@@ -112,6 +112,21 @@ contract MasterChef is Ownable {
         pool.howmany = newHowmany;
     }
 
+    // View function to see pending SUSHIs on frontend.
+    function pendingSushi(IERC20 _token) external view returns (uint256) {
+        PoolInfo storage pool = poolInfo[_token];
+        UserInfo storage user = userInfo[_token][msg.sender];
+        require(pool.lpToken != IERC20(address(0)), "pendingSushi: wut?");
+        uint256 accSushiPerShare = pool.accSushiPerShare;
+        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
+        if (block.number > pool.lastRewardBlock && lpSupply != 0) {
+            uint256 blockCount = block.number.sub(pool.lastRewardBlock);
+            uint256 sushiReward = blockCount.mul(pool.howmany);
+            accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
+        }
+        return user.amount.mul(accSushiPerShare).div(1e9).sub(user.rewardDebt);
+    }
+
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(PoolInfo storage _pool) internal {
         if (block.number <= _pool.lastRewardBlock) {
