@@ -12,7 +12,7 @@ import "./SushiToken.sol";
 interface Migrator {
     // Perform LP token migration from legacy UniswapV2 to SushiSwap.
     // Take ERC20 token address and return the new LP token address.
-    // Migrator should have full access to the caller's LP token. 
+    // Migrator should have full access to the caller's LP token.
     // Return the new LP token address and new `howmany`.
     //
     // XXX Migrator must have allowance access to UniswapV2 LP tokens.
@@ -46,7 +46,7 @@ contract MasterChef is Ownable {
         uint256 amount;     // How many LP tokens the user has provided.
         uint256 rewardDebt; // Reward debt. See explanation below.
         //
-        // We do some fancy math here. Basically, any point in time, the amount of SUSHIs 
+        // We do some fancy math here. Basically, any point in time, the amount of SUSHIs
         // entitled to a user but is pending to be distributed is:
         //
         //   pending reward = (user.amount * pool.accSushiPerShare) - user.rewardDebt
@@ -121,7 +121,7 @@ contract MasterChef is Ownable {
             _pool.lastRewardBlock = block.number;
             return;
         }
-        uint256 blockCount = _pool.lastRewardBlock.sub(block.number);
+        uint256 blockCount = block.number.sub(_pool.lastRewardBlock);
         uint256 sushiReward = blockCount.mul(_pool.howmany);
         sushi.mint(devaddr, sushiReward.mul(devshare).div(1e9));
         sushi.mint(address(this), sushiReward);
@@ -137,7 +137,7 @@ contract MasterChef is Ownable {
         updatePool(pool);
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
-            sushi.transfer(msg.sender, pending);
+            safeSushiTransfer(msg.sender, pending);
         }
         pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
@@ -149,10 +149,10 @@ contract MasterChef is Ownable {
         PoolInfo storage pool = poolInfo[_token];
         UserInfo storage user = userInfo[_token][msg.sender];
         require(pool.lpToken != IERC20(address(0)), "withdraw: wut?");
-        require(user.amount > _amount, "withdraw: not good");
+        require(user.amount >= _amount, "withdraw: not good");
         updatePool(pool);
         uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
-        sushi.transfer(msg.sender, pending);
+        safeSushiTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
         user.rewardDebt = user.amount.mul(pool.accSushiPerShare).div(1e9);
         pool.lpToken.safeTransfer(address(msg.sender), _amount);
@@ -166,6 +166,16 @@ contract MasterChef is Ownable {
         user.amount = 0;
         user.rewardDebt = 0;
         pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+    }
+
+    // Safe sushi transfer function, just in case if rounding error causes pool to not have enough SUSHIs.
+    function safeSushiTransfer(address _to, uint256 _amount) internal {
+        uint256 sushiBal = sushi.balanceOf(address(this));
+        if (_amount > sushiBal) {
+            sushi.transfer(_to, sushiBal);
+        } else {
+            sushi.transfer(_to, _amount);
+        }
     }
 
     // Update dev address by the previous dev.
