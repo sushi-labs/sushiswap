@@ -129,9 +129,9 @@ contract MasterChef is Ownable {
     }
 
     // View function to see pending SUSHIs on frontend.
-    function pendingSushi(IERC20 _token) external view returns (uint256) {
+    function pendingSushi(IERC20 _token, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
+        UserInfo storage user = userInfo[_token][_user];
         require(pool.lpToken != IERC20(address(0)), "pendingSushi: wut?");
         uint256 accSushiPerShare = pool.accSushiPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
