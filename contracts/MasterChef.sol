@@ -13,13 +13,13 @@ interface Migrator {
     // Perform LP token migration from legacy UniswapV2 to SushiSwap.
     // Take ERC20 token address and return the new LP token address.
     // Migrator should have full access to the caller's LP token.
-    // Return the new LP token address and new `howmany`.
+    // Return the new LP token address.
     //
     // XXX Migrator must have allowance access to UniswapV2 LP tokens.
     // SushiSwap must mint EXACTLY the same amount of SushiSwap LP tokens or
     // else something bad will happen. Traditional UniswapV2 does not
     // do that so be careful!
-    function migrate(IERC20 token) external returns (IERC20, uint256);
+    function migrate(IERC20 token) external returns (IERC20);
 }
 
 // MasterChef is the master of Sushi. He can make Sushi and he is a fair guy.
@@ -70,15 +70,20 @@ contract MasterChef is Ownable {
     uint256 public devshare = 0.1 * 1e9;
     // Dev address.
     address public devaddr;
+    // Block number when bonus SUSHI period ends.
+    uint256 public bonusEndBlock;
+    // Bonus muliplier for early sushi makers.
+    uint256 public constant BONUS_MULTIPLIER = 10;
 
     // Info of each user that stakes LP tokens.
     mapping (IERC20 => mapping (address => UserInfo)) public userInfo;
     // Info of each pool.
     mapping (IERC20 => PoolInfo) public poolInfo;
 
-    constructor(SushiToken _sushi, address _devaddr) public {
+    constructor(SushiToken _sushi, address _devaddr, uint256 _bonusEndBlock) public {
         sushi = _sushi;
         devaddr = _devaddr;
+        bonusEndBlock = _bonusEndBlock;
     }
 
     // Add a new token + lp to the pool. Can only be called by the owner.
@@ -103,13 +108,24 @@ contract MasterChef is Ownable {
         PoolInfo storage pool = poolInfo[_token];
         IERC20 lpToken = pool.lpToken;
         require(lpToken != IERC20(address(0)), "migrate: wut?");
-        updatePool(pool);
         uint256 bal = lpToken.balanceOf(address(this));
         lpToken.safeApprove(address(_migrator), bal);
-        (IERC20 newLpToken, uint256 newHowmany) = _migrator.migrate(lpToken);
+        IERC20 newLpToken = _migrator.migrate(lpToken);
         require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
         pool.lpToken = newLpToken;
-        pool.howmany = newHowmany;
+    }
+
+    // Return reward multiplier over the given _from to _to block.
+    function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
+        if (_to <= bonusEndBlock) {
+            return _to.sub(_from).mul(BONUS_MULTIPLIER);
+        } else if (_from >= bonusEndBlock) {
+            return _to.sub(_from);
+        } else {
+            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
+                _to.sub(bonusEndBlock)
+            );
+        }
     }
 
     // View function to see pending SUSHIs on frontend.
@@ -120,8 +136,8 @@ contract MasterChef is Ownable {
         uint256 accSushiPerShare = pool.accSushiPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 blockCount = block.number.sub(pool.lastRewardBlock);
-            uint256 sushiReward = blockCount.mul(pool.howmany);
+            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
+            uint256 sushiReward = multiplier.mul(pool.howmany);
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
         }
         return user.amount.mul(accSushiPerShare).div(1e9).sub(user.rewardDebt);
@@ -137,8 +153,8 @@ contract MasterChef is Ownable {
             _pool.lastRewardBlock = block.number;
             return;
         }
-        uint256 blockCount = block.number.sub(_pool.lastRewardBlock);
-        uint256 sushiReward = blockCount.mul(_pool.howmany);
+        uint256 multiplier = getMultiplier(_pool.lastRewardBlock, block.number);
+        uint256 sushiReward = multiplier.mul(_pool.howmany);
         sushi.mint(devaddr, sushiReward.mul(devshare).div(1e9));
         sushi.mint(address(this), sushiReward);
         _pool.accSushiPerShare = _pool.accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));

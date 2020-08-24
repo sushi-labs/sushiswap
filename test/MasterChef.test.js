@@ -6,7 +6,7 @@ const MockERC20 = artifacts.require('MockERC20');
 contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
     beforeEach(async () => {
         this.sushi = await SushiToken.new({ from: alice });
-        this.chef = await MasterChef.new(this.sushi.address, dev, { from: alice });
+        this.chef = await MasterChef.new(this.sushi.address, dev, '1000', { from: alice });
         await this.sushi.transferOwnership(this.chef.address, { from: alice });
     });
 
@@ -34,7 +34,7 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
 
         it('should give out SUSHIs only after farming time', async () => {
             // 1000 per block farming rate starting at block 100
-            await this.chef.add(this.token.address, '1000', this.lp.address, '100');
+            await this.chef.add(this.token.address, '100', this.lp.address, '100');
             await this.lp.approve(this.chef.address, '1000', { from: bob });
             await this.chef.deposit(this.token.address, '100', { from: bob });
             await time.advanceBlockTo('89');
@@ -58,7 +58,7 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
 
         it('should not distribute SUSHIs if no one deposit', async () => {
             // 1000 per block farming rate starting at block 200
-            await this.chef.add(this.token.address, '1000', this.lp.address, '100');
+            await this.chef.add(this.token.address, '100', this.lp.address, '100');
             await this.lp.approve(this.chef.address, '1000', { from: bob });
             await time.advanceBlockTo('199');
             assert.equal((await this.sushi.totalSupply()).valueOf(), '0');
@@ -80,7 +80,7 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
 
         it('should distribute SUSHIs properly', async () => {
             // 1000 per block farming rate starting at block 300
-            await this.chef.add(this.token.address, '1000', this.lp.address, '300');
+            await this.chef.add(this.token.address, '100', this.lp.address, '300');
             await this.lp.approve(this.chef.address, '1000', { from: alice });
             await this.lp.approve(this.chef.address, '1000', { from: bob });
             await this.lp.approve(this.chef.address, '1000', { from: carol });
