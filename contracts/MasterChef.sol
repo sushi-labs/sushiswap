@@ -103,6 +103,7 @@ contract MasterChef is Ownable {
         PoolInfo storage pool = poolInfo[_token];
         IERC20 lpToken = pool.lpToken;
         require(lpToken != IERC20(address(0)), "migrate: wut?");
+        updatePool(pool);
         uint256 bal = lpToken.balanceOf(address(this));
         lpToken.safeApprove(address(_migrator), bal);
         (IERC20 newLpToken, uint256 newHowmany) = _migrator.migrate(lpToken);
