@@ -11,7 +11,7 @@ import "./SushiToken.sol";
 
 interface Migrator {
     // Perform LP token migration from legacy UniswapV2 to SushiSwap.
-    // Take ERC20 token address and return the new LP token address.
+    // Take the current LP token address and return the new LP token address.
     // Migrator should have full access to the caller's LP token.
     // Return the new LP token address.
     //
