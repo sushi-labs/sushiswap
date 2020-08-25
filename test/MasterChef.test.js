@@ -19,6 +19,16 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
         assert.equal(owner.valueOf(), this.chef.address);
     });
 
+    it('should allow dev and only dev to update dev', async () => {
+        this.chef = await MasterChef.new(this.sushi.address, dev, '1000', '0', '1000', { from: alice });
+        assert.equal((await this.chef.devaddr()).valueOf(), dev);
+        await expectRevert(this.chef.dev(bob, { from: bob }), 'dev: wut?');
+        await this.chef.dev(bob, { from: dev });
+        assert.equal((await this.chef.devaddr()).valueOf(), bob);
+        await this.chef.dev(alice, { from: bob });
+        assert.equal((await this.chef.devaddr()).valueOf(), alice);
+    })
+
     context('With ERC/LP token added to the field', () => {
         beforeEach(async () => {
             this.token = await MockERC20.new('Token', 'TOKEN', '10000000000', {
