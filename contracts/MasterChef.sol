@@ -74,6 +74,8 @@ contract MasterChef is Ownable {
     uint256 public sushiPerBlock;
     // Bonus muliplier for early sushi makers.
     uint256 public constant BONUS_MULTIPLIER = 10;
+    // The migrator contract. It has a lot of power. Can only be set through governance (owner).
+    Migrator public migrator;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -127,13 +129,19 @@ contract MasterChef is Ownable {
         poolInfo[_pid].allocPoint = _allocPoint;
     }
 
-    // Migrate lp token to another lp contract. Can only be called by the owner.
-    function migrate(uint256 _pid, Migrator _migrator) public onlyOwner {
+    // Set the migrator contract. Can only be called by the owner.
+    function setMigrator(Migrator _migrator) public onlyOwner {
+        migrator = _migrator;
+    }
+
+    // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
+    function migrate(uint256 _pid) public onlyOwner {
+        require(address(migrator) != address(0), "migrate: no migrator");
         PoolInfo storage pool = poolInfo[_pid];
         IERC20 lpToken = pool.lpToken;
         uint256 bal = lpToken.balanceOf(address(this));
-        lpToken.safeApprove(address(_migrator), bal);
-        IERC20 newLpToken = _migrator.migrate(lpToken);
+        lpToken.safeApprove(address(migrator), bal);
+        IERC20 newLpToken = migrator.migrate(lpToken);
         require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
         pool.lpToken = newLpToken;
     }
