@@ -31,15 +31,14 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
 
     context('With ERC/LP token added to the field', () => {
         beforeEach(async () => {
-            this.token = await MockERC20.new('Token', 'TOKEN', '10000000000', {
-                from: minter,
-            });
-            this.lp = await MockERC20.new('LPToken', 'LP', '10000000000', {
-                from: minter,
-            });
+            this.lp = await MockERC20.new('LPToken', 'LP', '10000000000', { from: minter });
             await this.lp.transfer(alice, '1000', { from: minter });
             await this.lp.transfer(bob, '1000', { from: minter });
             await this.lp.transfer(carol, '1000', { from: minter });
+            this.lp2 = await MockERC20.new('LPToken2', 'LP2', '10000000000', { from: minter });
+            await this.lp2.transfer(alice, '1000', { from: minter });
+            await this.lp2.transfer(bob, '1000', { from: minter });
+            await this.lp2.transfer(carol, '1000', { from: minter });
         });
 
         it('should give out SUSHIs only after farming time', async () => {
@@ -92,7 +91,7 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
             assert.equal((await this.lp.balanceOf(bob)).valueOf(), '1000');
         });
 
-        it('should distribute SUSHIs properly', async () => {
+        it('should distribute SUSHIs properly for each staker', async () => {
             // 100 per block farming rate starting at block 300 with bonus until block 1000
             this.chef = await MasterChef.new(this.sushi.address, dev, '100', '300', '1000', { from: alice });
             await this.sushi.transferOwnership(this.chef.address, { from: alice });
@@ -151,6 +150,33 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
             assert.equal((await this.lp.balanceOf(alice)).valueOf(), '1000');
             assert.equal((await this.lp.balanceOf(bob)).valueOf(), '1000');
             assert.equal((await this.lp.balanceOf(carol)).valueOf(), '1000');
+        });
+
+        it('should give proper SUSHIs allocation to each pool', async () => {
+            // 100 per block farming rate starting at block 400 with bonus until block 1000
+            this.chef = await MasterChef.new(this.sushi.address, dev, '100', '400', '1000', { from: alice });
+            await this.sushi.transferOwnership(this.chef.address, { from: alice });
+            await this.lp.approve(this.chef.address, '1000', { from: alice });
+            await this.lp2.approve(this.chef.address, '1000', { from: bob });
+            // Add first LP to the pool with allocation 1
+            await this.chef.add('1', this.lp.address, true);
+            // Alice deposits 10 LPs at block 410
+            await time.advanceBlockTo('409');
+            await this.chef.deposit(0, '10', { from: alice });
+            // Add LP2 to the pool with allocation 2 at block 420
+            await time.advanceBlockTo('419');
+            await this.chef.add('2', this.lp2.address, true);
+            // Alice should have 10*1000 pending reward
+            assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '10000');
+            // Bob deposits 10 LP2s at block 425
+            await time.advanceBlockTo('424');
+            await this.chef.deposit(1, '5', { from: bob });
+            // Alice should have 10000 + 5*1/3*1000 = 11666 pending reward
+            assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '11666');
+            await time.advanceBlockTo('430');
+            // At block 430. Bob should get 5*2/3*1000 = 3333. Alice should get ~1666 more.
+            assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '13333');
+            assert.equal((await this.chef.pendingSushi(1, bob)).valueOf(), '3333');
         });
     });
 });

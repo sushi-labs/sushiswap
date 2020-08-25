@@ -160,9 +160,7 @@ contract MasterChef is Ownable {
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 sushiReward = multiplier.mul(
-                sushiPerBlock.mul(pool.allocPoint).div(totalAllocPoint)
-            );
+            uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
         }
         return user.amount.mul(accSushiPerShare).div(1e9).sub(user.rewardDebt);
@@ -188,9 +186,7 @@ contract MasterChef is Ownable {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 sushiReward = multiplier.mul(
-            sushiPerBlock.mul(pool.allocPoint).div(totalAllocPoint)
-        );
+        uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
         sushi.mint(devaddr, sushiReward.div(10));
         sushi.mint(address(this), sushiReward);
         pool.accSushiPerShare = pool.accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
