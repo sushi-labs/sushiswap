@@ -61,7 +61,7 @@ contract MasterChef is Ownable {
         IERC20 lpToken;           // Address of LP token contract.
         uint256 allocPoint;       // How many allocation points assigned to this pool. SUSHIs to distribute per block.
         uint256 lastRewardBlock;  // Last block number that SUSHIs distribution occurs.
-        uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e9. See below.
+        uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
     }
 
     // The SUSHI TOKEN!
@@ -165,9 +165,9 @@ contract MasterChef is Ownable {
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
+            accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e12).div(lpSupply));
         }
-        return user.amount.mul(accSushiPerShare).div(1e9).sub(user.rewardDebt);
+        return user.amount.mul(accSushiPerShare).div(1e12).sub(user.rewardDebt);
     }
 
     // Update reward vairables for all pools. Be careful of gas spending!
@@ -193,7 +193,7 @@ contract MasterChef is Ownable {
         uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
         sushi.mint(devaddr, sushiReward.div(10));
         sushi.mint(address(this), sushiReward);
-        pool.accSushiPerShare = pool.accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
+        pool.accSushiPerShare = pool.accSushiPerShare.add(sushiReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }
 
@@ -203,12 +203,12 @@ contract MasterChef is Ownable {
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
+            uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e12).sub(user.rewardDebt);
             safeSushiTransfer(msg.sender, pending);
         }
         pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
-        user.rewardDebt = user.amount.mul(pool.accSushiPerShare).div(1e9);
+        user.rewardDebt = user.amount.mul(pool.accSushiPerShare).div(1e12);
     }
 
     // Withdraw LP tokens from MasterChef.
@@ -217,10 +217,10 @@ contract MasterChef is Ownable {
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(_pid);
-        uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
+        uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e12).sub(user.rewardDebt);
         safeSushiTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
-        user.rewardDebt = user.amount.mul(pool.accSushiPerShare).div(1e9);
+        user.rewardDebt = user.amount.mul(pool.accSushiPerShare).div(1e12);
         pool.lpToken.safeTransfer(address(msg.sender), _amount);
     }
 
