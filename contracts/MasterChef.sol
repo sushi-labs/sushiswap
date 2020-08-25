@@ -108,12 +108,7 @@ contract MasterChef is Ownable {
         if (_withUpdate) {
             massUpdatePools();
         }
-        uint256 lastRewardBlock;
-        if (block.number > startBlock) {
-            lastRewardBlock = block.number;
-        } else {
-            lastRewardBlock = startBlock;
-        }
+        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
             lpToken: _lpToken,
