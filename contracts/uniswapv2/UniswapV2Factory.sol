@@ -6,6 +6,7 @@ import './UniswapV2Pair.sol';
 contract UniswapV2Factory is IUniswapV2Factory {
     address public feeTo;
     address public feeToSetter;
+    address public migrator;
 
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
@@ -42,8 +43,14 @@ contract UniswapV2Factory is IUniswapV2Factory {
         feeTo = _feeTo;
     }
 
+    function setMigrator(address _migrator) external {
+        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
+        migrator = _migrator;
+    }
+
     function setFeeToSetter(address _feeToSetter) external {
         require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
+
 }
