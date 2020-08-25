@@ -159,13 +159,13 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
             await this.lp.approve(this.chef.address, '1000', { from: alice });
             await this.lp2.approve(this.chef.address, '1000', { from: bob });
             // Add first LP to the pool with allocation 1
-            await this.chef.add('1', this.lp.address, true);
+            await this.chef.add('10', this.lp.address, true);
             // Alice deposits 10 LPs at block 410
             await time.advanceBlockTo('409');
             await this.chef.deposit(0, '10', { from: alice });
             // Add LP2 to the pool with allocation 2 at block 420
             await time.advanceBlockTo('419');
-            await this.chef.add('2', this.lp2.address, true);
+            await this.chef.add('20', this.lp2.address, true);
             // Alice should have 10*1000 pending reward
             assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '10000');
             // Bob deposits 10 LP2s at block 425
