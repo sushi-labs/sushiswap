@@ -178,5 +178,23 @@ contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
             assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '13333');
             assert.equal((await this.chef.pendingSushi(1, bob)).valueOf(), '3333');
         });
+
+        it('should stop giving bonus SUSHIs after the bonus period ends', async () => {
+            // 100 per block farming rate starting at block 500 with bonus until block 600
+            this.chef = await MasterChef.new(this.sushi.address, dev, '100', '500', '600', { from: alice });
+            await this.sushi.transferOwnership(this.chef.address, { from: alice });
+            await this.lp.approve(this.chef.address, '1000', { from: alice });
+            await this.chef.add('1', this.lp.address, true);
+            // Alice deposits 10 LPs at block 590
+            await time.advanceBlockTo('589');
+            await this.chef.deposit(0, '10', { from: alice });
+            // At block 605, she should have 1000*10 + 100*5 = 10500 pending.
+            await time.advanceBlockTo('605');
+            assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '10500');
+            // At block 606, Alice withdraws all pending rewards and should get 10600.
+            await this.chef.deposit(0, '0', { from: alice });
+            assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), '0');
+            assert.equal((await this.sushi.balanceOf(alice)).valueOf(), '10600');
+        });
     });
 });
