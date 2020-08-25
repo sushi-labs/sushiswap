@@ -33,14 +33,6 @@ contract MasterChef is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    // Info of each pool.
-    struct PoolInfo {
-        IERC20 lpToken;           // Address of LP token contract.
-        uint256 howmany;          // How many SUSHIs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that SUSHIs distribution occurs.
-        uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e9. See below.
-    }
-
     // Info of each user.
     struct UserInfo {
         uint256 amount;     // How many LP tokens the user has provided.
@@ -54,7 +46,7 @@ contract MasterChef is Ownable {
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
         //   1. The pool's `accSushiPerShare` (and `lastRewardBlock`) gets updated.
         //
-        //   accSushiPerShare += howmany * (block.number - lastRewardBlock) / pool.lpToken.balanceOf(this)
+        //   accSushiPerShare += allocPerBlock * (block.number - lastRewardBlock) / pool.lpToken.balanceOf(this)
         //   lastRewardBlock = block.number
         //
         //   2. User receives the pending reward sent to his/her address.
@@ -64,50 +56,82 @@ contract MasterChef is Ownable {
         //   reward debt = user.amount * pool.accSushiPerShare
     }
 
+    // Info of each pool.
+    struct PoolInfo {
+        IERC20 lpToken;           // Address of LP token contract.
+        uint256 allocPoint;       // How many allocation points assigned to this pool. SUSHIs to distribute per block.
+        uint256 lastRewardBlock;  // Last block number that SUSHIs distribution occurs.
+        uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e9. See below.
+    }
+
     // The SUSHI TOKEN!
     SushiToken public sushi;
-    // Dev share ratio, multiplied by the usual 1e9.
-    uint256 public devshare = 0.1 * 1e9;
     // Dev address.
     address public devaddr;
     // Block number when bonus SUSHI period ends.
     uint256 public bonusEndBlock;
+    // SUSHI tokens created per block.
+    uint256 public sushiPerBlock;
     // Bonus muliplier for early sushi makers.
     uint256 public constant BONUS_MULTIPLIER = 10;
 
-    // Info of each user that stakes LP tokens.
-    mapping (IERC20 => mapping (address => UserInfo)) public userInfo;
     // Info of each pool.
-    mapping (IERC20 => PoolInfo) public poolInfo;
+    PoolInfo[] public poolInfo;
+    // Info of each user that stakes LP tokens.
+    mapping (uint256 => mapping (address => UserInfo)) public userInfo;
+    // Total allocation poitns. Must be the sum of all allocation points in all pools.
+    uint256 public totalAllocPoint = 0;
+    // The block number when SUSHI mining starts.
+    uint256 public startBlock;
 
-    constructor(SushiToken _sushi, address _devaddr, uint256 _bonusEndBlock) public {
+    constructor(
+        SushiToken _sushi,
+        address _devaddr,
+        uint256 _sushiPerBlock,
+        uint256 _startBlock,
+        uint256 _bonusEndBlock
+    ) public {
         sushi = _sushi;
         devaddr = _devaddr;
+        sushiPerBlock = _sushiPerBlock;
         bonusEndBlock = _bonusEndBlock;
+        startBlock = _startBlock;
     }
 
-    // Add a new token + lp to the pool. Can only be called by the owner.
-    function add(IERC20 _token, uint256 _howmany, IERC20 _lpToken, uint256 rewardAt) public onlyOwner {
-        require(poolInfo[_token].lpToken == IERC20(address(0)), "add: already there");
-        poolInfo[_token] = PoolInfo({
+    // Add a new lp to the pool. Can only be called by the owner.
+    // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
+    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
+        if (_withUpdate) {
+            massUpdatePools();
+        }
+        uint256 lastRewardBlock;
+        if (block.number > startBlock) {
+            lastRewardBlock = block.number;
+        } else {
+            lastRewardBlock = startBlock;
+        }
+        totalAllocPoint = totalAllocPoint.add(_allocPoint);
+        poolInfo.push(PoolInfo({
             lpToken: _lpToken,
-            howmany: _howmany,
-            lastRewardBlock: rewardAt,
+            allocPoint: _allocPoint,
+            lastRewardBlock: lastRewardBlock,
             accSushiPerShare: 0
-        });
+        }));
     }
 
-    // Update the given pool's SUSHI per block. Can only be called by the owner.
-    function set(IERC20 _token, uint256 _howmany) public onlyOwner {
-        require(poolInfo[_token].lpToken != IERC20(address(0)), "set: not there");
-        poolInfo[_token].howmany = _howmany;
+    // Update the given pool's SUSHI allocation point. Can only be called by the owner.
+    function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
+        if (_withUpdate) {
+            massUpdatePools();
+        }
+        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
+        poolInfo[_pid].allocPoint = _allocPoint;
     }
 
     // Migrate lp token to another lp contract. Can only be called by the owner.
-    function migrate(IERC20 _token, Migrator _migrator) public onlyOwner {
-        PoolInfo storage pool = poolInfo[_token];
+    function migrate(uint256 _pid, Migrator _migrator) public onlyOwner {
+        PoolInfo storage pool = poolInfo[_pid];
         IERC20 lpToken = pool.lpToken;
-        require(lpToken != IERC20(address(0)), "migrate: wut?");
         uint256 bal = lpToken.balanceOf(address(this));
         lpToken.safeApprove(address(_migrator), bal);
         IERC20 newLpToken = _migrator.migrate(lpToken);
@@ -129,44 +153,55 @@ contract MasterChef is Ownable {
     }
 
     // View function to see pending SUSHIs on frontend.
-    function pendingSushi(IERC20 _token, address _user) external view returns (uint256) {
-        PoolInfo storage pool = poolInfo[_token];
-        UserInfo storage user = userInfo[_token][_user];
-        require(pool.lpToken != IERC20(address(0)), "pendingSushi: wut?");
+    function pendingSushi(uint256 _pid, address _user) external view returns (uint256) {
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][_user];
         uint256 accSushiPerShare = pool.accSushiPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 sushiReward = multiplier.mul(pool.howmany);
+            uint256 sushiReward = multiplier.mul(
+                sushiPerBlock.mul(pool.allocPoint).div(totalAllocPoint)
+            );
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
         }
         return user.amount.mul(accSushiPerShare).div(1e9).sub(user.rewardDebt);
     }
 
+    // Update reward vairables for all pools. Be careful of gas spending!
+    function massUpdatePools() public {
+        uint256 length = poolInfo.length;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            updatePool(pid);
+        }
+    }
+
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(PoolInfo storage _pool) internal {
-        if (block.number <= _pool.lastRewardBlock) {
+    function updatePool(uint256 _pid) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        if (block.number <= pool.lastRewardBlock) {
             return;
         }
-        uint256 lpSupply = _pool.lpToken.balanceOf(address(this));
+        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (lpSupply == 0) {
-            _pool.lastRewardBlock = block.number;
+            pool.lastRewardBlock = block.number;
             return;
         }
-        uint256 multiplier = getMultiplier(_pool.lastRewardBlock, block.number);
-        uint256 sushiReward = multiplier.mul(_pool.howmany);
-        sushi.mint(devaddr, sushiReward.mul(devshare).div(1e9));
+        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
+        uint256 sushiReward = multiplier.mul(
+            sushiPerBlock.mul(pool.allocPoint).div(totalAllocPoint)
+        );
+        sushi.mint(devaddr, sushiReward.div(10));
         sushi.mint(address(this), sushiReward);
-        _pool.accSushiPerShare = _pool.accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
-        _pool.lastRewardBlock = block.number;
+        pool.accSushiPerShare = pool.accSushiPerShare.add(sushiReward.mul(1e9).div(lpSupply));
+        pool.lastRewardBlock = block.number;
     }
 
     // Deposit LP tokens to MasterChef for SUSHI allocation.
-    function deposit(IERC20 _token, uint256 _amount) public {
-        PoolInfo storage pool = poolInfo[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
-        require(pool.lpToken != IERC20(address(0)), "deposit: wut?");
-        updatePool(pool);
+    function deposit(uint256 _pid, uint256 _amount) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][msg.sender];
+        updatePool(_pid);
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
             safeSushiTransfer(msg.sender, pending);
@@ -177,12 +212,11 @@ contract MasterChef is Ownable {
     }
 
     // Withdraw LP tokens from MasterChef.
-    function withdraw(IERC20 _token, uint256 _amount) public {
-        PoolInfo storage pool = poolInfo[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
-        require(pool.lpToken != IERC20(address(0)), "withdraw: wut?");
+    function withdraw(uint256 _pid, uint256 _amount) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
-        updatePool(pool);
+        updatePool(_pid);
         uint256 pending = user.amount.mul(pool.accSushiPerShare).div(1e9).sub(user.rewardDebt);
         safeSushiTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
@@ -191,10 +225,9 @@ contract MasterChef is Ownable {
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(IERC20 _token) public {
-        PoolInfo storage pool = poolInfo[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
-        require(pool.lpToken != IERC20(address(0)), "emergencyWithdraw: wut?");
+    function emergencyWithdraw(uint256 _pid) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][msg.sender];
         user.amount = 0;
         user.rewardDebt = 0;
         pool.lpToken.safeTransfer(address(msg.sender), user.amount);
