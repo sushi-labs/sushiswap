@@ -3,7 +3,7 @@ const SushiToken = artifacts.require('SushiToken');
 const MasterChef = artifacts.require('MasterChef');
 const MockERC20 = artifacts.require('MockERC20');
 
-contract('SushiToken', ([alice, bob, carol, dev, minter]) => {
+contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
     beforeEach(async () => {
         this.sushi = await SushiToken.new({ from: alice });
     });
