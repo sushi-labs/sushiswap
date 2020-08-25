@@ -1,9 +1,8 @@
-pragma solidity =0.5.16;
+pragma solidity =0.6.12;
 
-import './interfaces/IUniswapV2ERC20.sol';
 import './libraries/SafeMath.sol';
 
-contract UniswapV2ERC20 is IUniswapV2ERC20 {
+contract UniswapV2ERC20 {
     using SafeMath for uint;
 
     string public constant name = 'Uniswap V2';
@@ -24,7 +23,7 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
     constructor() public {
         uint chainId;
         assembly {
-            chainId := chainid
+            chainId := chainid()
         }
         DOMAIN_SEPARATOR = keccak256(
             abi.encode(
