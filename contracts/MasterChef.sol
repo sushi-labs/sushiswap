@@ -45,15 +45,9 @@ contract MasterChef is Ownable {
         //
         // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
         //   1. The pool's `accSushiPerShare` (and `lastRewardBlock`) gets updated.
-        //
-        //   accSushiPerShare += allocPerBlock * (block.number - lastRewardBlock) / pool.lpToken.balanceOf(this)
-        //   lastRewardBlock = block.number
-        //
         //   2. User receives the pending reward sent to his/her address.
         //   3. User's `amount` gets updated.
-        //   4. User's `rewardDebt` gets updated using the following formula:
-        //
-        //   reward debt = user.amount * pool.accSushiPerShare
+        //   4. User's `rewardDebt` gets updated.
     }
 
     // Info of each pool.
