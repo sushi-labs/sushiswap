@@ -46,4 +46,15 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
         assert.equal((await this.token.balanceOf(bob)).valueOf(), '9029203');
         assert.equal((await this.weth.balanceOf(bob)).valueOf(), '451459');
     });
+
+    it('should allow first minting from public only after migrator is gone', async () => {
+        await this.factory2.setMigrator(this.migrator.address, { from: alice });
+        this.tokenx = await MockERC20.new('TOKENX', 'TOKENX', '100000000', { from: minter });
+        this.lpx = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.tokenx.address)).logs[0].args.pair);
+        await this.weth.transfer(this.lpx.address, '10000000', { from: minter });
+        await this.tokenx.transfer(this.lpx.address, '500000', { from: minter });
+        await expectRevert(this.lpx.mint(minter), 'Must not have migrator');
+        await this.factory2.setMigrator('0x0000000000000000000000000000000000000000', { from: alice });
+        await this.lpx.mint(minter);
+    });
 });
