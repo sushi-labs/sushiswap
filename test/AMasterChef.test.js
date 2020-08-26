@@ -41,6 +41,17 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
             await this.lp2.transfer(carol, '1000', { from: minter });
         });
 
+        it('should allow emergency withdraw', async () => {
+            // 100 per block farming rate starting at block 100 with bonus until block 1000
+            this.chef = await MasterChef.new(this.sushi.address, dev, '100', '100', '1000', { from: alice });
+            await this.chef.add('100', this.lp.address, true);
+            await this.lp.approve(this.chef.address, '1000', { from: bob });
+            await this.chef.deposit(0, '100', { from: bob });
+            assert.equal((await this.lp.balanceOf(bob)).valueOf(), '900');
+            await this.chef.emergencyWithdraw(0, { from: bob });
+            assert.equal((await this.lp.balanceOf(bob)).valueOf(), '1000');
+        });
+
         it('should give out SUSHIs only after farming time', async () => {
             // 100 per block farming rate starting at block 100 with bonus until block 1000
             this.chef = await MasterChef.new(this.sushi.address, dev, '100', '100', '1000', { from: alice });
