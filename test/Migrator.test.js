@@ -26,6 +26,10 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
         await this.weth.transfer(this.lp1.address, '500000', { from: minter });
         await this.lp1.mint(minter);
         assert.equal((await this.lp1.balanceOf(minter)).valueOf(), '2235067');
+        // Add some fake revenue
+        await this.token.transfer(this.lp1.address, '100000', { from: minter });
+        await this.weth.transfer(this.lp1.address, '5000', { from: minter });
+        await this.lp1.sync();
         await this.lp1.approve(this.chef.address, '100000000000', { from: minter });
         await this.chef.deposit('0', '2000000', { from: minter });
         assert.equal((await this.lp1.balanceOf(this.chef.address)).valueOf(), '2000000');
@@ -39,7 +43,7 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
         await this.chef.withdraw('0', '2000000', { from: minter });
         await this.lp2.transfer(this.lp2.address, '2000000', { from: minter });
         await this.lp2.burn(bob);
-        assert.equal((await this.token.balanceOf(bob)).valueOf(), '8939805');
-        assert.equal((await this.weth.balanceOf(bob)).valueOf(), '446989');
+        assert.equal((await this.token.balanceOf(bob)).valueOf(), '9029203');
+        assert.equal((await this.weth.balanceOf(bob)).valueOf(), '451459');
     });
 });

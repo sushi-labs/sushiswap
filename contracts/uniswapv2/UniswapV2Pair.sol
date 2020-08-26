@@ -8,7 +8,7 @@ import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IUniswapV2Callee.sol';
 
 
-interface Migrator {
+interface IMigrator {
     // Return the desired amount of liquidity token that the migrator wants.
     function desiredLiquidity() external view returns (uint256);
 }
@@ -124,7 +124,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         if (_totalSupply == 0) {
             address migrator = IUniswapV2Factory(factory).migrator();
             if (msg.sender == migrator) {
-                liquidity = Migrator(migrator).desiredLiquidity();
+                liquidity = IMigrator(migrator).desiredLiquidity();
                 require(liquidity > 0 && liquidity != uint256(-1), "Bad desired liquidity");
             } else {
                 require(migrator == address(0), "Must not have migrator");
