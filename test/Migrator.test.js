@@ -16,7 +16,7 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
         this.lp1 = await UniswapV2Pair.at((await this.factory1.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
         this.lp2 = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
         this.chef = await MasterChef.new(this.sushi.address, dev, '1000', '0', '100000', { from: alice });
-        this.migrator = await Migrator.new(this.chef.address, this.factory2.address, '0');
+        this.migrator = await Migrator.new(this.chef.address, this.factory1.address, this.factory2.address, '0');
         await this.sushi.transferOwnership(this.chef.address, { from: alice });
         await this.chef.add('100', this.lp1.address, true, { from: alice });
     });
