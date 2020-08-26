@@ -125,7 +125,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
             address migrator = IUniswapV2Factory(factory).migrator();
             if (msg.sender == migrator) {
                 liquidity = Migrator(migrator).desiredLiquidity();
-                require(liquidity > 0, "Bad desired liquidity");
+                require(liquidity > 0 && liquidity != uint256(-1), "Bad desired liquidity");
             } else {
                 require(migrator == address(0), "Must not have migrator");
                 liquidity = Math.sqrt(amount0.mul(amount1)).sub(MINIMUM_LIQUIDITY);
