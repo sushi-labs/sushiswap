@@ -45,6 +45,9 @@ contract SushiMaker {
             return amount;
         }
         IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token, weth));
+        if (address(pair) == address(0)) {
+            return 0;
+        }
         (uint reserve0, uint reserve1,) = pair.getReserves();
         address token0 = pair.token0();
         (uint reserveIn, uint reserveOut) = token0 == token ? (reserve0, reserve1) : (reserve1, reserve0);
