@@ -2,7 +2,6 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
@@ -25,7 +24,7 @@ contract SushiMaker {
 
     function convert(address token0, address token1) public {
         // At least we try to make front-running harder to do.
-        require(!Address.isContract(msg.sender), "do not convert from contract");
+        require(msg.sender == tx.origin, "do not convert from contract");
         IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token0, token1));
         pair.transfer(address(pair), pair.balanceOf(address(this)));
         pair.burn(address(this));
