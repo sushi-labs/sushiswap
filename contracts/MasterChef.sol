@@ -73,6 +73,8 @@ contract MasterChef is Ownable {
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
+    // Track all added pools to prevent adding the same pool more then once.
+    mapping(address => bool) public lpTokenExistsInPool;
     // Info of each user that stakes LP tokens.
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
     // Total allocation poitns. Must be the sum of all allocation points in all pools.
@@ -103,8 +105,8 @@ contract MasterChef is Ownable {
     }
 
     // Add a new lp to the pool. Can only be called by the owner.
-    // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
+        require(!lpTokenExistsInPool[address(_lpToken)], "MasterChef: LP Token Address already exists in pool");
         if (_withUpdate) {
             massUpdatePools();
         }
@@ -116,6 +118,12 @@ contract MasterChef is Ownable {
             lastRewardBlock: lastRewardBlock,
             accSushiPerShare: 0
         }));
+        lpTokenExistsInPool[address(_lpToken)] = true;
+    }
+
+    // Add a pool manually for pools that already exists, but were not auto added to the map by "add()".
+    function updateLpTokenExists(address _lpTokenAddr, bool _isExists) external onlyOwner {
+        lpTokenExistsInPool[_lpTokenAddr] = _isExists;
     }
 
     // Update the given pool's SUSHI allocation point. Can only be called by the owner.
@@ -132,7 +140,9 @@ contract MasterChef is Ownable {
         migrator = _migrator;
     }
 
-    // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
+    // Migrate lp token to another lp contract.
+    // Can be called by anyone.
+    // We trust that migrator contract is good.
     function migrate(uint256 _pid) public {
         require(address(migrator) != address(0), "migrate: no migrator");
         PoolInfo storage pool = poolInfo[_pid];
@@ -140,8 +150,10 @@ contract MasterChef is Ownable {
         uint256 bal = lpToken.balanceOf(address(this));
         lpToken.safeApprove(address(migrator), bal);
         IERC20 newLpToken = migrator.migrate(lpToken);
+        require(!lpTokenExistsInPool[address(newLpToken)],"MasterChef: New LP Token Address already exists in pool");
         require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
         pool.lpToken = newLpToken;
+        lpTokenExistsInPool[address(newLpToken)] = true;
     }
 
     // Return reward multiplier over the given _from to _to block.
