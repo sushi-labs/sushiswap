@@ -43,8 +43,8 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
         await this.chef.withdraw('0', '2000000', { from: minter });
         await this.lp2.transfer(this.lp2.address, '2000000', { from: minter });
         await this.lp2.burn(bob);
-        assert.equal((await this.token.balanceOf(bob)).valueOf(), '9029203');
-        assert.equal((await this.weth.balanceOf(bob)).valueOf(), '451459');
+        assert.equal((await this.token.balanceOf(bob)).valueOf(), '9033718');
+        assert.equal((await this.weth.balanceOf(bob)).valueOf(), '451685');
     });
 
     it('should allow first minting from public only after migrator is gone', async () => {
