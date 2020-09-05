@@ -17,6 +17,7 @@ contract Migrator {
         IUniswapV2Factory _factory,
         uint256 _notBeforeBlock
     ) public {
+        require(_chef != address(0) && _oldFactory != address(0) && address(_factory) != address(0), "invalid address");
         chef = _chef;
         oldFactory = _oldFactory;
         factory = _factory;

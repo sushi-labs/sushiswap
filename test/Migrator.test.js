@@ -1,6 +1,6 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
-const SushiToken = artifacts.require('SushiToken');
-const MasterChef = artifacts.require('MasterChef');
+const SakeToken = artifacts.require('SakeToken');
+const SakeMaster = artifacts.require('SakeMaster');
 const MockERC20 = artifacts.require('MockERC20');
 const UniswapV2Pair = artifacts.require('UniswapV2Pair');
 const UniswapV2Factory = artifacts.require('UniswapV2Factory');
@@ -10,14 +10,14 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
     beforeEach(async () => {
         this.factory1 = await UniswapV2Factory.new(alice, { from: alice });
         this.factory2 = await UniswapV2Factory.new(alice, { from: alice });
-        this.sushi = await SushiToken.new({ from: alice });
+        this.sake = await SakeToken.new({ from: alice });
         this.weth = await MockERC20.new('WETH', 'WETH', '100000000', { from: minter });
         this.token = await MockERC20.new('TOKEN', 'TOKEN', '100000000', { from: minter });
         this.lp1 = await UniswapV2Pair.at((await this.factory1.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
         this.lp2 = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
-        this.chef = await MasterChef.new(this.sushi.address, dev, '1000', '0', '100000', { from: alice });
+        this.chef = await SakeMaster.new(this.sake.address, dev, '1000', '0', { from: alice });
         this.migrator = await Migrator.new(this.chef.address, this.factory1.address, this.factory2.address, '0');
-        await this.sushi.transferOwnership(this.chef.address, { from: alice });
+        await this.sake.transferOwnership(this.chef.address, { from: alice });
         await this.chef.add('100', this.lp1.address, true, { from: alice });
     });
 

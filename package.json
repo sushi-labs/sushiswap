@@ -1,12 +1,40 @@
 {
-  "name": "SushiSwap",
+  "name": "SakeSwap",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "test": "npx truffle test",
+    "compile": "npx truffle compile",
+    "deploy": "npx truffle migrate --network rinkeby",
+    "start": "npx ganache-cli -l 10000038 -i 1234 -e 100000 -a 10 -u 0 -g 1000000000 --allowUnlimitedContractSize -m \"$HDWALLET_MNEMONIC\"",
+    "session": "npx openzeppelin session --from $ADMIN_ADDRESS --network local --expires 7200 --timeout 3600",
+    "session-kovan": "npx openzeppelin session --from $ADMIN_ADDRESS --network kovan --expires 7200 --timeout 3600",
+    "session-rinkeby": "npx openzeppelin session --from $ADMIN_ADDRESS --network rinkeby --expires 7200 --timeout 3600",
+    "session-mainnet": "npx openzeppelin session --from $ADMIN_ADDRESS --network mainnet --expires 7200 --timeout 3600",
+    "version": "npx truffle version",
+    "extract-abis": "npx truffle-extract -o .abis",
+    "solhint": "npx solhint -f table contracts/**/*.sol",
+    "prettier:solidity": "npx prettier --write contracts/**/*.sol"
+  },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/contracts": "^3.1.0"
+  },
+  "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.6",
-    "truffle": "^5.1.41",
+    "@openzeppelin/cli": "^2.8.2",
+    "@truffle/hdwallet-provider": "^1.0.43",
+    "eth-gas-reporter": "^0.2.17",
+    "ganache-cli": "^6.10.1",
+    "mocha-junit-reporter": "^2.0.0",
+    "prettier": "^2.1.1",
+    "prettier-plugin-solidity": "^1.0.0-alpha.56",
+    "solc": "0.7.0",
+    "solhint": "^3.2.0",
+    "solhint-plugin-prettier": "^0.0.5",
+    "truffle": "5.1.42",
+    "truffle-assertions": "^0.9.2",
+    "truffle-extract": "pooltogether/truffle-extract#2a57b6e63a8a2057aad0fec63ba255cd46e9ff1d",
     "truffle-flattener": "^1.4.4"
   }
 }

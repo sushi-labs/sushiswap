@@ -7,17 +7,19 @@ import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 
-contract SushiMaker {
+contract SakeMaker {
     using SafeMath for uint256;
 
     IUniswapV2Factory public factory;
     address public bar;
-    address public sushi;
+    address public sake;
     address public weth;
 
-    constructor(IUniswapV2Factory _factory, address _bar, address _sushi, address _weth) public {
+    constructor(IUniswapV2Factory _factory, address _bar, address _sake, address _weth) public {
+        require(address(_factory) != address(0) && _bar != address(0) && 
+            _sake != address(0) && _weth != address(0), "invalid address");
         factory = _factory;
-        sushi = _sushi;
+        sake = _sake;
         bar = _bar;
         weth = _weth;
     }
@@ -29,18 +31,18 @@ contract SushiMaker {
         pair.transfer(address(pair), pair.balanceOf(address(this)));
         pair.burn(address(this));
         uint256 wethAmount = _toWETH(token0) + _toWETH(token1);
-        _toSUSHI(wethAmount);
+        _toSAKE(wethAmount);
     }
 
     function _toWETH(address token) internal returns (uint256) {
-        if (token == sushi) {
+        if (token == sake) {
             uint amount = IERC20(token).balanceOf(address(this));
             IERC20(token).transfer(bar, amount);
             return 0;
         }
         if (token == weth) {
             uint amount = IERC20(token).balanceOf(address(this));
-            IERC20(token).transfer(factory.getPair(weth, sushi), amount);
+            IERC20(token).transfer(factory.getPair(weth, sake), amount);
             return amount;
         }
         IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token, weth));
@@ -57,12 +59,12 @@ contract SushiMaker {
         uint amountOut = numerator / denominator;
         (uint amount0Out, uint amount1Out) = token0 == token ? (uint(0), amountOut) : (amountOut, uint(0));
         IERC20(token).transfer(address(pair), amountIn);
-        pair.swap(amount0Out, amount1Out, factory.getPair(weth, sushi), new bytes(0));
+        pair.swap(amount0Out, amount1Out, factory.getPair(weth, sake), new bytes(0));
         return amountOut;
     }
 
-    function _toSUSHI(uint256 amountIn) internal {
-        IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(weth, sushi));
+    function _toSAKE(uint256 amountIn) internal {
+        IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(weth, sake));
         (uint reserve0, uint reserve1,) = pair.getReserves();
         address token0 = pair.token0();
         (uint reserveIn, uint reserveOut) = token0 == weth ? (reserve0, reserve1) : (reserve1, reserve0);

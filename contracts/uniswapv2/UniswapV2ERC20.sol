@@ -5,7 +5,7 @@ import './libraries/SafeMath.sol';
 contract UniswapV2ERC20 {
     using SafeMathUniswap for uint;
 
-    string public constant name = 'SushiSwap LP Token';
+    string public constant name = 'SakeSwap LP Token';
     string public constant symbol = 'SLP';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
