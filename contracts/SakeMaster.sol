@@ -60,14 +60,20 @@ contract SakeMaster is Ownable {
     SakeToken public sake;
     // Dev address.
     address public devaddr;
+    // Block number when beta test period ends.
+    uint256 public betaTestEndBlock;
     // Block number when bonus SAKE period ends.
     uint256 public bonusEndBlock;
     // Block number when mint SAKE period ends.
     uint256 public mintEndBlock;
     // SAKE tokens created per block.
     uint256 public sakePerBlock;
-    // Bonus muliplier for early sake makers.
-    uint256 public constant BONUS_MULTIPLIER = 10;
+    // Bonus muliplier for 5~20 days sake makers.
+    uint256 public constant BONUSONE_MULTIPLIER = 20;
+    // Bonus muliplier for 20~35 sake makers.
+    uint256 public constant BONUSTWO_MULTIPLIER = 2;
+    // beta test block num,about 5 days.
+    uint256 public constant BETATEST_BLOCKNUM = 35000;
     // Bonus block num,about 15 days.
     uint256 public constant BONUS_BLOCKNUM = 100000;
     // mint end block num,about 30 days.
@@ -104,8 +110,9 @@ contract SakeMaster is Ownable {
         devaddr = _devaddr;
         sakePerBlock = _sakePerBlock;
         startBlock = _startBlock;
-        bonusEndBlock = startBlock.add(BONUS_BLOCKNUM);
-        mintEndBlock = startBlock.add(MINTEND_BLOCKNUM);
+        betaTestEndBlock = startBlock.add(BETATEST_BLOCKNUM);
+        bonusEndBlock = startBlock.add(BONUS_BLOCKNUM).add(BETATEST_BLOCKNUM);
+        mintEndBlock = startBlock.add(MINTEND_BLOCKNUM).add(BETATEST_BLOCKNUM);
     }
 
     function poolLength() external view returns (uint256) {
@@ -166,15 +173,26 @@ contract SakeMaster is Ownable {
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
         uint256 _toFinal = _to > mintEndBlock ? mintEndBlock : _to;
-        if (_from > mintEndBlock) {
+        if (_toFinal <= betaTestEndBlock) {
+             return _toFinal.sub(_from);
+        }else if (_from >= mintEndBlock) {
             return 0;
         } else if (_toFinal <= bonusEndBlock) {
-            return _toFinal.sub(_from).mul(BONUS_MULTIPLIER);
-        } else if (_from >= bonusEndBlock) {
-            return _toFinal.sub(_from);
+            if (_from < betaTestEndBlock) {
+                return betaTestEndBlock.sub(_from).add(_toFinal.sub(betaTestEndBlock).mul(BONUSONE_MULTIPLIER));
+            } else {
+                return _toFinal.sub(_from).mul(BONUSONE_MULTIPLIER);
+            }
         } else {
-            return bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_toFinal.sub(bonusEndBlock));
-        }
+            if (_from < betaTestEndBlock) {
+                return betaTestEndBlock.sub(_from).add(bonusEndBlock.sub(betaTestEndBlock).mul(BONUSONE_MULTIPLIER)).add(
+                    (_toFinal.sub(bonusEndBlock).mul(BONUSTWO_MULTIPLIER)));
+            } else if (betaTestEndBlock <= _from && _from < bonusEndBlock) {
+                return bonusEndBlock.sub(_from).mul(BONUSONE_MULTIPLIER).add(_toFinal.sub(bonusEndBlock).mul(BONUSTWO_MULTIPLIER));
+            } else {
+                return _toFinal.sub(_from).mul(BONUSTWO_MULTIPLIER);
+            }
+        } 
     }
 
     // View function to see pending SAKEs on frontend.
