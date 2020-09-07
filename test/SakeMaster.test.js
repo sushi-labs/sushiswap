@@ -230,5 +230,15 @@ contract('SakeMaster', ([alice, bob, carol, dev, minter]) => {
             assert.equal(await this.sake.lpTokenPID(this.lp2.address), 2);
             assert.equal(await this.sake.poolLength(), 2);
         });
+
+        it('handover the saketoken mintage right', async () => {
+            this.master = await SakeMaster.new(this.sake.address, dev, '100', '0', { from: alice });
+            assert.equal(await this.sake.owner(), alice);
+            this.sake.transferOwnership(this.master.address, { from: alice });
+            assert.equal(await this.sake.owner(), this.master.address);
+            await this.master.handoverSakeMintage(bob);
+            assert.equal(await this.sake.owner(), bob);
+        });
+
     });
 });

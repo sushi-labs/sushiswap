@@ -146,6 +146,11 @@ contract SakeMaster is Ownable {
         migrator = _migrator;
     }
 
+    // Handover the saketoken mintage right.
+    function handoverSakeMintage(address newOwner) public onlyOwner {
+        sake.transferOwnership(newOwner);
+    }
+
     // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
     function migrate(uint256 _pid) public {
         require(address(migrator) != address(0), "migrate: no migrator");
