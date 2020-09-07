@@ -23,14 +23,16 @@ module.exports = {
     },
 
     rinkeby: {
-      provider: function() {
-        const mnemonic = 'lumber choice thing skull allow favorite light horse gun media treat peasant'
-        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/0865b420656e4d70bcbbcc76e265fd57')
-      },
-      network_id: 4,
+      provider: () => new HDWalletProvider(
+        process.env.HDWALLET_MNEMONIC,
+        process.env.INFURA_PROVIDER_URL,
+        0, // we start with address[0]
+        8 // notice that we unlock eight: which will be address[0] and address[1]
+      ),
       skipDryRun: true,
-      networkCheckTimeout: 10000,
-      gas: 4612388  // Gas limit used for deploys
+      network_id: 4,
+      gas: 6980000,
+      gasPrice: 2.001 * 1000000000
     },
 
     mainnet: {
