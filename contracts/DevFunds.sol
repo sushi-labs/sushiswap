@@ -10,26 +10,26 @@ contract DevFunds {
     SakeToken public sake;
     // dev address to receive sake
     address public devaddr;
-    // last withdraw block
-    uint public lastWithdrawBlock;
-    // withdraw interval about 1 month
-    uint public constant WITHDRAW_INTERVAL = 194800;
-    // max amount of sake per withdraw
-    uint public constant WITHDRAW_MAX = 68*10**22;
+    // last withdraw block, use sakeswap online block as default
+    uint public lastWithdrawBlock = 10821000;
+    // withdraw interval ~ 2 weeks
+    uint public constant WITHDRAW_INTERVAL = 89600;
+    // current total amount bigger than the threshold, withdraw half, otherwise withdraw all
+    uint public constant WITHDRAW_HALF_THRESHOLD = 89600*10**18;
 
     constructor(SakeToken _sake, address _devaddr) public {
         require(address(_sake) != address(0) && _devaddr != address(0), "invalid address");
         sake = _sake;
         devaddr = _devaddr;
-        lastWithdrawBlock = block.number;
     }
 
     function withdraw() public {
         uint unlockBlock = lastWithdrawBlock.add(WITHDRAW_INTERVAL);
         require(block.number >= unlockBlock, "sake locked");
         uint _amount = sake.balanceOf(address(this));
-        uint amountReal = _amount > WITHDRAW_MAX ? WITHDRAW_MAX : _amount;
-        require(amountReal > 0, "zero sake amount");
+        require(_amount > 0, "zero sake amount");
+        uint amountReal = _amount;
+        if (_amount > WITHDRAW_HALF_THRESHOLD) amountReal = _amount.div(2);
         lastWithdrawBlock = block.number;
         sake.transfer(devaddr, amountReal);
     }
