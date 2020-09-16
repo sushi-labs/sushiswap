@@ -2,19 +2,19 @@ const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const SakeToken = artifacts.require('SakeToken');
 const SakeMaster = artifacts.require('SakeMaster');
 const MockERC20 = artifacts.require('MockERC20');
-const UniswapV2Pair = artifacts.require('UniswapV2Pair');
-const UniswapV2Factory = artifacts.require('UniswapV2Factory');
+const SakeSwapPair = artifacts.require('SakeSwapPair');
+const SakeSwapFactory = artifacts.require('SakeSwapFactory');
 const Migrator = artifacts.require('Migrator');
 
 contract('Migrator', ([alice, bob, dev, minter]) => {
     beforeEach(async () => {
-        this.factory1 = await UniswapV2Factory.new(alice, { from: alice });
-        this.factory2 = await UniswapV2Factory.new(alice, { from: alice });
+        this.factory1 = await SakeSwapFactory.new(alice, { from: alice });
+        this.factory2 = await SakeSwapFactory.new(alice, { from: alice });
         this.sake = await SakeToken.new({ from: alice });
         this.weth = await MockERC20.new('WETH', 'WETH', '100000000', { from: minter });
         this.token = await MockERC20.new('TOKEN', 'TOKEN', '100000000', { from: minter });
-        this.lp1 = await UniswapV2Pair.at((await this.factory1.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
-        this.lp2 = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
+        this.lp1 = await SakeSwapPair.at((await this.factory1.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
+        this.lp2 = await SakeSwapPair.at((await this.factory2.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
         this.chef = await SakeMaster.new(this.sake.address, dev, '1000', '0', { from: alice });
         this.migrator = await Migrator.new(this.chef.address, this.factory1.address, this.factory2.address, '0');
         await this.sake.transferOwnership(this.chef.address, { from: alice });
@@ -50,7 +50,7 @@ contract('Migrator', ([alice, bob, dev, minter]) => {
     it('should allow first minting from public only after migrator is gone', async () => {
         await this.factory2.setMigrator(this.migrator.address, { from: alice });
         this.tokenx = await MockERC20.new('TOKENX', 'TOKENX', '100000000', { from: minter });
-        this.lpx = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.tokenx.address)).logs[0].args.pair);
+        this.lpx = await SakeSwapPair.at((await this.factory2.createPair(this.weth.address, this.tokenx.address)).logs[0].args.pair);
         await this.weth.transfer(this.lpx.address, '10000000', { from: minter });
         await this.tokenx.transfer(this.lpx.address, '500000', { from: minter });
         await expectRevert(this.lpx.mint(minter), 'Must not have migrator');

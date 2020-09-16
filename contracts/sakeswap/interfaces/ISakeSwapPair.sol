@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.0;
 
-interface IUniswapV2Pair {
+interface ISakeSwapPair {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
@@ -37,6 +38,7 @@ interface IUniswapV2Pair {
     function factory() external view returns (address);
     function token0() external view returns (address);
     function token1() external view returns (address);
+    function stoken() external view returns (address);
     function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
     function price0CumulativeLast() external view returns (uint);
     function price1CumulativeLast() external view returns (uint);
@@ -49,4 +51,11 @@ interface IUniswapV2Pair {
     function sync() external;
 
     function initialize(address, address) external;
+    function dealSlippageWithIn(address[] calldata path, uint amountIn, address to, bool ifmint) external returns (uint amountOut);
+    function dealSlippageWithOut(address[] calldata path, uint amountOut, address to, bool ifmint) external returns (uint extra);
+    function getAmountOutMarket(address token, uint amountIn) external view returns (uint _out, uint t0Price);
+    function getAmountInMarket(address token, uint amountOut) external view returns (uint _in, uint t0Price);
+    function getAmountOutFinal(address token, uint256 amountIn) external view returns (uint256 amountOut, uint256 stokenAmount);
+    function getAmountInFinal(address token, uint256 amountOut) external view returns (uint256 amountIn, uint256 stokenAmount);
+    function getTokenMarketPrice(address token) external view returns (uint price);
 }

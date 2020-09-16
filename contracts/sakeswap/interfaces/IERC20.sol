@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.0;
 
-interface IERC20Uniswap {
+interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
@@ -14,4 +15,6 @@ interface IERC20Uniswap {
     function approve(address spender, uint value) external returns (bool);
     function transfer(address to, uint value) external returns (bool);
     function transferFrom(address from, address to, uint value) external returns (bool);
+    function mint(address to, uint value) external returns (bool);
+    function burn(address from, uint value) external returns (bool);
 }
