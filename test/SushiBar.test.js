@@ -2,7 +2,7 @@ const { expectRevert } = require('@openzeppelin/test-helpers');
 const SushiToken = artifacts.require('SushiToken');
 const SushiBar = artifacts.require('SushiBar');
 
-contract('SushiToken', ([alice, bob, carol]) => {
+contract('SushiBar', ([alice, bob, carol]) => {
     beforeEach(async () => {
         this.sushi = await SushiToken.new({ from: alice });
         this.bar = await SushiBar.new(this.sushi.address, { from: alice });
