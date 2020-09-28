@@ -1,8 +1,22 @@
 {
-  "name": "SushiSwap",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@levx/sushiswap-core",
+  "version": "1.2.0",
   "license": "MIT",
+  "description": "🎛 Core contracts for the SushiSwap protocol",
+  "files": [
+    "contracts",
+    "build"
+  ],
+  "repository": "https://github.com/lev-x/sushiswap-core",
+  "keywords": [
+    "uniswap",
+    "sushiswap",
+    "ethereum"
+  ],
+  "scripts": {
+    "compile": "truffle compile",
+    "prepublishOnly": "yarn run compile && node scripts/prepublish.js"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^3.1.0",
     "@openzeppelin/test-helpers": "^0.5.6",
