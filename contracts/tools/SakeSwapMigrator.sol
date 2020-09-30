@@ -146,6 +146,6 @@ contract SakeSwapMigrator {
         uint256 remainBal0 = ISakeSwapERC20(token0).balanceOf(address(this));
         uint256 remainBal1 = ISakeSwapERC20(token1).balanceOf(address(this));
         if (remainBal0 > 0) ISakeSwapERC20(token0).transfer(msg.sender, remainBal0);
-        if (remainBal1 > 1) ISakeSwapERC20(token1).transfer(msg.sender, remainBal1);
+        if (remainBal1 > 0) ISakeSwapERC20(token1).transfer(msg.sender, remainBal1);
     }
 }
