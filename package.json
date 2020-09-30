@@ -1,5 +1,5 @@
 {
-  "name": "@levx/sushiswap-core",
+  "name": "@sushiswap/core",
   "version": "1.2.1",
   "license": "MIT",
   "description": "🎛 Core contracts for the SushiSwap protocol",
@@ -7,7 +7,7 @@
     "contracts",
     "build"
   ],
-  "repository": "https://github.com/lev-x/sushiswap-core",
+  "repository": "https://github.com/sushiswap-community/sushiswap-core",
   "keywords": [
     "uniswap",
     "sushiswap",
