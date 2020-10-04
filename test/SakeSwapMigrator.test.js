@@ -1,4 +1,3 @@
-const { expectRevert } = require('@openzeppelin/test-helpers');
 const { web3 } = require('@openzeppelin/test-helpers/src/setup');
 const MockERC20 = artifacts.require('MockERC20');
 const SakeSwapRouter = artifacts.require('SakeSwapRouter');
