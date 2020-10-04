@@ -12,11 +12,11 @@ contract SakeSwapBatchTrade {
     ISakeSwapRouter public router = ISakeSwapRouter(0x9C578b573EdE001b95d51a55A3FAfb45f5608b1f);
     address public weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     
-    constructor(address _router, address _weth, address _factory) public {
-        router = ISakeSwapRouter(_router);
-        weth = _weth;
-        factory = ISakeSwapFactory(_factory);
-    }
+    // constructor(address _router, address _weth, address _factory) public {
+    //     router = ISakeSwapRouter(_router);
+    //     weth = _weth;
+    //     factory = ISakeSwapFactory(_factory);
+    // }
     
     receive() external payable {
         assert(msg.sender == weth); // only accept ETH via fallback from the WETH contract
