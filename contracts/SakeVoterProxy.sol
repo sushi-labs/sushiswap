@@ -147,7 +147,7 @@ contract SakeVoterProxy {
                 _vCtSakes = _vCtSakes.add(votes.balanceOf(address(_vLpToken)));
             }
         }
-        voterTotal = votes.totalSupply().mul(balancePow) + _vCtSakes.mul(lpPow) + bar.totalSupply().mul(stakePow);
+        voterTotal = votes.totalSupply().sub(bar.totalSupply()).sub(_vCtSakes).mul(balancePow) + _vCtSakes.mul(lpPow) + bar.totalSupply().mul(stakePow);
         if (sqrtEnable == true) {
             return sqrt(voterTotal);
         }

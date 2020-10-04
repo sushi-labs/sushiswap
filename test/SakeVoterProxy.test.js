@@ -35,6 +35,17 @@ contract('SakeVoterProxy', ([alice, bob, carol, dev, minter]) => {
         assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '10130000');
         this.sakeVoterProxy.setSqrtEnable(true, { from: alice });
         assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
+        //sakebar enter
+        await this.sakeToken.approve(this.SakeBar.address, '10000', { from: carol });
+        await this.SakeBar.enter('10000',{ from: carol });
+        //sqrt(10140000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3184');
+        await this.sakeVoterProxy.setPow(2,1,0, { from: alice });
+        // totalSupply = //sqrt(10130000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
+        await this.sakeVoterProxy.setPow(2,1,2, { from: alice });
+        // totalSupply = //sqrt(10150000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3185');
     });
 
     it('check votePools api', async () => {
