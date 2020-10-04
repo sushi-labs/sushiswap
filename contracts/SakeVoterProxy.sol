@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./sakeswap/interfaces/ISakeSwapPair.sol";
 import "./SakeMaster.sol";
+import "./SakeBar.sol";
 
 struct IndexValue {
     uint256 keyIndex;
@@ -80,21 +81,36 @@ contract SakeVoterProxy {
     IERC20 public votes;
     SakeMaster public chef;
     address public owner;
+    SakeBar public bar;
+    uint256 public lpPow;
+    uint256 public balancePow;
+    uint256 public stakePow;
+    bool public sqrtEnable;
 
     modifier onlyOwner() {
         require(owner == msg.sender, "Not Owner");
         _;
     }
 
-    constructor(address _tokenAddr, address _masterAddr) public {
+    constructor(
+        address _tokenAddr,
+        address _masterAddr,
+        address _barAddr
+    ) public {
         votes = IERC20(_tokenAddr);
         chef = SakeMaster(_masterAddr);
+        bar = SakeBar(_barAddr);
         owner = msg.sender;
         votePoolMap.insert(votePoolMap.size, uint256(0));
         votePoolMap.insert(votePoolMap.size, uint256(32));
         votePoolMap.insert(votePoolMap.size, uint256(33));
         votePoolMap.insert(votePoolMap.size, uint256(34));
         votePoolMap.insert(votePoolMap.size, uint256(36));
+        votePoolMap.insert(votePoolMap.size, uint256(42));
+        lpPow = 2;
+        balancePow = 1;
+        stakePow = 1;
+        sqrtEnable = true;
     }
 
     function decimals() external pure returns (uint8) {
@@ -109,8 +125,33 @@ contract SakeVoterProxy {
         return "SAKE";
     }
 
+    function sqrt(uint256 x) public pure returns (uint256 y) {
+        uint256 z = x.add(1).div(2);
+        y = x;
+        while (z < y) {
+            y = z;
+            z = x.div(z).add(z).div(2);
+        }
+    }
+
     function totalSupply() external view returns (uint256) {
-        return votes.totalSupply();
+        uint256 voterTotal = 0;
+        uint256 _vCtSakes = 0;
+        uint256 _vTmpPoolId = 0;
+        IERC20 _vLpToken;
+        for (uint256 i = votePoolMap.iterateStart(); votePoolMap.iterateValid(i); i = votePoolMap.iterateNext(i)) {
+            //count lp contract sakenums
+            (, _vTmpPoolId) = votePoolMap.iterateGet(i);
+            if (chef.poolLength() > _vTmpPoolId) {
+                (_vLpToken, , , ) = chef.poolInfo(_vTmpPoolId);
+                _vCtSakes = _vCtSakes.add(votes.balanceOf(address(_vLpToken)));
+            }
+        }
+        voterTotal = votes.totalSupply().mul(balancePow) + _vCtSakes.mul(lpPow) + bar.totalSupply().mul(stakePow);
+        if (sqrtEnable == true) {
+            return sqrt(voterTotal);
+        }
+        return voterTotal;
     }
 
     //sum user deposit sakenum
@@ -137,7 +178,10 @@ contract SakeVoterProxy {
                 _votes = _votes.add(_vUserSakeNum);
             }
         }
-        _votes = _votes.add(votes.balanceOf(_voter));
+        _votes = _votes.mul(lpPow) + votes.balanceOf(_voter).mul(balancePow) + bar.balanceOf(_voter).mul(stakePow);
+        if (sqrtEnable == true) {
+            return sqrt(_votes);
+        }
         return _votes;
     }
 
@@ -158,6 +202,29 @@ contract SakeVoterProxy {
                 votePoolMap.remove(i);
                 return;
             }
+        }
+    }
+
+    function setSqrtEnable(bool enable) public onlyOwner {
+        if (sqrtEnable != enable) {
+            sqrtEnable = enable;
+        }
+    }
+
+    function setPow(
+        uint256 lPow,
+        uint256 bPow,
+        uint256 sPow
+    ) public onlyOwner {
+        //no need to check pow ?= 0
+        if (lPow != lpPow) {
+            lpPow = lPow;
+        }
+        if (bPow != balancePow) {
+            balancePow = bPow;
+        }
+        if (sPow != stakePow) {
+            stakePow = sPow;
         }
     }
 }
