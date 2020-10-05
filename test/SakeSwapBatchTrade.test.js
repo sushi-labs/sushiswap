@@ -21,7 +21,7 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
         await this.tokenA.approve(this.router.address, '1000000000000000000000');
         this.tokenAETHPair = await SakeSwapPair.at((await this.factory.createPair(this.tokenA.address, this.weth.address)).logs[0].args.pair);
         this.stokenAETH = await SakeSwapSlippageToken.at((await this.tokenAETHPair.stoken()));
-        await this.router.addLiquidityETH(this.tokenA.address, '1000000000000000000000', '0', '0', alice, '10000000000000', { value:'50000000000000000000' });
+        await this.router.addLiquidityETH(this.tokenA.address, '1000000000000000000000', '0', '0', alice, '10000000000000', { value:'10000000000000000000' });
     });
 
     it('should swap from tokenA to tokenB 10 times successfully', async () => {
@@ -30,10 +30,43 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
         await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '1000000', '1000000', '0', '0', alice, '10000000000000');
         await this.tokenA.transfer(bob, 10000);
         await this.tokenA.approve(this.sakeSwapBatchTrade.address, 10000, { from:bob });
-        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 10, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 10, false, { from:bob });
         console.log("gas used when swap token 10 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAB.balanceOf(bob);
-        console.log("stoken amount when swap token 10 times:" + bal.toString())
+        console.log("stoken amount when swap token 10 times:" + bal.toString());
+        assert.equal((await this.stokenAB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenA.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+    });
+
+    it('should swap from tokenA to tokenB 10 times and add liquidity successfully', async () => {
+        await this.tokenA.approve(this.router.address, '1000000');
+        await this.tokenB.approve(this.router.address, '1000000');
+        await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '1000000', '1000000', '0', '0', alice, '10000000000000');
+        await this.tokenA.transfer(bob, 10000);
+        await this.tokenA.approve(this.sakeSwapBatchTrade.address, 10000, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 10, true, { from:bob });
+        console.log("gas used when swap token 10 times:" + tx.receipt.gasUsed);
+        const bal = await this.stokenAB.balanceOf(bob);
+        console.log("stoken amount when swap token 10 times:" + bal.toString());
+        assert.equal((await this.stokenAB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenA.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+    });
+
+    it('should add liquidity successfully', async () => {
+        await this.tokenA.approve(this.router.address, '1000000');
+        await this.tokenB.approve(this.router.address, '1000000');
+        await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '1000000', '1000000', '0', '0', alice, '10000000000000');
+        await this.tokenA.transfer(bob, 10000);
+        await this.tokenA.approve(this.sakeSwapBatchTrade.address, 10000, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 0, true, { from:bob });
+        console.log("gas used when swap token 10 times:" + tx.receipt.gasUsed);
+        const bal = await this.stokenAB.balanceOf(bob);
+        console.log("stoken amount when swap token 10 times:" + bal.toString());
+        assert.equal((await this.stokenAB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenA.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenB.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
     });
 
     it('should swap from tokenA to tokenB 20 time successfully', async () => {
@@ -46,7 +79,7 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
 
         await this.tokenA.transfer(bob, 10000);
         await this.tokenA.approve(this.sakeSwapBatchTrade.address, 10000, { from:bob });
-        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 20, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, 10000, 20, false, { from:bob });
         console.log("gas used when swap token 20 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAB.balanceOf(bob);
         console.log("stoken amount when swap token 20 times:" + bal.toString())
@@ -54,7 +87,7 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
 
     it('should swap from ETH to other tokens 10 times successfully', async () => {
         const ethBefore = await web3.eth.getBalance(alice);
-        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 10, { value:'5000000000000000000' });
+        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 10, false, { value:'5000000000000000000' });
         console.log("gas used when swap eth 10 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAETH.balanceOf(alice);
         console.log("stoken amount when swap eth 10 times:" + bal.toString())
@@ -62,25 +95,59 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
         console.log("eth diff: " + new BN(ethBefore).sub(new BN(ethAfter)).toString());
     });
 
+    it('should swap from ETH to other tokens and add liquidity successfully', async () => {
+        const ethBefore = await web3.eth.getBalance(alice);
+        const LPBefore = await this.tokenAETHPair.balanceOf(alice);
+        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 10, true, { value:'1000000000000000000' });
+        console.log("gas used when swap eth 10 times:" + tx.receipt.gasUsed);
+        const bal = await this.stokenAETH.balanceOf(alice);
+        console.log("stoken amount when swap eth 10 times:" + bal.toString())
+        const ethAfter = await web3.eth.getBalance(alice);
+        console.log("eth diff: " + new BN(ethBefore).sub(new BN(ethAfter)).toString());
+        const LPAfter = await this.tokenAETHPair.balanceOf(alice);
+        console.log("add liqudity:" + LPAfter.toString());
+        assert.equal((await this.stokenAETH.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.weth.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenA.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+    });
+
+    it('should add ETH liquidity successfully', async () => {
+        const ethBefore = await web3.eth.getBalance(alice);
+        const LPBefore = await this.tokenAETHPair.balanceOf(alice);
+        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 0, true, { value:'1000000000000000000' });
+        console.log("gas used when swap eth 10 times:" + tx.receipt.gasUsed);
+        const bal = await this.stokenAETH.balanceOf(alice);
+        console.log("stoken amount when swap eth 10 times:" + bal.toString())
+        const ethAfter = await web3.eth.getBalance(alice);
+        console.log("eth diff: " + new BN(ethBefore).sub(new BN(ethAfter)).toString());
+        const LPAfter = await this.tokenAETHPair.balanceOf(alice);
+        console.log("add liqudity:" + LPAfter.toString());
+        assert.equal((await this.stokenAETH.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.weth.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+        assert.equal((await this.tokenA.balanceOf(this.sakeSwapBatchTrade.address)).valueOf(), '0');
+    });
+
     it('should swap from ETH to other tokens 20 times successfully', async () => {
-        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 20, { value:'5000000000000000000' });
+        const tx = await this.sakeSwapBatchTrade.swapExactETHForTokens(this.tokenA.address, 20, false, { value:'5000000000000000000' });
         console.log("gas used when swap eth 20 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAETH.balanceOf(alice);
         console.log("stoken amount when swap eth 20 times:" + bal.toString())
     });
 
     it('simulate ETH/SAKE', async () => {
-        await this.tokenA.approve(this.router.address, '626040003377443802568');
-        await this.tokenB.approve(this.router.address, '3640731189940203812597030');
-        await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '626040003377443802568', '3640731189940203812597030', '0', '0', alice, '10000000000000');
-        await this.tokenA.transfer(bob, '10000000000000000000');
-        await this.tokenA.approve(this.sakeSwapBatchTrade.address, '10000000000000000000', { from:bob });
-        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, '10000000000000000000', 20, { from:bob });
+        const token0 = await this.tokenABPair.token0();
+        console.log(this.tokenA.address, this.tokenB.address, token0);
+        await this.tokenA.approve(this.router.address, '3938007232629397223897923');
+        await this.tokenB.approve(this.router.address, '576496616858370123227');
+        await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '3938007232629397223897923', '576496616858370123227', '0', '0', alice, '10000000000000');
+        await this.tokenB.transfer(bob, '1000000000000000000');
+        await this.tokenB.approve(this.sakeSwapBatchTrade.address, '1000000000000000000', { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenB.address, this.tokenA.address, '1000000000000000000', 20, false, { from:bob });
         console.log("gas used when swap token 20 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAB.balanceOf(bob);
-        console.log("stoken amount when swap token 20 times:" + bal.toString())
-        const amountBefore = new BN('10000000000000000000');
-        const amountAfter = await this.tokenA.balanceOf(bob);
+        console.log("stoken amount when swap token 20 times:" + bal.toString());
+        const amountBefore = new BN('1000000000000000000');
+        const amountAfter = await this.tokenB.balanceOf(bob);
         console.log("token consumed:" + amountBefore.sub(amountAfter).toString());
     });
 
@@ -90,7 +157,7 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
         await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '134540036859', '2224606362139919175367190', '0', '0', alice, '10000000000000');
         await this.tokenA.transfer(bob, '1000000000');
         await this.tokenA.approve(this.sakeSwapBatchTrade.address, '1000000000', { from:bob });
-        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, '1000000000', 20, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, '1000000000', 20, false, { from:bob });
         console.log("gas used when swap token 20 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAB.balanceOf(bob);
         console.log("stoken amount when swap token 20 times:" + bal.toString())
@@ -105,7 +172,7 @@ contract('SakeSwapBatchTrade', ([alice, bob, minter]) => {
         await this.router.addLiquidity(this.tokenA.address, this.tokenB.address, '122128487545352375034784', '2049948337074231388356097', '0', '0', alice, '10000000000000');
         await this.tokenA.transfer(bob, '1000000000000000000000');
         await this.tokenA.approve(this.sakeSwapBatchTrade.address, '1000000000000000000000', { from:bob });
-        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, '1000000000000000000000', 20, { from:bob });
+        const tx = await this.sakeSwapBatchTrade.swapExactTokensForTokens(this.tokenA.address, this.tokenB.address, '1000000000000000000000', 20, false, { from:bob });
         console.log("gas used when swap token 20 times:" + tx.receipt.gasUsed);
         const bal = await this.stokenAB.balanceOf(bob);
         console.log("stoken amount when swap token 20 times:" + bal.toString())
