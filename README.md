@@ -22,6 +22,8 @@ https://sakeswap.finance. Feel free to read the code. More details coming soon.
 - DAI-ETH WULP - https://etherscan.io/address/0x30a5c50f65c71f4700f4cb2c7972285f7e415f84    //DOUBLE TOKEN YIELD FARMING
 - WBTC-ETH WULP - https://etherscan.io/address/0x62370394d8b858d7d359ac4e3ca385fa0dd04d13   //DOUBLE TOKEN YIELD FARMING
 - SakeSwapPair init code hash - `b2b53dca60cae1d1f93f64d80703b888689f28b63c483459183f2f4271fa0308`
+- STokenMaster - https://etherscan.io/address/0x3a417237364FBE95955eDf0B7351dc9c44E59FC7
+- SakeSwapBatchTrade - https://etherscan.io/address/0xc8B227Ae84A162744465007c38240B367928D5F8
 
 ## License
 
