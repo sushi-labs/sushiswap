@@ -21,53 +21,65 @@ contract('SakeVoterProxy', ([alice, bob, carol, dev, minter]) => {
         this.sakeVoterProxy = await SakeVoterProxy.new(this.sakeToken.address, this.sakeMaster.address,this.SakeBar.address, this.sTokenMaster.address,{ from: alice });
     });
 
-    // it('check totalSupply', async () => {
-    //     await this.sakeToken.mint(alice, '10000', { from: alice });
-    //     await this.sakeToken.mint(bob, '10000', { from: alice });
-    //     await this.sakeToken.mint(carol, '10000', { from: alice });
-    //     //sqrt(10030000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3167');
-    //     await this.sakeToken.mint(carol, '50000', { from: alice });
-    //     //sqrt(10080000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3174');
-    //     await this.sakeToken.mint(bob, '50000', { from: alice });
-    //     //sqrt(10130000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
-    //     this.sakeVoterProxy.setSqrtEnable(false, { from: alice });
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '10130000');
-    //     this.sakeVoterProxy.setSqrtEnable(true, { from: alice });
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
-    //     //sakebar enter
-    //     await this.sakeToken.approve(this.SakeBar.address, '10000', { from: carol });
-    //     await this.SakeBar.enter('10000',{ from: carol });
-    //     //sqrt(10140000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3184');
-    //     await this.sakeVoterProxy.setPow(2,1,0, { from: alice });
-    //     // totalSupply = //sqrt(10130000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
-    //     await this.sakeVoterProxy.setPow(2,1,2, { from: alice });
-    //     // totalSupply = //sqrt(10150000)
-    //     assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3185');
-    // });
+    it('check totalSupply', async () => {
+        await this.sakeToken.mint(alice, '10000', { from: alice });
+        await this.sakeToken.mint(bob, '10000', { from: alice });
+        await this.sakeToken.mint(carol, '10000', { from: alice });
+        //sqrt(10030000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3167');
+        await this.sakeToken.mint(carol, '50000', { from: alice });
+        //sqrt(10080000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3174');
+        await this.sakeToken.mint(bob, '50000', { from: alice });
+        //sqrt(10130000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
+        this.sakeVoterProxy.setSqrtEnable(false, { from: alice });
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '10130000');
+        this.sakeVoterProxy.setSqrtEnable(true, { from: alice });
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
+        //sakebar enter
+        await this.sakeToken.approve(this.SakeBar.address, '10000', { from: carol });
+        await this.SakeBar.enter('10000',{ from: carol });
+        //sqrt(10140000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3182');
+        await this.sakeVoterProxy.setPow(2,1,0, { from: alice });
+        // totalSupply = //sqrt(10130000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3181');
+        await this.sakeVoterProxy.setPow(2,1,2, { from: alice });
+        // totalSupply = //sqrt(10150000)
+        assert.equal((await this.sakeVoterProxy.totalSupply()).valueOf(), '3184');
+    });
 
-    // it('check votePools api', async () => {
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolId(1)).valueOf(), '32');
-    //     await expectRevert(this.sakeVoterProxy.addVotePool(5,{ from: bob }),'Not Owner');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
-    //     this.sakeVoterProxy.addVotePool('5', { from: alice });
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolId(3)).valueOf(), '34');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolId(5)).valueOf(), '5');
-    //     await expectRevert(this.sakeVoterProxy.delVotePool('5', { from: bob }),'Not Owner');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
-    //     this.sakeVoterProxy.delVotePool('5', { from: alice });
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolId(2)).valueOf(), '33');
-    //     // this.sakeVoterProxy.addVotePool('9', { from: alice });
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
-    //     // assert.equal((await this.sakeVoterProxy.getVotePoolId(5)).valueOf(), '9');
-    // });
+    it('check votePools api', async () => {
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolId(1)).valueOf(), '32');
+        await expectRevert(this.sakeVoterProxy.addVotePool(5,{ from: bob }),'Not Owner');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
+        this.sakeVoterProxy.addVotePool('5', { from: alice });
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolId(3)).valueOf(), '34');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolId(5)).valueOf(), '5');
+        await expectRevert(this.sakeVoterProxy.delVotePool('5', { from: bob }),'Not Owner');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
+        this.sakeVoterProxy.delVotePool('5', { from: alice });
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '5');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolId(2)).valueOf(), '33');
+        // this.sakeVoterProxy.addVotePool('9', { from: alice });
+        // assert.equal((await this.sakeVoterProxy.getVotePoolNum()).valueOf(), '6');
+        // assert.equal((await this.sakeVoterProxy.getVotePoolId(5)).valueOf(), '9');
+        for(i=50;i<100;i++)
+        {
+            this.sakeVoterProxy.addVotePool(i, { from: alice });
+            this.sakeVoterProxy.addStlVotePool(i, { from: alice });
+        }
+        //console.log("get total1 ",(await this.sakeVoterProxy.totalSupply()).valueOf());
+        for(i=50;i<100;i++)
+        {
+            this.sakeVoterProxy.delVotePool(i, { from: alice });
+            this.sakeVoterProxy.delStlVotePool(i, { from: alice });
+        }
+        //console.log("get total2 ",(await this.sakeVoterProxy.totalSupply()).valueOf());
+    });
 
     it('check balanceOf', async () => {
         assert.equal((await this.sakeVoterProxy.balanceOf(bob)).valueOf(), '0');

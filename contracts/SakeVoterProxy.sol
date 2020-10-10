@@ -143,23 +143,39 @@ contract SakeVoterProxy {
     function totalSupply() external view returns (uint256) {
         uint256 voterTotal = 0;
         uint256 _vCtSakes = 0;
-        uint256 _vTmpPoolId = 0;
+        uint256 _vTmpLpPoolId = 0;
+        uint256 _vTmpSlpPoolId = 0;
+        bool jump_flag = false;
         IERC20 _vLpToken;
         IERC20 _vStlToken;
         for (uint256 i = voteLpPoolMap.iterateStart(); voteLpPoolMap.iterateValid(i); i = voteLpPoolMap.iterateNext(i)) {
             //count lp contract sakenums
-            (, _vTmpPoolId) = voteLpPoolMap.iterateGet(i);
-            if (chef.poolLength() > _vTmpPoolId) {
-                (_vLpToken, , , ) = chef.poolInfo(_vTmpPoolId);
+            (, _vTmpLpPoolId) = voteLpPoolMap.iterateGet(i);
+            if (chef.poolLength() > _vTmpLpPoolId) {
+                (_vLpToken, , , ) = chef.poolInfo(_vTmpLpPoolId);
                 _vCtSakes = _vCtSakes.add(votes.balanceOf(address(_vLpToken)));
             }
         }
-        for (uint256 i = voteStPoolMap.iterateStart(); voteStPoolMap.iterateValid(i); i = voteStPoolMap.iterateNext(i)) {
-            //count lp contract sakenums
-            (, _vTmpPoolId) = voteStPoolMap.iterateGet(i);
-            if (stm.poolLength() > _vTmpPoolId) {
-                (_vStlToken, , , , , , ) = stm.poolInfo(_vTmpPoolId);
-                _vCtSakes = _vCtSakes.add(votes.balanceOf(address(_vStlToken)));
+        for (uint256 j = voteStPoolMap.iterateStart(); voteStPoolMap.iterateValid(j); j = voteStPoolMap.iterateNext(j)) {
+            //count slp contract sakenums
+            (, _vTmpSlpPoolId) = voteStPoolMap.iterateGet(j);
+            if (stm.poolLength() > _vTmpSlpPoolId) {
+                (_vStlToken, , , , , , ) = stm.poolInfo(_vTmpSlpPoolId);
+                jump_flag = false;
+                for (uint256 i = voteLpPoolMap.iterateStart(); voteLpPoolMap.iterateValid(i); i = voteLpPoolMap.iterateNext(i)) {
+                    //count lp contract sakenums
+                    (, _vTmpLpPoolId) = voteLpPoolMap.iterateGet(i);
+                    if (chef.poolLength() > _vTmpLpPoolId) {
+                        (_vLpToken, , , ) = chef.poolInfo(_vTmpLpPoolId);
+                        if(_vLpToken == _vStlToken){
+                            jump_flag = true;
+                            break;
+                        }
+                    }
+                }
+                if(jump_flag == false){
+                    _vCtSakes = _vCtSakes.add(votes.balanceOf(address(_vStlToken)));
+                }
             }
         }
         voterTotal = votes.totalSupply().sub(bar.totalSupply()).sub(_vCtSakes).mul(balancePow) + _vCtSakes.mul(lpPow) + bar.totalSupply().mul(stakePow);
