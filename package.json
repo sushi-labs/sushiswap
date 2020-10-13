@@ -1,13 +1,13 @@
 {
   "name": "@sushiswap/core",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "license": "MIT",
   "description": "🎛 Core contracts for the SushiSwap protocol",
   "files": [
     "contracts",
     "build"
   ],
-  "repository": "https://github.com/sushiswap-community/sushiswap-core",
+  "repository": "https://github.com/sushiswap/sushiswap",
   "keywords": [
     "uniswap",
     "sushiswap",
