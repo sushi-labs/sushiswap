@@ -11,6 +11,7 @@ https://app.sushiswap.org. Feel free to read the code. More details coming soon.
 - (Uni|Sushi)swapV2Pair init code hash - `e18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303`
 - SushiBar - https://etherscan.io/address/0x8798249c2e607446efb7ad49ec89dd1865ff4272
 - SushiMaker - https://etherscan.io/address/0x54844afe358ca98e4d09aae869f25bfe072e1b1a
+- Migrator2 - https://etherscan.io/address/0x60A02cD1e3443E8ab7825DccF8d7080Eb78BCA6F
 
 ## License
 
