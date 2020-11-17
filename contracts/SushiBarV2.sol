@@ -12,16 +12,8 @@ interface IERC20 {
     function totalSupply() external view returns (uint256);
     function balanceOf(address account) external view returns (uint256);
     function transfer(address recipient, uint256 amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    // non-standard
-    function name() external view returns (string memory);
-    function symbol() external view returns (string memory);
-    function decimals() external view returns (uint8);
 }
 
 // Data part taken out for building of contracts that receive delegate calls
@@ -85,9 +77,12 @@ contract SushiBar is ERC20 {
         //    amount     now - startTime   
         // ----------- * --------------- * total extra SUSHI
         // totalSupply       356 days
-        return
-            balanceOf[owner].mul(block.timestamp.sub(startTime[owner])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
-            / totalSupplyCurrent / 365 days;
+        uint256 duration = block.timestamp.sub(startTime[owner]);
+        if (duration < 365 days) {
+            return balanceOf[owner].mul(duration).mul(sushi.totalSupply().sub(totalSupplyCurrent)) / 365 days / totalSupplyCurrent;
+        } else {
+            return balanceOf[owner].mul(sushi.totalSupply().sub(totalSupplyCurrent)) / totalSupplyCurrent;
+        }
     }
 
     function enter(uint256 amount, address to) public {
@@ -108,7 +103,6 @@ contract SushiBar is ERC20 {
         emit Transfer(address(0), to, amount);
 
         sushi.transferFrom(msg.sender, address(this), amount);
-        
         emit Enter(msg.sender, to, amount);
     }
 
