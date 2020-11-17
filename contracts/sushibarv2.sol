@@ -1,0 +1,140 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+// a library for performing overflow-safe math, updated with awesomeness from of DappHub (https://github.com/dapphub/ds-math)
+library BoringMath {
+    function add(uint a, uint b) internal pure returns (uint c) {require((c = a + b) >= b, "BoringMath: Add Overflow");}
+    function sub(uint a, uint b) internal pure returns (uint c) {require((c = a - b) <= a, "BoringMath: Underflow");}
+    function mul(uint a, uint b) internal pure returns (uint c) {require(a == 0 || (c = a * b)/b == a, "BoringMath: Mul Overflow");}
+}
+
+interface IERC20 {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    // non-standard
+    function name() external view returns (string memory);
+    function symbol() external view returns (string memory);
+    function decimals() external view returns (uint8);
+}
+
+// Data part taken out for building of contracts that receive delegate calls
+contract ERC20Data {
+    uint256 public totalSupply;
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping (address => uint256)) allowance;
+}
+
+contract ERC20 is ERC20Data {
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+
+    function transfer(address to, uint256 amount) public returns (bool success) {
+        if (balanceOf[msg.sender] >= amount && amount > 0 && balanceOf[to] + amount > balanceOf[to]) {
+            balanceOf[msg.sender] -= amount;
+            balanceOf[to] += amount;
+            emit Transfer(msg.sender, to, amount);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function transferFrom(address from, address to, uint256 amount) public returns (bool success) {
+        if (balanceOf[from] >= amount && allowance[from][msg.sender] >= amount && amount > 0 && balanceOf[to] + amount > balanceOf[to]) {
+            balanceOf[from] -= amount;
+            allowance[from][msg.sender] -= amount;
+            balanceOf[to] += amount;
+            emit Transfer(from, to, amount);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function approve(address spender, uint256 amount) public returns (bool success) {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+        return true;
+    }
+}
+
+contract SushiBar is ERC20 {
+    using BoringMath for uint256;
+    
+    string public name = "SushiBar V2";
+    string public symbol = "xSUSHI2";
+    uint8 public decimals = 18;
+    IERC20 public sushi = IERC20(0x6B3595068778DD592e39A122f4f5a5cF09C90fE2);
+    
+    mapping(address => uint256) public startTime;
+
+    event Enter(address indexed owner, address indexed to, uint256 amount);
+    event Leave(address indexed owner, address indexed to, uint256 amount);
+    event Harvest(address indexed owner, address indexed to);
+
+
+    function enter(uint256 amount, address to) public {
+        uint256 startTimeCurrent = startTime[to];
+        uint256 balanceCurrent = balanceOf[to];
+        if (balanceCurrent == 0) {
+            // If there is no balance, startTime is now
+            startTime[to] = block.timestamp;
+        } else {
+            // If there is already a balance:
+            // Increase startTime by: amount / (balance + amount) * (now - startTime)
+            // If you added 100 SUSHI 3 momnths ago and you add 200 SUSHI now, startTime should become 1 month ago
+            startTime[to] = startTimeCurrent.add(amount.mul(block.timestamp.sub(startTimeCurrent) / (balanceCurrent.add(amount))));
+        }
+        
+        totalSupply = totalSupply.add(amount);
+        balanceOf[to] = balanceCurrent.add(amount);
+        emit Transfer(address(0), to, amount);
+
+        sushi.transferFrom(msg.sender, address(this), amount);
+        
+        emit Enter(msg.sender, to, amount);
+    }
+
+    function harvest(address to) public {
+        uint256 totalSupplyCurrent = totalSupply;
+        // Reward calculation:
+        //    amount     now - startTime   
+        // ----------- * --------------- * total extra SUSHI
+        // totalSupply       356 days
+        uint256 sushiAmount = 
+            balanceOf[msg.sender].mul(block.timestamp.sub(startTime[msg.sender])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
+            / totalSupplyCurrent / 365 days;
+
+        startTime[msg.sender] = block.timestamp;
+
+        sushi.transfer(to, sushiAmount);
+        emit Harvest(msg.sender, to);
+    }
+
+    function leave(uint256 amount, address to) public {
+        uint256 totalSupplyCurrent = totalSupply;
+        // Reward calculation:
+        // Return the principal and add:
+        //    amount     now - startTime   
+        // ----------- * --------------- * total extra SUSHI
+        // totalSupply       356 days
+        uint256 sushiAmount = amount.add(
+            amount.mul(block.timestamp.sub(startTime[msg.sender])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
+            / totalSupplyCurrent / 365 days
+        );
+
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(amount);
+        totalSupply = totalSupplyCurrent.sub(amount);
+        emit Transfer(to, address(0), amount);
+
+        sushi.transfer(to, sushiAmount);
+        emit Leave(msg.sender, to, amount);
+    }
+}
