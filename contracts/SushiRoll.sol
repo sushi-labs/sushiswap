@@ -19,8 +19,7 @@ contract SushiRoll {
         router = _router;
     }
 
-    // msg.sender should have approved 'liquidity' amount of LP token of 'tokenA' and 'tokenB'
-    function migrate(
+    function migrateWithPermit(
         address tokenA,
         address tokenB,
         uint256 liquidity,
@@ -30,7 +29,22 @@ contract SushiRoll {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external {
+    ) public {
+        IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
+        pair.permit(msg.sender, address(this), liquidity, deadline, v, r, s);
+
+        migrate(tokenA, tokenB, liquidity, amountAMin, amountBMin, deadline);
+    }
+
+    // msg.sender should have approved 'liquidity' amount of LP token of 'tokenA' and 'tokenB'
+    function migrate(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        uint256 deadline
+    ) public {
         require(deadline >= block.timestamp, 'SushiSwap: EXPIRED');
 
         // Remove liquidity from the old router with permit
@@ -40,10 +54,7 @@ contract SushiRoll {
             liquidity,
             amountAMin,
             amountBMin,
-            deadline,
-            v,
-            r,
-            s
+            deadline
         );
 
         // Add liquidity to the new router
@@ -64,14 +75,9 @@ contract SushiRoll {
         uint256 liquidity,
         uint256 amountAMin,
         uint256 amountBMin,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
+        uint256 deadline
     ) internal returns (uint256 amountA, uint256 amountB) {
         IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
-        pair.permit(msg.sender, address(this), liquidity, deadline, v, r, s);
-        // Send liquidity to pair
         pair.transferFrom(msg.sender, address(pair), liquidity);
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
