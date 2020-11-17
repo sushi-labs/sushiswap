@@ -77,8 +77,18 @@ contract SushiBar is ERC20 {
 
     event Enter(address indexed owner, address indexed to, uint256 amount);
     event Leave(address indexed owner, address indexed to, uint256 amount);
-    event Harvest(address indexed owner, address indexed to);
+    event Claim(address indexed owner, address indexed to, uint256 amount);
 
+    function pending(address owner) public view returns(uint256) {
+        uint256 totalSupplyCurrent = totalSupply;
+        // Reward calculation:
+        //    amount     now - startTime   
+        // ----------- * --------------- * total extra SUSHI
+        // totalSupply       356 days
+        return
+            balanceOf[owner].mul(block.timestamp.sub(startTime[owner])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
+            / totalSupplyCurrent / 365 days;
+    }
 
     function enter(uint256 amount, address to) public {
         uint256 startTimeCurrent = startTime[to];
@@ -102,36 +112,19 @@ contract SushiBar is ERC20 {
         emit Enter(msg.sender, to, amount);
     }
 
-    function harvest(address to) public {
-        uint256 totalSupplyCurrent = totalSupply;
-        // Reward calculation:
-        //    amount     now - startTime   
-        // ----------- * --------------- * total extra SUSHI
-        // totalSupply       356 days
-        uint256 sushiAmount = 
-            balanceOf[msg.sender].mul(block.timestamp.sub(startTime[msg.sender])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
-            / totalSupplyCurrent / 365 days;
-
+    function claim(address to) public {
+        uint256 amount = pending(msg.sender);
         startTime[msg.sender] = block.timestamp;
 
-        sushi.transfer(to, sushiAmount);
-        emit Harvest(msg.sender, to);
+        sushi.transfer(to, amount);
+        emit Claim(msg.sender, to, amount);
     }
 
     function leave(uint256 amount, address to) public {
-        uint256 totalSupplyCurrent = totalSupply;
-        // Reward calculation:
-        // Return the principal and add:
-        //    amount     now - startTime   
-        // ----------- * --------------- * total extra SUSHI
-        // totalSupply       356 days
-        uint256 sushiAmount = amount.add(
-            amount.mul(block.timestamp.sub(startTime[msg.sender])).mul(sushi.totalSupply().sub(totalSupplyCurrent))
-            / totalSupplyCurrent / 365 days
-        );
+        uint256 sushiAmount = amount.add(pending(msg.sender));
 
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(amount);
-        totalSupply = totalSupplyCurrent.sub(amount);
+        totalSupply = totalSupply.sub(amount);
         emit Transfer(to, address(0), amount);
 
         sushi.transfer(to, sushiAmount);
