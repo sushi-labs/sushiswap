@@ -64,24 +64,25 @@ contract SushiBar is ERC20 {
     string public symbol = "xSUSHI2";
     uint8 public decimals = 18;
     IERC20 public sushi = IERC20(0x6B3595068778DD592e39A122f4f5a5cF09C90fE2);
+    IERC20 public dai = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     
     mapping(address => uint256) public startTime;
+    mapping(address => uint256) public claimed;
 
     event Enter(address indexed owner, address indexed to, uint256 amount);
     event Leave(address indexed owner, address indexed to, uint256 amount);
     event Claim(address indexed owner, address indexed to, uint256 amount);
 
     function pending(address owner) public view returns(uint256) {
-        uint256 totalSupplyCurrent = totalSupply;
         // Reward calculation:
         //    amount     now - startTime   
         // ----------- * --------------- * total extra SUSHI
         // totalSupply       356 days
         uint256 duration = block.timestamp.sub(startTime[owner]);
         if (duration < 365 days) {
-            return balanceOf[owner].mul(duration).mul(sushi.totalSupply().sub(totalSupplyCurrent)) / 365 days / totalSupplyCurrent;
+            return balanceOf[owner].mul(duration).mul(dai.totalSupply()) / 365 days / totalSupply;
         } else {
-            return balanceOf[owner].mul(sushi.totalSupply().sub(totalSupplyCurrent)) / totalSupplyCurrent;
+            return balanceOf[owner].mul(dai.totalSupply()) / totalSupply;
         }
     }
 
@@ -107,21 +108,24 @@ contract SushiBar is ERC20 {
     }
 
     function claim(address to) public {
-        uint256 amount = pending(msg.sender);
-        startTime[msg.sender] = block.timestamp;
+        uint256 claimedCurrent = claimed[msg.sender];
+        uint256 amount = pending(msg.sender).sub(claimedCurrent);
+        claimed[msg.sender] = claimedCurrent.add(amount);
 
-        sushi.transfer(to, amount);
+        dai.transfer(to, amount);
         emit Claim(msg.sender, to, amount);
     }
 
     function leave(uint256 amount, address to) public {
-        uint256 sushiAmount = amount.add(pending(msg.sender));
+        claim(to);
 
         balanceOf[msg.sender] = balanceOf[msg.sender].sub(amount);
         totalSupply = totalSupply.sub(amount);
         emit Transfer(to, address(0), amount);
+        
+        claimed[msg.sender] = pending(msg.sender);
 
-        sushi.transfer(to, sushiAmount);
+        sushi.transfer(to, amount);
         emit Leave(msg.sender, to, amount);
     }
 }
