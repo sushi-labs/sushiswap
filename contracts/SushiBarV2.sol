@@ -158,7 +158,7 @@ contract SushiBar is ERC20, Ownable {
         } else {
             // If there is already a balance:
             // Increase startTime by: amount / (balance + amount) * (now - startTime)
-            // If you added 100 SUSHI 3 momnths ago and you add 200 SUSHI now, startTime should become 1 month ago
+            // If you added 100 SUSHI 3 months ago and you add 200 SUSHI now, startTime should become 1 month ago
             uint256 startTimeCurrent = startTime[to];
             uint256 durationCurrent = block.timestamp.sub(startTimeCurrent);
             uint256 bonusTime = bonus[msg.sender];
