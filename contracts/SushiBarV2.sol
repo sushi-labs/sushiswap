@@ -5,7 +5,7 @@ pragma solidity ^0.6.12;
 library BoringMath {
     function add(uint a, uint b) internal pure returns (uint c) {require((c = a + b) >= b, "BoringMath: Add Overflow");}
     function sub(uint a, uint b) internal pure returns (uint c) {require((c = a - b) <= a, "BoringMath: Underflow");}
-    function mul(uint a, uint b) internal pure returns (uint c) {require(a == 0 || (c = a * b)/b == a, "BoringMath: Mul Overflow");}
+    function mul(uint a, uint b) internal pure returns (uint c) {require(b == 0 || (c = a * b)/b == a, "BoringMath: Mul Overflow");}
 }
 
 // Source: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
