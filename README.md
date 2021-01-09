@@ -14,6 +14,12 @@ https://sushiswap.fi.
 - SushiMaker - https://etherscan.io/address/0x95c69c3220b31b843f1cf20bee5c53fcde7fc12e
 - SushiRoll - https://etherscan.io/address/0x16E58463eb9792Bc236d8860F5BC69A81E26E32B
 
+## Docs
+
+[Development](docs/DEVELOPMENT.md)
+
+[Deployment](docs/DEPLOYMENT.md)
+
 ## License
 
-WTFPL
+MIT
