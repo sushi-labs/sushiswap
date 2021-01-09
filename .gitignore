@@ -1,2 +1,12 @@
-/node_modules/
-/build/
+artifacts/
+build/
+cache/
+coverage/
+deployments/
+node_modules/
+package-lock.json
+.coverage_artifacts/
+.coverage_contracts/
+coverage/
+coverage.json
+.env
