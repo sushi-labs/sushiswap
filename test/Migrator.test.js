@@ -1,60 +1,99 @@
-const { expectRevert, time } = require('@openzeppelin/test-helpers');
-const SushiToken = artifacts.require('SushiToken');
-const MasterChef = artifacts.require('MasterChef');
-const MockERC20 = artifacts.require('MockERC20');
-const UniswapV2Pair = artifacts.require('UniswapV2Pair');
-const UniswapV2Factory = artifacts.require('UniswapV2Factory');
-const Migrator = artifacts.require('Migrator');
+const { ethers } = require("hardhat")
+const { expect } = require("chai")
 
-contract('Migrator', ([alice, bob, dev, minter]) => {
-    beforeEach(async () => {
-        this.factory1 = await UniswapV2Factory.new(alice, { from: alice });
-        this.factory2 = await UniswapV2Factory.new(alice, { from: alice });
-        this.sushi = await SushiToken.new({ from: alice });
-        this.weth = await MockERC20.new('WETH', 'WETH', '100000000', { from: minter });
-        this.token = await MockERC20.new('TOKEN', 'TOKEN', '100000000', { from: minter });
-        this.lp1 = await UniswapV2Pair.at((await this.factory1.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
-        this.lp2 = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.token.address)).logs[0].args.pair);
-        this.chef = await MasterChef.new(this.sushi.address, dev, '1000', '0', '100000', { from: alice });
-        this.migrator = await Migrator.new(this.chef.address, this.factory1.address, this.factory2.address, '0');
-        await this.sushi.transferOwnership(this.chef.address, { from: alice });
-        await this.chef.add('100', this.lp1.address, true, { from: alice });
-    });
+describe("Migrator", function () {
+  before(async function () {
+    this.signers = await ethers.getSigners()
+    this.alice = this.signers[0]
+    this.bob = this.signers[1]
+    this.dev = this.signers[2]
+    this.minter = this.signers[3]
 
-    it('should do the migration successfully', async () => {
-        await this.token.transfer(this.lp1.address, '10000000', { from: minter });
-        await this.weth.transfer(this.lp1.address, '500000', { from: minter });
-        await this.lp1.mint(minter);
-        assert.equal((await this.lp1.balanceOf(minter)).valueOf(), '2235067');
-        // Add some fake revenue
-        await this.token.transfer(this.lp1.address, '100000', { from: minter });
-        await this.weth.transfer(this.lp1.address, '5000', { from: minter });
-        await this.lp1.sync();
-        await this.lp1.approve(this.chef.address, '100000000000', { from: minter });
-        await this.chef.deposit('0', '2000000', { from: minter });
-        assert.equal((await this.lp1.balanceOf(this.chef.address)).valueOf(), '2000000');
-        await expectRevert(this.chef.migrate(0), 'migrate: no migrator');
-        await this.chef.setMigrator(this.migrator.address, { from: alice });
-        await expectRevert(this.chef.migrate(0), 'migrate: bad');
-        await this.factory2.setMigrator(this.migrator.address, { from: alice });
-        await this.chef.migrate(0);
-        assert.equal((await this.lp1.balanceOf(this.chef.address)).valueOf(), '0');
-        assert.equal((await this.lp2.balanceOf(this.chef.address)).valueOf(), '2000000');
-        await this.chef.withdraw('0', '2000000', { from: minter });
-        await this.lp2.transfer(this.lp2.address, '2000000', { from: minter });
-        await this.lp2.burn(bob);
-        assert.equal((await this.token.balanceOf(bob)).valueOf(), '9033718');
-        assert.equal((await this.weth.balanceOf(bob)).valueOf(), '451685');
-    });
+    this.UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory")
+    this.UniswapV2Pair = await ethers.getContractFactory("UniswapV2Pair")
+    this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
+    this.SushiToken = await ethers.getContractFactory("SushiToken")
+    this.MasterChef = await ethers.getContractFactory("MasterChef")
+    this.Migrator = await ethers.getContractFactory("Migrator")
+  })
 
-    it('should allow first minting from public only after migrator is gone', async () => {
-        await this.factory2.setMigrator(this.migrator.address, { from: alice });
-        this.tokenx = await MockERC20.new('TOKENX', 'TOKENX', '100000000', { from: minter });
-        this.lpx = await UniswapV2Pair.at((await this.factory2.createPair(this.weth.address, this.tokenx.address)).logs[0].args.pair);
-        await this.weth.transfer(this.lpx.address, '10000000', { from: minter });
-        await this.tokenx.transfer(this.lpx.address, '500000', { from: minter });
-        await expectRevert(this.lpx.mint(minter), 'Must not have migrator');
-        await this.factory2.setMigrator('0x0000000000000000000000000000000000000000', { from: alice });
-        await this.lpx.mint(minter);
-    });
-});
+  beforeEach(async function () {
+    this.factory1 = await this.UniswapV2Factory.deploy(this.alice.address)
+    await this.factory1.deployed()
+
+    this.factory2 = await this.UniswapV2Factory.deploy(this.alice.address)
+    await this.factory2.deployed()
+
+    this.sushi = await this.SushiToken.deploy()
+    await this.sushi.deployed()
+
+    this.weth = await this.ERC20Mock.deploy("WETH", "WETH", "100000000")
+    await this.weth.deployed()
+
+    this.token = await this.ERC20Mock.deploy("TOKEN", "TOKEN", "100000000")
+    await this.token.deployed()
+
+    const pair1 = await this.factory1.createPair(this.weth.address, this.token.address)
+
+    this.lp1 = await this.UniswapV2Pair.attach((await pair1.wait()).events[0].args.pair)
+
+    const pair2 = await this.factory2.createPair(this.weth.address, this.token.address)
+
+    this.lp2 = await this.UniswapV2Pair.attach((await pair2.wait()).events[0].args.pair)
+
+    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "100000")
+    await this.chef.deployed()
+
+    this.migrator = await this.Migrator.deploy(this.chef.address, this.factory1.address, this.factory2.address, "0")
+    await this.migrator.deployed()
+
+    await this.sushi.transferOwnership(this.chef.address)
+
+    await this.chef.add("100", this.lp1.address, true)
+  })
+
+  it("should do the migration successfully", async function () {
+    await this.token.connect(this.minter).transfer(this.lp1.address, "10000000", { from: this.minter.address })
+    await this.weth.connect(this.minter).transfer(this.lp1.address, "500000", { from: this.minter.address })
+    await this.lp1.mint(this.minter.address)
+    expect(await this.lp1.balanceOf(this.minter.address)).to.equal("2235067")
+
+    // Add some fake revenue
+    await this.token.connect(this.minter).transfer(this.lp1.address, "100000", { from: this.minter.address })
+    await this.weth.connect(this.minter).transfer(this.lp1.address, "5000", { from: this.minter.address })
+    await this.lp1.sync()
+    await this.lp1.connect(this.minter).approve(this.chef.address, "100000000000", { from: this.minter.address })
+    await this.chef.connect(this.minter).deposit("0", "2000000", { from: this.minter.address })
+    expect(await this.lp1.balanceOf(this.chef.address), "2000000")
+    await expect(this.chef.migrate(0)).to.be.revertedWith("migrate: no migrator")
+
+    await this.chef.setMigrator(this.migrator.address)
+    await expect(this.chef.migrate(0)).to.be.revertedWith("migrate: bad")
+
+    await this.factory2.setMigrator(this.migrator.address)
+    await this.chef.migrate(0)
+    expect(await this.lp1.balanceOf(this.chef.address)).to.equal("0")
+    expect(await this.lp2.balanceOf(this.chef.address)).to.equal("2000000")
+
+    await this.chef.connect(this.minter).withdraw("0", "2000000", { from: this.minter.address })
+    await this.lp2.connect(this.minter).transfer(this.lp2.address, "2000000", { from: this.minter.address })
+    await this.lp2.burn(this.bob.address)
+    expect(await this.token.balanceOf(this.bob.address)).to.equal("9033718")
+    expect(await this.weth.balanceOf(this.bob.address)).to.equal("451685")
+  })
+
+  it("should allow first minting from public only after migrator is gone", async function () {
+    await this.factory2.setMigrator(this.migrator.address)
+
+    this.tokenx = await this.ERC20Mock.deploy("TOKENX", "TOKENX", "100000000")
+    await this.tokenx.deployed()
+
+    const pair = await this.factory2.createPair(this.weth.address, this.tokenx.address)
+
+    this.lpx = await this.UniswapV2Pair.attach((await pair.wait()).events[0].args.pair)
+
+    await this.weth.connect(this.minter).transfer(this.lpx.address, "10000000", { from: this.minter.address })
+    await this.tokenx.connect(this.minter).transfer(this.lpx.address, "500000", { from: this.minter.address })
+    await expect(this.lpx.mint(this.minter.address)).to.be.revertedWith("Must not have migrator")
+  })
+})
