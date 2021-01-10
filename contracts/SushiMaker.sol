@@ -19,13 +19,17 @@ contract SushiMaker is BoringOwnable {
     using BoringERC20 for IERC20;
 
     // V1 - V5: OK
-    IUniswapV2Factory public constant factory = IUniswapV2Factory(0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac);
+    IUniswapV2Factory public immutable factory;
+    //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
     // V1 - V5: OK
-    address public constant bar = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
+    address public immutable bar; 
+    //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
     // V1 - V5: OK
-    address private constant sushi = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
+    address private immutable sushi;
+    //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
     // V1 - V5: OK
-    address private constant weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address private immutable weth; 
+    //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
     // V1 - V5: OK
     mapping(address => address) internal _bridges;
@@ -35,6 +39,14 @@ contract SushiMaker is BoringOwnable {
     // E1: OK
     event LogConvert(address indexed server, address indexed token0, address indexed token1, uint256 amount0, uint256 amount1, uint256 amountSUSHI);
 
+
+    constructor (address _factory, address _bar, address _sushi, address _weth) public {
+       factory = IUniswapV2Factory(_factory);
+       bar = _bar;
+       sushi = _sushi;
+       weth = _weth;
+    }
+    
     // F1 - F10: OK
     // C1 - C24: OK
     function bridgeFor(address token) public view returns (address bridge) {
