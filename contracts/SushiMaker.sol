@@ -59,7 +59,7 @@ contract SushiMaker is BoringOwnable {
     // C1 - C24: OK
     // C6: It's not a fool proof solution, but it prevents flash loans, so here it's ok to use tx.origin
     modifier onlyEOA() {
-        // Try to make flash-loan exploit harder to do.
+        // Try to make flash-loan exploit harder to do by only allowing externally owned addresses.
         require(msg.sender == tx.origin, "SushiMaker: must use EOA");
         _;
     }
