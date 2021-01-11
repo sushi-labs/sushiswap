@@ -1,61 +1,170 @@
-const SushiToken = artifacts.require('SushiToken');
-const SushiMaker = artifacts.require('SushiMaker');
-const MockERC20 = artifacts.require('MockERC20');
-const UniswapV2Pair = artifacts.require('UniswapV2Pair');
-const UniswapV2Factory = artifacts.require('UniswapV2Factory');
+const { ethers } = require("hardhat")
+const { prepare, deploy, getBigNumber, createSLP } = require("./utilities")
+const { expect } = require("chai")
 
-contract('SushiMaker', ([alice, bar, minter]) => {
-    beforeEach(async () => {
-        this.factory = await UniswapV2Factory.new(alice, { from: alice });
-        this.sushi = await SushiToken.new({ from: alice });
-        await this.sushi.mint(minter, '100000000', { from: alice });
-        this.weth = await MockERC20.new('WETH', 'WETH', '100000000', { from: minter });
-        this.token1 = await MockERC20.new('TOKEN1', 'TOKEN', '100000000', { from: minter });
-        this.token2 = await MockERC20.new('TOKEN2', 'TOKEN2', '100000000', { from: minter });
-        this.maker = await SushiMaker.new(this.factory.address, bar, this.sushi.address, this.weth.address);
-        this.sushiWETH = await UniswapV2Pair.at((await this.factory.createPair(this.weth.address, this.sushi.address)).logs[0].args.pair);
-        this.wethToken1 = await UniswapV2Pair.at((await this.factory.createPair(this.weth.address, this.token1.address)).logs[0].args.pair);
-        this.wethToken2 = await UniswapV2Pair.at((await this.factory.createPair(this.weth.address, this.token2.address)).logs[0].args.pair);
-        this.token1Token2 = await UniswapV2Pair.at((await this.factory.createPair(this.token1.address, this.token2.address)).logs[0].args.pair);
-    });
+describe("SushiMaker", function () {
+    before(async function () {
+        await prepare(this, ["SushiMaker", 'SushiBar', 'SushiMakerExploitMock', 'RevertingERC20Mock', 'UniswapV2Factory', 'UniswapV2Pair'])
+      })
+    
+      beforeEach(async function () {
+        await deploy(this, 
+            [['sushi', this.RevertingERC20Mock,  ["SUSHI", "SUSHI", getBigNumber("10000000")]], 
+            ['dai', this.RevertingERC20Mock, ["DAI", "DAI", getBigNumber("10000000")]],
+            ['mic', this.RevertingERC20Mock, ["MIC", "MIC", getBigNumber("10000000")]],
+            ['usdc', this.RevertingERC20Mock, ["USDC", "USDC", getBigNumber("10000000")]],
+            ['weth', this.RevertingERC20Mock, ["WETH", "ETH", getBigNumber("10000000")]],
+            ['strudel', this.RevertingERC20Mock, ["$TRDL", "$TRDL", getBigNumber("10000000")]],
+            ['factory', this.UniswapV2Factory, [this.alice.address]]
+            ])
+        await deploy(this, [['bar', this.SushiBar, [this.sushi.address]]])
+        await deploy(this, [['sushiMaker', this.SushiMaker, [this.factory.address, this.bar.address, this.sushi.address, this.weth.address]]])
+        await deploy(this, [['exploiter', this.SushiMakerExploitMock, [this.sushiMaker.address]]])
+        await createSLP(this, 'sushiEth', this.sushi, this.weth, getBigNumber(10))
+        await createSLP(this, 'strudelEth', this.strudel, this.weth, getBigNumber(10))
+        await createSLP(this, 'daiEth', this.dai, this.weth, getBigNumber(10))
+        await createSLP(this, 'usdcEth', this.usdc, this.weth, getBigNumber(10))
+        await createSLP(this, 'micUSDC', this.mic, this.usdc, getBigNumber(10))
+        await createSLP(this, 'sushiUSDC', this.sushi, this.usdc, getBigNumber(10))
+        await createSLP(this, 'daiUSDC', this.dai, this.usdc, getBigNumber(10))
+        await createSLP(this, 'daiMIC', this.dai, this.mic, getBigNumber(10))
+      })
+    describe('setBridge', function(){
+        it('does not allow to set bridge for Sushi', async function(){
+            await expect(this.sushiMaker.setBridge(this.sushi.address, this.weth.address)).to.be.revertedWith(
+                "SushiMaker: Invalid bridge"
+            )
+        })
 
-    it('should make SUSHIs successfully', async () => {
-        await this.factory.setFeeTo(this.maker.address, { from: alice });
-        await this.weth.transfer(this.sushiWETH.address, '10000000', { from: minter });
-        await this.sushi.transfer(this.sushiWETH.address, '10000000', { from: minter });
-        await this.sushiWETH.mint(minter);
-        await this.weth.transfer(this.wethToken1.address, '10000000', { from: minter });
-        await this.token1.transfer(this.wethToken1.address, '10000000', { from: minter });
-        await this.wethToken1.mint(minter);
-        await this.weth.transfer(this.wethToken2.address, '10000000', { from: minter });
-        await this.token2.transfer(this.wethToken2.address, '10000000', { from: minter });
-        await this.wethToken2.mint(minter);
-        await this.token1.transfer(this.token1Token2.address, '10000000', { from: minter });
-        await this.token2.transfer(this.token1Token2.address, '10000000', { from: minter });
-        await this.token1Token2.mint(minter);
-        // Fake some revenue
-        await this.token1.transfer(this.token1Token2.address, '100000', { from: minter });
-        await this.token2.transfer(this.token1Token2.address, '100000', { from: minter });
-        await this.token1Token2.sync();
-        await this.token1.transfer(this.token1Token2.address, '10000000', { from: minter });
-        await this.token2.transfer(this.token1Token2.address, '10000000', { from: minter });
-        await this.token1Token2.mint(minter);
-        // Maker should have the LP now
-        assert.equal((await this.token1Token2.balanceOf(this.maker.address)).valueOf(), '16528');
-        // After calling convert, bar should have SUSHI value at ~1/6 of revenue
-        await this.maker.convert(this.token1.address, this.token2.address);
-        assert.equal((await this.sushi.balanceOf(bar)).valueOf(), '32965');
-        assert.equal((await this.token1Token2.balanceOf(this.maker.address)).valueOf(), '0');
-        // Should also work for SUSHI-ETH pair
-        await this.sushi.transfer(this.sushiWETH.address, '100000', { from: minter });
-        await this.weth.transfer(this.sushiWETH.address, '100000', { from: minter });
-        await this.sushiWETH.sync();
-        await this.sushi.transfer(this.sushiWETH.address, '10000000', { from: minter });
-        await this.weth.transfer(this.sushiWETH.address, '10000000', { from: minter });
-        await this.sushiWETH.mint(minter);
-        assert.equal((await this.sushiWETH.balanceOf(this.maker.address)).valueOf(), '16537');
-        await this.maker.convert(this.sushi.address, this.weth.address);
-        assert.equal((await this.sushi.balanceOf(bar)).valueOf(), '66249');
-        assert.equal((await this.sushiWETH.balanceOf(this.maker.address)).valueOf(), '0');
-    });
-});
+        it('does not allow to set bridge for WETH', async function(){
+            await expect(this.sushiMaker.setBridge(this.weth.address, this.sushi.address)).to.be.revertedWith(
+                "SushiMaker: Invalid bridge"
+            )
+        })
+
+        it('does not allow to set bridge to itself', async function(){
+            await expect(this.sushiMaker.setBridge(this.dai.address, this.dai.address)).to.be.revertedWith(
+                "SushiMaker: Invalid bridge"
+            )
+        })
+
+        it('emits correct event on bridge', async function(){
+            await expect(this.sushiMaker.setBridge(this.dai.address, this.sushi.address)).to.emit(
+                this.sushiMaker, "LogBridgeSet"
+            ).withArgs(this.dai.address, this.sushi.address)
+        })
+    })
+    describe("convert", function () {
+        it("should convert SUSHI - ETH", async function () {
+            await this.sushiEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convert(this.sushi.address, this.weth.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushiEth.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1897569270781234370')
+        })
+
+        it("should convert USDC - ETH", async function () {
+            await this.usdcEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convert(this.usdc.address, this.weth.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.usdcEth.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1590898251382934275')
+        })
+
+        it("should convert $TRDL - ETH", async function () {
+            await this.strudelEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convert(this.strudel.address, this.weth.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.strudelEth.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1590898251382934275')
+        })
+
+        it("should convert USDC - SUSHI", async function () {
+            await this.sushiUSDC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convert(this.usdc.address, this.sushi.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushiUSDC.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1897569270781234370')
+        })
+
+        it('should convert using standard ETH path', async function (){
+            await this.daiEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convert(this.dai.address, this.weth.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.daiEth.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1590898251382934275')
+        })
+
+        it('converts MIC/USDC using more complex path', async function (){
+            await this.micUSDC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.setBridge(this.usdc.address, this.sushi.address)
+            await this.sushiMaker.setBridge(this.mic.address, this.usdc.address)
+            await this.sushiMaker.convert(this.mic.address, this.usdc.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.micUSDC.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1590898251382934275')
+        })
+
+        it('converts DAI/USDC using more complex path', async function (){
+            await this.daiUSDC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.setBridge(this.usdc.address, this.sushi.address)
+            await this.sushiMaker.setBridge(this.dai.address, this.usdc.address)
+            await this.sushiMaker.convert(this.dai.address, this.usdc.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.daiUSDC.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1590898251382934275')
+        })
+
+        it('converts DAI/MIC using two step path', async function (){
+            await this.daiMIC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.setBridge(this.dai.address, this.usdc.address)
+            await this.sushiMaker.setBridge(this.mic.address, this.dai.address)
+            await this.sushiMaker.convert(this.dai.address, this.mic.address)
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.daiMIC.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('1200963016721363748')
+        })
+
+        it('reverts if it loops back', async function (){
+            await this.daiMIC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.setBridge(this.dai.address, this.mic.address)
+            await this.sushiMaker.setBridge(this.mic.address, this.dai.address)
+            await expect(this.sushiMaker.convert(this.dai.address, this.mic.address)).to.be.reverted
+        })
+
+        it("reverts if caller is not EOA", async function () {
+            await this.sushiEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await expect(this.exploiter.convert(this.sushi.address, this.weth.address)).to.be.revertedWith(
+                "SushiMaker: must use EOA"
+            )
+        })
+
+        it('reverts if pair does not exist', async function (){
+            await expect(this.sushiMaker.convert(this.mic.address, this.micUSDC.address)).to.be.revertedWith(
+                "SushiMaker: Invalid pair"
+            )
+        })
+
+        it('reverts if no path is available', async function (){
+            await this.micUSDC.transfer(this.sushiMaker.address, getBigNumber(1))
+            await expect(this.sushiMaker.convert(this.mic.address, this.usdc.address)).to.be.revertedWith(
+                'SushiMaker: Cannot convert'
+            )
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.micUSDC.balanceOf(this.sushiMaker.address)).to.equal(getBigNumber(1))
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal(0)
+        })
+    })
+
+    describe('convertMultiple', function (){
+        it('should allow to convert multiple', async function() {
+            await this.daiEth.transfer(this.sushiMaker.address, getBigNumber(1)) 
+            await this.sushiEth.transfer(this.sushiMaker.address, getBigNumber(1))
+            await this.sushiMaker.convertMultiple([this.dai.address, this.sushi.address], [this.weth.address, this.weth.address])
+            expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.daiEth.balanceOf(this.sushiMaker.address)).to.equal(0)
+            expect(await this.sushi.balanceOf(this.bar.address)).to.equal('3186583558687783097')
+        })
+    })
+
+})
