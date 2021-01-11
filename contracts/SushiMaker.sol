@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 // P1 - P3: OK
 pragma solidity 0.6.12;
-import "./libraries/BoringMath.sol";
-import "./libraries/BoringERC20.sol";
+
+import "@bartjman/boring-solidity/contracts/libraries/BoringMath.sol";
+import "@bartjman/boring-solidity/contracts/libraries/BoringERC20.sol";
 
 import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
-import "./BoringOwnable.sol";
+import "@bartjman/boring-solidity/contracts/BoringOwnable.sol";
 
 // SushiMaker is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
 // This contract handles "serving up" rewards for xSushi holders by trading tokens collected from fees for Sushi.
