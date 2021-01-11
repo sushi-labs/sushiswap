@@ -41,6 +41,7 @@
     "prepublishOnly": "yarn run build && node scripts/prepublish.js"
   },
   "devDependencies": {
+    "@bartjman/boring-solidity": "https://github.com/bartjman/BoringSolidity.git",
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-etherscan": "^2.1.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
@@ -50,9 +51,9 @@
     "@uniswap/v2-core": "git://github.com/uniswap/uniswap-v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
-    "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.0.0",
-    "hardhat": "^2.0.6",
+    "ethereum-waffle": "^3.2.0",
+    "ethers": "^5.0.25",
+    "hardhat": "^2.0.7",
     "hardhat-abi-exporter": "^2.0.8",
     "hardhat-deploy": "^0.7.0-beta.43",
     "hardhat-deploy-ethers": "^0.3.0-beta.7",
@@ -60,6 +61,8 @@
     "hardhat-preprocessor": "^0.1.1",
     "hardhat-spdx-license-identifier": "^2.0.3",
     "hardhat-watcher": "^2.0.0",
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.3",
     "solidity-coverage": "^0.7.13"
   }
 }

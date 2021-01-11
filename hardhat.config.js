@@ -19,7 +19,6 @@ const { task } = require("hardhat/config")
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (args, hre) => {
   const accounts = await hre.ethers.getSigners()
-
   for (const account of accounts) {
     console.log(account.address)
   }
@@ -35,6 +34,8 @@ const accounts = {
 module.exports = {
   abiExporter: {
     path: "./build/abi",
+    // The clear option is set to false by default because it represents
+    // a destructive action, but should be set to true in most cases.
     //clear: true,
     flat: true,
     // only: [],
@@ -57,10 +58,49 @@ module.exports = {
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     },
   },
+  namedAccounts: {
+    deployer: {
+      default: 0, // here this will by default take the first account as deployer
+      1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
+    },
+    alice: {
+      default: 1,
+      // hardhat: 0,
+    },
+    bob: {
+      default: 2,
+      // hardhat: 0,
+    },
+    carol: {
+      default: 3,
+      // hardhat: 0,
+    },
+    fee: {
+      // Default to 1
+      default: 1,
+      // Multi sig feeTo address
+      // 1: "",
+    },
+    dev: {
+      // Default to 1
+      default: 1,
+      // dev address
+      // 1: "",
+    },
+  },
   networks: {
+    // mainnet: {
+    //   url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    //   gasPrice: 120 * 1000000000,
+    //   chainId: 1,
+    // },
     hardhat: {
-      chainId: 31337,
       accounts,
+      chainId: 31337,
+      live: false,
+      saveDeployments: true,
+      tags: ["test", "local"],
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -68,6 +108,7 @@ module.exports = {
       chainId: 3,
       live: true,
       saveDeployments: true,
+      tags: ["staging"],
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -75,19 +116,24 @@ module.exports = {
       chainId: 42,
       live: true,
       saveDeployments: true,
+      tags: ["staging"],
     },
   },
   preprocess: {
     eachLine: removeConsoleLog((bre) => bre.network.name !== "hardhat" && bre.network.name !== "localhost"),
   },
   solidity: {
-    version: "0.6.12",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 5000,
+    compilers: [
+      {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 5000,
+          },
+        },
       },
-    },
+    ],
   },
   spdxLicenseIdentifier: {
     overwrite: false,

@@ -34,10 +34,16 @@ Mocha & Chai with Waffle matchers (these are really useful).
 
 <https://hardhat.org/guides/vscode-tests.html#running-tests-on-visual-studio-code>
 
+## Seeding
+
+npx hardhat run --network localhost scripts/seed.js
+
 ## Console
 
 ```sh
 yarn console
+
+npx hardhat --network localhost console
 ```
 
 <https://hardhat.org/guides/hardhat-console.html>

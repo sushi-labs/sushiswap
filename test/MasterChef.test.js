@@ -79,13 +79,13 @@ describe("MasterChef", function () {
 
       await this.chef.add("100", this.lp.address, true)
 
-      await this.lp.connect(this.bob).approve(this.chef.address, "1000", { from: this.bob.address })
+      await this.lp.connect(this.bob).approve(this.chef.address, "1000")
 
-      await this.chef.connect(this.bob).deposit(0, "100", { from: this.bob.address })
+      await this.chef.connect(this.bob).deposit(0, "100")
 
       expect(await this.lp.balanceOf(this.bob.address)).to.equal("900")
 
-      await this.chef.connect(this.bob).emergencyWithdraw(0, { from: this.bob.address })
+      await this.chef.connect(this.bob).emergencyWithdraw(0)
 
       expect(await this.lp.balanceOf(this.bob.address)).to.equal("1000")
     })
@@ -99,27 +99,27 @@ describe("MasterChef", function () {
 
       await this.chef.add("100", this.lp.address, true)
 
-      await this.lp.connect(this.bob).approve(this.chef.address, "1000", { from: this.bob.address })
-      await this.chef.connect(this.bob).deposit(0, "100", { from: this.bob.address })
+      await this.lp.connect(this.bob).approve(this.chef.address, "1000")
+      await this.chef.connect(this.bob).deposit(0, "100")
       await time.advanceBlockTo("89")
 
-      await this.chef.connect(this.bob).deposit(0, "0", { from: this.bob.address }) // block 90
+      await this.chef.connect(this.bob).deposit(0, "0") // block 90
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       await time.advanceBlockTo("94")
 
-      await this.chef.connect(this.bob).deposit(0, "0", { from: this.bob.address }) // block 95
+      await this.chef.connect(this.bob).deposit(0, "0") // block 95
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       await time.advanceBlockTo("99")
 
-      await this.chef.connect(this.bob).deposit(0, "0", { from: this.bob.address }) // block 100
+      await this.chef.connect(this.bob).deposit(0, "0") // block 100
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       await time.advanceBlockTo("100")
 
-      await this.chef.connect(this.bob).deposit(0, "0", { from: this.bob.address }) // block 101
+      await this.chef.connect(this.bob).deposit(0, "0") // block 101
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("1000")
 
       await time.advanceBlockTo("104")
-      await this.chef.connect(this.bob).deposit(0, "0", { from: this.bob.address }) // block 105
+      await this.chef.connect(this.bob).deposit(0, "0") // block 105
 
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("5000")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("500")
@@ -132,19 +132,19 @@ describe("MasterChef", function () {
       await this.chef.deployed()
       await this.sushi.transferOwnership(this.chef.address)
       await this.chef.add("100", this.lp.address, true)
-      await this.lp.connect(this.bob).approve(this.chef.address, "1000", { from: this.bob.address })
+      await this.lp.connect(this.bob).approve(this.chef.address, "1000")
       await time.advanceBlockTo("199")
       expect(await this.sushi.totalSupply()).to.equal("0")
       await time.advanceBlockTo("204")
       expect(await this.sushi.totalSupply()).to.equal("0")
       await time.advanceBlockTo("209")
-      await this.chef.connect(this.bob).deposit(0, "10", { from: this.bob.address }) // block 210
+      await this.chef.connect(this.bob).deposit(0, "10") // block 210
       expect(await this.sushi.totalSupply()).to.equal("0")
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("0")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("0")
       expect(await this.lp.balanceOf(this.bob.address)).to.equal("990")
       await time.advanceBlockTo("219")
-      await this.chef.connect(this.bob).withdraw(0, "10", { from: this.bob.address }) // block 220
+      await this.chef.connect(this.bob).withdraw(0, "10") // block 220
       expect(await this.sushi.totalSupply()).to.equal("11000")
       expect(await this.sushi.balanceOf(this.bob.address)).to.equal("10000")
       expect(await this.sushi.balanceOf(this.dev.address)).to.equal("1000")
