@@ -6,10 +6,11 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const factory = await deployments.get("UniswapV2Factory")
   const bar = await deployments.get("SushiBar")
   const sushi = await deployments.get("SushiToken")
+  const weth = await deployments.get("WETH9Mock")
 
   await deploy("SushiMaker", {
     from: deployer,
-    args: [factory, bar, sushi],
+    args: [factory.address, bar.address, sushi.address, weth.address],
     log: true,
   })
 }

@@ -5,9 +5,11 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   const sushi = await deployments.get("SushiToken")
 
+  console.log("SUSHI", sushi)
+
   await deploy("SushiBar", {
     from: deployer,
-    args: [sushi],
+    args: [sushi.address],
     log: true,
   })
 }
