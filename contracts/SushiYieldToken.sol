@@ -4,7 +4,8 @@ pragma solidity 0.6.12;
 
 import "./uniswapv2/libraries/SafeMath.sol";
 import "./uniswapv2/libraries/TransferHelper.sol";
-import "./interfaces/IERC20.sol";
+import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
+import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 
 contract SushiYieldToken {
     using SafeMathUniswap for uint256;
@@ -28,8 +29,8 @@ contract SushiYieldToken {
      */
     bytes public data;
 
-    string public constant name = "SushiSwap Yield";
-    string public constant symbol = "SYD";
+    string public name;
+    string public symbol;
     uint8 public constant decimals = 18;
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
@@ -70,6 +71,12 @@ contract SushiYieldToken {
         require(msg.sender == factory, "forbidden");
         lpToken = _lpToken;
         data = _data;
+
+        IUniswapV2Pair pair = IUniswapV2Pair(lpToken);
+        string memory symbol0 = IUniswapV2ERC20(pair.token0()).symbol();
+        string memory symbol1 = IUniswapV2ERC20(pair.token1()).symbol();
+        name = string(abi.encodePacked(symbol0, "-", symbol1, " SushiSwap Yield Token"));
+        symbol = string(abi.encodePacked(symbol0, "-", symbol1, " SYD"));
     }
 
     function _mint(address to, uint256 value) internal {
@@ -136,7 +143,7 @@ contract SushiYieldToken {
     }
 
     function mint(address to) external lock returns (uint256 amount) {
-        amount = IERC20(lpToken).balanceOf(address(this));
+        amount = IUniswapV2ERC20(lpToken).balanceOf(address(this));
         require(amount > 0, "insufficient-balance");
 
         (bool success,) = factory.delegatecall(abi.encodeWithSignature("deposit(bytes,uint256,address)", data, amount, to));

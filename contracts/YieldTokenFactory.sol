@@ -69,7 +69,7 @@ contract YieldTokenFactory {
         require(getYieldToken[pid] == address(0), "already-created");
 
         bytes memory bytecode = type(SushiYieldToken).creationCode;
-        bytes memory data = abi.encodePacked(pid);
+        bytes memory data = abi.encode(masterChef, pid);
         bytes32 salt = keccak256(data);
         assembly {
             token := create2(0, add(bytecode, 32), mload(bytecode), salt)
@@ -89,10 +89,10 @@ contract YieldTokenFactory {
      * @param to receiver of sushi rewards
      */
     function deposit(bytes memory data, uint256 amount, address to) external {
-        uint256 pid = abi.decode(data, (uint256));
-        (address lpToken,,,) = IMasterChef(masterChef).poolInfo(pid);
-        lpToken.safeApprove(masterChef, amount);
-        IMasterChef(masterChef).deposit(pid, amount);
+        (address _masterChef, uint256 pid) = abi.decode(data, (address, uint256));
+        (address lpToken,,,) = IMasterChef(_masterChef).poolInfo(pid);
+        lpToken.safeApprove(_masterChef, amount);
+        IMasterChef(_masterChef).deposit(pid, amount);
         _transferBalance(sushi, to);
     }
 
@@ -104,9 +104,9 @@ contract YieldTokenFactory {
      * @param to receiver of lp tokens
      */
     function withdraw(bytes memory data, uint256 amount, address to) external {
-        uint256 pid = abi.decode(data, (uint256));
-        (address lpToken,,,) = IMasterChef(masterChef).poolInfo(pid);
-        IMasterChef(masterChef).withdraw(pid, amount);
+        (address _masterChef, uint256 pid) = abi.decode(data, (address, uint256));
+        (address lpToken,,,) = IMasterChef(_masterChef).poolInfo(pid);
+        IMasterChef(_masterChef).withdraw(pid, amount);
         _transferBalance(lpToken, to);
         _transferBalance(sushi, to);
     }
