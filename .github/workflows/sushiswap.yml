@@ -1,7 +1,7 @@
 #  workflow pipeline
 name: sushiswap
 
-on: ["pull_request"]
+on: ["push", "pull_request"]
 
 jobs:
   build:
@@ -15,22 +15,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+        with:
+         ref: ${{github.event.pull_request.head.ref}}
+         repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Nodejs  ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - name: yarn install and build
+
+      - name: Install and Compile
         run: |
           yarn install
           yarn compile
           
-      - name: yarn test and coverage
+      - name: Lint and Coverage
         run: |
           yarn lint
           yarn coverage
     
-      - name: Coveralls
+      - name: Testing and Reports
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
