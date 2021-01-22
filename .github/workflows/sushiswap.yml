@@ -1,0 +1,40 @@
+#  workflow pipeline
+name: sushiswap
+
+on: ["pull_request"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["12.x"]
+        os: ["ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+      - name: yarn install and build
+        run: |
+          yarn install
+          yarn compile
+          
+      - name: yarn test and coverage
+        run: |
+          yarn lint
+          yarn coverage
+    
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+           yarn test 
+           yarn coverage
+
