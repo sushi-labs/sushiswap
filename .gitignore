@@ -10,3 +10,4 @@ package-lock.json
 coverage/
 coverage.json
 .env
+.DS_Store
