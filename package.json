@@ -60,6 +60,8 @@
     "hardhat-preprocessor": "^0.1.1",
     "hardhat-spdx-license-identifier": "^2.0.3",
     "hardhat-watcher": "^2.0.0",
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.3",
     "solidity-coverage": "^0.7.13"
   }
 }
