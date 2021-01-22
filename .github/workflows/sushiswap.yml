@@ -30,16 +30,8 @@ jobs:
           yarn install
           yarn build
           
-      - name: Lint and Coverage
+      - name: Test and Coverage
         run: |
-          yarn prettier
-          yarn lint
-    
-      - name: Testing and Reports
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run: |
-           yarn test 
-           yarn coverage
+          npx hardhat test --verbose
+
 
