@@ -29,7 +29,7 @@ M4 - Are any unbounded loops/arrays used that can cause DoS? (SWC-128)
 M5 - Check behaviour for all function arguments when wrong or extreme
 
 Code
-C1 - All math done through BoringMath (SWC-101)
+C1 - All math done through SafeMath (SWC-101)
 C2 - Are any storage slots read multiple times?
 C3 - Are any unbounded loops/arrays used that can cause DoS? (SWC-128)
 C4 - Use block.timestamp only for long intervals (SWC-116)

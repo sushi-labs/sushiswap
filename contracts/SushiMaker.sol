@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: MIT
 // P1 - P3: OK
 pragma solidity 0.6.12;
-import "./libraries/BoringMath.sol";
-import "./libraries/BoringERC20.sol";
+import "./libraries/SafeMath.sol";
+import "./libraries/SafeERC20.sol";
 
 import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
-import "./BoringOwnable.sol";
+import "./Ownable.sol";
 
 // SushiMaker is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
 // This contract handles "serving up" rewards for xSushi holders by trading tokens collected from fees for Sushi.
 
 // T1 - T4: OK
-contract SushiMaker is BoringOwnable {
-    using BoringMath for uint256;
-    using BoringERC20 for IERC20;
+contract SushiMaker is Ownable {
+    using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     // V1 - V5: OK
     IUniswapV2Factory public immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
     // V1 - V5: OK
-    address public immutable bar; 
+    address public immutable bar;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
     // V1 - V5: OK
     address private immutable sushi;
     //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
     // V1 - V5: OK
-    address private immutable weth; 
+    address private immutable weth;
     //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
     // V1 - V5: OK
@@ -46,7 +46,7 @@ contract SushiMaker is BoringOwnable {
        sushi = _sushi;
        weth = _weth;
     }
-    
+
     // F1 - F10: OK
     // C1 - C24: OK
     function bridgeFor(address token) public view returns (address bridge) {
