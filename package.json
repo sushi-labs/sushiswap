@@ -82,8 +82,9 @@
     "hardhat-watcher": "^2.0.0",
     "prettier": "^2.2.0",
     "prettier-plugin-solidity": "^1.0.0-beta.5",
-    "solidity-coverage": "^0.7.0",
     "ts-generator": "^0.1.1",
-    "typechain": "^4.0.1"
+    "typechain": "^4.0.1",
+    "solidity-coverage": "^0.7.13",
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943"
   }
 }
