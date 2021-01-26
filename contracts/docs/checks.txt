@@ -54,6 +54,7 @@ C21 - Are all state variables read from the correct contract: master vs. clone
 C22 - Is > or < or >= or <= correct
 C23 - Are logical operators correct ==, !=, &&, ||, !
 C24 - Don't use uint, use uint256 instead
+C25 - Are memory structs always saved if they are altered (check for mid-code returns)
 
 Calls in Functions
 X1 - Is the result checked and errors dealt with? (SWC-104)

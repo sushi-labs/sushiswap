@@ -60,6 +60,7 @@
     "hardhat-preprocessor": "^0.1.1",
     "hardhat-spdx-license-identifier": "^2.0.3",
     "hardhat-watcher": "^2.0.0",
-    "solidity-coverage": "^0.7.13"
+    "solidity-coverage": "^0.7.13",
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943"
   }
 }

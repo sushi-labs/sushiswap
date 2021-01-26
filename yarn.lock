@@ -23,6 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@boringcrypto/boring-solidity@boringcrypto/BoringSolidity#e06e943":
+  version "1.0.4"
+  resolved "https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943e7e8a168ed0395ef663a17fd71a6949a2"
+
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@ensdomains/ens/-/ens-0.4.5.tgz#e0aebc005afdc066447c6e22feb4eda89a5edbfc"
