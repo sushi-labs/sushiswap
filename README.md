@@ -1,6 +1,8 @@
-# SushiSwap
+# Ubeswap
 
-https://sushiswap.fi.
+Ubeswap is a protocol for decentralized exchange and automated liquidity provision on Celo.
+
+https://koroswap.com.
 
 ## Deployed Contracts
 
