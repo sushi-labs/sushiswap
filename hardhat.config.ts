@@ -9,7 +9,6 @@ import "hardhat-deploy";
 import "hardhat-gas-reporter";
 import { removeConsoleLog } from "hardhat-preprocessor";
 import "hardhat-spdx-license-identifier";
-import "hardhat-typechain";
 import "hardhat-watcher";
 import { HardhatUserConfig, task } from "hardhat/config";
 import "solidity-coverage";
@@ -108,10 +107,6 @@ export default {
   tenderly: {
     project: process.env.TENDERLY_PROJECT,
     username: process.env.TENDERLY_USERNAME,
-  },
-  typechain: {
-    outDir: "build/types",
-    target: "ethers-v5",
   },
   watcher: {
     compile: {

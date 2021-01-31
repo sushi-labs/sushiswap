@@ -23,7 +23,9 @@
     "ethereum"
   ],
   "scripts": {
-    "build": "hardhat compile",
+    "build": "hardhat compile && npm run typechain",
+    "clean": "rm -fr build/",
+    "typechain": "typechain --target=ethers-v5 'build/abi/*.json' --outDir build/types",
     "console": "hardhat console",
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license UNLICENSED",
@@ -66,7 +68,6 @@
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-preprocessor": "^0.1.1",
     "hardhat-spdx-license-identifier": "^2.0.3",
-    "hardhat-typechain": "^0.3.4",
     "hardhat-watcher": "^2.1.1",
     "husky": ">=4",
     "lint-staged": ">=10",
