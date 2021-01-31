@@ -18,6 +18,7 @@
   "homepage": "https://github.com/koroswap/koroswap#readme",
   "keywords": [
     "uniswap",
+    "sushiswap",
     "koroswap",
     "ethereum"
   ],
@@ -47,7 +48,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.1.0",
     "@tenderly/hardhat-tenderly": "^1.0.6",
-    "@uniswap/v2-core": "git://github.com/uniswap/uniswap-v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
+    "@uniswap/v2-core": "^1.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.0.0",
