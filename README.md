@@ -1,6 +1,8 @@
 # Koroswap
 
-https://koroswap.fi.
+Koroswap is a protocol for decentralized exchange and automated liquidity provision on Celo.
+
+https://koroswap.com.
 
 ## Deployed Contracts
 

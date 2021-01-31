@@ -1,6 +1,6 @@
 {
   "name": "@koroswap/core",
-  "version": "1.4.1",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "🎛 Core contracts for the Koroswap protocol",
   "files": [
@@ -28,9 +28,9 @@
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license UNLICENSED",
     "mainnet:export": "hardhat --network mainnet export",
-    "ropsten:deploy": "hardhat --network ropsten deploy",
-    "ropsten:verify": "hardhat --network ropsten etherscan-verify --solc-input --license UNLICENSED",
-    "ropsten:export": "hardhat --network ropsten export",
+    "alfajores:deploy": "hardhat --network alfajores deploy",
+    "alfajores:verify": "hardhat --network alfajores etherscan-verify --solc-input --license UNLICENSED",
+    "alfajores:export": "hardhat --network alfajores export",
     "kovan:deploy": "hardhat --network kovan deploy",
     "kovan:export": "hardhat --network kovan export",
     "kovan:verify": "hardhat --network kovan etherscan-verify --solc-input --license UNLICENSED",
@@ -42,25 +42,62 @@
     "prepublishOnly": "yarn run build && node scripts/prepublish.js"
   },
   "devDependencies": {
+    "@celo-tools/celo-ethers-wrapper": "^0.0.5",
+    "@celo/contractkit": "^1.0.1",
     "@nomiclabs/hardhat-ethers": "^2.0.1",
-    "@nomiclabs/hardhat-etherscan": "^2.1.0",
+    "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.1.0",
     "@tenderly/hardhat-tenderly": "^1.0.6",
+    "@typechain/ethers-v5": "^5.0.0",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.22",
     "@uniswap/v2-core": "^1.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
-    "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.0.0",
-    "hardhat": "^2.0.6",
+    "ethereum-waffle": "^3.2.2",
+    "ethers": "^5.0.26",
+    "hardhat": "^2.0.8",
     "hardhat-abi-exporter": "^2.0.8",
-    "hardhat-deploy": "^0.7.0-beta.43",
+    "hardhat-deploy": "^0.7.0-beta.44",
     "hardhat-deploy-ethers": "^0.3.0-beta.7",
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-preprocessor": "^0.1.1",
     "hardhat-spdx-license-identifier": "^2.0.3",
-    "hardhat-watcher": "^2.0.0",
-    "solidity-coverage": "^0.7.13"
+    "hardhat-typechain": "^0.3.4",
+    "hardhat-watcher": "^2.1.1",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "^2.2.1",
+    "solidity-coverage": "^0.7.14",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^9.1.1",
+    "typechain": "^4.0.1",
+    "typescript": "^4.1.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css,md,sol}": "prettier --write"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.sol",
+        "options": {
+          "bracketSpacing": false,
+          "printWidth": 145,
+          "tabWidth": 4,
+          "useTabs": false,
+          "singleQuote": false,
+          "explicitTypes": "always"
+        }
+      }
+    ]
   }
 }

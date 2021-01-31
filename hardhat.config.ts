@@ -1,38 +1,40 @@
-// hardhat.config.js
-require("dotenv/config")
-require("@nomiclabs/hardhat-etherscan")
-require("@nomiclabs/hardhat-solhint")
-// require("@nomiclabs/hardhat-solpp")
-require("@tenderly/hardhat-tenderly")
-require("@nomiclabs/hardhat-waffle")
-require("hardhat-abi-exporter")
-require("hardhat-deploy")
-require("hardhat-deploy-ethers")
-require("hardhat-gas-reporter")
-require("hardhat-spdx-license-identifier")
-require("hardhat-watcher")
-require("solidity-coverage")
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-solhint";
+import "@nomiclabs/hardhat-waffle";
+import "@tenderly/hardhat-tenderly";
+import "dotenv/config";
+import "hardhat-abi-exporter";
+import "hardhat-deploy";
+import "hardhat-gas-reporter";
+import { removeConsoleLog } from "hardhat-preprocessor";
+import "hardhat-spdx-license-identifier";
+import "hardhat-typechain";
+import "hardhat-watcher";
+import { HardhatUserConfig, task } from "hardhat/config";
+import "solidity-coverage";
+import { fornoURLs } from "./lib/celoProvider";
 
-const { task } = require("hardhat/config")
+// import "./src/hardhatCelo";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (args, hre) => {
-  const accounts = await hre.ethers.getSigners()
+  const accounts = await hre.ethers.getSigners();
 
   for (const account of accounts) {
-    console.log(account.address)
+    console.log(account.address);
   }
-})
-
-const { removeConsoleLog } = require("hardhat-preprocessor")
+});
 
 const accounts = {
-  mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
   accountsBalance: "990000000000000000000",
-}
+};
 
-module.exports = {
+export default {
   abiExporter: {
     path: "./build/abi",
     //clear: true,
@@ -58,16 +60,16 @@ module.exports = {
     },
   },
   networks: {
+    alfajores: {
+      url: fornoURLs.alfajores,
+      accounts,
+      network_id: 44787, // latest Alfajores network id
+      live: true,
+      saveDeployments: true,
+    },
     hardhat: {
       chainId: 31337,
       accounts,
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 3,
-      live: true,
-      saveDeployments: true,
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -77,8 +79,14 @@ module.exports = {
       saveDeployments: true,
     },
   },
+  paths: {
+    deploy: "scripts/deploy",
+  },
   preprocess: {
-    eachLine: removeConsoleLog((bre) => bre.network.name !== "hardhat" && bre.network.name !== "localhost"),
+    eachLine: removeConsoleLog(
+      (bre) =>
+        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
+    ),
   },
   solidity: {
     version: "0.6.12",
@@ -97,6 +105,10 @@ module.exports = {
     project: process.env.TENDERLY_PROJECT,
     username: process.env.TENDERLY_USERNAME,
   },
+  typechain: {
+    outDir: "build/types",
+    target: "ethers-v5",
+  },
   watcher: {
     compile: {
       tasks: ["compile"],
@@ -104,4 +116,4 @@ module.exports = {
       verbose: true,
     },
   },
-}
+} as HardhatUserConfig;
