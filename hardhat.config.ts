@@ -81,6 +81,10 @@ export default {
   },
   paths: {
     deploy: "scripts/deploy",
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./build/cache",
+    artifacts: "./build/artifacts",
   },
   preprocess: {
     eachLine: removeConsoleLog(
