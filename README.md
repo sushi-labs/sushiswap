@@ -1,6 +1,6 @@
-# SushiSwap
+# Koroswap
 
-https://sushiswap.fi.
+https://koroswap.fi.
 
 ## Deployed Contracts
 

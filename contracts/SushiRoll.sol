@@ -9,7 +9,7 @@ import "./uniswapv2/interfaces/IUniswapV2Router01.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 import "./uniswapv2/libraries/UniswapV2Library.sol";
 
-// SushiRoll helps your migrate your existing Uniswap LP tokens to SushiSwap LP ones
+// SushiRoll helps your migrate your existing Uniswap LP tokens to Koroswap LP ones
 contract SushiRoll {
     using SafeERC20 for IERC20;
 
@@ -47,7 +47,7 @@ contract SushiRoll {
         uint256 amountBMin,
         uint256 deadline
     ) public {
-        require(deadline >= block.timestamp, 'SushiSwap: EXPIRED');
+        require(deadline >= block.timestamp, 'Koroswap: EXPIRED');
 
         // Remove liquidity from the old router with permit
         (uint256 amountA, uint256 amountB) = removeLiquidity(

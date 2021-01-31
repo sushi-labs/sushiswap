@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // SushiBar is the coolest bar in town. You come in with some Sushi, and leave with more! The longer you stay, the more Sushi you get.
 //
-// This contract handles swapping to and from xSushi, SushiSwap's staking token.
+// This contract handles swapping to and from xSushi, Koroswap's staking token.
 contract SushiBar is ERC20("SushiBar", "xSUSHI"){
     using SafeMath for uint256;
     IERC20 public sushi;

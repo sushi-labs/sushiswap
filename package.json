@@ -1,24 +1,24 @@
 {
-  "name": "@sushiswap/core",
+  "name": "@koroswap/core",
   "version": "1.4.1",
   "license": "MIT",
-  "description": "🎛 Core contracts for the SushiSwap protocol",
+  "description": "🎛 Core contracts for the Koroswap protocol",
   "files": [
     "contracts",
     "build"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sushiswap/sushiswap.git"
+    "url": "git+https://github.com/koroswap/koroswap.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/sushiswap/sushiswap/issues"
+    "url": "https://github.com/koroswap/koroswap/issues"
   },
-  "homepage": "https://github.com/sushiswap/sushiswap#readme",
+  "homepage": "https://github.com/koroswap/koroswap#readme",
   "keywords": [
     "uniswap",
-    "sushiswap",
+    "koroswap",
     "ethereum"
   ],
   "scripts": {
