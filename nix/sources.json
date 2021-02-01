@@ -1,4 +1,16 @@
 {
+    "celo-blockchain": {
+        "branch": "master",
+        "description": "Official repository for the golang Celo Blockchain",
+        "homepage": "https://celo.org",
+        "owner": "celo-org",
+        "repo": "celo-blockchain",
+        "rev": "60106832a04599b937a8a0290aaf37563eea2a6e",
+        "sha256": "16630p3a7k8h069hr6qlcx5vbzggl0f7jhppf4znyp4dq4f5c1nz",
+        "type": "tarball",
+        "url": "https://github.com/celo-org/celo-blockchain/archive/60106832a04599b937a8a0290aaf37563eea2a6e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
