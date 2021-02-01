@@ -13,6 +13,7 @@ import "hardhat-watcher";
 import { HardhatUserConfig, task } from "hardhat/config";
 import "solidity-coverage";
 import { fornoURLs } from "./lib/celoProvider";
+import "./lib/hardhat-ethers-celo";
 
 // import "./src/hardhatCelo";
 

@@ -11,12 +11,6 @@ import { lazyObject } from "hardhat/plugins";
 import { HardhatNetworkHDAccountsConfig } from "hardhat/types";
 import { getProvider, ICeloNetwork } from "../celoProvider";
 
-class CeloWalletWithAddress extends CeloWallet {
-  public toJSON() {
-    return `<CeloWalletWithAddress ${this.address}>`;
-  }
-}
-
 const makePath = (index: number): string => `m/44'/52752'/0'/0/${index}`;
 
 extendEnvironment((hre) => {
@@ -25,25 +19,29 @@ extendEnvironment((hre) => {
     const currentNetwork = networks[hre.network.name];
     const provider = getProvider(hre.network.name as ICeloNetwork);
 
-    console.log(currentNetwork);
     return {
       ...ethers,
       provider,
 
-      getSigners: async () =>
-        Array(10)
+      getSigners: async () => {
+        const accountsCfg = currentNetwork?.accounts as HardhatNetworkHDAccountsConfig;
+        return Array(accountsCfg.count)
           .fill(null)
           .map((_, i) => {
             const privateKey = HDNode.fromMnemonic(
-              (currentNetwork?.accounts as HardhatNetworkHDAccountsConfig)
-                .mnemonic,
-              makePath(i)
-            );
-            return (new CeloWalletWithAddress(
-              privateKey,
+              accountsCfg.mnemonic
+            ).derivePath(makePath(i));
+            const wallet = (new CeloWallet(
+              {
+                privateKey: privateKey.privateKey,
+                address: privateKey.address,
+              },
               provider
             ) as unknown) as SignerWithAddress;
-          }),
+            wallet.toJSON = () => `<CeloWallet ${wallet.address}>`;
+            return wallet;
+          });
+      },
       // We cast to any here as we hit a limitation of Function#bind and
       // overloads. See: https://github.com/microsoft/TypeScript/issues/28582
       getContractFactory: getContractFactory.bind(null, hre) as any,

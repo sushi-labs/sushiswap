@@ -25,7 +25,7 @@
   "scripts": {
     "build": "hardhat compile && npm run typechain",
     "clean": "rm -fr build/",
-    "typechain": "typechain --target=ethers-v5 'build/abi/*.json' --outDir build/types",
+    "typechain": "typechain --target ethers-v5 --outDir build/types 'build/artifacts/!(build-info)/**/!(*.dbg).json' && rm build/types/index.ts",
     "console": "hardhat console",
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license UNLICENSED",
@@ -73,7 +73,6 @@
     "lint-staged": ">=10",
     "prettier": "^2.2.1",
     "solidity-coverage": "^0.7.14",
-    "ts-generator": "^0.1.1",
     "ts-node": "^9.1.1",
     "typechain": "^4.0.1",
     "typescript": "^4.1.3"
