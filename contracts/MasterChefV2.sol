@@ -22,9 +22,10 @@ interface IMasterChef {
 
     function poolInfo(uint256 pid) external view returns (IMasterChef.PoolInfo memory);
     function totalAllocPoint() external view returns (uint256);
+    function deposit(uint256 _pid, uint256 _amount) external;
 }
 
-contract MasterChefV2 is BoringOwnable {
+contract MasterChefV2 is BoringOwnable, BoringBatchable {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringERC20 for IERC20;
@@ -55,50 +56,75 @@ contract MasterChefV2 is BoringOwnable {
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 totalAllocPoint;
 
+    uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
+    uint256 private constant REWARD_TOKEN_DIVISOR = 1e18;
+
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
+    event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
+    event LogPoolAddition(IERC20 indexed lpToken, uint256 allocPoint, IERC20 indexed rewardToken, uint256 rewardTokenMultiplier);
 
-    constructor(IMasterChef _masterChef, IERC20 _sushi, uint256 MASTER_PID_) public {
+    /** @param _masterChef the SushiSwap MasterChef contract
+     *  @param _sushi the SUSHI Token
+     *  @param _MASTER_PID the pool ID of the dummy token on the base contract
+     */
+    constructor(IMasterChef _masterChef, IERC20 _sushi, uint256 _MASTER_PID) public {
         masterChef = _masterChef;
         sushi = _sushi;
-        MASTER_PID = MASTER_PID_;
-    }
- 
-    function init() public {
-        // Takes DUMMY token
-        // Deposits dummy token in MasterChef
-        // Sets lastrewarddate
+        MASTER_PID = _MASTER_PID;
     }
 
-    function poolLength() external view returns (uint256) {
+    function init(IERC20 dummyToken) external {
+        uint256 balance = dummyToken.balanceOf(msg.sender);
+        require(balance != 0, "Balance must exceed 0");
+        dummyToken.safeTransferFrom(msg.sender, address(this), balance);
+        IMasterChef _masterChef = masterChef;
+        dummyToken.approve(address(_masterChef), balance);
+        _masterChef.deposit(MASTER_PID, balance);
+    }
+
+    function poolLength() public view returns (uint256) {
         return poolInfo.length;
     }
 
-    // Add a new lp to the pool. Can only be called by the owner.
-    // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    function add(uint256 allocPoint, IERC20 lpToken_, IERC20 rewardToken_, uint256 rewardTokenMultiplier_) public onlyOwner {
+    /** @dev Add a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once. Rewards will be messed up if you do.
+     *  @param allocPoint AP of the new pool
+     *  @param _lpToken address of the LP token
+     *  @param _rewardToken address of the reward Token
+     *  @param _rewardTokenMultiplier multiplier for the reward token
+     */
+    function add(uint256 allocPoint, IERC20 _lpToken, IERC20 _rewardToken, uint256 _rewardTokenMultiplier) public onlyOwner {
+        require(address(_rewardToken) != address(0), "");
         uint256 lastRewardBlock = block.number;
         totalAllocPoint = totalAllocPoint.add(allocPoint);
-        lpToken.push(lpToken_);
-        rewardToken.push(rewardToken_);
-        rewardTokenMultiplier.push(rewardTokenMultiplier_);
+        lpToken.push(_lpToken);
+        rewardToken.push(_rewardToken);
+        rewardTokenMultiplier.push(_rewardTokenMultiplier);
 
         poolInfo.push(PoolInfo({
             allocPoint: allocPoint.to64(),
             lastRewardBlock: lastRewardBlock.to64(),
             accSushiPerShare: 0
         }));
+        emit LogPoolAddition(_lpToken, allocPoint, _rewardToken, _rewardTokenMultiplier);
     }
 
-    // Update the given pool's SUSHI allocation point. Can only be called by the owner.
+
+    /** @notice Update the given pool's SUSHI allocation point. Can only be called by the owner.
+     *  @param _pid ID of the pool to be changed
+     *  @param _allocPoint new AP of the pool
+     */
     function set(uint256 _pid, uint256 _allocPoint) public onlyOwner {
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint.to64();
     }
 
-    // Return reward multiplier over the given _from to _to block.
-    // View function to see pending SUSHIs on frontend.
+
+    /** @notice View function to see pending SUSHIs on frontend.
+     *  @param _pid ID of the pool
+     *  @param _user address of user
+     */
     function pendingSushi(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
@@ -112,21 +138,29 @@ contract MasterChefV2 is BoringOwnable {
         return (user.amount.mul(accSushiPerShare) / 1e12).sub(user.rewardDebt);
     }
 
-    // Update reward variables for all pools. Be careful of gas spending!
-    function massUpdatePools(uint256[] calldata pids) public {
+    /** @notice Update reward variables for all pools. Be careful of gas spending!
+     *  @param pids pool IDs of all to be updated, make sure to update all active pools
+     */
+    function massUpdatePools(uint256[] calldata pids) external {
         uint256 len = pids.length;
         for (uint256 i = 0; i < len; ++i) {
             updatePool(pids[i]);
         }
     }
 
-    uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
+    /** @notice calculates the amount of SUSHI per block
+     *  @param amount pool IDs of all to be updated, make sure to update all active pools
+     */
     function sushiPerBlock() public view returns (uint256 amount) {
         amount = uint256(MASTERCHEF_SUSHI_PER_BLOCK)
             .mul(masterChef.poolInfo(MASTER_PID).allocPoint) / masterChef.totalAllocPoint();
     }
 
-    // Update reward variables of the given pool to be up-to-date.
+
+    /** @notice Update reward variables of the given pool to be up-to-date.
+     *  @param pid pool ID
+     *  @return pool returns the Pool that was updated
+     */
     function updatePool(uint256 pid) public returns (PoolInfo memory pool) {
         pool = poolInfo[pid];
         if (block.number > pool.lastRewardBlock) {
@@ -146,7 +180,9 @@ contract MasterChefV2 is BoringOwnable {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][to];
         if (user.amount > 0) {
-            // Add to rewardDebt
+            uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
+            require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
+            _transferSushiAndRewards(pid, to, pending);
         }
         if(amount > 0) {
             lpToken[pid].safeTransferFrom(address(msg.sender), address(this), amount);
@@ -163,15 +199,16 @@ contract MasterChefV2 is BoringOwnable {
         UserInfo memory user = userInfo[pid][msg.sender];
         require(user.amount >= amount, "withdraw: not good");
         uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
+        require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
         if (pending > 0) {
-            //safeSushiTransfer(msg.sender, pending);
+            _transferSushiAndRewards(pid, to, pending);
         }
         if (amount > 0) {
             user.amount = user.amount.sub(amount);
             lpToken[pid].safeTransfer(to, amount);
         }
         user.rewardDebt = user.amount.mul(pool.accSushiPerShare) / 1e12;
-        userInfo[pid][to] = user;
+        userInfo[pid][msg.sender] = user;
         emit Withdraw(msg.sender, pid, amount, to);
     }
 
@@ -179,11 +216,30 @@ contract MasterChefV2 is BoringOwnable {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][msg.sender];
         uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
+        require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
         if (pending > 0) {
-            //safeSushiTransfer(msg.sender, pending);
+            _transferSushiAndRewards(pid, to, pending);
         }
         user.rewardDebt = user.amount.mul(pool.accSushiPerShare) / 1e12;
-        userInfo[pid][to] = user;
+        userInfo[pid][msg.sender] = user;
+        emit Harvest(msg.sender, pid, pending);
+    }
+
+    function _transferSushiAndRewards (uint256 pid, address _to, uint256 _amount) internal {
+        IERC20 _rewardToken = rewardToken[pid];
+        uint256 _rewardTokenMultiplier = rewardTokenMultiplier[pid];
+        sushi.safeTransfer(_to, _amount); // TODO: should this be safeSushiTransfer or harvestFromMasterChef be called?
+        uint256 pendingReward = _amount.mul(_rewardTokenMultiplier) / REWARD_TOKEN_DIVISOR;
+        uint256 rewardBal = _rewardToken.balanceOf(address(this));
+        if (pendingReward > rewardBal) {
+            _rewardToken.safeTransfer(_to, rewardBal);
+        } else {
+            _rewardToken.safeTransfer(_to, _amount);
+        }
+    }
+
+    function harvestFromMasterChef () public {
+        masterChef.deposit(MASTER_PID, 0);
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.

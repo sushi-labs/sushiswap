@@ -9,7 +9,7 @@ interface IMasterChef {
     function deposit(uint256 _pid, uint256 _amount) external;
     function withdraw(uint256 _pid, uint256 _amount) external;        
 }
-
+/*
 contract MasterChefWrapper is BoringOwnable {
     using BoringMath for uint256;
     using BoringERC20 for IERC20;
@@ -199,3 +199,4 @@ contract MasterChefWrapper is BoringOwnable {
         emit EmergencyWithdraw(msg.sender, _pid, amount);
     }
 }
+*/
