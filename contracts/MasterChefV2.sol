@@ -32,7 +32,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     struct UserInfo {
         uint256 amount;
-        uint256 rewardDebt;
+        int256 rewardDebt;
     }
 
     struct PoolInfo {
@@ -64,6 +64,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
     event LogPoolAddition(IERC20 indexed lpToken, uint256 allocPoint, IERC20 indexed rewardToken, uint256 rewardTokenMultiplier);
+    event LogSetPool(uint256 indexed pid, uint256 allocPoint);
+    event LogUpdatePool(uint256 indexed pid, uint64 lastRewardBlock, uint256 lpSupply, uint256 accSushiPerShare);
+    event LogInit();
 
     /** @param _masterChef the SushiSwap MasterChef contract
      *  @param _sushi the SUSHI Token
@@ -82,6 +85,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         IMasterChef _masterChef = masterChef;
         dummyToken.approve(address(_masterChef), balance);
         _masterChef.deposit(MASTER_PID, balance);
+        emit LogInit();
     }
 
     function poolLength() public view returns (uint256) {
@@ -95,7 +99,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
      *  @param _rewardTokenMultiplier multiplier for the reward token
      */
     function add(uint256 allocPoint, IERC20 _lpToken, IERC20 _rewardToken, uint256 _rewardTokenMultiplier) public onlyOwner {
-        require(address(_rewardToken) != address(0), "");
+        require(_rewardToken != sushi, "can't be sushi");
         uint256 lastRewardBlock = block.number;
         totalAllocPoint = totalAllocPoint.add(allocPoint);
         lpToken.push(_lpToken);
@@ -118,6 +122,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function set(uint256 _pid, uint256 _allocPoint) public onlyOwner {
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint.to64();
+        emit LogSetPool(_pid, _allocPoint);
     }
 
 
@@ -126,8 +131,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
      *  @param _user address of user
      */
     function pendingSushi(uint256 _pid, address _user) external view returns (uint256) {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][_user];
+        PoolInfo memory pool = poolInfo[_pid];
+        UserInfo memory user = userInfo[_pid][_user];
         uint256 accSushiPerShare = pool.accSushiPerShare;
         uint256 lpSupply = lpToken[_pid].balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
@@ -135,7 +140,13 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             uint256 sushiReward = blocks.mul(sushiPerBlock()).mul(pool.allocPoint) / totalAllocPoint;
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e12) / lpSupply);
         }
-        return (user.amount.mul(accSushiPerShare) / 1e12).sub(user.rewardDebt);
+        uint256 _pendingSushi;
+        if(user.rewardDebt < 0) {
+            _pendingSushi = (user.amount.mul(accSushiPerShare) / 1e12).add(uint256(-user.rewardDebt));
+        } else {
+            _pendingSushi = (user.amount.mul(accSushiPerShare) / 1e12).sub(uint256(user.rewardDebt));
+        }
+        return _pendingSushi;
     }
 
     /** @notice Update reward variables for all pools. Be careful of gas spending!
@@ -172,6 +183,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             }
             pool.lastRewardBlock = block.number.to32();
             poolInfo[pid] = pool;
+            emit LogUpdatePool(pid, pool.lastRewardBlock, lpSupply, pool.accSushiPerShare);
         }
     }
 
@@ -179,16 +191,11 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function deposit(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][to];
-        if (user.amount > 0) {
-            uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
-            require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
-            _transferSushiAndRewards(pid, to, pending);
-        }
         if(amount > 0) {
             lpToken[pid].safeTransferFrom(address(msg.sender), address(this), amount);
             user.amount = user.amount.add(amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accSushiPerShare) / 1e12;
+        user.rewardDebt = user.rewardDebt + int256(amount.mul(pool.accSushiPerShare) / 1e12);
         userInfo[pid][to] = user;
         emit Deposit(msg.sender, pid, amount, to);
     }
@@ -197,17 +204,11 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function withdraw(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][msg.sender];
-        require(user.amount >= amount, "withdraw: not good");
-        uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
-        require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
-        if (pending > 0) {
-            _transferSushiAndRewards(pid, to, pending);
-        }
         if (amount > 0) {
             user.amount = user.amount.sub(amount);
             lpToken[pid].safeTransfer(to, amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accSushiPerShare) / 1e12;
+        user.rewardDebt = user.rewardDebt - int256(amount.mul(pool.accSushiPerShare) / 1e12);
         userInfo[pid][msg.sender] = user;
         emit Withdraw(msg.sender, pid, amount, to);
     }
@@ -215,31 +216,43 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function harvest(uint256 pid, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][msg.sender];
-        uint256 pending = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(user.rewardDebt);
-        require(sushi.balanceOf(address(this)) >= pending, "Please Harvest Before");
-        if (pending > 0) {
-            _transferSushiAndRewards(pid, to, pending);
+        uint256 _pendingSushi;
+        if(user.rewardDebt < 0) {
+            _pendingSushi = (user.amount.mul(pool.accSushiPerShare) / 1e12).add(uint256(-user.rewardDebt));
+        } else {
+            _pendingSushi = (user.amount.mul(pool.accSushiPerShare) / 1e12).sub(uint256(user.rewardDebt));
         }
-        user.rewardDebt = user.amount.mul(pool.accSushiPerShare) / 1e12;
+        if (_pendingSushi > 0) {
+            _transferSushiAndRewards(pid, to, _pendingSushi);
+        }
+        user.rewardDebt = int256(user.amount.mul(pool.accSushiPerShare) / 1e12);
         userInfo[pid][msg.sender] = user;
-        emit Harvest(msg.sender, pid, pending);
+        emit Harvest(msg.sender, pid, _pendingSushi);
     }
 
     function _transferSushiAndRewards (uint256 pid, address _to, uint256 _amount) internal {
         IERC20 _rewardToken = rewardToken[pid];
-        uint256 _rewardTokenMultiplier = rewardTokenMultiplier[pid];
-        sushi.safeTransfer(_to, _amount); // TODO: should this be safeSushiTransfer or harvestFromMasterChef be called?
-        uint256 pendingReward = _amount.mul(_rewardTokenMultiplier) / REWARD_TOKEN_DIVISOR;
-        uint256 rewardBal = _rewardToken.balanceOf(address(this));
-        if (pendingReward > rewardBal) {
-            _rewardToken.safeTransfer(_to, rewardBal);
-        } else {
-            _rewardToken.safeTransfer(_to, _amount);
+        sushi.safeTransfer(_to, _amount); 
+        if(address(_rewardToken) != address(0)){
+            uint256 _rewardTokenMultiplier = rewardTokenMultiplier[pid];
+            uint256 pendingReward = _amount.mul(_rewardTokenMultiplier) / REWARD_TOKEN_DIVISOR;
+            uint256 rewardBal = _rewardToken.balanceOf(address(this));
+            if (pendingReward > rewardBal) {
+                _rewardToken.safeTransfer(_to, rewardBal);
+            } else {
+                _rewardToken.safeTransfer(_to, _amount);
+            }
         }
     }
 
     function harvestFromMasterChef () public {
         masterChef.deposit(MASTER_PID, 0);
+    }
+
+    function skim (IERC20 _rewardToken) public onlyOwner {
+        require(_rewardToken != sushi, "can't be sushi");
+        uint256 rewardBal = _rewardToken.balanceOf(address(this));
+        _rewardToken.safeTransfer(owner, rewardBal);
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
@@ -252,4 +265,5 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         lpToken[pid].safeTransfer(to, amount);
         emit EmergencyWithdraw(msg.sender, pid, amount, to);
     }
+
 }
