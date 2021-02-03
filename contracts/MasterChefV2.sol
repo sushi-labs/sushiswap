@@ -66,8 +66,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
-    event LogPoolAddition(uint256 allocPoint, IERC20 indexed lpToken,  IRewarder indexed rewarder);
-    event LogSetPool(uint256 indexed pid, uint256 allocPoint, IRewarder rewarder);
+    event LogPoolAddition(uint256 indexed pid, uint256 allocPoint, IERC20 indexed lpToken,  IRewarder indexed rewarder);
+    event LogSetPool(uint256 indexed pid, uint256 allocPoint, IRewarder rewarder, bool overwrite);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardBlock, uint256 lpSupply, uint256 accSushiPerShare);
     event LogInit();
 
@@ -111,7 +111,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             lastRewardBlock: lastRewardBlock.to64(),
             accSushiPerShare: 0
         }));
-        emit LogPoolAddition( allocPoint, _lpToken, _rewarder);
+        emit LogPoolAddition( lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
 
 
@@ -123,7 +123,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint.to64(); 
         if(overwrite) { rewarder[_pid] = _rewarder; }
-        emit LogSetPool(_pid, _allocPoint, _rewarder);
+        emit LogSetPool(_pid, _allocPoint, _rewarder, overwrite);
     }
 
 
