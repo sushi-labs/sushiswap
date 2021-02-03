@@ -119,10 +119,10 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
      *  @param _pid ID of the pool to be changed
      *  @param _allocPoint new AP of the pool
      */
-    function set(uint256 _pid, uint256 _allocPoint, IRewarder _rewarder) public onlyOwner {
+    function set(uint256 _pid, uint256 _allocPoint, IRewarder _rewarder, bool overwrite) public onlyOwner {
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint.to64(); 
-        if(_rewarder != IRewarder(0)) {rewarder[_pid] = _rewarder;}
+        if(overwrite) { rewarder[_pid] = _rewarder; }
         emit LogSetPool(_pid, _allocPoint, _rewarder);
     }
 

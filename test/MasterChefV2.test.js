@@ -43,7 +43,7 @@ describe("MasterChefV2", function () {
   
 
   describe("Add", function () {
-      it("should add pool with reward token multiplier", async function () {
+      it("Should add pool with reward token multiplier", async function () {
           await expect(this.chef2.add(10, this.rlp.address, this.rewarder.address))
           .to.emit(this.chef2, "LogPoolAddition")
           .withArgs(10, this.rlp.address, this.rewarder.address)
@@ -51,7 +51,7 @@ describe("MasterChefV2", function () {
   })
 
   describe("Harvest", function () {
-    it("should give back the correct amount of SUSHI and reward", async function () {
+    it("Should give back the correct amount of SUSHI and reward", async function () {
         await this.r.transfer(this.rewarder.address, getBigNumber(100000))
         await this.chef2.add(10, this.rlp.address, this.rewarder.address)
         await this.rlp.approve(this.chef2.address, getBigNumber(10))
