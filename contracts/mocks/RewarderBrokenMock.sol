@@ -6,7 +6,7 @@ import "../interfaces/IRewarder.sol";
 
 contract RewarderBrokenMock is IRewarder {
 
-    function onSushiReward (address, uint256) override external {
+    function onSushiReward (uint256, address, uint256) override external {
         revert();
     }
   
