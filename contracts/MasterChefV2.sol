@@ -232,12 +232,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         masterChef.deposit(MASTER_PID, 0);
     }
 
-    function skim (IERC20 _rewardToken) public onlyOwner {
-        require(_rewardToken != sushi, "can't be sushi");
-        uint256 rewardBal = _rewardToken.balanceOf(address(this));
-        _rewardToken.safeTransfer(owner, rewardBal);
-    }
-
     // Withdraw without caring about rewards. EMERGENCY ONLY.
     function emergencyWithdraw(uint256 pid, address to) public {
         UserInfo memory user = userInfo[pid][msg.sender];
