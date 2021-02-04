@@ -46,7 +46,7 @@ describe("MasterChefV2", function () {
       it("Should add pool with reward token multiplier", async function () {
           await expect(this.chef2.add(10, this.rlp.address, this.rewarder.address))
           .to.emit(this.chef2, "LogPoolAddition")
-          .withArgs(10, this.rlp.address, this.rewarder.address)
+          .withArgs(0, 10, this.rlp.address, this.rewarder.address)
       })
   })
 

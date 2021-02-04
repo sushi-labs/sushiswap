@@ -27,6 +27,12 @@ contract RewarderMock is IRewarder {
             rewardToken.safeTransfer(user, pendingReward);
         }
     }
+    function pendingTokens(uint256 pid, address user, uint256 sushiAmount) override external returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
+        IERC20[] memory _rewardTokens = new IERC20[](1);
+        _rewardTokens[0] = (rewardToken);
+        uint256[] memory _rewardAmounts = new uint256[](1);
+        _rewardAmounts[0] = sushiAmount.mul(rewardMultiplier) / REWARD_TOKEN_DIVISOR;
+        return (_rewardTokens, _rewardAmounts);
+    }
   
-    
 }
