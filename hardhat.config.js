@@ -15,20 +15,44 @@ require("solidity-coverage")
 
 const { task } = require("hardhat/config")
 
+const { normalizeHardhatNetworkAccountsConfig } = require("hardhat/internal/core/providers/util")
+
+const { BN, bufferToHex, privateToAddress, toBuffer } = require("ethereumjs-util")
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (args, hre) => {
-  const accounts = await hre.ethers.getSigners()
-  for (const account of accounts) {
-    console.log(account.address)
+task("accounts", "Prints the list of accounts", async (_, { config }) => {
+  const networkConfig = config.networks["ropsten"]
+
+  const accounts = normalizeHardhatNetworkAccountsConfig(networkConfig.accounts)
+
+  console.log("Accounts")
+  console.log("========")
+
+  for (const [index, account] of accounts.entries()) {
+    const address = bufferToHex(privateToAddress(toBuffer(account.privateKey)))
+    const privateKey = bufferToHex(toBuffer(account.privateKey))
+    const balance = new BN(account.balance).div(new BN(10).pow(new BN(18))).toString(10)
+    console.log(`Account #${index}: ${address} (${balance} ETH)
+Private Key: ${privateKey}
+`)
   }
 })
+
+// // This is a sample Hardhat task. To learn how to create your own go to
+// // https://hardhat.org/guides/create-task.html
+// task("accounts", "Prints the list of accounts", async (args, hre) => {
+//   const accounts = await hre.ethers.getSigners()
+//   for (const account of accounts) {
+//     console.log(account.address)
+//   }
+// })
 
 const { removeConsoleLog } = require("hardhat-preprocessor")
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
-  accountsBalance: "990000000000000000000",
+  // accountsBalance: "990000000000000000000",
 }
 
 module.exports = {
@@ -110,14 +134,14 @@ module.exports = {
       saveDeployments: true,
       tags: ["staging"],
     },
-    kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 42,
-      live: true,
-      saveDeployments: true,
-      tags: ["staging"],
-    },
+    // kovan: {
+    //   url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    //   chainId: 42,
+    //   live: true,
+    //   saveDeployments: true,
+    //   tags: ["staging"],
+    // },
   },
   preprocess: {
     eachLine: removeConsoleLog((bre) => bre.network.name !== "hardhat" && bre.network.name !== "localhost"),
