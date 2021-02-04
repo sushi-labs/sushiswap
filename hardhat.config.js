@@ -60,7 +60,7 @@ module.exports = {
     path: "./build/abi",
     // The clear option is set to false by default because it represents
     // a destructive action, but should be set to true in most cases.
-    //clear: true,
+    clear: true,
     flat: true,
     // only: [],
     // except: []
