@@ -32,6 +32,6 @@ jobs:
           
       - name: Test and Coverage
         run: |
-          npx hardhat test --verbose
+          yarn test
 
 
