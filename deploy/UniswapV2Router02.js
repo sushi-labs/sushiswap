@@ -20,6 +20,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     from: deployer,
     args: [factoryAddress, wethAddress],
     log: true,
+    deterministicDeployment: true,
   })
 }
 

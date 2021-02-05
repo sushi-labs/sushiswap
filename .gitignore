@@ -1,13 +1,11 @@
 artifacts/
-build/
 cache/
 coverage/
 deployments/
+exports/
 node_modules/
+types/
 package-lock.json
-.coverage_artifacts/
-.coverage_contracts/
-coverage/
 coverage.json
 .env
 .DS_Store

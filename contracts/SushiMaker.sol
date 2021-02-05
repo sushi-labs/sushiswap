@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+
 // P1 - P3: OK
 pragma solidity 0.6.12;
 import "./libraries/SafeMath.sol";

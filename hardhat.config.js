@@ -5,11 +5,11 @@ require("@nomiclabs/hardhat-solhint")
 // require("@nomiclabs/hardhat-solpp")
 require("@tenderly/hardhat-tenderly")
 require("@nomiclabs/hardhat-waffle")
-require("hardhat-abi-exporter")
 require("hardhat-deploy")
 require("hardhat-deploy-ethers")
 require("hardhat-gas-reporter")
 require("hardhat-spdx-license-identifier")
+require("hardhat-typechain");
 require("hardhat-watcher")
 require("solidity-coverage")
 
@@ -56,31 +56,18 @@ const accounts = {
 }
 
 module.exports = {
-  abiExporter: {
-    path: "./build/abi",
-    // The clear option is set to false by default because it represents
-    // a destructive action, but should be set to true in most cases.
-    clear: true,
-    flat: true,
-    // only: [],
-    // except: []
-  },
   defaultNetwork: "hardhat",
   etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS ? true : false,
-    currency: "USD",
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+    currency: "USD",
+    enabled: process.env.REPORT_GAS === "true",
     excludeContracts: ["contracts/mocks/", "contracts/libraries/"],
   },
-  hardhat: {
-    forking: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-    },
+  mocha: {
+    timeout: 20000
   },
   namedAccounts: {
     deployer: {
@@ -119,9 +106,18 @@ module.exports = {
     //   gasPrice: 120 * 1000000000,
     //   chainId: 1,
     // },
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ["local"],
+    },
     hardhat: {
-      accounts,
-      chainId: 31337,
+      // Seems to be a bug with this, even when false it complains about being unauthenticated.
+      // Reported to HardHat team and fix is incoming
+      // forking: {
+      //   enabled: process.env.FORKING === "true",
+      //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      // },
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],
@@ -134,14 +130,39 @@ module.exports = {
       saveDeployments: true,
       tags: ["staging"],
     },
-    // kovan: {
-    //   url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    //   accounts,
-    //   chainId: 42,
-    //   live: true,
-    //   saveDeployments: true,
-    //   tags: ["staging"],
-    // },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 4,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 5,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+    kovan: {
+      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 42,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+  },
+  paths: {
+    artifacts: "artifacts",
+    cache: "cache",
+    deploy: "deploy",
+    deployments: "deployments",
+    imports: "imports",
+    sources: "contracts",
+    tests: "test",
   },
   preprocess: {
     eachLine: removeConsoleLog((bre) => bre.network.name !== "hardhat" && bre.network.name !== "localhost"),
@@ -166,6 +187,10 @@ module.exports = {
   tenderly: {
     project: process.env.TENDERLY_PROJECT,
     username: process.env.TENDERLY_USERNAME,
+  },
+  typechain: {
+    outDir: "types",
+    target: "ethers-v5",
   },
   watcher: {
     compile: {

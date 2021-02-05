@@ -7,6 +7,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     from: deployer,
     args: [alice],
     log: true,
+    deterministicDeployment: true,
   })
 }
 

@@ -11,6 +11,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     from: deployer,
     args: [sushi.address],
     log: true,
+    deterministicDeployment: true,
   })
 }
 

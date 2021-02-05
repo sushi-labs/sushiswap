@@ -16,14 +16,13 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   const bar = await deployments.get("SushiBar")
   const sushi = await deployments.get("SushiToken")
 
-  console.log("HAS WETH IN MAP?", WETH_MAP.has(chainId), chainId)
-
   const wethAddress = WETH_MAP.has(chainId) ? WETH_MAP.get(chainId) : (await deployments.get("WETH9Mock")).address
 
   await deploy("SushiMaker", {
     from: deployer,
     args: [factory.address, bar.address, sushi.address, wethAddress],
     log: true,
+    deterministicDeployment: true,
   })
 }
 

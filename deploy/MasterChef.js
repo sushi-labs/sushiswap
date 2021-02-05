@@ -11,12 +11,13 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     from: deployer,
     args: [sushi.address, dev, "1000", "0", "1000"],
     log: true,
+    deterministicDeployment: true,
   })
 
   if (newlyDeployed) {
     const sushi = await ethers.getContract("SushiToken")
-
-    // console.log("Owner", await sushi.owner(), "Deployer", deployer)
+    
+    console.log("Owner", await sushi.owner(), "Deployer", deployer)
 
     // Transfer Sushi Ownership to Chef
     await sushi.transferOwnership(address)
