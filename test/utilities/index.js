@@ -4,6 +4,7 @@ const {
 } = require("ethers")
 
 const BASE_TEN = 10
+const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
 
 function encodeParameters(types, values) {
   const abi = new ethers.utils.AbiCoder()
@@ -57,4 +58,5 @@ module.exports = {
   createSLP,
   getBigNumber,
   time: require("./time"),
+  ADDRESS_ZERO,
 }

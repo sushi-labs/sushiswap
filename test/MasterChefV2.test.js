@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
-const { time, prepare, deploy, getBigNumber } = require("./utilities")
+const { time, prepare, deploy, getBigNumber, ADDRESS_ZERO} = require("./utilities")
 const { advanceBlockTo, advanceBlock } = require("./utilities/time")
 
 describe("MasterChefV2", function () {
@@ -120,6 +120,17 @@ describe("MasterChefV2", function () {
               (await this.rlp.balanceOf(this.chef2.address)),
               (await this.chef2.poolInfo(0)).accSushiPerShare)
     })
+    it("Should take else path", async function () {
+      await this.chef2.add(10, this.rlp.address, this.rewarder.address)
+      await advanceBlockTo(1)
+      await this.chef2.batch(
+          [
+              this.chef2.interface.encodeFunctionData("updatePool", [0]),
+              this.chef2.interface.encodeFunctionData("updatePool", [0]),
+          ],
+          true
+      )
+    })
   })
 
   describe("Deposit", function () {
@@ -159,6 +170,20 @@ describe("MasterChefV2", function () {
     it("Harvest with empty user balance", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
       await this.chef2.harvest(0, this.alice.address)
+    })
+
+    it("Harvest for SUSHI-only pool", async function () {
+      await this.chef2.add(10, this.rlp.address, ADDRESS_ZERO)
+      await this.rlp.approve(this.chef2.address, getBigNumber(10))
+      expect(await this.chef2.lpToken(0)).to.be.equal(this.rlp.address)
+      let log = await this.chef2.deposit(0, getBigNumber(1), this.alice.address)
+      await advanceBlock()
+      await this.chef2.harvestFromMasterChef()
+      let log2 = await this.chef2.withdraw(0, getBigNumber(1), this.alice.address)
+      let expectedSushi = getBigNumber(100).mul(log2.blockNumber - log.blockNumber).div(2)
+      expect((await this.chef2.userInfo(0, this.alice.address)).rewardDebt).to.be.equal("-"+expectedSushi)
+      await this.chef2.harvest(0, this.alice.address)
+      expect(await this.sushi.balanceOf(this.alice.address)).to.be.equal(expectedSushi)
     })
   })
   
