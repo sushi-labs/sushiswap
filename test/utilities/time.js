@@ -8,6 +8,19 @@ async function advanceBlockTo(blockNumber) {
   }
 }
 
+async function advanceTimeAndBlock(time) {
+  await advanceTime(time)
+  await advanceBlock()
+}
+
+async function advanceTime(time) {
+  await ethers.provider.send("evm_increaseTime", [time])
+}
+
+async function advanceBlock() {
+  await ethers.provider.send("evm_mine")
+}
+
 const duration = {
   seconds: function (val) {
     return new BigNumber(val)
@@ -32,4 +45,7 @@ const duration = {
 module.exports = {
   advanceBlockTo,
   duration,
+  advanceBlock,
+  advanceTime,
+  advanceTimeAndBlock,
 }
