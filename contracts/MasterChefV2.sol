@@ -187,12 +187,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function deposit(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][to];
-        if(amount > 0) {
-            lpToken[pid].safeTransferFrom(address(msg.sender), address(this), amount);
-            user.amount = user.amount.add(amount);
-        }
+
+        // Effects
+        user.amount = user.amount.add(amount);
         user.rewardDebt = user.rewardDebt.add(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
         userInfo[pid][to] = user;
+
+        // Interactions
+        lpToken[pid].safeTransferFrom(address(msg.sender), address(this), amount);
+
         emit Deposit(msg.sender, pid, amount, to);
     }
 
@@ -200,12 +203,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     function withdraw(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo memory user = userInfo[pid][msg.sender];
-        if (amount > 0) {
-            user.amount = user.amount.sub(amount);
-            lpToken[pid].safeTransfer(to, amount);
-        }
+
+        // Effects
         user.rewardDebt = user.rewardDebt.sub(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
+        user.amount = user.amount.sub(amount);
         userInfo[pid][msg.sender] = user;
+
+        // Interactions
+        lpToken[pid].safeTransfer(to, amount);
+        
         emit Withdraw(msg.sender, pid, amount, to);
     }
 
@@ -216,16 +222,20 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (_pendingSushi == 0) { return; }
             
         IRewarder _rewarder = rewarder[pid];
-        sushi.safeTransfer(to, _pendingSushi); 
         
+        // Effects
         user.rewardDebt = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
         userInfo[pid][msg.sender] = user;
-        emit Harvest(msg.sender, pid, _pendingSushi);
+
+        // Interactions
+        sushi.safeTransfer(to, _pendingSushi); 
 
         if(address(_rewarder) != address(0)){
             // solhint-disable-next-line
             address(_rewarder).call(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
         }
+
+        emit Harvest(msg.sender, pid, _pendingSushi);
     }
 
     function harvestFromMasterChef () public {
