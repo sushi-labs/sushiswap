@@ -22,22 +22,22 @@ async function advanceBlock() {
 }
 
 const duration = {
-  seconds: function (val) {
+  seconds: function(val) {
     return new BigNumber(val)
   },
-  minutes: function (val) {
+  minutes: function(val) {
     return new BigNumber(val).mul(this.seconds("60"))
   },
-  hours: function (val) {
+  hours: function(val) {
     return new BigNumber(val).mul(this.minutes("60"))
   },
-  days: function (val) {
+  days: function(val) {
     return new BigNumber(val).mul(this.hours("24"))
   },
-  weeks: function (val) {
+  weeks: function(val) {
     return new BigNumber(val).mul(this.days("7"))
   },
-  years: function (val) {
+  years: function(val) {
     return new BigNumber(val).mul(this.days("365"))
   },
 }
