@@ -1,4 +1,4 @@
-# SushiSwap
+# Swipe Swap
 
 https://sushiswap.fi.
 
