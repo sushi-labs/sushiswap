@@ -38,7 +38,7 @@ async function createSLP(thisObject, name, tokenA, tokenB, amount) {
 
   const _pair = (await createPairTx.wait()).events[0].args.pair
 
-  thisObject[name] = await thisObject.UniswapV2Pair.attach(_pair)
+  thisObject[name] = await thisObject.SwipeswapV2Pair.attach(_pair)
 
   await tokenA.transfer(thisObject[name].address, amount)
   await tokenB.transfer(thisObject[name].address, amount)

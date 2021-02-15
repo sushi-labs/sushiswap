@@ -9,23 +9,23 @@ describe("Migrator", function () {
     this.dev = this.signers[2]
     this.minter = this.signers[3]
 
-    this.UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory")
-    this.UniswapV2Pair = await ethers.getContractFactory("UniswapV2Pair")
+    this.SwipeswapV2Factory = await ethers.getContractFactory("SwipeswapV2Factory")
+    this.SwipeswapV2Pair = await ethers.getContractFactory("SwipeswapV2Pair")
     this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
+    this.SwipeToken = await ethers.getContractFactory("SwipeToken")
     this.MasterChef = await ethers.getContractFactory("MasterChef")
     this.Migrator = await ethers.getContractFactory("Migrator")
   })
 
   beforeEach(async function () {
-    this.factory1 = await this.UniswapV2Factory.deploy(this.alice.address)
+    this.factory1 = await this.SwipeswapV2Factory.deploy(this.alice.address)
     await this.factory1.deployed()
 
-    this.factory2 = await this.UniswapV2Factory.deploy(this.alice.address)
+    this.factory2 = await this.SwipeswapV2Factory.deploy(this.alice.address)
     await this.factory2.deployed()
 
-    this.sushi = await this.SushiToken.deploy()
-    await this.sushi.deployed()
+    this.swipe = await this.SwipeToken.deploy()
+    await this.swipe.deployed()
 
     this.weth = await this.ERC20Mock.deploy("WETH", "WETH", "100000000")
     await this.weth.deployed()
@@ -35,19 +35,19 @@ describe("Migrator", function () {
 
     const pair1 = await this.factory1.createPair(this.weth.address, this.token.address)
 
-    this.lp1 = await this.UniswapV2Pair.attach((await pair1.wait()).events[0].args.pair)
+    this.lp1 = await this.SwipeswapV2Pair.attach((await pair1.wait()).events[0].args.pair)
 
     const pair2 = await this.factory2.createPair(this.weth.address, this.token.address)
 
-    this.lp2 = await this.UniswapV2Pair.attach((await pair2.wait()).events[0].args.pair)
+    this.lp2 = await this.SwipeswapV2Pair.attach((await pair2.wait()).events[0].args.pair)
 
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "100000")
+    this.chef = await this.MasterChef.deploy(this.swipe.address, this.dev.address, "1000", "0", "100000")
     await this.chef.deployed()
 
     this.migrator = await this.Migrator.deploy(this.chef.address, this.factory1.address, this.factory2.address, "0")
     await this.migrator.deployed()
 
-    await this.sushi.transferOwnership(this.chef.address)
+    await this.swipe.transferOwnership(this.chef.address)
 
     await this.chef.add("100", this.lp1.address, true)
   })
@@ -90,7 +90,7 @@ describe("Migrator", function () {
 
     const pair = await this.factory2.createPair(this.weth.address, this.tokenx.address)
 
-    this.lpx = await this.UniswapV2Pair.attach((await pair.wait()).events[0].args.pair)
+    this.lpx = await this.SwipeswapV2Pair.attach((await pair.wait()).events[0].args.pair)
 
     await this.weth.connect(this.minter).transfer(this.lpx.address, "10000000", { from: this.minter.address })
     await this.tokenx.connect(this.minter).transfer(this.lpx.address, "500000", { from: this.minter.address })

@@ -1,24 +1,25 @@
 {
-  "name": "@sushiswap/core",
+  "name": "@swipeswap/core",
   "version": "1.4.1",
   "license": "MIT",
-  "description": "🎛 Core contracts for the SushiSwap protocol",
+  "description": "🎛 Core contracts for the SwipeSwap protocol",
   "files": [
     "contracts",
     "build"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sushiswap/sushiswap.git"
+    "url": "git+https://github.com/swipeswap/swipeswap.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/sushiswap/sushiswap/issues"
+    "url": "https://github.com/swipeswap/swipeswap/issues"
   },
-  "homepage": "https://github.com/sushiswap/sushiswap#readme",
+  "homepage": "https://github.com/swipeswap/swipeswap#readme",
   "keywords": [
     "uniswap",
     "sushiswap",
+    "swipeswap",
     "ethereum"
   ],
   "scripts": {

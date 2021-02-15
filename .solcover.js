@@ -2,7 +2,7 @@ module.exports = {
   norpc: true,
   testCommand: "npm test",
   compileCommand: "npm run compile",
-  skipFiles: ["mocks/", "interfaces/", "uniswapv2/"],
+  skipFiles: ["mocks/", "interfaces/", "swipeswapv2/"],
   providerOptions: {
     default_balance_ether: "10000000000000000000000000",
   },
