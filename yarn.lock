@@ -4388,12 +4388,12 @@ hardhat-abi-exporter@^2.0.8:
   resolved "https://registry.yarnpkg.com/hardhat-abi-exporter/-/hardhat-abi-exporter-2.0.8.tgz#03ec54a5f51256c4bb447ce016c3a3041660071a"
   integrity sha512-8Q2SH//RSzuzjHlnfaQkpfbZXVHkWKM1dWIyVwGVzREBdYfBW5SC/3safvU7KGy5gmLH/P3fgq4uuqNmGvDUrw==
 
-hardhat-deploy-ethers@^0.3.0:
+hardhat-deploy-ethers@^0.3.0-beta.7:
   version "0.3.0-beta.7"
   resolved "https://registry.yarnpkg.com/hardhat-deploy-ethers/-/hardhat-deploy-ethers-0.3.0-beta.7.tgz#860d86b84ed3c4fdef64283ccf1e8d5623454d02"
   integrity sha512-JKMNte6vudu9LSNqgmBtNxc1gfxp3NUcPKVAf/FANHfl9pa/mBGg6hpQO7tD8CLkAbe6f4K5BjyYIPWX3p7MKw==
 
-hardhat-deploy@^0.7.0:
+hardhat-deploy@^0.7.0-beta.44:
   version "0.7.0-beta.44"
   resolved "https://registry.yarnpkg.com/hardhat-deploy/-/hardhat-deploy-0.7.0-beta.44.tgz#e03eb60765d4ecc3711dc7aadaba60c64b1d381c"
   integrity sha512-eIM8RrLDgD12wINTdduYshxqNP/uz9qMCgao37jl6iiZ2LwHkNTL/X+RtTVfq/vS7bvLW7qpjymHJiak5rd1Pg==
@@ -6595,7 +6595,7 @@ prepend-http@^2.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
 
-prettier-plugin-solidity@^1.0.0:
+prettier-plugin-solidity@^1.0.0-beta.5:
   version "1.0.0-beta.5"
   resolved "https://registry.yarnpkg.com/prettier-plugin-solidity/-/prettier-plugin-solidity-1.0.0-beta.5.tgz#04347bc3fb8deb5d097c9c823cbc01451a40da7a"
   integrity sha512-Fd0a+rF/FD7dnN/ZyaSHjH9q/onw6Qd4lzU+nIPj9FoqBkt+WDUYLpiwuVZ/I0i5hZRTVAxiwErp7qmgdyqYpA==

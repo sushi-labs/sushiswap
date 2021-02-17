@@ -13,8 +13,6 @@ require("hardhat-typechain")
 require("hardhat-watcher")
 require("solidity-coverage")
 
-require("./tasks")
-
 const { removeConsoleLog } = require("hardhat-preprocessor")
 
 const accounts = {
