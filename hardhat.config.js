@@ -2,51 +2,18 @@
 require("dotenv/config")
 require("@nomiclabs/hardhat-etherscan")
 require("@nomiclabs/hardhat-solhint")
-// require("@nomiclabs/hardhat-solpp")
 require("@tenderly/hardhat-tenderly")
 require("@nomiclabs/hardhat-waffle")
+require("hardhat-abi-exporter")
 require("hardhat-deploy")
 require("hardhat-deploy-ethers")
 require("hardhat-gas-reporter")
 require("hardhat-spdx-license-identifier")
-require("hardhat-typechain");
+require("hardhat-typechain")
 require("hardhat-watcher")
 require("solidity-coverage")
 
-const { task } = require("hardhat/config")
-
-const { normalizeHardhatNetworkAccountsConfig } = require("hardhat/internal/core/providers/util")
-
-const { BN, bufferToHex, privateToAddress, toBuffer } = require("ethereumjs-util")
-
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (_, { config }) => {
-  const networkConfig = config.networks["ropsten"]
-
-  const accounts = normalizeHardhatNetworkAccountsConfig(networkConfig.accounts)
-
-  console.log("Accounts")
-  console.log("========")
-
-  for (const [index, account] of accounts.entries()) {
-    const address = bufferToHex(privateToAddress(toBuffer(account.privateKey)))
-    const privateKey = bufferToHex(toBuffer(account.privateKey))
-    const balance = new BN(account.balance).div(new BN(10).pow(new BN(18))).toString(10)
-    console.log(`Account #${index}: ${address} (${balance} ETH)
-Private Key: ${privateKey}
-`)
-  }
-})
-
-// // This is a sample Hardhat task. To learn how to create your own go to
-// // https://hardhat.org/guides/create-task.html
-// task("accounts", "Prints the list of accounts", async (args, hre) => {
-//   const accounts = await hre.ethers.getSigners()
-//   for (const account of accounts) {
-//     console.log(account.address)
-//   }
-// })
+require("./tasks")
 
 const { removeConsoleLog } = require("hardhat-preprocessor")
 
@@ -56,6 +23,13 @@ const accounts = {
 }
 
 module.exports = {
+  abiExporter: {
+    path: "./abi",
+    clear: true,
+    flat: true,
+    // only: [],
+    // except: []
+  },
   defaultNetwork: "hardhat",
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
@@ -67,7 +41,7 @@ module.exports = {
     excludeContracts: ["contracts/mocks/", "contracts/libraries/"],
   },
   mocha: {
-    timeout: 20000
+    timeout: 20000,
   },
   namedAccounts: {
     deployer: {
@@ -86,26 +60,20 @@ module.exports = {
       default: 3,
       // hardhat: 0,
     },
-    fee: {
-      // Default to 1
-      default: 1,
-      // Multi sig feeTo address
-      // 1: "",
-    },
     dev: {
-      // Default to 1
-      default: 1,
-      // dev address
+      // Default to 4
+      default: 4,
+      // dev address mainnet
       // 1: "",
     },
   },
   networks: {
-    // mainnet: {
-    //   url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    //   accounts,
-    //   gasPrice: 120 * 1000000000,
-    //   chainId: 1,
-    // },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      gasPrice: 120 * 1000000000,
+      chainId: 1,
+    },
     localhost: {
       live: false,
       saveDeployments: true,
@@ -154,6 +122,22 @@ module.exports = {
       saveDeployments: true,
       tags: ["staging"],
     },
+    moonbase: {
+      url: "https://rpc.testnet.moonbeam.network",
+      accounts,
+      chainId: 1287,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+    arbitrum: {
+      url: "https://kovan3.arbitrum.io/rpc",
+      accounts,
+      chainId: 79377087078960,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
   },
   paths: {
     artifacts: "artifacts",
@@ -174,7 +158,7 @@ module.exports = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 5000,
+            runs: 200,
           },
         },
       },
