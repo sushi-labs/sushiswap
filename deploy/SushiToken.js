@@ -7,9 +7,11 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    gasLimit: 5198000,
   })
 
   console.log(`SUSHI token deployed at ${address}`)
 }
 
 module.exports.tags = ["SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory"]

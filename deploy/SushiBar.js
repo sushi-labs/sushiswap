@@ -11,9 +11,10 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     from: deployer,
     args: [sushi.address],
     log: true,
-    deterministicDeployment: true,
+    deterministicDeployment: false,
+    gasLimit: 5198000,
   })
 }
 
 module.exports.tags = ["SushiBar"]
-module.exports.dependencies = ["SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory", "SushiToken"]
