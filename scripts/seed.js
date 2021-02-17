@@ -1,2 +1,0 @@
-// Get compound token list
-// 
