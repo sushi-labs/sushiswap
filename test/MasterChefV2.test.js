@@ -56,12 +56,12 @@ describe("MasterChefV2", function () {
   describe("Set", function() {
     it("Should emit event LogSetPool", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
-      await expect(this.chef2.set(0, 10, this.rewarder.address, false))
+      await expect(this.chef2.set(0, 10, this.dummy.address, false))
             .to.emit(this.chef2, "LogSetPool")
             .withArgs(0, 10, this.rewarder.address, false)
-      await expect(this.chef2.set(0, 10, this.rewarder.address, true))
+      await expect(this.chef2.set(0, 10, this.dummy.address, true))
             .to.emit(this.chef2, "LogSetPool")
-            .withArgs(0, 10, this.rewarder.address, true)
+            .withArgs(0, 10, this.dummy.address, true)
       })
 
     it("Should revert if invalid pool", async function () {
