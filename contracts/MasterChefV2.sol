@@ -236,8 +236,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         address _rewarder = address(rewarder[pid]);
         if (_rewarder != address(0)){
-            // Note: Do it this way because we we don't want to fail harvest if only the delegate call fails.
-            // Additionally, we forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
             // Forwarding: (63/64 of gasleft by evm convention) minus 5000
             // solhint-disable-next-line
             _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
