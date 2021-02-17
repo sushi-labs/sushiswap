@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat")
-const { expect } = require("chai")
+const { expect, assert } = require("chai")
 const { time, prepare, deploy, getBigNumber, ADDRESS_ZERO} = require("./utilities")
 const { advanceBlockTo, advanceBlock } = require("./utilities/time")
 
@@ -9,17 +9,16 @@ describe("MasterChefV2", function () {
     await deploy(this, [
       ["brokenRewarder", this.RewarderBrokenMock]
     ])
-   
   })
 
   beforeEach(async function () {
     await deploy(this, [
-      ["sushi", this.SushiToken], 
+      ["sushi", this.SushiToken],
     ])
 
-    await deploy(this, 
-      [["lp", this.ERC20Mock, ["LP Token", "LPT", getBigNumber(10)]], 
-      ["dummy", this.ERC20Mock, ["Dummy", "DummyT", getBigNumber(10)]], 
+    await deploy(this,
+      [["lp", this.ERC20Mock, ["LP Token", "LPT", getBigNumber(10)]],
+      ["dummy", this.ERC20Mock, ["Dummy", "DummyT", getBigNumber(10)]],
       ['chef', this.MasterChef, [this.sushi.address, this.bob.address, getBigNumber(100), "0", "0"]]
     ])
 
@@ -27,22 +26,21 @@ describe("MasterChefV2", function () {
     await this.chef.add(100, this.lp.address, true)
     await this.chef.add(100, this.dummy.address, true)
     await this.lp.approve(this.chef.address, getBigNumber(10))
-    await this.chef.deposit(0, getBigNumber(10)) 
+    await this.chef.deposit(0, getBigNumber(10))
 
     await deploy(this, [
         ['chef2', this.MasterChefV2, [this.chef.address, this.sushi.address, 1]],
-        ["rlp", this.ERC20Mock, ["LP", "rLPT", getBigNumber(10)]], 
-        ["r", this.ERC20Mock, ["Reward", "RewardT", getBigNumber(100000)]], 
+        ["rlp", this.ERC20Mock, ["LP", "rLPT", getBigNumber(10)]],
+        ["r", this.ERC20Mock, ["Reward", "RewardT", getBigNumber(100000)]],
     ])
     await deploy(this, [["rewarder", this.RewarderMock, [getBigNumber(1), this.r.address]]])
     await this.dummy.approve(this.chef2.address, getBigNumber(10))
     await this.chef2.init(this.dummy.address)
-    await this.rlp.transfer(this.bob.address, getBigNumber(1)) 
+    await this.rlp.transfer(this.bob.address, getBigNumber(1))
   })
-  
+
   describe("Init", function () {
-    it("Balance of dummyToken should be 0 after init() and"
-        +"repeated execition should fail", async function () {
+    it("Balance of dummyToken should be 0 after init(), repeated execution should fail", async function () {
       await expect(this.chef2.init(this.dummy.address))
             .to.be.revertedWith("Balance must exceed 0")
     })
@@ -58,13 +56,24 @@ describe("MasterChefV2", function () {
   describe("Set", function() {
     it("Should emit event LogSetPool", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
-      await expect(this.chef2.set(0, 10, this.rewarder.address, false))
+      await expect(this.chef2.set(0, 10, this.dummy.address, false))
             .to.emit(this.chef2, "LogSetPool")
             .withArgs(0, 10, this.rewarder.address, false)
-      await expect(this.chef2.set(0, 10, this.rewarder.address, true))
+      await expect(this.chef2.set(0, 10, this.dummy.address, true))
             .to.emit(this.chef2, "LogSetPool")
-            .withArgs(0, 10, this.rewarder.address, true)
+            .withArgs(0, 10, this.dummy.address, true)
       })
+
+    it("Should revert if invalid pool", async function () {
+      let err;
+      try {
+        await this.chef2.set(0, 10, this.rewarder.address, false)
+      } catch (e) {
+        err = e;
+      }
+
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
+    })
   })
 
   describe("PendingSushi", function() {
@@ -99,7 +108,18 @@ describe("MasterChefV2", function () {
       //expect('updatePool').to.be.calledOnContract(); //not suported by heardhat
       //expect('updatePool').to.be.calledOnContractWith(0); //not suported by heardhat
 
-  })
+    })
+
+    it("Updating invalid pools should fail", async function () {
+      let err;
+      try {
+        await this.chef2.massUpdatePools([0, 10000, 100000])
+      } catch (e) {
+        err = e;
+      }
+
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
+    })
 })
 
   describe("Add", function () {
@@ -120,6 +140,7 @@ describe("MasterChefV2", function () {
               (await this.rlp.balanceOf(this.chef2.address)),
               (await this.chef2.poolInfo(0)).accSushiPerShare)
     })
+
     it("Should take else path", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
       await advanceBlockTo(1)
@@ -140,6 +161,17 @@ describe("MasterChefV2", function () {
       await expect(this.chef2.deposit(0, getBigNumber(0), this.alice.address))
             .to.emit(this.chef2, "Deposit")
             .withArgs(this.alice.address, 0, 0, this.alice.address)
+    })
+
+    it("Depositing into non-existent pool should fail", async function () {
+      let err;
+      try {
+        await this.chef2.deposit(1001, getBigNumber(0), this.alice.address)
+      } catch (e) {
+        err = e;
+      }
+
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
     })
   })
 
@@ -186,7 +218,7 @@ describe("MasterChefV2", function () {
       expect(await this.sushi.balanceOf(this.alice.address)).to.be.equal(expectedSushi)
     })
   })
-  
+
   describe("EmergencyWithdraw", function() {
     it("Should emit event EmergencyWithdraw", async function () {
       await this.r.transfer(this.rewarder.address, getBigNumber(100000))
