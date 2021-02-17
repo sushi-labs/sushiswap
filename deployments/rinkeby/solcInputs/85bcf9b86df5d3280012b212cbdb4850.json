@@ -1,0 +1,40 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Faucet.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.6.12;\n\ninterface IERC20 {\n    function balanceOf(address account) external view returns (uint256);\n    function transfer(address recipient, uint256 amount) external returns (bool);\n    function allowance(address owner, address spender) external view returns (uint256);\n    function approve(address spender, uint256 amount) external returns (bool);\n    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\n}\n\nlibrary BoringERC20 {\n    bytes4 private constant SIG_SYMBOL = 0x95d89b41; // symbol()\n    bytes4 private constant SIG_NAME = 0x06fdde03; // name()\n    bytes4 private constant SIG_DECIMALS = 0x313ce567; // decimals()\n    bytes4 private constant SIG_TRANSFER = 0xa9059cbb; // transfer(address,uint256)\n    bytes4 private constant SIG_TRANSFER_FROM = 0x23b872dd; // transferFrom(address,address,uint256)\n\n    /// @notice Provides a safe ERC20.symbol version which returns '???' as fallback string.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (string) Token symbol.\n    function safeSymbol(IERC20 token) internal view returns (string memory) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_SYMBOL));\n        return success && data.length > 0 ? abi.decode(data, (string)) : \"???\";\n    }\n\n    /// @notice Provides a safe ERC20.name version which returns '???' as fallback string.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (string) Token name.\n    function safeName(IERC20 token) internal view returns (string memory) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_NAME));\n        return success && data.length > 0 ? abi.decode(data, (string)) : \"???\";\n    }\n\n    /// @notice Provides a safe ERC20.decimals version which returns '18' as fallback value.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (uint8) Token decimals.\n    function safeDecimals(IERC20 token) internal view returns (uint8) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_DECIMALS));\n        return success && data.length == 32 ? abi.decode(data, (uint8)) : 18;\n    }\n\n    /// @notice Provides a safe ERC20.transfer version for different ERC-20 implementations.\n    /// Reverts on a failed transfer.\n    /// @param token The address of the ERC-20 token.\n    /// @param to Transfer tokens to.\n    /// @param amount The token amount.\n    function safeTransfer(\n        IERC20 token,\n        address to,\n        uint256 amount\n    ) internal {\n        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER, to, amount));\n        require(success && (data.length == 0 || abi.decode(data, (bool))), \"BoringERC20: Transfer failed\");\n    }\n\n    /// @notice Provides a safe ERC20.transferFrom version for different ERC-20 implementations.\n    /// Reverts on a failed transfer.\n    /// @param token The address of the ERC-20 token.\n    /// @param from Transfer tokens from.\n    /// @param to Transfer tokens to.\n    /// @param amount The token amount.\n    function safeTransferFrom(\n        IERC20 token,\n        address from,\n        address to,\n        uint256 amount\n    ) internal {\n        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER_FROM, from, to, amount));\n        require(success && (data.length == 0 || abi.decode(data, (bool))), \"BoringERC20: TransferFrom failed\");\n    }\n}\n\ninterface IPolyFaucet {\n    function getTokens (uint256 _amount) external returns (bool);\n}\n\ninterface IBokky {\n    function drip() external;\n}\n\ninterface IFauceteer {\n    function drip(address token) external;\n}\n\ncontract Faucet\n{\n    using BoringERC20 for IERC20;\n    \n    bool poly = false;\n    \n    address[] bokky;\n    \n    address[] compound;\n      \n    IFauceteer fauceteer;\n\n    IERC20 sushi;\n      \n    constructor(\n      bool _poly, \n      address[] memory _bokky, \n      address[] memory _compound, \n      IFauceteer _fauceteer,\n      IERC20 _sushi\n      ) public {\n        poly = _poly;\n        bokky = _bokky;\n        compound = _compound;\n        fauceteer = _fauceteer;\n        sushi = _sushi;\n    }\n    \n    function _dump(address token) private {\n        uint256 balance = IERC20(token).balanceOf(address(this));\n        IERC20(token).safeTransfer(msg.sender, balance);\n    }\n    \n    function drip() public {\n        if (poly) {\n            // POLY\n            IPolyFaucet(0x96A62428509002a7aE5F6AD29E4750d852A3f3D7).getTokens(5000 * 1e18);\n            _dump(0x96A62428509002a7aE5F6AD29E4750d852A3f3D7);    \n        }\n\n\n        for (uint i = 0; i < bokky.length; i++) {\n            address b = bokky[i];\n            IBokky(b).drip();\n            _dump(b);\n        }\n\n        for (uint j = 0; j < compound.length; j++) {\n          address c = compound[j];\n          fauceteer.drip(c);\n          _dump(c);\n        }\n        \n        sushi.transfer(msg.sender, sushi.balanceOf(address(this)) / 10000); // 0.01%\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    },
+    "libraries": {
+      "": {
+        "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Faucet.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.6.12;\n\ninterface IERC20 {\n    function balanceOf(address account) external view returns (uint256);\n    function transfer(address recipient, uint256 amount) external returns (bool);\n    function allowance(address owner, address spender) external view returns (uint256);\n    function approve(address spender, uint256 amount) external returns (bool);\n    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\n}\n\nlibrary BoringERC20 {\n    bytes4 private constant SIG_SYMBOL = 0x95d89b41; // symbol()\n    bytes4 private constant SIG_NAME = 0x06fdde03; // name()\n    bytes4 private constant SIG_DECIMALS = 0x313ce567; // decimals()\n    bytes4 private constant SIG_TRANSFER = 0xa9059cbb; // transfer(address,uint256)\n    bytes4 private constant SIG_TRANSFER_FROM = 0x23b872dd; // transferFrom(address,address,uint256)\n\n    /// @notice Provides a safe ERC20.symbol version which returns '???' as fallback string.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (string) Token symbol.\n    function safeSymbol(IERC20 token) internal view returns (string memory) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_SYMBOL));\n        return success && data.length > 0 ? abi.decode(data, (string)) : \"???\";\n    }\n\n    /// @notice Provides a safe ERC20.name version which returns '???' as fallback string.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (string) Token name.\n    function safeName(IERC20 token) internal view returns (string memory) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_NAME));\n        return success && data.length > 0 ? abi.decode(data, (string)) : \"???\";\n    }\n\n    /// @notice Provides a safe ERC20.decimals version which returns '18' as fallback value.\n    /// @param token The address of the ERC-20 token contract.\n    /// @return (uint8) Token decimals.\n    function safeDecimals(IERC20 token) internal view returns (uint8) {\n        (bool success, bytes memory data) = address(token).staticcall(abi.encodeWithSelector(SIG_DECIMALS));\n        return success && data.length == 32 ? abi.decode(data, (uint8)) : 18;\n    }\n\n    /// @notice Provides a safe ERC20.transfer version for different ERC-20 implementations.\n    /// Reverts on a failed transfer.\n    /// @param token The address of the ERC-20 token.\n    /// @param to Transfer tokens to.\n    /// @param amount The token amount.\n    function safeTransfer(\n        IERC20 token,\n        address to,\n        uint256 amount\n    ) internal {\n        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER, to, amount));\n        require(success && (data.length == 0 || abi.decode(data, (bool))), \"BoringERC20: Transfer failed\");\n    }\n\n    /// @notice Provides a safe ERC20.transferFrom version for different ERC-20 implementations.\n    /// Reverts on a failed transfer.\n    /// @param token The address of the ERC-20 token.\n    /// @param from Transfer tokens from.\n    /// @param to Transfer tokens to.\n    /// @param amount The token amount.\n    function safeTransferFrom(\n        IERC20 token,\n        address from,\n        address to,\n        uint256 amount\n    ) internal {\n        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER_FROM, from, to, amount));\n        require(success && (data.length == 0 || abi.decode(data, (bool))), \"BoringERC20: TransferFrom failed\");\n    }\n}\n\ninterface IPolyFaucet {\n    function getTokens (uint256 _amount) external returns (bool);\n}\n\ninterface IBokky {\n    function drip() external;\n}\n\ninterface IFauceteer {\n    function drip(address token) external;\n}\n\ncontract Faucet\n{\n    using BoringERC20 for IERC20;\n    \n    bool poly = false;\n    \n    address[] bokky;\n    \n    address[] compound;\n      \n    IERC20 sushi;\n      \n    constructor(bool _poly, address[] memory _bokky, address[] memory _compound, address _sushi) public {\n        poly = _poly;\n        bokky = _bokky;\n        compound = _compound;\n        sushi = IERC20(_sushi);\n    }\n    \n    function _dump(address token) private {\n        uint256 balance = IERC20(token).balanceOf(address(this));\n        IERC20(token).safeTransfer(msg.sender, balance);\n    }\n    \n    function _fauceteer(address token) private {\n        IFauceteer(0x8E78C7D0fA09F26858372898f0ECca808DaC7828).drip(token); \n        _dump(token);\n    }\n    \n    function drip() public {\n        if (poly) {\n            // POLY ROPSTEN ONLY\n            IPolyFaucet(0x96A62428509002a7aE5F6AD29E4750d852A3f3D7).getTokens(5000 * 1e18);\n            _dump(0x96A62428509002a7aE5F6AD29E4750d852A3f3D7);    \n        }\n\n\n        for (uint i = 0; i < bokky.length; i++) {\n            address _address = bokky[i];\n            IBokky(_address).drip();\n            _dump(_address);\n        }\n        \n        // // XEENUS\n        // IBokky(0x7E0480Ca9fD50EB7A3855Cf53c347A1b4d6A2FF5).drip();\n        // _dump(0x7E0480Ca9fD50EB7A3855Cf53c347A1b4d6A2FF5);\n        \n        // // YEENUS\n        // IBokky(0xF6fF95D53E08c9660dC7820fD5A775484f77183A).drip();\n        // _dump(0xF6fF95D53E08c9660dC7820fD5A775484f77183A);\n        \n        // // ZEENUS\n        // IBokky(0xC84f8B669Ccb91C86AB2b38060362b9956f2De52).drip();\n        // _dump(0xC84f8B669Ccb91C86AB2b38060362b9956f2De52);\n        \n        // // WEENUS\n        // IBokky(0x101848D5C5bBca18E6b4431eEdF6B95E9ADF82FA).drip();\n        // _dump(0x101848D5C5bBca18E6b4431eEdF6B95E9ADF82FA);\n\n        for (uint j = 0; j < compound.length; j++) {\n            _fauceteer(compound[j]);\n        }\n        \n        \n        // // BAT\n        // _fauceteer(0x443Fd8D5766169416aE42B8E050fE9422f628419);\n        \n        // // COMP\n        //  _fauceteer(0x1Fe16De955718CFAb7A44605458AB023838C2793);\n        \n        // // DAI\n        // _fauceteer(0xc2118d4d90b274016cB7a54c03EF52E6c537D957);\n        \n        // // REP\n        // _fauceteer(0x6FD34013CDD2905d8d27b0aDaD5b97B2345cF2B8);\n        \n        //  // SAI\n        // _fauceteer(0x26fF7457496600C63b3E8902C9f871E60eDec4e4);\n\n        // // UNI\n        // _fauceteer(0x71d82Eb6A5051CfF99582F4CDf2aE9cD402A4882);\n\n        // // USDC\n        // _fauceteer(0x0D9C8723B343A8368BebE0B5E89273fF8D712e3C);\n\n        // // USDT\n        // _fauceteer(0x516de3a7A567d81737e3a46ec4FF9cFD1fcb0136);\n        \n        // // WBTC\n        // _fauceteer(0xBde8bB00A7eF67007A96945B3a3621177B615C44);   \n        \n        // // ZRX\n        // _fauceteer(0xE4C6182EA459E63B8F1be7c428381994CcC2D49c);\n        \n        // IERC20 sushi = IERC20(0x63058b298f1d083beDcC2Dd77Aa4667909aC357B);\n        \n        sushi.transfer(msg.sender, sushi.balanceOf(address(this)) / 10000); // 0.01%\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    },
+    "libraries": {
+      "": {
+        "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+      }
+    }
+  }
+}
