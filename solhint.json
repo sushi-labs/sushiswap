@@ -1,0 +1,15 @@
+{
+  "extends": "solhint:recommended",
+  "plugins": ["prettier"],
+  "rules": {
+    "avoid-suicide": "error",
+    "avoid-sha3": "warn",
+    "code-complexity": ["warn", 7],
+    "compiler-version": "off",
+    "max-states-count": ["error", 18],
+    "max-line-length": ["warn", 145],
+    "not-rely-on-time": "warn",
+    "quotes": ["warn", "double"],
+    "prettier/prettier": "off"
+  }
+}

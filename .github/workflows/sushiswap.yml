@@ -1,0 +1,37 @@
+#  workflow pipeline
+name: sushiswap
+
+on: ["push", "pull_request"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["14.x", "12.x"]
+        os: ["ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+         ref: ${{github.event.pull_request.head.ref}}
+         repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Nodejs  ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+
+      - name: Install and Compile
+        run: |
+          yarn install
+          yarn build
+          
+      - name: Test and Coverage
+        run: |
+          yarn test
+
+

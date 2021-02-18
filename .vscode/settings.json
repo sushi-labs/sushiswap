@@ -1,5 +1,5 @@
 {
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll": true
@@ -15,5 +15,5 @@
   "solidity.validationDelay": 1500,
   "solidity.packageDefaultDependenciesDirectory": "node_modules",
   "solidity-va.deco.statevars": true,
-  "solidity-va.preview.markdown": false,
+  "solidity-va.preview.markdown": false
 }

@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity =0.6.12;
-
 
 import './libraries/UniswapV2Library.sol';
 import './libraries/SafeMath.sol';
