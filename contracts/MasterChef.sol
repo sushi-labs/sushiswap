@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SushiToken.sol";
 
-interface IMigratorChef {
+/* interface IMigratorChef {
     // Perform LP token migration from legacy UniswapV2 to SushiSwap.
     // Take the current LP token address and return the new LP token address.
     // Migrator should have full access to the caller's LP token.
@@ -20,7 +20,7 @@ interface IMigratorChef {
     // else something bad will happen. Traditional UniswapV2 does not
     // do that so be careful!
     function migrate(IERC20 token) external returns (IERC20);
-}
+} */
 
 // MasterChef is the master of Sushi. He can make Sushi and he is a fair guy.
 //
@@ -56,17 +56,18 @@ contract MasterChef is Ownable {
         uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
     }
     // The SUSHI TOKEN!
-    SushiToken public sushi;
+    //SushiToken public sushi;
+    IERC20 hsfToken; // Address of the hsf token contract
     // Dev address.
     address public devaddr;
     // Block number when bonus SUSHI period ends.
-    uint256 public bonusEndBlock;
+    uint256 public bonusEndBlock; // wont be used
     // SUSHI tokens created per block.
-    uint256 public sushiPerBlock;
+    uint256 public sushiPerBlock; // should be a state variable ??
     // Bonus muliplier for early sushi makers.
-    uint256 public constant BONUS_MULTIPLIER = 10;
+    uint256 public constant BONUS_MULTIPLIER = 10; // wont be used
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
-    IMigratorChef public migrator;
+    IMigratorChef public migrator; // wont be used
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
@@ -84,16 +85,19 @@ contract MasterChef is Ownable {
     );
 
     constructor(
-        SushiToken _sushi,
+        // change sushi for hsf
+        // remove bonus logic
+        // change sushiPerBlock logic
+        SushiToken _sushi, // IERC20 _hsfToken
         address _devaddr,
         uint256 _sushiPerBlock,
         uint256 _startBlock,
-        uint256 _bonusEndBlock
+        uint256 _bonusEndBlock // wont be used
     ) public {
-        sushi = _sushi;
+        sushi = _sushi; // hsfToken = _hsfToken
         devaddr = _devaddr;
-        sushiPerBlock = _sushiPerBlock;
-        bonusEndBlock = _bonusEndBlock;
+        sushiPerBlock = _sushiPerBlock; // should be hsf per block, or should be removed and hsf per block should be calculated in a seperate function
+        bonusEndBlock = _bonusEndBlock; // wont be used
         startBlock = _startBlock;
     }
 
@@ -140,12 +144,12 @@ contract MasterChef is Ownable {
     }
 
     // Set the migrator contract. Can only be called by the owner.
-    function setMigrator(IMigratorChef _migrator) public onlyOwner {
+/*     function setMigrator(IMigratorChef _migrator) public onlyOwner {
         migrator = _migrator;
-    }
+    } */
 
     // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
-    function migrate(uint256 _pid) public {
+ /*    function migrate(uint256 _pid) public {
         require(address(migrator) != address(0), "migrate: no migrator");
         PoolInfo storage pool = poolInfo[_pid];
         IERC20 lpToken = pool.lpToken;
@@ -154,10 +158,10 @@ contract MasterChef is Ownable {
         IERC20 newLpToken = migrator.migrate(lpToken);
         require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
         pool.lpToken = newLpToken;
-    }
+    } */
 
     // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to)
+  /*   function getMultiplier(uint256 _from, uint256 _to)
         public
         view
         returns (uint256)
@@ -172,10 +176,11 @@ contract MasterChef is Ownable {
                     _to.sub(bonusEndBlock)
                 );
         }
-    }
+    } */
 
     // View function to see pending SUSHIs on frontend.
-    function pendingSushi(uint256 _pid, address _user)
+    function pendingSushi(uint256 _pid, address _user) 
+    // remove multiplier logic
         external
         view
         returns (uint256)
@@ -208,6 +213,9 @@ contract MasterChef is Ownable {
 
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(uint256 _pid) public {
+        // remove multiplier logic
+        // change sushiPerBlock logic
+        // remove sushi minting
         PoolInfo storage pool = poolInfo[_pid];
         if (block.number <= pool.lastRewardBlock) {
             return;
@@ -217,8 +225,8 @@ contract MasterChef is Ownable {
             pool.lastRewardBlock = block.number;
             return;
         }
-        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 sushiReward =
+        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number); // should be removed, as we arent doing bonus or multiplier
+        /* uint256 sushiReward =
             multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(
                 totalAllocPoint
             );
@@ -227,7 +235,9 @@ contract MasterChef is Ownable {
         pool.accSushiPerShare = pool.accSushiPerShare.add(
             sushiReward.mul(1e12).div(lpSupply)
         );
-        pool.lastRewardBlock = block.number;
+        pool.lastRewardBlock = block.number; */
+        // The above block should be replaced with a seperate function that a. calculates the number of hsf tokens distributed per block.
+        // following the function, the block reward should be distributed to each pool based on pool allocpoint.
     }
 
     // Deposit LP tokens to MasterChef for SUSHI allocation.
