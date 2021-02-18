@@ -12,6 +12,8 @@ https://dev.sushiswap.fi/sushiswap/contracts
 
 [Deployment](docs/DEPLOYMENT.md)
 
+[History](docs/HISTORY.md)
+
 ## License
 
 MIT
