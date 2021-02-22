@@ -34,4 +34,21 @@ jobs:
         run: |
           yarn test
 
+  mythx:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install MythX CLI
+        run: python -m pip install mythx-cli
+      - name: Print version info
+        run: |
+          python3 -V
+          mythx version
+
+      - name: Submit contracts
+        run: mythx analyze
