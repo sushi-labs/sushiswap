@@ -1,0 +1,23 @@
+# Run me by typing `mythx analyze` in the directory of the yml file! :)
+
+ci: true
+confirm: true
+analyze:
+    mode: quick
+    async: true
+    create-group: true
+    solc: 0.6.12
+    remappings:
+        - "@openzeppelin=node_modules/@openzeppelin"
+    targets:
+        - contracts/SushiMaker.sol:SushiMaker
+        - contracts/uniswapv2/UniswapV2Pair.sol:UniswapV2Pair
+        - contracts/uniswapv2/UniswapV2Factory.sol:UniswapV2Factory
+        - contracts/uniswapv2/UniswapV2ERC20.sol:UniswapV2ERC20
+        - contracts/uniswapv2/UniswapV2Router02.sol:UniswapV2Router02
+        - contracts/SushiRoll.sol:SushiRoll
+        - contracts/SushiToken.sol:SushiToken
+        - contracts/SushiBar.sol:SushiBar
+        - contracts/MasterChef.sol:MasterChef
+        - contracts/governance/Timelock.sol:Timelock
+        - contracts/Migrator.sol:Migrator
