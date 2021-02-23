@@ -29,15 +29,23 @@ jobs:
         run: |
           yarn install
           yarn build
-          
+
       - name: Test and Coverage
         run: |
           yarn test
 
   mythx:
     runs-on: ubuntu-latest
+    env:
+      MYTHX_API_KEY: ${{ secrets.MYTHX }}
 
     steps:
+      - name: Nodejs 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          check-latest: true
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
@@ -49,6 +57,14 @@ jobs:
         run: |
           python3 -V
           mythx version
+
+      - uses: actions/checkout@v2
+        with:
+         ref: ${{github.event.pull_request.head.ref}}
+         repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Install dependencies
+        run: yarn install
 
       - name: Submit contracts
         run: mythx analyze
