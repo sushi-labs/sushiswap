@@ -29,13 +29,15 @@ jobs:
         run: |
           yarn install
           yarn build
-          
+
       - name: Test and Coverage
         run: |
           yarn test
 
   mythx:
     runs-on: ubuntu-latest
+    env:
+      MYTHX_API_KEY: ${{ secrets.MYTHX }}
 
     steps:
       - name: Set up Python 3.8
