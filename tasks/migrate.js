@@ -19,7 +19,7 @@ module.exports = async function (
   console.log("Migrate", config.networks[hre.network.name].accounts)
 
   // Dev private key
-  const privateKey = Wallet.fromMnemonic(config.networks[hre.network.name].accounts.mnemonic, "m/44'/60'/0'/0/4").privateKey
+  const privateKey = Wallet.fromMnemonic(config.networks[hre.network.name].accounts.mnemonic, "m/44'/60'/0'/0/1").privateKey
 
   const erc20Contract = await ethers.getContractFactory("UniswapV2ERC20")
 
