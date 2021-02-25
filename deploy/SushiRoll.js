@@ -14,6 +14,10 @@ module.exports = async function ({ getNamedAccounts, getChainId, deployments }) 
 
   const chainId = await getChainId()
 
+  if (!UNISWAP_ROUTER.has(chainId)) {
+    throw Error("No Uniswap Router")
+  }
+
   const uniswapRouterAddress = UNISWAP_ROUTER.get(chainId)
 
   const sushiswapRouterAddress = (await deployments.get("UniswapV2Router02")).address
@@ -22,8 +26,7 @@ module.exports = async function ({ getNamedAccounts, getChainId, deployments }) 
     from: deployer,
     args: [uniswapRouterAddress, sushiswapRouterAddress],
     log: true,
-    deterministicDeployment: false,
-    gasLimit: 5198000,
+    deterministicDeployment: false
   })
 }
 
