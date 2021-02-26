@@ -13,7 +13,7 @@ task("bytecode", "Prints bytecode").setAction(async function({ address }, { ethe
   console.log("Bytecode", await ethers.provider.getCode(address))
 })
 
-task("feeder:feed", "Feed").setAction(async function({ address }, { getNamedAccounts, ethers: { BigNumber }, getChainId }) {
+task("feeder:feed", "Feed").setAction(async function({ amount }, { getNamedAccounts, ethers: { BigNumber }, getChainId }) {
   const { deployer, dev } = await getNamedAccounts()
 
   const feeder = new ethers.Wallet(process.env.FEEDER_PRIVATE_KEY, ethers.provider)
@@ -22,11 +22,6 @@ task("feeder:feed", "Feed").setAction(async function({ address }, { getNamedAcco
     to: deployer,
     value: BigNumber.from(1).mul(BigNumber.from(10).pow(17))
   })).wait();
-
-  // await (await feeder.sendTransaction({
-  //   to: dev,
-  //   value: getBigNumber(1, 9)
-  // })).wait();
 })
 
 task("feeder:return", "Return funds to feeder").setAction(async function({ address }, { ethers: { getNamedSigners } }) {
@@ -41,8 +36,6 @@ task("feeder:return", "Return funds to feeder").setAction(async function({ addre
     to: process.env.FEEDER_PUBLIC_KEY,
     value: await dev.getBalance()
   })).wait();
-
-  console.log("collect from deployer")
 })
 
 task("erc20:approve", "ERC20 approve")
@@ -62,7 +55,7 @@ task("factory:set-fee-to", "Factory set fee to")
 .setAction(async function ({ feeTo }, { ethers: { getNamedSigner } }, runSuper) {
   const factory = await ethers.getContract("UniswapV2Factory")
   console.log(`Setting factory feeTo to ${feeTo} address`)
-  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo, { gasLimit: 5198000 })).wait() 
+  await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait() 
 });
 
 // TODO: Swap?
