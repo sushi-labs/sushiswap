@@ -53,15 +53,6 @@ module.exports = {
       default: 1,
       // dev address mainnet
       // 1: "",
-    },
-    feeTo: {
-      // Default to 2
-      default: 2,
-      // feeTo address BSC
-      // 56: "",
-    },
-    feeder: {
-      default: process.env.FEEDER_PUBLIC_KEY
     }
   },
   networks: {
@@ -149,7 +140,8 @@ module.exports = {
       accounts,
       chainId: 250,
       live: true,
-      saveDeployments: true
+      saveDeployments: true,
+      gasPrice: 22000000000,
     },
     'fantom-testnet': {
       url: "https://rpc.testnet.fantom.network",
