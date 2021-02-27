@@ -1,5 +1,6 @@
 // hardhat.config.js
 require("dotenv/config")
+
 require("@nomiclabs/hardhat-etherscan")
 require("@nomiclabs/hardhat-solhint")
 require("@tenderly/hardhat-tenderly")
@@ -12,6 +13,8 @@ require("hardhat-spdx-license-identifier")
 require("hardhat-typechain")
 require("hardhat-watcher")
 require("solidity-coverage")
+
+require("./tasks")
 
 const { removeConsoleLog } = require("hardhat-preprocessor")
 
@@ -43,27 +46,14 @@ module.exports = {
   },
   namedAccounts: {
     deployer: {
-      default: 0, // here this will by default take the first account as deployer
-      1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
-    },
-    alice: {
-      default: 1,
-      // hardhat: 0,
-    },
-    bob: {
-      default: 2,
-      // hardhat: 0,
-    },
-    carol: {
-      default: 3,
-      // hardhat: 0,
+      default: 0
     },
     dev: {
-      // Default to 4
-      default: 4,
+      // Default to 1
+      default: 1,
       // dev address mainnet
       // 1: "",
-    },
+    }
   },
   networks: {
     mainnet: {
@@ -78,12 +68,10 @@ module.exports = {
       tags: ["local"],
     },
     hardhat: {
-      // Seems to be a bug with this, even when false it complains about being unauthenticated.
-      // Reported to HardHat team and fix is incoming
-      // forking: {
-      //   enabled: process.env.FORKING === "true",
-      //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      // },
+      forking: {
+        enabled: process.env.FORKING === "true",
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      },
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],
@@ -95,6 +83,8 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 5000000000,
+      gasMultiplier: 2
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -103,6 +93,8 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 5000000000,
+      gasMultiplier: 2
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -111,6 +103,8 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 5000000000,
+      gasMultiplier: 2
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -119,6 +113,8 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 20000000000,
+      gasMultiplier: 2
     },
     moonbase: {
       url: "https://rpc.testnet.moonbeam.network",
@@ -127,6 +123,8 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gas: 5198000,
+      gasMultiplier: 2,
     },
     arbitrum: {
       url: "https://kovan3.arbitrum.io/rpc",
@@ -135,7 +133,64 @@ module.exports = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasMultiplier: 2,
     },
+    fantom: {
+      url: "https://rpcapi.fantom.network",
+      accounts,
+      chainId: 250,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 22000000000,
+    },
+    'fantom-testnet': {
+      url: "https://rpc.testnet.fantom.network",
+      accounts,
+      chainId: 4002,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    matic: {
+      url: "https://rpc-mainnet.maticvigil.com",
+      accounts,
+      chainId: 137,
+      live: true,
+      saveDeployments: true,
+    },
+    mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com/",
+      accounts,
+      chainId: 80001,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    xdai: {
+      url: "https://rpc.xdaichain.com",
+      accounts,
+      chainId: 100,
+      live: true,
+      saveDeployments: true,
+    },
+    bsc: {
+      url: "https://bsc-dataseed.binance.org",
+      accounts,
+      chainId: 56,
+      live: true,
+      saveDeployments: true,
+    },
+    'bsc-testnet': {
+      url: "https://data-seed-prebsc-2-s3.binance.org:8545",
+      accounts,
+      chainId: 97,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    }
   },
   paths: {
     artifacts: "artifacts",

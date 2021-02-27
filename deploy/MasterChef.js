@@ -3,31 +3,28 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 
   const { deployer, dev } = await getNamedAccounts()
 
-  const sushi = await deployments.get("SushiToken")
-
-  console.log("Deploying Master Chef", deployer)
+  const sushi = await ethers.getContract("SushiToken")
   
-  const { address, newlyDeployed } = await deploy("MasterChef", {
+  const { address } = await deploy("MasterChef", {
     from: deployer,
     args: [sushi.address, dev, "1000000000000000000000", "0", "1000000000000000000000"],
     log: true,
-    deterministicDeployment: false,
-    gasLimit: 5198000,
+    deterministicDeployment: false
   })
 
-  if (newlyDeployed) {
-    const sushi = await ethers.getContract("SushiToken")
-
+  if (await sushi.owner() !== address) {
     // Transfer Sushi Ownership to Chef
-    await (await sushi.transferOwnership(address, { gasLimit: 5198000 })).wait()
-
-    // Transfer ownership of MasterChef to dev
-    const masterChef = await ethers.getContract("MasterChef")
-    await (await masterChef.transferOwnership(dev, { gasLimit: 5198000 })).wait()
+    console.log("Transfer Sushi Ownership to Chef")
+    await (await sushi.transferOwnership(address)).wait()
   }
 
-  console.log("Master Chef Deployed")
+  const masterChef = await ethers.getContract("MasterChef")
+  if (await masterChef.owner() !== dev) {
+    // Transfer ownership of MasterChef to dev
+    console.log("Transfer ownership of MasterChef to dev")
+    await (await masterChef.transferOwnership(dev)).wait()
+  }
 }
 
 module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]

@@ -5,6 +5,8 @@ const { BN, bufferToHex, privateToAddress, toBuffer } = require("ethereumjs-util
 module.exports = async function (taskArguments, hre, runSuper) {
   const networkConfig = hre.config.networks["mainnet"]
 
+  console.log(networkConfig.accounts)
+
   const accounts = normalizeHardhatNetworkAccountsConfig(networkConfig.accounts)
 
   console.log("Accounts")
