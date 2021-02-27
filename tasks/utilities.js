@@ -4,10 +4,6 @@ const {
 
 const PERMIT_TYPEHASH = keccak256(toUtf8Bytes("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"))
 
-function getBigNumber(amount, decimals = 18) {
-  return BigNumber.from(amount).mul(BigNumber.from(BASE_TEN).pow(decimals))
-}
-
 function getDomainSeparator(name, chainId, tokenAddress) {
   return keccak256(
     defaultAbiCoder.encode(
@@ -45,6 +41,5 @@ async function getApprovalDigest(token, chainId, approve, nonce, deadline) {
 }
 
 module.exports = {
-  getApprovalDigest,
-  getBigNumber,
+  getApprovalDigest
 }

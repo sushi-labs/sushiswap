@@ -2,8 +2,6 @@ const { task } = require("hardhat/config")
 
 const { ethers: { constants: { MaxUint256 }}} = require("ethers")
 
-const { getBigNumber } = require("./utilities")
-
 task("accounts", "Prints the list of accounts", require("./accounts"))
 task("gas-price", "Prints gas price").setAction(async function({ address }, { ethers }) {
   console.log("Gas price", (await ethers.provider.getGasPrice()).toString())
