@@ -1,7 +1,7 @@
 import { deployContract } from "@ubeswap/solidity-create2-deployer";
 import { DeployFunction } from ".";
-import factoryContract from "../../build/artifacts/contracts/UniswapV2Factory.sol/UniswapV2Factory.json";
-import routerContract from "../../build/artifacts/contracts/UniswapV2Router02.sol/UniswapV2Router02.json";
+import factoryContract from "../../build/artifacts/contracts/uniswapv2/UniswapV2Factory.sol/UniswapV2Factory.json";
+import routerContract from "../../build/artifacts/contracts/uniswapv2/UniswapV2Router02.sol/UniswapV2Router02.json";
 
 const salt = "Tayo'y magsayawan";
 
