@@ -26,7 +26,7 @@ const accounts = {
 module.exports = {
   abiExporter: {
     path: "./abi",
-    clear: true,
+    clear: false,
     flat: true,
     // only: [],
     // except: []

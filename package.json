@@ -57,12 +57,7 @@
     "prepublishOnly": "yarn run build && node scripts/prepublish.js"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@nomiclabs/hardhat-ethers": "^2.0.0",
-=======
-    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
-    "@nomiclabs/hardhat-ethers": "^2.0.1",
->>>>>>> c92504b (MasterChefV2: progress)
     "@nomiclabs/hardhat-etherscan": "^2.1.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
