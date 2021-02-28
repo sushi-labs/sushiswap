@@ -23,6 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@boringcrypto/boring-solidity@boringcrypto/BoringSolidity#e06e943":
+  version "1.0.4"
+  resolved "https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943e7e8a168ed0395ef663a17fd71a6949a2"
+
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@ensdomains/ens/-/ens-0.4.5.tgz#e0aebc005afdc066447c6e22feb4eda89a5edbfc"
@@ -635,10 +639,10 @@
   resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.11.1.tgz#fa840af64840c930f24a9c82c08d4a092a068add"
   integrity sha512-H8BSBoKE8EubJa0ONqecA2TviT3TnHeC4NpgnAHSUiuhZoQBfPB4L2P9bs8R6AoTW10Endvh3vc+fomVMIDIYQ==
 
-"@sushiswap/sdk@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@sushiswap/sdk/-/sdk-4.0.3.tgz#a16f6cb7664a4a7e29d736aeaad24b259768395a"
-  integrity sha512-3k1r7RcC02bXg3LPfEJ/ssEiyUNuC6da/IB2dk5IkdoM7/KYZscQGtf0jA4HvKtlI2gOseSfz68abP7IeHjCjQ==
+"@sushiswap/sdk@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sushiswap/sdk/-/sdk-4.1.1.tgz#af975ff1900c7adb851776a0739976cb25c4701e"
+  integrity sha512-hOc5QLh8LkcJPV42F+5MvTuakX5/k5xjJNEEaq5AF51ph7kG6MRAtqy0fiO8510fef14iNVA1zByeyH0uDAa9w==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
@@ -7616,7 +7620,7 @@ solidity-comments-extractor@^0.0.4:
   resolved "https://registry.yarnpkg.com/solidity-comments-extractor/-/solidity-comments-extractor-0.0.4.tgz#ce420aef23641ffd0131c7d80ba85b6e1e42147e"
   integrity sha512-58glBODwXIKMaQ7rfcJOrWtFQMMOK28tJ0/LcB5Xhu7WtAxk4UX2fpgKPuaL41XjMp/y0gAa1MTLqk018wuSzA==
 
-solidity-coverage@^0.7.0:
+solidity-coverage@^0.7.13:
   version "0.7.15"
   resolved "https://registry.yarnpkg.com/solidity-coverage/-/solidity-coverage-0.7.15.tgz#c5974e92b665d5be6bee11c24bbf7f6ff7529fa2"
   integrity sha512-MVcpEUyMjf+ITew3BS7fI/NRxpYJUg9wPrSLS7y/F7BwXpYVRgAK4WsjbMzVkRdmezta1Kon0XqYHZMLgEt9XA==
