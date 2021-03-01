@@ -23,9 +23,9 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@boringcrypto/boring-solidity@boringcrypto/BoringSolidity#e06e943":
-  version "1.0.4"
-  resolved "https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943e7e8a168ed0395ef663a17fd71a6949a2"
+"@boringcrypto/boring-solidity@boringcrypto/BoringSolidity#b85f13c8f048136b3d3cb7e498ad6b76da05f98c":
+  version "1.1.0"
+  resolved "https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/b85f13c8f048136b3d3cb7e498ad6b76da05f98c"
 
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"

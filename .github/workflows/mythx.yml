@@ -1,0 +1,42 @@
+name: mythx
+on:
+  push:
+    paths:
+      - "contracts/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["14.x"]
+        os: ["ubuntu-latest"]
+    env:
+      MYTHX_API_KEY: ${{ secrets.MYTHX }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Nodejs 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          check-latest: true
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install MythX CLI
+        run: python -m pip install mythx-cli
+      - name: Print version info
+        run: |
+          python3 -V
+          mythx version
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Submit contracts
+        run: mythx analyze
