@@ -57,6 +57,7 @@
     "prepublishOnly": "yarn run build && node scripts/prepublish.js"
   },
   "devDependencies": {
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-etherscan": "^2.1.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
@@ -65,6 +66,8 @@
     "@sushiswap/sdk": "^4.1.1",
     "@tenderly/hardhat-tenderly": "^1.0.0",
     "@typechain/ethers-v5": "^5.0.0",
+    "@types/mocha": "^8.2.1",
+    "@types/node": "^14.14.31",
     "@uniswap/v2-core": "git://github.com/uniswap/uniswap-v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
     "chai": "^4.2.0",
     "cross-env": "^7.0.0",
@@ -78,13 +81,14 @@
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-preprocessor": "^0.1.0",
     "hardhat-spdx-license-identifier": "^2.0.0",
-    "hardhat-typechain": "^0.3.4",
+    "hardhat-typechain": "^0.3.5",
     "hardhat-watcher": "^2.0.0",
     "prettier": "^2.2.0",
     "prettier-plugin-solidity": "^1.0.0-beta.5",
-    "ts-generator": "^0.1.1",
-    "typechain": "^4.0.1",
     "solidity-coverage": "^0.7.13",
-    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943"
+    "ts-generator": "^0.1.1",
+    "ts-node": "^9.1.1",
+    "typechain": "^4.0.2",
+    "typescript": "^4.2.2"
   }
 }
