@@ -1,9 +1,6 @@
 // hardhat.config.ts
 
-import * as dotenv from "dotenv";
-dotenv.config();
-
-import { HardhatUserConfig } from "hardhat/types";
+import 'dotenv/config'
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-solhint";
 import "@tenderly/hardhat-tenderly";
@@ -19,7 +16,8 @@ import "solidity-coverage";
 
 import "./tasks";
 
-import {removeConsoleLog} from "hardhat-preprocessor";
+import { HardhatUserConfig } from "hardhat/types";
+import { removeConsoleLog } from "hardhat-preprocessor";
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
