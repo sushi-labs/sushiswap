@@ -23,7 +23,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each user.
     /// `amount` of LP tokens the user has provided.
-    /// `rewardDebt` the amount of SUSHI entitled to the user.
+    /// `rewardDebt` The amount of SUSHI entitled to the user.
     struct UserInfo {
         uint256 amount;
         int256 rewardDebt;
@@ -31,14 +31,14 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each pool.
     /// `allocPoint` The amount of allocation points assigned to the pool.
-    /// Also known as the amount of SUSHIs to distribute per Block
+    /// Also known as the amount of SUSHIs to distribute per Block.
     struct PoolInfo {
         uint128 accSushiPerShare;
         uint64 lastRewardBlock;
         uint64 allocPoint;
     }
 
-    /// @notice Address of MasterChef (v1).
+    /// @notice Address of MCV1.
     IMasterChef public immutable MASTER_CHEF;
     /// @notice The SUSHI ERC-20 contract.
     IERC20 public immutable SUSHI;
@@ -65,23 +65,24 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
-    event LogPoolAddition(uint256 indexed pid, uint256 allocPoint, IERC20 indexed lpToken,  IRewarder indexed rewarder);
-    event LogSetPool(uint256 indexed pid, uint256 allocPoint, IRewarder rewarder, bool overwrite);
+    event LogPoolAddition(uint256 indexed pid, uint256 allocPoint, IERC20 indexed lpToken, IRewarder indexed rewarder);
+    event LogSetPool(uint256 indexed pid, uint256 allocPoint, IRewarder indexed rewarder, bool overwrite);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardBlock, uint256 lpSupply, uint256 accSushiPerShare);
     event LogInit();
 
-    /// @param _MASTER_CHEF the SushiSwap MasterChef contract
-    /// @param _sushi the SUSHI Token
-    /// @param _MASTER_PID the pool ID of the dummy token on the base contract
+    /// @param _MASTER_CHEF The SushiSwap MCV1 contract.
+    /// @param _sushi The SUSHI Token.
+    /// @param _MASTER_PID The pool ID of the dummy token on the base contract.
     constructor(IMasterChef _MASTER_CHEF, IERC20 _sushi, uint256 _MASTER_PID) public {
         MASTER_CHEF = _MASTER_CHEF;
         SUSHI = _sushi;
         MASTER_PID = _MASTER_PID;
     }
 
-    /// @notice Deposits a dummy tokens to `MASTER_CHEF`. This is required because `MASTER_CHEF` holds the minting rights for SUSHI.
+    /// @notice Deposits a dummy token to `MASTER_CHEF`. This is required because `MASTER_CHEF` holds the minting rights for SUSHI.
     /// Any balance of transaction sender from `dummyToken` is transferred.
     /// The allocation point for the pool on MCV1 is the total allocation point for all pools that receive double incentives.
+    /// @param dummyToken The address of the ERC-20 to deposit into MCV1.
     function init(IERC20 dummyToken) external {
         uint256 balance = dummyToken.balanceOf(msg.sender);
         require(balance != 0, "Balance must exceed 0");
@@ -96,11 +97,11 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         return poolInfo.length;
     }
 
-    /// @notice Add a new lp to the pool. Can only be called by the owner.
+    /// @notice Add a new LP to the pool. Can only be called by the owner.
     /// DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    /// @param allocPoint AP of the new pool
-    /// @param _lpToken address of the LP token
-    /// @param _rewarder address of the reward Contract
+    /// @param allocPoint AP of the new pool.
+    /// @param _lpToken Address of the LP token.
+    /// @param _rewarder Address of the rewarder delegate.
     function add(uint256 allocPoint, IERC20 _lpToken, IRewarder _rewarder) public onlyOwner {
         uint256 lastRewardBlock = block.number;
         totalAllocPoint = totalAllocPoint.add(allocPoint);
@@ -115,10 +116,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         emit LogPoolAddition(lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
 
-
     /// @notice Update the given pool's SUSHI allocation point and `IRewarder` contract. Can only be called by the owner.
     /// @param _pid The index of the pool. See `poolInfo`.
-    /// @param _allocPoint new AP of the pool
+    /// @param _allocPoint New AP of the pool
     /// @param _rewarder Address of the rewarder delegate.
     /// @param overwrite True if _rewarder should be `set`. Otherwise `_rewarder` is ignored.
     function set(uint256 _pid, uint256 _allocPoint, IRewarder _rewarder, bool overwrite) public onlyOwner {
@@ -128,10 +128,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         emit LogSetPool(_pid, _allocPoint, overwrite ? _rewarder : rewarder[_pid], overwrite);
     }
 
-
     /// @notice View function to see pending SUSHIs on frontend.
     /// @param _pid The index of the pool. See `poolInfo`.
-    /// @param _user address of user
+    /// @param _user Address of user.
     function pendingSushi(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo memory pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
@@ -147,7 +146,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     }
 
     /// @notice Update reward variables for all pools. Be careful of gas spending!
-    /// @param pids pool IDs of all to be updated, make sure to update all active pools
+    /// @param pids Pool IDs of all to be updated. Make sure to update all active pools.
     function massUpdatePools(uint256[] calldata pids) external {
         uint256 len = pids.length;
         for (uint256 i = 0; i < len; ++i) {
@@ -155,16 +154,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         }
     }
 
-    /// @notice calculates the `amount` of SUSHI per block
+    /// @notice Calculates the `amount` of SUSHI per block.
     function sushiPerBlock() public view returns (uint256 amount) {
         amount = uint256(MASTERCHEF_SUSHI_PER_BLOCK)
             .mul(MASTER_CHEF.poolInfo(MASTER_PID).allocPoint) / MASTER_CHEF.totalAllocPoint();
     }
 
-
     /// @notice Update reward variables of the given pool.
     /// @param pid The index of the pool. See `poolInfo`.
-    /// @return pool returns the Pool that was updated
+    /// @return pool Returns the pool that was updated.
     function updatePool(uint256 pid) public returns (PoolInfo memory pool) {
         pool = poolInfo[pid];
         if (block.number > pool.lastRewardBlock) {
@@ -180,9 +178,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         }
     }
 
-    /// @notice Deposit LP tokens to MasterChef for SUSHI allocation.
+    /// @notice Deposit LP tokens to MCV2 for SUSHI allocation.
     /// @param pid The index of the pool. See `poolInfo`.
-    /// @param amount to deposit.
+    /// @param amount LP token amount to deposit.
     /// @param to The receiver of `amount`.
     function deposit(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
@@ -198,10 +196,10 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         emit Deposit(msg.sender, pid, amount, to);
     }
 
-    /// @notice Withdraw LP tokens from MasterChef.
+    /// @notice Withdraw LP tokens from MCV2.
     /// @param pid The index of the pool. See `poolInfo`.
-    /// @param amount of lp tokens to withdraw.
-    /// @param to Receiver of the lp tokens.
+    /// @param amount LP token amount to withdraw.
+    /// @param to Receiver of the LP tokens.
     function withdraw(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][msg.sender];
@@ -226,13 +224,11 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
         if (_pendingSushi == 0) { return; }
 
-
         // Effects
         user.rewardDebt = accumulatedSushi;
 
         // Interactions
         SUSHI.safeTransfer(to, _pendingSushi);
-
 
         address _rewarder = address(rewarder[pid]);
         if (_rewarder != address(0)){
@@ -248,13 +244,13 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     }
 
     /// @notice Harvests SUSHI from `MASTER_CHEF` and pool `MASTER_PID` to this contract.
-    function harvestFromMasterChef () public {
+    function harvestFromMasterChef() public {
         MASTER_CHEF.deposit(MASTER_PID, 0);
     }
 
     /// @notice Withdraw without caring about rewards. EMERGENCY ONLY.
     /// @param pid The index of the pool. See `poolInfo`.
-    /// @param to Receiver of the lp tokens.
+    /// @param to Receiver of the LP tokens.
     function emergencyWithdraw(uint256 pid, address to) public {
         UserInfo storage user = userInfo[pid][msg.sender];
         uint256 amount = user.amount;
