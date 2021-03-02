@@ -1,15 +1,15 @@
-const { ethers } = require("hardhat")
+import { ethers } from "hardhat"
 const { BigNumber } = require("ethers")
 
-const BASE_TEN = 10
-const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
+export const BASE_TEN = 10
+export const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
 
-function encodeParameters(types, values) {
+export function encodeParameters(types, values) {
   const abi = new ethers.utils.AbiCoder()
   return abi.encode(types, values)
 }
 
-async function prepare(thisObject, contracts) {
+export async function prepare(thisObject, contracts) {
   for (let i in contracts) {
     let contract = contracts[i]
     thisObject[contract] = await ethers.getContractFactory(contract)
@@ -24,7 +24,7 @@ async function prepare(thisObject, contracts) {
   thisObject.carolPrivateKey = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
 }
 
-async function deploy(thisObject, contracts) {
+export async function deploy(thisObject, contracts) {
   for (let i in contracts) {
     let contract = contracts[i]
     thisObject[contract[0]] = await contract[1].deploy(...(contract[2] || []))
@@ -32,7 +32,7 @@ async function deploy(thisObject, contracts) {
   }
 }
 
-async function createSLP(thisObject, name, tokenA, tokenB, amount) {
+export async function createSLP(thisObject, name, tokenA, tokenB, amount) {
   const createPairTx = await thisObject.factory.createPair(tokenA.address, tokenB.address)
 
   const _pair = (await createPairTx.wait()).events[0].args.pair
@@ -45,16 +45,8 @@ async function createSLP(thisObject, name, tokenA, tokenB, amount) {
   await thisObject[name].mint(thisObject.alice.address)
 }
 // Defaults to e18 using amount * 10^18
-function getBigNumber(amount, decimals = 18) {
+export function getBigNumber(amount, decimals = 18) {
   return BigNumber.from(amount).mul(BigNumber.from(BASE_TEN).pow(decimals))
 }
 
-module.exports = {
-  encodeParameters,
-  prepare,
-  deploy,
-  createSLP,
-  getBigNumber,
-  time: require("./time"),
-  ADDRESS_ZERO,
-}
+export * from "./time"
