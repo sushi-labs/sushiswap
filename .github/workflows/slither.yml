@@ -2,6 +2,9 @@
 name: slither
 on:
   push:
+    paths:
+      - "**.sol"
+      - ".github/workflows/slither.yml"
 
 jobs:
   build:

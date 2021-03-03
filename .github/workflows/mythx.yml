@@ -2,7 +2,9 @@ name: mythx
 on:
   push:
     paths:
-      - "contracts/**"
+      - "**.sol"
+      - ".github/workflows/mythx.yml"
+
 jobs:
   build:
     runs-on: ubuntu-latest
