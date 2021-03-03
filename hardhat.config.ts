@@ -1,29 +1,30 @@
-// hardhat.config.js
-require("dotenv/config")
+// hardhat.config.ts
 
-require("@nomiclabs/hardhat-etherscan")
-require("@nomiclabs/hardhat-solhint")
-require("@tenderly/hardhat-tenderly")
-require("@nomiclabs/hardhat-waffle")
-require("hardhat-abi-exporter")
-require("hardhat-deploy")
-require("hardhat-deploy-ethers")
-require("hardhat-gas-reporter")
-require("hardhat-spdx-license-identifier")
-require("hardhat-typechain")
-require("hardhat-watcher")
-require("solidity-coverage")
+import 'dotenv/config'
+import "@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-solhint";
+import "@tenderly/hardhat-tenderly";
+import "@nomiclabs/hardhat-waffle";
+import "hardhat-abi-exporter";
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
+import "hardhat-gas-reporter";
+import "hardhat-spdx-license-identifier";
+import "hardhat-typechain";
+import "hardhat-watcher";
+import "solidity-coverage";
 
-require("./tasks")
+import "./tasks";
 
-const { removeConsoleLog } = require("hardhat-preprocessor")
+import { HardhatUserConfig } from "hardhat/types";
+import { removeConsoleLog } from "hardhat-preprocessor";
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
   // accountsBalance: "990000000000000000000",
 }
 
-module.exports = {
+const config: HardhatUserConfig = {
   abiExporter: {
     path: "./abi",
     clear: false,
@@ -222,8 +223,8 @@ module.exports = {
     runOnCompile: true,
   },
   tenderly: {
-    project: process.env.TENDERLY_PROJECT,
-    username: process.env.TENDERLY_USERNAME,
+    project: process.env.TENDERLY_PROJECT!,
+    username: process.env.TENDERLY_USERNAME!,
   },
   typechain: {
     outDir: "types",
@@ -237,3 +238,5 @@ module.exports = {
     },
   },
 }
+
+export default config;
