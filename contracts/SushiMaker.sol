@@ -9,6 +9,8 @@ import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
+import "./oracles/TWAPValidationOracle.sol";
+
 import "./Ownable.sol";
 
 // SushiMaker is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
@@ -32,6 +34,10 @@ contract SushiMaker is Ownable {
     address private immutable weth;
     //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
+    TWAPValidationOracle private immutable validationOracle;
+    
+    uint256 private impactDivisor;
+
     // V1 - V5: OK
     mapping(address => address) internal _bridges;
 
@@ -51,12 +57,15 @@ contract SushiMaker is Ownable {
         address _factory,
         address _bar,
         address _sushi,
-        address _weth
+        address _weth,
+        TWAPValidationOracle _validationOracle
     ) public {
         factory = IUniswapV2Factory(_factory);
         bar = _bar;
         sushi = _sushi;
         weth = _weth;
+        impactDivisor = 4;
+        validationOracle = _validationOracle;
     }
 
     // F1 - F10: OK
@@ -80,6 +89,10 @@ contract SushiMaker is Ownable {
         // Effects
         _bridges[token] = bridge;
         emit LogBridgeSet(token, bridge);
+    }
+
+    function setImpactDivisor (uint256 _impactDivisor) external onlyOwner{
+        impactDivisor = _impactDivisor;
     }
 
     // M1 - M5: OK
@@ -234,6 +247,9 @@ contract SushiMaker is Ownable {
         // Interactions
         // X1 - X5: OK
         (uint256 reserve0, uint256 reserve1, ) = pair.getReserves();
+        
+        validationOracle.isWithinBounds(pair);
+
         uint256 amountInWithFee = amountIn.mul(997);
         if (fromToken == pair.token0()) {
             amountOut =
@@ -241,6 +257,7 @@ contract SushiMaker is Ownable {
                 reserve0.mul(1000).add(amountInWithFee);
             IERC20(fromToken).safeTransfer(address(pair), amountIn);
             pair.swap(0, amountOut, to, new bytes(0));
+            require(amountIn < reserve0 / impactDivisor, "Maker: Impact too high");
             // TODO: Add maximum slippage?
         } else {
             amountOut =
@@ -248,6 +265,9 @@ contract SushiMaker is Ownable {
                 reserve1.mul(1000).add(amountInWithFee);
             IERC20(fromToken).safeTransfer(address(pair), amountIn);
             pair.swap(amountOut, 0, to, new bytes(0));
+
+            require(amountIn < reserve1 / impactDivisor, "Maker: Impact too high");
+
             // TODO: Add maximum slippage?
         }
     }
