@@ -85,7 +85,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @param dummyToken The address of the ERC-20 token to deposit into MCV1.
     function init(IERC20 dummyToken) external {
         uint256 balance = dummyToken.balanceOf(msg.sender);
-        require(balance != 0, "Balance must exceed 0");
+        require(balance != 0, "No balance");
         dummyToken.safeTransferFrom(msg.sender, address(this), balance);
         dummyToken.approve(address(MASTER_CHEF), balance);
         MASTER_CHEF.deposit(MASTER_PID, balance);
@@ -94,7 +94,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Returns the number of MCV2 pools.
     function poolLength() public view returns (uint256 pools) {
-        return poolInfo.length;
+        pools = poolInfo.length;
     }
 
     /// @notice Add a new LP to the pool. Can only be called by the owner.
@@ -142,8 +142,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             uint256 sushiReward = blocks.mul(sushiPerBlock()).mul(pool.allocPoint) / totalAllocPoint;
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(ACC_SUSHI_PRECISION) / lpSupply);
         }
-        uint256 _pendingSushi = int256(user.amount.mul(accSushiPerShare) / ACC_SUSHI_PRECISION).sub(user.rewardDebt).toUInt256();
-        return _pendingSushi;
+        pending = int256(user.amount.mul(accSushiPerShare) / ACC_SUSHI_PRECISION).sub(user.rewardDebt).toUInt256();
     }
 
     /// @notice Update reward variables for all pools. Be careful of gas spending!
@@ -218,12 +217,13 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @notice Harvest proceeds for transaction sender to `to`.
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param to Receiver of SUSHI rewards.
-    function harvest(uint256 pid, address to) public returns (bool success, bytes memory) {
+    /// @return success Returns bool indicating success of rewarder delegate call.
+    function harvest(uint256 pid, address to) public returns (bool success) {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][msg.sender];
         int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
         uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
-        if (_pendingSushi == 0) { return (false, ""); }
+        require(_pendingSushi != 0, "No harvest");
 
         // Effects
         user.rewardDebt = accumulatedSushi;
@@ -237,7 +237,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
             // Forwarding: (63/64 of gasleft by evm convention) minus 5000
             // solhint-disable-next-line
-            return _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
+            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
         }
 
         emit Harvest(msg.sender, pid, _pendingSushi);
