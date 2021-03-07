@@ -85,7 +85,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @param dummyToken The address of the ERC-20 token to deposit into MCV1.
     function init(IERC20 dummyToken) external {
         uint256 balance = dummyToken.balanceOf(msg.sender);
-        require(balance != 0, "No balance");
+        require(balance != 0, "Balance must exceed 0");
         dummyToken.safeTransferFrom(msg.sender, address(this), balance);
         dummyToken.approve(address(MASTER_CHEF), balance);
         MASTER_CHEF.deposit(MASTER_PID, balance);
@@ -223,7 +223,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         UserInfo storage user = userInfo[pid][msg.sender];
         int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
         uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
-        require(_pendingSushi != 0, "No harvest");
+        if (_pendingSushi == 0) { success = false; }
 
         // Effects
         user.rewardDebt = accumulatedSushi;
