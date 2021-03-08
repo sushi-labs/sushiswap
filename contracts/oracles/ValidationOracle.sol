@@ -6,7 +6,7 @@ import "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol";
 import "../libraries/FixedPoint.sol";
 import "../uniswapv2/interfaces/IUniswapV2Pair.sol";
 
-contract TWAPValidationOracle {
+contract ValidationOracle {
     using FixedPoint for *;
     using BoringMath for uint256;
 

@@ -9,7 +9,7 @@ import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
 import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
-import "./oracles/TWAPValidationOracle.sol";
+import "./oracles/ValidationOracle.sol";
 
 import "./Ownable.sol";
 
@@ -34,7 +34,7 @@ contract SushiMaker is Ownable {
     address private immutable weth;
     //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
-    TWAPValidationOracle private immutable validationOracle;
+    ValidationOracle public validationOracle;
     
     uint256 private impactDivisor;
 
@@ -58,13 +58,13 @@ contract SushiMaker is Ownable {
         address _bar,
         address _sushi,
         address _weth,
-        TWAPValidationOracle _validationOracle
+        ValidationOracle _validationOracle
     ) public {
         factory = IUniswapV2Factory(_factory);
         bar = _bar;
         sushi = _sushi;
         weth = _weth;
-        impactDivisor = 4;
+        impactDivisor = 10;
         validationOracle = _validationOracle;
     }
 
@@ -79,7 +79,7 @@ contract SushiMaker is Ownable {
 
     // F1 - F10: OK
     // C1 - C24: OK
-    function setBridge(address token, address bridge) external onlyOwner {
+    function setBridge(address token, address bridge) public onlyOwner {
         // Checks
         require(
             token != sushi && token != weth && token != bridge,
@@ -91,7 +91,11 @@ contract SushiMaker is Ownable {
         emit LogBridgeSet(token, bridge);
     }
 
-    function setImpactDivisor (uint256 _impactDivisor) external onlyOwner{
+    function setValidationOracle (ValidationOracle _validationOracle) public onlyOwner {
+        validationOracle = _validationOracle;
+    }
+
+    function setImpactDivisor (uint256 _impactDivisor) public onlyOwner{
         impactDivisor = _impactDivisor;
     }
 
@@ -110,7 +114,7 @@ contract SushiMaker is Ownable {
     //     As the size of the SushiBar has grown, this requires large amounts of funds and isn't super profitable anymore
     //     The onlyEOA modifier prevents this being done with a flash loan.
     // C1 - C24: OK
-    function convert(address token0, address token1) external onlyEOA() {
+    function convert(address token0, address token1) public onlyEOA() {
         _convert(token0, token1);
     }
 
