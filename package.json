@@ -52,7 +52,7 @@
     "test": "hardhat test --verbose",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=2048\" hardhat coverage",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
-    "prettier": "prettier --write test/**/*.{js,ts} && prettier --write contracts/**/*.sol",
+    "prettier": "prettier --write test/**/*.{ts} && prettier --write contracts/**/*.sol",
     "lint": "yarn prettier && solhint -c .solhint.json contracts/**/*.sol",
     "prepublishOnly": "yarn run build && node scripts/prepublish.js"
   },

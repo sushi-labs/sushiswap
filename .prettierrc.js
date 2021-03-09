@@ -12,7 +12,7 @@ module.exports = {
     //   },
     // },
     {
-      files: "*.js",
+      files: "*.ts",
       options: {
         printWidth: 145,
         semi: false,

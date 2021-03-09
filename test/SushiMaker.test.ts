@@ -1,6 +1,5 @@
-const { ethers } = require("hardhat")
-const { prepare, deploy, getBigNumber, createSLP } = require("./utilities")
-const { expect } = require("chai")
+import { expect } from "chai";
+import { prepare, deploy, getBigNumber, createSLP } from "./utilities"
 
 describe("SushiMaker", function () {
   before(async function () {

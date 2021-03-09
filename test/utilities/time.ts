@@ -2,36 +2,36 @@ const { ethers } = require("hardhat")
 
 const { BigNumber } = ethers
 
-async function advanceBlock() {
+export async function advanceBlock() {
   return ethers.provider.send("evm_mine", [])
 }
 
-async function advanceBlockTo(blockNumber) {
+export async function advanceBlockTo(blockNumber) {
   for (let i = await ethers.provider.getBlockNumber(); i < blockNumber; i++) {
     await advanceBlock()
   }
 }
 
-async function increase(value) {
+export async function increase(value) {
   await ethers.provider.send("evm_increaseTime", [value.toNumber()])
   await advanceBlock()
 }
 
-async function latest() {
+export async function latest() {
   const block = await ethers.provider.getBlock("latest")
   return BigNumber.from(block.timestamp)
 }
 
-async function advanceTimeAndBlock(time) {
+export async function advanceTimeAndBlock(time) {
   await advanceTime(time)
   await advanceBlock()
 }
 
-async function advanceTime(time) {
+export async function advanceTime(time) {
   await ethers.provider.send("evm_increaseTime", [time])
 }
 
-const duration = {
+export const duration = {
   seconds: function (val) {
     return BigNumber.from(val)
   },
@@ -50,14 +50,4 @@ const duration = {
   years: function (val) {
     return BigNumber.from(val).mul(this.days("365"))
   },
-}
-
-module.exports = {
-  advanceBlock,
-  advanceBlockTo,
-  duration,
-  latest,
-  increase,
-  advanceTime,
-  advanceTimeAndBlock,
 }

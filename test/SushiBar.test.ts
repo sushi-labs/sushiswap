@@ -1,5 +1,5 @@
-const { ethers } = require("hardhat")
-const { expect } = require("chai")
+import { ethers } from "hardhat";
+import { expect } from "chai";
 
 describe("SushiBar", function () {
   before(async function () {
