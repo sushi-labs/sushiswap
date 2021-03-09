@@ -223,7 +223,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         UserInfo storage user = userInfo[pid][msg.sender];
         int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
         uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
-        if (_pendingSushi == 0) { revert(); }
+        if (_pendingSushi == 0) { revert("Balance must exceed 0"); }
 
         // Effects
         user.rewardDebt = accumulatedSushi;
