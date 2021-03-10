@@ -4,7 +4,7 @@ https://sushiswap.fi.
 
 ## Deployed Contracts
 
-https://dev.sushiswap.fi/sushiswap/contracts
+https://dev.sushi.com/sushiswap/contracts
 
 ## Docs
 
