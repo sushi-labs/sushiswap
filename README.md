@@ -1,6 +1,6 @@
 # SushiSwap
 
-https://sushi.com/.
+https://sushi.com/
 
 ## Deployed Contracts
 
