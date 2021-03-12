@@ -39,7 +39,7 @@ contract SushiBar is ERC20("SushiBar", "xSUSHI"){
     }
 
     // Leave the bar. Claim back your SUSHIs.
-    // Unclocks the staked + gained Sushi and burns xSushi
+    // Unlocks the staked + gained Sushi and burns xSushi
     function leave(uint256 _share) public {
         // Gets the amount of xSushi in existence
         uint256 totalShares = totalSupply();

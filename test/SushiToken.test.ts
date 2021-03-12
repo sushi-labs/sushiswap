@@ -1,5 +1,6 @@
-const { ethers } = require("hardhat")
-const { expect } = require("chai")
+import { ethers } from "hardhat";
+import { expect } from "chai";
+
 describe("SushiToken", function () {
   before(async function () {
     this.SushiToken = await ethers.getContractFactory("SushiToken")

@@ -1,6 +1,6 @@
-const { ethers } = require("hardhat")
-const { expect } = require("chai")
-const { encodeParameters, time } = require("./utilities")
+import { ethers } from "hardhat";
+import { expect } from "chai";
+import { encodeParameters, latest, duration, increase } from "./utilities"
 
 describe("Timelock", function () {
   before(async function () {
@@ -35,24 +35,24 @@ describe("Timelock", function () {
         "0",
         "transferOwnership(address)",
         encodeParameters(["address"], [this.carol.address]),
-        (await time.latest()).add(time.duration.days(4))
+        (await latest()).add(duration.days(4))
       )
     ).to.be.revertedWith("Timelock::queueTransaction: Call must come from admin.")
   })
 
   it("should do the timelock thing", async function () {
     await this.sushi.transferOwnership(this.timelock.address)
-    const eta = (await time.latest()).add(time.duration.days(4))
+    const eta = (await latest()).add(duration.days(4))
     await this.timelock
       .connect(this.bob)
       .queueTransaction(this.sushi.address, "0", "transferOwnership(address)", encodeParameters(["address"], [this.carol.address]), eta)
-    await time.increase(time.duration.days(1))
+    await increase(duration.days(1))
     await expect(
       this.timelock
         .connect(this.bob)
         .executeTransaction(this.sushi.address, "0", "transferOwnership(address)", encodeParameters(["address"], [this.carol.address]), eta)
     ).to.be.revertedWith("Timelock::executeTransaction: Transaction hasn't surpassed time lock.")
-    await time.increase(time.duration.days(4))
+    await increase(duration.days(4))
     await this.timelock
       .connect(this.bob)
       .executeTransaction(this.sushi.address, "0", "transferOwnership(address)", encodeParameters(["address"], [this.carol.address]), eta)
@@ -66,7 +66,7 @@ describe("Timelock", function () {
     await this.sushi.transferOwnership(this.chef.address)
     await this.chef.add("100", this.lp1.address, true)
     await this.chef.transferOwnership(this.timelock.address)
-    const eta = (await time.latest()).add(time.duration.days(4))
+    const eta = (await latest()).add(duration.days(4))
     await this.timelock
       .connect(this.bob)
       .queueTransaction(
@@ -85,7 +85,7 @@ describe("Timelock", function () {
         encodeParameters(["uint256", "address", "bool"], ["100", this.lp2.address, false]),
         eta
       )
-    await time.increase(time.duration.days(4))
+    await increase(duration.days(4))
     await this.timelock
       .connect(this.bob)
       .executeTransaction(

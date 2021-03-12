@@ -1,7 +1,5 @@
-const { ethers } = require("hardhat")
-const { expect, assert } = require("chai")
-const { time, prepare, deploy, getBigNumber, ADDRESS_ZERO} = require("./utilities")
-const { advanceBlockTo, advanceBlock } = require("./utilities/time")
+import { expect, assert } from "chai";
+import { advanceBlockTo, advanceBlock, prepare, deploy, getBigNumber, ADDRESS_ZERO } from "./utilities"
 
 describe("MasterChefV2", function () {
   before(async function () {

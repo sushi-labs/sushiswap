@@ -1,10 +1,10 @@
 # SushiSwap
 
-https://sushiswap.fi.
+https://sushi.com/
 
 ## Deployed Contracts
 
-https://dev.sushiswap.fi/sushiswap/contracts
+https://dev.sushi.com/sushiswap/contracts
 
 ## Docs
 
@@ -14,6 +14,10 @@ https://dev.sushiswap.fi/sushiswap/contracts
 
 [History](docs/HISTORY.md)
 
+## Security
+
+[Security Policy](SECURITY.md)
+
 ## License
 
-MIT
+[MIT](LICENSE.txt)
