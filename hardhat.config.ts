@@ -1,6 +1,6 @@
 // hardhat.config.ts
 
-import 'dotenv/config'
+import "dotenv/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-solhint";
 import "@tenderly/hardhat-tenderly";
@@ -13,16 +13,17 @@ import "hardhat-spdx-license-identifier";
 import "hardhat-typechain";
 import "hardhat-watcher";
 import "solidity-coverage";
-
 import "./tasks";
 
 import { HardhatUserConfig } from "hardhat/types";
 import { removeConsoleLog } from "hardhat-preprocessor";
 
 const accounts = {
-  mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
   // accountsBalance: "990000000000000000000",
-}
+};
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -47,14 +48,14 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      default: 0
+      default: 0,
     },
     dev: {
       // Default to 1
       default: 1,
       // dev address mainnet
       // 1: "",
-    }
+    },
   },
   networks: {
     mainnet: {
@@ -85,7 +86,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasPrice: 5000000000,
-      gasMultiplier: 2
+      gasMultiplier: 2,
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -95,7 +96,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasPrice: 5000000000,
-      gasMultiplier: 2
+      gasMultiplier: 2,
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -105,7 +106,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasPrice: 5000000000,
-      gasMultiplier: 2
+      gasMultiplier: 2,
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -115,7 +116,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasPrice: 20000000000,
-      gasMultiplier: 2
+      gasMultiplier: 2,
     },
     moonbase: {
       url: "https://rpc.testnet.moonbeam.network",
@@ -144,7 +145,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasPrice: 22000000000,
     },
-    'fantom-testnet': {
+    "fantom-testnet": {
       url: "https://rpc.testnet.fantom.network",
       accounts,
       chainId: 4002,
@@ -183,10 +184,43 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
-    'bsc-testnet': {
+    "bsc-testnet": {
       url: "https://data-seed-prebsc-2-s3.binance.org:8545",
       accounts,
       chainId: 97,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    heco: {
+      url: "https://http-mainnet.hecochain.com",
+      accounts,
+      chainId: 128,
+      live: true,
+      saveDeployments: true,
+    },
+    "heco-testnet": {
+      url: "https://http-testnet.hecochain.com",
+      accounts,
+      chainId: 256,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    avalanche: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43114,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 470000000000,
+    },
+    fuji: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43113,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
@@ -203,7 +237,10 @@ const config: HardhatUserConfig = {
     tests: "test",
   },
   preprocess: {
-    eachLine: removeConsoleLog((bre) => bre.network.name !== "hardhat" && bre.network.name !== "localhost"),
+    eachLine: removeConsoleLog(
+      (bre) =>
+        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
+    ),
   },
   solidity: {
     compilers: [
@@ -237,6 +274,6 @@ const config: HardhatUserConfig = {
       verbose: true,
     },
   },
-}
+};
 
 export default config;
