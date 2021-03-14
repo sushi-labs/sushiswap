@@ -140,9 +140,7 @@ contract KashiSushiMaker is Ownable {
     // F1 - F10: OK, see convert
     // C1 - C24: OK
     // C3: Loop is under control of the caller
-    function convertMultiple(
-        IKashiFeeRedemption[] calldata kashiPair
-    ) external onlyEOA() {
+    function convertMultiple(IKashiFeeRedemption[] calldata kashiPair) external onlyEOA {
         // TODO: This can be optimized a fair bit, but this is safer and simpler for now
         uint256 len = kashiPair.length;
         for (uint256 i = 0; i < len; i++) {
@@ -176,7 +174,8 @@ contract KashiSushiMaker is Ownable {
                 amountOut = _swap(address(asset), sushi, assetBalance, bar);
             } else {
                 _swap(address(asset), bridge, assetBalance, address(this));
-                amountOut = _swap(bridge, sushi, assetBalance, bar);
+                uint256 bridgeBalance = IERC20(bridge).balanceOf(address(this));
+                amountOut = _swap(bridge, sushi, bridgeBalance, bar);
             }
         }
         
