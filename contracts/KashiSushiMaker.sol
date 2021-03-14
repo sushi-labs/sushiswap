@@ -12,9 +12,28 @@ import "./oracles/ValidationOracle.sol";
 
 import "./Ownable.sol";
 
+interface IBentoBoxWithdraw {
+    function balanceOf(IERC20, address) external view returns (uint256);
+
+    function withdraw(
+        IERC20 token_,
+        address from,
+        address to,
+        uint256 amount,
+        uint256 share
+    ) external returns (uint256 amountOut, uint256 shareOut);
+}
+
+interface IKashiFeeRedemption {
+    function asset() external view returns (address);
+    function balanceOf(address account) external view returns (uint256);
+    function withdrawFees() external;
+    function removeAsset(address to, uint256 fraction) external returns (uint256 share);
+}
+
 // SingleSushiMaker is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
 // This contract handles "serving up" rewards for xSushi holders by trading tokens collected from fees for Sushi.
-contract SingleSushiMaker is Ownable {
+contract KashiSushiMaker is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     
@@ -24,23 +43,44 @@ contract SingleSushiMaker is Ownable {
     // V1 - V5: OK
     address public immutable bar;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
+    
+    IBentoBoxWithdraw public immutable bentoBox;
+    //0xB5891167796722331b7ea7824F036b3Bdcb4531C
+    
     // V1 - V5: OK
     address private immutable sushi;
     //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
+    // V1 - V5: OK
+    address private immutable weth;
+    //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
     ValidationOracle public validationOracle;
     
     uint256 private impactDivisor;
+    
+    // E1: OK
+    event LogConvert(
+        address indexed server,
+        address indexed token0,
+        address indexed token1,
+        uint256 amount0,
+        uint256 amount1,
+        uint256 amountSUSHI
+    );
 
     constructor(
         address _factory,
         address _bar,
+        IBentoBoxWithdraw _bentoBox,
         address _sushi,
+        address _weth,
         ValidationOracle _validationOracle
     ) public {
         factory = IUniswapV2Factory(_factory);
         bar = _bar;
+        bentoBox = _bentoBox;
         sushi = _sushi;
+        weth = _weth;
         impactDivisor = 10;
         validationOracle = _validationOracle;
     }
@@ -52,10 +92,41 @@ contract SingleSushiMaker is Ownable {
     function setImpactDivisor(uint256 _impactDivisor) public onlyOwner{
         impactDivisor = _impactDivisor;
     }
-
-    function convert(IERC20 fromToken) external returns (uint256 amountOut) {
+    
+    // M1 - M5: OK
+    // C1 - C24: OK
+    // C6: It's not a fool proof solution, but it prevents flash loans, so here it's ok to use tx.origin
+    modifier onlyEOA() {
+        // Try to make flash-loan exploit harder to do by only allowing externally owned addresses.
         require(msg.sender == tx.origin, "SushiMaker: must use EOA");
-        amountOut = _swap(address(fromToken), sushi, fromToken.balanceOf(address(this)), bar);
+        _;
+    }
+
+    function convert(IKashiFeeRedemption kashiPair) external onlyEOA {
+        _convert(kashiPair);
+    }
+    
+    function _convert(IKashiFeeRedemption kashiPair) internal returns (uint256 amountOut) {
+        // update Kashi fee balance for this contract (`feeTo`)
+        kashiPair.withdrawFees();
+        
+        // convert Kashi balance to Bento balance
+        uint256 kashiBalance = kashiPair.balanceOf(address(this));
+        kashiPair.removeAsset(address(this), kashiBalance);
+        
+        // convert Bento balance to underlying `asset`
+        IERC20 asset = IERC20(kashiPair.asset());
+        uint256 bentoBalance = bentoBox.balanceOf(asset, address(this));
+        bentoBox.withdraw(asset, address(this), address(this), 0, bentoBalance);
+        
+        uint256 assetBalance = asset.balanceOf(address(this));
+        
+        if (address(asset) == sushi) {
+            IERC20(sushi).safeTransfer(bar, assetBalance);
+            amountOut = assetBalance;
+        } else {
+            amountOut = _swap(address(asset), sushi, assetBalance, bar);
+        }
     }
 
     function _swap(
