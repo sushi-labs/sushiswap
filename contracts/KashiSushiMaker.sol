@@ -12,8 +12,6 @@ import "./oracles/ValidationOracle.sol";
 import "./Ownable.sol";
 
 interface IBentoBoxWithdraw {
-    function balanceOf(IERC20, address) external view returns (uint256);
-
     function withdraw(
         IERC20 token_,
         address from,
@@ -35,7 +33,7 @@ interface IKashiWithdrawFee {
 contract KashiSushiMaker is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
-    
+
     // V1 - V5: OK
     IUniswapV2Factory private immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
@@ -53,12 +51,12 @@ contract KashiSushiMaker is Ownable {
     //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 
     ValidationOracle private validationOracle;
-    
+
     uint256 private impactDivisor;
-    
+
     // V1 - V5: OK
     mapping(address => address) private _bridges;
-    
+
     // E1: OK
     event LogBridgeSet(address indexed token, address indexed bridge);
     // E1: OK
@@ -70,14 +68,14 @@ contract KashiSushiMaker is Ownable {
     );
 
     constructor(
-        address _factory,
+        IUniswapV2Factory _factory,
         address _bar,
         IBentoBoxWithdraw _bentoBox,
         address _sushi,
         address _weth,
         ValidationOracle _validationOracle
     ) public {
-        factory = IUniswapV2Factory(_factory);
+        factory = _factory;
         bar = _bar;
         bentoBox = _bentoBox;
         sushi = _sushi;
@@ -85,7 +83,7 @@ contract KashiSushiMaker is Ownable {
         impactDivisor = 10;
         validationOracle = _validationOracle;
     }
-    
+
     // F1 - F10: OK
     // C1 - C24: OK
     function bridgeFor(address token) public view returns (address bridge) {
@@ -116,7 +114,7 @@ contract KashiSushiMaker is Ownable {
     function setImpactDivisor(uint256 _impactDivisor) external onlyOwner{
         impactDivisor = _impactDivisor;
     }
-    
+
     // M1 - M5: OK
     // C1 - C24: OK
     // C6: It's not a fool proof solution, but it prevents flash loans, so here it's ok to use tx.origin
@@ -125,7 +123,7 @@ contract KashiSushiMaker is Ownable {
         require(msg.sender == tx.origin, "Maker: must use EOA");
         _;
     }
-    
+
     // F1 - F10: OK
     // F3: _convert is separate to save gas by only checking the 'onlyEOA' modifier once in case of convertMultiple
     // F6: There is an exploit to add lots of SUSHI to the bar, run convert, then remove the SUSHI again.
@@ -135,7 +133,7 @@ contract KashiSushiMaker is Ownable {
     function convert(IKashiWithdrawFee kashiPair) external onlyEOA {
         _convert(kashiPair);
     }
-    
+
     // F1 - F10: OK, see convert
     // C1 - C24: OK
     // C3: Loop is under control of the caller
@@ -144,41 +142,38 @@ contract KashiSushiMaker is Ownable {
             _convert(kashiPair[i]);
         }
     }
-    
+
     function _convert(IKashiWithdrawFee kashiPair) private {
-        // update Kashi fee balance for this maker contract (`feeTo`)
+        // update Kashi fees for this Maker contract (`feeTo`)
         kashiPair.withdrawFees();
         
-        // convert Kashi balance to Bento balance
-        kashiPair.removeAsset(address(this), kashiPair.balanceOf(address(this)));
-        
-        // convert Bento balance to underlying `asset` for Maker
-        IERC20 asset = IERC20(kashiPair.asset());
-        bentoBox.withdraw(asset, address(this), address(this), 0, bentoBox.balanceOf(asset, address(this)));
-        uint256 assetBalance = asset.balanceOf(address(this));
-        
-        // if returned Kashi fee `asset` is `sushi` - send balance to `bar` - else, swap for `sushi`
-        uint256 amountOut;
-        if (address(asset) == sushi) {
-            IERC20(sushi).safeTransfer(bar, assetBalance);
-            amountOut = assetBalance;
-        } else {
-            address bridge = bridgeFor(address(asset));
-            // if `sushi` is bridge, swap from `asset` to `sushi` and send to `bar`
-            if (bridge == sushi) {
-                amountOut = _swap(address(asset), bridge, assetBalance, bar);
-            } else {
-                uint256 bridgeBalance = _swap(address(asset), bridge, assetBalance, address(this));
-                amountOut = _swap(bridge, sushi, bridgeBalance, bar);
-            }
-        }
+        // convert updated Kashi balance to Bento shares
+        uint256 bentoShares = kashiPair.removeAsset(address(this), kashiPair.balanceOf(address(this)));
+
+        // convert Bento shares to underlying Kashi asset (`token0`) balance (`amount0`) for Maker
+        address token0 = kashiPair.asset();
+        (uint256 amount0, ) = bentoBox.withdraw(IERC20(token0), address(this), address(this), 0, bentoShares);
         
         emit LogConvert(
             msg.sender,
-            address(asset),
-            assetBalance,
-            amountOut
+            token0,
+            amount0,
+            _convertStep(token0, amount0)
         );
+    }
+    
+    function _convertStep(address token0, uint256 amount0) private returns (uint256 sushiOut) {
+        // Interactions
+        if (token0 == sushi) {
+            IERC20(token0).safeTransfer(bar, amount0);
+            sushiOut = amount0;
+        } else if (token0 == weth) {
+            sushiOut = _swap(token0, sushi, amount0, bar);
+        } else {
+            address bridge = bridgeFor(token0);
+            uint256 amountOut = _swap(token0, bridge, amount0, address(this));
+            sushiOut = _convertStep(bridge, amountOut);
+        }
     }
 
     function _swap(
@@ -196,7 +191,7 @@ contract KashiSushiMaker is Ownable {
         // Interactions
         // X1 - X5: OK
         (uint256 reserve0, uint256 reserve1, ) = pair.getReserves();
-        
+
         validationOracle.isWithinBounds(pair);
 
         uint256 amountInWithFee = amountIn.mul(997);
