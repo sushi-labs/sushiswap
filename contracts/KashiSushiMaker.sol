@@ -24,7 +24,7 @@ interface IBentoBoxWithdraw {
     ) external returns (uint256 amountOut, uint256 shareOut);
 }
 
-interface IKashiFeeRedemption {
+interface IKashiWithdrawFee {
     function asset() external view returns (address);
     function balanceOf(address account) external view returns (uint256);
     function withdrawFees() external;
@@ -102,7 +102,7 @@ contract KashiSushiMaker is Ownable {
         // Checks
         require(
             token != sushi && token != weth && token != bridge,
-            "SushiMaker: Invalid bridge"
+            "Maker: Invalid bridge"
         );
 
         // Effects
@@ -122,8 +122,8 @@ contract KashiSushiMaker is Ownable {
     // C1 - C24: OK
     // C6: It's not a fool proof solution, but it prevents flash loans, so here it's ok to use tx.origin
     modifier onlyEOA() {
-        // Try to make flash-loan exploit harder to do by only allowing externally owned addresses.
-        require(msg.sender == tx.origin, "SushiMaker: must use EOA");
+        // Try to make flash-loan exploit harder to do by only allowing externally-owned addresses.
+        require(msg.sender == tx.origin, "Maker: must use EOA");
         _;
     }
     
@@ -133,14 +133,14 @@ contract KashiSushiMaker is Ownable {
     //     As the size of the SushiBar has grown, this requires large amounts of funds and isn't super profitable anymore
     //     The onlyEOA modifier prevents this being done with a flash loan.
     // C1 - C24: OK
-    function convert(IKashiFeeRedemption kashiPair) public onlyEOA {
+    function convert(IKashiWithdrawFee kashiPair) public onlyEOA {
         _convert(kashiPair);
     }
     
     // F1 - F10: OK, see convert
     // C1 - C24: OK
     // C3: Loop is under control of the caller
-    function convertMultiple(IKashiFeeRedemption[] calldata kashiPair) external onlyEOA {
+    function convertMultiple(IKashiWithdrawFee[] calldata kashiPair) external onlyEOA {
         // TODO: This can be optimized a fair bit, but this is safer and simpler for now
         uint256 len = kashiPair.length;
         for (uint256 i = 0; i < len; i++) {
@@ -148,7 +148,7 @@ contract KashiSushiMaker is Ownable {
         }
     }
     
-    function _convert(IKashiFeeRedemption kashiPair) internal {
+    function _convert(IKashiWithdrawFee kashiPair) internal {
         // update Kashi fee balance for this maker contract (`feeTo`)
         kashiPair.withdrawFees();
         
@@ -169,12 +169,11 @@ contract KashiSushiMaker is Ownable {
             amountOut = assetBalance;
         } else {
             address bridge = bridgeFor(address(asset));
-            // if `sushi` is bridge, swap from `asset` to `sushi` and send to bar
+            // if `sushi` is bridge, swap from `asset` to `sushi` and send to `bar`
             if (bridge == sushi) {
-                amountOut = _swap(address(asset), sushi, assetBalance, bar);
+                amountOut = _swap(address(asset), bridge, assetBalance, bar);
             } else {
-                _swap(address(asset), bridge, assetBalance, address(this));
-                uint256 bridgeBalance = IERC20(bridge).balanceOf(address(this));
+                uint256 bridgeBalance = _swap(address(asset), bridge, assetBalance, address(this));
                 amountOut = _swap(bridge, sushi, bridgeBalance, bar);
             }
         }
@@ -197,7 +196,7 @@ contract KashiSushiMaker is Ownable {
         // X1 - X5: OK
         IUniswapV2Pair pair =
             IUniswapV2Pair(factory.getPair(fromToken, toToken));
-        require(address(pair) != address(0), "SushiMaker: Cannot convert");
+        require(address(pair) != address(0), "Maker: Cannot convert");
 
         // Interactions
         // X1 - X5: OK
@@ -213,17 +212,13 @@ contract KashiSushiMaker is Ownable {
             IERC20(fromToken).safeTransfer(address(pair), amountIn);
             pair.swap(0, amountOut, to, new bytes(0));
             require(amountIn < reserve0 / impactDivisor, "Maker: Impact too high");
-            // TODO: Add maximum slippage?
         } else {
             amountOut =
                 amountIn.mul(997).mul(reserve0) /
                 reserve1.mul(1000).add(amountInWithFee);
             IERC20(fromToken).safeTransfer(address(pair), amountIn);
             pair.swap(amountOut, 0, to, new bytes(0));
-
             require(amountIn < reserve1 / impactDivisor, "Maker: Impact too high");
-
-            // TODO: Add maximum slippage?
         }
     }
 }
