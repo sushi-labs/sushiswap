@@ -111,7 +111,7 @@ contract KashiSushiMaker is Ownable {
         validationOracle = _validationOracle;
     }
 
-    function setImpactDivisor(uint256 _impactDivisor) external onlyOwner{
+    function setImpactDivisor(uint256 _impactDivisor) external onlyOwner {
         impactDivisor = _impactDivisor;
     }
 
