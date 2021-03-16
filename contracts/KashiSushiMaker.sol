@@ -39,7 +39,7 @@ contract KashiSushiMaker is Ownable {
     address private immutable bar;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
     IBentoBoxWithdraw private immutable bentoBox;
-    //0xB5891167796722331b7ea7824F036b3Bdcb4531C
+    //0xccb146728f6D94Fe22D1030E7FA369bd33916824 
     address private immutable sushi;
     //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
     address private immutable weth;
@@ -56,8 +56,9 @@ contract KashiSushiMaker is Ownable {
     event LogBridgeSet(address indexed token, address indexed bridge);
     event LogConvert(
         address indexed server,
-        address indexed asset,
-        uint256 amount,
+        address indexed token0,
+        uint256 amount0,
+        uint256 amountBENTO,
         uint256 amountSUSHI
     );
 
@@ -80,20 +81,12 @@ contract KashiSushiMaker is Ownable {
         pairCodeHash = _pairCodeHash;
     }
 
-    function bridgeFor(address token) public view returns (address bridge) {
-        bridge = _bridges[token];
-        if (bridge == address(0)) {
-            bridge = weth;
-        }
-    }
-
     function setBridge(address token, address bridge) external onlyOwner {
         // Checks
         require(
             token != sushi && token != weth && token != bridge,
             "Maker: Invalid bridge"
         );
-
         // Effects
         _bridges[token] = bridge;
         emit LogBridgeSet(token, bridge);
@@ -109,7 +102,7 @@ contract KashiSushiMaker is Ownable {
 
     modifier onlyEOA() {
         // Try to make flash-loan exploit harder to do by only allowing externally-owned addresses.
-        require(msg.sender == tx.origin, "Maker: must use EOA");
+        require(msg.sender == tx.origin, "Maker: Must use EOA");
         _;
     }
 
@@ -138,6 +131,7 @@ contract KashiSushiMaker is Ownable {
             msg.sender,
             token0,
             amount0,
+            bentoShares,
             _convertStep(token0, amount0)
         );
     }
@@ -149,7 +143,10 @@ contract KashiSushiMaker is Ownable {
         } else if (token0 == weth) {
             sushiOut = _swap(token0, sushi, amount0, bar);
         } else {
-            address bridge = bridgeFor(token0);
+            address bridge = _bridges[token0];
+            if (bridge == address(0)) {
+                bridge = weth;
+            }
             uint256 amountOut = _swap(token0, bridge, amount0, address(this));
             sushiOut = _convertStep(bridge, amountOut);
         }
