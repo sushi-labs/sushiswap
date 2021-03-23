@@ -26,9 +26,9 @@ interface IKashiWithdrawFee {
     function removeAsset(address to, uint256 fraction) external returns (uint256 share);
 }
 
-// KashiSushiMaker is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
+// SushiMakerKashi is MasterChef's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
 // This contract handles "serving up" rewards for xSushi holders by trading tokens collected from Kashi fees for Sushi.
-contract KashiSushiMaker is Ownable {
+contract SushiMakerKashi is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
