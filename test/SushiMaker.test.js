@@ -4,7 +4,7 @@ const { expect } = require("chai")
 
 describe("SushiMaker", function () {
   before(async function () {
-    await prepare(this, ["SushiMaker", "SushiBar", "SushiMakerExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair"])
+    await prepare(this, ["SushiMaker", "SushiBar", "SushiMakerExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair", "ValidationOracle"])
   })
 
   beforeEach(async function () {
@@ -18,7 +18,8 @@ describe("SushiMaker", function () {
       ["factory", this.UniswapV2Factory, [this.alice.address]],
     ])
     await deploy(this, [["bar", this.SushiBar, [this.sushi.address]]])
-    await deploy(this, [["sushiMaker", this.SushiMaker, [this.factory.address, this.bar.address, this.sushi.address, this.weth.address]]])
+    await deploy(this, [["oracle", this.ValidationOracle]])
+    await deploy(this, [["sushiMaker", this.SushiMaker, [this.factory.address, this.bar.address, this.sushi.address, this.weth.address, this.oracle.address]]])
     await deploy(this, [["exploiter", this.SushiMakerExploitMock, [this.sushiMaker.address]]])
     await createSLP(this, "sushiEth", this.sushi, this.weth, getBigNumber(10))
     await createSLP(this, "strudelEth", this.strudel, this.weth, getBigNumber(10))
