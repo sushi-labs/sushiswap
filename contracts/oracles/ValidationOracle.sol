@@ -2,13 +2,13 @@
 
 pragma solidity 0.6.12;
 
-import "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol";
+import "../libraries/SafeMath.sol";
 import "../libraries/FixedPoint.sol";
 import "../uniswapv2/interfaces/IUniswapV2Pair.sol";
 
 contract ValidationOracle {
     using FixedPoint for *;
-    using BoringMath for uint256;
+    using SafeMath for uint256;
 
     uint256 private constant PERIOD = 5;
     uint256 private constant VALIDITY = 60;
