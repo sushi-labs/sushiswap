@@ -29,6 +29,13 @@ describe("KashiSushiMaker", function () {
     await createSLP(this, "daiUSDC", this.dai, this.usdc, getBigNumber(10))
     await createSLP(this, "daiMIC", this.dai, this.mic, getBigNumber(10))
   })
+  
+  describe("whiteListMasterContract", function () {
+    it("whitelists Kashi from Bento", async function () {
+      await expect(this.bento.whitelistMasterContract(this.kashi.address, true))
+    })
+  })
+
   describe("setBridge", function () {
     it("does not allow to set bridge for Sushi", async function () {
       await expect(this.kashiMaker.setBridge(this.sushi.address, this.weth.address)).to.be.revertedWith("Maker: Invalid bridge")
