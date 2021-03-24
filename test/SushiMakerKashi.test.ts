@@ -3,7 +3,7 @@ import { prepare, deploy, getBigNumber, createSLP } from "./utilities"
 
 describe("KashiSushiMaker", function () {
   before(async function () {
-    await prepare(this, ["SushiMakerKashi", "SushiBar", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair", "BentoBoxV1", "KashiPairMediumRiskV1"])
+    await prepare(this, ["SushiMakerKashi", "SushiBar", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair", "BentoBoxV1", "KashiPairMediumRiskV1", "PeggedOracleV1"])
   })
 
   beforeEach(async function () {
@@ -18,8 +18,9 @@ describe("KashiSushiMaker", function () {
     ])
     await deploy(this, [["bar", this.SushiBar, [this.sushi.address]]])
     await deploy(this, [["bento", this.BentoBoxV1, [this.weth.address]]])
-    await deploy(this, [["kashi", this.KashiPairMediumRiskV1, [this.bento.address]]])
+    await deploy(this, [["kashiMaster", this.KashiPairMediumRiskV1, [this.bento.address]]])
     await deploy(this, [["kashiMaker", this.SushiMakerKashi, [this.factory.address, this.bar.address, this.bento.address, this.sushi.address, this.weth.address, this.factory.pairCodeHash()]]])
+    await deploy(this, [["oracle", this.PeggedOracleV1]])
     await createSLP(this, "sushiEth", this.sushi, this.weth, getBigNumber(10))
     await createSLP(this, "strudelEth", this.strudel, this.weth, getBigNumber(10))
     await createSLP(this, "daiEth", this.dai, this.weth, getBigNumber(10))
@@ -30,9 +31,15 @@ describe("KashiSushiMaker", function () {
     await createSLP(this, "daiMIC", this.dai, this.mic, getBigNumber(10))
   })
   
+  describe("setFeeTo", function () {
+    it("sets Maker as Kashi fee receiver", async function () {
+      await expect(this.kashiMaster.setFeeTo(this.kashiMaker.address))
+    })
+  })
+  
   describe("whiteListMasterContract", function () {
-    it("whitelists Kashi from Bento", async function () {
-      await expect(this.bento.whitelistMasterContract(this.kashi.address, true))
+    it("whitelists Kashi master contract on Bento", async function () {
+      await expect(this.bento.whitelistMasterContract(this.kashiMaster.address, true))
     })
   })
 
