@@ -1,3 +1,5 @@
+import { ethers } from "hardhat";
+const { keccak256, defaultAbiCoder } = require("ethers");
 import { expect } from "chai";
 import { prepare, deploy, getBigNumber, createSLP } from "./utilities"
 
@@ -29,18 +31,21 @@ describe("KashiSushiMaker", function () {
     await createSLP(this, "sushiUSDC", this.sushi, this.usdc, getBigNumber(10))
     await createSLP(this, "daiUSDC", this.dai, this.usdc, getBigNumber(10))
     await createSLP(this, "daiMIC", this.dai, this.mic, getBigNumber(10))
-  })
-  
-  describe("setFeeTo", function () {
-    it("sets Maker as Kashi fee receiver", async function () {
-      await expect(this.kashiMaster.setFeeTo(this.kashiMaker.address))
-    })
-  })
-  
-  describe("whiteListMasterContract", function () {
-    it("whitelists Kashi master contract on Bento", async function () {
-      await expect(this.bento.whitelistMasterContract(this.kashiMaster.address, true))
-    })
+    await this.kashiMaster.setFeeTo(this.kashiMaker.address)
+    await this.bento.whitelistMasterContract(this.kashiMaster.address, true)
+    await this.sushi.approve(this.bento.address, getBigNumber(10))
+    await this.dai.approve(this.bento.address, getBigNumber(10))
+    await this.mic.approve(this.bento.address, getBigNumber(10))
+    await this.usdc.approve(this.bento.address, getBigNumber(10))
+    await this.weth.approve(this.bento.address, getBigNumber(10))
+    await this.strudel.approve(this.bento.address, getBigNumber(10))
+    await this.bento.deposit(this.sushi.address, this.address, this.address, getBigNumber(10))
+    await this.bento.deposit(this.dai.address, this.address, this.address, getBigNumber(10))
+    await this.bento.deposit(this.mic.address, this.address, this.address, getBigNumber(10))
+    await this.bento.deposit(this.usdc.address, this.address, this.address, getBigNumber(10))
+    await this.bento.deposit(this.weth.address, this.address, this.address, getBigNumber(10))
+    await this.bento.deposit(this.strudel.address, this.address, this.address, getBigNumber(10))
+    await this.bento.setMasterContractApproval(this.address, this.kashiMaster, true, 0, 0x0000000000000000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000000000000)
   })
 
   describe("setBridge", function () {
