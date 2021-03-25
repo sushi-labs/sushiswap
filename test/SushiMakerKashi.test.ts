@@ -61,6 +61,10 @@ describe("KashiSushiMaker", function () {
   })
 
   describe("setBridge", function () {
+    it("only allows the owner to set bridge", async function () {
+      await expect(this.kashiMaker.connect(this.bob).setBridge(this.sushi.address, this.weth.address, { from: this.bob.address })).to.be.revertedWith("Ownable: caller is not the owner")
+    })
+    
     it("does not allow to set bridge for Sushi", async function () {
       await expect(this.kashiMaker.setBridge(this.sushi.address, this.weth.address)).to.be.revertedWith("Maker: Invalid bridge")
     })
