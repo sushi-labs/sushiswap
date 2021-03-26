@@ -74,7 +74,7 @@ interface ICompoundBridge {
 
 contract BentoBridge {
     IAaveBridge immutable aave; // AAVE lending pool contract - 0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9
-    IBentoBridge immutable bento; // BENTO token vault contract - 
+    IBentoBridge immutable bento; // BENTO token vault contract - 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966
     
     constructor(IAaveBridge _aave, IBentoBridge _bento) public {
         _bento.registerProtocol();
