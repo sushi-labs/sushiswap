@@ -1,14 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 
-/// @dev brief EIP 20 interface for contract bridges
+// File @boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol@v1.2.0
+// License-Identifier: MIT
+
 interface IERC20 {
-     function balanceOf(address account) external view returns (uint256);
-     
-     function approve(address spender, uint256 amount) external returns (bool);
-     
-     /// @notice EIP 2612
-     function permit(
+    function totalSupply() external view returns (uint256);
+
+    function balanceOf(address account) external view returns (uint256);
+
+    function allowance(address owner, address spender) external view returns (uint256);
+
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    /// @notice EIP 2612
+    function permit(
         address owner,
         address spender,
         uint256 value,
@@ -17,14 +26,47 @@ interface IERC20 {
         bytes32 r,
         bytes32 s
     ) external;
-    
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    
-    function transferFrom(
-        address sender,
-        address recipient,
+}
+
+// File @boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol@v1.2.0
+// License-Identifier: MIT
+
+library BoringERC20 {
+    bytes4 private constant SIG_SYMBOL = 0x95d89b41; // symbol()
+    bytes4 private constant SIG_NAME = 0x06fdde03; // name()
+    bytes4 private constant SIG_DECIMALS = 0x313ce567; // decimals()
+    bytes4 private constant SIG_TRANSFER = 0xa9059cbb; // transfer(address,uint256)
+    bytes4 private constant SIG_TRANSFER_FROM = 0x23b872dd; // transferFrom(address,address,uint256)
+
+    /// @notice Provides a safe ERC20.transfer version for different ERC-20 implementations.
+    /// Reverts on a failed transfer.
+    /// @param token The address of the ERC-20 token.
+    /// @param to Transfer tokens to.
+    /// @param amount The token amount.
+    function safeTransfer(
+        IERC20 token,
+        address to,
         uint256 amount
-    ) external returns (bool);
+    ) internal {
+        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER, to, amount));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "BoringERC20: Transfer failed");
+    }
+
+    /// @notice Provides a safe ERC20.transferFrom version for different ERC-20 implementations.
+    /// Reverts on a failed transfer.
+    /// @param token The address of the ERC-20 token.
+    /// @param from Transfer tokens from.
+    /// @param to Transfer tokens to.
+    /// @param amount The token amount.
+    function safeTransferFrom(
+        IERC20 token,
+        address from,
+        address to,
+        uint256 amount
+    ) internal {
+        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(SIG_TRANSFER_FROM, from, to, amount));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "BoringERC20: TransferFrom failed");
+    }
 }
 
 interface IAaveBridge {
@@ -36,7 +78,7 @@ interface IAaveBridge {
         address onBehalfOf, 
         uint16 referralCode
     ) external;
-    
+
     function withdraw( 
         address token, 
         uint256 amount, 
@@ -46,7 +88,7 @@ interface IAaveBridge {
 
 interface IBentoBridge {
     function registerProtocol() external;
-    
+
     function deposit( 
         IERC20 token_,
         address from,
@@ -66,22 +108,24 @@ interface IBentoBridge {
 
 interface ICompoundBridge {
     function underlying() external view returns (address);
-    
+
     function mint(uint mintAmount) external returns (uint);
-    
+
     function redeemUnderlying(uint redeemAmount) external returns (uint);
 }
 
 contract BentoBridge {
+    using BoringERC20 for IERC20;
+    
     IAaveBridge immutable aave; // AAVE lending pool contract - 0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9
     IBentoBridge immutable bento; // BENTO token vault contract - 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966
-    
+
     constructor(IAaveBridge _aave, IBentoBridge _bento) public {
         _bento.registerProtocol();
         aave = _aave;
         bento = _bento;
     }
-    
+
     function approveTokenBridge(IERC20[] calldata underlying, address[] calldata cToken) external {
         for (uint256 i = 0; i < underlying.length; i++) {
             underlying[i].approve(address(aave), type(uint256).max); // max approve `aave` spender to pull `underlying` from this contract
@@ -89,43 +133,43 @@ contract BentoBridge {
             underlying[i].approve(address(cToken[i]), type(uint256).max); // max approve `cToken` spender to pull `underlying` from this contract
         }
     }
-    
+
     /// - AAVE - ///
     function aaveToBento(address aToken, uint256 amount) external {
-        IERC20(aToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(aToken).safeTransferFrom(msg.sender, address(this), amount);
         address underlying = IAaveBridge(aToken).UNDERLYING_ASSET_ADDRESS();
         aave.withdraw(underlying, amount, address(this));
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-    
+
     function aaveToBentoWithPermit(
         address aToken, uint256 amount, 
         uint8 v, bytes32 r, bytes32 s
     ) external {
         IERC20(aToken).permit(msg.sender, address(this), amount, now, v, r, s);
-        IERC20(aToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(aToken).safeTransferFrom(msg.sender, address(this), amount);
         address underlying = IAaveBridge(aToken).UNDERLYING_ASSET_ADDRESS();
         aave.withdraw(underlying, amount, address(this));
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-    
+
     function bentoToAave(IERC20 underlying, uint256 amount) external {
         bento.withdraw(underlying, msg.sender, address(this), amount, 0);
         aave.deposit(address(underlying), underlying.balanceOf(address(this)), msg.sender, 0); 
     }
-    
+
     /// - COMPOUND - ///
     function compoundToBento(address cToken, uint256 amount) external {
-        IERC20(cToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(cToken).safeTransferFrom(msg.sender, address(this), amount);
         address underlying = ICompoundBridge(cToken).underlying();
         ICompoundBridge(cToken).redeemUnderlying(amount);
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-    
+
     function bentoToCompound(address cToken, uint256 amount) external {
         address underlying = ICompoundBridge(cToken).underlying();
         bento.withdraw(IERC20(underlying), msg.sender, address(this), amount, 0);
         ICompoundBridge(cToken).mint(amount);
-        IERC20(cToken).transfer(msg.sender, IERC20(cToken).balanceOf(address(this))); 
+        IERC20(cToken).safeTransfer(msg.sender, IERC20(cToken).balanceOf(address(this))); 
     }
 }
