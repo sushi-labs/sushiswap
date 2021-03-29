@@ -133,7 +133,18 @@ contract BentoBridge {
             underlying[i].approve(address(cToken[i]), type(uint256).max); // max approve `cToken` spender to pull `underlying` from this contract
         }
     }
-
+    
+    /// - PERMIT - ///
+    // @notice general meta-tx helper - deposit `token` into `bento` with EIP 2612 `permit()`
+    function toBentoWithPermit(
+        IERC20 token, uint256 amount, 
+        uint8 v, bytes32 r, bytes32 s
+    ) external {
+        token.permit(msg.sender, address(this), amount, now, v, r, s);
+        token.safeTransferFrom(msg.sender, address(this), amount);
+        bento.deposit(token, address(this), msg.sender, amount, 0);
+    }
+    
     /// - AAVE - ///
     function aaveToBento(address aToken, uint256 amount) external {
         IERC20(aToken).safeTransferFrom(msg.sender, address(this), amount);
@@ -141,7 +152,7 @@ contract BentoBridge {
         aave.withdraw(underlying, amount, address(this));
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-
+    
     function aaveToBentoWithPermit(
         address aToken, uint256 amount, 
         uint8 v, bytes32 r, bytes32 s
@@ -152,7 +163,7 @@ contract BentoBridge {
         aave.withdraw(underlying, amount, address(this));
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-
+    
     function bentoToAave(IERC20 underlying, uint256 amount) external {
         bento.withdraw(underlying, msg.sender, address(this), amount, 0);
         aave.deposit(address(underlying), underlying.balanceOf(address(this)), msg.sender, 0); 
@@ -165,7 +176,7 @@ contract BentoBridge {
         ICompoundBridge(cToken).redeemUnderlying(amount);
         bento.deposit(IERC20(underlying), address(this), msg.sender, amount, 0);
     }
-
+    
     function bentoToCompound(address cToken, uint256 amount) external {
         address underlying = ICompoundBridge(cToken).underlying();
         bento.withdraw(IERC20(underlying), msg.sender, address(this), amount, 0);
