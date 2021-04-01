@@ -10,6 +10,12 @@ import "./libraries/SignedSafeMath.sol";
 import "./interfaces/IRewarder.sol";
 import "./interfaces/IMasterChef.sol";
 
+interface IMigratorChef {
+    // Take the current LP token address and return the new LP token address.
+    // Migrator should have full access to the caller's LP token.
+    function migrate(IERC20 token) external returns (IERC20);
+}
+
 /// @notice The (older) MasterChef contract gives out a constant number of SUSHI tokens per block.
 /// It is the only address with minting rights for SUSHI.
 /// The idea for this MasterChef V2 (MCV2) contract is therefore to be the owner of a dummy token
@@ -44,6 +50,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     IERC20 public immutable SUSHI;
     /// @notice The index of MCV2 master pool in MCV1.
     uint256 public immutable MASTER_PID;
+    // @notice The migrator contract. It has a lot of power. Can only be set through governance (owner).
+    IMigratorChef public migrator;
 
     /// @notice Info of each MCV2 pool.
     PoolInfo[] public poolInfo;
@@ -85,7 +93,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @param dummyToken The address of the ERC-20 token to deposit into MCV1.
     function init(IERC20 dummyToken) external {
         uint256 balance = dummyToken.balanceOf(msg.sender);
-        require(balance != 0, "Balance must exceed 0");
+        require(balance != 0, "MasterChefV2: Balance must exceed 0");
         dummyToken.safeTransferFrom(msg.sender, address(this), balance);
         dummyToken.approve(address(MASTER_CHEF), balance);
         MASTER_CHEF.deposit(MASTER_PID, balance);
@@ -126,6 +134,24 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         poolInfo[_pid].allocPoint = _allocPoint.to64();
         if (overwrite) { rewarder[_pid] = _rewarder; }
         emit LogSetPool(_pid, _allocPoint, overwrite ? _rewarder : rewarder[_pid], overwrite);
+    }
+
+    /// @notice Set the `migrator` contract. Can only be called by the owner.
+    /// @param _migrator The contract address to set.
+    function setMigrator(IMigratorChef _migrator) public onlyOwner {
+        migrator = _migrator;
+    }
+
+    /// @notice Migrate LP token to another LP contract through the `migrator` contract.
+    /// @param _pid The index of the pool. See `poolInfo`.
+    function migrate(uint256 _pid) public {
+        require(address(migrator) != address(0), "MasterChefV2: no migrator set");
+        IERC20 _lpToken = lpToken[_pid];
+        uint256 bal = _lpToken.balanceOf(address(this));
+        _lpToken.approve(address(migrator), bal);
+        IERC20 newLpToken = migrator.migrate(_lpToken);
+        require(bal == newLpToken.balanceOf(address(this)), "MasterChefV2: migrated balance must match");
+        lpToken[_pid] = newLpToken;
     }
 
     /// @notice View function to see pending SUSHI on frontend.
