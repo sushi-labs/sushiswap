@@ -10,6 +10,19 @@ import "./libraries/SignedSafeMath.sol";
 import "./interfaces/IRewarder.sol";
 import "./interfaces/IMasterChef.sol";
 
+interface IMigratorChef {
+    // Perform LP token migration from legacy UniswapV2 to SushiSwap.
+    // Take the current LP token address and return the new LP token address.
+    // Migrator should have full access to the caller's LP token.
+    // Return the new LP token address.
+    //
+    // XXX Migrator must have allowance access to UniswapV2 LP tokens.
+    // SushiSwap must mint EXACTLY the same amount of SushiSwap LP tokens or
+    // else something bad will happen. Traditional UniswapV2 does not
+    // do that so be careful!
+    function migrate(IERC20 token) external returns (IERC20);
+}
+
 /// @notice The (older) MasterChef contract gives out a constant number of SUSHI tokens per block.
 /// It is the only address with minting rights for SUSHI.
 /// The idea for this MasterChef V2 (MCV2) contract is therefore to be the owner of a dummy token
@@ -44,6 +57,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     IERC20 public immutable SUSHI;
     /// @notice The index of MCV2 master pool in MCV1.
     uint256 public immutable MASTER_PID;
+    // The migrator contract. It has a lot of power. Can only be set through governance (owner).
+    IMigratorChef public migrator;
 
     /// @notice Info of each MCV2 pool.
     PoolInfo[] public poolInfo;
@@ -126,6 +141,22 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         poolInfo[_pid].allocPoint = _allocPoint.to64();
         if (overwrite) { rewarder[_pid] = _rewarder; }
         emit LogSetPool(_pid, _allocPoint, overwrite ? _rewarder : rewarder[_pid], overwrite);
+    }
+
+    // Set the migrator contract. Can only be called by the owner.
+    function setMigrator(IMigratorChef _migrator) public onlyOwner {
+        migrator = _migrator;
+    }
+
+    // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
+    function migrate(uint256 _pid) public {
+        require(address(migrator) != address(0), "migrate: no migrator");
+        IERC20 _lpToken = lpToken[_pid];
+        uint256 bal = _lpToken.balanceOf(address(this));
+        _lpToken.approve(address(migrator), bal);
+        IERC20 newLpToken = migrator.migrate(_lpToken);
+        require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
+        lpToken[_pid] = newLpToken;
     }
 
     /// @notice View function to see pending SUSHI on frontend.
