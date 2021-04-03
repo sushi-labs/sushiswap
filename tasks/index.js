@@ -11,14 +11,15 @@ task("bytecode", "Prints bytecode").setAction(async function({ address }, { ethe
   console.log("Bytecode", await ethers.provider.getCode(address))
 })
 
-task("feeder:feed", "Feed").setAction(async function({ amount }, { getNamedAccounts, ethers: { BigNumber }, getChainId }) {
+task("feeder:feed", "Feed")
+.setAction(async function({ feedDev }, { getNamedAccounts, ethers: { BigNumber }, getChainId }) {
   const { deployer, dev } = await getNamedAccounts()
 
   const feeder = new ethers.Wallet(process.env.FEEDER_PRIVATE_KEY, ethers.provider)
 
   await (await feeder.sendTransaction({
     to: deployer,
-    value: BigNumber.from(1).mul(BigNumber.from(10).pow(17))
+    value: BigNumber.from(1).mul(BigNumber.from(10).pow(18))
   })).wait();
 })
 
