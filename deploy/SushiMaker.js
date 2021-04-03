@@ -33,12 +33,6 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
     console.log("Setting maker owner")
     await (await maker.transferOwnership(dev, true, false)).wait()
   }
-
-  // if (await factory.feeTo() !== address) {
-  //   // Set FeeTo to maker
-  //   console.log("Setting factory feeTo to maker address")
-  //   await (await factory.connect(await getNamedSigner('dev')).setFeeTo(address)).wait()
-  // }
 }
 
 module.exports.tags = ["SushiMaker"]
