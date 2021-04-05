@@ -69,10 +69,10 @@ library BoringERC20 {
     }
 }
 
-/// @notice interface for `aave` deposit and withdraw
+/// @notice Interface for AAVE deposit and withdraw.
 interface IAaveBridge {
     function UNDERLYING_ASSET_ADDRESS() external view returns (address);
-    
+
     function deposit( 
         address asset, 
         uint256 amount, 
@@ -87,7 +87,7 @@ interface IAaveBridge {
     ) external;
 }
 
-/// @notice interface for `bento` deposit and withdraw
+/// @notice Interface for BENTO deposit and withdraw.
 interface IBentoBridge {
     function registerProtocol() external;
 
@@ -108,15 +108,15 @@ interface IBentoBridge {
     ) external returns (uint256 amountOut, uint256 shareOut);
 }
 
-/// @notice interface for `cToken` deposit and withdraw
+/// @notice Interface for COMPOUND deposit and withdraw.
 interface ICompoundBridge {
     function underlying() external view returns (address);
     function mint(uint mintAmount) external returns (uint);
     function redeem(uint redeemTokens) external returns (uint);
 }
 
-/// @notice interface for `dai` deposit via `permit()` primitive
-interface IDAIPermit {
+/// @notice Interface for DAI deposit via `permit()` primitive.
+interface IDaiPermit {
     function permit(
         address holder,
         address spender,
@@ -129,6 +129,7 @@ interface IDAIPermit {
     ) external;
 }
 
+/// @notice Contract to bridge underlying defi tokens and BENTO.
 contract BentoBridge {
     using BoringERC20 for IERC20;
 
@@ -142,7 +143,7 @@ contract BentoBridge {
         bento = _bento;
         dai = _dai;
     }
-    
+
     function approveTokenBridge(IERC20[] calldata underlying, address[] calldata cToken) external {
         for (uint256 i = 0; i < underlying.length; i++) {
             underlying[i].approve(address(aave), type(uint256).max); // max approve `aave` spender to pull `underlying` from this contract
@@ -172,30 +173,30 @@ contract BentoBridge {
 
     function bentoToAave(IERC20 underlying, uint256 amount) external {
         bento.withdraw(underlying, msg.sender, address(this), amount, 0);
-        aave.deposit(address(underlying), underlying.balanceOf(address(this)), msg.sender, 0); 
+        aave.deposit(address(underlying), amount, msg.sender, 0); 
     }
 
-    /// - COMPOUND - ///
-    function compoundToBento(address cToken, uint256 amount) external {
-        IERC20(cToken).safeTransferFrom(msg.sender, address(this), amount);
-        address underlying = ICompoundBridge(cToken).underlying();
-        ICompoundBridge(cToken).redeem(amount);
-        bento.deposit(IERC20(underlying), address(this), msg.sender, IERC20(underlying).balanceOf(address(this)), 0);
+    /// - COMPOUND/CREAM - ///
+    function compoundToBento(address cToken, uint256 cTokenAmount) external {
+        IERC20(cToken).safeTransferFrom(msg.sender, address(this), cTokenAmount);
+        IERC20 underlying = IERC20(ICompoundBridge(cToken).underlying());
+        ICompoundBridge(cToken).redeem(cTokenAmount);
+        bento.deposit(underlying, address(this), msg.sender, underlying.balanceOf(address(this)), 0);
     }
 
-    function bentoToCompound(address cToken, uint256 amount) external {
-        address underlying = ICompoundBridge(cToken).underlying();
-        bento.withdraw(IERC20(underlying), msg.sender, address(this), amount, 0);
-        ICompoundBridge(cToken).mint(amount);
+    function bentoToCompound(address cToken, uint256 underlyingAmount) external {
+        IERC20 underlying = IERC20(ICompoundBridge(cToken).underlying());
+        bento.withdraw(underlying, msg.sender, address(this), underlyingAmount, 0);
+        ICompoundBridge(cToken).mint(underlyingAmount);
         IERC20(cToken).safeTransfer(msg.sender, IERC20(cToken).balanceOf(address(this))); 
     }
-    
+
     /// - DAI - ///
     function daiToBentoWithPermit(
         uint256 amount, uint256 nonce, uint256 deadline,
         uint8 v, bytes32 r, bytes32 s
     ) external {
-        IDAIPermit(dai).permit(msg.sender, address(this), nonce, deadline, true, v, r, s);
+        IDaiPermit(dai).permit(msg.sender, address(this), nonce, deadline, true, v, r, s);
         IERC20(dai).safeTransferFrom(msg.sender, address(this), amount);
         bento.deposit(IERC20(dai), address(this), msg.sender, amount, 0);
     }
