@@ -19,4 +19,4 @@ module.exports.skip = ({ getChainId }) =>
     }
   })
 
-module.exports.tags = ["test"]
+module.exports.tags = ["Mocks"]
