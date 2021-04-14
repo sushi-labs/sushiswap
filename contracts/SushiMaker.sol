@@ -91,6 +91,18 @@ contract SushiMaker is Ownable {
         _;
     }
 
+    function isContract(address account) internal view returns (bool) {
+    /// @dev isContract According to EIP-1052, 0x0 is the value returned for not-yet created accounts
+    // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
+    // for accounts without code, i.e. `keccak256('')`
+        bytes32 codehash;
+        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+    // solhint-disable-next-line no-inline-assembly
+        assembly { codehash := extcodehash(account) }
+        return (codehash != accountHash && codehash != 0x0);
+    }
+
+
     // F1 - F10: OK
     // F3: _convert is separate to save gas by only checking the 'onlyEOA' modifier once in case of convertMultiple
     // F6: There is an exploit to add lots of SUSHI to the bar, run convert, then remove the SUSHI again.
