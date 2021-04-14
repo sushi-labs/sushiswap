@@ -67,7 +67,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
-    bytes4 private constant SIG_ON_SUSHI_REWARD = 0xbb6cc2ef; // onSushiReward(uint256,address,uint256)
+    bytes4 private constant SIG_ON_SUSHI_REWARD = 0x70b78fe7; // onSushiReward(uint256,address,uint256,uint256)
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
