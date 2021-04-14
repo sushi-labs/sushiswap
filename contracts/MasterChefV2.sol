@@ -208,7 +208,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param amount LP token amount to deposit.
     /// @param to The receiver of `amount` deposit benefit.
-    function deposit(uint256 pid, uint256 amount, address to) public {
+    /// @return success Returns bool indicating success of rewarder delegate call.
+    function deposit(uint256 pid, uint256 amount, address to) public returns (bool success) {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][to];
 
@@ -219,6 +220,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         // Interactions
         lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);
 
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, 0, user.amount));
+        }
+
         emit Deposit(msg.sender, pid, amount, to);
     }
 
@@ -226,7 +236,8 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param amount LP token amount to withdraw.
     /// @param to Receiver of the LP tokens.
-    function withdraw(uint256 pid, uint256 amount, address to) public {
+    /// @return success Returns bool indicating success of rewarder delegate call.
+    function withdraw(uint256 pid, uint256 amount, address to) public returns (bool success) {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][msg.sender];
 
@@ -236,6 +247,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         // Interactions
         lpToken[pid].safeTransfer(to, amount);
+
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, 0, user.amount));
+        }
 
         emit Withdraw(msg.sender, pid, amount, to);
     }
@@ -263,7 +283,11 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
             // Forwarding: (63/64 of gasleft by evm convention) minus 5000
             // solhint-disable-next-line
-            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
+            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
+        }
+
+        emit Harvest(msg.sender, pid, _pendingSushi);
+    }
         }
 
         emit Harvest(msg.sender, pid, _pendingSushi);
