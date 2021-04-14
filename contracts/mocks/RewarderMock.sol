@@ -18,7 +18,7 @@ contract RewarderMock is IRewarder {
         rewardToken = _rewardToken;
     }
 
-    function onSushiReward (uint256, address user, uint256 sushiAmount, uint256 lpAmount) override external {
+    function onSushiReward (uint256, address user, uint256 sushiAmount, uint256) override external {
         uint256 pendingReward = sushiAmount.mul(rewardMultiplier) / REWARD_TOKEN_DIVISOR;
         uint256 rewardBal = rewardToken.balanceOf(address(this));
         if (pendingReward > rewardBal) {
