@@ -92,12 +92,12 @@ contract SushiMaker is Ownable {
     }
 
     function isContract(address account) internal view returns (bool) {
-    /// @dev isContract According to EIP-1052, 0x0 is the value returned for not-yet created accounts
-    // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
-    // for accounts without code, i.e. `keccak256('')`
+    /// @dev isContract EIP-1052
+    //  return 0x0; this is the value returned for not-yet created accounts
+    //  return 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470; is returned or accounts without code, i.e. `keccak256('')`
         bytes32 codehash;
         bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-    // solhint-disable-next-line no-inline-assembly
+        // solhint-disable-next-line no-inline-assembly
         assembly { codehash := extcodehash(account) }
         return (codehash != accountHash && codehash != 0x0);
     }
