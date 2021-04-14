@@ -288,6 +288,28 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         emit Harvest(msg.sender, pid, _pendingSushi);
     }
+
+    function withdrawAndHarvest(uint256 pid, uint256 amount, address to) public returns (bool success) {
+        PoolInfo memory pool = updatePool(pid);
+        UserInfo storage user = userInfo[pid][msg.sender];
+        int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
+        uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
+        if (_pendingSushi == 0) { success = false; }
+
+        // Effects
+        user.rewardDebt = accumulatedSushi.sub(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
+        user.amount = user.amount.sub(amount);
+        
+        // Interactions
+        SUSHI.safeTransfer(to, _pendingSushi);
+
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
         }
 
         emit Harvest(msg.sender, pid, _pendingSushi);
