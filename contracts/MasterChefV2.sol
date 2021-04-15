@@ -216,14 +216,14 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         user.rewardDebt = user.rewardDebt.add(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
 
         // Interactions
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, to, to, 0, user.amount);
+        }
+
         lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);
 
         emit Deposit(msg.sender, pid, amount, to);
-
-        IRewarder _rewarder = rewarder[pid];
-        if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, to, 0, user.amount);
-        }
     }
 
     /// @notice Withdraw LP tokens from MCV2.
@@ -239,14 +239,14 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         user.amount = user.amount.sub(amount);
 
         // Interactions
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, msg.sender, to, 0, user.amount);
+        }
+        
         lpToken[pid].safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, pid, amount, to);
-
-        IRewarder _rewarder = rewarder[pid];
-        if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, msg.sender, 0, user.amount);
-        }
     }
 
     /// @notice Harvest proceeds for transaction sender to `to`.
@@ -265,13 +265,13 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (_pendingSushi != 0) {
             SUSHI.safeTransfer(to, _pendingSushi);
         }
-
-        emit Harvest(msg.sender, pid, _pendingSushi);
-
+        
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward( pid, to, _pendingSushi, user.amount);
+            _rewarder.onSushiReward( pid, msg.sender, to, _pendingSushi, user.amount);
         }
+
+        emit Harvest(msg.sender, pid, _pendingSushi);
     }
     
     /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.
@@ -290,15 +290,16 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         
         // Interactions
         SUSHI.safeTransfer(to, _pendingSushi);
+
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, msg.sender, to, _pendingSushi, user.amount);
+        }
+
         lpToken[pid].safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, pid, amount, to);
         emit Harvest(msg.sender, pid, _pendingSushi);
-
-        IRewarder _rewarder = rewarder[pid];
-        if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, to, _pendingSushi, user.amount);
-        }
     }
 
     /// @notice Harvests SUSHI from `MASTER_CHEF` MCV1 and pool `MASTER_PID` to this MCV2 contract.
