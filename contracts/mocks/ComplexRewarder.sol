@@ -8,8 +8,8 @@ import "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol";
 import "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol";
 import "../MasterChefV2.sol";
 
-/// @author 0xKeno
-contract RewarderMock is IRewarder,  BoringOwnable{
+/// @author @0xKeno
+contract ComplexRewarder is IRewarder,  BoringOwnable{
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringERC20 for IERC20;
