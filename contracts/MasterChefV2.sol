@@ -273,7 +273,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         user.rewardDebt = accumulatedSushi;
 
         // Interactions
-        if (_pendingSushi == 0) {
+        if (_pendingSushi != 0) {
             SUSHI.safeTransfer(to, _pendingSushi);
         }
 
