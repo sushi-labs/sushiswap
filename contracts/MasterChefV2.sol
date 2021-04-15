@@ -67,7 +67,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
-    bytes4 private constant SIG_ON_SUSHI_REWARD = 0x70b78fe7; // onSushiReward(uint256,address,uint256,uint256)
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
@@ -221,13 +220,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         emit Deposit(msg.sender, pid, amount, to);
 
-        address _rewarder = address(rewarder[pid]);
-        if (_rewarder != address(0)) {
-            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
-            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
-            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
-            // solhint-disable-next-line
-            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, 0, user.amount));
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, to, 0, user.amount);
         }
 
     }
@@ -249,13 +244,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         emit Withdraw(msg.sender, pid, amount, to);
 
-        address _rewarder = address(rewarder[pid]);
-        if (_rewarder != address(0)) {
-            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
-            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
-            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
-            // solhint-disable-next-line
-            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, 0, user.amount));
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, msg.sender, 0, user.amount);
         }
 
     }
@@ -279,13 +270,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         emit Harvest(msg.sender, pid, _pendingSushi);
 
-        address _rewarder = address(rewarder[pid]);
-        if (_rewarder != address(0)) {
-            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
-            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
-            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
-            // solhint-disable-next-line
-            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward( pid, to, _pendingSushi, user.amount);
         }
 
     }
@@ -307,13 +294,9 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         emit Withdraw(msg.sender, pid, amount, to);
         emit Harvest(msg.sender, pid, _pendingSushi);
 
-        address _rewarder = address(rewarder[pid]);
-        if (_rewarder != address(0)) {
-            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
-            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
-            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
-            // solhint-disable-next-line
-            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, to, _pendingSushi, user.amount);
         }
 
     }
