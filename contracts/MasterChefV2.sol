@@ -67,7 +67,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
     uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
-    bytes4 private constant SIG_ON_SUSHI_REWARD = 0xbb6cc2ef; // onSushiReward(uint256,address,uint256)
+    bytes4 private constant SIG_ON_SUSHI_REWARD = 0x70b78fe7; // onSushiReward(uint256,address,uint256,uint256)
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
@@ -220,6 +220,15 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);
 
         emit Deposit(msg.sender, pid, amount, to);
+
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, 0, user.amount));
+        }
     }
 
     /// @notice Withdraw LP tokens from MCV2.
@@ -238,24 +247,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         lpToken[pid].safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, pid, amount, to);
-    }
-
-    /// @notice Harvest proceeds for transaction sender to `to`.
-    /// @param pid The index of the pool. See `poolInfo`.
-    /// @param to Receiver of SUSHI rewards.
-    /// @return success Returns bool indicating success of rewarder delegate call.
-    function harvest(uint256 pid, address to) public returns (bool success) {
-        PoolInfo memory pool = updatePool(pid);
-        UserInfo storage user = userInfo[pid][msg.sender];
-        int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
-        uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
-        if (_pendingSushi == 0) { success = false; }
-
-        // Effects
-        user.rewardDebt = accumulatedSushi;
-
-        // Interactions
-        SUSHI.safeTransfer(to, _pendingSushi);
 
         address _rewarder = address(rewarder[pid]);
         if (_rewarder != address(0)) {
@@ -263,10 +254,68 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
             // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
             // Forwarding: (63/64 of gasleft by evm convention) minus 5000
             // solhint-disable-next-line
-            (success, ) = _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, _pendingSushi));
+            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, msg.sender, 0, user.amount));
+        }
+    }
+
+    /// @notice Harvest proceeds for transaction sender to `to`.
+    /// @param pid The index of the pool. See `poolInfo`.
+    /// @param to Receiver of SUSHI rewards.
+    function harvest(uint256 pid, address to) public {
+        PoolInfo memory pool = updatePool(pid);
+        UserInfo storage user = userInfo[pid][msg.sender];
+        int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
+        uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
+
+        // Effects
+        user.rewardDebt = accumulatedSushi;
+
+        // Interactions
+        if (_pendingSushi != 0) {
+            SUSHI.safeTransfer(to, _pendingSushi);
         }
 
         emit Harvest(msg.sender, pid, _pendingSushi);
+
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
+        }
+    }
+    
+    /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.
+    /// @param pid The index of the pool. See `poolInfo`.
+    /// @param amount LP token amount to withdraw.
+    /// @param to Receiver of the LP tokens and SUSHI rewards.
+    function withdrawAndHarvest(uint256 pid, uint256 amount, address to) public {
+        PoolInfo memory pool = updatePool(pid);
+        UserInfo storage user = userInfo[pid][msg.sender];
+        int256 accumulatedSushi = int256(user.amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION);
+        uint256 _pendingSushi = accumulatedSushi.sub(user.rewardDebt).toUInt256();
+
+        // Effects
+        user.rewardDebt = accumulatedSushi.sub(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
+        user.amount = user.amount.sub(amount);
+        
+        // Interactions
+        SUSHI.safeTransfer(to, _pendingSushi);
+        lpToken[pid].safeTransfer(to, amount);
+
+        emit Withdraw(msg.sender, pid, amount, to);
+        emit Harvest(msg.sender, pid, _pendingSushi);
+
+        address _rewarder = address(rewarder[pid]);
+        if (_rewarder != address(0)) {
+            // Note: Do it this way because we don't want to fail harvest if only the delegate call fails.
+            // Additionally, forward less gas so that we have enough buffer to complete harvest if the call eats up too much gas.
+            // Forwarding: (63/64 of gasleft by evm convention) minus 5000
+            // solhint-disable-next-line
+            _rewarder.call{ gas: gasleft() - 5000 }(abi.encodeWithSelector(SIG_ON_SUSHI_REWARD, pid, to, _pendingSushi, user.amount));
+        }
     }
 
     /// @notice Harvests SUSHI from `MASTER_CHEF` MCV1 and pool `MASTER_PID` to this MCV2 contract.
