@@ -222,7 +222,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, to, 0, user.amount);
+            _rewarder.onSushiReward(pid, to, to, 0, user.amount);
         }
     }
 
@@ -245,7 +245,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, msg.sender, 0, user.amount);
+            _rewarder.onSushiReward(pid, msg.sender, to, 0, user.amount);
         }
     }
 
@@ -270,7 +270,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward( pid, to, _pendingSushi, user.amount);
+            _rewarder.onSushiReward( pid, msg.sender, to, _pendingSushi, user.amount);
         }
     }
     
@@ -297,7 +297,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
 
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
-            _rewarder.onSushiReward(pid, to, _pendingSushi, user.amount);
+            _rewarder.onSushiReward(pid, msg.sender, to, 0, user.amount);
         }
     }
 
