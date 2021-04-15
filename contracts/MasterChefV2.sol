@@ -224,7 +224,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, to, 0, user.amount);
         }
-
     }
 
     /// @notice Withdraw LP tokens from MCV2.
@@ -248,7 +247,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, msg.sender, 0, user.amount);
         }
-
     }
 
     /// @notice Harvest proceeds for transaction sender to `to`.
@@ -274,9 +272,12 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward( pid, to, _pendingSushi, user.amount);
         }
-
     }
-
+    
+    /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.
+    /// @param pid The index of the pool. See `poolInfo`.
+    /// @param amount LP token amount to withdraw.
+    /// @param to Receiver of the LP tokens and SUSHI rewards.
     function withdrawAndHarvest(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][msg.sender];
@@ -298,7 +299,6 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, to, _pendingSushi, user.amount);
         }
-
     }
 
     /// @notice Harvests SUSHI from `MASTER_CHEF` MCV1 and pool `MASTER_PID` to this MCV2 contract.
