@@ -53,8 +53,7 @@ methods {
 	SUSHI() returns (address) envfree
 
 	// Rewarder
-	// SIG_ON_SUSHI_REWARD = 0xbb6cc2ef; // onSushiReward(uint256,address,uint256)
-	0xbb6cc2ef => NONDET
+	onSushiReward(uint256, address, uint256, uint256) => NONDET
 
 	// MasterChefV1
 	deposit(uint256 pid, uint256 amount) => NONDET
