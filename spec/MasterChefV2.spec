@@ -243,6 +243,8 @@ rule preserveTotalAssetOfUser(method f, uint256 pid, address user,
 		withdraw(e, pid, amount, to);
 	} else if (f.selector == emergencyWithdraw(uint256, address).selector) {
 		emergencyWithdraw(e, pid, to);
+	} else if (f.selector == withdrawAndHarvest(uint256,uint256,address).selector) {
+		withdrawAndHarvest(e, pid, amount, to);
 	} else {
 		calldataarg args;
 		f(e, args);
@@ -385,7 +387,10 @@ function callFunctionWithParams(method f, uint256 pid, address sender, address t
 		harvest(e, pid, to);
 	} else if (f.selector == emergencyWithdraw(uint256, address).selector) {
 		emergencyWithdraw(e, pid, to);
-	} else {
+	} else if (f.selector == withdrawAndHarvest(uint256,uint256,address).selector) {
+		withdrawAndHarvest(e, pid, amount, to);
+	}
+	else {
 		calldataarg args;
 		f(e,args);
 	}
