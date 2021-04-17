@@ -315,6 +315,12 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
         uint256 amount = user.amount;
         user.amount = 0;
         user.rewardDebt = 0;
+
+        IRewarder _rewarder = rewarder[pid];
+        if (address(_rewarder) != address(0)) {
+            _rewarder.onSushiReward(pid, msg.sender, to, 0, 0);
+        }
+
         // Note: transfer can fail or succeed if `amount` is zero.
         lpToken[pid].safeTransfer(to, amount);
         emit EmergencyWithdraw(msg.sender, pid, amount, to);
