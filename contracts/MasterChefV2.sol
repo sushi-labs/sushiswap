@@ -63,7 +63,7 @@ contract MasterChefV2 is BoringOwnable, BoringBatchable {
     /// @notice Info of each user that stakes LP tokens.
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
     /// @dev Total allocation points. Must be the sum of all allocation points in all pools.
-    uint256 totalAllocPoint;
+    uint256 public totalAllocPoint;
 
     uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
