@@ -53,8 +53,7 @@ methods {
 	SUSHI() returns (address) envfree
 
 	// Rewarder
-	// SIG_ON_SUSHI_REWARD = 0xbb6cc2ef; // onSushiReward(uint256,address,uint256)
-	0xbb6cc2ef => NONDET
+	onSushiReward(uint256, address, uint256, uint256) => NONDET
 
 	// MasterChefV1
 	deposit(uint256 pid, uint256 amount) => NONDET
@@ -244,6 +243,8 @@ rule preserveTotalAssetOfUser(method f, uint256 pid, address user,
 		withdraw(e, pid, amount, to);
 	} else if (f.selector == emergencyWithdraw(uint256, address).selector) {
 		emergencyWithdraw(e, pid, to);
+	} else if (f.selector == withdrawAndHarvest(uint256,uint256,address).selector) {
+		withdrawAndHarvest(e, pid, amount, to);
 	} else {
 		calldataarg args;
 		f(e, args);
@@ -386,7 +387,10 @@ function callFunctionWithParams(method f, uint256 pid, address sender, address t
 		harvest(e, pid, to);
 	} else if (f.selector == emergencyWithdraw(uint256, address).selector) {
 		emergencyWithdraw(e, pid, to);
-	} else {
+	} else if (f.selector == withdrawAndHarvest(uint256,uint256,address).selector) {
+		withdrawAndHarvest(e, pid, amount, to);
+	}
+	else {
 		calldataarg args;
 		f(e,args);
 	}
