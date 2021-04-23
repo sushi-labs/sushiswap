@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 
 import './interfaces/IBentoBoxV1.sol';
 import './interfaces/IBoshiCallee.sol';
-import './interfaces/IBoshiFactory.sol';
+import './IBoshiFactory.sol';
 import './interfaces/IMigrator.sol';
 import './libraries/BoshiMath.sol';
 import './BoshiERC20.sol';
