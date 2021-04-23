@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.12;
 
-import './interfaces/IBoshiFactory.sol';
+import './IBoshiFactory.sol';
 import './BoshiERC20.sol';
 
 contract BoshiFactory is IBoshiFactory {
