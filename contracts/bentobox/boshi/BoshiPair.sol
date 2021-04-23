@@ -2,11 +2,6 @@
 
 pragma solidity 0.6.12;
 
-interface IMigrator {
-    // Return the desired amount of liquidity token that the migrator wants.
-    function desiredLiquidity() external view returns (uint256);
-}
-
 contract BoshiPair is BoshiERC20 {
     using BoshiMath for uint256;
     using BoshiMath for uint224;
