@@ -214,13 +214,27 @@ interface IBentoBoxV1 {
     ) external returns (uint256 amountOut, uint256 shareOut);
 }
 
-// File: contracts/uniswapv2/interfaces/IUniswapV2Callee.sol
-
-interface IUniswapV2Callee {
-    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) external;
+interface IBoshiCallee {
+    function boshiCall(address sender, uint256 amount0, uint256 amount1, bytes calldata data) external;
 }
 
-// File: contracts/uniswapv2/UniswapV2Pair.sol
+interface IBoshiFactory {
+    event PairCreated(address indexed token0, address indexed token1, address pair, uint256);
+
+    function feeTo() external view returns (address);
+    function feeToSetter() external view returns (address);
+    function migrator() external view returns (address);
+
+    function getPair(IERC20 tokenA, IERC20 tokenB) external view returns (address pair);
+    function allPairs(uint256) external view returns (address pair);
+    function allPairsLength() external view returns (uint256);
+
+    function createPair(IERC20 tokenA, IERC20 tokenB) external returns (address pair);
+
+    function setFeeTo(address) external;
+    function setFeeToSetter(address) external;
+    function setMigrator(address) external;
+}
 
 interface IMigrator {
     // Return the desired amount of liquidity token that the migrator wants.
@@ -612,7 +626,7 @@ contract BoshiPair is BoshiERC20 {
         require(to != address(_token0) && to != address(_token1), 'Boshi: INVALID_TO');
         if (amount0Out > 0) bento.transfer(_token0, address(this), to, amount0Out); // optimistically transfer tokens
         if (amount1Out > 0) bento.transfer(_token1, address(this), to, amount1Out); // optimistically transfer tokens
-        if (data.length > 0) IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
+        if (data.length > 0) IBoshiCallee(to).boshiCall(msg.sender, amount0Out, amount1Out, data);
         balance0 = IBentoBoxV1(bento).balanceOf(_token0, address(this));
         balance1 = IBentoBoxV1(bento).balanceOf(_token1, address(this));
         }
@@ -628,24 +642,6 @@ contract BoshiPair is BoshiERC20 {
         _update(balance0, balance1, _reserve0, _reserve1);
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
     }
-}
-
-interface IBoshiFactory {
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint256);
-
-    function feeTo() external view returns (address);
-    function feeToSetter() external view returns (address);
-    function migrator() external view returns (address);
-
-    function getPair(IERC20 tokenA, IERC20 tokenB) external view returns (address pair);
-    function allPairs(uint256) external view returns (address pair);
-    function allPairsLength() external view returns (uint256);
-
-    function createPair(IERC20 tokenA, IERC20 tokenB) external returns (address pair);
-
-    function setFeeTo(address) external;
-    function setFeeToSetter(address) external;
-    function setMigrator(address) external;
 }
 
 contract BoshiFactory is IBoshiFactory {
