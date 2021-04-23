@@ -602,7 +602,7 @@ contract BoshiPair is BoshiERC20 {
         amount1 = liquidity.mul(balance1) / _totalSupply; // using balances ensures pro-rata distribution
         require(amount0 > 0 && amount1 > 0, 'Boshi: INSUFFICIENT_LIQUIDITY_BURNED');
         _burn(address(this), liquidity);
-        bento.transfer(IERC20(_token0), address(this), to, amount0);
+        bento.transfer(_token0, address(this), to, amount0);
         bento.transfer(_token1, address(this), to, amount1);
         balance0 = IBentoBoxV1(bento).balanceOf(_token0, address(this));
         balance1 = IBentoBoxV1(bento).balanceOf(_token1, address(this));
