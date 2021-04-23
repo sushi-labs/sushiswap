@@ -2,7 +2,11 @@
 
 pragma solidity 0.6.12;
 
+import './interfaces/IBentoBoxV1.sol';
+import './interfaces/IBoshiCallee.sol';
 import './interfaces/IMigrator.sol';
+import './libraries/BoshiMath.sol';
+import './BoshiERC20.sol';
 
 contract BoshiPair is BoshiERC20 {
     using BoshiMath for uint256;
@@ -167,7 +171,7 @@ contract BoshiPair is BoshiERC20 {
         require(to != address(_token0) && to != address(_token1), 'Boshi: INVALID_TO');
         if (amount0Out > 0) bento.transfer(_token0, address(this), to, amount0Out); // optimistically transfer tokens
         if (amount1Out > 0) bento.transfer(_token1, address(this), to, amount1Out); // optimistically transfer tokens
-        if (data.length > 0) IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
+        if (data.length > 0) IBoshiCallee(to).boshiCall(msg.sender, amount0Out, amount1Out, data);
         balance0 = IBentoBoxV1(bento).balanceOf(_token0, address(this));
         balance1 = IBentoBoxV1(bento).balanceOf(_token1, address(this));
         }
