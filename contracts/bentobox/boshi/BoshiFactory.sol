@@ -4,6 +4,7 @@ pragma solidity 0.6.12;
 
 import './IBoshiFactory.sol';
 import './BoshiERC20.sol';
+import './BoshiPair.sol';
 
 contract BoshiFactory is IBoshiFactory {
     address public override feeTo;
