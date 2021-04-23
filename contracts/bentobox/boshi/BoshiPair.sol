@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.12;
 
-import './interfaces/IBentoBoxV1.sol';
+import './IBentoBoxV1.sol';
 import './interfaces/IBoshiCallee.sol';
 import './IBoshiFactory.sol';
 import './interfaces/IMigrator.sol';
