@@ -2,6 +2,8 @@
 
 pragma solidity 0.6.12;
 
+import './interfaces/IMigrator.sol';
+
 contract BoshiPair is BoshiERC20 {
     using BoshiMath for uint256;
     using BoshiMath for uint224;
