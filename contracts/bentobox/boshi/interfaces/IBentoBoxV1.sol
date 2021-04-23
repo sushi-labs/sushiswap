@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 // File @sushiswap/bentobox-sdk/contracts/IFlashBorrower.sol@v1.0.1
 // License-Identifier: MIT
