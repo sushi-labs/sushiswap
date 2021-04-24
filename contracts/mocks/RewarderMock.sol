@@ -30,7 +30,7 @@ contract RewarderMock is IRewarder {
         }
     }
     
-    function pendingTokens(uint256 pid, address user, uint256 sushiAmount) override external returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
+    function pendingTokens(uint256 pid, address user, uint256 sushiAmount) override external view returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
         IERC20[] memory _rewardTokens = new IERC20[](1);
         _rewardTokens[0] = (rewardToken);
         uint256[] memory _rewardAmounts = new uint256[](1);
