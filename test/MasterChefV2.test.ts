@@ -31,7 +31,7 @@ describe("MasterChefV2", function () {
         ["rlp", this.ERC20Mock, ["LP", "rLPT", getBigNumber(10)]],
         ["r", this.ERC20Mock, ["Reward", "RewardT", getBigNumber(100000)]],
     ])
-    await deploy(this, [["rewarder", this.RewarderMock, [getBigNumber(1), this.r.address]]])
+    await deploy(this, [["rewarder", this.RewarderMock, [getBigNumber(1), this.r.address, this.chef2.address]]])
     await this.dummy.approve(this.chef2.address, getBigNumber(10))
     await this.chef2.init(this.dummy.address)
     await this.rlp.transfer(this.bob.address, getBigNumber(1))
