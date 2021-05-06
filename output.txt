@@ -1,0 +1,15 @@
+yarn run v1.22.10
+$ hardhat --network ropsten deploy
+Nothing to compile
+Creating Typechain artifacts in directory types for target ethers-v5
+Successfully generated Typechain artifacts!
+deploying "ERC20Mock" (tx: 0x873cff77b55021473b0bc8ac784e153a7af99e9d205230cf6fac3e107f4f95f2)...: deployed at 0x424dA1e4b8207b696c2D0420FA519168dA6E0Df6 with 735084 gas
+deploying "UniswapV2Factory" (tx: 0x91fc002101d16e37f973e998a2ea4d92a8eb559c38038e87334f6e187d91799f)...: deployed at 0x1Db8e441191c44313A0856eBB5c3338dda4f1814 with 2509406 gas
+deploying "WETH9Mock" (tx: 0xa787100aeb874fc6afe077429a9fcab0cb85b3155d87923928c040d481951d49)...: deployed at 0xe7c6c17C2ca1E2dC9A699562DEDf5143B700e4B4 with 541812 gas
+deploying "UniswapV2Router02" (tx: 0xd58b563fe501a387d40823079ec08de089a017b1f3b112f585b12efb07b01e12)...: deployed at 0x982c813c55bCd3831906Ad86279A8cE05e442246 with 3875337 gas
+deploying "SushiToken" (tx: 0xd63121f2a9e7bd2778e8f34861d3dae9071978069d594bd1ac3621f2451d4678)...: deployed at 0x4eC6972Ed03903f3d139a20884072D31787fc3EE with 1626803 gas
+deploying "MasterChef" (tx: 0xfd6db55a456cf1f57206374b84397253be08ac68941449da2c2a3d6b410f2630)...: deployed at 0x5a37e1657E2222471681Fa0b48995B46Db15ee57 with 1743884 gas
+Mint Sushi
+Transfer Sushi Ownership to Chef
+
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

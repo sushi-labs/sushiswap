@@ -4,7 +4,6 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deployer, dev } = await getNamedAccounts()
 
   const sushi = await ethers.getContract("SushiToken")
-  const erc20 = await ethers.getContract("ERC20Mock")
   
   const { address } = await deploy("MasterChef", {
     from: deployer,
@@ -35,4 +34,4 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 }
 
 module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken", "ERC20Mock"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]

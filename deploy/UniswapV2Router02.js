@@ -29,4 +29,4 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 }
 
 module.exports.tags = ["UniswapV2Router02", "AMM"]
-module.exports.dependencies = ["UniswapV2Factory", "WETH9Mock"]
+module.exports.dependencies = ["UniswapV2Factory", "Mocks"]
