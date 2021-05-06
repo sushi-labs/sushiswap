@@ -3,4 +3,17 @@ $ hardhat --network ropsten deploy
 Nothing to compile
 Creating Typechain artifacts in directory types for target ethers-v5
 Successfully generated Typechain artifacts!
-deploying "UniswapV2Factory" (tx: 0x3e9c4d783d473ec359f99161598f8cb51f28574e152ea2038a65e22349e30e38)...
+reusing "UniswapV2Factory" at 0x26E1505E178474c6f0A78aeE4752FEAcDd9b7302
+deploying "WETH9Mock" (tx: 0x6979cf6a5452e956f83b1eacd9f512674f10b492b31fb5b682b0f87ea83458b9)...: deployed at 0x7a7517289E4122860E62289fF68e7385DF5507fd with 541812 gas
+deploying "UniswapV2Router02" (tx: 0xca4750aae06516163d63ee18363cb26067450befcdb0e627f102d0027aaa7a59)...: deployed at 0x930F194E1d206A2D6929BdeCab6f954deaeB9F3E with 3875349 gas
+deploying "SushiToken" (tx: 0xa90ea96092dff31ad5717ff24c9a6d68d4ac2adf6c608bdd0280291949fe932e)...: deployed at 0xEc6973d2eD9ef5c690A869bd5C616Ab197E7A88c with 1626803 gas
+deploying "MasterChef" (tx: 0xcc957d5df454687f372e126b34144b605ff7e330e349144c68f6b46f9e0ffedf)...: deployed at 0x6e86a996Fb426EAf8b615Ee8E30219b6E5bdeEE4 with 1743884 gas
+Mint Sushi
+Transfer Sushi Ownership to Chef
+Transfer ownership of MasterChef to dev
+deploying "SushiBar" (tx: 0x87d2f655816ee02add70a6c81daf6c34c087e77e779b57bdc5e61fbfa50ce334)...: deployed at 0x3d536c005fB5CcdD6ce93428709b127ba797F5a1 with 1038053 gas
+deploying "SushiMaker" (tx: 0x124e1ec5a1548bb90240fa8f5fb2ccdfb66767e68fb2f681881a37433316c1c0)...: deployed at 0x4b58585064Dd0FbbCAEEa061B844bC1ac7293f3f with 1307284 gas
+Setting maker owner
+deploying "SushiRoll" (tx: 0xd5d48c781c5e1e349d360d5b1bb1dc7c35c6b57202c178e2b787377ebcda7dae)...: deployed at 0x5e4AEAE6ff766D7e735A2deE2f0552A34700fb88 with 1031165 gas
+deploying "Timelock" (tx: 0x5f788c7e8a18089ff3207038d191617e4844d8041fde258732c08b2779d60b29)...: deployed at 0xDe645f6f89AeCA4F7a55E70f5574B3065e0913Db with 1432331 gas
+Done in 368.99s.
