@@ -4,6 +4,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deployer, dev } = await getNamedAccounts()
 
   const sushi = await ethers.getContract("SushiToken")
+  const erc20 = await ethers.getContract("ERC20Mock")
   
   const { address } = await deploy("MasterChef", {
     from: deployer,
@@ -11,6 +12,13 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     log: true,
     deterministicDeployment: false
   })
+
+  if (await sushi.owner() === deployer) {
+    // Mint Sushi
+    console.log("Mint Sushi")
+    await (await sushi.mint(deployer, "1000000000000000000000", {from: deployer})).wait()
+    await (await sushi.mint(dev, "1000000000000000000000", {from: deployer})).wait()
+  }
 
   if (await sushi.owner() !== address) {
     // Transfer Sushi Ownership to Chef
@@ -27,4 +35,4 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 }
 
 module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken", "ERC20Mock"]

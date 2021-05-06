@@ -19,7 +19,7 @@ import { HardhatUserConfig } from "hardhat/types"
 import { removeConsoleLog } from "hardhat-preprocessor"
 
 const accounts = {
-  mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
+  mnemonic: process.env.MNEMONIC || "artefact section remember visual light ceiling venue hedgehog length jump prepare noise",
   // accountsBalance: "990000000000000000000",
 }
 
@@ -61,6 +61,11 @@ const config: HardhatUserConfig = {
       accounts,
       gasPrice: 120 * 1000000000,
       chainId: 1,
+    },
+    ganache: {
+      url: "http://127.0.0.1:7545",
+      accounts,
+      gasPrice: 20000000000
     },
     localhost: {
       live: false,

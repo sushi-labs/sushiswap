@@ -12,7 +12,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   if (chainId === '31337') {
     wethAddress = (await deployments.get("WETH9Mock")).address
   } else if (chainId in WETH) {
-    wethAddress = WETH[chainId].address
+    //wethAddress = WETH[chainId].address
+    wethAddress = (await deployments.get("WETH9Mock")).address
   } else {
     throw Error("No WETH!")
   }
@@ -28,4 +29,4 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 }
 
 module.exports.tags = ["UniswapV2Router02", "AMM"]
-module.exports.dependencies = ["UniswapV2Factory", "Mocks"]
+module.exports.dependencies = ["UniswapV2Factory", "WETH9Mock"]

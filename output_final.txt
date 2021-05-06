@@ -1,0 +1,46 @@
+yarn run v1.22.10
+$ yarn ropsten:deploy && yarn rinkeby:deploy && yarn goerli:deploy && yarn kovan:deploy && yarn moonbase:deploy && yarn arbitrum:deploy
+
+
+$ hardhat --network ropsten deploy
+Nothing to compile
+Creating Typechain artifacts in directory types for target ethers-v5
+Successfully generated Typechain artifacts!
+deploying "ERC20Mock" (tx: 0xc713031fec3c9eb1f3974a53fe27b13b82525f519e1083fc70f543a87d43ad46)...: deployed at 0x7935AF5AB463cdCE8192bC2373846c70827Fd7A9 with 735000 gas
+deploying "UniswapV2Factory" (tx: 0xf94afe2fd7f59f07b991126c57b110d705c373b941e2f2767edcb2cc7982eb03)...: deployed at 0x3cAfaD056f321376aF2DcFA4905CE1FaDF9a2095 with 2509406 gas
+deploying "WETH9Mock" (tx: 0xe97997d48c5989b5760cdc0960f4986bc39bbaea975798dd106c75b377e5378f)...: deployed at 0xB4C2362f71dfd476724C8CD90BFcB41720BBD663 with 541812 gas
+deploying "UniswapV2Router02" (tx: 0x7b0b3c772479b85bef2485ab7ca87eaf9fc614132163f548544a6ee2f82a35c2)...: deployed at 0x389F91d5dAf410401276Ece6bF65dD2770a3bd6E with 3875349 gas
+deploying "SushiToken" (tx: 0x872b7949a8288849d7b0b7faff056a095dc38f2f9cbdc91a320f874dab0320a4)...: deployed at 0x10756c832fEA69320a478e6E4c0297Cf830B4f0b with 1626803 gas
+deploying "MasterChef" (tx: 0x2926ac19005aaa1eeebaf0ade9892c53530dad7a2a6181c520765e0f49376f40)...: deployed at 0xD49Ee945014b71911D6B3128Acb1Dd9E6a0EF00b with 1743884 gas
+Mint Sushi
+Transfer Sushi Ownership to Chef
+Transfer ownership of MasterChef to dev
+deploying "SushiBar" (tx: 0xabb4b3a02bfeb9994608b393bbbbe23c2d7d67cbbdbab6c19f28b2103293ec71)...: deployed at 0x835664f17b9AA0d9c9abeE97ffDBc57298edA2b0 with 1038053 gas
+deploying "SushiMaker" (tx: 0x0b1fda0f9920369479ba447d104b4b51ec665386f9f46c8f048cb4f0f2913a20)...: deployed at 0x54A4167EB20C730AcaE8e00d5a57506ba1A52771 with 1307296 gas
+Setting maker owner
+deploying "SushiRoll" (tx: 0x82fc692aabf2750fdaf894fdcc9ae8ebc362a252ef0e9a7cf02a84c88cc94d90)...: deployed at 0xeE88113A356d558Be2E116a749fA55f45ff60c18 with 1031165 gas
+deploying "Timelock" (tx: 0x1089a21db9aef41376599a15a5f20e0ba3a81d88ed18d41a5071797f8e56eb61)...: deployed at 0xA5c0366df9f6A0626af6555B0A234D61BC7ED86D with 1432331 gas
+
+
+
+
+
+$ hardhat --network rinkeby deploy
+Nothing to compile
+Creating Typechain artifacts in directory types for target ethers-v5
+Successfully generated Typechain artifacts!
+deploying "ERC20Mock" (tx: 0xf9a61dc3071d8504f7656c149a0e214c8b922eec2ccae2382cf00ae94e970bb7)...: deployed at 0x34608B13EbB7a9e9cf50bFfa95f750C4d77a5FF7 with 735000 gas
+deploying "UniswapV2Factory" (tx: 0x548cb6959a24104ce4649128ca70e5c56996f4a1bf21aa89be17a649b56be913)...: deployed at 0x903bd64f12B87dD7538A7cB07FAd8209647c4Eb5 with 2509406 gas
+deploying "WETH9Mock" (tx: 0xd3f296ec903b7eff7502cc32ce4372f3e756f7773af37507056b11a0b21617c1)...: deployed at 0xB7Ec550800B544f1aE6366aA088149848A1EA668 with 541812 gas
+deploying "UniswapV2Router02" (tx: 0x42fb8cabfe8e62d337cfef09ba5767d202eff9cb7aff2a8210f1f7de6a23c816)...: deployed at 0xE5dA398f1Ce2ea900a10A1312d8a936ba565Cc40 with 3875337 gas
+deploying "SushiToken" (tx: 0x68c4d3297864f336a2d92d06b6a64b65409dc10fe6194127f267622913ca5cee)...: deployed at 0xbd1F9647e9b79508bb447A28453f8EBBE2A37B40 with 1626803 gas
+deploying "MasterChef" (tx: 0xf4cd852e1a06e7a9c48a4cd7aac0f9edce755e952901d16a7c9376fbb343fbde)...: deployed at 0x2Dc86840CF9c34cc3c88342fC90Fe820EC9c1DE1 with 1743884 gas
+Mint Sushi
+Transfer Sushi Ownership to Chef
+Transfer ownership of MasterChef to dev
+deploying "SushiBar" (tx: 0x629e0ef36c00de1880cf2a2da987be1f7dddcf6e6666312d5b917ad39511023b)...: deployed at 0xAEEd12d4FD824b962976Df6f0536dC850606e93b with 1038053 gas
+deploying "SushiMaker" (tx: 0x1eb28e57261cc2f4258612c9cb98b472d83640b96b1f513649f503d8a35d9cd2)...: deployed at 0x4212DC1F59D1c3f368Ee8f44Ea8a4Aabe623669E with 1307284 gas
+Setting maker owner
+deploying "SushiRoll" (tx: 0x8b84adf323f95234d74e92f9d5915db5981cc76742acb7472ae06a6675680c7c)...: deployed at 0x80fcc03c2e1B573a660E111cCc31b11FD4b21B1c with 1031165 gas
+deploying "Timelock" (tx: 0x0cc6157fe8ea1e0f96000b7deb59daddab44600813c3cc0241d8dd433c683e80)...: deployed at 0x377858222A5c70D8cCF3566f82482b37796e50B9 with 1432331 gas
+

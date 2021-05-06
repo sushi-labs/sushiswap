@@ -16,7 +16,8 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
   if (chainId === '31337') {
     wethAddress = (await deployments.get("WETH9Mock")).address
   } else if (chainId in WETH) {
-    wethAddress = WETH[chainId].address
+    // wethAddress = WETH[chainId].address
+    wethAddress = (await deployments.get("WETH9Mock")).address
   } else {
     throw Error("No WETH!")
   }
