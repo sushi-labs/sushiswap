@@ -16,6 +16,7 @@ interface IMiniChefV2 {
 
     function poolLength() external view returns (uint256);
     function updatePool(uint256 pid) external returns (IMiniChefV2.PoolInfo memory);
+    function userInfo(uint256 _pid, address _user) external view returns (uint256, uint256);
     function deposit(uint256 pid, uint256 amount, address to) external;
     function withdraw(uint256 pid, uint256 amount, address to) external;
     function harvest(uint256 pid, address to) external;
