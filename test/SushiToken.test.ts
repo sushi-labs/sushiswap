@@ -43,7 +43,9 @@ describe("SushiToken", function () {
   it("should supply token transfers properly", async function () {
     await this.sushi.mint(this.alice.address, "100")
     await this.sushi.mint(this.bob.address, "1000")
+    console.log(await this.sushi.balanceOf(this.bob.address))
     await this.sushi.transfer(this.carol.address, "10")
+    console.log(await this.sushi.balanceOf(this.bob.address).toString())
     await this.sushi.connect(this.bob).transfer(this.carol.address, "100", {
       from: this.bob.address,
     })

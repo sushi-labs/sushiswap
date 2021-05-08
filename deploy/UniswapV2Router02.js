@@ -17,6 +17,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     throw Error("No WETH!")
   }
 
+  console.log(chainId + ") wethAddress = " + wethAddress)
+
   const factoryAddress = (await deployments.get("UniswapV2Factory")).address
 
   await deploy("UniswapV2Router02", {

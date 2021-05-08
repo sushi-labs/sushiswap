@@ -21,6 +21,8 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
     throw Error("No WETH!")
   }
 
+  console.log(chainId + ") wethAddress = " + wethAddress)
+
   await deploy("SushiMaker", {
     from: deployer,
     args: [factory.address, bar.address, sushi.address, wethAddress],
