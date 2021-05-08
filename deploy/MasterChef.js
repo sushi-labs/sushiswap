@@ -12,13 +12,6 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     deterministicDeployment: false
   })
 
-  if (await sushi.owner() === deployer) {
-    // Mint Sushi
-    console.log("Mint Sushi")
-    await (await sushi.mint(deployer, "1000000000000000000000", {from: deployer})).wait()
-    await (await sushi.mint(dev, "1000000000000000000000", {from: deployer})).wait()
-  }
-
   if (await sushi.owner() !== address) {
     // Transfer Sushi Ownership to Chef
     console.log("Transfer Sushi Ownership to Chef")

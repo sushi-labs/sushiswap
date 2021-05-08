@@ -32,7 +32,6 @@
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input",
     "mainnet:export": "hardhat --network mainnet export --export exports/mainnet.json",
-    "ganache:deploy": "hardhat --network ganache deploy",
     "ropsten:deploy": "hardhat --network ropsten deploy",
     "ropsten:verify": "hardhat --network ropsten etherscan-verify --solc-input",
     "ropsten:export": "hardhat --network ropsten export --export exports/ropsten.json",
