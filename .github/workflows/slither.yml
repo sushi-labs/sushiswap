@@ -1,0 +1,59 @@
+# Slither CI Action v1.0.2
+name: slither
+on:
+  push:
+    paths:
+      - "**.sol"
+      - ".github/workflows/slither.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["14.x"]
+        os: ["ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Nodejs 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          check-latest: true
+
+      - name: Install Hardhat
+        run: |
+          yarn install 
+          npx hardhat compile
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install Slither
+        run: pip3 install slither-analyzer
+      - name: Prepare output
+        run: |
+          mkdir -p CI/slither-output
+      - name: Run analysis
+        shell: bash
+        run: |
+          slither . --json-types compilations,console,detectors,printers,list-detectors,list-printers --exclude-dependencies --compile-force-framework hardhat >>CI/slither-output/slither_report.txt 2>&1 || true
+        # more complicated example
+        # slither --exclude=divide-before-multiply,unused-return,timestamp,naming-convention,pragma,solc-version,external-function,reentrancy-benign,reentrancy-no-eth,arbitrary-send,incorrect-equality,reentrancy-events,assembly,uninitialized-local --filter-paths="@openzeppelin|WETH9.sol|uniswapV2"
+      - name: Store the report
+        uses: actions/upload-artifact@v2
+        with:
+          name: slither-report
+          path: CI/slither-output/slither_report.txt
+      - name: Check status
+        shell: bash
+        run: |
+          FALSE_POSITIVE_WARNINGS=7
+          FOUND_WARNINGS=`grep "\d+ result" -Po CI/slither-output/slither_report.txt | sed 's/ result//g'`
+          echo "Slither has found $FOUND_WARNINGS issues"
+          if [[ $FOUND_WARNINGS -gt $FALSE_POSITIVE_WARNINGS ]]; then echo "$FOUND_WARNINGS issues exceeds limit" >&2; exit 1; fi
