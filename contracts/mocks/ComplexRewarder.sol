@@ -98,7 +98,7 @@ contract ComplexRewarder is IRewarder,  BoringOwnable{
         pools = poolIds.length;
     }
 
-    /// @notice Add a new LP to the pool. Can only be called by the owner.
+    /// @notice Add a new LP to the pool.  Can only be called by the owner.
     /// DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     /// @param allocPoint AP of the new pool.
     /// @param _pid Pid on MCV2
@@ -156,6 +156,7 @@ contract ComplexRewarder is IRewarder,  BoringOwnable{
     /// @return pool Returns the pool that was updated.
     function updatePool(uint256 pid) public returns (PoolInfo memory pool) {
         pool = poolInfo[pid];
+        require(pool.lastRewardBlock != 0, "Pool does not exist");
         if (block.number > pool.lastRewardBlock) {
             uint256 lpSupply = MasterChefV2(MASTERCHEF_V2).lpToken(pid).balanceOf(MASTERCHEF_V2);
 
