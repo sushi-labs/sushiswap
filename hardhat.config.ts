@@ -240,6 +240,22 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
       gasMultiplier: 2,
     },
+    "okex": {
+      url: "https://exchainrpc.okex.org",
+      accounts,
+      chainId: 66,
+      live: true,
+      saveDeployments: true,
+    },
+    "okex-testnet": {
+      url: "https://exchaintestrpc.okex.org",
+      accounts,
+      chainId: 65,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    }
   },
   paths: {
     artifacts: "artifacts",
