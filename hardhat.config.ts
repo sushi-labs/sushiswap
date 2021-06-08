@@ -126,15 +126,6 @@ const config: HardhatUserConfig = {
       gas: 5198000,
       gasMultiplier: 2,
     },
-    arbitrum: {
-      url: "https://kovan3.arbitrum.io/rpc",
-      accounts,
-      chainId: 79377087078960,
-      live: true,
-      saveDeployments: true,
-      tags: ["staging"],
-      gasMultiplier: 2,
-    },
     fantom: {
       url: "https://rpcapi.fantom.network",
       accounts,
@@ -240,7 +231,7 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
       gasMultiplier: 2,
     },
-    "okex": {
+    okex: {
       url: "https://exchainrpc.okex.org",
       accounts,
       chainId: 66,
@@ -255,7 +246,24 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasMultiplier: 2,
-    }
+    },
+    arbitrum: {
+      url: "https://arb1.arbitrum.io/rpc",
+      accounts,
+      chainId: 42161,
+      live: true,
+      saveDeployments: true,
+      blockGasLimit: 700000,
+    },
+    "arbitrum-testnet": {
+      url: "https://kovan3.arbitrum.io/rpc",
+      accounts,
+      chainId: 79377087078960,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
   },
   paths: {
     artifacts: "artifacts",
