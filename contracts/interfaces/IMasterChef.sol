@@ -5,7 +5,6 @@ pragma experimental ABIEncoderV2;
 import './IERC20.sol';
 
 interface IMasterChef {
-    using BoringERC20 for IERC20;
     struct UserInfo {
         uint256 amount;     // How many LP tokens the user has provided.
         uint256 rewardDebt; // Reward debt. See explanation below.
