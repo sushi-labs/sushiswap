@@ -53,7 +53,7 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
     event LogSetPool(uint256 indexed pid, uint256 allocPoint);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accSushiPerShare);
     event LogRewardPerSecond(uint256 rewardPerSecond);
-    event LogInit();
+    event LogInit(IERC20 indexed rewardToken, address owner, uint256 rewardPerSecond, IERC20 indexed masterLpToken);
 
     constructor (address _MASTERCHEF_V2) public {
         MASTERCHEF_V2 = _MASTERCHEF_V2;
@@ -65,7 +65,7 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
         require(rewardToken == IERC20(0), "Rewarder: already initialized");
         (rewardToken, owner, rewardPerSecond, masterLpToken) = abi.decode(data, (IERC20, address, uint256, IERC20));
         require(rewardToken != IERC20(0), "Rewarder: bad token");
-        emit LogInit();
+        emit LogInit(rewardToken, owner, rewardPerSecond, masterLpToken);
     }
 
     function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 override external {
