@@ -1,10 +1,7 @@
-# SushiSwap
+# SUNI EXCHANGE
 
-https://sushi.com/
+https://suni.exchange/
 
-## Deployed Contracts
-
-https://dev.sushi.com/sushiswap/contracts
 
 ## Docs
 
