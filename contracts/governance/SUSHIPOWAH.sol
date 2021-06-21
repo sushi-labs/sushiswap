@@ -12,16 +12,7 @@ interface IERC20 {
 
 interface IBentoBoxV1BalanceAmount {
     function balanceOf(IERC20, address) external view returns (uint256);
-
-    function toAmount(
-        IERC20 token,
-        uint256 share,
-        bool roundUp
-    ) external view returns (uint256 amount);
-}
-
-interface ICreamRate {
-    function exchangeRateStored() external view returns (uint256);
+    function toAmount(IERC20 token, uint256 share, bool roundUp) external view returns (uint256 amount);
 }
 
 contract SUSHIPOWAH {
@@ -31,11 +22,12 @@ contract SUSHIPOWAH {
     IERC20 sushi = IERC20(0x6B3595068778DD592e39A122f4f5a5cF09C90fE2);
     IERC20 axSushi = IERC20(0xF256CC7847E919FAc9B808cC216cAc87CCF2f47a);
     IBentoBoxV1BalanceAmount bento = IBentoBoxV1BalanceAmount(0xF5BCE5077908a1b7370B9ae04AdC565EBd643966);
-    address crxSushi = 0x228619CCa194Fbe3Ebeb2f835eC1eA5080DaFbb2; 
+    IERC20 crxSushi = IERC20(0x228619CCa194Fbe3Ebeb2f835eC1eA5080DaFbb2); 
+    IERC20 meow = IERC20(0xDB27dA48027062B4035fb5991660F12df1d553F1);
 
-    function name() external pure returns(string memory) { return "SUSHIPOWAH"; }
-    function symbol() external pure returns(string memory) { return "SUSHIPOWAH"; }
-    function decimals() external pure returns(uint8) { return 18; }
+    function name() external pure returns (string memory) { return "SUSHIPOWAH"; }
+    function symbol() external pure returns (string memory) { return "SUSHIPOWAH"; }
+    function decimals() external pure returns (uint8) { return 18; }
     function allowance(address, address) external pure returns (uint256) { return 0; }
     function approve(address, uint256) external pure returns (bool) { return false; }
     function transfer(address, uint256) external pure returns (bool) { return false; }
@@ -43,20 +35,20 @@ contract SUSHIPOWAH {
 
     /// @notice Returns SUSHI voting 'powah' for `account`.
     function balanceOf(address account) external view returns (uint256 powah) {
-        uint256 bento_balance = bento.toAmount(bar, bento.balanceOf(bar, account), false); 
-        uint256 crxsushi_balance = IERC20(crxSushi).balanceOf(account) * ICreamRate(crxSushi).exchangeRateStored() / 10**18; // adjust CREAM balance against rate
-        uint256 collective_xsushi_balance = bar.balanceOf(account) + axSushi.balanceOf(account) + bento_balance + crxsushi_balance; // calculate collective xSushi staking
-        uint256 xsushi_powah = sushi.balanceOf(address(bar)) * collective_xsushi_balance / bar.totalSupply(); // calculate SUSHI weight from xSUSHI staking
-        (uint256 lp_stakedBalance, ) = chef.userInfo(12, account);
-        uint256 lp_balance = pair.balanceOf(account) + lp_stakedBalance; // add LP tokens & those staked in MasterChef
-        uint256 lp_powah = sushi.balanceOf(address(pair)) * lp_balance / pair.totalSupply() * 2; // calculate SUSHI weight from adjusted LP staking
-        powah = xsushi_powah + lp_powah; // combine LP & xSushi weights for 'powah'
+        uint256 axsushi_balance = axSushi.balanceOf(account) * bar.balanceOf(address(axSushi)) / axSushi.totalSupply(); // get tally for aToken
+        uint256 bento_balance = bento.toAmount(bar, bento.balanceOf(bar, account), false); // get BENTO xSushi balance 'amount' (not shares)
+        uint256 crxsushi_balance = crxSushi.balanceOf(account) * bar.balanceOf(address(crxSushi)) / crxSushi.totalSupply(); // get tally for cToken
+        uint256 meow_balance = meow.balanceOf(account) * bento.toAmount(bar, bento.balanceOf(bar, address(meow)), false) / meow.totalSupply(); // get tally for MEOW
+        uint256 collective_xsushi_balance = axsushi_balance + bento_balance + crxsushi_balance + meow_balance + bar.balanceOf(account); // get collective xSushi staking balances
+        uint256 xsushi_powah = collective_xsushi_balance * sushi.balanceOf(address(bar)) / bar.totalSupply(); // calculate xSushi weight
+        (uint256 lp_stakedBalance, ) = chef.userInfo(12, account); // get LP balance staked in MasterChef
+        uint256 lp_balance = lp_stakedBalance + pair.balanceOf(account); // add staked LP balance & those held by `account`
+        uint256 lp_powah = lp_balance * sushi.balanceOf(address(pair)) / pair.totalSupply() * 2; // calculate adjusted LP weight
+        powah = xsushi_powah + lp_powah; // add xSushi & LP weights for 'powah'
     }
 
     /// @notice Returns total 'powah' supply.
     function totalSupply() external view returns (uint256 total) {
-        uint256 xsushi_totalSushi = sushi.balanceOf(address(bar));
-        uint256 lp_totalSushi = sushi.balanceOf(address(pair));
-        total = xsushi_totalSushi+ lp_totalSushi * 2;
+        total = sushi.balanceOf(address(bar)) + sushi.balanceOf(address(pair)) * 2;
     }
 }
