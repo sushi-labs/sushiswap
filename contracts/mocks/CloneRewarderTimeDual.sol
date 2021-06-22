@@ -109,6 +109,13 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
         return (_rewardTokens, _rewardAmounts);
     }
 
+    function rewardRates() external view returns (uint256[] memory) {
+        uint256[] memory _rewardRates = new uint256[](2);
+        _rewardRates[0] = rewardPerSecond1;
+        _rewardRates[1] = rewardPerSecond2;        
+        return (_rewardRates);
+    }
+
     /// @notice Sets the sushi per second to be distributed. Can only be called by the owner.
     /// @param _rewardPerSecond1 The amount of reward token 1 to be distributed per second.
     /// @param _rewardPerSecond2 The amount of reward token 2 to be distributed per second.

@@ -94,6 +94,12 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
         return (_rewardTokens, _rewardAmounts);
     }
 
+    function rewardRates() external view returns (uint256[] memory) {
+        uint256[] memory _rewardRates = new uint256[](1);
+        _rewardRates[0] = rewardPerSecond;
+        return (_rewardRates);
+    }
+
     /// @notice Sets the sushi per second to be distributed. Can only be called by the owner.
     /// @param _rewardPerSecond The amount of Sushi to be distributed per second.
     function setRewardPerSecond(uint256 _rewardPerSecond) public onlyOwner {
