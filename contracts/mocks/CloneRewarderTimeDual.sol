@@ -136,7 +136,6 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
     /// @notice View function to see pending Token
     /// @param _pid The index of the pool. See `poolInfo`.
     /// @param _user Address of user.
-    /// @return (reward1, reward2) rewards given for a user
     function pendingToken(uint256 _pid, address _user) public view returns (uint256 reward1, uint256 reward2) {
         PoolInfo memory pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
