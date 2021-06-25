@@ -264,6 +264,13 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
       gasMultiplier: 2,
     },
+    celo: {
+      url: "https://forno.celo.org",
+      accounts,
+      chainId: 42220,
+      live: true,
+      saveDeployments: true,
+    },
   },
   paths: {
     artifacts: "artifacts",
