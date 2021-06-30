@@ -20,18 +20,17 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
     IERC20 public rewardToken1;
     IERC20 public rewardToken2;
 
-    /// @notice Info of each MCV2 user.
+    /// @notice Info of each Rewarder user.
     /// `amount` LP token amount the user has provided.
-    /// `rewardDebt` The amount of SUSHI entitled to the user.
+    /// `rewardDebt1` The amount of reward token 1 entitled to the user.
+    /// `rewardDebt2` The amount of reward token 2 entitled to the user.
     struct UserInfo {
         uint256 amount;
         uint256 rewardDebt1;
         uint256 rewardDebt2;
     }
 
-    /// @notice Info of each MCV2 pool.
-    /// `allocPoint` The amount of allocation points assigned to the pool.
-    /// Also known as the amount of SUSHI to distribute per block.
+    /// @notice Info of the rewarder pool.
     struct PoolInfo {
         uint128 accToken1PerShare;
         uint128 accToken2PerShare;
@@ -72,28 +71,30 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
         emit LogInit(rewardToken1, rewardToken2, owner, rewardPerSecond1, rewardPerSecond2, masterLpToken);
     }
 
-    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 override external {
+    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpTokenAmount) onlyMCV2 override external {
         require(IMasterChefV2(MASTERCHEF_V2).lpToken(pid) == masterLpToken);
 
         PoolInfo memory pool = updatePool(pid);
-        UserInfo storage user = userInfo[pid][_user];
+        UserInfo memory _userInfo = userInfo[pid][_user];
         uint256 pending1;
         uint256 pending2;
-        if (user.amount > 0) {
+        if (_userInfo.amount > 0) {
             pending1 =
-                (user.amount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION).sub(
-                    user.rewardDebt1
+                (_userInfo.amount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION).sub(
+                    _userInfo.rewardDebt1
                 );
             pending2 =
-                (user.amount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION).sub(
-                    user.rewardDebt2
+                (_userInfo.amount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION).sub(
+                    _userInfo.rewardDebt2
                 );
             rewardToken1.safeTransfer(to, pending1);
             rewardToken2.safeTransfer(to, pending2);
         }
-        user.amount = lpToken;
-        user.rewardDebt1 = lpToken.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION;
-        user.rewardDebt2 = lpToken.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION;
+        _userInfo.amount = lpTokenAmount;
+        _userInfo.rewardDebt1 = lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION;
+        _userInfo.rewardDebt2 = lpTokenAmount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION;
+
+        userInfo[pid][_user] = _userInfo;
 
         emit LogOnReward(_user, pid, pending1, pending2, to);
     }
