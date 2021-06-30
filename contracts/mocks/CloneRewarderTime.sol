@@ -19,23 +19,21 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
 
     IERC20 public rewardToken;
 
-    /// @notice Info of each MCV2 user.
+    /// @notice Info of each Rewarder user.
     /// `amount` LP token amount the user has provided.
-    /// `rewardDebt` The amount of SUSHI entitled to the user.
+    /// `rewardDebt` The amount of Reward Token entitled to the user.
     struct UserInfo {
         uint256 amount;
         uint256 rewardDebt;
     }
 
-    /// @notice Info of each MCV2 pool.
-    /// `allocPoint` The amount of allocation points assigned to the pool.
-    /// Also known as the amount of SUSHI to distribute per block.
+    /// @notice Info of the rewarder pool
     struct PoolInfo {
-        uint128 accSushiPerShare;
+        uint128 accToken1PerShare;
         uint64 lastRewardTime;
     }
 
-    /// @notice Info of each pool.
+    /// @notice Mapping to track the rewarder pool.
     mapping (uint256 => PoolInfo) public poolInfo;
 
 
@@ -51,7 +49,7 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
     event LogOnReward(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event LogPoolAddition(uint256 indexed pid, uint256 allocPoint);
     event LogSetPool(uint256 indexed pid, uint256 allocPoint);
-    event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accSushiPerShare);
+    event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accToken1PerShare);
     event LogRewardPerSecond(uint256 rewardPerSecond);
     event LogInit(IERC20 indexed rewardToken, address owner, uint256 rewardPerSecond, IERC20 indexed masterLpToken);
 
@@ -68,7 +66,7 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
         emit LogInit(rewardToken, owner, rewardPerSecond, masterLpToken);
     }
 
-    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 override external {
+    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpTokenAmount) onlyMCV2 override external {
         require(IMasterChefV2(MASTERCHEF_V2).lpToken(pid) == masterLpToken);
 
         PoolInfo memory pool = updatePool(pid);
@@ -76,13 +74,13 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
         uint256 pending;
         if (user.amount > 0) {
             pending =
-                (user.amount.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION).sub(
+                (user.amount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION).sub(
                     user.rewardDebt
                 );
             rewardToken.safeTransfer(to, pending);
         }
-        user.amount = lpToken;
-        user.rewardDebt = lpToken.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION;
+        user.amount = lpTokenAmount;
+        user.rewardDebt = lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION;
         emit LogOnReward(_user, pid, pending, to);
     }
     
@@ -122,14 +120,14 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
     function pendingToken(uint256 _pid, address _user) public view returns (uint256 pending) {
         PoolInfo memory pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
-        uint256 accSushiPerShare = pool.accSushiPerShare;
+        uint256 accToken1PerShare = pool.accToken1PerShare;
         uint256 lpSupply = IMasterChefV2(MASTERCHEF_V2).lpToken(_pid).balanceOf(MASTERCHEF_V2);
         if (block.timestamp > pool.lastRewardTime && lpSupply != 0) {
             uint256 time = block.timestamp.sub(pool.lastRewardTime);
             uint256 sushiReward = time.mul(rewardPerSecond);
-            accSushiPerShare = accSushiPerShare.add(sushiReward.mul(ACC_TOKEN_PRECISION) / lpSupply);
+            accToken1PerShare = accToken1PerShare.add(sushiReward.mul(ACC_TOKEN_PRECISION) / lpSupply);
         }
-        pending = (user.amount.mul(accSushiPerShare) / ACC_TOKEN_PRECISION).sub(user.rewardDebt);
+        pending = (user.amount.mul(accToken1PerShare) / ACC_TOKEN_PRECISION).sub(user.rewardDebt);
     }
 
     /// @notice Update reward variables of the given pool.
@@ -143,11 +141,11 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
             if (lpSupply > 0) {
                 uint256 time = block.timestamp.sub(pool.lastRewardTime);
                 uint256 sushiReward = time.mul(rewardPerSecond);
-                pool.accSushiPerShare = pool.accSushiPerShare.add((sushiReward.mul(ACC_TOKEN_PRECISION) / lpSupply).to128());
+                pool.accToken1PerShare = pool.accToken1PerShare.add((sushiReward.mul(ACC_TOKEN_PRECISION) / lpSupply).to128());
             }
             pool.lastRewardTime = block.timestamp.to64();
             poolInfo[pid] = pool;
-            emit LogUpdatePool(pid, pool.lastRewardTime, lpSupply, pool.accSushiPerShare);
+            emit LogUpdatePool(pid, pool.lastRewardTime, lpSupply, pool.accToken1PerShare);
         }
     }
 }
