@@ -47,7 +47,7 @@ contract SushiRoll {
         uint256 amountBMin,
         uint256 deadline
     ) public {
-        require(deadline >= block.timestamp, 'SushiSwap: EXPIRED');
+        require(deadline >= block.timestamp, 'SuniExchange: EXPIRED');
 
         // Remove liquidity from the old router with permit
         (uint256 amountA, uint256 amountB) = removeLiquidity(
