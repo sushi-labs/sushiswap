@@ -9,8 +9,8 @@ import "./uniswapv2/interfaces/IUniswapV2Router01.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 import "./uniswapv2/libraries/UniswapV2Library.sol";
 
-// SushiRoll helps your migrate your existing Uniswap LP tokens to SushiSwap LP ones
-contract SushiRoll {
+// SuniRoll helps your migrate your existing Uniswap LP tokens to SuniSwap LP ones
+contract SuniRoll {
     using SafeERC20 for IERC20;
 
     IUniswapV2Router01 public oldRouter;
@@ -84,8 +84,8 @@ contract SushiRoll {
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
-        require(amountA >= amountAMin, 'SushiRoll: INSUFFICIENT_A_AMOUNT');
-        require(amountB >= amountBMin, 'SushiRoll: INSUFFICIENT_B_AMOUNT');
+        require(amountA >= amountAMin, 'SuniRoll: INSUFFICIENT_A_AMOUNT');
+        require(amountB >= amountBMin, 'SuniRoll: INSUFFICIENT_B_AMOUNT');
     }
 
     // calculates the CREATE2 address for a pair without making any external calls

@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-// SushiToken with Governance.
-contract SushiToken is ERC20("Suni Swap", "SUWP"), Ownable {
+// SuniToken with Governance.
+contract SuniToken is ERC20("Suni Swap", "SUWP"), Ownable {
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
@@ -185,7 +185,7 @@ contract SushiToken is ERC20("Suni Swap", "SUWP"), Ownable {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying SUSHIs (not scaled);
+        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying SUWPs (not scaled);
         _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);

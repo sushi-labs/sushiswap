@@ -475,7 +475,7 @@ library BoringERC20 {
     }
 }
 
-// File @sushiswap/bentobox-sdk/contracts/IBatchFlashBorrower.sol@v1.0.1
+// File @suniswap/bentobox-sdk/contracts/IBatchFlashBorrower.sol@v1.0.1
 // License-Identifier: MIT
 
 interface IBatchFlashBorrower {
@@ -488,7 +488,7 @@ interface IBatchFlashBorrower {
     ) external;
 }
 
-// File @sushiswap/bentobox-sdk/contracts/IFlashBorrower.sol@v1.0.1
+// File @suniswap/bentobox-sdk/contracts/IFlashBorrower.sol@v1.0.1
 // License-Identifier: MIT
 
 interface IFlashBorrower {
@@ -501,7 +501,7 @@ interface IFlashBorrower {
     ) external;
 }
 
-// File @sushiswap/bentobox-sdk/contracts/IStrategy.sol@v1.0.1
+// File @suniswap/bentobox-sdk/contracts/IStrategy.sol@v1.0.1
 // License-Identifier: MIT
 
 interface IStrategy {
@@ -519,7 +519,7 @@ interface IStrategy {
     function exit(uint256 balance) external returns (int256 amountAdded);
 }
 
-// File @sushiswap/bentobox-sdk/contracts/IBentoBoxV1.sol@v1.0.1
+// File @suniswap/bentobox-sdk/contracts/IBentoBoxV1.sol@v1.0.1
 // License-Identifier: MIT
 
 interface IBentoBoxV1 {
