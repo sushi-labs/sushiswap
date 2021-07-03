@@ -50,5 +50,5 @@ yarn ropsten:verify
 
 ```sh
 hardhat tenderly:verify --network kovan ContractName=Address
-
+hardhat tenderly:verify --network rinkeby ContractName=0x210177AAE9824141591BF30aE156Bfd906f18B71
 ```
