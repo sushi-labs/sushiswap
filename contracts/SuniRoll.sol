@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./uniswapv2/interfaces/ISuniswapPair.sol";
 import "./uniswapv2/interfaces/ISuniswapRouter01.sol";
 import "./uniswapv2/interfaces/ISuniswapFactory.sol";
-import "./uniswapv2/libraries/UniswapV2Library.sol";
+import "./uniswapv2/libraries/SuniswapLibrary.sol";
 
 // SuniRoll helps your migrate your existing Uniswap LP tokens to SuniSwap LP ones
 contract SuniRoll {
@@ -82,7 +82,7 @@ contract SuniRoll {
         ISuniswapPair pair = ISuniswapPair(pairForOldRouter(tokenA, tokenB));
         pair.transferFrom(msg.sender, address(pair), liquidity);
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
-        (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
+        (address token0,) = SuniswapLibrary.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
         require(amountA >= amountAMin, 'SuniRoll: INSUFFICIENT_A_AMOUNT');
         require(amountB >= amountBMin, 'SuniRoll: INSUFFICIENT_B_AMOUNT');
@@ -90,7 +90,7 @@ contract SuniRoll {
 
     // calculates the CREATE2 address for a pair without making any external calls
     function pairForOldRouter(address tokenA, address tokenB) internal view returns (address pair) {
-        (address token0, address token1) = UniswapV2Library.sortTokens(tokenA, tokenB);
+        (address token0, address token1) = SuniswapLibrary.sortTokens(tokenA, tokenB);
         pair = address(uint(keccak256(abi.encodePacked(
                 hex'ff',
                 oldRouter.factory(),
@@ -106,7 +106,7 @@ contract SuniRoll {
         uint256 amountBDesired
     ) internal returns (uint amountA, uint amountB) {
         (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired);
-        address pair = UniswapV2Library.pairFor(router.factory(), tokenA, tokenB);
+        address pair = SuniswapLibrary.pairFor(router.factory(), tokenA, tokenB);
         IERC20(tokenA).safeTransfer(pair, amountA);
         IERC20(tokenB).safeTransfer(pair, amountB);
         ISuniswapPair(pair).mint(msg.sender);
@@ -123,15 +123,15 @@ contract SuniRoll {
         if (factory.getPair(tokenA, tokenB) == address(0)) {
             factory.createPair(tokenA, tokenB);
         }
-        (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(address(factory), tokenA, tokenB);
+        (uint256 reserveA, uint256 reserveB) = SuniswapLibrary.getReserves(address(factory), tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
-            uint256 amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
+            uint256 amountBOptimal = SuniswapLibrary.quote(amountADesired, reserveA, reserveB);
             if (amountBOptimal <= amountBDesired) {
                 (amountA, amountB) = (amountADesired, amountBOptimal);
             } else {
-                uint256 amountAOptimal = UniswapV2Library.quote(amountBDesired, reserveB, reserveA);
+                uint256 amountAOptimal = SuniswapLibrary.quote(amountBDesired, reserveB, reserveA);
                 assert(amountAOptimal <= amountADesired);
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }

@@ -3,13 +3,13 @@
 pragma solidity =0.6.12;
 
 import './interfaces/ISuniswapFactory.sol';
-import './UniswapV2Pair.sol';
+import './SuniswapPair.sol';
 
-contract UniswapV2Factory is ISuniswapFactory {
+contract SuniswapFactory is ISuniswapFactory {
 
 
     //GENERATE CODE INIT CODE PAIR HASH
-    //bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(UniswapV2Pair).creationCode));
+    //bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(SuniswapPair).creationCode));
 
 
     address public override feeTo;
@@ -31,7 +31,7 @@ contract UniswapV2Factory is ISuniswapFactory {
 
     //SUNI INIT CODE HASH
     function pairCodeHash() external pure returns (bytes32) {
-        return keccak256(type(UniswapV2Pair).creationCode);
+        return keccak256(type(SuniswapPair).creationCode);
     }
 
     function createPair(address tokenA, address tokenB) external override returns (address pair) {
@@ -41,13 +41,13 @@ contract UniswapV2Factory is ISuniswapFactory {
         require(getPair[token0][token1] == address(0), 'SuniExchangeV2: PAIR_EXISTS'); // single check is sufficient
 
         //SUNI INIT CODE HASH
-        bytes memory bytecode = type(UniswapV2Pair).creationCode;
+        bytes memory bytecode = type(SuniswapPair).creationCode;
 
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        UniswapV2Pair(pair).initialize(token0, token1);
+        SuniswapPair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair; // populate mapping in the reverse direction
         allPairs.push(pair);

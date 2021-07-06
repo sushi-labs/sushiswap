@@ -5,9 +5,9 @@ pragma solidity =0.6.12;
 import './libraries/SafeMath.sol';
 
 contract SuniswapERC20 {
-    using SafeMathUniswap for uint;
+    using SafeMathSuniswap for uint;
 
-    string public constant name = 'SuniExchange LP Token';
+    string public constant name = 'Suniswap LP Token';
     string public constant symbol = 'SEG';
     uint8 public constant decimals = 18;
     uint  public totalSupply;

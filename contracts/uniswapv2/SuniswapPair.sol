@@ -14,8 +14,8 @@ interface IMigrator {
     function desiredLiquidity() external view returns (uint256);
 }
 
-contract UniswapV2Pair is SuniswapERC20 {
-    using SafeMathUniswap  for uint;
+contract SuniswapPair is SuniswapERC20 {
+    using SafeMathSuniswap for uint;
     using UQ112x112 for uint224;
 
     uint public constant MINIMUM_LIQUIDITY = 10**3;
