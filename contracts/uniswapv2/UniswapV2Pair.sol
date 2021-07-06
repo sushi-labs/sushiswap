@@ -2,7 +2,7 @@
 
 pragma solidity =0.6.12;
 
-import './UniswapV2ERC20.sol';
+import './SuniswapERC20.sol';
 import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 import './interfaces/IERC20.sol';
@@ -14,7 +14,7 @@ interface IMigrator {
     function desiredLiquidity() external view returns (uint256);
 }
 
-contract UniswapV2Pair is UniswapV2ERC20 {
+contract UniswapV2Pair is SuniswapERC20 {
     using SafeMathUniswap  for uint;
     using UQ112x112 for uint224;
 

@@ -4,7 +4,7 @@ pragma solidity =0.6.12;
 
 import './libraries/SafeMath.sol';
 
-contract UniswapV2ERC20 {
+contract SuniswapERC20 {
     using SafeMathUniswap for uint;
 
     string public constant name = 'SuniExchange LP Token';
