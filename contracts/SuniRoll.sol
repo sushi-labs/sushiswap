@@ -5,18 +5,18 @@ pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/IUniswapV2Router01.sol";
-import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
+import "./uniswapv2/interfaces/ISuniswapRouter01.sol";
+import "./uniswapv2/interfaces/ISuniswapFactory.sol";
 import "./uniswapv2/libraries/UniswapV2Library.sol";
 
 // SuniRoll helps your migrate your existing Uniswap LP tokens to SuniSwap LP ones
 contract SuniRoll {
     using SafeERC20 for IERC20;
 
-    IUniswapV2Router01 public oldRouter;
-    IUniswapV2Router01 public router;
+    ISuniswapRouter01 public oldRouter;
+    ISuniswapRouter01 public router;
 
-    constructor(IUniswapV2Router01 _oldRouter, IUniswapV2Router01 _router) public {
+    constructor(ISuniswapRouter01 _oldRouter, ISuniswapRouter01 _router) public {
         oldRouter = _oldRouter;
         router = _router;
     }
@@ -119,7 +119,7 @@ contract SuniRoll {
         uint256 amountBDesired
     ) internal returns (uint256 amountA, uint256 amountB) {
         // create the pair if it doesn't exist yet
-        IUniswapV2Factory factory = IUniswapV2Factory(router.factory());
+        ISuniswapFactory factory = ISuniswapFactory(router.factory());
         if (factory.getPair(tokenA, tokenB) == address(0)) {
             factory.createPair(tokenA, tokenB);
         }

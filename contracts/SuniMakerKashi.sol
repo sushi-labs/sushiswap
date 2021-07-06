@@ -5,7 +5,7 @@ import "./libraries/SafeMath.sol";
 import "./libraries/SafeERC20.sol";
 
 import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
+import "./uniswapv2/interfaces/ISuniswapFactory.sol";
 
 import "./Ownable.sol";
 
@@ -32,7 +32,7 @@ contract SuniMakerKashi is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IUniswapV2Factory private immutable factory;
+    ISuniswapFactory private immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
     address private immutable bar;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
@@ -57,7 +57,7 @@ contract SuniMakerKashi is Ownable {
     );
 
     constructor(
-        IUniswapV2Factory _factory,
+        ISuniswapFactory _factory,
         address _bar,
         IBentoBoxWithdraw _bentoBox,
         address _suwp,

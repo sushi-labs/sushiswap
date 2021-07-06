@@ -3,20 +3,20 @@
 pragma solidity 0.6.12;
 
 import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
+import "./uniswapv2/interfaces/ISuniswapFactory.sol";
 
 
 contract Migrator {
     address public chef;
     address public oldFactory;
-    IUniswapV2Factory public factory;
+    ISuniswapFactory public factory;
     uint256 public notBeforeBlock;
     uint256 public desiredLiquidity = uint256(-1);
 
     constructor(
         address _chef,
         address _oldFactory,
-        IUniswapV2Factory _factory,
+        ISuniswapFactory _factory,
         uint256 _notBeforeBlock
     ) public {
         chef = _chef;

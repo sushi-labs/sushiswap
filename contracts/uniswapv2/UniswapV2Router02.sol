@@ -5,12 +5,12 @@ pragma solidity =0.6.12;
 import './libraries/UniswapV2Library.sol';
 import './libraries/SafeMath.sol';
 import './libraries/TransferHelper.sol';
-import './interfaces/IUniswapV2Router02.sol';
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/ISuniswapRouter02.sol';
+import './interfaces/ISuniswapFactory.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IWETH.sol';
 
-contract UniswapV2Router02 is IUniswapV2Router02 {
+contract UniswapV2Router02 is ISuniswapRouter02 {
     using SafeMathUniswap for uint;
 
     address public immutable override factory;
@@ -40,8 +40,8 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint amountBMin
     ) internal virtual returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
-        if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IUniswapV2Factory(factory).createPair(tokenA, tokenB);
+        if (ISuniswapFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            ISuniswapFactory(factory).createPair(tokenA, tokenB);
         }
         (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {

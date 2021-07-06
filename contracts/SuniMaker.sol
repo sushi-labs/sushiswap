@@ -7,7 +7,7 @@ import "./libraries/SafeERC20.sol";
 
 import "./uniswapv2/interfaces/ISuniswapERC20.sol";
 import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
+import "./uniswapv2/interfaces/ISuniswapFactory.sol";
 
 import "./Ownable.sol";
 
@@ -20,7 +20,7 @@ contract SuniMaker is Ownable {
     using SafeERC20 for IERC20;
 
     // V1 - V5: OK
-    IUniswapV2Factory public immutable factory;
+    ISuniswapFactory public immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
     // V1 - V5: OK
     address public immutable bar;
@@ -53,7 +53,7 @@ contract SuniMaker is Ownable {
         address _suwp,
         address _weth
     ) public {
-        factory = IUniswapV2Factory(_factory);
+        factory = ISuniswapFactory(_factory);
         bar = _bar;
         SUWP = _suwp;
         weth = _weth;
