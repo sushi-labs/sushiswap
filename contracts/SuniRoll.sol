@@ -4,10 +4,10 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/ISuniswapRouter01.sol";
-import "./uniswapv2/interfaces/ISuniswapFactory.sol";
-import "./uniswapv2/libraries/SuniswapLibrary.sol";
+import "./suniswap/interfaces/ISuniswapPair.sol";
+import "./suniswap/interfaces/ISuniswapRouter01.sol";
+import "./suniswap/interfaces/ISuniswapFactory.sol";
+import "./suniswap/libraries/SuniswapLibrary.sol";
 
 // SuniRoll helps your migrate your existing Uniswap LP tokens to SuniSwap LP ones
 contract SuniRoll {
@@ -47,7 +47,7 @@ contract SuniRoll {
         uint256 amountBMin,
         uint256 deadline
     ) public {
-        require(deadline >= block.timestamp, 'SuniExchange: EXPIRED');
+        require(deadline >= block.timestamp, 'Suniswap: EXPIRED');
 
         // Remove liquidity from the old router with permit
         (uint256 amountA, uint256 amountB) = removeLiquidity(

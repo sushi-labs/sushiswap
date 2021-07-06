@@ -80,7 +80,7 @@ contract SuniswapERC20 {
     }
 
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'SuniExchangeV2: EXPIRED');
+        require(deadline >= block.timestamp, 'Suniswap: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -89,7 +89,7 @@ contract SuniswapERC20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'SuniExchangeV2: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'Suniswap: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }

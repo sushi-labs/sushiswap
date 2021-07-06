@@ -35,10 +35,10 @@ contract SuniswapFactory is ISuniswapFactory {
     }
 
     function createPair(address tokenA, address tokenB) external override returns (address pair) {
-        require(tokenA != tokenB, 'SuniExchangeV2: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, 'Suniswap: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'SuniExchangeV2: ZERO_ADDRESS');
-        require(getPair[token0][token1] == address(0), 'SuniExchangeV2: PAIR_EXISTS'); // single check is sufficient
+        require(token0 != address(0), 'Suniswap: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'Suniswap: PAIR_EXISTS'); // single check is sufficient
 
         //SUNI INIT CODE HASH
         bytes memory bytecode = type(SuniswapPair).creationCode;
@@ -55,17 +55,17 @@ contract SuniswapFactory is ISuniswapFactory {
     }
 
     function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, 'SuniExchangeV2: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'Suniswap: FORBIDDEN');
         feeTo = _feeTo;
     }
 
     function setMigrator(address _migrator) external override {
-        require(msg.sender == feeToSetter, 'SuniExchangeV2: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'Suniswap: FORBIDDEN');
         migrator = _migrator;
     }
 
     function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, 'SuniExchangeV2: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'Suniswap: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
 

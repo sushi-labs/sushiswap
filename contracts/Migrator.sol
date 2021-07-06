@@ -2,8 +2,8 @@
 
 pragma solidity 0.6.12;
 
-import "./uniswapv2/interfaces/ISuniswapPair.sol";
-import "./uniswapv2/interfaces/ISuniswapFactory.sol";
+import "./suniswap/interfaces/ISuniswapPair.sol";
+import "./suniswap/interfaces/ISuniswapFactory.sol";
 
 
 contract Migrator {
