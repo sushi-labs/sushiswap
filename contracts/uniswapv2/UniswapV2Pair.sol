@@ -7,7 +7,7 @@ import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IUniswapV2Factory.sol';
-import './interfaces/IUniswapV2Callee.sol';
+import './interfaces/ISuniswapCallee.sol';
 
 interface IMigrator {
     // Return the desired amount of liquidity token that the migrator wants.
@@ -182,7 +182,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         require(to != _token0 && to != _token1, 'SuniExchangeV2: INVALID_TO');
         if (amount0Out > 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
         if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
-        if (data.length > 0) IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
+        if (data.length > 0) ISuniswapCallee(to).suniswapCall(msg.sender, amount0Out, amount1Out, data);
         balance0 = IERC20Uniswap(_token0).balanceOf(address(this));
         balance1 = IERC20Uniswap(_token1).balanceOf(address(this));
         }
