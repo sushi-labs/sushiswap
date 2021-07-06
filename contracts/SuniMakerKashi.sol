@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 import "./libraries/SafeMath.sol";
 import "./libraries/SafeERC20.sol";
 
-import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
+import "./uniswapv2/interfaces/ISuniswapPair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 import "./Ownable.sol";
@@ -142,8 +142,8 @@ contract SuniMakerKashi is Ownable {
         address to
     ) private returns (uint256 amountOut) {
         (address token0, address token1) = fromToken < toToken ? (fromToken, toToken) : (toToken, fromToken);
-        IUniswapV2Pair pair =
-            IUniswapV2Pair(
+        ISuniswapPair pair =
+            ISuniswapPair(
                 uint256(
                     keccak256(abi.encodePacked(hex"ff", factory, keccak256(abi.encodePacked(token0, token1)), pairCodeHash))
                 )

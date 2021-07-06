@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
+import "./uniswapv2/interfaces/ISuniswapPair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Router01.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 import "./uniswapv2/libraries/UniswapV2Library.sol";
@@ -32,7 +32,7 @@ contract SuniRoll {
         bytes32 r,
         bytes32 s
     ) public {
-        IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
+        ISuniswapPair pair = ISuniswapPair(pairForOldRouter(tokenA, tokenB));
         pair.permit(msg.sender, address(this), liquidity, deadline, v, r, s);
 
         migrate(tokenA, tokenB, liquidity, amountAMin, amountBMin, deadline);
@@ -79,7 +79,7 @@ contract SuniRoll {
         uint256 amountBMin,
         uint256 deadline
     ) internal returns (uint256 amountA, uint256 amountB) {
-        IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
+        ISuniswapPair pair = ISuniswapPair(pairForOldRouter(tokenA, tokenB));
         pair.transferFrom(msg.sender, address(pair), liquidity);
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
@@ -109,7 +109,7 @@ contract SuniRoll {
         address pair = UniswapV2Library.pairFor(router.factory(), tokenA, tokenB);
         IERC20(tokenA).safeTransfer(pair, amountA);
         IERC20(tokenB).safeTransfer(pair, amountB);
-        IUniswapV2Pair(pair).mint(msg.sender);
+        ISuniswapPair(pair).mint(msg.sender);
     }
 
     function _addLiquidity(

@@ -6,7 +6,7 @@ import "./libraries/SafeMath.sol";
 import "./libraries/SafeERC20.sol";
 
 import "./uniswapv2/interfaces/IUniswapV2ERC20.sol";
-import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
+import "./uniswapv2/interfaces/ISuniswapPair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 import "./Ownable.sol";
@@ -120,7 +120,7 @@ contract SuniMaker is Ownable {
     function _convert(address token0, address token1) internal {
         // Interactions
         // S1 - S4: OK
-        IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token0, token1));
+        ISuniswapPair pair = ISuniswapPair(factory.getPair(token0, token1));
         require(address(pair) != address(0), "SuniMaker: Invalid pair");
         // balanceOf: S1 - S4: OK
         // transfer: X1 - X5: OK
@@ -227,8 +227,8 @@ contract SuniMaker is Ownable {
     ) internal returns (uint256 amountOut) {
         // Checks
         // X1 - X5: OK
-        IUniswapV2Pair pair =
-            IUniswapV2Pair(factory.getPair(fromToken, toToken));
+        ISuniswapPair pair =
+            ISuniswapPair(factory.getPair(fromToken, toToken));
         require(address(pair) != address(0), "SuniMaker: Cannot convert");
 
         // Interactions

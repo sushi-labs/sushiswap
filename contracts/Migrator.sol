@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.12;
 
-import "./uniswapv2/interfaces/IUniswapV2Pair.sol";
+import "./uniswapv2/interfaces/ISuniswapPair.sol";
 import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 
@@ -25,15 +25,15 @@ contract Migrator {
         notBeforeBlock = _notBeforeBlock;
     }
 
-    function migrate(IUniswapV2Pair orig) public returns (IUniswapV2Pair) {
+    function migrate(ISuniswapPair orig) public returns (ISuniswapPair) {
         require(msg.sender == chef, "not from master chef");
         require(block.number >= notBeforeBlock, "too early to migrate");
         require(orig.factory() == oldFactory, "not from old factory");
         address token0 = orig.token0();
         address token1 = orig.token1();
-        IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token0, token1));
-        if (pair == IUniswapV2Pair(address(0))) {
-            pair = IUniswapV2Pair(factory.createPair(token0, token1));
+        ISuniswapPair pair = ISuniswapPair(factory.getPair(token0, token1));
+        if (pair == ISuniswapPair(address(0))) {
+            pair = ISuniswapPair(factory.createPair(token0, token1));
         }
         uint256 lp = orig.balanceOf(msg.sender);
         if (lp == 0) return pair;
