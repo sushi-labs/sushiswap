@@ -6,18 +6,15 @@ import './interfaces/ISuniswapFactory.sol';
 import './SuniswapPair.sol';
 
 contract SuniswapFactory is ISuniswapFactory {
-
-
-    //GENERATE CODE INIT CODE PAIR HASH
-    //bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(SuniswapPair).creationCode));
-
-
     address public override feeTo;
     address public override feeToSetter;
     address public override migrator;
 
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
+
+    //GENERATE CODE INIT CODE PAIR HASH
+    bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(SuniswapPair).creationCode));
 
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
