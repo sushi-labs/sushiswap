@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.5;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.6;
 
 interface IMasterChefUserInfo {
     function userInfo(uint256 pid, address account) external view returns (uint256, uint256);
@@ -23,7 +23,7 @@ contract SUSHIPOWAH {
     IERC20 axSushi = IERC20(0xF256CC7847E919FAc9B808cC216cAc87CCF2f47a);
     IBentoBoxV1BalanceAmount bento = IBentoBoxV1BalanceAmount(0xF5BCE5077908a1b7370B9ae04AdC565EBd643966);
     IERC20 crxSushi = IERC20(0x228619CCa194Fbe3Ebeb2f835eC1eA5080DaFbb2); 
-    IERC20 meow = IERC20(0xDB27dA48027062B4035fb5991660F12df1d553F1);
+    IERC20 meow = IERC20(0x650F44eD6F1FE0E1417cb4b3115d52494B4D9b6D);
 
     function name() external pure returns (string memory) { return "SUSHIPOWAH"; }
     function symbol() external pure returns (string memory) { return "SUSHIPOWAH"; }
