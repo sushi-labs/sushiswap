@@ -272,7 +272,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
     },
     palm: {
-      url: "https://palm.infura.io/v3/da5fbfafcca14b109e2665290681e267",
+      url: "https://palmg.infura.io/v3/da5fbfafcca14b109e2665290681e267",
       accounts,
       chainId: 11297108109,
       live: true,
