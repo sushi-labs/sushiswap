@@ -271,6 +271,22 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    palm: {
+      url: "https://palm.infura.io/v3/da5fbfafcca14b109e2665290681e267",
+      accounts,
+      chainId: 11297108109,
+      live: true,
+      saveDeployments: true,
+    },
+    "palm-testnet": {
+      url: "https://palm-testnet.infura.io/v3/da5fbfafcca14b109e2665290681e267",
+      accounts,
+      chainId: 11297108099,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
   },
   paths: {
     artifacts: "artifacts",

@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/core",
-  "version": "1.4.2",
+  "version": "2.0.0-canary.1",
   "license": "MIT",
   "types": "./types/index.ts",
   "description": "Core contracts for the SushiSwap protocol",
@@ -54,7 +54,7 @@
     "test:gas": "cross-env REPORT_GAS=true yarn test",
     "prettier": "prettier --write test/**/*.{ts} && prettier --write contracts/**/*.sol",
     "lint": "yarn prettier && solhint -c .solhint.json contracts/**/*.sol",
-    "prepublishOnly": "yarn run build && node scripts/prepublish.js"
+    "prepublishOnly": "yarn run build"
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
