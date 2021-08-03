@@ -106,7 +106,7 @@ contract SushiMaker is BoringOwnable, BoringBatchable {
         );
     }
 
-    function burnPair(IUniswapV2Pair pair) public {
+    function burnPair(IUniswapV2Pair pair) public onlyOperator {
         pair.burn(address(this));
     } 
 }
