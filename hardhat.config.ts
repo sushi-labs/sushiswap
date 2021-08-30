@@ -287,6 +287,13 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
       gasMultiplier: 2,
     },
+    moonriver: {
+      url: "https://rpc.moonriver.moonbeam.network",
+      accounts,
+      chainId: 1285,
+      live: true,
+      saveDeployments: true,
+    },
   },
   paths: {
     artifacts: "artifacts",
