@@ -52,8 +52,6 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
     address public immutable MASTERCHEF_V2;
 
     event LogOnReward(address indexed user, uint256 indexed pid, uint256 amount1, uint256 amount2, address indexed to);
-    event LogPoolAddition(uint256 indexed pid, uint256 allocPoint);
-    event LogSetPool(uint256 indexed pid, uint256 allocPoint);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accToken1PerShare, uint256 accToken2PerShare);
     event LogRewardPerSecond(uint256 rewardPerSecond1, uint256 rewardPerSecond2);
     event LogInit(IERC20 rewardToken1, IERC20 rewardToken2, address owner, uint256 rewardPerSecond1, uint256 rewardPerSecond2, IERC20 indexed masterLpToken);

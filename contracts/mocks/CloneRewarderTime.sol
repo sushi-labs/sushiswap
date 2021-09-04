@@ -47,8 +47,6 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
     address public immutable MASTERCHEF_V2;
 
     event LogOnReward(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
-    event LogPoolAddition(uint256 indexed pid, uint256 allocPoint);
-    event LogSetPool(uint256 indexed pid, uint256 allocPoint);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accToken1PerShare);
     event LogRewardPerSecond(uint256 rewardPerSecond);
     event LogInit(IERC20 indexed rewardToken, address owner, uint256 rewardPerSecond, IERC20 indexed masterLpToken);
