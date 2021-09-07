@@ -294,6 +294,23 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    bch: {
+      url: "https://smartbch.fountainhead.cash/mainnet",
+      accounts,
+      chainId: 10000,
+      live: true,
+      saveDeployments: true,
+      gasMultiplier: 2,
+    },
+    "bch-amber": {
+      url: "http://35.220.203.194:8545",
+      accounts,
+      chainId: 10001,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
   },
   paths: {
     artifacts: "artifacts",

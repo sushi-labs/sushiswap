@@ -1,9 +1,9 @@
 {
-  "name": "@sushiswap/core",
-  "version": "2.0.0-canary.1",
+  "name": "@mistswapdex/core",
+  "version": "0.0.1",
   "license": "MIT",
   "types": "./types/index.ts",
-  "description": "Core contracts for the SushiSwap protocol",
+  "description": "Core contracts for the MISTswap protocol",
   "files": [
     "abi",
     "artifacts",
@@ -15,15 +15,15 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sushiswap/sushiswap.git"
+    "url": "git+https://github.com/mistswapdex/mistswap.git"
   },
   "bugs": {
-    "url": "https://github.com/sushiswap/sushiswap/issues"
+    "url": "https://github.com/mistswapdex/mistswap/issues"
   },
-  "homepage": "https://github.com/sushiswap/sushiswap#readme",
+  "homepage": "https://github.com/mistswapdex/mistswap#readme",
   "keywords": [
-    "sushiswap",
-    "ethereum"
+    "mistswap",
+    "bitcoin-cash"
   ],
   "scripts": {
     "build": "hardhat compile",
@@ -48,6 +48,10 @@
     "moonbase:export": "hardhat --network moonbase export --export exports/moonbase.json",
     "arbitrum:deploy": "hardhat --network arbitrum deploy",
     "arbitrum:export": "hardhat --network arbitrum export --export exports/arbitrum.json",
+    "bch:deploy": "hardhat --network bch deploy",
+    "bch:export": "hardhat --network bch export --export exports/bch.json",
+    "bch-amber:deploy": "hardhat --network bch-amber deploy",
+    "bch-amber:export": "hardhat --network bch-amber export --export exports/bch-amber.json",
     "export": "hardhat export --export-all exports/deployments.json",
     "test": "hardhat test --verbose",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=2048\" hardhat coverage",
@@ -63,7 +67,7 @@
     "@nomiclabs/hardhat-solhint": "^2.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.1.0",
-    "@sushiswap/sdk": "^4.1.1",
+    "@mistswapdex/sdk": "^4.1.1",
     "@tenderly/hardhat-tenderly": "^1.0.0",
     "@typechain/ethers-v5": "^5.0.0",
     "@types/mocha": "^8.2.1",
