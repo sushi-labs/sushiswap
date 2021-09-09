@@ -1,6 +1,6 @@
-# SushiSwap
+# MISTswap
 
-https://sushi.com/
+https://mistswap.fi
 
 ## Deployed Contracts
 

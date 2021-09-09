@@ -294,7 +294,7 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
-    bch: {
+    smartbch: {
       url: "https://smartbch.fountainhead.cash/mainnet",
       accounts,
       chainId: 10000,
@@ -302,7 +302,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasMultiplier: 2,
     },
-    "bch-amber": {
+    "smartbch-amber": {
       url: "http://35.220.203.194:8545",
       accounts,
       chainId: 10001,

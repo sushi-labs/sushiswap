@@ -9,3 +9,4 @@ package-lock.json
 coverage.json
 .env
 .DS_Store
+yarn-error.log
