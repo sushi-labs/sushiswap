@@ -1,4 +1,4 @@
-const { WETH } = require("@sushiswap/sdk")
+const { WETH } = require("@mistswapdex/sdk")
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments

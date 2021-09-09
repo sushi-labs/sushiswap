@@ -1,4 +1,4 @@
-const { ChainId } = require("@sushiswap/sdk")
+const { ChainId } = require("@mistswapdex/sdk")
 
 
 const SUSHI = {
