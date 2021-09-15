@@ -9,45 +9,19 @@ npx hardhat node
 ## Mainnet
 
 ```sh
-yarn mainnet:deploy
+yarn smartbch:deploy
 ```
 
 ```sh
-yarn mainnet:verify
-```
-
-```sh
-hardhat tenderly:verify --network mainnet ContractName=Address
-```
-
-```sh
-hardhat tenderly:push --network mainnet ContractName=Address
-```
-
-## Ropsten
-
-```sh
-yarn ropsten:deploy
-```
-
-```sh
-yarn ropsten:verify
-```
-
-```sh
-hardhat tenderly:verify --network ropsten ContractName=Address
+yarn smartbch:verify
 ```
 
 ## Kovan
 
 ```sh
-yarn ropsten:deploy
+yarn smartbch-amber:deploy
 ```
 
 ```sh
-yarn ropsten:verify
-```
-
-```sh
-hardhat tenderly:verify --network kovan ContractName=Address
+yarn smartbch-amber:verify
 ```
