@@ -1,6 +1,7 @@
 const BENSWAP_ROUTER = new Map()
 BENSWAP_ROUTER.set("10000", "0xa194133ED572D86fe27796F2feADBAFc062cB9E0")
 BENSWAP_ROUTER.set("10001", "0x221C2c57B0dAec7aF9A3B03c384c0C99e066b612")
+BENSWAP_ROUTER.set("31337", "0xa194133ED572D86fe27796F2feADBAFc062cB9E0")
 
 module.exports = async function ({ getNamedAccounts, getChainId, deployments }) {
   const { deploy } = deployments
