@@ -4,15 +4,13 @@ https://mistswap.fi
 
 ## Deployed Contracts
 
-https://dev.sushi.com/sushiswap/contracts
+https://dev.mistswap.fi/mistswap/contracts
 
 ## Docs
 
 [Development](docs/DEVELOPMENT.md)
 
 [Deployment](docs/DEPLOYMENT.md)
-
-[History](docs/HISTORY.md)
 
 ## Security
 

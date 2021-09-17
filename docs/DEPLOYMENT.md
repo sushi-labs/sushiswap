@@ -16,7 +16,7 @@ yarn smartbch:deploy
 yarn smartbch:verify
 ```
 
-## Kovan
+## Amber
 
 ```sh
 yarn smartbch-amber:deploy
