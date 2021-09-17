@@ -65,16 +65,17 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
     function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 override external {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][_user];
-        uint256 pending;
-        if (user.amount > 0) {
-            pending =
-                (user.amount.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION).sub(
-                    user.rewardDebt
-                );
-            rewardToken.safeTransfer(to, pending);
-        }
+        
+        uint256 rewardDebt = user.rewardDebt;
+        
         user.amount = lpToken;
         user.rewardDebt = lpToken.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION;
+
+        uint256 pending;
+        if (user.amount > 0) {
+            pending = user.rewardDebt.sub(rewardDebt);
+            rewardToken.safeTransfer(to, pending);
+        }
         emit LogOnReward(_user, pid, pending, to);
     }
     
