@@ -65,7 +65,6 @@ const config: HardhatUserConfig = {
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],
-      chainId: 10000,
     },
     smartbch: {
       url: "https://smartbch.fountainhead.cash/mainnet",
