@@ -700,10 +700,10 @@
   dependencies:
     keccak "^3.0.0"
 
-"@mistswapdex/sdk@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@mistswapdex/sdk/-/sdk-0.0.2.tgz#de18c4308a99e5b310e6f40478a0c0a2a62b48f8"
-  integrity sha512-9wzUk+yFxV7p/B65XWU3aRs/111fswLucds8KzGmXa80vYZMjH9Q3qcovLAMF44fq3tGw1YVTaOJu4/rxUpd+w==
+"@mistswapdex/sdk@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@mistswapdex/sdk/-/sdk-0.0.9.tgz#00c0e2e4010186d42f89b49617adfc3bbf63feba"
+  integrity sha512-Vfc9w+NPoJ0hrasMTAuoGU5s4NVgi4s7ATpbe9GPd2PXCoT6yOUC9/UNmzRsxc6p96Gd1Rhqbcz7UaZYiUn9KQ==
   dependencies:
     big.js "^6.1.0"
     decimal.js-light "^2.5.0"
