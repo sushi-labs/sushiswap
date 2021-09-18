@@ -1,4 +1,4 @@
-const { WETH } = require("@mistswapdex/sdk")
+const { WETH9 } = require("@mistswapdex/sdk")
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments
@@ -15,8 +15,8 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
   
   if (chainId === '31337') {
     wethAddress = (await deployments.get("WETH9Mock")).address
-  } else if (chainId in WETH) {
-    wethAddress = WETH[chainId].address
+  } else if (chainId in WETH9) {
+    wethAddress = WETH9[chainId].address
   } else {
     throw Error("No WETH!")
   }
@@ -28,10 +28,14 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
     deterministicDeployment: false
   })
 
+  const txOptions = {
+    gasPrice: 1050000000,
+  }
+
   const maker = await ethers.getContract("SushiMaker")
   if (await maker.owner() !== dev) {
     console.log("Setting maker owner")
-    await (await maker.transferOwnership(dev, true, false)).wait()
+    await (await maker.transferOwnership(dev, true, false, txOptions)).wait()
   }
 }
 
