@@ -158,6 +158,6 @@ task("maker:serve", "SushiBar serve")
 .setAction(async function ({ a, b }, { ethers: { getNamedSigner } }, runSuper) {
   const maker = await ethers.getContract("SushiMaker")
 
-  await (await maker.connect(await getNamedSigner("dev")).convert(a, b, { gasLimitgasLimit: 5198000 })).wait()
+  await (await maker.connect(await getNamedSigner("dev")).convert(a, b, { gasPrice: 1050000000, gasLimit: 5198000 })).wait()
 });
 
