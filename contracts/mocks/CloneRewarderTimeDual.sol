@@ -8,7 +8,7 @@ import "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol";
 import "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol";
 
 interface IMasterChefV2 {
-    function lpToken(uint256 pid) external view returns (IERC20 _lpToken); 
+    function lpToken(uint256 pid) external view returns (IERC20 _lpToken);
 }
 
 /// @author @0xKeno
@@ -85,22 +85,39 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
                 (_userInfo.amount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION).sub(
                     _userInfo.rewardDebt2
                 );
-            rewardToken1.safeTransfer(to, pending1);
-            rewardToken2.safeTransfer(to, pending2);
+
+            uint256 balance1 = rewardToken1.balanceOf(address(this));
+            uint256 balance2 = rewardToken2.balanceOf(address(this));
+
+            if (pending1 > balance1) {
+                rewardToken1.safeTransfer(to, balance1);
+                pending1 -= balance1;
+            } else {
+                rewardToken1.safeTransfer(to, pending1);
+                pending1 = 0;
+            }
+
+            if (pending2 > balance2) {
+                rewardToken2.safeTransfer(to, balance2);
+                pending2 -= balance2;
+            } else {
+                rewardToken2.safeTransfer(to, pending2);
+                pending2 = 0;
+            }
         }
         _userInfo.amount = lpTokenAmount;
-        _userInfo.rewardDebt1 = lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION;
-        _userInfo.rewardDebt2 = lpTokenAmount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION;
+        _userInfo.rewardDebt1 = (lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION) - pending1;
+        _userInfo.rewardDebt2 = (lpTokenAmount.mul(pool.accToken2PerShare) / ACC_TOKEN_PRECISION) - pending2;
 
         userInfo[pid][_user] = _userInfo;
 
         emit LogOnReward(_user, pid, pending1, pending2, to);
     }
-    
+
     function pendingTokens(uint256 pid, address user, uint256) override external view returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
         IERC20[] memory _rewardTokens = new IERC20[](2);
         _rewardTokens[0] = rewardToken1;
-        _rewardTokens[1] = rewardToken2;        
+        _rewardTokens[1] = rewardToken2;
         uint256[] memory _rewardAmounts = new uint256[](2);
         (uint256 reward1, uint256 reward2) = pendingToken(pid, user);
         _rewardAmounts[0] = reward1;
@@ -111,7 +128,7 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
     function rewardRates() external view returns (uint256[] memory) {
         uint256[] memory _rewardRates = new uint256[](2);
         _rewardRates[0] = rewardPerSecond1;
-        _rewardRates[1] = rewardPerSecond2;        
+        _rewardRates[1] = rewardPerSecond2;
         return (_rewardRates);
     }
 
@@ -122,6 +139,20 @@ contract CloneRewarderTimeDual is IRewarder,  BoringOwnable{
         rewardPerSecond1 = _rewardPerSecond1;
         rewardPerSecond2 = _rewardPerSecond2;
         emit LogRewardPerSecond(_rewardPerSecond1, _rewardPerSecond2);
+    }
+
+    /// @notice Allows owner to reclaim/withdraw any tokens (including reward tokens) held by this contract
+    /// @param token Token to reclaim, use 0x00 for Ethereum
+    /// @param amount Amount of tokens to reclaim
+    /// @param to Receiver of the tokens, first of his name, rightful heir to the lost tokens,
+    /// reightful owner of the extra tokens, and ether, protector of mistaken transfers, mother of token reclaimers,
+    /// the Khaleesi of the Great Token Sea, the Unburnt, the Breaker of blockchains.
+    function reclaimTokens(address token, uint256 amount, address payable to) public onlyOwner {
+        if (token == address(0)) {
+            to.transfer(amount);
+        } else {
+            IERC20(token).safeTransfer(to, amount);
+        }
     }
 
     modifier onlyMCV2 {

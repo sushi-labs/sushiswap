@@ -8,7 +8,7 @@ import "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol";
 import "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol";
 
 interface IMasterChefV2 {
-    function lpToken(uint256 pid) external view returns (IERC20 _lpToken); 
+    function lpToken(uint256 pid) external view returns (IERC20 _lpToken);
 }
 
 /// @author @0xKeno
@@ -75,13 +75,20 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
                 (user.amount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION).sub(
                     user.rewardDebt
                 );
-            rewardToken.safeTransfer(to, pending);
+            uint256 balance = rewardToken.balanceOf(address(this));
+            if (pending > balance) {
+                rewardToken.safeTransfer(to, balance);
+                pending -= balance;
+            } else {
+                rewardToken.safeTransfer(to, pending);
+                pending = 0;
+            }
         }
         user.amount = lpTokenAmount;
-        user.rewardDebt = lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION;
+        user.rewardDebt = (lpTokenAmount.mul(pool.accToken1PerShare) / ACC_TOKEN_PRECISION) - pending;
         emit LogOnReward(_user, pid, pending, to);
     }
-    
+
     function pendingTokens(uint256 pid, address user, uint256) override external view returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
         IERC20[] memory _rewardTokens = new IERC20[](1);
         _rewardTokens[0] = (rewardToken);
@@ -101,6 +108,20 @@ contract CloneRewarderTime is IRewarder,  BoringOwnable{
     function setRewardPerSecond(uint256 _rewardPerSecond) public onlyOwner {
         rewardPerSecond = _rewardPerSecond;
         emit LogRewardPerSecond(_rewardPerSecond);
+    }
+
+    /// @notice Allows owner to reclaim/withdraw any tokens (including reward tokens) held by this contract
+    /// @param token Token to reclaim, use 0x00 for Ethereum
+    /// @param amount Amount of tokens to reclaim
+    /// @param to Receiver of the tokens, first of his name, rightful heir to the lost tokens,
+    /// reightful owner of the extra tokens, and ether, protector of mistaken transfers, mother of token reclaimers,
+    /// the Khaleesi of the Great Token Sea, the Unburnt, the Breaker of blockchains.
+    function reclaimTokens(address token, uint256 amount, address payable to) public onlyOwner {
+        if (token == address(0)) {
+            to.transfer(amount);
+        } else {
+            IERC20(token).safeTransfer(to, amount);
+        }
     }
 
     modifier onlyMCV2 {
