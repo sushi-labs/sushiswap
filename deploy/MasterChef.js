@@ -7,7 +7,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   
   const { address } = await deploy("MasterChef", {
     from: deployer,
-    args: [sushi.address, dev, "1000000000000000000000", "0", "1000000000000000000000"],
+    args: [sushi.address, dev, "100000000000000000000", "0", "1000000000000000000000"],
     log: true,
     deterministicDeployment: false
   })
