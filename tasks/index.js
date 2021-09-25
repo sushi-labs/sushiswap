@@ -95,11 +95,45 @@ task("migrate", "Migrates liquidity from BenSwap to SushiSwap")
   .addOptionalParam("b", "Token B", "0xc778417E063141139Fce010982780140Aa0cD5Ab")
   .setAction(require("./migrate"))
 
-task("masterchef:add", "Add pool to masterchef")
+task("masterchef:add", "Add farm to masterchef")
 .setAction(async function (taskArguments, { ethers: { getNamedSigner } }, runSuper) {
   const masterChef = await ethers.getContract("MasterChef")
 
-  await (await masterChef.connect(await getNamedSigner("dev")).add(1000, '0x3e78a806b127c02b54419191571d9379819e989c', true)).wait()
+  // add bch/tc pool
+  // await (await masterChef.connect(await getNamedSigner("dev")).add(1000, '0x9A520C877c62aB833276F6FD871D61898aFE0896', true, {
+  await (await masterChef.connect(await getNamedSigner("dev")).add(10000, '0xDB70603f600a3eab200bA0F08fbDca467bD5a1D5', true, {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:farm", "Query farm of masterchef")
+.addParam("pid", "Pool ID")
+.setAction(async function ({ pid }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const { lpToken, allocPoint, lastRewardBlock, accSushiPerShare } = await masterChef.poolInfo(pid)
+
+  console.log('lpToken', lpToken);
+  console.log('allocPoint', allocPoint.toString());
+  console.log('lastRewardBlock', lastRewardBlock.toString());
+  console.log('accSushiPerShare', accSushiPerShare.toString());
+
+  const erc20 = await ethers.getContractFactory("UniswapV2Pair")
+
+  const mlp = erc20.attach(lpToken)
+  const { reserve0, reserve1, blockTimestampLast } = await mlp.getReserves();
+
+  console.log('lp factory', await mlp.factory());
+  console.log('lp token0', await mlp.token0());
+  console.log('lp token1', await mlp.token1());
+  console.log('lp reserve0', reserve0());
+  console.log('lp reserve1', reserve1());
+  console.log('lp blockTimestampLast', blockTimestampLast());
+  console.log('lp price0CumulativeLast', await mlp.price0CumulativeLast());
+  console.log('lp price1CumulativeLast', await mlp.price1CumulativeLast());
+  console.log('lp kLast', await mlp.kLast());
+  console.log('lp unlocked', await mlp.unlocked());
 });
 
 task("masterchef:deposit", "MasterChef deposit")
