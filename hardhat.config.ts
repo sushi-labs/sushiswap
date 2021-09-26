@@ -294,6 +294,20 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    fuse: {
+      url: "https://rpc.fuse.io",
+      accounts,
+      chainId: 122,
+      live: true,
+      saveDeployments: true,
+    },
+    clover: {
+      url: "https://rpc-ivy.clover.finance",
+      accounts,
+      chainId: 1024,
+      live: true,
+      saveDeployments: true,
+    },
   },
   paths: {
     artifacts: "artifacts",
