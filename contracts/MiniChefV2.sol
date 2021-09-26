@@ -58,6 +58,10 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each user that stakes LP tokens.
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
+
+    /// @dev Tokens added
+    mapping (address => bool) public addedTokens;
+
     /// @dev Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint;
 
@@ -89,6 +93,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @param _lpToken Address of the LP ERC-20 token.
     /// @param _rewarder Address of the rewarder delegate.
     function add(uint256 allocPoint, IERC20 _lpToken, IRewarder _rewarder) public onlyOwner {
+        require(addedTokens[address(_lpToken)] == false, "Token already added");
         totalAllocPoint = totalAllocPoint.add(allocPoint);
         lpToken.push(_lpToken);
         rewarder.push(_rewarder);
@@ -98,6 +103,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
             lastRewardTime: block.timestamp.to64(),
             accSushiPerShare: 0
         }));
+        addedTokens[address(_lpToken)] = true;
         emit LogPoolAddition(lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
 
