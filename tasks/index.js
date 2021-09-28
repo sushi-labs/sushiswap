@@ -129,18 +129,17 @@ task("masterchef:farm", "Query farm of masterchef")
   const erc20 = await ethers.getContractFactory("UniswapV2Pair")
 
   const mlp = erc20.attach(lpToken)
-  const { reserve0, reserve1, blockTimestampLast } = await mlp.getReserves();
+  const [ reserve0, reserve1, blockTimestampLast ] = await mlp.getReserves();
 
   console.log('lp factory', await mlp.factory());
   console.log('lp token0', await mlp.token0());
   console.log('lp token1', await mlp.token1());
-  console.log('lp reserve0', reserve0());
-  console.log('lp reserve1', reserve1());
-  console.log('lp blockTimestampLast', blockTimestampLast());
-  console.log('lp price0CumulativeLast', await mlp.price0CumulativeLast());
-  console.log('lp price1CumulativeLast', await mlp.price1CumulativeLast());
-  console.log('lp kLast', await mlp.kLast());
-  console.log('lp unlocked', await mlp.unlocked());
+  console.log('lp reserve0', reserve0.toString());
+  console.log('lp reserve1', reserve1.toString());
+  console.log('lp blockTimestampLast', blockTimestampLast);
+  console.log('lp price0CumulativeLast', (await mlp.price0CumulativeLast()).toString());
+  console.log('lp price1CumulativeLast', (await mlp.price1CumulativeLast()).toString());
+  console.log('lp kLast', (await mlp.kLast()).toString());
 });
 
 task("masterchef:deposit", "MasterChef deposit")
