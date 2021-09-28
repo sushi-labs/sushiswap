@@ -95,7 +95,7 @@ contract SushiRoll {
                 hex'ff',
                 oldRouter.factory(),
                 keccak256(abi.encodePacked(token0, token1)),
-                hex'96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' // init code hash
+                hex'd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66' // init code hash
             ))));
     }
 
