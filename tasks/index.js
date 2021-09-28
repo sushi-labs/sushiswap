@@ -57,6 +57,13 @@ task("factory:set-fee-to", "Factory set fee to")
   await (await factory.connect(await getNamedSigner('dev')).setFeeTo(feeTo)).wait() 
 });
 
+task("factory:paircodehash", "Get pair code hash")
+.setAction(async function ({ }, { ethers: { getNamedSigner } }, runSuper) {
+  const Factory = await ethers.getContractFactory("UniswapV2Factory")
+  const factory = Factory.attach('0xaa094cA3FBd19dCCcE91C79d1FffA28293B05f28')
+  console.log(await factory.pairCodeHash())
+});
+
 // TODO: Swap?
 
 // TODO: Test
