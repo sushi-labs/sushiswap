@@ -14,6 +14,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 
   const txOptions = {
     gasPrice: 1050000000,
+    gasLimit: 5000000,
   }
 
   if (await sushi.owner() !== address) {

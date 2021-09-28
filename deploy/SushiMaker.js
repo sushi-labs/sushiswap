@@ -30,6 +30,7 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
 
   const txOptions = {
     gasPrice: 1050000000,
+    gasLimit: 5000000,
   }
 
   const maker = await ethers.getContract("SushiMaker")
