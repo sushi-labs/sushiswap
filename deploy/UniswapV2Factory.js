@@ -1,9 +1,3 @@
-// Defining bytecode and abi from original contract on mainnet to ensure bytecode matches and it produces the same pair code hash
-const {
-  bytecode,
-  abi,
-} = require("../deployments/mainnet/UniswapV2Factory.json");
-
 module.exports = async function ({
   ethers,
   getNamedAccounts,
@@ -15,10 +9,6 @@ module.exports = async function ({
   const { deployer, dev } = await getNamedAccounts();
 
   await deploy("UniswapV2Factory", {
-    contract: {
-      abi,
-      bytecode,
-    },
     from: deployer,
     args: [dev],
     log: true,
