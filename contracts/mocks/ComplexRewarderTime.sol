@@ -22,6 +22,7 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
     struct UserInfo {
         uint256 amount;
         uint256 rewardDebt;
+        uint256 unpaidRewards;
     }
 
     /// @notice Info of each MCV2 pool.
@@ -48,6 +49,14 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
 
     address private immutable MASTERCHEF_V2;
 
+    uint256 internal unlocked;
+    modifier lock() {
+        require(unlocked == 1, "LOCKED");
+        unlocked = 2;
+        _;
+        unlocked = 1;
+    }
+
     event LogOnReward(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event LogPoolAddition(uint256 indexed pid, uint256 allocPoint);
     event LogSetPool(uint256 indexed pid, uint256 allocPoint);
@@ -59,10 +68,11 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
         rewardToken = _rewardToken;
         rewardPerSecond = _rewardPerSecond;
         MASTERCHEF_V2 = _MASTERCHEF_V2;
+        unlocked = 1;
     }
 
 
-    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 override external {
+    function onSushiReward (uint256 pid, address _user, address to, uint256, uint256 lpToken) onlyMCV2 lock override external {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][_user];
         uint256 pending;
@@ -70,19 +80,19 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
             pending =
                 (user.amount.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION).sub(
                     user.rewardDebt
-                );
+                ).add(user.unpaidRewards);
             uint256 balance = rewardToken.balanceOf(address(this));
             if (pending > balance) {
                 rewardToken.safeTransfer(to, balance);
-                pending -= balance;
+                user.unpaidRewards = pending - balance;
             } else {
                 rewardToken.safeTransfer(to, pending);
-                pending = 0;
+                user.unpaidRewards = 0;
             }
         }
         user.amount = lpToken;
-        user.rewardDebt = (lpToken.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION) - pending;
-        emit LogOnReward(_user, pid, pending, to);
+        user.rewardDebt = lpToken.mul(pool.accSushiPerShare) / ACC_TOKEN_PRECISION;
+        emit LogOnReward(_user, pid, pending - user.unpaidRewards, to);
     }
 
     function pendingTokens(uint256 pid, address user, uint256) override external view returns (IERC20[] memory rewardTokens, uint256[] memory rewardAmounts) {
@@ -168,7 +178,7 @@ contract ComplexRewarderTime is IRewarder,  BoringOwnable{
             uint256 sushiReward = time.mul(rewardPerSecond).mul(pool.allocPoint) / totalAllocPoint;
             accSushiPerShare = accSushiPerShare.add(sushiReward.mul(ACC_TOKEN_PRECISION) / lpSupply);
         }
-        pending = (user.amount.mul(accSushiPerShare) / ACC_TOKEN_PRECISION).sub(user.rewardDebt);
+        pending = (user.amount.mul(accSushiPerShare) / ACC_TOKEN_PRECISION).sub(user.rewardDebt).add(user.unpaidRewards);
     }
 
     /// @notice Update reward variables for all pools. Be careful of gas spending!
