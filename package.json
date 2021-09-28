@@ -28,7 +28,6 @@
   "scripts": {
     "build": "hardhat compile",
     "console": "hardhat console",
-    "postinstall": "patch-package",
     "smartbch:deploy": "hardhat --network smartbch deploy",
     "smartbch:export": "hardhat --network smartbch export --export exports/smartbch.json",
     "smartbch-amber:deploy": "hardhat --network smartbch-amber deploy",
@@ -57,7 +56,7 @@
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.2.0",
     "ethers": "^5.0.0",
-    "hardhat": "^2.6.3",
+    "hardhat": "2.0.11",
     "hardhat-abi-exporter": "^2.0.8",
     "hardhat-deploy": "^0.7.0-beta.44",
     "hardhat-deploy-ethers": "^0.3.0-beta.7",
@@ -75,8 +74,6 @@
     "typescript": "^4.2.2"
   },
   "dependencies": {
-    "eip-712": "^0.4.3",
-    "patch-package": "^6.4.7",
-    "postinstall-postinstall": "^2.1.0"
+    "eip-712": "^0.4.3"
   }
 }

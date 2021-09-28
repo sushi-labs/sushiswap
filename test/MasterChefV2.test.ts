@@ -63,7 +63,7 @@ describe("MasterChefV2", function () {
         err = e
       }
 
-      assert.equal(err.toString(), "Error: Transaction reverted without a reason string")
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
     })
   })
 
@@ -112,7 +112,7 @@ describe("MasterChefV2", function () {
         err = e
       }
 
-      assert.equal(err.toString(), "Error: Transaction reverted without a reason string")
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
     })
   })
 
@@ -165,7 +165,7 @@ describe("MasterChefV2", function () {
         err = e
       }
 
-      assert.equal(err.toString(), "Error: Transaction reverted without a reason string")
+      assert.equal(err.toString(), "Error: VM Exception while processing transaction: invalid opcode")
     })
   })
 
