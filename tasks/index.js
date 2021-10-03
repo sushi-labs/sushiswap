@@ -155,12 +155,12 @@ task("pair:query", "Look up pair")
 });
 
 task("masterchef:add", "Add farm to masterchef")
-.setAction(async function (taskArguments, { ethers: { getNamedSigner } }, runSuper) {
+.addParam("alloc", "Allocation Points")
+.addParam("address", "Pair Address")
+.setAction(async function ({ alloc, address }, { ethers: { getNamedSigner } }, runSuper) {
   const masterChef = await ethers.getContract("MasterChef")
 
-  // add bch/mist pool
-  // await (await masterChef.connect(await getNamedSigner("dev")).add(10000, '0xa6A957Eb0DB729AB096310A8723139873513b0B3', true, {
-  await (await masterChef.connect(await getNamedSigner("dev")).add(1000, '0x07DE6fc05597E0E4c92C83637A8a0CA411f3a769', true, {
+  await (await masterChef.connect(await getNamedSigner("dev")).add(alloc, address, true, {
     gasPrice: 1050000000,
     gasLimit: 5198000,
   })).wait()
