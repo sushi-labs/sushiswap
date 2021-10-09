@@ -154,6 +154,22 @@ task("pair:query", "Look up pair")
   console.log('kLast', (await pair.kLast()).toString());
 });
 
+task("timelock:logs", "Get logs from timelock")
+.setAction(async function ({ _ }, { ethers: { getNamedSigner } }, runSuper) {
+  const timelock = await ethers.getContract("Timelock")
+
+  const logs = await ethers.provider.getLogs({
+    fromBlock: 1027525,
+    toBlock: 'latest',
+    address: timelock.address,
+  })
+
+  for (let log of logs) {
+    const parsed = timelock.interface.parseLog(log)
+    console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|1000)} away) data:${parsed.args['data']}`)
+  }
+})
+
 task("masterchef:add", "Add farm to masterchef")
 .addParam("alloc", "Allocation Points")
 .addParam("address", "Pair Address")
@@ -161,6 +177,148 @@ task("masterchef:add", "Add farm to masterchef")
   const masterChef = await ethers.getContract("MasterChef")
 
   await (await masterChef.connect(await getNamedSigner("dev")).add(alloc, address, true, {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+function encodeParameters(types, values) {
+  const abi = new ethers.utils.AbiCoder()
+  return abi.encode(types, values)
+}
+
+task("masterchef:add:queue", "Add farm to masterchef (timelock queue)")
+.addParam("alloc", "Allocation Points")
+.addParam("address", "Pair Address")
+.addParam("eta", "Delay")
+.setAction(async function ({ alloc, address, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).queueTransaction(
+    masterChef.address,
+    "0",
+    "add(uint256,address,bool)",
+    encodeParameters(["uint256", "address", "bool"], [alloc, address, false]),
+    eta,
+  {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:add:execute", "Add farm to masterchef (timelock execute)")
+.addParam("alloc", "Allocation Points")
+.addParam("address", "Pair Address")
+.addParam("eta", "Delay")
+.setAction(async function ({ alloc, address, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).executeTransaction(
+    masterChef.address,
+    "0",
+    "add(uint256,address,bool)",
+    encodeParameters(["uint256", "address", "bool"], [alloc, address, false]),
+    eta,
+  {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:add:cancel", "Add farm to masterchef (timelock cancel)")
+.addParam("alloc", "Allocation Points")
+.addParam("address", "Pair Address")
+.addParam("eta", "Delay")
+.setAction(async function ({ alloc, address, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).cancelTransaction(
+    masterChef.address,
+    "0",
+    "add(uint256,address,bool)",
+    encodeParameters(["uint256", "address", "bool"], [alloc, address, false]),
+    eta,
+  {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+
+task("masterchef:set", "Set farm allocation points")
+.addParam("pid", "Pool Id")
+.addParam("alloc", "Allocation Points")
+.addOptionalParam("massUpdate", false)
+.setAction(async function ({ pid, alloc, massUpdate }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  await (await masterChef.connect(await getNamedSigner("dev")).set(pid, alloc, massUpdate, {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:set:queue", "Set farm allocation points (timelock queue)")
+.addParam("pid", "Pool Id")
+.addParam("alloc", "Allocation Points")
+.addOptionalParam("massUpdate", false)
+.addParam("eta", "Delay")
+.setAction(async function ({ pid, alloc, massUpdate, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).queueTransaction(
+    masterChef.address,
+    "0",
+    "set(uint256,uint256,bool)",
+    encodeParameters(["uint256", "uint256", "bool"], [pid, alloc, massUpdate]),
+    eta,
+  {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:set:execute", "Set farm allocation points (timelock execute)")
+.addParam("pid", "Pool Id")
+.addParam("alloc", "Allocation Points")
+.addOptionalParam("massUpdate", false)
+.addParam("eta", "Delay")
+.setAction(async function ({ pid, alloc, massUpdate, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).executeTransaction(
+    masterChef.address,
+    "0",
+    "set(uint256,uint256,bool)",
+    encodeParameters(["uint256", "uint256", "bool"], [pid, alloc, massUpdate]),
+    eta,
+  {
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+});
+
+task("masterchef:set:cancel", "Set farm allocation points (timelock cancel)")
+.addParam("pid", "Pool Id")
+.addParam("alloc", "Allocation Points")
+.addOptionalParam("massUpdate", false)
+.addParam("eta", "Delay")
+.setAction(async function ({ pid, alloc, massUpdate, eta }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  const timelock = await ethers.getContract("Timelock")
+  await (await timelock.connect(await getNamedSigner("dev")).cancelTransaction(
+    masterChef.address,
+    "0",
+    "set(uint256,uint256,bool)",
+    encodeParameters(["uint256", "uint256", "bool"], [pid, alloc, massUpdate]),
+    eta,
+  {
     gasPrice: 1050000000,
     gasLimit: 5198000,
   })).wait()
