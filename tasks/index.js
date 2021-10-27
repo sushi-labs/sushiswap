@@ -403,11 +403,50 @@ task("bar:leave", "SushiBar leave")
 });
 
 task("maker:serve", "SushiBar serve")
-.addParam("a", "Token A")
-.addParam("b", "Token B")
 .setAction(async function ({ a, b }, { ethers: { getNamedSigner } }, runSuper) {
+  const factory = await ethers.getContract("UniswapV2Factory")
   const maker = await ethers.getContract("SushiMaker")
+  const allPairsLength = Number.parseInt((await factory.allPairsLength()).toString());
 
-  console.log(await (await maker.connect(await getNamedSigner("dev")).convert(a, b, { gasPrice: 1050000000, gasLimit: 5198000 })).wait())
+  const erc20 = await ethers.getContractFactory("UniswapV2Pair")
+  let servedCount = 0;
+  for (let i=0; i<allPairsLength; ++i) {
+    console.log(`processing pair ${i+1}/${allPairsLength+1}`)
+    try {
+      const pairAddress = await factory.allPairs(i)
+      console.log(`pair: ${pairAddress}`)
+      const pair = erc20.attach(pairAddress)
+
+      const balance = await pair.balanceOf(maker.address)
+      if (balance.eq(0)) {
+          console.log('0 balance')
+          continue
+      }
+
+      const totalSupply = await pair.totalSupply();
+
+      if (totalSupply.div(balance).eq(1)) {
+          console.log(`balance is entirety of LP`)
+          continue
+      }
+
+      if (totalSupply.div(balance).gt(10000)) {
+          console.log(`${totalSupply.div(balance)} less than 1/10000th of LP`)
+          continue
+      }
+
+
+      const a = await pair.token0()
+      const b = await pair.token1()
+      console.log('tokens: ', a, b)
+
+      const served = await (await maker.connect(await getNamedSigner("dev")).convert(a, b, { gasPrice: 1050000000, gasLimit: 5198000 })).wait()
+      console.log('served', served.transactionHash)
+      ++servedCount
+    } catch (e) {
+      console.log(`error encountered: ${JSON.stringify(e)}`)
+    }
+  }
+  console.log(`served ${servedCount} of ${allPairsLength}`)
 });
 
