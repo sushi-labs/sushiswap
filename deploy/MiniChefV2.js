@@ -1,4 +1,4 @@
-const { SUSHI_ADDRESS } = require("@sushiswap/sdk");
+const { SUSHI_ADDRESS } = require("@sushiswap/core-sdk");
 
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   const { deploy } = deployments;
