@@ -165,6 +165,18 @@ task("timelock:logs", "Get logs from timelock")
   }
 })
 
+task("masterchef:massupdate", "update reward variables for all pools")
+.setAction(async function ({ _ }, { ethers: { getNamedSigner } }, runSuper) {
+  const masterChef = await ethers.getContract("MasterChef")
+
+  await (await masterChef.connect(await getNamedSigner("dev")).massUpdatePools({
+    gasPrice: 1050000000,
+    gasLimit: 5198000,
+  })).wait()
+
+  console.log('mass updated pools')
+})
+
 task("masterchef:add", "Add farm to masterchef")
 .addParam("alloc", "Allocation Points")
 .addParam("address", "Pair Address")
