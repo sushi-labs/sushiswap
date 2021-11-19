@@ -161,7 +161,7 @@ task("timelock:logs", "Get logs from timelock")
 
   for (let log of logs) {
     const parsed = timelock.interface.parseLog(log)
-    console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|1000)} away) data:${parsed.args['data']}`)
+    console.log(`${parsed.name}: ${parsed.args['signature']} contract:${parsed.args[1]} eta:${parsed.args['eta'].toString()} (${Number.parseInt(parsed.args['eta'].toString()) - ((+ new Date)/1000|0)} away) data:${parsed.args['data']}`)
   }
 })
 
