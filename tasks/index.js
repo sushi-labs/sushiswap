@@ -120,11 +120,6 @@ task("router:add-liquidity-eth", "Router add liquidity eth")
   await (await router.connect(await getNamedSigner("dev")).addLiquidityETH(token, tokenDesired, tokenMinimum, ethMinimum, to, deadline)).wait()    
 });
 
-task("migrate", "Migrates liquidity from BenSwap to SushiSwap")
-  .addOptionalParam("a", "Token A", "0xaD6D458402F60fD3Bd25163575031ACDce07538D")
-  .addOptionalParam("b", "Token B", "0xc778417E063141139Fce010982780140Aa0cD5Ab")
-  .setAction(require("./migrate"))
-
 task("erc20:balance", "Look up balance")
 .addParam("address", "Token address")
 .addParam("account", "Account")
