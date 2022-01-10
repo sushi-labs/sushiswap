@@ -65,7 +65,9 @@
     "@openzeppelin/contracts": "^3.1.0",
     "@sushiswap/core-sdk": "1.0.0-canary.9",
     "@tenderly/hardhat-tenderly": "^1.0.0",
-    "@typechain/ethers-v5": "^5.0.0",
+    "typechain": "^6.1.0",
+    "@typechain/hardhat": "^3.1.0",
+    "@typechain/ethers-v5": "^8.0.5",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.10.1",
@@ -82,14 +84,12 @@
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-preprocessor": "^0.1.0",
     "hardhat-spdx-license-identifier": "^2.0.0",
-    "hardhat-typechain": "^0.3.5",
     "hardhat-watcher": "^2.0.0",
     "prettier": "^2.2.0",
     "prettier-plugin-solidity": "^1.0.0-beta.5",
     "solidity-coverage": "^0.7.13",
     "ts-generator": "^0.1.1",
     "ts-node": "^9.1.1",
-    "typechain": "^4.0.2",
     "typescript": "^4.2.2"
   }
 }
