@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "17.0.12",
+    "@types/react": "17.0.37",
     "config": "*",
     "eslint": "7.32.0",
     "next-transpile-modules": "9.0.0",

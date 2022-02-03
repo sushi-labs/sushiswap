@@ -7,13 +7,14 @@ import MetaMaskWalletView, { MetaMaskStatusView } from "./MetaMaskWalletView";
 const ConnectWalletView: FC = () => {
   return (
     <div>
-      {connectors.map(([connector, hooks], i) => {
+      {connectors.map(([connector, hooks, store], i) => {
+        console.log(store);
         if (connector instanceof MetaMask) {
           return (
-            <>
-              <MetaMaskStatusView connector={connector} hooks={hooks} key={i} />
-              <MetaMaskWalletView connector={connector} hooks={hooks} key={i} />
-            </>
+            <div key={i}>
+              <MetaMaskStatusView connector={connector} hooks={hooks} />
+              <MetaMaskWalletView connector={connector} hooks={hooks} />
+            </div>
           );
         }
 
