@@ -1,4 +1,4 @@
-import { Button } from "ui";
+// import { Button } from "ui";
 import dynamic from "next/dynamic";
 
 const ConnectWalletView = dynamic(
@@ -11,7 +11,7 @@ export default function Web() {
     <div>
       <h1>Web</h1>
       <ConnectWalletView />
-      <Button />
+      {/* <Button /> */}
     </div>
   );
 }
