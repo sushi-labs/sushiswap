@@ -1,2 +1,2 @@
-export * from "./MetaMaskWalletView";
+export { default as MetaMaskWalletView } from "./MetaMaskWalletView";
 export { default } from "./ConnectWalletView";

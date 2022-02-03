@@ -9,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ethersproject/abi": "^5.5.0",
-    "@ethersproject/contracts": "^5.5.0",
     "@web3-react/core": "8.0.16-alpha.0",
     "@web3-react/eip1193": "8.0.16-alpha.0",
     "@web3-react/empty": "8.0.17-alpha.0",

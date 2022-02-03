@@ -1,4 +1,3 @@
-import { Button } from "ui";
 import dynamic from "next/dynamic";
 
 const ConnectWalletView = dynamic(
@@ -6,12 +5,13 @@ const ConnectWalletView = dynamic(
   { ssr: false }
 );
 
-export default function Web() {
+const Web = () => {
   return (
     <div>
       <h1>Web</h1>
       <ConnectWalletView />
-      <Button />
     </div>
   );
-}
+};
+
+export default Web;
