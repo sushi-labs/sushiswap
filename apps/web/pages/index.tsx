@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-
+const Account = dynamic(() => import("../components/account"), { ssr: false });
 const ConnectWalletView = dynamic(
   () => import("../components/connect/ConnectWalletView"),
   { ssr: false }
@@ -7,8 +7,9 @@ const ConnectWalletView = dynamic(
 
 const Web = () => {
   return (
-    <div>
-      <h1>Web</h1>
+    <div className="flex flex-col gap-10">
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <Account />
       <ConnectWalletView />
     </div>
   );

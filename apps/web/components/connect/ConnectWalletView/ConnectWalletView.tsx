@@ -1,14 +1,13 @@
 import { FC } from "react";
 
 import { MetaMask } from "@web3-react/metamask";
-import { connectors } from "../../../connectors";
+import { connectors } from "app/connectors";
 import MetaMaskWalletView, { MetaMaskStatusView } from "./MetaMaskWalletView";
 
 const ConnectWalletView: FC = () => {
   return (
     <div>
-      {connectors.map(([connector, hooks, store], i) => {
-        console.log(store);
+      {connectors.map(([connector, hooks], i) => {
         if (connector instanceof MetaMask) {
           return (
             <div key={i}>
