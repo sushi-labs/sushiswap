@@ -25,6 +25,7 @@
     "zustand": "^3.6.9"
   },
   "devDependencies": {
+    "@headlessui/react": "^1.4.3",
     "@types/node": "17.0.12",
     "@types/react": "17.0.37",
     "autoprefixer": "^10.4.2",
