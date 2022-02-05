@@ -1,6 +1,8 @@
-import "../styles/globals.css";
+import "../theme/styles/globals.css";
 import { FC, useEffect } from "react";
 import type { AppProps } from "next/app";
+import { ThemeProvider } from "../theme";
+import Background from "app/components/Background";
 
 const Noop: FC = ({ children }) => <>{children}</>;
 
@@ -12,9 +14,13 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <Layout pageProps={pageProps}>
-      <Component {...pageProps} />
-    </Layout>
+    <ThemeProvider>
+      <Background>
+        <Layout pageProps={pageProps}>
+          <Component {...pageProps} />
+        </Layout>
+      </Background>
+    </ThemeProvider>
   );
 };
 

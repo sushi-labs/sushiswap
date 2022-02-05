@@ -1,5 +1,5 @@
 import { FC, forwardRef, MutableRefObject } from "react";
-import { classNames } from "../utils/classNames";
+import { classNames } from "../lib/classNames";
 
 export interface DialogContentProps {
   className?: string;
