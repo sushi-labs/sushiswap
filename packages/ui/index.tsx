@@ -1,4 +1,4 @@
 import * as React from "react";
-export * from "./Dialog";
-export * from "./Menu";
-export * from "./Select";
+export * from "./dialog";
+export * from "./menu";
+export * from "./select";
