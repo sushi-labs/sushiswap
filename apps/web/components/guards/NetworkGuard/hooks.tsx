@@ -2,7 +2,7 @@ import priorityConnector from "app/lib/connectors/priorityConnector";
 const { usePriorityProvider } = priorityConnector;
 import useStore from "app/lib/store";
 import { useCallback } from "react";
-import METAMASK_NETWORKS from "../../../../../packages/config/METAMASK_NETWORKS";
+import NETWORKS from "config/networks";
 import { WalletError } from "app/lib/utils/WalletError";
 
 export const useNetworkGuard = (networks: number[]) => {
@@ -18,7 +18,7 @@ export const useNetworkHandlers = () => {
       if (!provider || !account)
         return console.error("Dependencies unavailable");
 
-      const params = METAMASK_NETWORKS[chainId];
+      const params = NETWORKS[chainId];
 
       provider.send("wallet_addEthereumChain", [params, account]).catch((e) => {
         if (e instanceof WalletError) {
