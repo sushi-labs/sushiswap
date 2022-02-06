@@ -1,4 +1,10 @@
-import React, { createContext, FC, useEffect, useState } from "react";
+import React, {
+  createContext,
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Theme } from "./types";
 
 const getInitialTheme = () => {
@@ -7,18 +13,16 @@ const getInitialTheme = () => {
       "color-theme"
     ) as Theme;
 
-    if (storedPreference === Theme.NO_PREFERENCE) {
-      const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
-      if (darkMedia.matches) {
-        return Theme.DARK;
-      }
-
-      return Theme.LIGHT;
-    }
-
-    if (typeof storedPreference === "string") {
+    if (storedPreference) {
       return storedPreference;
     }
+
+    const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+    if (darkMedia.matches) {
+      return Theme.DARK;
+    }
+
+    return Theme.LIGHT;
   }
 
   return Theme.NO_PREFERENCE;
@@ -28,34 +32,30 @@ const ThemeContext = createContext<
   { theme: Theme; setTheme(theme: Theme): void } | undefined
 >(undefined);
 
-export const ThemeProvider: FC<{ initialTheme?: Theme }> = ({
-  initialTheme,
-  children,
-}) => {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+export const ThemeProvider: FC = ({ children }) => {
+  const [theme, setTheme] = useState<Theme>(getInitialTheme());
 
-  const rawSetTheme = (rawTheme: Theme, persist: boolean = true) => {
-    const root = window.document.documentElement;
-    const isDark = rawTheme === Theme.DARK;
+  const rawSetTheme = useCallback(
+    (rawTheme: Theme, explicit: boolean = true) => {
+      const root = window.document.documentElement;
+      const isDark = rawTheme === Theme.DARK;
 
-    root.classList.remove(isDark ? Theme.LIGHT : Theme.DARK);
-    root.classList.add(rawTheme);
+      root.classList.remove(isDark ? Theme.LIGHT : Theme.DARK);
+      root.classList.add(rawTheme);
 
-    if (persist) {
-      localStorage.setItem("color-theme", rawTheme);
-    }
-  };
-
-  if (initialTheme) {
-    rawSetTheme(initialTheme);
-  }
+      if (explicit) {
+        localStorage.setItem("color-theme", rawTheme);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
-    rawSetTheme(theme);
-  }, [theme]);
+    rawSetTheme(theme, false);
+  }, [rawSetTheme, theme]);
 
   useEffect(() => {
-    if (theme !== Theme.NO_PREFERENCE) return;
+    if (!!window.localStorage.getItem("color-theme")) return;
 
     const query = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -67,7 +67,7 @@ export const ThemeProvider: FC<{ initialTheme?: Theme }> = ({
     return () => {
       query.removeEventListener("change", handler);
     };
-  }, [theme]);
+  }, [rawSetTheme, theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
