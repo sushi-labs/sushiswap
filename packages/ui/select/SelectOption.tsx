@@ -11,7 +11,9 @@ const SelectOption: FC<SelectOptionProps> = ({ className, ...props }) => {
       {...props}
       className={({ active }) =>
         classNames(
-          active ? "text-white bg-indigo-600" : "text-gray-900",
+          active
+            ? "text-slate-500 dark:text-slate-400 bg-indigo-600"
+            : "text-slate-500 dark:text-slate-400",
           "cursor-default select-none relative py-2 pl-3 pr-9",
           className
         )

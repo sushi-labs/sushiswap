@@ -10,7 +10,7 @@ const SelectLabel: FC<SelectLabelProps> = ({ className, ...props }) => {
       {...props}
       className={classNames(
         className,
-        "block text-sm font-medium text-gray-700"
+        "block text-sm font-medium text-slate-500 dark:text-slate-400"
       )}
     />
   );

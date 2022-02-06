@@ -16,12 +16,12 @@ const SelectButton: FC<SelectButtonProps> = forwardRef<
       ref={ref}
       className={classNames(
         props.className,
-        "bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        "dark:bg-slate-700 bg-white relative w-full border border-slate-300 dark:border-slate-700 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       )}
     >
       {children}
       <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <SelectorIcon className="h-5 w-5 text-slate-400" aria-hidden="true" />
       </span>
     </Listbox.Button>
   );

@@ -14,7 +14,7 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose }) => {
       <div className="flex flex-col gap-1 justify-center">
         <Dialog.Title
           as="h3"
-          className="text-lg font-medium leading-6 text-gray-900"
+          className="text-lg font-medium leading-6 text-slate-900 dark:text-white"
         >
           {onBack && (
             <ArrowLeftIcon
