@@ -1,6 +1,6 @@
 import { ChainId } from "@sushiswap/core-sdk";
 
-const METAMASK_NETWORKS: Record<
+const NETWORKS: Record<
   number,
   {
     chainId: string;
@@ -22,7 +22,7 @@ const METAMASK_NETWORKS: Record<
       symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: ["https://mainnet.infura.io/v3"],
+    rpcUrls: ["https://api.sushirelay.com/v1"],
     blockExplorerUrls: ["https://etherscan.com"],
   },
   [ChainId.FANTOM]: {
@@ -188,4 +188,19 @@ const METAMASK_NETWORKS: Record<
   },
 };
 
-export default METAMASK_NETWORKS;
+export const URLS: Record<number, string[]> = Object.keys(NETWORKS).reduce(
+  (accumulator: Record<string, string[]>, chainId) => {
+    const validURLs: string[] = NETWORKS[Number(chainId)].rpcUrls.filter(
+      (url) => url
+    );
+
+    if (validURLs.length) {
+      accumulator[chainId] = validURLs;
+    }
+
+    return accumulator;
+  },
+  {}
+);
+
+export default NETWORKS;

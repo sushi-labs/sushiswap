@@ -5,7 +5,7 @@ import Background from "app/components/Background";
 import { ThemeProvider } from "theme/ThemeContext";
 import { ChainId } from "@sushiswap/core-sdk";
 import dynamic from "next/dynamic";
-import { useCreateStore, Provider } from "../lib/store";
+import { useCreateStore, Provider, initializeStore } from "../lib/store";
 
 const NetworkGuard = dynamic(
   () => import("../components/guards/NetworkGuard/NetworkGuard"),
