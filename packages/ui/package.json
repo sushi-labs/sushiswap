@@ -12,6 +12,7 @@
     "typescript": "^4.5.3"
   },
   "dependencies": {
-    "@headlessui/react": "^1.4.0"
+    "@headlessui/react": "^1.4.0",
+    "@heroicons/react": "^1.0.5"
   }
 }

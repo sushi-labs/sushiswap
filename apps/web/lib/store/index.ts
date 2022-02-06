@@ -19,7 +19,9 @@ const useStore = create<StoreState>((set, get) => ({
 priorityConnectorWithStore[2].subscribe(() => {
   const { accounts, chainId, activating, error } =
     priorityConnectorWithStore[2].getState();
-  useStore.getState().setWeb3({ accounts, chainId, activating, error });
+  useStore
+    .getState()
+    .setWeb3({ account: accounts?.[0], chainId, activating, error });
 });
 
 export default useStore;

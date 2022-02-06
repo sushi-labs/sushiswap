@@ -1,46 +1,119 @@
-import { FC, useRef, useState } from "react";
-import { ChainId } from "@sushiswap/core-sdk";
-import { Dialog } from "ui";
-import useStore from "../../lib/store";
+import { FC, useCallback, useRef, useState } from "react";
+import { NATIVE } from "@sushiswap/core-sdk";
+import { Dialog, Select } from "ui";
+import useStore from "app/lib/store";
+import priorityConnector from "app/lib/connectors/priorityConnector";
+import METAMASK_NETWORKS from "config/METAMASK_NETWORKS";
+const { usePriorityProvider } = priorityConnector;
+import Link from "next/link";
+import { ExternalLinkIcon } from "@heroicons/react/solid";
+import { WalletError } from "app/lib/utils/WalletError";
 
 interface NetworkGuard {
-  networks: ChainId[];
+  networks: number[];
 }
 
-const NetworkGuard: FC<NetworkGuard> = ({ networks }) => {
-  const cancelButtonRef = useRef(null);
+export const useNetworkGuard = (networks: number[]) => {
   const chainId = useStore((state) => state.chainId);
-  const [open, setOpen] = useState(
-    chainId ? networks.includes(chainId) : false
+  return chainId ? networks.includes(chainId) : undefined;
+};
+
+const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
+  const { chainId, account } = useStore((state) => state);
+  const provider = usePriorityProvider();
+  const cancelButtonRef = useRef(null);
+  const correctNetwork = useNetworkGuard(networks);
+  const [desiredChainId, setDesiredChainId] = useState<number>(networks?.[0]);
+  const open = !Boolean(correctNetwork);
+
+  const addNetworkHandler = useCallback(
+    async (chainId: number, account: string) => {
+      if (!provider) return console.error("Provider unavailable");
+      const params = METAMASK_NETWORKS[chainId];
+
+      provider.send("wallet_addEthereumChain", [params, account]).catch((e) => {
+        if (e instanceof WalletError) {
+          console.error(`Add chain error ${e.message}`);
+        }
+      });
+    },
+    [provider]
   );
 
+  const switchNetworkHandler = useCallback(
+    (chainId: number, account: string) => {
+      if (!provider) return console.error("Provider unavailable");
+
+      provider
+        .send("wallet_switchEthereumChain", [
+          { chainId: `0x${chainId.toString(16)}` },
+          account,
+        ])
+        .catch((e) => {
+          if (e instanceof WalletError && e.code === 4902) {
+            void addNetworkHandler(chainId, account);
+          }
+        });
+    },
+    [addNetworkHandler, provider]
+  );
+
+  if (!chainId) {
+    return <>{children}</>;
+  }
+
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
-      <Dialog.Content>
-        <Dialog.Header title="Connect wallet" onClose={() => setOpen(false)} />
-        <Dialog.Description as="p">
-          Are you sure you want to deactivate your account? All of your data
-          will be permanently removed. This action cannot be undone.
-        </Dialog.Description>
-        <Dialog.Actions>
-          <button
-            type="button"
-            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-            onClick={() => setOpen(false)}
-          >
-            Deactivate
-          </button>
-          <button
-            type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            onClick={() => setOpen(false)}
-            ref={cancelButtonRef}
-          >
-            Cancel
-          </button>
-        </Dialog.Actions>
-      </Dialog.Content>
-    </Dialog>
+    <>
+      <Dialog open={open} onClose={() => {}}>
+        <Dialog.Content>
+          <Dialog.Header title="Wrong network" />
+          <Dialog.Description as="p">
+            This page is not available on the <b>{NATIVE[chainId].name}</b>{" "}
+            network. Please select one of the networks below to connect to an
+            available network.
+          </Dialog.Description>
+          <Dialog.Description as="div">
+            <Select
+              onChange={setDesiredChainId}
+              value={desiredChainId}
+              label={<Select.Label>Available Networks</Select.Label>}
+              button={
+                <Select.Button>{NATIVE[desiredChainId].name}</Select.Button>
+              }
+            >
+              <Select.Options>
+                {networks.map((network) => (
+                  <Select.Option key={network} value={network}>
+                    {NATIVE[network].name}
+                  </Select.Option>
+                ))}
+              </Select.Options>
+            </Select>
+          </Dialog.Description>
+          <Dialog.Actions>
+            <Link
+              passHref={true}
+              href={`https://${NATIVE[desiredChainId].name}.sushi.com`.toLowerCase()}
+            >
+              <a className="text-center flex flex-1 gap-1 items-center justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm">
+                {`${NATIVE[desiredChainId].name}.sushi.com`.toLowerCase()}{" "}
+                <ExternalLinkIcon width={16} />
+              </a>
+            </Link>
+            <button
+              disabled={!desiredChainId}
+              type="button"
+              className="flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
+              onClick={() => switchNetworkHandler(desiredChainId, account)}
+              ref={cancelButtonRef}
+            >
+              Connect to {NATIVE[desiredChainId].name}
+            </button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
+      {children}
+    </>
   );
 };
 

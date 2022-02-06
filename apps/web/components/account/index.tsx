@@ -1,17 +1,17 @@
 import { FC, useRef, useState } from "react";
-import { Button, Dialog } from "ui";
+import { Dialog } from "ui";
 import useStore from "../../lib/store";
 
 const Account: FC = () => {
   const [open, setOpen] = useState(false);
-  const { chainId, accounts } = useStore((state) => state);
+  const { chainId, account } = useStore((state) => state);
   const cancelButtonRef = useRef(null);
 
   return (
     <div className="flex flex-col">
       <h2>ChainId Using Hook: {chainId}</h2>
-      <h3>Account Using Hook: {accounts?.[0]}</h3>
-      <Button onClick={() => setOpen(!open)}>Connect</Button>
+      <h3>Account Using Hook: {account}</h3>
+      <button onClick={() => setOpen(!open)}>Connect</button>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content>

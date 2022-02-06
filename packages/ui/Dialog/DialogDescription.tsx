@@ -1,15 +1,22 @@
-import React from "react";
-import { withStyles } from "../hoc";
+import React, { FC } from "react";
 import { Dialog as HeadlessDialog } from "@headlessui/react";
 import { ExtractProps } from "../types";
+import { classNames } from "../lib/classNames";
 
-type Description = (
-  props: ExtractProps<typeof HeadlessDialog.Description>
-) => JSX.Element;
+export type DialogDescriptionProps = ExtractProps<
+  typeof HeadlessDialog.Description
+> & {};
 
-const DialogDescription: Description = withStyles(
-  HeadlessDialog.Description,
-  "text-sm text-gray-500"
-);
+const DialogDescription: FC<DialogDescriptionProps> = ({
+  className,
+  ...props
+}) => {
+  return (
+    <HeadlessDialog.Description
+      {...props}
+      className={classNames(className, "text-sm text-gray-500")}
+    />
+  );
+};
 
 export default DialogDescription;
