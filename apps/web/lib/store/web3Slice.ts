@@ -1,7 +1,9 @@
 import { Web3ReactState } from "@web3-react/types";
 import { StoreSlice } from "./index";
+import { ChainId } from "@sushiswap/core-sdk";
 
-export interface Web3Slice extends Web3ReactState {
+export interface Web3Slice extends Omit<Web3ReactState, "chainId"> {
+  chainId?: ChainId;
   setWeb3(x: Web3ReactState): void;
 }
 

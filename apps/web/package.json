@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.5",
+    "@sushiswap/core-sdk": "^1.0.0-canary.34",
     "@web3-react/core": "8.0.10-beta.0",
     "@web3-react/eip1193": "8.0.5-beta.0",
     "@web3-react/empty": "8.0.3-beta.0",
