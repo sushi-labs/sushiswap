@@ -409,7 +409,7 @@
     "@ethersproject/properties" "^5.5.0"
     "@ethersproject/strings" "^5.5.0"
 
-"@headlessui/react@^1.4.0", "@headlessui/react@^1.4.3":
+"@headlessui/react@^1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-1.4.3.tgz#f77c6bb5cb4a614a5d730fb880cab502d48abf37"
   integrity sha512-n2IQkaaw0aAAlQS5MEXsM4uRK+w18CrM72EqnGRl/UBOQeQajad8oiKXR9Nk15jOzTFQjpxzrZMf1NxHidFBiw==
@@ -531,10 +531,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.0.tgz#7f698254aadf921e48dda8c0a6b304026b8a9323"
   integrity sha512-JLo+Y592QzIE+q7Dl2pMUtt4q8SKYI5jDrZxrozEQxnGVOyYE+GWK9eLkwTaeN9DDctlaRAQ3TBmzZ1qdLE30A==
 
-"@sushiswap/core-sdk@^1.0.0-canary.34":
-  version "1.0.0-canary.34"
-  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.34.tgz#492dd13861c33c9ce1d076e9c6c5d24047474522"
-  integrity sha512-fQ8eGWVE0eT393mh4k/t95HDopMdJhmDXU2dOvo/3zZ7+R6qBOKVaw4e2CgtO3ZICN1B3KirzfrXBGK2JkquMw==
+"@sushiswap/core-sdk@^1.0.0-canary.65":
+  version "1.0.0-canary.65"
+  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.65.tgz#9577a4bb6200b51b26782ff5724a4a5dfa193286"
+  integrity sha512-sE6cPi9kfvfZ47xdA3P2UxMaEAiZ7IPR+q71wW4kS3AOuugzr+FaPCZoiO+o+mmtSm/AkRC5nO7bamtNa3GXoQ==
   dependencies:
     "@ethersproject/address" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"

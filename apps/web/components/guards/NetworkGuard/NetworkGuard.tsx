@@ -1,66 +1,17 @@
-import { FC, useCallback, useRef, useState } from "react";
-import { NATIVE } from "@sushiswap/core-sdk";
-import { Dialog, Select } from "ui";
+import { FC, useState } from "react";
 import useStore from "app/lib/store";
-import priorityConnector from "app/lib/connectors/priorityConnector";
-import METAMASK_NETWORKS from "config/METAMASK_NETWORKS";
-const { usePriorityProvider } = priorityConnector;
+import { Dialog, Select } from "ui";
+import { NATIVE } from "@sushiswap/core-sdk";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@heroicons/react/solid";
-import { WalletError } from "app/lib/utils/WalletError";
+import {
+  useNetworkGuard,
+  useNetworkHandlers,
+} from "app/components/guards/NetworkGuard/hooks";
 
 interface NetworkGuard {
   networks: number[];
 }
-
-export const useNetworkGuard = (networks: number[]) => {
-  const chainId = useStore((state) => state.chainId);
-  return chainId ? networks.includes(chainId) : undefined;
-};
-
-export const useNetworkHandlers = () => {
-  const provider = usePriorityProvider();
-
-  const addNetwork = useCallback(
-    async (chainId: number, account?: string) => {
-      if (!provider || !account)
-        return console.error("Dependencies unavailable");
-
-      const params = METAMASK_NETWORKS[chainId];
-
-      provider.send("wallet_addEthereumChain", [params, account]).catch((e) => {
-        if (e instanceof WalletError) {
-          console.error(`Add chain error ${e.message}`);
-        }
-      });
-    },
-    [provider]
-  );
-
-  const switchNetwork = useCallback(
-    (chainId: number, account?: string) => {
-      if (!provider || !account)
-        return console.error("Dependencies unavailable");
-
-      provider
-        .send("wallet_switchEthereumChain", [
-          { chainId: `0x${chainId.toString(16)}` },
-          account,
-        ])
-        .catch((e) => {
-          if (e instanceof WalletError && e.code === 4902) {
-            void addNetwork(chainId, account);
-          }
-        });
-    },
-    [addNetwork, provider]
-  );
-
-  return {
-    addNetwork,
-    switchNetwork,
-  };
-};
 
 const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
   const { chainId, account } = useStore((state) => state);

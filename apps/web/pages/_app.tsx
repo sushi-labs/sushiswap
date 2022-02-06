@@ -7,7 +7,7 @@ import { ChainId } from "@sushiswap/core-sdk";
 import dynamic from "next/dynamic";
 
 const NetworkGuard = dynamic(
-  () => import("../components/guards/NetworkGuard"),
+  () => import("../components/guards/NetworkGuard/NetworkGuard"),
   { ssr: false }
 );
 
