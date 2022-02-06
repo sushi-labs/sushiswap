@@ -22,7 +22,7 @@ const NETWORKS: Record<
       symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: ["https://mainnet.infura.io/v3"],
+    rpcUrls: ["https://api.sushirelay.com/v1"],
     blockExplorerUrls: ["https://etherscan.com"],
   },
   [ChainId.FANTOM]: {

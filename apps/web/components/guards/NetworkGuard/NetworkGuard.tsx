@@ -55,7 +55,7 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
             <button
               disabled={!desiredChainId}
               type="button"
-              className="flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
+              className="justify-center flex-1 px-4 py-2 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
               onClick={() => switchNetwork(desiredChainId, account)}
             >
               Connect to {NATIVE[desiredChainId].name}
@@ -64,7 +64,7 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
               passHref={true}
               href={`https://${NATIVE[desiredChainId].name}.sushi.com`.toLowerCase()}
             >
-              <a className="text-center flex flex-1 gap-1 items-center justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm">
+              <a className="flex items-center justify-center flex-1 gap-1 px-4 py-2 text-base font-medium text-center text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm">
                 {`${NATIVE[desiredChainId].name}.sushi.com`.toLowerCase()}{" "}
                 <ExternalLinkIcon width={16} />
               </a>
