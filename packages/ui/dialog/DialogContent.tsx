@@ -14,7 +14,7 @@ const DialogContent: FC<DialogContentProps> = forwardRef<
       ref={ref}
       className={classNames(
         className,
-        "space-y-3 inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+        "space-y-3 inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
       )}
     >
       {children}

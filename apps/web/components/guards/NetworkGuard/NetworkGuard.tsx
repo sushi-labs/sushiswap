@@ -51,7 +51,15 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
               </Select.Options>
             </Select>
           </Dialog.Description>
-          <Dialog.Actions>
+          <Dialog.Actions className="!flex-col">
+            <button
+              disabled={!desiredChainId}
+              type="button"
+              className="flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
+              onClick={() => switchNetwork(desiredChainId, account)}
+            >
+              Connect to {NATIVE[desiredChainId].name}
+            </button>
             <Link
               passHref={true}
               href={`https://${NATIVE[desiredChainId].name}.sushi.com`.toLowerCase()}
@@ -61,14 +69,6 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
                 <ExternalLinkIcon width={16} />
               </a>
             </Link>
-            <button
-              disabled={!desiredChainId}
-              type="button"
-              className="flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
-              onClick={() => switchNetwork(desiredChainId, account)}
-            >
-              Connect to {NATIVE[desiredChainId].name}
-            </button>
           </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
