@@ -18,17 +18,14 @@ export const useNetworkGuard = (networks: number[]) => {
   return chainId ? networks.includes(chainId) : undefined;
 };
 
-const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
-  const { chainId, account } = useStore((state) => state);
+export const useNetworkHandlers = () => {
   const provider = usePriorityProvider();
-  const cancelButtonRef = useRef(null);
-  const correctNetwork = useNetworkGuard(networks);
-  const [desiredChainId, setDesiredChainId] = useState<number>(networks?.[0]);
-  const open = !Boolean(correctNetwork);
 
-  const addNetworkHandler = useCallback(
-    async (chainId: number, account: string) => {
-      if (!provider) return console.error("Provider unavailable");
+  const addNetwork = useCallback(
+    async (chainId: number, account?: string) => {
+      if (!provider || !account)
+        return console.error("Dependencies unavailable");
+
       const params = METAMASK_NETWORKS[chainId];
 
       provider.send("wallet_addEthereumChain", [params, account]).catch((e) => {
@@ -40,9 +37,10 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
     [provider]
   );
 
-  const switchNetworkHandler = useCallback(
-    (chainId: number, account: string) => {
-      if (!provider) return console.error("Provider unavailable");
+  const switchNetwork = useCallback(
+    (chainId: number, account?: string) => {
+      if (!provider || !account)
+        return console.error("Dependencies unavailable");
 
       provider
         .send("wallet_switchEthereumChain", [
@@ -51,12 +49,24 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
         ])
         .catch((e) => {
           if (e instanceof WalletError && e.code === 4902) {
-            void addNetworkHandler(chainId, account);
+            void addNetwork(chainId, account);
           }
         });
     },
-    [addNetworkHandler, provider]
+    [addNetwork, provider]
   );
+
+  return {
+    addNetwork,
+    switchNetwork,
+  };
+};
+
+const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
+  const { chainId, account } = useStore((state) => state);
+  const correctNetwork = useNetworkGuard(networks);
+  const [desiredChainId, setDesiredChainId] = useState<number>(networks?.[0]);
+  const { switchNetwork } = useNetworkHandlers();
 
   if (!chainId) {
     return <>{children}</>;
@@ -64,7 +74,7 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={() => {}}>
+      <Dialog open={!Boolean(correctNetwork)} onClose={() => {}}>
         <Dialog.Content>
           <Dialog.Header title="Wrong network" />
           <Dialog.Description as="p">
@@ -104,8 +114,7 @@ const NetworkGuard: FC<NetworkGuard> = ({ networks, children }) => {
               disabled={!desiredChainId}
               type="button"
               className="flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm"
-              onClick={() => switchNetworkHandler(desiredChainId, account)}
-              ref={cancelButtonRef}
+              onClick={() => switchNetwork(desiredChainId, account)}
             >
               Connect to {NATIVE[desiredChainId].name}
             </button>
