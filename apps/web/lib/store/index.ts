@@ -1,4 +1,4 @@
-import create, { GetState, SetState, StoreApi } from "zustand";
+import create, { GetState, SetState, StoreApi, UseBoundStore } from "zustand";
 import { createWeb3Slice, Web3Slice } from "./web3Slice";
 import { useLayoutEffect } from "react";
 import createContext from "zustand/context";
@@ -9,7 +9,7 @@ export type StoreSlice<T> = (
   get: GetState<StoreState>
 ) => T;
 
-let store: StoreApi<StoreState>;
+let store: UseBoundStore<StoreState, StoreApi<StoreState>>;
 
 const initialState = {};
 const zustandContext = createContext<StoreState>();
@@ -55,7 +55,7 @@ export function useCreateStore(initialState = {}) {
       });
     };
 
-    if (initialState && store) {
+    if (initialState) {
       store.setState({
         ...store.getState(),
         ...initialState,
