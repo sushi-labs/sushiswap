@@ -4,12 +4,6 @@ import useStore from "../../lib/store";
 
 const Account: FC = () => {
   const [open, setOpen] = useState(false);
-
-  console.log(
-    "STATE",
-    useStore((state) => state)
-  );
-
   const { chainId, account } = useStore((state) => state);
   const cancelButtonRef = useRef(null);
 
