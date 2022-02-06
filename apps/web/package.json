@@ -20,13 +20,13 @@
     "@web3-react/url": "8.0.5-beta.0",
     "@web3-react/walletconnect": "8.0.8-beta.0",
     "@web3-react/walletlink": "8.0.10-beta.0",
+    "@headlessui/react": "^1.4.3",
     "next": "^12.0.10",
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
     "zustand": "^3.6.9"
   },
   "devDependencies": {
-    "@headlessui/react": "^1.4.3",
     "@types/node": "17.0.12",
     "@types/react": "17.0.37",
     "autoprefixer": "^10.4.2",

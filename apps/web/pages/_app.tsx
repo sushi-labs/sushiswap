@@ -5,6 +5,7 @@ import Background from "app/components/Background";
 import { ThemeProvider } from "theme/ThemeContext";
 import { ChainId } from "@sushiswap/core-sdk";
 import dynamic from "next/dynamic";
+import { useCreateStore, Provider } from "../lib/store";
 
 const NetworkGuard = dynamic(
   () => import("../components/guards/NetworkGuard/NetworkGuard"),
@@ -14,6 +15,8 @@ const NetworkGuard = dynamic(
 const Noop: FC = ({ children }) => <>{children}</>;
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
+  const createStore = useCreateStore(pageProps.initialZustandState);
+
   const Layout = (Component as any).Layout || Noop;
 
   useEffect(() => {
@@ -21,15 +24,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <ThemeProvider>
-      <NetworkGuard networks={[ChainId.ETHEREUM, ChainId.FANTOM, ChainId.BSC]}>
-        <Background>
-          <Layout pageProps={pageProps}>
-            <Component {...pageProps} />
-          </Layout>
-        </Background>
-      </NetworkGuard>
-    </ThemeProvider>
+    <Provider createStore={createStore}>
+      <ThemeProvider>
+        <NetworkGuard
+          networks={[ChainId.ETHEREUM, ChainId.FANTOM, ChainId.BSC]}
+        >
+          <Background>
+            <Layout pageProps={pageProps}>
+              <Component {...pageProps} />
+            </Layout>
+          </Background>
+        </NetworkGuard>
+      </ThemeProvider>
+    </Provider>
   );
 };
 
