@@ -2,13 +2,13 @@ import { FC, Fragment, FunctionComponent } from "react";
 import { Transition, Dialog as HeadlessDialog } from "@headlessui/react";
 import DialogContent, { DialogContentProps } from "./DialogContent";
 import DialogHeader, { DialogHeaderProps } from "./DialogHeader";
-import DialogDescription from "./DialogDescription";
-import { ExtractProps } from "../types";
+import DialogDescription, { DialogDescriptionProps } from "./DialogDescription";
 import DialogActions, { DialogActionProps } from "./DialogActions";
 
 interface DialogProps {
   open: boolean;
   onClose(): void;
+  children: DialogContentProps;
 }
 
 const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
@@ -57,9 +57,7 @@ const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
 };
 
 export const Dialog: FunctionComponent<DialogProps> & {
-  Description: (
-    props: ExtractProps<typeof HeadlessDialog.Description>
-  ) => JSX.Element;
+  Description: FunctionComponent<DialogDescriptionProps>;
   Header: FunctionComponent<DialogHeaderProps>;
   Actions: FunctionComponent<DialogActionProps>;
   Content: FunctionComponent<DialogContentProps>;

@@ -6,8 +6,8 @@
       "app/components/*": ["./components/*"],
       "app/connectors": ["./connectors/index.ts"],
       "app/connectors/*": ["./connectors/*"],
-      "app/store": ["./store/index.ts"],
-      "app/store/*": ["./store/*"]
+      "app/lib": ["./lib/index.ts"],
+      "app/lib/*": ["./lib/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

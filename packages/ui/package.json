@@ -5,7 +5,8 @@
   "types": "./index.tsx",
   "license": "MIT",
   "peerDependencies": {
-    "@headlessui/react": "^1.4.0"
+    "@headlessui/react": "^1.4.0",
+    "@heroicons/react": "^1.0.5"
   },
   "devDependencies": {
     "@types/react": "^17.0.37",

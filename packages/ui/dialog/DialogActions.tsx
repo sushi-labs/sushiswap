@@ -11,7 +11,7 @@ const DialogActions: FC<DialogActionProps> = ({ children, className }) => {
     <div
       className={classNames(
         className,
-        "mt-5 sm:mt-4 sm:flex sm:flex-row-reverse"
+        "flex flex-col sm:flex-row-reverse gap-3 pt-2"
       )}
     >
       {children}
