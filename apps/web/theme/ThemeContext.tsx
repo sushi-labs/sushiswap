@@ -3,6 +3,7 @@ import React, {
   FC,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useState,
 } from "react";
 import { Theme } from "./types";
@@ -50,7 +51,7 @@ export const ThemeProvider: FC = ({ children }) => {
     []
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     rawSetTheme(theme, false);
   }, [rawSetTheme, theme]);
 
