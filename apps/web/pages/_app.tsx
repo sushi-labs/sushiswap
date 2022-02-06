@@ -1,8 +1,8 @@
 import "../theme/styles/globals.css";
 import { FC, useEffect } from "react";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "../theme";
 import Background from "app/components/Background";
+import { ThemeProvider } from "theme/ThemeContext";
 
 const Noop: FC = ({ children }) => <>{children}</>;
 

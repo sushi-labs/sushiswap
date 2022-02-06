@@ -1,5 +1,5 @@
 import { Web3ReactState } from "@web3-react/types";
-import { StoreSlice } from "app/store/index";
+import { StoreSlice } from "./index";
 
 export interface Web3Slice extends Web3ReactState {
   setWeb3(x: Web3ReactState): void;

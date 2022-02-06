@@ -3,10 +3,14 @@ import React, {
   FC,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useState,
 } from "react";
-import { Theme } from "./types";
+
+export enum Theme {
+  NO_PREFERENCE = "no-preference",
+  LIGHT = "light",
+  DARK = "dark",
+}
 
 const getInitialTheme = () => {
   if (typeof window !== "undefined" && window.localStorage) {
@@ -51,7 +55,7 @@ export const ThemeProvider: FC = ({ children }) => {
     []
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     rawSetTheme(theme, false);
   }, [rawSetTheme, theme]);
 

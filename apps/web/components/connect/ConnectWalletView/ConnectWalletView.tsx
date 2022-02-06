@@ -1,8 +1,8 @@
 import { FC } from "react";
 
 import { MetaMask } from "@web3-react/metamask";
-import { connectors } from "app/connectors";
 import MetaMaskWalletView, { MetaMaskStatusView } from "./MetaMaskWalletView";
+import { connectors } from "../../../lib/connectors";
 
 const ConnectWalletView: FC = () => {
   return (

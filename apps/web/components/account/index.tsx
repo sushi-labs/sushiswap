@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { Button, Dialog } from "ui";
-import useStore from "app/store/index";
+import useStore from "../../lib/store";
 
 const Account: FC = () => {
   const [open, setOpen] = useState(false);

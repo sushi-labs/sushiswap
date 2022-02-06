@@ -1,6 +1,6 @@
 import { getPriorityConnectorWithStore } from "../connectors";
 import create, { GetState, SetState } from "zustand";
-import { createWeb3Slice, Web3Slice } from "app/store/web3Slice";
+import { createWeb3Slice, Web3Slice } from "./web3Slice";
 
 const priorityConnectorWithStore = getPriorityConnectorWithStore();
 
