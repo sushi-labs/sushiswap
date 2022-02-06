@@ -15,3 +15,12 @@ export const connectorsWithStore: [
   Web3ReactHooks,
   Web3ReactStore
 ][] = [[metaMask, metaMaskHooks, metaMaskStore]];
+
+export const getPriorityConnectorWithStore = () => {
+  const values = connectorsWithStore.map(([, , store]) => {
+    const { chainId, accounts, activating, error } = store.getState();
+    return Boolean(chainId && accounts && !activating && !error);
+  });
+  const index = values.findIndex((isActive) => isActive);
+  return connectorsWithStore[index === -1 ? 0 : index];
+};

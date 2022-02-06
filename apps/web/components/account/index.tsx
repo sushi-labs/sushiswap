@@ -1,17 +1,16 @@
 import { FC, useRef, useState } from "react";
-import priorityConnector from "app/connectors/priorityConnector";
 import { Button, Dialog } from "ui";
-const { usePriorityWeb3React } = priorityConnector;
+import useStore from "app/store/index";
 
 const Account: FC = () => {
   const [open, setOpen] = useState(false);
-  const { chainId, account } = usePriorityWeb3React(undefined);
+  const { chainId, accounts } = useStore((state) => state);
   const cancelButtonRef = useRef(null);
 
   return (
     <div className="flex flex-col">
       <h2>ChainId Using Hook: {chainId}</h2>
-      <h3>Account Using Hook: {account}</h3>
+      <h3>Account Using Hook: {accounts?.[0]}</h3>
       <Button onClick={() => setOpen(!open)}>Connect</Button>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
