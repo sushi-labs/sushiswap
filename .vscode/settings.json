@@ -9,7 +9,7 @@
   "mochaExplorer.exit": true,
   "solidity.linter": "solhint",
   "solidity.enableLocalNodeCompiler": false,
-  "solidity.compileUsingRemoteVersion": "v0.6.12+commit.27d51765",
+  "solidity.compileUsingRemoteVersion": "v0.8.11+commit.d7f03943",
   "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
