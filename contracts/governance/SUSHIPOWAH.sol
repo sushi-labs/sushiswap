@@ -45,12 +45,16 @@ contract SUSHIPOWAH {
 
     // Packed into a single storage slot for gas efficiency
     struct Delegation {
+        // The account that is delegated to
         address delegate;
+        // The index of this account in the voters array for the delegate
         uint32 index;
+        // After delegation, the account cannot delegate again or vote for 7 days to prevent double voting
+        uint40 lockedUntil;
     }
 
-    // Mapping from account to Delegation struct (delegate and index of 
-    // this account in the voters array for the delegate)
+    // Mapping from account to Delegation struct
+    // (delegate and index of this account in the voters array for the delegate)
     mapping(address => Delegation) public delegatedTo;
     // Mapping from account to an array of voters that have delegated to them
     mapping(address => address[]) public voters;
@@ -72,19 +76,27 @@ contract SUSHIPOWAH {
 
     // Delegates your SushiPowah to a delegate
     function delegate(address to) public {
+        require(delegatedTo[msg.sender].lockedUntil < block.timestamp, "Locked");
+
         if (delegatedTo[msg.sender].delegate != address(0)) {
             _removeVoter(to, delegatedTo[msg.sender].index);
         }
-        delegatedTo[msg.sender].index = uint32(voters[to].length);
+
+        delegatedTo[msg.sender] = Delegation(
+            to,
+            uint32(voters[to].length),
+            uint40(block.timestamp + 7 days)
+        );
         voters[to].push(msg.sender);
     }
 
     // The delegate can use this function to remove voters that delegate to them
-    // This can be useful if someone tried to spam the voter list to become too 
-    // large to cause an out of gas in the balanceOf view.
+    // This can be useful if someone tried to spam the voter list to become 
+    // too large to cause an out of gas in the balanceOf view.
     function removeVoter(uint256 index) public {
-        // Remove the delegation
-        delegatedTo[voters[msg.sender][index]] = Delegation(address(0), 0);
+        // Remove the delegation, keep the lock
+        delegatedTo[voters[msg.sender][index]].delegate = address(0);
+        delegatedTo[voters[msg.sender][index]].index = 0;
         // Remove the voter from the list
         _removeVoter(msg.sender, index);
     }
@@ -134,8 +146,10 @@ contract SUSHIPOWAH {
 
     /// @notice Returns SUSHI voting 'powah' for `account`.
     function balanceOf(address account) public view returns (uint256 powah) {
-        // Count the account's SushiPowah if it's not delegated
-        powah = delegatedTo[account].delegate == address(0) ? _balanceOf(account) : 0;
+        // Count the account's SushiPowah if it's not delegated and not locked
+        powah = delegatedTo[account].delegate == address(0) && delegatedTo[msg.sender].lockedUntil < block.timestamp
+            ? _balanceOf(account)
+            : 0;
 
         // Add all the SushiPowah from voters that have delegated to this account
         uint256 len = voters[account].length;
@@ -146,7 +160,10 @@ contract SUSHIPOWAH {
 
     // Shows some powah info about your account
     function myBalance() external view returns (uint256 powah, uint256 count, uint256 delegatedPowah) {
-        powah = _balanceOf(msg.sender);
+        // Count the account's SushiPowah if it's not delegated and not locked
+        powah = delegatedTo[msg.sender].delegate == address(0) && delegatedTo[msg.sender].lockedUntil < block.timestamp
+            ? _balanceOf(msg.sender)
+            : 0;
 
         // Add all the SushiPowah from voters that have delegated to this account
         count = voters[msg.sender].length;
