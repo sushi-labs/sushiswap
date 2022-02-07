@@ -1,4 +1,5 @@
 {
+  "baseBranch": "origin/master",
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],

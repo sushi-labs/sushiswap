@@ -1,6 +1,6 @@
 import { ExtractProps } from "../types";
 import { Menu as HeadlessMenu } from "@headlessui/react";
-import { FC, forwardRef, MutableRefObject } from "react";
+import { FC, forwardRef } from "react";
 import { classNames } from "../lib/classNames";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 
@@ -9,7 +9,7 @@ export type MenuButton = ExtractProps<typeof HeadlessMenu.Button> & {
 };
 
 export const MenuButton: FC<MenuButton> = forwardRef<
-  MutableRefObject<HTMLDivElement>,
+  HTMLDivElement,
   MenuButton
 >(({ className, children, ...props }, ref) => {
   return (

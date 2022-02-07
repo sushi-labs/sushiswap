@@ -1,4 +1,4 @@
-import type { AddEthereumChainParameter } from "@web3-react/metamask";
+import { AddEthereumChainParameter } from "@web3-react/types";
 
 const ETH: AddEthereumChainParameter["nativeCurrency"] = {
   name: "Ether",
@@ -37,7 +37,7 @@ export function getAddChainParameters(
       chainId,
       chainName: chainInformation.name,
       nativeCurrency: chainInformation.nativeCurrency,
-      rpcUrls: chainInformation.urls,
+      rpcUrls: chainInformation.urls as string[],
       blockExplorerUrls: chainInformation.blockExplorerUrls,
     };
   } else {
@@ -166,17 +166,16 @@ export const CHAINS: {
   },
 };
 
-export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce(
-  (accumulator, chainId) => {
-    const validURLs: string[] = CHAINS[Number(chainId)].urls.filter(
-      (url) => url
-    );
+export const URLS = Object.keys(CHAINS).reduce<
+  Record<string, (string | undefined)[]>
+>((accumulator, chainId) => {
+  const validURLs: (string | undefined)[] = CHAINS[Number(chainId)].urls.filter(
+    (url) => url
+  );
 
-    if (validURLs.length) {
-      accumulator[chainId] = validURLs;
-    }
+  if (validURLs.length) {
+    accumulator[chainId] = validURLs;
+  }
 
-    return accumulator;
-  },
-  {}
-);
+  return accumulator;
+}, {});

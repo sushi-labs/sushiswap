@@ -1,0 +1,115 @@
+name: PR Deploy and Audit
+
+on: [pull_request]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: UnlyEd/github-action-await-vercel@v1.2.14
+        id: await-vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        with:
+          deployment-url: interface-teamsushi.vercel.app
+          timeout: 60
+      - name: Display deployment status
+        run: "echo The deployment at ${{ fromJson(steps.await-vercel.outputs.deploymentDetails).url }} is ${{ fromJson(steps.await-vercel.outputs.deploymentDetails).readyState }}"
+      - name: Audit URLs using Lighthouse
+        id: lighthouse_audit
+        uses: treosh/lighthouse-ci-action@v7
+        with:
+          # add as many urls here as you wish to audit
+          # prefixed by the preview-url
+          urls: |
+            https://${{ fromJson(steps.await-vercel.outputs.deploymentDetails).url }}
+          budgetPath: '.github/lighthouse/budget.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          runs: 3
+      - name: Add comment to PR
+        id: loading_lighthouse_comment_to_pr
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.pull_request.number }}
+          header: lighthouse
+          message: |
+            🚦 Running Lighthouse audit...
+      - name: Add comment to PR
+        id: loading_budget_comment_to_pr
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.pull_request.number }}
+          header: budget
+          message: |
+            ⏱ Running budget checks...
+      - name: Format lighthouse result
+        id: lighthouse_result
+        if: ${{ always() }}
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const links = ${{ steps.lighthouse_audit.outputs.links }}
+            const results = (${{ steps.lighthouse_audit.outputs.manifest }}).filter(result => result.isRepresentativeRun);
+            const score = res => res >= 90 ? '🟢' : res >= 50 ? '🟠' : '🔴';
+            const comment = results.map((result) => {
+              const summary = result.summary;
+              const url = result.url;
+              return `
+              🌎 [${url}](${url})
+              ⚡️ [Lighthouse report](${links[url]})
+              | Category | Score |
+              | --- | --- |
+              ${Object.keys(summary).map((key) => {
+                const percentage = Math.round(summary[key] * 100);
+                return `| ${score(percentage)} ${key} | ${percentage} |`;
+              }).join('\n')}
+              `;
+            }).join('---');
+            core.setOutput("comment", comment);
+      - name: Format budget result
+        id: budget_result
+        if: ${{ always() }}
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const assertions = ${{ steps.lighthouse_audit.outputs.assertionResults }};
+            if (!assertions.length) {
+              core.setOutput("comment", '✅ Budget met, nothing to see here');
+            } else {
+              const comment = assertions.map((result) => {
+                return `
+            ❌ **${result.auditProperty || ''}.${result.auditId}** failure on [${result.url}](${result.url})
+            *${result.auditTitle}* - [docs](${result.auditDocumentationLink})
+            | Actual | Expected |
+            | --- | --- |
+            | ${result.actual} | ${result.operator} ${result.expected} |
+            `;
+              }).join('---');
+              core.setOutput("comment", comment);
+            }
+      - name: Add Lighthouse comment to PR
+        id: lighthouse_comment_to_pr
+        if: ${{ always() }}
+        uses: marocchino/sticky-pull-request-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.pull_request.number }}
+          header: lighthouse
+          message: |
+            ${{ steps.lighthouse_result.outputs.comment }}
+      - name: Add Budget comment to PR
+        id: budget_comment_to_pr
+        if: ${{ always() }}
+        uses: marocchino/sticky-pull-request-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.pull_request.number }}
+          header: budget
+          message: |
+            ${{ steps.budget_result.outputs.comment }}

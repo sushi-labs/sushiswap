@@ -1,4 +1,4 @@
-import { FC, forwardRef, MutableRefObject } from "react";
+import { FC, forwardRef } from "react";
 import { classNames } from "../lib/classNames";
 
 export interface DialogContentProps {
@@ -6,7 +6,7 @@ export interface DialogContentProps {
 }
 
 const DialogContent: FC<DialogContentProps> = forwardRef<
-  MutableRefObject<HTMLDivElement>,
+  HTMLDivElement,
   DialogContentProps
 >(({ className, children }, ref) => {
   return (
