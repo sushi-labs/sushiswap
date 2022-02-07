@@ -3,7 +3,7 @@ const { usePriorityProvider } = priorityConnector;
 import useStore from "app/lib/store";
 import { useCallback } from "react";
 import NETWORKS from "config/networks";
-import { WalletError } from "app/lib/utils/WalletError";
+import { isWalletError, WalletError } from "app/lib/utils/WalletError";
 
 export const useNetworkGuard = (networks: number[]) => {
   const chainId = useStore((state) => state.chainId);
@@ -21,7 +21,7 @@ export const useNetworkHandlers = () => {
       const params = NETWORKS[chainId];
 
       provider.send("wallet_addEthereumChain", [params, account]).catch((e) => {
-        if (e instanceof WalletError) {
+        if (isWalletError(e)) {
           console.error(`Add chain error ${e.message}`);
         }
       });
@@ -40,7 +40,7 @@ export const useNetworkHandlers = () => {
           account,
         ])
         .catch((e) => {
-          if (e instanceof WalletError && e.code === 4902) {
+          if (isWalletError(e) && e.code === 4902) {
             void addNetwork(chainId, account);
           }
         });

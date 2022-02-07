@@ -21,7 +21,7 @@ function getCookie(key: string) {
 export const [network, hooks] = initializeConnector<Network>(
   (actions) => {
     const provider = new Network(actions, URLS, false);
-    provider.activate(Number(getCookie("chain-id")));
+    void provider.activate(Number(getCookie("chain-id")));
     return provider;
   },
   Object.keys(URLS).map((chainId) => Number(chainId))
