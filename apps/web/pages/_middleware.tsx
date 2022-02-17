@@ -1,31 +1,26 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { ChainId } from '@sushiswap/core-sdk'
+import { subdomainToChainIdMap } from 'app/lib/constants/subdomainChainMap'
+import { DEFAULT_CHAIN_ID } from 'app/lib/constants/defaults'
 
-const SUBDOMAIN_CHAIN_ID: { [subdomain: string]: string } = {
-  celo: "42220",
-};
+const parseChainIdFromSubdomain = (host: ReturnType<Headers['get']>): ChainId => {
+  const subdomain = host?.split('.')[0]
+  const matchedChainId = subdomain ? subdomainToChainIdMap[subdomain] : undefined
+  return matchedChainId ? matchedChainId : DEFAULT_CHAIN_ID
+}
 
-const DEFAULT_CHAIN_ID = "1";
+export function middleware(req: NextRequest) {
+  const cookieSetChainId = req.cookies['chain-id']
+  const subdomainSetChainId = parseChainIdFromSubdomain(req.headers.get('host'))
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  const response = NextResponse.next()
 
-  const chainId = request.cookies["chain-id"];
-
-  const subdomain = request.headers.get("host")?.split(".")[0];
-
-  // If chainId already set and no subdomain, just return...
-  if (chainId && !subdomain) {
-    return response;
+  const subdomainMatchesCookie = cookieSetChainId && parseInt(cookieSetChainId) === subdomainSetChainId
+  if (subdomainMatchesCookie) {
+    return response
+  } else {
+    response.cookie('chain-id', subdomainSetChainId.toString())
+    return response
   }
-
-  // set the `cookie`
-  response.cookie(
-    "chain-id",
-    !(chainId && subdomain) || !(subdomain in SUBDOMAIN_CHAIN_ID)
-      ? DEFAULT_CHAIN_ID
-      : SUBDOMAIN_CHAIN_ID[subdomain]
-  );
-
-  return response;
 }

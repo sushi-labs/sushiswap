@@ -1,11 +1,11 @@
-import { FC, useRef, useState } from "react";
-import { Dialog } from "ui";
-import useStore from "../../lib/store";
+import { FC, useRef, useState } from 'react'
+import { Dialog } from 'ui'
+import useStore from '../../lib/store'
 
 const Account: FC = () => {
-  const [open, setOpen] = useState(false);
-  const { chainId, account } = useStore((state) => state);
-  const cancelButtonRef = useRef(null);
+  const [open, setOpen] = useState(false)
+  const { chainId, account } = useStore((state) => state)
+  const cancelButtonRef = useRef(null)
 
   return (
     <div className="flex flex-col">
@@ -15,13 +15,10 @@ const Account: FC = () => {
 
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content>
-          <Dialog.Header
-            title="Connect wallet"
-            onClose={() => setOpen(false)}
-          />
+          <Dialog.Header title="Connect wallet" onClose={() => setOpen(false)} />
           <Dialog.Description as="p">
-            Are you sure you want to deactivate your account? All of your data
-            will be permanently removed. This action cannot be undone.
+            Are you sure you want to deactivate your account? All of your data will be permanently removed. This action
+            cannot be undone.
           </Dialog.Description>
           <Dialog.Actions>
             <button
@@ -43,7 +40,7 @@ const Account: FC = () => {
         </Dialog.Content>
       </Dialog>
     </div>
-  );
-};
+  )
+}
 
-export default Account;
+export default Account

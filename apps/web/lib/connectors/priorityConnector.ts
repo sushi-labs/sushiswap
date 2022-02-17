@@ -1,4 +1,4 @@
-import { getPriorityConnector } from "@web3-react/core";
-import { connectors } from "./index";
+import { getPriorityConnector } from '@web3-react/core'
+import { connectors } from './index'
 
-export default getPriorityConnector(...connectors);
+export default getPriorityConnector(...connectors)
