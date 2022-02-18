@@ -1,38 +1,38 @@
-import { FC } from "react";
-import { CHAINS, URLS } from "../../../../chains";
+import { FC } from 'react'
+import { CHAINS } from '../../../../chains'
+import { ChainId } from '@sushiswap/core-sdk'
 
 interface MetasMaskSelectView {
-  chainId: number;
-  setChainId?(chainId: number): void;
+  chainId: ChainId | undefined
+  setChainId?(chainId: number): void
 }
 
-const MetaMaskSelectView: FC<MetasMaskSelectView> = ({
-  chainId,
-  setChainId,
-}) => {
+const MetaMaskSelectView: FC<MetasMaskSelectView> = ({ chainId, setChainId }) => {
   return (
     <label>
-      Chain:{" "}
+      Chain:{' '}
       <select
         value={`${chainId}`}
         onChange={
           setChainId
             ? (event) => {
-                setChainId(Number(event.target.value));
+                setChainId(Number(event.target.value))
               }
             : undefined
         }
         disabled={!setChainId}
       >
         <option value={-1}>Default</option>
-        {Object.keys(URLS).map((chainId) => (
-          <option key={chainId} value={chainId}>
-            {CHAINS[Number(chainId)].name}
-          </option>
-        ))}
+        {Object.entries(CHAINS)
+          .filter(([, data]) => data.urls)
+          .map(([chainId, data]) => (
+            <option key={chainId} value={chainId}>
+              {data.name}
+            </option>
+          ))}
       </select>
     </label>
-  );
-};
+  )
+}
 
-export default MetaMaskSelectView;
+export default MetaMaskSelectView

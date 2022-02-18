@@ -1,20 +1,17 @@
-import dynamic from "next/dynamic";
-import { FC } from "react";
+import dynamic from 'next/dynamic'
+import { FC } from 'react'
 
-const Account = dynamic(() => import("../components/account"), { ssr: false });
-const ConnectWalletView = dynamic(
-  () => import("../components/connect/ConnectWalletView"),
-  { ssr: false }
-);
+const Account = dynamic(() => import('../components/account'), { ssr: false })
+const ConnectWalletView = dynamic(() => import('../components/connect/ConnectWalletView'), { ssr: false })
 
-const Web: FC = () => {
+const Index: FC = () => {
   return (
     <div className="flex flex-col gap-10">
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <Account />
       <ConnectWalletView />
     </div>
-  );
-};
+  )
+}
 
-export default Web;
+export default Index

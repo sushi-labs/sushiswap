@@ -1,1 +1,1 @@
-export * from "./NetworkGuard";
+export * from './NetworkGuard'

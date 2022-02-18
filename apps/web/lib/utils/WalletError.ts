@@ -1,4 +1,4 @@
-export const USER_REJECTED_TX = 4001;
+export const USER_REJECTED_TX = 4001
 
 /*
  * Used for Typescript try/catch error parsing. Example:
@@ -9,19 +9,14 @@ export const USER_REJECTED_TX = 4001;
 export class WalletError extends Error {
   constructor(
     readonly code: number,
-    readonly message: string,
+    override readonly message: string,
     readonly data?: unknown,
-    readonly stack?: string
+    override readonly stack?: string,
   ) {
-    super();
+    super()
   }
 }
 
 export const isWalletError = (error: unknown): error is WalletError => {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    "message" in error
-  );
-};
+  return typeof error === 'object' && error !== null && 'code' in error && 'message' in error
+}

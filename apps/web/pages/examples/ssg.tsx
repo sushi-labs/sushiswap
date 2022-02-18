@@ -1,5 +1,5 @@
 export default function SSG() {
-  return <div>SSG</div>;
+  return <div>SSG</div>
 }
 
 // If you build and start the app, the date returned here will have the same
@@ -14,5 +14,5 @@ export function getStaticProps() {
         light: false,
       },
     },
-  };
+  }
 }

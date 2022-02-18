@@ -1,19 +1,35 @@
 import { ChainId } from "@sushiswap/core-sdk";
 
-const NETWORKS: Record<
-  number,
-  {
-    chainId: string;
-    chainName: string;
-    nativeCurrency: {
-      name: string;
-      symbol: string;
-      decimals: number;
-    };
-    rpcUrls: string[];
-    blockExplorerUrls: string[];
-  }
-> = {
+interface NetworkData {
+  chainId: string;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls: string[];
+}
+
+export type ChainsWithData =
+  | ChainId.ETHEREUM
+  | ChainId.FANTOM
+  | ChainId.BSC
+  | ChainId.MATIC
+  | ChainId.HECO
+  | ChainId.XDAI
+  | ChainId.HARMONY
+  | ChainId.AVALANCHE
+  | ChainId.OKEX
+  | ChainId.ARBITRUM
+  | ChainId.CELO
+  | ChainId.MOONRIVER
+  | ChainId.FUSE
+  | ChainId.TELOS
+  | ChainId.PALM;
+
+const NETWORKS: Record<ChainsWithData, NetworkData> = {
   [ChainId.ETHEREUM]: {
     chainId: "0x1",
     chainName: "Ethereum",
@@ -188,19 +204,8 @@ const NETWORKS: Record<
   },
 };
 
-export const URLS: Record<number, string[]> = Object.keys(NETWORKS).reduce(
-  (accumulator: Record<string, string[]>, chainId) => {
-    const validURLs: string[] = NETWORKS[Number(chainId)].rpcUrls.filter(
-      (url) => url
-    );
-
-    if (validURLs.length) {
-      accumulator[chainId] = validURLs;
-    }
-
-    return accumulator;
-  },
-  {}
-);
+export const URLS = Object.fromEntries(
+  Object.entries(NETWORKS).map(([chainId, data]) => [chainId, data.rpcUrls])
+) as Record<ChainsWithData, NetworkData["rpcUrls"]>;
 
 export default NETWORKS;

@@ -1,21 +1,19 @@
-import { FC } from "react";
-import { MetaMaskWalletView } from "./types";
+import { FC } from 'react'
+import { MetaMaskWalletView } from './types'
 
-const MetaMaskStatusView: FC<MetaMaskWalletView> = ({
-  hooks: { useError, useAccounts, useChainId },
-}) => {
-  const chainId = useChainId();
-  const accounts = useAccounts();
-  const error = useError();
+const MetaMaskStatusView: FC<MetaMaskWalletView> = ({ hooks: { useError, useAccounts, useChainId } }) => {
+  const chainId = useChainId()
+  const accounts = useAccounts()
+  const error = useError()
 
-  const connected = Boolean(chainId && accounts);
+  const connected = Boolean(chainId && accounts)
 
   return (
     <div>
       <b>MetaMask</b>
       {error ? (
         <>
-          🛑 {error.name ?? "Error"}: {error.message}
+          🛑 {error.name ?? 'Error'}: {error.message}
         </>
       ) : connected ? (
         <>✅ Connected</>
@@ -23,7 +21,7 @@ const MetaMaskStatusView: FC<MetaMaskWalletView> = ({
         <>⚠️ Disconnected</>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default MetaMaskStatusView;
+export default MetaMaskStatusView
