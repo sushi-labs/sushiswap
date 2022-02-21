@@ -160,6 +160,31 @@ importers:
       eslint-config-prettier: 8.4.0
       prettier: 2.5.1
 
+  packages/math:
+    specifiers:
+      '@types/big.js': ^6.1.3
+      big.js: ^6.1.1
+      config: workspace:*
+      decimal.js-light: ^2.5.1
+      jsbi: ^4.1.0
+      tiny-invariant: ^1.2.0
+      tiny-warning: ^1.0.3
+      toformat: ^2.0.0
+      tsconfig: workspace:*
+      typescript: ^4.5.3
+    dependencies:
+      big.js: 6.1.1
+      decimal.js-light: 2.5.1
+      jsbi: 4.1.0
+      tiny-invariant: 1.2.0
+      tiny-warning: 1.0.3
+      toformat: 2.0.0
+    devDependencies:
+      '@types/big.js': 6.1.3
+      config: link:../config
+      tsconfig: link:../tsconfig
+      typescript: 4.5.5
+
   packages/multicall:
     specifiers:
       config: workspace:*
@@ -752,6 +777,10 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: false
+
+  /@types/big.js/6.1.3:
+    resolution: {integrity: sha512-fHh2h1cFlvGP0kFCqoAsnuQoM0n3xHB6HxgZvELt7dji+BtK/j938MRL0nG5AA45EgibuFcPjgLlkqfUPCyoKw==}
+    dev: true
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
