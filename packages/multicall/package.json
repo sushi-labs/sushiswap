@@ -5,8 +5,8 @@
   "types": "./index.d.ts",
   "license": "MIT",
   "devDependencies": {
-    "config": "*",
-    "tsconfig": "*",
+    "tsconfig": "workspace:*",
+    "config": "workspace:*",
     "typescript": "^4.5.3"
   }
 }

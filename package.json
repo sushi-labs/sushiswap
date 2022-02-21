@@ -1,5 +1,5 @@
 {
-  "name": "turborepo-basic-shared",
+  "name": "interface",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -19,5 +19,5 @@
     "npm": ">=7.0.0",
     "node": ">=14.0.0"
   },
-  "packageManager": "yarn@1.22.15"
+  "packageManager": "pnpm@6.31.0"
 }
