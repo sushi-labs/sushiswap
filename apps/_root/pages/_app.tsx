@@ -1,4 +1,4 @@
-import '../theme/styles/globals.css'
+import 'ui/globals.css'
 import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import Background from 'app/components/Background'
