@@ -1,9 +1,12 @@
-const withTM = require('next-transpile-modules')(['ui', 'config'])
+import transpileModules from 'next-transpile-modules'
+
+const withTranspileModules = transpileModules(['ui', 'config'])
 
 const { BLOG_URL, ANALYTICS_URL, DOCS_URL } = process.env
 
-module.exports = withTM({
-  reactStrictMode: false,
+export default withTranspileModules({
+  reactStrictMode: true,
+  swcMinify: true,
   async rewrites() {
     return [
       {
