@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "app/components": ["./components/index.ts"],
+      "app/components/*": ["./components/*"],
+      "app/connectors": ["./connectors/index.ts"],
+      "app/connectors/*": ["./connectors/*"],
+      "app/lib": ["./lib/index.ts"],
+      "app/lib/*": ["./lib/*"]
+    },
+    "target": "ES2015",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "downlevelIteration": true,
+    "incremental": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "wallet-example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.4.3",
+    "@heroicons/react": "^1.0.5",
+    "@sushiswap/core-sdk": "^1.0.0-canary.65",
+    "@web3-react/core": "8.0.10-beta.0",
+    "@web3-react/eip1193": "8.0.5-beta.0",
+    "@web3-react/empty": "8.0.3-beta.0",
+    "@web3-react/metamask": "8.0.6-beta.0",
+    "@web3-react/network": "8.0.5-beta.0",
+    "@web3-react/url": "8.0.5-beta.0",
+    "next": "^12.0.10",
+    "react": "^18.0.0-rc.0",
+    "react-dom": "^18.0.0-rc.0",
+    "zustand": "^3.6.9",
+    "chain": "workspace:*",
+    "ui": "workspace:*",
+    "wallet-connector": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.18",
+    "@types/react": "17.0.39",
+    "@web3-react/types": "8.0.3-beta.0",
+    "autoprefixer": "^10.4.2",
+    "config": "*",
+    "eslint": "7.32.0",
+    "next-transpile-modules": "9.0.0",
+    "postcss": "^8.4.6",
+    "prettier": "^2.5.1",
+    "tailwindcss": "^3.0.18",
+    "tsconfig": "*",
+    "typescript": "^4.5.3"
+  }
+}
