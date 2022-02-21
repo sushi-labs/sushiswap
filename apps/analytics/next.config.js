@@ -1,6 +1,6 @@
 const withTM = require("next-transpile-modules")(["ui"]);
 
 module.exports = withTM({
-  basePath: "/docs",
+  basePath: "/analytics",
   reactStrictMode: true,
 });

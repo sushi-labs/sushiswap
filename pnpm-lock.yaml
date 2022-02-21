@@ -8,34 +8,7 @@ importers:
     devDependencies:
       turbo: 1.1.3
 
-  apps/docs:
-    specifiers:
-      '@types/node': ^17.0.12
-      '@types/react': 17.0.37
-      config: workspace:*
-      eslint: 7.32.0
-      next: 12.0.10
-      next-transpile-modules: 9.0.0
-      react: ^18.0.0-rc.0
-      react-dom: ^18.0.0-rc.0
-      tsconfig: workspace:*
-      typescript: ^4.5.3
-      ui: workspace:*
-    dependencies:
-      next: 12.0.10_757a802188413a36d4f24237d13b8e90
-      react: 18.0.0-rc.0
-      react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
-      ui: link:../../packages/ui
-    devDependencies:
-      '@types/node': 17.0.19
-      '@types/react': 17.0.37
-      config: link:../../packages/config
-      eslint: 7.32.0
-      next-transpile-modules: 9.0.0
-      tsconfig: link:../../packages/tsconfig
-      typescript: 4.5.5
-
-  apps/web:
+  apps/_root:
     specifiers:
       '@headlessui/react': ^1.4.3
       '@heroicons/react': ^1.0.5
@@ -64,7 +37,7 @@ importers:
       tsconfig: workspace:*
       typescript: ^4.5.3
       ui: workspace:*
-      zustand: ^4.0.0-beta.0
+      zustand: ^3.6.9
     dependencies:
       '@headlessui/react': 1.5.0_757a802188413a36d4f24237d13b8e90
       '@heroicons/react': 1.0.5_react@18.0.0-rc.0
@@ -81,7 +54,7 @@ importers:
       react: 18.0.0-rc.0
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
       ui: link:../../packages/ui
-      zustand: 4.0.0-beta.1_react@18.0.0-rc.0
+      zustand: 3.7.0_react@18.0.0-rc.0
     devDependencies:
       '@types/node': 17.0.18
       '@types/react': 17.0.39
@@ -93,6 +66,87 @@ importers:
       postcss: 8.4.6
       prettier: 2.5.1
       tailwindcss: 3.0.23_autoprefixer@10.4.2
+      tsconfig: link:../../packages/tsconfig
+      typescript: 4.5.5
+
+  apps/analytics:
+    specifiers:
+      '@types/node': ^17.0.12
+      '@types/react': 17.0.37
+      config: workspace:*
+      eslint: 7.32.0
+      next: 12.0.10
+      next-transpile-modules: 9.0.0
+      react: ^18.0.0-rc.0
+      react-dom: ^18.0.0-rc.0
+      tsconfig: workspace:*
+      typescript: ^4.5.3
+      ui: workspace:*
+    dependencies:
+      next: 12.0.10_757a802188413a36d4f24237d13b8e90
+      react: 18.0.0-rc.0
+      react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
+      ui: link:../../packages/ui
+    devDependencies:
+      '@types/node': 17.0.19
+      '@types/react': 17.0.37
+      config: link:../../packages/config
+      eslint: 7.32.0
+      next-transpile-modules: 9.0.0
+      tsconfig: link:../../packages/tsconfig
+      typescript: 4.5.5
+
+  apps/blog:
+    specifiers:
+      '@types/node': ^17.0.12
+      '@types/react': 17.0.37
+      config: workspace:*
+      eslint: 7.32.0
+      next: 12.0.10
+      next-transpile-modules: 9.0.0
+      react: ^18.0.0-rc.0
+      react-dom: ^18.0.0-rc.0
+      tsconfig: workspace:*
+      typescript: ^4.5.3
+      ui: workspace:*
+    dependencies:
+      next: 12.0.10_757a802188413a36d4f24237d13b8e90
+      react: 18.0.0-rc.0
+      react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
+      ui: link:../../packages/ui
+    devDependencies:
+      '@types/node': 17.0.19
+      '@types/react': 17.0.37
+      config: link:../../packages/config
+      eslint: 7.32.0
+      next-transpile-modules: 9.0.0
+      tsconfig: link:../../packages/tsconfig
+      typescript: 4.5.5
+
+  apps/docs:
+    specifiers:
+      '@types/node': ^17.0.12
+      '@types/react': 17.0.37
+      config: workspace:*
+      eslint: 7.32.0
+      next: 12.0.10
+      next-transpile-modules: 9.0.0
+      react: ^18.0.0-rc.0
+      react-dom: ^18.0.0-rc.0
+      tsconfig: workspace:*
+      typescript: ^4.5.3
+      ui: workspace:*
+    dependencies:
+      next: 12.0.10_757a802188413a36d4f24237d13b8e90
+      react: 18.0.0-rc.0
+      react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
+      ui: link:../../packages/ui
+    devDependencies:
+      '@types/node': 17.0.19
+      '@types/react': 17.0.37
+      config: link:../../packages/config
+      eslint: 7.32.0
+      next-transpile-modules: 9.0.0
       tsconfig: link:../../packages/tsconfig
       typescript: 4.5.5
 
@@ -3069,6 +3123,18 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
     dev: true
+
+  /zustand/3.7.0_react@18.0.0-rc.0:
+    resolution: {integrity: sha512-USzVzLGrvZ8VK1/sEsOAmeqa8N7D3OBdZskVaL7DL89Q4QLTYD053iIlZ5KDidyZ+Od80Dttin/f8ZulOLFFDQ==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      react: '>=16.8'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.0.0-rc.0
+    dev: false
 
   /zustand/4.0.0-beta.1_react@18.0.0-rc.0:
     resolution: {integrity: sha512-XdKfCM6I2k758AQY/WaUZoC0uQjj7z6NfvvYBo+cxU58M3iMsrHU9w7yUkUNIOKc9T8/5S0j54ga7wVGQWhcvA==}
