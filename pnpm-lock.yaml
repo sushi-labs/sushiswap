@@ -164,10 +164,12 @@ importers:
 
   packages/config:
     specifiers:
+      chain: workspace:*
       eslint-config-next: ^12.0.8
       eslint-config-prettier: ^8.3.0
       prettier: ^2.5.1
     dependencies:
+      chain: link:../chain
       eslint-config-next: 12.1.0
       eslint-config-prettier: 8.4.0
       prettier: 2.5.1
