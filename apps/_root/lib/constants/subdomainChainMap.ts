@@ -33,7 +33,6 @@ const chainIdToSubdomainName: Record<ChainId, SubdomainName> = {
   [ChainId.MOONRIVER]: 'moonriver',
   [ChainId.FUSE]: 'fuse',
   [ChainId.TELOS]: 'telos',
-  [ChainId.HARDHAT]: 'hardhat',
 }
 
 export const subdomainToChainIdMap: Record<SubdomainName, ChainId> = Object.fromEntries(
