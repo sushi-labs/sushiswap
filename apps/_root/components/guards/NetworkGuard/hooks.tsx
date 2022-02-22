@@ -1,7 +1,7 @@
 import priorityConnector from 'app/lib/connectors/priorityConnector'
 import useStore from 'app/lib/store'
 import { useCallback } from 'react'
-import NETWORKS, { ChainsWithData } from 'config/networks'
+import NETWORKS, { ChainsWithData } from 'networks'
 import { isWalletError } from 'app/lib/utils/WalletError'
 
 const { usePriorityProvider } = priorityConnector

@@ -9,8 +9,6 @@
   ],
   "dependencies": {
     "eslint-config-next": "^12.0.8",
-    "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.5.1",
-    "chain": "workspace:*"
+    "eslint-config-prettier": "^8.3.0"
   }
 }
