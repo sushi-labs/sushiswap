@@ -1,10 +1,26 @@
 # Interface Monorepo
 
-...
+Sushi 2.0 🍣
 
-## Install
+## Getting Started
 
 https://pnpm.io/installation
+
+### Install
+
+pnpn install
+
+### Execute
+
+pnpx
+
+### Dev
+
+pnpn run dev
+
+### Build
+
+pnpn run build
 
 ## Apps
 
@@ -12,10 +28,12 @@ https://pnpm.io/installation
 - `analytics`
 - `blog`
 - `docs`
-- `store`
 
 ## Packages
 
+- `chain`
 - `config`
+- `math`
 - `multicall`
+- `tsconfig`
 - `ui`
