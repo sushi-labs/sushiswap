@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 import { subdomainToChainIdMap } from 'app/lib/constants/subdomainChainMap'
 import { DEFAULT_CHAIN_ID } from 'app/lib/constants/defaults'
 

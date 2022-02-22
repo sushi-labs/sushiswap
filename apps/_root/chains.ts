@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 import { AddEthereumChainParameter } from '@web3-react/types'
 
 const ETH: AddEthereumChainParameter['nativeCurrency'] = {

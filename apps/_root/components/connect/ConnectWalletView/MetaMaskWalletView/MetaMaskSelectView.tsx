@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { CHAINS } from '../../../../chains'
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 
 interface MetasMaskSelectView {
   chainId: ChainId | undefined

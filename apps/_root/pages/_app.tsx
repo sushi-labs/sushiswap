@@ -3,7 +3,7 @@ import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import Background from 'app/components/Background'
 import { ThemeProvider } from 'theme/ThemeContext'
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 import dynamic from 'next/dynamic'
 import { useCreateStore, Provider } from '../lib/store'
 

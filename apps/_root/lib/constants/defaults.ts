@@ -1,3 +1,3 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM

@@ -2,7 +2,7 @@ import { FC, useCallback, useState } from 'react'
 import MetaMaskSelectView from './MetaMaskSelectView'
 import { getAddChainParameters } from '../../../../chains'
 import { MetaMaskWalletView } from './types'
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from 'chain'
 
 const MetaMaskWalletView: FC<MetaMaskWalletView> = ({
   connector,

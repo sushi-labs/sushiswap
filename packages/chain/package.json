@@ -1,0 +1,12 @@
+{
+  "name": "chain",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.d.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "config": "workspace:*",
+    "typescript": "^4.5.3"
+  }
+}

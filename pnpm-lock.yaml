@@ -25,6 +25,7 @@ importers:
       '@web3-react/walletconnect': 8.0.8-beta.0
       '@web3-react/walletlink': 8.0.10-beta.0
       autoprefixer: ^10.4.2
+      chain: workspace:*
       config: workspace:*
       eslint: 7.32.0
       next: 12.0.10
@@ -50,6 +51,7 @@ importers:
       '@web3-react/url': 8.0.5-beta.0_react@18.0.0-rc.0
       '@web3-react/walletconnect': 8.0.8-beta.0_react@18.0.0-rc.0
       '@web3-react/walletlink': 8.0.10-beta.0_react@18.0.0-rc.0
+      chain: link:../../packages/chain
       next: 12.0.10_757a802188413a36d4f24237d13b8e90
       react: 18.0.0-rc.0
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
@@ -150,6 +152,16 @@ importers:
       tsconfig: link:../../packages/tsconfig
       typescript: 4.5.5
 
+  packages/chain:
+    specifiers:
+      config: workspace:*
+      tsconfig: workspace:*
+      typescript: ^4.5.3
+    devDependencies:
+      config: link:../config
+      tsconfig: link:../tsconfig
+      typescript: 4.5.5
+
   packages/config:
     specifiers:
       eslint-config-next: ^12.0.8
@@ -168,7 +180,6 @@ importers:
       decimal.js-light: ^2.5.1
       jsbi: ^4.1.0
       tiny-invariant: ^1.2.0
-      tiny-warning: ^1.0.3
       toformat: ^2.0.0
       tsconfig: workspace:*
       typescript: ^4.5.3
@@ -177,7 +188,6 @@ importers:
       decimal.js-light: 2.5.1
       jsbi: 4.1.0
       tiny-invariant: 1.2.0
-      tiny-warning: 1.0.3
       toformat: 2.0.0
     devDependencies:
       '@types/big.js': 6.1.3
