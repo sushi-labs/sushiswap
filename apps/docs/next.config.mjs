@@ -1,9 +1,9 @@
-import transpileModules from "next-transpile-modules";
+import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(["ui"]);
+const withTranspileModules = transpileModules(['ui'])
 
 export default withTranspileModules({
-  basePath: "/docs",
+  basePath: '/docs',
   reactStrictMode: true,
   swcMinify: true,
-});
+})
