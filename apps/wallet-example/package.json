@@ -32,13 +32,10 @@
     "@types/react": "17.0.39",
     "@web3-react/types": "8.0.3-beta.0",
     "autoprefixer": "^10.4.2",
-    "config": "*",
+    "config": "workspace:*",
     "eslint": "7.32.0",
     "next-transpile-modules": "9.0.0",
-    "postcss": "^8.4.6",
-    "prettier": "^2.5.1",
     "tailwindcss": "^3.0.18",
-    "tsconfig": "*",
     "typescript": "^4.5.3"
   }
 }

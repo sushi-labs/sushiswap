@@ -6,7 +6,10 @@
   "license": "MIT",
   "files": [
     "eslint-preset.js",
-    "jest"
+    "jest",
+    "typescript/base.json",
+    "typescript/react-library.json",
+    "typescript/nextjs.json"
   ],
   "dependencies": {
     "eslint-config-next": "^12.0.8",

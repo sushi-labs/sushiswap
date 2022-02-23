@@ -39,7 +39,6 @@
     "postcss": "^8.4.6",
     "prettier": "^2.5.1",
     "tailwindcss": "^3.0.18",
-    "tsconfig": "workspace:*",
     "typescript": "^4.5.3"
   }
 }

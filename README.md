@@ -28,6 +28,9 @@ pnpn run build
 - `analytics`
 - `blog`
 - `docs`
+- `furo`
+- `kashi`
+- `miso`
 
 ## Packages
 
