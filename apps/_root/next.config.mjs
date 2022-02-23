@@ -1,8 +1,8 @@
-import transpileModules from 'next-transpile-modules'
+import transpileModules from "next-transpile-modules";
 
-const withTranspileModules = transpileModules(['ui', 'config', 'chain'])
+const withTranspileModules = transpileModules(["ui", "config", "chain"]);
 
-const { BLOG_URL, ANALYTICS_URL, DOCS_URL } = process.env
+const { BLOG_URL, ANALYTICS_URL, DOCS_URL } = process.env;
 
 export default withTranspileModules({
   reactStrictMode: true,
@@ -10,43 +10,43 @@ export default withTranspileModules({
   async redirects() {
     return [
       {
-        source: '/discord{/}?',
+        source: "/discord{/}?",
         permanent: true,
-        destination: 'https://discord.gg/SDPH8SNVZW',
+        destination: "https://discord.gg/SDPH8SNVZW",
       },
-    ]
+    ];
   },
   async rewrites() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         destination: `/:path*`,
       },
 
       {
-        source: '/analytics',
+        source: "/analytics",
         destination: `${ANALYTICS_URL}/analytics`,
       },
       {
-        source: '/analytics/:path*',
+        source: "/analytics/:path*",
         destination: `${ANALYTICS_URL}/analytics/:path*`,
       },
       {
-        source: '/blog',
+        source: "/blog",
         destination: `${BLOG_URL}/blog`,
       },
       {
-        source: '/blog/:path*',
+        source: "/blog/:path*",
         destination: `${BLOG_URL}/blog/:path*`,
       },
       {
-        source: '/docs',
+        source: "/docs",
         destination: `${DOCS_URL}/docs`,
       },
       {
-        source: '/docs/:path*',
+        source: "/docs/:path*",
         destination: `${DOCS_URL}/docs/:path*`,
       },
-    ]
+    ];
   },
-})
+});
