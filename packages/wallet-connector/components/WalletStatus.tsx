@@ -1,10 +1,8 @@
-import { FC } from "react";
-import { useStore } from "../state/store";
+import { FC } from 'react'
+import { useStore } from '../state/store'
 
 export const WalletStatus: FC = () => {
-  const { chainId, account, error, activating, name, connector } = useStore(
-    (state) => state
-  );
+  const { chainId, account, error, activating, name, connector } = useStore((state) => state)
 
   return (
     <div>
@@ -16,5 +14,5 @@ export const WalletStatus: FC = () => {
       <div>Error: {error?.message}</div>
       <button onClick={() => connector.deactivate()}>Disconnect</button>
     </div>
-  );
-};
+  )
+}

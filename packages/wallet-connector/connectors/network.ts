@@ -1,17 +1,17 @@
-import { initializeConnector } from "@web3-react/core";
-import { Network } from "@web3-react/network";
-import { URLS } from "chain/networkConfig";
+import { initializeConnector } from '@web3-react/core'
+import { Network } from '@web3-react/network'
+import { URLS } from 'chain/networkConfig'
 
 const [connector, hooks, store] = initializeConnector<Network>(
   (actions) => {
-    return new Network(actions, URLS, false);
+    return new Network(actions, URLS, false)
   },
-  Object.keys(URLS).map((chainId) => Number(chainId))
-);
+  Object.keys(URLS).map((chainId) => Number(chainId)),
+)
 
 export const networkConnector = {
-  name: "Network",
+  name: 'Network',
   instance: connector,
   hooks,
   store,
-};
+}

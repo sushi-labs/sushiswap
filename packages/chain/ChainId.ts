@@ -30,4 +30,4 @@ enum ChainId {
   TELOS = 40,
 }
 
-export default ChainId;
+export default ChainId

@@ -1,24 +1,20 @@
-import { FC, Fragment, FunctionComponent } from "react";
-import { Transition, Dialog as HeadlessDialog } from "@headlessui/react";
-import DialogContent, { DialogContentProps } from "./DialogContent";
-import DialogHeader, { DialogHeaderProps } from "./DialogHeader";
-import DialogDescription, { DialogDescriptionProps } from "./DialogDescription";
-import DialogActions, { DialogActionProps } from "./DialogActions";
+import { FC, Fragment, FunctionComponent } from 'react'
+import { Transition, Dialog as HeadlessDialog } from '@headlessui/react'
+import DialogContent, { DialogContentProps } from './DialogContent'
+import DialogHeader, { DialogHeaderProps } from './DialogHeader'
+import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
+import DialogActions, { DialogActionProps } from './DialogActions'
 
 interface DialogProps {
-  open: boolean;
-  onClose(): void;
-  children: DialogContentProps;
+  open: boolean
+  onClose(): void
+  children: DialogContentProps
 }
 
 const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
   return (
     <Transition appear show={open} as={Fragment}>
-      <HeadlessDialog
-        as="div"
-        className="fixed inset-0 z-10 overflow-y-auto"
-        onClose={onClose}
-      >
+      <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -33,10 +29,7 @@ const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="inline-block h-screen align-middle"
-            aria-hidden="true"
-          >
+          <span className="inline-block h-screen align-middle" aria-hidden="true">
             &#8203;
           </span>
           <Transition.Child
@@ -53,17 +46,17 @@ const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
         </div>
       </HeadlessDialog>
     </Transition>
-  );
-};
+  )
+}
 
 export const Dialog: FunctionComponent<DialogProps> & {
-  Description: FunctionComponent<DialogDescriptionProps>;
-  Header: FunctionComponent<DialogHeaderProps>;
-  Actions: FunctionComponent<DialogActionProps>;
-  Content: FunctionComponent<DialogContentProps>;
+  Description: FunctionComponent<DialogDescriptionProps>
+  Header: FunctionComponent<DialogHeaderProps>
+  Actions: FunctionComponent<DialogActionProps>
+  Content: FunctionComponent<DialogContentProps>
 } = Object.assign(DialogRoot, {
   Content: DialogContent,
   Header: DialogHeader,
   Description: DialogDescription,
   Actions: DialogActions,
-});
+})

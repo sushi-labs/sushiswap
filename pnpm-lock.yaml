@@ -216,7 +216,6 @@ importers:
       '@web3-react/walletconnect': 8.0.8-beta.0_react@18.0.0-rc.0
       '@web3-react/walletlink': 8.0.10-beta.0_react@18.0.0-rc.0
       chain: link:../../packages/chain
-      config: link:../../packages/config
       next: 12.0.10_757a802188413a36d4f24237d13b8e90
       react: 18.0.0-rc.0
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
@@ -227,6 +226,7 @@ importers:
       '@types/react': 17.0.39
       '@web3-react/types': 8.0.3-beta.0_react@18.0.0-rc.0
       autoprefixer: 10.4.2_postcss@8.4.6
+      config: link:../../packages/config
       eslint: 7.32.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.6

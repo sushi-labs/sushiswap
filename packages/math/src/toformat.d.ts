@@ -1,1 +1,1 @@
-declare module "toformat";
+declare module 'toformat'
