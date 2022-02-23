@@ -1,4 +1,4 @@
-import _Big, { RoundingMode } from "big.js";
+import _Big from "big.js";
 
 import BigintIsh from "./BigintIsh";
 import JSBI from "jsbi";
@@ -13,15 +13,15 @@ const Big = toFormat(_Big);
 Big.strict = true;
 
 const toSignificantRounding = {
-  [Rounding.ROUND_DOWN]: Decimal.ROUND_DOWN,
-  [Rounding.ROUND_HALF_UP]: Decimal.ROUND_HALF_UP,
-  [Rounding.ROUND_UP]: Decimal.ROUND_UP,
+  [Rounding.ROUND_DOWN]: _Decimal.ROUND_DOWN,
+  [Rounding.ROUND_HALF_UP]: _Decimal.ROUND_HALF_UP,
+  [Rounding.ROUND_UP]: _Decimal.ROUND_UP,
 };
 
 const toFixedRounding = {
-  [Rounding.ROUND_DOWN]: RoundingMode.RoundDown,
-  [Rounding.ROUND_HALF_UP]: RoundingMode.RoundHalfUp,
-  [Rounding.ROUND_UP]: RoundingMode.RoundUp,
+  [Rounding.ROUND_DOWN]: _Big.roundDown,
+  [Rounding.ROUND_HALF_UP]: _Big.roundHalfUp,
+  [Rounding.ROUND_UP]: _Big.roundUp,
 };
 
 class Fraction {

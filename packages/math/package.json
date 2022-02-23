@@ -2,9 +2,20 @@
   "name": "math",
   "version": "0.0.0",
   "private": true,
-  "main": "./index.ts",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "test": "jest",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "lint": "TIMING=1 eslint src --fix",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
   "dependencies": {
     "big.js": "^6.1.1",
     "decimal.js-light": "^2.5.1",
@@ -13,6 +24,13 @@
     "toformat": "^2.0.0"
   },
   "devDependencies": {
-    "@types/big.js": "^6.1.3"
+    "@types/big.js": "^6.1.3",
+    "@types/jest": "^27.4.1",
+    "config": "workspace:*",
+    "tsconfig": "workspace:*",
+    "jest": "^27.5.1"
+  },
+  "jest": {
+    "preset": "config/jest/node"
   }
 }
