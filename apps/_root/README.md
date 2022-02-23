@@ -1,4 +1,3 @@
-## Sushi 2.0
+# Root
 
-- Links to docs
-- Philosophy
+Root application
