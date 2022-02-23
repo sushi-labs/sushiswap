@@ -7,6 +7,15 @@ const { BLOG_URL, ANALYTICS_URL, DOCS_URL } = process.env
 export default withTranspileModules({
   reactStrictMode: true,
   swcMinify: true,
+  async redirects() {
+    return [
+      {
+        source: '/discord{/}?',
+        permanent: true,
+        destination: 'https://discord.gg/SDPH8SNVZW',
+      },
+    ]
+  },
   async rewrites() {
     return [
       {
