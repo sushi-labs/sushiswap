@@ -4,7 +4,7 @@ import { URLS } from 'chain/networkConfig'
 
 const [connector, hooks, store] = initializeConnector<Network>(
   (actions) => {
-    return new Network(actions, URLS, false)
+    return new Network(actions, URLS, true)
   },
   Object.keys(URLS).map((chainId) => Number(chainId)),
 )

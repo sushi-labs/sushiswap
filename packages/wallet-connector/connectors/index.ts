@@ -28,13 +28,13 @@ export const getPriorityConnector = (): InitializedConnector => {
 
 export type ConnectorToActivate = {
   name: string
-  activateFn: () => void
+  activate: () => void
 }
 
 export const getConnectorsToActivate = (): ConnectorToActivate[] => {
   return connectors.map((connector) => ({
     name: connector.name,
-    activateFn: () => {
+    activate: () => {
       connector.instance.activate()
       syncStoreWithWeb3(connector)
     },

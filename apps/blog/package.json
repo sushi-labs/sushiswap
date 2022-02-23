@@ -18,9 +18,9 @@
   "devDependencies": {
     "@types/node": "17.0.19",
     "@types/react": "17.0.39",
+    "config": "workspace:*",
     "eslint": "8.9.0",
     "next-transpile-modules": "9.0.0",
-    "config": "workspace:*",
     "typescript": "^4.5.5"
   }
 }

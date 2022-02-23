@@ -8,7 +8,7 @@ const SushiWalletConnector: FC = () => {
     <div>
       <WalletStatus />
       {getConnectorsToActivate().map((connector, i) => (
-        <ActivateConnector key={i} name={connector.name} activateFn={connector.activateFn} />
+        <ActivateConnector key={i} name={connector.name} activate={connector.activate} />
       ))}
     </div>
   )
