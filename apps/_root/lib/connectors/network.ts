@@ -1,6 +1,6 @@
 import { initializeConnector } from '@web3-react/core'
 import { Network } from '@web3-react/network'
-import { URLS } from 'networks'
+import { URLS } from 'chain/networkConfig'
 
 type CookieName = string
 type Value = string
