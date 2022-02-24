@@ -22,7 +22,6 @@ export default withTranspileModules({
         source: '/:path*',
         destination: `/:path*`,
       },
-
       {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
@@ -47,6 +46,14 @@ export default withTranspileModules({
         source: '/docs/:path*',
         destination: `${DOCS_URL}/docs/:path*`,
       },
+      // {
+      //   source: '/store',
+      //   destination: `${STORE_URL}/store`,
+      // },
+      // {
+      //   source: '/store/:path*',
+      //   destination: `${STORE_URL}/store/:path*`,
+      // },
     ]
   },
 })
