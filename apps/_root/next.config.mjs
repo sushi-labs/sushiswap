@@ -1,6 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['ui', 'chain'])
+const withTranspileModules = transpileModules(['ui', 'chains'])
 
 const { BLOG_URL, ANALYTICS_URL, DOCS_URL, STORE_URL, LEGACY_URL } = process.env
 

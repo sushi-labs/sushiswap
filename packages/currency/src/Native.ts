@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant'
 import { Currency } from './Currency'
 import { Token } from './Token'
 
-import { Chain, chains } from 'chain'
+import chains from 'chains'
 
 export const WNATIVE: { [chainId: number]: Token } = {
   [1]: new Token({
@@ -37,7 +37,7 @@ export class Native extends Currency {
       return this.cache[chainId]
     }
 
-    const chain: Chain | undefined = chains.find((chain) => chain.chainId === chainId)
+    const chain = chains.find((chain) => chain.chainId === chainId)
 
     invariant(!!chain, 'CHAIN')
 

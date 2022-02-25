@@ -1,0 +1,12 @@
+{
+  "extends": "config/typescript/base.json",
+  "include": ["."],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "resolveJsonModule": true
+  }
+}

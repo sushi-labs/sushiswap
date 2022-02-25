@@ -13,7 +13,6 @@ export abstract class Currency {
    * Returns whether the currency is a token that is usable in Uniswap without wrapping
    */
   public abstract readonly isToken: boolean
-
   /**
    * The chain ID on which this currency resides
    */
@@ -65,8 +64,7 @@ export abstract class Currency {
   public abstract equals(other: Native | Token): boolean
 
   /**
-   * Return the wrapped version of this currency that can be used with the Uniswap contracts. Currencies must
-   * implement this to be used in Uniswap
+   * Return the wrapped version of this currency
    */
   public abstract get wrapped(): Token
 }
