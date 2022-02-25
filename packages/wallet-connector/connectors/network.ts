@@ -6,11 +6,11 @@ const [connector, hooks, store] = initializeConnector<Network>(
   (actions) => {
     return new Network(
       actions,
-      Object.fromEntries(chains.map((chain) => [Number(chain.chainId), String(chain.rpc)])),
+      Object.fromEntries(Object.entries(chains).map(([chainId, { rpc }]) => [Number(chainId), String(rpc)])),
       true,
     )
   },
-  chains.map(({ chainId }) => Number(chainId)),
+  Object.entries(chains).map(([chainId]) => Number(chainId)),
 )
 
 export const networkConnector = {
