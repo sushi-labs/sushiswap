@@ -1,6 +1,6 @@
 import { initializeConnector } from '@web3-react/core'
 import { Network } from '@web3-react/network'
-import { URLS } from 'chain/networkConfig'
+import { URLS } from '../../chain/config'
 
 const [connector, hooks, store] = initializeConnector<Network>(
   (actions) => {
