@@ -1,40 +1,61 @@
 export interface Chain {
   name: string
   chain: string
-  icon?: string | null
-  rpc?: (string | null)[] | null
-  faucets?: (string | null)[] | null
+  icon?: string
+  rpc: string[]
+  faucets: string[]
   nativeCurrency: NativeCurrency
   infoURL: string
   shortName: string
-  chainId: number
-  networkId: number
-  slip44?: number | null
-  ens?: Ens | null
-  explorers?: (ExplorersEntity | null)[] | null
-  title?: string | null
-  parent?: Parent | null
-  network?: string | null
+  chainID: number
+  networkID: number
+  slip44?: number
+  ens?: Ens
+  explorers?: Explorer[]
+  title?: string
+  parent?: Parent
+  network?: Network
 }
+
+export interface Ens {
+  registry: string
+}
+
+export interface Explorer {
+  name: string
+  url: string
+  standard: Standard
+  icon?: string
+}
+
+export enum Standard {
+  Eip3091 = 'EIP3091',
+  None = 'none',
+}
+
 export interface NativeCurrency {
   name: string
   symbol: string
   decimals: number
 }
-export interface Ens {
-  registry: string
+
+export enum Network {
+  Iorachain = 'iorachain',
+  Mainnet = 'mainnet',
+  Testnet = 'testnet',
 }
-export interface ExplorersEntity {
-  name: string
-  url: string
-  standard: string
-  icon?: string | null
-}
+
 export interface Parent {
-  type: string
+  type: Type
   chain: string
-  bridges?: BridgesEntity[] | null
+  bridges?: Bridge[]
 }
-export interface BridgesEntity {
+
+export interface Bridge {
   url: string
+}
+
+export enum Type {
+  L2 = 'L2',
+  Shard = 'shard',
 }
