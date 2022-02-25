@@ -1,27 +1,21 @@
-import _Big from 'big.js'
-
-import BigintIsh from './BigintIsh'
 import JSBI from 'jsbi'
-import Rounding from './Rounding'
-import _Decimal from 'decimal.js-light'
 import invariant from 'tiny-invariant'
-import toFormat from 'toformat'
 
-const Decimal = toFormat(_Decimal)
-const Big = toFormat(_Big)
-
-Big.strict = true
+import Big from './Big'
+import BigintIsh from './BigintIsh'
+import Rounding from './Rounding'
+import Decimal from './Decimal'
 
 const toSignificantRounding = {
-  [Rounding.ROUND_DOWN]: _Decimal.ROUND_DOWN,
-  [Rounding.ROUND_HALF_UP]: _Decimal.ROUND_HALF_UP,
-  [Rounding.ROUND_UP]: _Decimal.ROUND_UP,
+  [Rounding.ROUND_DOWN]: Decimal.ROUND_DOWN,
+  [Rounding.ROUND_HALF_UP]: Decimal.ROUND_HALF_UP,
+  [Rounding.ROUND_UP]: Decimal.ROUND_UP,
 }
 
 const toFixedRounding = {
-  [Rounding.ROUND_DOWN]: _Big.roundDown,
-  [Rounding.ROUND_HALF_UP]: _Big.roundHalfUp,
-  [Rounding.ROUND_UP]: _Big.roundUp,
+  [Rounding.ROUND_DOWN]: Big.roundDown,
+  [Rounding.ROUND_HALF_UP]: Big.roundHalfUp,
+  [Rounding.ROUND_UP]: Big.roundUp,
 }
 
 class Fraction {
