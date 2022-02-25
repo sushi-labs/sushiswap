@@ -5,6 +5,9 @@
   "main": "./index.ts",
   "types": "./index.d.ts",
   "license": "MIT",
+  "scripts": {
+    "generate": "curl -s 'https://chainid.network/chains.json' > chains.json"
+  },
   "devDependencies": {
     "config": "workspace:*",
     "typescript": "^4.5.3"
