@@ -1,2 +1,2 @@
-export { Native } from './Native'
-export { Token } from './Token'
+export * from './Native'
+export * from './Token'

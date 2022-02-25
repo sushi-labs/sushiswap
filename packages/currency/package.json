@@ -18,12 +18,13 @@
   },
   "dependencies": {
     "@ethersproject/address": "^5.5.0",
-    "tiny-invariant": "^1.2.0"
+    "tiny-invariant": "^1.2.0",
+    "chains": "workspace:*",
+    "math": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "config": "workspace:*",
-    "chains": "workspace:*",
     "jest": "^27.5.1",    
     "typescript": "^4.5.3"
   },

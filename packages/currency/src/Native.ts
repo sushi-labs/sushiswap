@@ -1,10 +1,9 @@
 import invariant from 'tiny-invariant'
+import CHAIN from 'chains'
 import { Currency } from './Currency'
 import { Token } from './Token'
 
-import chains from 'chains'
-
-export const WNATIVE: { [chainId: number]: Token } = {
+export const WNATIVE: Record<number, Token> = {
   [1]: new Token({
     chainId: 1,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -19,7 +18,7 @@ export class Native extends Currency {
   public readonly isToken: false = false
   public readonly symbol: string
   public readonly name: string
-  public constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {
+  protected constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {
     super(native)
     this.symbol = native.symbol
     this.name = native.name
@@ -37,11 +36,9 @@ export class Native extends Currency {
       return this.cache[chainId]
     }
 
-    const chain = chains.find((chain) => chain.chainId === chainId)
+    invariant(!!(chainId in CHAIN), 'CHAINS')
 
-    invariant(!!chain, 'CHAIN')
-
-    const { nativeCurrency } = chain
+    const { nativeCurrency } = CHAIN[chainId]
 
     invariant(!!nativeCurrency, 'NATIVE_CURRENCY')
 

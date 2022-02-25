@@ -1,4 +1,4 @@
-import { Token } from '../Token'
+import { Token } from '..'
 
 describe('Token', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'

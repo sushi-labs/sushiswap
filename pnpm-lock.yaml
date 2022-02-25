@@ -127,6 +127,7 @@ importers:
       '@web3-react/types': 8.0.3-beta.0
       '@web3-react/url': 8.0.5-beta.0
       autoprefixer: ^10.4.2
+      chains: workspace:*
       config: workspace:*
       eslint: 7.32.0
       next: ^12.0.10
@@ -148,6 +149,7 @@ importers:
       '@web3-react/metamask': 8.0.6-beta.0_react@18.0.0-rc.0
       '@web3-react/network': 8.0.5-beta.0_react@18.0.0-rc.0
       '@web3-react/url': 8.0.5-beta.0_react@18.0.0-rc.0
+      chains: link:../../packages/chains
       next: 12.0.10_757a802188413a36d4f24237d13b8e90
       react: 18.0.0-rc.0
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
@@ -190,14 +192,16 @@ importers:
       chains: workspace:*
       config: workspace:*
       jest: ^27.5.1
+      math: workspace:*
       tiny-invariant: ^1.2.0
       typescript: ^4.5.3
     dependencies:
       '@ethersproject/address': 5.5.0
+      chains: link:../chains
+      math: link:../math
       tiny-invariant: 1.2.0
     devDependencies:
       '@types/jest': 27.4.1
-      chains: link:../chains
       config: link:../config
       jest: 27.5.1
       typescript: 4.5.5
