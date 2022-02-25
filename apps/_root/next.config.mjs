@@ -2,7 +2,7 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['ui', 'chain'])
 
-const { BLOG_URL, ANALYTICS_URL, DOCS_URL } = process.env
+const { BLOG_URL, ANALYTICS_URL, DOCS_URL, STORE_URL, LEGACY_URL } = process.env
 
 export default withTranspileModules({
   reactStrictMode: true,
@@ -53,6 +53,15 @@ export default withTranspileModules({
       // {
       //   source: '/store/:path*',
       //   destination: `${STORE_URL}/store/:path*`,
+      // },
+
+      // {
+      //   source: '/legacy',
+      //   destination: `${LEGACY_URL}/legacy`,
+      // },
+      // {
+      //   source: '/legacy/:path*',
+      //   destination: `${LEGACY_URL}/legacy/:path*`,
       // },
     ]
   },
