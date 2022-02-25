@@ -1,0 +1,33 @@
+{
+  "name": "currency",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "test": "jest",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "lint": "TIMING=1 eslint src --fix",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "dependencies": {
+    "@ethersproject/address": "^5.5.0",
+    "tiny-invariant": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "config": "workspace:*",
+    "chain": "workspace:*",
+    "jest": "^27.5.1",    
+    "typescript": "^4.5.3"
+  },
+  "jest": {
+    "preset": "config/jest/node"
+  }
+}
