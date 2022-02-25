@@ -23,6 +23,7 @@
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
     "zustand": "^3.6.9",
+    "chains": "workspace:*",
     "ui": "workspace:*",
     "wallet-connector": "workspace:*"
   },
