@@ -29,7 +29,7 @@ export class Native extends Currency {
     return wnative
   }
 
-  private static cache: { [chainId: number]: Native } = {}
+  private static cache: Record<number, Native> = {}
 
   public static onChain(chainId: number): Native {
     if (chainId in this.cache) {
