@@ -5,6 +5,7 @@
   "compilerOptions": {
     "lib": ["ES2015"],
     "module": "CommonJS",
+    "target": "ES5",
     "outDir": "./dist",
     "rootDir": ".",
     "resolveJsonModule": true
