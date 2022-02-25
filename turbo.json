@@ -1,11 +1,15 @@
 {
   "pipeline": {
+    "generate": {
+      "cache": false
+    },
     "build": {
       "outputs": [
         "dist/**",
         ".next/**"
       ],
       "dependsOn": [
+        "^generate",
         "^build"
       ]
     },
