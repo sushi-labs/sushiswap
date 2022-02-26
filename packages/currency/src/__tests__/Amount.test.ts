@@ -2,7 +2,7 @@ import { Native } from '../Native'
 import { Token } from '../Token'
 import { Amount } from '../Amount'
 
-import { Percent, JSBI, MaxUint256 } from 'math'
+import { Percent, JSBI, MAX_UINT256 } from 'math'
 
 describe('Amount', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
@@ -32,14 +32,14 @@ describe('Amount', () => {
   })
 
   it('token amount can be max uint256', () => {
-    const amount = Amount.fromRawAmount(new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }), MaxUint256)
-    expect(amount.quotient).toEqual(MaxUint256)
+    const amount = Amount.fromRawAmount(new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }), MAX_UINT256)
+    expect(amount.quotient).toEqual(MAX_UINT256)
   })
   it('token amount cannot exceed max uint256', () => {
     expect(() =>
       Amount.fromRawAmount(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        JSBI.add(MaxUint256, JSBI.BigInt(1)),
+        JSBI.add(MAX_UINT256, JSBI.BigInt(1)),
       ),
     ).toThrow('AMOUNT')
   })
@@ -47,7 +47,7 @@ describe('Amount', () => {
     expect(() =>
       Amount.fromFractionalAmount(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        JSBI.add(JSBI.multiply(MaxUint256, JSBI.BigInt(2)), JSBI.BigInt(2)),
+        JSBI.add(JSBI.multiply(MAX_UINT256, JSBI.BigInt(2)), JSBI.BigInt(2)),
         JSBI.BigInt(2),
       ),
     ).toThrow('AMOUNT')
@@ -55,10 +55,10 @@ describe('Amount', () => {
   it('token amount numerator can be gt. uint256 if denominator is gt. 1', () => {
     const amount = Amount.fromFractionalAmount(
       new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-      JSBI.add(MaxUint256, JSBI.BigInt(2)),
+      JSBI.add(MAX_UINT256, JSBI.BigInt(2)),
       2,
     )
-    expect(amount.numerator).toEqual(JSBI.add(JSBI.BigInt(2), MaxUint256))
+    expect(amount.numerator).toEqual(JSBI.add(JSBI.BigInt(2), MAX_UINT256))
   })
 
   describe('#toFixed', () => {
