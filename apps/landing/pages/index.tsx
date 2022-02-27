@@ -32,20 +32,18 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
     <>
       <div className="relative min-h-screen overflow-hidden bg-[#0D0415] ">
         <div className="relative pt-6">
-          <div className="absolute top-0 bottom-0 left-0 right-0">
-            <Image
-              width={1547}
-              height={809}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              src={background}
-              alt="Neon Street Background"
-              priority
-              unoptimized
-              placeholder="blur"
-            />
-          </div>
+          <Image
+            // width={1547}
+            // height={809}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            src={background}
+            alt="Neon Street Background"
+            priority
+            unoptimized
+            placeholder="blur"
+          />
           <Menu setIsOpen={setIsOpen} isOpen={isOpen} />
           <MobileMenu setIsOpen={setIsOpen} isOpen={isOpen} />
           <div className="relative max-w-2xl px-5 pt-6 mx-auto sm:px-4">
