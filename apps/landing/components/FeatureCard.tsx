@@ -1,6 +1,15 @@
 import Image from 'next/image'
+import { FC } from 'react'
 
-const FeatureCard = ({ imgUrl, marginLeft, title, description, paddingRight = false }) => {
+interface FeatureCard {
+  imgUrl: string
+  marginLeft?: boolean
+  title: string
+  description: string
+  paddingRight?: boolean
+}
+
+const FeatureCard: FC<FeatureCard> = ({ imgUrl, marginLeft, title, description, paddingRight = false }) => {
   return (
     <>
       <div className={`flex flex-row space-x-6 ` + (marginLeft && `ml-0 sm:ml-20`) + (paddingRight ? ` pr-10` : '')}>

@@ -1,4 +1,26 @@
-const ProductCard = ({ imgUrl, marginLeft, title, description, cta, ctaLink, customSize, paddingRight = false }) => {
+import { FC } from 'react'
+
+interface ProductCard {
+  imgUrl: string
+  marginLeft?: boolean
+  title: string
+  description: string
+  cta: string
+  ctaLink: string
+  customSize?: string
+  paddingRight?: boolean
+}
+
+const ProductCard: FC<ProductCard> = ({
+  imgUrl,
+  marginLeft,
+  title,
+  description,
+  cta,
+  ctaLink,
+  customSize,
+  paddingRight = false,
+}) => {
   return (
     <>
       <div className={`flex flex-row space-x-6 ` + (marginLeft && `ml-0 sm:ml-20`) + (paddingRight && ` pr-10`)}>
