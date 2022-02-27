@@ -240,7 +240,7 @@ export async function getStaticProps() {
           decimalPlaces: 0,
         },
         {
-          formatted: `$${millify(results[1].pairCount)}`,
+          formatted: `${millify(results[1].pairCount)}`,
           number: Number(results[1].pairCount),
           title: 'Total Pairs',
           decimalPlaces: 0,
