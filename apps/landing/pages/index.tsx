@@ -28,19 +28,23 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
 
   return (
     <>
-      <div className="relative min-h-screen overflow-hidden bg-[#0D0415]">
-        <div
-          className="relative pt-6"
-          style={{
-            backgroundImage: `url('https://raw.githubusercontent.com/sushiswap/sushi-content/master/images/neon-street.jpg')`,
-            backgroundPosition: 'center -5rem',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
+      <div className="relative min-h-screen overflow-hidden bg-[#0D0415] ">
+        <div className="relative pt-6">
+          <div className="absolute top-0 bottom-0 left-0 right-0">
+            <Image
+              width={1547}
+              height={809}
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center"
+              src="https://raw.githubusercontent.com/sushiswap/sushi-content/master/images/neon-street.jpg"
+              alt="Neon Street Background"
+              priority
+            />
+          </div>
           <Menu setIsOpen={setIsOpen} isOpen={isOpen} />
           <MobileMenu setIsOpen={setIsOpen} isOpen={isOpen} />
-          <div className="max-w-2xl px-5 pt-6 mx-auto sm:px-4">
+          <div className="relative max-w-2xl px-5 pt-6 mx-auto sm:px-4">
             <div className="flex flex-col items-center space-y-4">
               <Image
                 priority
@@ -82,7 +86,7 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
               </div>
             </div>
           </div>
-          <div className="max-w-5xl px-4 pt-16 pb-8 mx-auto">
+          <div className="relative max-w-5xl px-4 pt-16 pb-8 mx-auto">
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {stats &&
                 stats.map((stat) => {
@@ -98,6 +102,7 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
                 })}
             </div>
           </div>
+          {/* Closing */}
         </div>
         <div className="max-w-3xl px-4 pt-10 pb-4 mx-auto sm:pt-28">
           <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]" ref={ref}>
