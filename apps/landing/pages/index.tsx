@@ -16,45 +16,8 @@ interface StateEntry {
   decimalPlaces: number
 }
 
-const Landing = () => {
+const Landing = ({ stats }: { stats: StateEntry[] }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [stats, setStats] = useState<StateEntry[]>()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const results = await Promise.all([sushiData.sushi.priceUSD(), sushiData.exchange.factory()])
-      const state = [
-        {
-          formatted: `$${millify(results[0])}`,
-          number: Number(results[0]),
-          title: '$SUSHI Price',
-          decimalPlaces: 2,
-        },
-        {
-          formatted: `$${millify(results[1].liquidityUSD)}`,
-          number: Number(results[1].liquidityUSD),
-          title: 'Total Liquidity',
-          decimalPlaces: 0,
-        },
-        {
-          formatted: `$${millify(results[1].volumeUSD)}`,
-          number: Number(results[1].volumeUSD),
-          title: 'Total Volume',
-          decimalPlaces: 0,
-        },
-        {
-          formatted: `$${millify(results[1].pairCount)}`,
-          number: Number(results[1].pairCount),
-          title: 'Total Pairs',
-          decimalPlaces: 0,
-        },
-      ]
-      setStats(state)
-    }
-
-    void fetchData()
-  }, [])
-
   const ref = React.createRef<HTMLDivElement>()
   const handleClick = () =>
     ref.current.scrollIntoView({
@@ -250,6 +213,41 @@ const Landing = () => {
       <Footer />
     </>
   )
+}
+
+// This function runs only on the server side
+export async function getStaticProps() {
+  const results = await Promise.all([sushiData.sushi.priceUSD(), sushiData.exchange.factory()])
+  return {
+    props: {
+      stats: [
+        {
+          formatted: `$${millify(results[0])}`,
+          number: Number(results[0]),
+          title: '$SUSHI Price',
+          decimalPlaces: 2,
+        },
+        {
+          formatted: `$${millify(results[1].liquidityUSD)}`,
+          number: Number(results[1].liquidityUSD),
+          title: 'Total Liquidity',
+          decimalPlaces: 0,
+        },
+        {
+          formatted: `$${millify(results[1].volumeUSD)}`,
+          number: Number(results[1].volumeUSD),
+          title: 'Total Volume',
+          decimalPlaces: 0,
+        },
+        {
+          formatted: `$${millify(results[1].pairCount)}`,
+          number: Number(results[1].pairCount),
+          title: 'Total Pairs',
+          decimalPlaces: 0,
+        },
+      ],
+    },
+  }
 }
 
 export default Landing
