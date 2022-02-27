@@ -115,7 +115,7 @@ const Landing = () => {
               </div>
             </div>
           </div>
-          <div className="max-w-5xl px-4 pt-16 mx-auto">
+          <div className="max-w-5xl px-4 pt-16 pb-8 mx-auto">
             <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {stats &&
                 stats.map((stat) => {
@@ -138,7 +138,7 @@ const Landing = () => {
           </div>
         </div>
         <div className="pt-10 mx-auto 2xl:max-w-screen-2xl">
-          <div className="flex flex-row items-center px-10 pt-20 pb-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
+          <div className="flex flex-row items-center justify-center px-10 pt-20 pb-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/chopsticks.png"
               marginLeft={true}
@@ -148,17 +148,6 @@ const Landing = () => {
               }
               cta="Enter Exchange"
               ctaLink="https://app.sushi.com"
-              customSize="w-20 h-22"
-            />
-            <ProductCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/chopsticks.png"
-              marginLeft={true}
-              title="Limit Order"
-              description={
-                'The most competitive rates for DeFi bluechips anywhere. Switch to other chains in one click.'
-              }
-              cta="Enter Limit Order"
-              ctaLink="https://app.sushi.com/limit-order"
               customSize="w-20 h-22"
             />
             <ProductCard
@@ -193,7 +182,7 @@ const Landing = () => {
           </div>
         </div>
         <div className="pt-10 mx-auto 2xl:max-w-screen-2xl">
-          <div className="flex flex-row items-center px-10 py-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
+          <div className="flex flex-row items-center justify-center px-10 py-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
             <FeatureCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/wallet.png"
               marginLeft={true}
