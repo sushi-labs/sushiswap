@@ -14,6 +14,7 @@ const Menu = ({ setIsOpen, isOpen }) => {
                 className="w-auto max-h-8 sm:max-h-10"
                 src={'/logo.png'}
                 unoptimized
+                priority
                 alt="Logo"
               />
             </Link>

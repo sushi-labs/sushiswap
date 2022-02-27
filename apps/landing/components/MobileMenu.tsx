@@ -26,7 +26,7 @@ const MobileMenu = ({ setIsOpen, isOpen }) => {
             >
               <div className="flex items-center justify-between px-5 pt-4">
                 <Link href="/" passHref aria-label="Home">
-                  <Image width={32} height={32} className="w-auto h-8" src={'/logo.png'} alt="Logo" />
+                  <Image width={32} height={32} className="w-auto h-8" src={'/logo.png'} alt="Logo" priority />
                 </Link>
                 <div className="-mr-2">
                   <button
