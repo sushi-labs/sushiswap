@@ -54,11 +54,9 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
                 height={195}
                 width={208}
                 className="w-32 mx-auto sm:w-52"
-                src={thicker}
+                src="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/thicker-neon.png"
                 alt="Neon Sushi Logo"
                 priority
-                unoptimized
-                placeholder="blur"
               />
               <div className="text-4xl font-semibold text-center text-white sm:text-5xl max-w-[698px]">
                 Be a DeFi Chef with Sushi.
