@@ -1,6 +1,5 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
-
 import Big from './Big'
 import BigintIsh from './BigintIsh'
 import Rounding from './Rounding'

@@ -9,8 +9,8 @@
         ".next/**"
       ],
       "dependsOn": [
-        "^generate",
-        "^build"
+        "^build",
+        "^generate"
       ]
     },
     "test": {
@@ -18,14 +18,14 @@
         "coverage/**"
       ],
       "dependsOn": [
-        "build"
+        "^build"
       ]
     },
     "lint": {
+      "outputs": [],
       "dependsOn": [
-        "build"
-      ],
-      "outputs": []
+        "^build"
+      ]  
     },
     "dev": {
       "cache": false

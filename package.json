@@ -8,9 +8,10 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "test": "turbo run test --parallel",
+    "dev": "turbo run dev --no-cache --parallel --continue",
     "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\""
   },
   "devDependencies": {

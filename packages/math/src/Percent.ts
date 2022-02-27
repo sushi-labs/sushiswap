@@ -1,7 +1,7 @@
+import JSBI from 'jsbi'
 import BigintIsh from './BigintIsh'
 import Fraction from './Fraction'
 import Rounding from './Rounding'
-import JSBI from 'jsbi'
 
 const ONE_HUNDRED = new Fraction(JSBI.BigInt(100))
 
