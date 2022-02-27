@@ -33,8 +33,6 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
       <div className="relative min-h-screen overflow-hidden bg-[#0D0415] ">
         <div className="relative pt-6">
           <Image
-            // width={1547}
-            // height={809}
             layout="fill"
             objectFit="cover"
             objectPosition="center"

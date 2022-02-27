@@ -16,7 +16,7 @@ const MobileMenu = ({ setIsOpen, isOpen }) => {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <div className="absolute inset-x-0 top-0 p-2 transition origin-top-right transform md:hidden">
+        <div className="absolute inset-x-0 top-0 z-50 p-2 transition origin-top-right transform md:hidden">
           <div className="rounded-lg shadow-md">
             <div
               className="overflow-hidden rounded-lg shadow-xs"
