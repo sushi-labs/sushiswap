@@ -2,6 +2,7 @@ import React from 'react'
 import { Transition } from '@headlessui/react'
 import Link from 'next/link'
 import Image from 'next/image'
+import logo from '../public/logo.png'
 
 const MobileMenu = ({ setIsOpen, isOpen }) => {
   return (
@@ -26,7 +27,7 @@ const MobileMenu = ({ setIsOpen, isOpen }) => {
             >
               <div className="flex items-center justify-between px-5 pt-4">
                 <Link href="/" passHref aria-label="Home">
-                  <Image width={32} height={32} className="w-auto h-8" src={'/logo.png'} alt="Logo" priority />
+                  <Image width={32} height={32} className="w-auto h-8" src={logo} alt="Logo" priority unoptimized />
                 </Link>
                 <div className="-mr-2">
                   <button

@@ -1,6 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import logo from '../public/logo.png'
+
 const Menu = ({ setIsOpen, isOpen }) => {
   return (
     <>
@@ -12,10 +14,10 @@ const Menu = ({ setIsOpen, isOpen }) => {
                 width={40}
                 height={40}
                 className="w-auto max-h-8 sm:max-h-10"
-                src={'/logo.png'}
-                unoptimized
+                src={logo}
                 priority
                 alt="Logo"
+                unoptimized
               />
             </Link>
             <Link href="/">

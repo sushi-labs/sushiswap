@@ -9,6 +9,8 @@ import FeatureCard from '../components/FeatureCard'
 import PartnerCard from '../components/PartnerCard'
 import millify from 'millify'
 import Image from 'next/image'
+import background from '../public/neon-street.jpg'
+import thicker from '../public/thicker-neon.png'
 
 interface StateEntry {
   formatted: string
@@ -37,9 +39,11 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
               layout="fill"
               objectFit="cover"
               objectPosition="center"
-              src="https://raw.githubusercontent.com/sushiswap/sushi-content/master/images/neon-street.jpg"
+              src={background}
               alt="Neon Street Background"
               priority
+              unoptimized
+              placeholder="blur"
             />
           </div>
           <Menu setIsOpen={setIsOpen} isOpen={isOpen} />
@@ -47,12 +51,14 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
           <div className="relative max-w-2xl px-5 pt-6 mx-auto sm:px-4">
             <div className="flex flex-col items-center space-y-4">
               <Image
-                priority
                 height={195}
                 width={208}
                 className="w-32 mx-auto sm:w-52"
-                src="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/thicker-neon.png"
+                src={thicker}
                 alt="Neon Sushi Logo"
+                priority
+                unoptimized
+                placeholder="blur"
               />
               <div className="text-4xl font-semibold text-center text-white sm:text-5xl max-w-[698px]">
                 Be a DeFi Chef with Sushi.
