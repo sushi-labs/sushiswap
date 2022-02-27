@@ -32,6 +32,15 @@
     },
     "clean": {
       "cache": false
+    },
+    "root#build": {
+      "dependsOn": [
+        "^build",
+        "$ANALYTICS_URL",
+        "$BLOG_URL",
+        "$DOCS_URL"
+      ],
+      "outputs": [".next/**"]
     }
   }
 }
