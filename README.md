@@ -8,7 +8,7 @@ https://pnpm.io/installation
 
 ### Install
 
-pnpn install
+pnpm install
 
 ### Execute
 
