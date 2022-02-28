@@ -739,10 +739,10 @@
   dependencies:
     antlr4ts "^0.5.0-alpha.4"
 
-"@sushiswap/core-sdk@1.0.0-canary.70":
-  version "1.0.0-canary.70"
-  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.70.tgz#fac21b830b5b30a26f6d33b10fbab515006a7227"
-  integrity sha512-OC+kGcUc4DX2y/qXNgu9Io77EItlY2KAq1PPY7EaShf3KZ1P6ZshZ7PbzeBbcKYzxJWQF055yvtTkfp6r3vI8Q==
+"@sushiswap/core-sdk@1.0.0-canary.77":
+  version "1.0.0-canary.77"
+  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.77.tgz#f579841c1a653d5dccb9cc6e928da81d5fdd2f97"
+  integrity sha512-1Lx8kpZfRZfGBfXyFHIr7OGpfMVqEaJKk9Ue6sdZ/szJhu55b51FHAGqmpKDaySAzKhunfSyH4t0+pQ0083FEA==
   dependencies:
     "@ethersproject/address" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"
