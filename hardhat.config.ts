@@ -124,7 +124,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gas: 5198000,
-      gasMultiplier: 2,
+      gasMultiplier: 4,
     },
     fantom: {
       url: "https://rpcapi.fantom.network",
@@ -221,6 +221,7 @@ const config: HardhatUserConfig = {
       chainId: 1666600000,
       live: true,
       saveDeployments: true,
+      gasMultiplier: 2,
     },
     "harmony-testnet": {
       url: "https://api.s0.b.hmny.io",
@@ -308,6 +309,20 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    telos: {
+      url: "https://rpc1.us.telos.net/evm",
+      accounts,
+      chainId: 40,
+      live: true,
+      saveDeployments: true,
+    },
+    moonbeam: {
+      url: "https://rpc.api.moonbeam.network",
+      accounts,
+      chainId: 1284,
+      live: true,
+      saveDeployments: true,
+    },
   },
   paths: {
     artifacts: "artifacts",
@@ -354,7 +369,5 @@ const config: HardhatUserConfig = {
     },
   },
 }
-
-
 
 export default config
