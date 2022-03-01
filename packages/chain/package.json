@@ -1,0 +1,31 @@
+{
+  "name": "chain",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
+  "files": [
+    "dist/**"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "pnpm run generate",
+    "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
+    "test": "jest",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "lint": "TIMING=1 eslint src --fix",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "config": "workspace:*",
+    "jest": "^27.5.1",
+    "eslint": "^8.10.0",
+    "typescript": "^4.6.2"
+  },
+  "jest": {
+    "preset": "config/jest/node"
+  }
+}

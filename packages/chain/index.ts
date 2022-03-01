@@ -1,3 +1,5 @@
+import chains from './chains.json'
+
 export interface Chain {
   name: string
   chain: string
@@ -7,8 +9,8 @@ export interface Chain {
   nativeCurrency: NativeCurrency
   infoURL: string
   shortName: string
-  chainID: number
-  networkID: number
+  chainId: number
+  networkId: number
   slip44?: number
   ens?: Ens
   explorers?: Explorer[]
@@ -59,3 +61,10 @@ export enum Type {
   L2 = 'L2',
   Shard = 'shard',
 }
+
+export class Chain implements Chain {
+  //
+}
+
+// Chain Id => Chain mapping
+export default Object.fromEntries((chains as Chain[]).map((data) => [data.chainId, data]))
