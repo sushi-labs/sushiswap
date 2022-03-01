@@ -25,5 +25,8 @@ describe('Currency', () => {
         t0.equals(new Token({ chainId: 1, address: ADDRESS_ZERO, decimals: 18, symbol: 'symbol', name: 'name' })),
       ).toStrictEqual(true)
     })
+    it('throws if chain id is not known', () => {
+      expect(() => Native.onChain(Number.MAX_SAFE_INTEGER)).toThrow('CHAINS')
+    })
   })
 })

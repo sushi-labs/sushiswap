@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import CHAIN from 'chains'
+import CHAIN from 'chain'
 import { Currency } from './Currency'
 import { Token } from './Token'
 
