@@ -20,7 +20,7 @@ export const MenuButton: FC<MenuButton> = forwardRef<HTMLDivElement, MenuButton>
           )}
         >
           {children}
-          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+          <ChevronDownIcon className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
         </HeadlessMenu.Button>
       </div>
     )

@@ -1,6 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['config', 'chains', 'wallet-connector'])
+const withTranspileModules = transpileModules(['chain', 'wallet-connector'])
 
 export default withTranspileModules({
   reactStrictMode: true,

@@ -15,8 +15,11 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\""
   },
   "devDependencies": {
+    "eslint": "8.10.0",
     "prettier": "^2.5.1",
-    "turbo": "latest"
+    "turbo": "latest",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3"
   },
   "engines": {
     "npm": ">=7.0.0",
