@@ -10,7 +10,7 @@
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
     "zustand": "^3.7.0",
-    "chains": "workspace:*"
+    "chain": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
