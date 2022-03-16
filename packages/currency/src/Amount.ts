@@ -1,9 +1,9 @@
 import invariant from 'tiny-invariant'
 import { JSBI, Fraction, Big, BigintIsh, Rounding, MAX_UINT256, ONE, ZERO } from 'math'
-import { Native } from './Native'
 import { Token } from './Token'
+import { Type } from './Type'
 
-export class Amount<T extends Native | Token> extends Fraction {
+export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
 
@@ -12,7 +12,7 @@ export class Amount<T extends Native | Token> extends Fraction {
    * @param currency the currency in the amount
    * @param rawAmount the raw token or ether amount
    */
-  public static fromRawAmount<T extends Native | Token>(currency: T, rawAmount: BigintIsh): Amount<T> {
+  public static fromRawAmount<T extends Type>(currency: T, rawAmount: BigintIsh): Amount<T> {
     return new Amount(currency, rawAmount)
   }
 
@@ -33,7 +33,7 @@ export class Amount<T extends Native | Token> extends Fraction {
    * @param numerator the numerator of the fractional token amount
    * @param denominator the denominator of the fractional token amount
    */
-  public static fromFractionalAmount<T extends Native | Token>(
+  public static fromFractionalAmount<T extends Type>(
     currency: T,
     numerator: BigintIsh,
     denominator: BigintIsh,

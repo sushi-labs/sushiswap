@@ -1,8 +1,7 @@
 import invariant from 'tiny-invariant'
 import { getAddress } from '@ethersproject/address'
 import { Currency } from './Currency'
-import { Native } from './Native'
-// import { Currency } from './currency'
+import { Type } from './Type'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
@@ -28,7 +27,7 @@ export class Token extends Currency {
    * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
    * @param other other token to compare
    */
-  public equals(other: Native | Token): boolean {
+  public equals(other: Type): boolean {
     return other.isToken && this.chainId === other.chainId && this.address === other.address
   }
 

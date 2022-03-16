@@ -2,6 +2,7 @@ import invariant from 'tiny-invariant'
 import CHAIN from 'chain'
 import { Currency } from './Currency'
 import { Token } from './Token'
+import { Type } from './Type'
 
 export const WNATIVE: Record<number, Token> = {
   [1]: new Token({
@@ -47,7 +48,7 @@ export class Native extends Currency {
     return (this.cache[chainId] = new Native({ chainId, decimals, name, symbol }))
   }
 
-  public equals(other: Native | Token): boolean {
+  public equals(other: Type): boolean {
     return other.isNative && other.chainId === this.chainId
   }
 }
