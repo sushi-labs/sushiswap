@@ -10,7 +10,7 @@
     "dist/**"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "dev": "tsc -w",
     "build": "tsc",
     "lint": "TIMING=1 eslint src --fix",
