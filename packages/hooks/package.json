@@ -17,8 +17,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^react@18.0.0-rc.1",
-    "react-dom": "^react@18.0.0-rc.1"
+    "react": "^18.0.0-rc.1",
+    "react-dom": "^18.0.0-rc.1"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
