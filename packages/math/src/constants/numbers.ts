@@ -13,8 +13,11 @@ export const _1000 = JSBI.BigInt(1000)
 export const _10000 = JSBI.BigInt(10000)
 
 export const _1e18 = JSBI.BigInt(1e18)
-
-export const MAX_UINT256 = JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+export const _1e12 = JSBI.BigInt(1e12)
+export const _1e9 = JSBI.BigInt(1e9)
+export const _1e6 = JSBI.BigInt(1e6)
 
 export const MAX_SAFE_INTEGER = JSBI.BigInt(Number.MAX_SAFE_INTEGER)
+export const MAX_UINT256 = JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
