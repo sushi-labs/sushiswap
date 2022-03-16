@@ -3,12 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3003",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "next build --profile",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@web3-react/core": "8.0.10-beta.0",
+    "@web3-react/network": "8.0.5-beta.0",
+    "chain": "workspace:*",
     "next": "12.0.10",
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
@@ -17,6 +20,7 @@
   "devDependencies": {
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
+    "@web3-react/types": "8.0.3-beta.0",
     "config": "workspace:*",
     "eslint": "8.10.0",
     "next-transpile-modules": "9.0.0",
