@@ -29,8 +29,8 @@
     "typechain": "^5.2.0"
   },
   "devDependencies": {
-    "@types/node": "^17.x",
-    "@types/react": "^17.x",
+    "@types/node": "17.0.21",
+    "@types/react": "17.0.39",
     "@web3-react/types": "8.0.10-beta.0",
     "config": "workspace:*",
     "eslint": "8.10.0",

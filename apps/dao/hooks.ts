@@ -90,13 +90,13 @@ export function getProvider(chainId: ChainId) {
 
 export function getInfuraChainName(chainId: ChainId) {
   switch (chainId) {
-    case ChainId.MAINNET:
+    case ChainId.ETHEREUM:
       return 'homestead'
     case ChainId.RINKEBY:
       return 'rinkeby'
     case ChainId.ROPSTEN:
       return 'ropsten'
-    case ChainId.GOERLI:
+    case ChainId.GÖRLI:
       return 'goerli'
     case ChainId.KOVAN:
       return 'kovan'

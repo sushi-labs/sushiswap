@@ -13,3 +13,7 @@ Dao app
     - [ ] Unexpected Signers
         - by name if previously known, address if not
         - negative color
+
+## Refs
+
+- https://gnosis.github.io/safe-react-gateway-sdk/modules.html#SafeInfo
