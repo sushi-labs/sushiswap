@@ -3,7 +3,7 @@
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
     "module": "CommonJS",
     "target": "ES5",
     "outDir": "./dist",

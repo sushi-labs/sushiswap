@@ -18,7 +18,7 @@ const SelectRoot: FC<SelectProps> = ({ value, onChange, disabled, horizontal, bu
       {({ open }) => (
         <>
           {label}
-          <div className="mt-1 relative">
+          <div className="relative mt-1">
             {button}
             <Transition
               as={Fragment}

@@ -1,5 +1,5 @@
 {
-  "name": "currency",
+  "name": "hooks",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -16,11 +16,9 @@
     "lint": "TIMING=1 eslint src --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
-  "dependencies": {
-    "@ethersproject/address": "^5.5.0",
-    "tiny-invariant": "^1.2.0",
-    "chain": "workspace:*",
-    "math": "workspace:*"
+  "peerDependencies": {
+    "react": "^react@18.0.0-rc.1",
+    "react-dom": "^react@18.0.0-rc.1"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
