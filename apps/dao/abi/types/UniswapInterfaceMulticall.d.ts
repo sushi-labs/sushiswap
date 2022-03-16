@@ -23,7 +23,7 @@ interface UniswapInterfaceMulticallInterface extends ethers.utils.Interface {
   functions: {
     "getCurrentBlockTimestamp()": FunctionFragment;
     "getEthBalance(address)": FunctionFragment;
-    "multicall((address,uint256,bytes)[])": FunctionFragment;
+    "multicall(tuple[])": FunctionFragment;
   };
 
   encodeFunctionData(

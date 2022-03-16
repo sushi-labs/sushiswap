@@ -10,10 +10,10 @@ const providerCache: Partial<Record<ChainId, providers.JsonRpcProvider>> = {}
 const MulticallInterface = new utils.Interface(MulticallABI)
 const ERC20Interface = new utils.Interface(ERC20_ABI)
 
-export function useContract(chainId: ChainId): UniswapInterfaceMulticall {
+export function useContract(chainId: ChainId) {
   return useMemo(() => {
     return new Contract(MULTICALL_ADDRESS, MulticallABI, getProvider(chainId)) as UniswapInterfaceMulticall
-  }, [])
+  }, [chainId]) as UniswapInterfaceMulticall
 }
 
 export function useLatestBlock(provider: providers.JsonRpcProvider) {

@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 import { useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { ChainId } from '../constants'
-import { getProvider, useCurrentBlockTimestampMultichain, useLatestBlock } from '../hooks'
+import { getProvider, useLatestBlock } from '../hooks'
 import { store } from '../store'
 import { Updater } from '../Updater'
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
