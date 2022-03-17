@@ -69,7 +69,7 @@
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.10.1",
-    "@uniswap/v2-core": "git://github.com/uniswap/uniswap-v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
+    "@uniswap/v2-core": "https://github.com/Uniswap/v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
     "chai": "^4.3.4",
     "cross-env": "^7.0.0",
     "dotenv": "^8.2.0",
