@@ -98,6 +98,7 @@ importers:
       '@ethersproject/bignumber': ^5.6.0
       '@ethersproject/experimental': ^5.6.0
       '@ethersproject/providers': ^5.6.1
+      '@gnosis.pm/safe-react-gateway-sdk': 2.8.6
       '@reduxjs/toolkit': ^1.8.0
       '@typechain/ethers-v5': ^7.2.0
       '@types/node': 17.0.21
@@ -116,6 +117,7 @@ importers:
       react: ^18.0.0-rc.1
       react-dom: ^18.0.0-rc.1
       react-redux: ^7.2.6
+      swr: ^1.2.2
       typechain: ^5.2.0
       typescript: ^4.6.2
       ui: workspace:*
@@ -123,6 +125,7 @@ importers:
       '@ethersproject/bignumber': 5.6.0
       '@ethersproject/experimental': 5.6.0
       '@ethersproject/providers': 5.6.1
+      '@gnosis.pm/safe-react-gateway-sdk': 2.8.6
       '@reduxjs/toolkit': 1.8.0_5b6a40f30f5a9b0dae26241d458eaaad
       '@typechain/ethers-v5': 7.2.0_fc2a39fbdec055b05ae1f8210697df90
       '@uniswap/redux-multicall': 1.1.0_c9ff65056fb281f634ccd18451830e84
@@ -135,6 +138,7 @@ importers:
       react: 18.0.0-rc.2-next-b9de50d2f-20220308
       react-dom: 18.0.0-rc.2-next-b9de50d2f-20220308_b6535743ded9d6e615b152ed8c889920
       react-redux: 7.2.6_3b3c4dafaa7e2bc132922eb3215c558b
+      swr: 1.2.2_b6535743ded9d6e615b152ed8c889920
       typechain: 5.2.0_typescript@4.6.2
       ui: link:../../packages/ui
     devDependencies:
@@ -1136,6 +1140,14 @@ packages:
       '@ethersproject/logger': 5.6.0
       '@ethersproject/properties': 5.6.0
       '@ethersproject/strings': 5.6.0
+    dev: false
+
+  /@gnosis.pm/safe-react-gateway-sdk/2.8.6:
+    resolution: {integrity: sha512-XPDOGQtUc1AON/xM4y5mGWMQ/VVaajRXVEdVmKCWOboK0bk1spkuD5oyo9hF0SB3f+lClIagb9PojOurjjWogw==}
+    dependencies:
+      isomorphic-unfetch: 3.1.0
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /@headlessui/react/1.5.0:
@@ -3756,6 +3768,15 @@ packages:
     resolution: {integrity: sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=}
     dev: true
 
+  /isomorphic-unfetch/3.1.0:
+    resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
+    dependencies:
+      node-fetch: 2.6.7
+      unfetch: 4.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /isomorphic-ws/4.0.1_ws@7.2.0:
     resolution: {integrity: sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==}
     peerDependencies:
@@ -5423,6 +5444,14 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  /swr/1.2.2_b6535743ded9d6e615b152ed8c889920:
+    resolution: {integrity: sha512-ky0BskS/V47GpW8d6RU7CPsr6J8cr7mQD6+do5eky3bM0IyJaoi3vO8UhvrzJaObuTlGhPl2szodeB2dUd76Xw==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.0.0-rc.2-next-b9de50d2f-20220308
+    dev: false
+
   /symbol-observable/1.2.0:
     resolution: {integrity: sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==}
     engines: {node: '>=0.10.0'}
@@ -5865,6 +5894,10 @@ packages:
       has-bigints: 1.0.1
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
+    dev: false
+
+  /unfetch/4.2.0:
+    resolution: {integrity: sha512-F9p7yYCn6cIW9El1zi0HI6vqpeIvBsr3dSuRO6Xuppb1u5rXpCPmMvLSyECLhybr9isec8Ohl0hPekMVrEinDA==}
     dev: false
 
   /universalify/0.1.2:

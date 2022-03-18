@@ -4,6 +4,7 @@ export default function Dao({ chainIds, blockNumbers }) {
   console.log({ blockNumbers, chainIds })
   const blockTimestamps = useCurrentBlockTimestampMultichain(chainIds, blockNumbers)
   const isReady = blockTimestamps.filter((b) => !!b).length >= 2
+
   return (
     <main style={{ background: 'blue' }}>
       <h1>Dao</h1>
