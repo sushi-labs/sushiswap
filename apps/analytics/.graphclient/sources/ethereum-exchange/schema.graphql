@@ -1,0 +1,3051 @@
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+"Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive."
+directive @entity on OBJECT
+
+"Defined a Subgraph ID for an object type"
+directive @subgraphId(id: String!) on OBJECT
+
+"creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+scalar ETHEREUM_BigDecimal
+
+scalar BigInt
+
+"""The block at which the query should be executed."""
+input ETHEREUM_Block_height {
+  """Value containing a block hash"""
+  hash: ETHEREUM_Bytes
+  """Value containing a block number"""
+  number: Int
+  """
+  Value containing the minimum block number. 
+  In the case of `number_gte`, the query will be executed on the latest block only if
+  the subgraph has progressed to or past the minimum block number.
+  Defaults to the latest block when omitted.
+  
+  """
+  number_gte: Int
+}
+
+type ETHEREUM_Bundle {
+  id: ID!
+  ethPrice: ETHEREUM_BigDecimal!
+}
+
+input ETHEREUM_Bundle_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ethPrice: ETHEREUM_BigDecimal
+  ethPrice_not: ETHEREUM_BigDecimal
+  ethPrice_gt: ETHEREUM_BigDecimal
+  ethPrice_lt: ETHEREUM_BigDecimal
+  ethPrice_gte: ETHEREUM_BigDecimal
+  ethPrice_lte: ETHEREUM_BigDecimal
+  ethPrice_in: [ETHEREUM_BigDecimal!]
+  ethPrice_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_Bundle_orderBy {
+  id
+  ethPrice
+}
+
+type ETHEREUM_Burn {
+  id: ID!
+  transaction: ETHEREUM_Transaction!
+  timestamp: BigInt!
+  pair: ETHEREUM_Pair!
+  liquidity: ETHEREUM_BigDecimal!
+  sender: ETHEREUM_Bytes
+  amount0: ETHEREUM_BigDecimal
+  amount1: ETHEREUM_BigDecimal
+  to: ETHEREUM_Bytes
+  logIndex: BigInt
+  amountUSD: ETHEREUM_BigDecimal
+  complete: Boolean!
+  feeTo: ETHEREUM_Bytes
+  feeLiquidity: ETHEREUM_BigDecimal
+}
+
+input ETHEREUM_Burn_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_not_contains: String
+  transaction_starts_with: String
+  transaction_not_starts_with: String
+  transaction_ends_with: String
+  transaction_not_ends_with: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  liquidity: ETHEREUM_BigDecimal
+  liquidity_not: ETHEREUM_BigDecimal
+  liquidity_gt: ETHEREUM_BigDecimal
+  liquidity_lt: ETHEREUM_BigDecimal
+  liquidity_gte: ETHEREUM_BigDecimal
+  liquidity_lte: ETHEREUM_BigDecimal
+  liquidity_in: [ETHEREUM_BigDecimal!]
+  liquidity_not_in: [ETHEREUM_BigDecimal!]
+  sender: ETHEREUM_Bytes
+  sender_not: ETHEREUM_Bytes
+  sender_in: [ETHEREUM_Bytes!]
+  sender_not_in: [ETHEREUM_Bytes!]
+  sender_contains: ETHEREUM_Bytes
+  sender_not_contains: ETHEREUM_Bytes
+  amount0: ETHEREUM_BigDecimal
+  amount0_not: ETHEREUM_BigDecimal
+  amount0_gt: ETHEREUM_BigDecimal
+  amount0_lt: ETHEREUM_BigDecimal
+  amount0_gte: ETHEREUM_BigDecimal
+  amount0_lte: ETHEREUM_BigDecimal
+  amount0_in: [ETHEREUM_BigDecimal!]
+  amount0_not_in: [ETHEREUM_BigDecimal!]
+  amount1: ETHEREUM_BigDecimal
+  amount1_not: ETHEREUM_BigDecimal
+  amount1_gt: ETHEREUM_BigDecimal
+  amount1_lt: ETHEREUM_BigDecimal
+  amount1_gte: ETHEREUM_BigDecimal
+  amount1_lte: ETHEREUM_BigDecimal
+  amount1_in: [ETHEREUM_BigDecimal!]
+  amount1_not_in: [ETHEREUM_BigDecimal!]
+  to: ETHEREUM_Bytes
+  to_not: ETHEREUM_Bytes
+  to_in: [ETHEREUM_Bytes!]
+  to_not_in: [ETHEREUM_Bytes!]
+  to_contains: ETHEREUM_Bytes
+  to_not_contains: ETHEREUM_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: ETHEREUM_BigDecimal
+  amountUSD_not: ETHEREUM_BigDecimal
+  amountUSD_gt: ETHEREUM_BigDecimal
+  amountUSD_lt: ETHEREUM_BigDecimal
+  amountUSD_gte: ETHEREUM_BigDecimal
+  amountUSD_lte: ETHEREUM_BigDecimal
+  amountUSD_in: [ETHEREUM_BigDecimal!]
+  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  complete: Boolean
+  complete_not: Boolean
+  complete_in: [Boolean!]
+  complete_not_in: [Boolean!]
+  feeTo: ETHEREUM_Bytes
+  feeTo_not: ETHEREUM_Bytes
+  feeTo_in: [ETHEREUM_Bytes!]
+  feeTo_not_in: [ETHEREUM_Bytes!]
+  feeTo_contains: ETHEREUM_Bytes
+  feeTo_not_contains: ETHEREUM_Bytes
+  feeLiquidity: ETHEREUM_BigDecimal
+  feeLiquidity_not: ETHEREUM_BigDecimal
+  feeLiquidity_gt: ETHEREUM_BigDecimal
+  feeLiquidity_lt: ETHEREUM_BigDecimal
+  feeLiquidity_gte: ETHEREUM_BigDecimal
+  feeLiquidity_lte: ETHEREUM_BigDecimal
+  feeLiquidity_in: [ETHEREUM_BigDecimal!]
+  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_Burn_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  liquidity
+  sender
+  amount0
+  amount1
+  to
+  logIndex
+  amountUSD
+  complete
+  feeTo
+  feeLiquidity
+}
+
+scalar ETHEREUM_Bytes
+
+type ETHEREUM_DayData {
+  id: ID!
+  date: Int!
+  factory: Factory!
+  volumeETH: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  untrackedVolume: ETHEREUM_BigDecimal!
+  liquidityETH: ETHEREUM_BigDecimal!
+  liquidityUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+}
+
+input ETHEREUM_DayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_not_contains: String
+  factory_starts_with: String
+  factory_not_starts_with: String
+  factory_ends_with: String
+  factory_not_ends_with: String
+  volumeETH: ETHEREUM_BigDecimal
+  volumeETH_not: ETHEREUM_BigDecimal
+  volumeETH_gt: ETHEREUM_BigDecimal
+  volumeETH_lt: ETHEREUM_BigDecimal
+  volumeETH_gte: ETHEREUM_BigDecimal
+  volumeETH_lte: ETHEREUM_BigDecimal
+  volumeETH_in: [ETHEREUM_BigDecimal!]
+  volumeETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  untrackedVolume: ETHEREUM_BigDecimal
+  untrackedVolume_not: ETHEREUM_BigDecimal
+  untrackedVolume_gt: ETHEREUM_BigDecimal
+  untrackedVolume_lt: ETHEREUM_BigDecimal
+  untrackedVolume_gte: ETHEREUM_BigDecimal
+  untrackedVolume_lte: ETHEREUM_BigDecimal
+  untrackedVolume_in: [ETHEREUM_BigDecimal!]
+  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
+  liquidityETH: ETHEREUM_BigDecimal
+  liquidityETH_not: ETHEREUM_BigDecimal
+  liquidityETH_gt: ETHEREUM_BigDecimal
+  liquidityETH_lt: ETHEREUM_BigDecimal
+  liquidityETH_gte: ETHEREUM_BigDecimal
+  liquidityETH_lte: ETHEREUM_BigDecimal
+  liquidityETH_in: [ETHEREUM_BigDecimal!]
+  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD: ETHEREUM_BigDecimal
+  liquidityUSD_not: ETHEREUM_BigDecimal
+  liquidityUSD_gt: ETHEREUM_BigDecimal
+  liquidityUSD_lt: ETHEREUM_BigDecimal
+  liquidityUSD_gte: ETHEREUM_BigDecimal
+  liquidityUSD_lte: ETHEREUM_BigDecimal
+  liquidityUSD_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum ETHEREUM_DayData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type Factory {
+  id: ID!
+  pairCount: BigInt!
+  volumeUSD: ETHEREUM_BigDecimal!
+  volumeETH: ETHEREUM_BigDecimal!
+  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  liquidityUSD: ETHEREUM_BigDecimal!
+  liquidityETH: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+  tokenCount: BigInt!
+  userCount: BigInt!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Token_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Token_filter): [ETHEREUM_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_HourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_HourData_filter): [ETHEREUM_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_DayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_DayData_filter): [ETHEREUM_DayData!]!
+}
+
+input ETHEREUM_Factory_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  pairCount: BigInt
+  pairCount_not: BigInt
+  pairCount_gt: BigInt
+  pairCount_lt: BigInt
+  pairCount_gte: BigInt
+  pairCount_lte: BigInt
+  pairCount_in: [BigInt!]
+  pairCount_not_in: [BigInt!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: ETHEREUM_BigDecimal
+  volumeETH_not: ETHEREUM_BigDecimal
+  volumeETH_gt: ETHEREUM_BigDecimal
+  volumeETH_lt: ETHEREUM_BigDecimal
+  volumeETH_gte: ETHEREUM_BigDecimal
+  volumeETH_lte: ETHEREUM_BigDecimal
+  volumeETH_in: [ETHEREUM_BigDecimal!]
+  volumeETH_not_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD: ETHEREUM_BigDecimal
+  liquidityUSD_not: ETHEREUM_BigDecimal
+  liquidityUSD_gt: ETHEREUM_BigDecimal
+  liquidityUSD_lt: ETHEREUM_BigDecimal
+  liquidityUSD_gte: ETHEREUM_BigDecimal
+  liquidityUSD_lte: ETHEREUM_BigDecimal
+  liquidityUSD_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidityETH: ETHEREUM_BigDecimal
+  liquidityETH_not: ETHEREUM_BigDecimal
+  liquidityETH_gt: ETHEREUM_BigDecimal
+  liquidityETH_lt: ETHEREUM_BigDecimal
+  liquidityETH_gte: ETHEREUM_BigDecimal
+  liquidityETH_lte: ETHEREUM_BigDecimal
+  liquidityETH_in: [ETHEREUM_BigDecimal!]
+  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+}
+
+enum ETHEREUM_Factory_orderBy {
+  id
+  pairCount
+  volumeUSD
+  volumeETH
+  untrackedVolumeUSD
+  liquidityUSD
+  liquidityETH
+  txCount
+  tokenCount
+  userCount
+  pairs
+  tokens
+  hourData
+  dayData
+}
+
+type ETHEREUM_HourData {
+  id: ID!
+  date: Int!
+  factory: Factory!
+  volumeETH: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  untrackedVolume: ETHEREUM_BigDecimal!
+  liquidityETH: ETHEREUM_BigDecimal!
+  liquidityUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+}
+
+input ETHEREUM_HourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_not_contains: String
+  factory_starts_with: String
+  factory_not_starts_with: String
+  factory_ends_with: String
+  factory_not_ends_with: String
+  volumeETH: ETHEREUM_BigDecimal
+  volumeETH_not: ETHEREUM_BigDecimal
+  volumeETH_gt: ETHEREUM_BigDecimal
+  volumeETH_lt: ETHEREUM_BigDecimal
+  volumeETH_gte: ETHEREUM_BigDecimal
+  volumeETH_lte: ETHEREUM_BigDecimal
+  volumeETH_in: [ETHEREUM_BigDecimal!]
+  volumeETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  untrackedVolume: ETHEREUM_BigDecimal
+  untrackedVolume_not: ETHEREUM_BigDecimal
+  untrackedVolume_gt: ETHEREUM_BigDecimal
+  untrackedVolume_lt: ETHEREUM_BigDecimal
+  untrackedVolume_gte: ETHEREUM_BigDecimal
+  untrackedVolume_lte: ETHEREUM_BigDecimal
+  untrackedVolume_in: [ETHEREUM_BigDecimal!]
+  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
+  liquidityETH: ETHEREUM_BigDecimal
+  liquidityETH_not: ETHEREUM_BigDecimal
+  liquidityETH_gt: ETHEREUM_BigDecimal
+  liquidityETH_lt: ETHEREUM_BigDecimal
+  liquidityETH_gte: ETHEREUM_BigDecimal
+  liquidityETH_lte: ETHEREUM_BigDecimal
+  liquidityETH_in: [ETHEREUM_BigDecimal!]
+  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD: ETHEREUM_BigDecimal
+  liquidityUSD_not: ETHEREUM_BigDecimal
+  liquidityUSD_gt: ETHEREUM_BigDecimal
+  liquidityUSD_lt: ETHEREUM_BigDecimal
+  liquidityUSD_gte: ETHEREUM_BigDecimal
+  liquidityUSD_lte: ETHEREUM_BigDecimal
+  liquidityUSD_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum ETHEREUM_HourData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type ETHEREUM_LiquidityPosition {
+  id: ID!
+  user: ETHEREUM_User!
+  pair: ETHEREUM_Pair!
+  liquidityTokenBalance: ETHEREUM_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot]!
+  block: Int!
+  timestamp: Int!
+}
+
+type ETHEREUM_LiquidityPositionSnapshot {
+  id: ID!
+  liquidityPosition: ETHEREUM_LiquidityPosition!
+  timestamp: Int!
+  block: Int!
+  user: ETHEREUM_User!
+  pair: ETHEREUM_Pair!
+  token0PriceUSD: ETHEREUM_BigDecimal!
+  token1PriceUSD: ETHEREUM_BigDecimal!
+  reserve0: ETHEREUM_BigDecimal!
+  reserve1: ETHEREUM_BigDecimal!
+  reserveUSD: ETHEREUM_BigDecimal!
+  liquidityTokenTotalSupply: ETHEREUM_BigDecimal!
+  liquidityTokenBalance: ETHEREUM_BigDecimal!
+}
+
+input ETHEREUM_LiquidityPositionSnapshot_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  liquidityPosition: String
+  liquidityPosition_not: String
+  liquidityPosition_gt: String
+  liquidityPosition_lt: String
+  liquidityPosition_gte: String
+  liquidityPosition_lte: String
+  liquidityPosition_in: [String!]
+  liquidityPosition_not_in: [String!]
+  liquidityPosition_contains: String
+  liquidityPosition_not_contains: String
+  liquidityPosition_starts_with: String
+  liquidityPosition_not_starts_with: String
+  liquidityPosition_ends_with: String
+  liquidityPosition_not_ends_with: String
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_not_contains: String
+  user_starts_with: String
+  user_not_starts_with: String
+  user_ends_with: String
+  user_not_ends_with: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  token0PriceUSD: ETHEREUM_BigDecimal
+  token0PriceUSD_not: ETHEREUM_BigDecimal
+  token0PriceUSD_gt: ETHEREUM_BigDecimal
+  token0PriceUSD_lt: ETHEREUM_BigDecimal
+  token0PriceUSD_gte: ETHEREUM_BigDecimal
+  token0PriceUSD_lte: ETHEREUM_BigDecimal
+  token0PriceUSD_in: [ETHEREUM_BigDecimal!]
+  token0PriceUSD_not_in: [ETHEREUM_BigDecimal!]
+  token1PriceUSD: ETHEREUM_BigDecimal
+  token1PriceUSD_not: ETHEREUM_BigDecimal
+  token1PriceUSD_gt: ETHEREUM_BigDecimal
+  token1PriceUSD_lt: ETHEREUM_BigDecimal
+  token1PriceUSD_gte: ETHEREUM_BigDecimal
+  token1PriceUSD_lte: ETHEREUM_BigDecimal
+  token1PriceUSD_in: [ETHEREUM_BigDecimal!]
+  token1PriceUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: ETHEREUM_BigDecimal
+  reserve0_not: ETHEREUM_BigDecimal
+  reserve0_gt: ETHEREUM_BigDecimal
+  reserve0_lt: ETHEREUM_BigDecimal
+  reserve0_gte: ETHEREUM_BigDecimal
+  reserve0_lte: ETHEREUM_BigDecimal
+  reserve0_in: [ETHEREUM_BigDecimal!]
+  reserve0_not_in: [ETHEREUM_BigDecimal!]
+  reserve1: ETHEREUM_BigDecimal
+  reserve1_not: ETHEREUM_BigDecimal
+  reserve1_gt: ETHEREUM_BigDecimal
+  reserve1_lt: ETHEREUM_BigDecimal
+  reserve1_gte: ETHEREUM_BigDecimal
+  reserve1_lte: ETHEREUM_BigDecimal
+  reserve1_in: [ETHEREUM_BigDecimal!]
+  reserve1_not_in: [ETHEREUM_BigDecimal!]
+  reserveUSD: ETHEREUM_BigDecimal
+  reserveUSD_not: ETHEREUM_BigDecimal
+  reserveUSD_gt: ETHEREUM_BigDecimal
+  reserveUSD_lt: ETHEREUM_BigDecimal
+  reserveUSD_gte: ETHEREUM_BigDecimal
+  reserveUSD_lte: ETHEREUM_BigDecimal
+  reserveUSD_in: [ETHEREUM_BigDecimal!]
+  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenTotalSupply: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_not: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_gt: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_lt: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_gte: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_lte: ETHEREUM_BigDecimal
+  liquidityTokenTotalSupply_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance: ETHEREUM_BigDecimal
+  liquidityTokenBalance_not: ETHEREUM_BigDecimal
+  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
+  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
+  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
+  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
+  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
+  id
+  liquidityPosition
+  timestamp
+  block
+  user
+  pair
+  token0PriceUSD
+  token1PriceUSD
+  reserve0
+  reserve1
+  reserveUSD
+  liquidityTokenTotalSupply
+  liquidityTokenBalance
+}
+
+input ETHEREUM_LiquidityPosition_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_not_contains: String
+  user_starts_with: String
+  user_not_starts_with: String
+  user_ends_with: String
+  user_not_ends_with: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  liquidityTokenBalance: ETHEREUM_BigDecimal
+  liquidityTokenBalance_not: ETHEREUM_BigDecimal
+  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
+  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
+  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
+  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
+  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+}
+
+enum ETHEREUM_LiquidityPosition_orderBy {
+  id
+  user
+  pair
+  liquidityTokenBalance
+  snapshots
+  block
+  timestamp
+}
+
+type ETHEREUM_Mint {
+  id: ID!
+  transaction: ETHEREUM_Transaction!
+  timestamp: BigInt!
+  pair: ETHEREUM_Pair!
+  to: ETHEREUM_Bytes!
+  liquidity: ETHEREUM_BigDecimal!
+  sender: ETHEREUM_Bytes
+  amount0: ETHEREUM_BigDecimal
+  amount1: ETHEREUM_BigDecimal
+  logIndex: BigInt
+  amountUSD: ETHEREUM_BigDecimal
+  feeTo: ETHEREUM_Bytes
+  feeLiquidity: ETHEREUM_BigDecimal
+}
+
+input ETHEREUM_Mint_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_not_contains: String
+  transaction_starts_with: String
+  transaction_not_starts_with: String
+  transaction_ends_with: String
+  transaction_not_ends_with: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  to: ETHEREUM_Bytes
+  to_not: ETHEREUM_Bytes
+  to_in: [ETHEREUM_Bytes!]
+  to_not_in: [ETHEREUM_Bytes!]
+  to_contains: ETHEREUM_Bytes
+  to_not_contains: ETHEREUM_Bytes
+  liquidity: ETHEREUM_BigDecimal
+  liquidity_not: ETHEREUM_BigDecimal
+  liquidity_gt: ETHEREUM_BigDecimal
+  liquidity_lt: ETHEREUM_BigDecimal
+  liquidity_gte: ETHEREUM_BigDecimal
+  liquidity_lte: ETHEREUM_BigDecimal
+  liquidity_in: [ETHEREUM_BigDecimal!]
+  liquidity_not_in: [ETHEREUM_BigDecimal!]
+  sender: ETHEREUM_Bytes
+  sender_not: ETHEREUM_Bytes
+  sender_in: [ETHEREUM_Bytes!]
+  sender_not_in: [ETHEREUM_Bytes!]
+  sender_contains: ETHEREUM_Bytes
+  sender_not_contains: ETHEREUM_Bytes
+  amount0: ETHEREUM_BigDecimal
+  amount0_not: ETHEREUM_BigDecimal
+  amount0_gt: ETHEREUM_BigDecimal
+  amount0_lt: ETHEREUM_BigDecimal
+  amount0_gte: ETHEREUM_BigDecimal
+  amount0_lte: ETHEREUM_BigDecimal
+  amount0_in: [ETHEREUM_BigDecimal!]
+  amount0_not_in: [ETHEREUM_BigDecimal!]
+  amount1: ETHEREUM_BigDecimal
+  amount1_not: ETHEREUM_BigDecimal
+  amount1_gt: ETHEREUM_BigDecimal
+  amount1_lt: ETHEREUM_BigDecimal
+  amount1_gte: ETHEREUM_BigDecimal
+  amount1_lte: ETHEREUM_BigDecimal
+  amount1_in: [ETHEREUM_BigDecimal!]
+  amount1_not_in: [ETHEREUM_BigDecimal!]
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: ETHEREUM_BigDecimal
+  amountUSD_not: ETHEREUM_BigDecimal
+  amountUSD_gt: ETHEREUM_BigDecimal
+  amountUSD_lt: ETHEREUM_BigDecimal
+  amountUSD_gte: ETHEREUM_BigDecimal
+  amountUSD_lte: ETHEREUM_BigDecimal
+  amountUSD_in: [ETHEREUM_BigDecimal!]
+  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  feeTo: ETHEREUM_Bytes
+  feeTo_not: ETHEREUM_Bytes
+  feeTo_in: [ETHEREUM_Bytes!]
+  feeTo_not_in: [ETHEREUM_Bytes!]
+  feeTo_contains: ETHEREUM_Bytes
+  feeTo_not_contains: ETHEREUM_Bytes
+  feeLiquidity: ETHEREUM_BigDecimal
+  feeLiquidity_not: ETHEREUM_BigDecimal
+  feeLiquidity_gt: ETHEREUM_BigDecimal
+  feeLiquidity_lt: ETHEREUM_BigDecimal
+  feeLiquidity_gte: ETHEREUM_BigDecimal
+  feeLiquidity_lte: ETHEREUM_BigDecimal
+  feeLiquidity_in: [ETHEREUM_BigDecimal!]
+  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_Mint_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  to
+  liquidity
+  sender
+  amount0
+  amount1
+  logIndex
+  amountUSD
+  feeTo
+  feeLiquidity
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum ETHEREUM_OrderDirection {
+  asc
+  desc
+}
+
+type ETHEREUM_Pair {
+  id: ID!
+  factory: Factory!
+  name: String!
+  token0: ETHEREUM_Token!
+  token1: ETHEREUM_Token!
+  reserve0: ETHEREUM_BigDecimal!
+  reserve1: ETHEREUM_BigDecimal!
+  totalSupply: ETHEREUM_BigDecimal!
+  reserveETH: ETHEREUM_BigDecimal!
+  reserveUSD: ETHEREUM_BigDecimal!
+  trackedReserveETH: ETHEREUM_BigDecimal!
+  token0Price: ETHEREUM_BigDecimal!
+  token1Price: ETHEREUM_BigDecimal!
+  volumeToken0: ETHEREUM_BigDecimal!
+  volumeToken1: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+  liquidityProviderCount: BigInt!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairHourData_filter): [ETHEREUM_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap!]!
+  timestamp: BigInt!
+  block: BigInt!
+}
+
+type ETHEREUM_PairDayData {
+  id: ID!
+  date: Int!
+  pair: ETHEREUM_Pair!
+  token0: ETHEREUM_Token!
+  token1: ETHEREUM_Token!
+  reserve0: ETHEREUM_BigDecimal!
+  reserve1: ETHEREUM_BigDecimal!
+  totalSupply: ETHEREUM_BigDecimal!
+  reserveUSD: ETHEREUM_BigDecimal!
+  volumeToken0: ETHEREUM_BigDecimal!
+  volumeToken1: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+}
+
+input ETHEREUM_PairDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_not_contains: String
+  token0_starts_with: String
+  token0_not_starts_with: String
+  token0_ends_with: String
+  token0_not_ends_with: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_not_contains: String
+  token1_starts_with: String
+  token1_not_starts_with: String
+  token1_ends_with: String
+  token1_not_ends_with: String
+  reserve0: ETHEREUM_BigDecimal
+  reserve0_not: ETHEREUM_BigDecimal
+  reserve0_gt: ETHEREUM_BigDecimal
+  reserve0_lt: ETHEREUM_BigDecimal
+  reserve0_gte: ETHEREUM_BigDecimal
+  reserve0_lte: ETHEREUM_BigDecimal
+  reserve0_in: [ETHEREUM_BigDecimal!]
+  reserve0_not_in: [ETHEREUM_BigDecimal!]
+  reserve1: ETHEREUM_BigDecimal
+  reserve1_not: ETHEREUM_BigDecimal
+  reserve1_gt: ETHEREUM_BigDecimal
+  reserve1_lt: ETHEREUM_BigDecimal
+  reserve1_gte: ETHEREUM_BigDecimal
+  reserve1_lte: ETHEREUM_BigDecimal
+  reserve1_in: [ETHEREUM_BigDecimal!]
+  reserve1_not_in: [ETHEREUM_BigDecimal!]
+  totalSupply: ETHEREUM_BigDecimal
+  totalSupply_not: ETHEREUM_BigDecimal
+  totalSupply_gt: ETHEREUM_BigDecimal
+  totalSupply_lt: ETHEREUM_BigDecimal
+  totalSupply_gte: ETHEREUM_BigDecimal
+  totalSupply_lte: ETHEREUM_BigDecimal
+  totalSupply_in: [ETHEREUM_BigDecimal!]
+  totalSupply_not_in: [ETHEREUM_BigDecimal!]
+  reserveUSD: ETHEREUM_BigDecimal
+  reserveUSD_not: ETHEREUM_BigDecimal
+  reserveUSD_gt: ETHEREUM_BigDecimal
+  reserveUSD_lt: ETHEREUM_BigDecimal
+  reserveUSD_gte: ETHEREUM_BigDecimal
+  reserveUSD_lte: ETHEREUM_BigDecimal
+  reserveUSD_in: [ETHEREUM_BigDecimal!]
+  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken0: ETHEREUM_BigDecimal
+  volumeToken0_not: ETHEREUM_BigDecimal
+  volumeToken0_gt: ETHEREUM_BigDecimal
+  volumeToken0_lt: ETHEREUM_BigDecimal
+  volumeToken0_gte: ETHEREUM_BigDecimal
+  volumeToken0_lte: ETHEREUM_BigDecimal
+  volumeToken0_in: [ETHEREUM_BigDecimal!]
+  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken1: ETHEREUM_BigDecimal
+  volumeToken1_not: ETHEREUM_BigDecimal
+  volumeToken1_gt: ETHEREUM_BigDecimal
+  volumeToken1_lt: ETHEREUM_BigDecimal
+  volumeToken1_gte: ETHEREUM_BigDecimal
+  volumeToken1_lte: ETHEREUM_BigDecimal
+  volumeToken1_in: [ETHEREUM_BigDecimal!]
+  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum ETHEREUM_PairDayData_orderBy {
+  id
+  date
+  pair
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+type ETHEREUM_PairHourData {
+  id: ID!
+  date: Int!
+  pair: ETHEREUM_Pair!
+  reserve0: ETHEREUM_BigDecimal!
+  reserve1: ETHEREUM_BigDecimal!
+  reserveUSD: ETHEREUM_BigDecimal!
+  volumeToken0: ETHEREUM_BigDecimal!
+  volumeToken1: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+}
+
+input ETHEREUM_PairHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  reserve0: ETHEREUM_BigDecimal
+  reserve0_not: ETHEREUM_BigDecimal
+  reserve0_gt: ETHEREUM_BigDecimal
+  reserve0_lt: ETHEREUM_BigDecimal
+  reserve0_gte: ETHEREUM_BigDecimal
+  reserve0_lte: ETHEREUM_BigDecimal
+  reserve0_in: [ETHEREUM_BigDecimal!]
+  reserve0_not_in: [ETHEREUM_BigDecimal!]
+  reserve1: ETHEREUM_BigDecimal
+  reserve1_not: ETHEREUM_BigDecimal
+  reserve1_gt: ETHEREUM_BigDecimal
+  reserve1_lt: ETHEREUM_BigDecimal
+  reserve1_gte: ETHEREUM_BigDecimal
+  reserve1_lte: ETHEREUM_BigDecimal
+  reserve1_in: [ETHEREUM_BigDecimal!]
+  reserve1_not_in: [ETHEREUM_BigDecimal!]
+  reserveUSD: ETHEREUM_BigDecimal
+  reserveUSD_not: ETHEREUM_BigDecimal
+  reserveUSD_gt: ETHEREUM_BigDecimal
+  reserveUSD_lt: ETHEREUM_BigDecimal
+  reserveUSD_gte: ETHEREUM_BigDecimal
+  reserveUSD_lte: ETHEREUM_BigDecimal
+  reserveUSD_in: [ETHEREUM_BigDecimal!]
+  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken0: ETHEREUM_BigDecimal
+  volumeToken0_not: ETHEREUM_BigDecimal
+  volumeToken0_gt: ETHEREUM_BigDecimal
+  volumeToken0_lt: ETHEREUM_BigDecimal
+  volumeToken0_gte: ETHEREUM_BigDecimal
+  volumeToken0_lte: ETHEREUM_BigDecimal
+  volumeToken0_in: [ETHEREUM_BigDecimal!]
+  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken1: ETHEREUM_BigDecimal
+  volumeToken1_not: ETHEREUM_BigDecimal
+  volumeToken1_gt: ETHEREUM_BigDecimal
+  volumeToken1_lt: ETHEREUM_BigDecimal
+  volumeToken1_gte: ETHEREUM_BigDecimal
+  volumeToken1_lte: ETHEREUM_BigDecimal
+  volumeToken1_in: [ETHEREUM_BigDecimal!]
+  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum ETHEREUM_PairHourData_orderBy {
+  id
+  date
+  pair
+  reserve0
+  reserve1
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+input ETHEREUM_Pair_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_not_contains: String
+  factory_starts_with: String
+  factory_not_starts_with: String
+  factory_ends_with: String
+  factory_not_ends_with: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_not_contains: String
+  token0_starts_with: String
+  token0_not_starts_with: String
+  token0_ends_with: String
+  token0_not_ends_with: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_not_contains: String
+  token1_starts_with: String
+  token1_not_starts_with: String
+  token1_ends_with: String
+  token1_not_ends_with: String
+  reserve0: ETHEREUM_BigDecimal
+  reserve0_not: ETHEREUM_BigDecimal
+  reserve0_gt: ETHEREUM_BigDecimal
+  reserve0_lt: ETHEREUM_BigDecimal
+  reserve0_gte: ETHEREUM_BigDecimal
+  reserve0_lte: ETHEREUM_BigDecimal
+  reserve0_in: [ETHEREUM_BigDecimal!]
+  reserve0_not_in: [ETHEREUM_BigDecimal!]
+  reserve1: ETHEREUM_BigDecimal
+  reserve1_not: ETHEREUM_BigDecimal
+  reserve1_gt: ETHEREUM_BigDecimal
+  reserve1_lt: ETHEREUM_BigDecimal
+  reserve1_gte: ETHEREUM_BigDecimal
+  reserve1_lte: ETHEREUM_BigDecimal
+  reserve1_in: [ETHEREUM_BigDecimal!]
+  reserve1_not_in: [ETHEREUM_BigDecimal!]
+  totalSupply: ETHEREUM_BigDecimal
+  totalSupply_not: ETHEREUM_BigDecimal
+  totalSupply_gt: ETHEREUM_BigDecimal
+  totalSupply_lt: ETHEREUM_BigDecimal
+  totalSupply_gte: ETHEREUM_BigDecimal
+  totalSupply_lte: ETHEREUM_BigDecimal
+  totalSupply_in: [ETHEREUM_BigDecimal!]
+  totalSupply_not_in: [ETHEREUM_BigDecimal!]
+  reserveETH: ETHEREUM_BigDecimal
+  reserveETH_not: ETHEREUM_BigDecimal
+  reserveETH_gt: ETHEREUM_BigDecimal
+  reserveETH_lt: ETHEREUM_BigDecimal
+  reserveETH_gte: ETHEREUM_BigDecimal
+  reserveETH_lte: ETHEREUM_BigDecimal
+  reserveETH_in: [ETHEREUM_BigDecimal!]
+  reserveETH_not_in: [ETHEREUM_BigDecimal!]
+  reserveUSD: ETHEREUM_BigDecimal
+  reserveUSD_not: ETHEREUM_BigDecimal
+  reserveUSD_gt: ETHEREUM_BigDecimal
+  reserveUSD_lt: ETHEREUM_BigDecimal
+  reserveUSD_gte: ETHEREUM_BigDecimal
+  reserveUSD_lte: ETHEREUM_BigDecimal
+  reserveUSD_in: [ETHEREUM_BigDecimal!]
+  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
+  trackedReserveETH: ETHEREUM_BigDecimal
+  trackedReserveETH_not: ETHEREUM_BigDecimal
+  trackedReserveETH_gt: ETHEREUM_BigDecimal
+  trackedReserveETH_lt: ETHEREUM_BigDecimal
+  trackedReserveETH_gte: ETHEREUM_BigDecimal
+  trackedReserveETH_lte: ETHEREUM_BigDecimal
+  trackedReserveETH_in: [ETHEREUM_BigDecimal!]
+  trackedReserveETH_not_in: [ETHEREUM_BigDecimal!]
+  token0Price: ETHEREUM_BigDecimal
+  token0Price_not: ETHEREUM_BigDecimal
+  token0Price_gt: ETHEREUM_BigDecimal
+  token0Price_lt: ETHEREUM_BigDecimal
+  token0Price_gte: ETHEREUM_BigDecimal
+  token0Price_lte: ETHEREUM_BigDecimal
+  token0Price_in: [ETHEREUM_BigDecimal!]
+  token0Price_not_in: [ETHEREUM_BigDecimal!]
+  token1Price: ETHEREUM_BigDecimal
+  token1Price_not: ETHEREUM_BigDecimal
+  token1Price_gt: ETHEREUM_BigDecimal
+  token1Price_lt: ETHEREUM_BigDecimal
+  token1Price_gte: ETHEREUM_BigDecimal
+  token1Price_lte: ETHEREUM_BigDecimal
+  token1Price_in: [ETHEREUM_BigDecimal!]
+  token1Price_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken0: ETHEREUM_BigDecimal
+  volumeToken0_not: ETHEREUM_BigDecimal
+  volumeToken0_gt: ETHEREUM_BigDecimal
+  volumeToken0_lt: ETHEREUM_BigDecimal
+  volumeToken0_gte: ETHEREUM_BigDecimal
+  volumeToken0_lte: ETHEREUM_BigDecimal
+  volumeToken0_in: [ETHEREUM_BigDecimal!]
+  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
+  volumeToken1: ETHEREUM_BigDecimal
+  volumeToken1_not: ETHEREUM_BigDecimal
+  volumeToken1_gt: ETHEREUM_BigDecimal
+  volumeToken1_lt: ETHEREUM_BigDecimal
+  volumeToken1_gte: ETHEREUM_BigDecimal
+  volumeToken1_lte: ETHEREUM_BigDecimal
+  volumeToken1_in: [ETHEREUM_BigDecimal!]
+  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidityProviderCount: BigInt
+  liquidityProviderCount_not: BigInt
+  liquidityProviderCount_gt: BigInt
+  liquidityProviderCount_lt: BigInt
+  liquidityProviderCount_gte: BigInt
+  liquidityProviderCount_lte: BigInt
+  liquidityProviderCount_in: [BigInt!]
+  liquidityProviderCount_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+}
+
+enum ETHEREUM_Pair_orderBy {
+  id
+  factory
+  name
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveETH
+  reserveUSD
+  trackedReserveETH
+  token0Price
+  token1Price
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidityProviderCount
+  liquidityPositions
+  liquidityPositionSnapshots
+  dayData
+  hourData
+  mints
+  burns
+  swaps
+  timestamp
+  block
+}
+
+type Query {
+  ETHEREUM_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_User
+  ETHEREUM_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_User_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_User!]!
+  ETHEREUM_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Bundle
+  ETHEREUM_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Bundle_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Bundle!]!
+  ETHEREUM_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Factory @merge(keyField: "id", keyArg: "id")
+  ETHEREUM_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Factory_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Factory!]!
+  ETHEREUM_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_HourData
+  ETHEREUM_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_HourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_HourData!]!
+  ETHEREUM_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_DayData
+  ETHEREUM_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_DayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_DayData!]!
+  ETHEREUM_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Token
+  ETHEREUM_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Token_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Token!]!
+  ETHEREUM_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_TokenHourData
+  ETHEREUM_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_TokenHourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_TokenHourData!]!
+  ETHEREUM_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_TokenDayData
+  ETHEREUM_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_TokenDayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_TokenDayData!]!
+  ETHEREUM_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Pair
+  ETHEREUM_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Pair_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Pair!]!
+  ETHEREUM_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_PairHourData
+  ETHEREUM_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_PairHourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_PairHourData!]!
+  ETHEREUM_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_PairDayData
+  ETHEREUM_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_PairDayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_PairDayData!]!
+  ETHEREUM_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_LiquidityPosition
+  ETHEREUM_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_LiquidityPosition_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_LiquidityPosition!]!
+  ETHEREUM_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_LiquidityPositionSnapshot
+  ETHEREUM_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_LiquidityPositionSnapshot!]!
+  ETHEREUM_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Transaction
+  ETHEREUM_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Transaction_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Transaction!]!
+  ETHEREUM_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Mint
+  ETHEREUM_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Mint_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Mint!]!
+  ETHEREUM_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Burn
+  ETHEREUM_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Burn_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Burn!]!
+  ETHEREUM_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Swap
+  ETHEREUM_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Swap_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Swap!]!
+  ETHEREUM_tokenSearch(
+    text: String!
+    first: Int = 100
+    skip: Int = 0
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Token!]!
+  ETHEREUM_pairSearch(
+    text: String!
+    first: Int = 100
+    skip: Int = 0
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Pair!]!
+  ETHEREUM_userSearch(
+    text: String!
+    first: Int = 100
+    skip: Int = 0
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_User!]!
+  """Access to subgraph metadata"""
+  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+}
+
+type Subscription {
+  ETHEREUM_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_User
+  ETHEREUM_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_User_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_User!]!
+  ETHEREUM_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Bundle
+  ETHEREUM_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Bundle_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Bundle!]!
+  ETHEREUM_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Factory
+  ETHEREUM_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Factory_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Factory!]!
+  ETHEREUM_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_HourData
+  ETHEREUM_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_HourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_HourData!]!
+  ETHEREUM_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_DayData
+  ETHEREUM_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_DayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_DayData!]!
+  ETHEREUM_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Token
+  ETHEREUM_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Token_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Token!]!
+  ETHEREUM_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_TokenHourData
+  ETHEREUM_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_TokenHourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_TokenHourData!]!
+  ETHEREUM_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_TokenDayData
+  ETHEREUM_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_TokenDayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_TokenDayData!]!
+  ETHEREUM_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Pair
+  ETHEREUM_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Pair_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Pair!]!
+  ETHEREUM_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_PairHourData
+  ETHEREUM_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_PairHourData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_PairHourData!]!
+  ETHEREUM_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_PairDayData
+  ETHEREUM_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_PairDayData_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_PairDayData!]!
+  ETHEREUM_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_LiquidityPosition
+  ETHEREUM_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_LiquidityPosition_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_LiquidityPosition!]!
+  ETHEREUM_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_LiquidityPositionSnapshot
+  ETHEREUM_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_LiquidityPositionSnapshot!]!
+  ETHEREUM_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Transaction
+  ETHEREUM_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Transaction_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Transaction!]!
+  ETHEREUM_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Mint
+  ETHEREUM_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Mint_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Mint!]!
+  ETHEREUM_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Burn
+  ETHEREUM_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Burn_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Burn!]!
+  ETHEREUM_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ETHEREUM_Swap
+  ETHEREUM_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ETHEREUM_Swap_orderBy
+    orderDirection: ETHEREUM_OrderDirection
+    where: ETHEREUM_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: ETHEREUM_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ETHEREUM_Swap!]!
+  """Access to subgraph metadata"""
+  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+}
+
+type ETHEREUM_Swap {
+  id: ID!
+  transaction: ETHEREUM_Transaction!
+  timestamp: BigInt!
+  pair: ETHEREUM_Pair!
+  sender: ETHEREUM_Bytes!
+  amount0In: ETHEREUM_BigDecimal!
+  amount1In: ETHEREUM_BigDecimal!
+  amount0Out: ETHEREUM_BigDecimal!
+  amount1Out: ETHEREUM_BigDecimal!
+  to: ETHEREUM_Bytes!
+  logIndex: BigInt
+  amountUSD: ETHEREUM_BigDecimal!
+}
+
+input ETHEREUM_Swap_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_not_contains: String
+  transaction_starts_with: String
+  transaction_not_starts_with: String
+  transaction_ends_with: String
+  transaction_not_ends_with: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_not_contains: String
+  pair_starts_with: String
+  pair_not_starts_with: String
+  pair_ends_with: String
+  pair_not_ends_with: String
+  sender: ETHEREUM_Bytes
+  sender_not: ETHEREUM_Bytes
+  sender_in: [ETHEREUM_Bytes!]
+  sender_not_in: [ETHEREUM_Bytes!]
+  sender_contains: ETHEREUM_Bytes
+  sender_not_contains: ETHEREUM_Bytes
+  amount0In: ETHEREUM_BigDecimal
+  amount0In_not: ETHEREUM_BigDecimal
+  amount0In_gt: ETHEREUM_BigDecimal
+  amount0In_lt: ETHEREUM_BigDecimal
+  amount0In_gte: ETHEREUM_BigDecimal
+  amount0In_lte: ETHEREUM_BigDecimal
+  amount0In_in: [ETHEREUM_BigDecimal!]
+  amount0In_not_in: [ETHEREUM_BigDecimal!]
+  amount1In: ETHEREUM_BigDecimal
+  amount1In_not: ETHEREUM_BigDecimal
+  amount1In_gt: ETHEREUM_BigDecimal
+  amount1In_lt: ETHEREUM_BigDecimal
+  amount1In_gte: ETHEREUM_BigDecimal
+  amount1In_lte: ETHEREUM_BigDecimal
+  amount1In_in: [ETHEREUM_BigDecimal!]
+  amount1In_not_in: [ETHEREUM_BigDecimal!]
+  amount0Out: ETHEREUM_BigDecimal
+  amount0Out_not: ETHEREUM_BigDecimal
+  amount0Out_gt: ETHEREUM_BigDecimal
+  amount0Out_lt: ETHEREUM_BigDecimal
+  amount0Out_gte: ETHEREUM_BigDecimal
+  amount0Out_lte: ETHEREUM_BigDecimal
+  amount0Out_in: [ETHEREUM_BigDecimal!]
+  amount0Out_not_in: [ETHEREUM_BigDecimal!]
+  amount1Out: ETHEREUM_BigDecimal
+  amount1Out_not: ETHEREUM_BigDecimal
+  amount1Out_gt: ETHEREUM_BigDecimal
+  amount1Out_lt: ETHEREUM_BigDecimal
+  amount1Out_gte: ETHEREUM_BigDecimal
+  amount1Out_lte: ETHEREUM_BigDecimal
+  amount1Out_in: [ETHEREUM_BigDecimal!]
+  amount1Out_not_in: [ETHEREUM_BigDecimal!]
+  to: ETHEREUM_Bytes
+  to_not: ETHEREUM_Bytes
+  to_in: [ETHEREUM_Bytes!]
+  to_not_in: [ETHEREUM_Bytes!]
+  to_contains: ETHEREUM_Bytes
+  to_not_contains: ETHEREUM_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: ETHEREUM_BigDecimal
+  amountUSD_not: ETHEREUM_BigDecimal
+  amountUSD_gt: ETHEREUM_BigDecimal
+  amountUSD_lt: ETHEREUM_BigDecimal
+  amountUSD_gte: ETHEREUM_BigDecimal
+  amountUSD_lte: ETHEREUM_BigDecimal
+  amountUSD_in: [ETHEREUM_BigDecimal!]
+  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_Swap_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  sender
+  amount0In
+  amount1In
+  amount0Out
+  amount1Out
+  to
+  logIndex
+  amountUSD
+}
+
+type ETHEREUM_Token {
+  id: ID!
+  factory: Factory!
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+  totalSupply: BigInt!
+  volume: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+  liquidity: ETHEREUM_BigDecimal!
+  derivedETH: ETHEREUM_BigDecimal!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenHourData_filter): [ETHEREUM_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenDayData_filter): [ETHEREUM_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+}
+
+type ETHEREUM_TokenDayData {
+  id: ID!
+  date: Int!
+  token: ETHEREUM_Token!
+  volume: ETHEREUM_BigDecimal!
+  volumeETH: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+  liquidity: ETHEREUM_BigDecimal!
+  liquidityETH: ETHEREUM_BigDecimal!
+  liquidityUSD: ETHEREUM_BigDecimal!
+  priceUSD: ETHEREUM_BigDecimal!
+}
+
+input ETHEREUM_TokenDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_not_contains: String
+  token_starts_with: String
+  token_not_starts_with: String
+  token_ends_with: String
+  token_not_ends_with: String
+  volume: ETHEREUM_BigDecimal
+  volume_not: ETHEREUM_BigDecimal
+  volume_gt: ETHEREUM_BigDecimal
+  volume_lt: ETHEREUM_BigDecimal
+  volume_gte: ETHEREUM_BigDecimal
+  volume_lte: ETHEREUM_BigDecimal
+  volume_in: [ETHEREUM_BigDecimal!]
+  volume_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: ETHEREUM_BigDecimal
+  volumeETH_not: ETHEREUM_BigDecimal
+  volumeETH_gt: ETHEREUM_BigDecimal
+  volumeETH_lt: ETHEREUM_BigDecimal
+  volumeETH_gte: ETHEREUM_BigDecimal
+  volumeETH_lte: ETHEREUM_BigDecimal
+  volumeETH_in: [ETHEREUM_BigDecimal!]
+  volumeETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: ETHEREUM_BigDecimal
+  liquidity_not: ETHEREUM_BigDecimal
+  liquidity_gt: ETHEREUM_BigDecimal
+  liquidity_lt: ETHEREUM_BigDecimal
+  liquidity_gte: ETHEREUM_BigDecimal
+  liquidity_lte: ETHEREUM_BigDecimal
+  liquidity_in: [ETHEREUM_BigDecimal!]
+  liquidity_not_in: [ETHEREUM_BigDecimal!]
+  liquidityETH: ETHEREUM_BigDecimal
+  liquidityETH_not: ETHEREUM_BigDecimal
+  liquidityETH_gt: ETHEREUM_BigDecimal
+  liquidityETH_lt: ETHEREUM_BigDecimal
+  liquidityETH_gte: ETHEREUM_BigDecimal
+  liquidityETH_lte: ETHEREUM_BigDecimal
+  liquidityETH_in: [ETHEREUM_BigDecimal!]
+  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD: ETHEREUM_BigDecimal
+  liquidityUSD_not: ETHEREUM_BigDecimal
+  liquidityUSD_gt: ETHEREUM_BigDecimal
+  liquidityUSD_lt: ETHEREUM_BigDecimal
+  liquidityUSD_gte: ETHEREUM_BigDecimal
+  liquidityUSD_lte: ETHEREUM_BigDecimal
+  liquidityUSD_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  priceUSD: ETHEREUM_BigDecimal
+  priceUSD_not: ETHEREUM_BigDecimal
+  priceUSD_gt: ETHEREUM_BigDecimal
+  priceUSD_lt: ETHEREUM_BigDecimal
+  priceUSD_gte: ETHEREUM_BigDecimal
+  priceUSD_lte: ETHEREUM_BigDecimal
+  priceUSD_in: [ETHEREUM_BigDecimal!]
+  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_TokenDayData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+type ETHEREUM_TokenHourData {
+  id: ID!
+  date: Int!
+  token: ETHEREUM_Token!
+  volume: ETHEREUM_BigDecimal!
+  volumeETH: ETHEREUM_BigDecimal!
+  volumeUSD: ETHEREUM_BigDecimal!
+  txCount: BigInt!
+  liquidity: ETHEREUM_BigDecimal!
+  liquidityETH: ETHEREUM_BigDecimal!
+  liquidityUSD: ETHEREUM_BigDecimal!
+  priceUSD: ETHEREUM_BigDecimal!
+}
+
+input ETHEREUM_TokenHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_not_contains: String
+  token_starts_with: String
+  token_not_starts_with: String
+  token_ends_with: String
+  token_not_ends_with: String
+  volume: ETHEREUM_BigDecimal
+  volume_not: ETHEREUM_BigDecimal
+  volume_gt: ETHEREUM_BigDecimal
+  volume_lt: ETHEREUM_BigDecimal
+  volume_gte: ETHEREUM_BigDecimal
+  volume_lte: ETHEREUM_BigDecimal
+  volume_in: [ETHEREUM_BigDecimal!]
+  volume_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: ETHEREUM_BigDecimal
+  volumeETH_not: ETHEREUM_BigDecimal
+  volumeETH_gt: ETHEREUM_BigDecimal
+  volumeETH_lt: ETHEREUM_BigDecimal
+  volumeETH_gte: ETHEREUM_BigDecimal
+  volumeETH_lte: ETHEREUM_BigDecimal
+  volumeETH_in: [ETHEREUM_BigDecimal!]
+  volumeETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: ETHEREUM_BigDecimal
+  liquidity_not: ETHEREUM_BigDecimal
+  liquidity_gt: ETHEREUM_BigDecimal
+  liquidity_lt: ETHEREUM_BigDecimal
+  liquidity_gte: ETHEREUM_BigDecimal
+  liquidity_lte: ETHEREUM_BigDecimal
+  liquidity_in: [ETHEREUM_BigDecimal!]
+  liquidity_not_in: [ETHEREUM_BigDecimal!]
+  liquidityETH: ETHEREUM_BigDecimal
+  liquidityETH_not: ETHEREUM_BigDecimal
+  liquidityETH_gt: ETHEREUM_BigDecimal
+  liquidityETH_lt: ETHEREUM_BigDecimal
+  liquidityETH_gte: ETHEREUM_BigDecimal
+  liquidityETH_lte: ETHEREUM_BigDecimal
+  liquidityETH_in: [ETHEREUM_BigDecimal!]
+  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD: ETHEREUM_BigDecimal
+  liquidityUSD_not: ETHEREUM_BigDecimal
+  liquidityUSD_gt: ETHEREUM_BigDecimal
+  liquidityUSD_lt: ETHEREUM_BigDecimal
+  liquidityUSD_gte: ETHEREUM_BigDecimal
+  liquidityUSD_lte: ETHEREUM_BigDecimal
+  liquidityUSD_in: [ETHEREUM_BigDecimal!]
+  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  priceUSD: ETHEREUM_BigDecimal
+  priceUSD_not: ETHEREUM_BigDecimal
+  priceUSD_gt: ETHEREUM_BigDecimal
+  priceUSD_lt: ETHEREUM_BigDecimal
+  priceUSD_gte: ETHEREUM_BigDecimal
+  priceUSD_lte: ETHEREUM_BigDecimal
+  priceUSD_in: [ETHEREUM_BigDecimal!]
+  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_TokenHourData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+input ETHEREUM_Token_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_not_contains: String
+  factory_starts_with: String
+  factory_not_starts_with: String
+  factory_ends_with: String
+  factory_not_ends_with: String
+  symbol: String
+  symbol_not: String
+  symbol_gt: String
+  symbol_lt: String
+  symbol_gte: String
+  symbol_lte: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_contains: String
+  symbol_not_contains: String
+  symbol_starts_with: String
+  symbol_not_starts_with: String
+  symbol_ends_with: String
+  symbol_not_ends_with: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  decimals: BigInt
+  decimals_not: BigInt
+  decimals_gt: BigInt
+  decimals_lt: BigInt
+  decimals_gte: BigInt
+  decimals_lte: BigInt
+  decimals_in: [BigInt!]
+  decimals_not_in: [BigInt!]
+  totalSupply: BigInt
+  totalSupply_not: BigInt
+  totalSupply_gt: BigInt
+  totalSupply_lt: BigInt
+  totalSupply_gte: BigInt
+  totalSupply_lte: BigInt
+  totalSupply_in: [BigInt!]
+  totalSupply_not_in: [BigInt!]
+  volume: ETHEREUM_BigDecimal
+  volume_not: ETHEREUM_BigDecimal
+  volume_gt: ETHEREUM_BigDecimal
+  volume_lt: ETHEREUM_BigDecimal
+  volume_gte: ETHEREUM_BigDecimal
+  volume_lte: ETHEREUM_BigDecimal
+  volume_in: [ETHEREUM_BigDecimal!]
+  volume_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ETHEREUM_BigDecimal
+  volumeUSD_not: ETHEREUM_BigDecimal
+  volumeUSD_gt: ETHEREUM_BigDecimal
+  volumeUSD_lt: ETHEREUM_BigDecimal
+  volumeUSD_gte: ETHEREUM_BigDecimal
+  volumeUSD_lte: ETHEREUM_BigDecimal
+  volumeUSD_in: [ETHEREUM_BigDecimal!]
+  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
+  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: ETHEREUM_BigDecimal
+  liquidity_not: ETHEREUM_BigDecimal
+  liquidity_gt: ETHEREUM_BigDecimal
+  liquidity_lt: ETHEREUM_BigDecimal
+  liquidity_gte: ETHEREUM_BigDecimal
+  liquidity_lte: ETHEREUM_BigDecimal
+  liquidity_in: [ETHEREUM_BigDecimal!]
+  liquidity_not_in: [ETHEREUM_BigDecimal!]
+  derivedETH: ETHEREUM_BigDecimal
+  derivedETH_not: ETHEREUM_BigDecimal
+  derivedETH_gt: ETHEREUM_BigDecimal
+  derivedETH_lt: ETHEREUM_BigDecimal
+  derivedETH_gte: ETHEREUM_BigDecimal
+  derivedETH_lte: ETHEREUM_BigDecimal
+  derivedETH_in: [ETHEREUM_BigDecimal!]
+  derivedETH_not_in: [ETHEREUM_BigDecimal!]
+}
+
+enum ETHEREUM_Token_orderBy {
+  id
+  factory
+  symbol
+  name
+  decimals
+  totalSupply
+  volume
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidity
+  derivedETH
+  hourData
+  dayData
+  basePairs
+  quotePairs
+  basePairsDayData
+  quotePairsDayData
+}
+
+type ETHEREUM_Transaction {
+  id: ID!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap]!
+}
+
+input ETHEREUM_Transaction_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  mints: [String!]
+  mints_not: [String!]
+  mints_contains: [String!]
+  mints_not_contains: [String!]
+  burns: [String!]
+  burns_not: [String!]
+  burns_contains: [String!]
+  burns_not_contains: [String!]
+  swaps: [String!]
+  swaps_not: [String!]
+  swaps_contains: [String!]
+  swaps_not_contains: [String!]
+}
+
+enum ETHEREUM_Transaction_orderBy {
+  id
+  blockNumber
+  timestamp
+  mints
+  burns
+  swaps
+}
+
+type ETHEREUM_User {
+  id: ID!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+}
+
+input ETHEREUM_User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+enum ETHEREUM_User_orderBy {
+  id
+  liquidityPositions
+}
+
+type ETHEREUM__Block_ {
+  """The hash of the block"""
+  hash: ETHEREUM_Bytes
+  """The block number"""
+  number: Int!
+}
+
+"""The type for the top-level _meta field"""
+type ETHEREUM__Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  
+  """
+  block: ETHEREUM__Block_!
+  """The deployment ID"""
+  deployment: String!
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}

@@ -1,0 +1,77 @@
+
+sources:
+  - name: ethereum-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/exchange
+    transforms:
+      - prefix:
+          value: ETHEREUM_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      # Rename Account to User to apply Type Merging
+      - rename:
+          - from:
+              type: ETHEREUM_Factory
+            to:
+              type: Factory
+      # Teach Type Merging how to resolve this entity
+      - typeMerging:
+          queryFields:
+            - queryFieldName: ETHEREUM_factory
+              keyField: id
+              keyArg: id
+
+  - name: matic-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange
+    transforms:
+      - prefix:
+          value: MATIC_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+            - Factory # Keep User as-is because we need it for Type Merging
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: MATIC_factory
+              keyField: id
+              keyArg: id
+        
+  # - name: moonriver-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonriver-exchange
+  # - name: fuse-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fuse-exchange
+  # - name: arbitrum-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange
+  # - name: celo-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/celo-exchange
+  # - name: matic-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange
+  # - name: bsc-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange
+  # - name: xdai-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/xdai-exchange
+  # - name: fantom-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange
+documents:
+  - ./factory-query.graphql
