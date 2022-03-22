@@ -13,347 +13,320 @@ directive @subgraphId(id: String!) on OBJECT
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
 type Query {
-  ETHEREUM_user(
+  MATIC_user(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): MATIC_User
+  MATIC_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: MATIC_User_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_User_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [MATIC_User!]!
+  MATIC_bundle(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): MATIC_Bundle
+  MATIC_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: MATIC_Bundle_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Bundle_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [MATIC_Bundle!]!
+  MATIC_factory(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory @merge(keyField: "id", keyArg: "id")
-  ETHEREUM_factories(
+  ): MATIC_Factory @merge(keyField: "id", keyArg: "id")
+  MATIC_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: MATIC_Factory_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Factory_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [MATIC_Factory!]!
+  MATIC_hourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): MATIC_HourData
+  MATIC_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: MATIC_HourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_HourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [MATIC_HourData!]!
+  MATIC_dayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): MATIC_DayData
+  MATIC_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: MATIC_DayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_DayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [MATIC_DayData!]!
+  MATIC_token(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): MATIC_Token
+  MATIC_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: MATIC_Token_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Token_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [MATIC_Token!]!
+  MATIC_tokenHourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): MATIC_TokenHourData
+  MATIC_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: MATIC_TokenHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenHourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [MATIC_TokenHourData!]!
+  MATIC_tokenDayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): MATIC_TokenDayData
+  MATIC_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: MATIC_TokenDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenDayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [MATIC_TokenDayData!]!
+  MATIC_pair(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): MATIC_Pair
+  MATIC_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: MATIC_Pair_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Pair_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [MATIC_Pair!]!
+  MATIC_pairHourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): MATIC_PairHourData
+  MATIC_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: MATIC_PairHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairHourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [MATIC_PairHourData!]!
+  MATIC_pairDayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): MATIC_PairDayData
+  MATIC_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: MATIC_PairDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairDayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [MATIC_PairDayData!]!
+  MATIC_liquidityPosition(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): MATIC_LiquidityPosition
+  MATIC_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: MATIC_LiquidityPosition_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPosition_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [MATIC_LiquidityPosition!]!
+  MATIC_liquidityPositionSnapshot(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): MATIC_LiquidityPositionSnapshot
+  MATIC_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPositionSnapshot_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [MATIC_LiquidityPositionSnapshot!]!
+  MATIC_transaction(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): MATIC_Transaction
+  MATIC_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: MATIC_Transaction_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Transaction_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [MATIC_Transaction!]!
+  MATIC_mint(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): MATIC_Mint
+  MATIC_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: MATIC_Mint_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Mint_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [MATIC_Mint!]!
+  MATIC_burn(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): MATIC_Burn
+  MATIC_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: MATIC_Burn_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Burn_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [MATIC_Burn!]!
+  MATIC_swap(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): MATIC_Swap
+  MATIC_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: MATIC_Swap_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Swap_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
-  ETHEREUM_tokenSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_pairSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_userSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
+  ): [MATIC_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
 }
 
 """The block at which the query should be executed."""
-input ETHEREUM_Block_height {
+input MATIC_Block_height {
   """Value containing a block hash"""
-  hash: ETHEREUM_Bytes
+  hash: MATIC_Bytes
   """Value containing a block number"""
   number: Int
   """
@@ -366,7 +339,7 @@ input ETHEREUM_Block_height {
   number_gte: Int
 }
 
-scalar ETHEREUM_Bytes
+scalar MATIC_Bytes
 
 enum _SubgraphErrorPolicy_ {
   """Data will be returned even if the subgraph has indexing errors"""
@@ -375,12 +348,12 @@ enum _SubgraphErrorPolicy_ {
   deny
 }
 
-type ETHEREUM_User {
+type MATIC_User {
   id: ID!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPosition_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPosition_filter): [MATIC_LiquidityPosition!]!
 }
 
-enum ETHEREUM_LiquidityPosition_orderBy {
+enum MATIC_LiquidityPosition_orderBy {
   id
   user
   pair
@@ -391,12 +364,12 @@ enum ETHEREUM_LiquidityPosition_orderBy {
 }
 
 """Defines the order direction, either ascending or descending"""
-enum ETHEREUM_OrderDirection {
+enum MATIC_OrderDirection {
   asc
   desc
 }
 
-input ETHEREUM_LiquidityPosition_filter {
+input MATIC_LiquidityPosition_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -445,14 +418,14 @@ input ETHEREUM_LiquidityPosition_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance: MATIC_BigDecimal
+  liquidityTokenBalance_not: MATIC_BigDecimal
+  liquidityTokenBalance_gt: MATIC_BigDecimal
+  liquidityTokenBalance_lt: MATIC_BigDecimal
+  liquidityTokenBalance_gte: MATIC_BigDecimal
+  liquidityTokenBalance_lte: MATIC_BigDecimal
+  liquidityTokenBalance_in: [MATIC_BigDecimal!]
+  liquidityTokenBalance_not_in: [MATIC_BigDecimal!]
   block: Int
   block_not: Int
   block_gt: Int
@@ -471,69 +444,69 @@ input ETHEREUM_LiquidityPosition_filter {
   timestamp_not_in: [Int!]
 }
 
-scalar ETHEREUM_BigDecimal
+scalar MATIC_BigDecimal
 
-type ETHEREUM_LiquidityPosition {
+type MATIC_LiquidityPosition {
   id: ID!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
-  snapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot]!
+  user: MATIC_User!
+  pair: MATIC_Pair!
+  liquidityTokenBalance: MATIC_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPositionSnapshot_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPositionSnapshot_filter): [MATIC_LiquidityPositionSnapshot]!
   block: Int!
   timestamp: Int!
 }
 
-type ETHEREUM_Pair {
+type MATIC_Pair {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: MATIC_Factory!
   name: String!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveETH: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  trackedReserveETH: ETHEREUM_BigDecimal!
-  token0Price: ETHEREUM_BigDecimal!
-  token1Price: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  token0: MATIC_Token!
+  token1: MATIC_Token!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  totalSupply: MATIC_BigDecimal!
+  reserveETH: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  trackedReserveETH: MATIC_BigDecimal!
+  token0Price: MATIC_BigDecimal!
+  token1Price: MATIC_BigDecimal!
+  volumeToken0: MATIC_BigDecimal!
+  volumeToken1: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
   liquidityProviderCount: BigInt!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
-  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairHourData_filter): [ETHEREUM_PairHourData!]!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint!]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn!]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPosition_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPosition_filter): [MATIC_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPositionSnapshot_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPositionSnapshot_filter): [MATIC_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairHourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairHourData_filter): [MATIC_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: MATIC_Mint_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Mint_filter): [MATIC_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: MATIC_Burn_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Burn_filter): [MATIC_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: MATIC_Swap_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Swap_filter): [MATIC_Swap!]!
   timestamp: BigInt!
   block: BigInt!
 }
 
-type ETHEREUM_Factory {
+type MATIC_Factory {
   id: ID!
   pairCount: BigInt!
-  volumeUSD: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  untrackedVolumeUSD: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
   txCount: BigInt!
   tokenCount: BigInt!
   userCount: BigInt!
-  pairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  tokens(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Token_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Token_filter): [ETHEREUM_Token!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_HourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_HourData_filter): [ETHEREUM_HourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_DayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_DayData_filter): [ETHEREUM_DayData!]!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: MATIC_Token_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Token_filter): [MATIC_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_HourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_HourData_filter): [MATIC_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_DayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_DayData_filter): [MATIC_DayData!]!
 }
 
 scalar BigInt
 
-enum ETHEREUM_Pair_orderBy {
+enum MATIC_Pair_orderBy {
   id
   factory
   name
@@ -564,7 +537,7 @@ enum ETHEREUM_Pair_orderBy {
   block
 }
 
-input ETHEREUM_Pair_filter {
+input MATIC_Pair_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -653,102 +626,102 @@ input ETHEREUM_Pair_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveETH: ETHEREUM_BigDecimal
-  reserveETH_not: ETHEREUM_BigDecimal
-  reserveETH_gt: ETHEREUM_BigDecimal
-  reserveETH_lt: ETHEREUM_BigDecimal
-  reserveETH_gte: ETHEREUM_BigDecimal
-  reserveETH_lte: ETHEREUM_BigDecimal
-  reserveETH_in: [ETHEREUM_BigDecimal!]
-  reserveETH_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH: ETHEREUM_BigDecimal
-  trackedReserveETH_not: ETHEREUM_BigDecimal
-  trackedReserveETH_gt: ETHEREUM_BigDecimal
-  trackedReserveETH_lt: ETHEREUM_BigDecimal
-  trackedReserveETH_gte: ETHEREUM_BigDecimal
-  trackedReserveETH_lte: ETHEREUM_BigDecimal
-  trackedReserveETH_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH_not_in: [ETHEREUM_BigDecimal!]
-  token0Price: ETHEREUM_BigDecimal
-  token0Price_not: ETHEREUM_BigDecimal
-  token0Price_gt: ETHEREUM_BigDecimal
-  token0Price_lt: ETHEREUM_BigDecimal
-  token0Price_gte: ETHEREUM_BigDecimal
-  token0Price_lte: ETHEREUM_BigDecimal
-  token0Price_in: [ETHEREUM_BigDecimal!]
-  token0Price_not_in: [ETHEREUM_BigDecimal!]
-  token1Price: ETHEREUM_BigDecimal
-  token1Price_not: ETHEREUM_BigDecimal
-  token1Price_gt: ETHEREUM_BigDecimal
-  token1Price_lt: ETHEREUM_BigDecimal
-  token1Price_gte: ETHEREUM_BigDecimal
-  token1Price_lte: ETHEREUM_BigDecimal
-  token1Price_in: [ETHEREUM_BigDecimal!]
-  token1Price_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  totalSupply: MATIC_BigDecimal
+  totalSupply_not: MATIC_BigDecimal
+  totalSupply_gt: MATIC_BigDecimal
+  totalSupply_lt: MATIC_BigDecimal
+  totalSupply_gte: MATIC_BigDecimal
+  totalSupply_lte: MATIC_BigDecimal
+  totalSupply_in: [MATIC_BigDecimal!]
+  totalSupply_not_in: [MATIC_BigDecimal!]
+  reserveETH: MATIC_BigDecimal
+  reserveETH_not: MATIC_BigDecimal
+  reserveETH_gt: MATIC_BigDecimal
+  reserveETH_lt: MATIC_BigDecimal
+  reserveETH_gte: MATIC_BigDecimal
+  reserveETH_lte: MATIC_BigDecimal
+  reserveETH_in: [MATIC_BigDecimal!]
+  reserveETH_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  trackedReserveETH: MATIC_BigDecimal
+  trackedReserveETH_not: MATIC_BigDecimal
+  trackedReserveETH_gt: MATIC_BigDecimal
+  trackedReserveETH_lt: MATIC_BigDecimal
+  trackedReserveETH_gte: MATIC_BigDecimal
+  trackedReserveETH_lte: MATIC_BigDecimal
+  trackedReserveETH_in: [MATIC_BigDecimal!]
+  trackedReserveETH_not_in: [MATIC_BigDecimal!]
+  token0Price: MATIC_BigDecimal
+  token0Price_not: MATIC_BigDecimal
+  token0Price_gt: MATIC_BigDecimal
+  token0Price_lt: MATIC_BigDecimal
+  token0Price_gte: MATIC_BigDecimal
+  token0Price_lte: MATIC_BigDecimal
+  token0Price_in: [MATIC_BigDecimal!]
+  token0Price_not_in: [MATIC_BigDecimal!]
+  token1Price: MATIC_BigDecimal
+  token1Price_not: MATIC_BigDecimal
+  token1Price_gt: MATIC_BigDecimal
+  token1Price_lt: MATIC_BigDecimal
+  token1Price_gte: MATIC_BigDecimal
+  token1Price_lte: MATIC_BigDecimal
+  token1Price_in: [MATIC_BigDecimal!]
+  token1Price_not_in: [MATIC_BigDecimal!]
+  volumeToken0: MATIC_BigDecimal
+  volumeToken0_not: MATIC_BigDecimal
+  volumeToken0_gt: MATIC_BigDecimal
+  volumeToken0_lt: MATIC_BigDecimal
+  volumeToken0_gte: MATIC_BigDecimal
+  volumeToken0_lte: MATIC_BigDecimal
+  volumeToken0_in: [MATIC_BigDecimal!]
+  volumeToken0_not_in: [MATIC_BigDecimal!]
+  volumeToken1: MATIC_BigDecimal
+  volumeToken1_not: MATIC_BigDecimal
+  volumeToken1_gt: MATIC_BigDecimal
+  volumeToken1_lt: MATIC_BigDecimal
+  volumeToken1_gte: MATIC_BigDecimal
+  volumeToken1_lte: MATIC_BigDecimal
+  volumeToken1_in: [MATIC_BigDecimal!]
+  volumeToken1_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD: MATIC_BigDecimal
+  untrackedVolumeUSD_not: MATIC_BigDecimal
+  untrackedVolumeUSD_gt: MATIC_BigDecimal
+  untrackedVolumeUSD_lt: MATIC_BigDecimal
+  untrackedVolumeUSD_gte: MATIC_BigDecimal
+  untrackedVolumeUSD_lte: MATIC_BigDecimal
+  untrackedVolumeUSD_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -783,7 +756,7 @@ input ETHEREUM_Pair_filter {
   block_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Token_orderBy {
+enum MATIC_Token_orderBy {
   id
   factory
   symbol
@@ -796,6 +769,7 @@ enum ETHEREUM_Token_orderBy {
   txCount
   liquidity
   derivedETH
+  whitelistPairs
   hourData
   dayData
   basePairs
@@ -804,7 +778,7 @@ enum ETHEREUM_Token_orderBy {
   quotePairsDayData
 }
 
-input ETHEREUM_Token_filter {
+input MATIC_Token_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -889,30 +863,30 @@ input ETHEREUM_Token_filter {
   totalSupply_lte: BigInt
   totalSupply_in: [BigInt!]
   totalSupply_not_in: [BigInt!]
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MATIC_BigDecimal
+  volume_not: MATIC_BigDecimal
+  volume_gt: MATIC_BigDecimal
+  volume_lt: MATIC_BigDecimal
+  volume_gte: MATIC_BigDecimal
+  volume_lte: MATIC_BigDecimal
+  volume_in: [MATIC_BigDecimal!]
+  volume_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD: MATIC_BigDecimal
+  untrackedVolumeUSD_not: MATIC_BigDecimal
+  untrackedVolumeUSD_gt: MATIC_BigDecimal
+  untrackedVolumeUSD_lt: MATIC_BigDecimal
+  untrackedVolumeUSD_gte: MATIC_BigDecimal
+  untrackedVolumeUSD_lte: MATIC_BigDecimal
+  untrackedVolumeUSD_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -921,46 +895,53 @@ input ETHEREUM_Token_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  derivedETH: ETHEREUM_BigDecimal
-  derivedETH_not: ETHEREUM_BigDecimal
-  derivedETH_gt: ETHEREUM_BigDecimal
-  derivedETH_lt: ETHEREUM_BigDecimal
-  derivedETH_gte: ETHEREUM_BigDecimal
-  derivedETH_lte: ETHEREUM_BigDecimal
-  derivedETH_in: [ETHEREUM_BigDecimal!]
-  derivedETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  derivedETH: MATIC_BigDecimal
+  derivedETH_not: MATIC_BigDecimal
+  derivedETH_gt: MATIC_BigDecimal
+  derivedETH_lt: MATIC_BigDecimal
+  derivedETH_gte: MATIC_BigDecimal
+  derivedETH_lte: MATIC_BigDecimal
+  derivedETH_in: [MATIC_BigDecimal!]
+  derivedETH_not_in: [MATIC_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
 }
 
-type ETHEREUM_Token {
+type MATIC_Token {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: MATIC_Factory!
   symbol: String!
   name: String!
   decimals: BigInt!
   totalSupply: BigInt!
-  volume: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  volume: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  derivedETH: ETHEREUM_BigDecimal!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenHourData_filter): [ETHEREUM_TokenHourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenDayData_filter): [ETHEREUM_TokenDayData!]!
-  basePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  liquidity: MATIC_BigDecimal!
+  derivedETH: MATIC_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenHourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenHourData_filter): [MATIC_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenDayData_filter): [MATIC_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
 }
 
-enum ETHEREUM_TokenHourData_orderBy {
+enum MATIC_TokenHourData_orderBy {
   id
   date
   token
@@ -974,7 +955,7 @@ enum ETHEREUM_TokenHourData_orderBy {
   priceUSD
 }
 
-input ETHEREUM_TokenHourData_filter {
+input MATIC_TokenHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1011,30 +992,30 @@ input ETHEREUM_TokenHourData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MATIC_BigDecimal
+  volume_not: MATIC_BigDecimal
+  volume_gt: MATIC_BigDecimal
+  volume_lt: MATIC_BigDecimal
+  volume_gte: MATIC_BigDecimal
+  volume_lte: MATIC_BigDecimal
+  volume_in: [MATIC_BigDecimal!]
+  volume_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1043,55 +1024,55 @@ input ETHEREUM_TokenHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  priceUSD: MATIC_BigDecimal
+  priceUSD_not: MATIC_BigDecimal
+  priceUSD_gt: MATIC_BigDecimal
+  priceUSD_lt: MATIC_BigDecimal
+  priceUSD_gte: MATIC_BigDecimal
+  priceUSD_lte: MATIC_BigDecimal
+  priceUSD_in: [MATIC_BigDecimal!]
+  priceUSD_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_TokenHourData {
+type MATIC_TokenHourData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: MATIC_Token!
+  volume: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  priceUSD: MATIC_BigDecimal!
 }
 
-enum ETHEREUM_TokenDayData_orderBy {
+enum MATIC_TokenDayData_orderBy {
   id
   date
   token
@@ -1105,7 +1086,7 @@ enum ETHEREUM_TokenDayData_orderBy {
   priceUSD
 }
 
-input ETHEREUM_TokenDayData_filter {
+input MATIC_TokenDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1142,30 +1123,30 @@ input ETHEREUM_TokenDayData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MATIC_BigDecimal
+  volume_not: MATIC_BigDecimal
+  volume_gt: MATIC_BigDecimal
+  volume_lt: MATIC_BigDecimal
+  volume_gte: MATIC_BigDecimal
+  volume_lte: MATIC_BigDecimal
+  volume_in: [MATIC_BigDecimal!]
+  volume_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1174,55 +1155,55 @@ input ETHEREUM_TokenDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  priceUSD: MATIC_BigDecimal
+  priceUSD_not: MATIC_BigDecimal
+  priceUSD_gt: MATIC_BigDecimal
+  priceUSD_lt: MATIC_BigDecimal
+  priceUSD_gte: MATIC_BigDecimal
+  priceUSD_lte: MATIC_BigDecimal
+  priceUSD_in: [MATIC_BigDecimal!]
+  priceUSD_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_TokenDayData {
+type MATIC_TokenDayData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: MATIC_Token!
+  volume: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  priceUSD: MATIC_BigDecimal!
 }
 
-enum ETHEREUM_PairDayData_orderBy {
+enum MATIC_PairDayData_orderBy {
   id
   date
   pair
@@ -1238,7 +1219,7 @@ enum ETHEREUM_PairDayData_orderBy {
   txCount
 }
 
-input ETHEREUM_PairDayData_filter {
+input MATIC_PairDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1315,62 +1296,62 @@ input ETHEREUM_PairDayData_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  totalSupply: MATIC_BigDecimal
+  totalSupply_not: MATIC_BigDecimal
+  totalSupply_gt: MATIC_BigDecimal
+  totalSupply_lt: MATIC_BigDecimal
+  totalSupply_gte: MATIC_BigDecimal
+  totalSupply_lte: MATIC_BigDecimal
+  totalSupply_in: [MATIC_BigDecimal!]
+  totalSupply_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  volumeToken0: MATIC_BigDecimal
+  volumeToken0_not: MATIC_BigDecimal
+  volumeToken0_gt: MATIC_BigDecimal
+  volumeToken0_lt: MATIC_BigDecimal
+  volumeToken0_gte: MATIC_BigDecimal
+  volumeToken0_lte: MATIC_BigDecimal
+  volumeToken0_in: [MATIC_BigDecimal!]
+  volumeToken0_not_in: [MATIC_BigDecimal!]
+  volumeToken1: MATIC_BigDecimal
+  volumeToken1_not: MATIC_BigDecimal
+  volumeToken1_gt: MATIC_BigDecimal
+  volumeToken1_lt: MATIC_BigDecimal
+  volumeToken1_gte: MATIC_BigDecimal
+  volumeToken1_lte: MATIC_BigDecimal
+  volumeToken1_in: [MATIC_BigDecimal!]
+  volumeToken1_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1381,23 +1362,23 @@ input ETHEREUM_PairDayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-type ETHEREUM_PairDayData {
+type MATIC_PairDayData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: MATIC_Pair!
+  token0: MATIC_Token!
+  token1: MATIC_Token!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  totalSupply: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  volumeToken0: MATIC_BigDecimal!
+  volumeToken1: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
 }
 
-enum ETHEREUM_HourData_orderBy {
+enum MATIC_HourData_orderBy {
   id
   date
   factory
@@ -1409,7 +1390,7 @@ enum ETHEREUM_HourData_orderBy {
   txCount
 }
 
-input ETHEREUM_HourData_filter {
+input MATIC_HourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1446,46 +1427,46 @@ input ETHEREUM_HourData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolume: MATIC_BigDecimal
+  untrackedVolume_not: MATIC_BigDecimal
+  untrackedVolume_gt: MATIC_BigDecimal
+  untrackedVolume_lt: MATIC_BigDecimal
+  untrackedVolume_gte: MATIC_BigDecimal
+  untrackedVolume_lte: MATIC_BigDecimal
+  untrackedVolume_in: [MATIC_BigDecimal!]
+  untrackedVolume_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1496,19 +1477,19 @@ input ETHEREUM_HourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-type ETHEREUM_HourData {
+type MATIC_HourData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: MATIC_Factory!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolume: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
   txCount: BigInt!
 }
 
-enum ETHEREUM_DayData_orderBy {
+enum MATIC_DayData_orderBy {
   id
   date
   factory
@@ -1520,7 +1501,7 @@ enum ETHEREUM_DayData_orderBy {
   txCount
 }
 
-input ETHEREUM_DayData_filter {
+input MATIC_DayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1557,46 +1538,46 @@ input ETHEREUM_DayData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolume: MATIC_BigDecimal
+  untrackedVolume_not: MATIC_BigDecimal
+  untrackedVolume_gt: MATIC_BigDecimal
+  untrackedVolume_lt: MATIC_BigDecimal
+  untrackedVolume_gte: MATIC_BigDecimal
+  untrackedVolume_lte: MATIC_BigDecimal
+  untrackedVolume_in: [MATIC_BigDecimal!]
+  untrackedVolume_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1607,19 +1588,19 @@ input ETHEREUM_DayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-type ETHEREUM_DayData {
+type MATIC_DayData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: MATIC_Factory!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolume: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
   txCount: BigInt!
 }
 
-enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
+enum MATIC_LiquidityPositionSnapshot_orderBy {
   id
   liquidityPosition
   timestamp
@@ -1635,7 +1616,7 @@ enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
   liquidityTokenBalance
 }
 
-input ETHEREUM_LiquidityPositionSnapshot_filter {
+input MATIC_LiquidityPositionSnapshot_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1720,81 +1701,81 @@ input ETHEREUM_LiquidityPositionSnapshot_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  token0PriceUSD: ETHEREUM_BigDecimal
-  token0PriceUSD_not: ETHEREUM_BigDecimal
-  token0PriceUSD_gt: ETHEREUM_BigDecimal
-  token0PriceUSD_lt: ETHEREUM_BigDecimal
-  token0PriceUSD_gte: ETHEREUM_BigDecimal
-  token0PriceUSD_lte: ETHEREUM_BigDecimal
-  token0PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token0PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD: ETHEREUM_BigDecimal
-  token1PriceUSD_not: ETHEREUM_BigDecimal
-  token1PriceUSD_gt: ETHEREUM_BigDecimal
-  token1PriceUSD_lt: ETHEREUM_BigDecimal
-  token1PriceUSD_gte: ETHEREUM_BigDecimal
-  token1PriceUSD_lte: ETHEREUM_BigDecimal
-  token1PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_not: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  token0PriceUSD: MATIC_BigDecimal
+  token0PriceUSD_not: MATIC_BigDecimal
+  token0PriceUSD_gt: MATIC_BigDecimal
+  token0PriceUSD_lt: MATIC_BigDecimal
+  token0PriceUSD_gte: MATIC_BigDecimal
+  token0PriceUSD_lte: MATIC_BigDecimal
+  token0PriceUSD_in: [MATIC_BigDecimal!]
+  token0PriceUSD_not_in: [MATIC_BigDecimal!]
+  token1PriceUSD: MATIC_BigDecimal
+  token1PriceUSD_not: MATIC_BigDecimal
+  token1PriceUSD_gt: MATIC_BigDecimal
+  token1PriceUSD_lt: MATIC_BigDecimal
+  token1PriceUSD_gte: MATIC_BigDecimal
+  token1PriceUSD_lte: MATIC_BigDecimal
+  token1PriceUSD_in: [MATIC_BigDecimal!]
+  token1PriceUSD_not_in: [MATIC_BigDecimal!]
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  liquidityTokenTotalSupply: MATIC_BigDecimal
+  liquidityTokenTotalSupply_not: MATIC_BigDecimal
+  liquidityTokenTotalSupply_gt: MATIC_BigDecimal
+  liquidityTokenTotalSupply_lt: MATIC_BigDecimal
+  liquidityTokenTotalSupply_gte: MATIC_BigDecimal
+  liquidityTokenTotalSupply_lte: MATIC_BigDecimal
+  liquidityTokenTotalSupply_in: [MATIC_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [MATIC_BigDecimal!]
+  liquidityTokenBalance: MATIC_BigDecimal
+  liquidityTokenBalance_not: MATIC_BigDecimal
+  liquidityTokenBalance_gt: MATIC_BigDecimal
+  liquidityTokenBalance_lt: MATIC_BigDecimal
+  liquidityTokenBalance_gte: MATIC_BigDecimal
+  liquidityTokenBalance_lte: MATIC_BigDecimal
+  liquidityTokenBalance_in: [MATIC_BigDecimal!]
+  liquidityTokenBalance_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_LiquidityPositionSnapshot {
+type MATIC_LiquidityPositionSnapshot {
   id: ID!
-  liquidityPosition: ETHEREUM_LiquidityPosition!
+  liquidityPosition: MATIC_LiquidityPosition!
   timestamp: Int!
   block: Int!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  token0PriceUSD: ETHEREUM_BigDecimal!
-  token1PriceUSD: ETHEREUM_BigDecimal!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
+  user: MATIC_User!
+  pair: MATIC_Pair!
+  token0PriceUSD: MATIC_BigDecimal!
+  token1PriceUSD: MATIC_BigDecimal!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  liquidityTokenTotalSupply: MATIC_BigDecimal!
+  liquidityTokenBalance: MATIC_BigDecimal!
 }
 
-enum ETHEREUM_PairHourData_orderBy {
+enum MATIC_PairHourData_orderBy {
   id
   date
   pair
@@ -1807,7 +1788,7 @@ enum ETHEREUM_PairHourData_orderBy {
   txCount
 }
 
-input ETHEREUM_PairHourData_filter {
+input MATIC_PairHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1844,54 +1825,54 @@ input ETHEREUM_PairHourData_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  volumeToken0: MATIC_BigDecimal
+  volumeToken0_not: MATIC_BigDecimal
+  volumeToken0_gt: MATIC_BigDecimal
+  volumeToken0_lt: MATIC_BigDecimal
+  volumeToken0_gte: MATIC_BigDecimal
+  volumeToken0_lte: MATIC_BigDecimal
+  volumeToken0_in: [MATIC_BigDecimal!]
+  volumeToken0_not_in: [MATIC_BigDecimal!]
+  volumeToken1: MATIC_BigDecimal
+  volumeToken1_not: MATIC_BigDecimal
+  volumeToken1_gt: MATIC_BigDecimal
+  volumeToken1_lt: MATIC_BigDecimal
+  volumeToken1_gte: MATIC_BigDecimal
+  volumeToken1_lte: MATIC_BigDecimal
+  volumeToken1_in: [MATIC_BigDecimal!]
+  volumeToken1_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1902,20 +1883,20 @@ input ETHEREUM_PairHourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-type ETHEREUM_PairHourData {
+type MATIC_PairHourData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: MATIC_Pair!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  volumeToken0: MATIC_BigDecimal!
+  volumeToken1: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
   txCount: BigInt!
 }
 
-enum ETHEREUM_Mint_orderBy {
+enum MATIC_Mint_orderBy {
   id
   transaction
   timestamp
@@ -1931,7 +1912,7 @@ enum ETHEREUM_Mint_orderBy {
   feeLiquidity
 }
 
-input ETHEREUM_Mint_filter {
+input MATIC_Mint_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1988,42 +1969,42 @@ input ETHEREUM_Mint_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount0_not: MATIC_BigDecimal
+  amount0_gt: MATIC_BigDecimal
+  amount0_lt: MATIC_BigDecimal
+  amount0_gte: MATIC_BigDecimal
+  amount0_lte: MATIC_BigDecimal
+  amount0_in: [MATIC_BigDecimal!]
+  amount0_not_in: [MATIC_BigDecimal!]
+  amount1: MATIC_BigDecimal
+  amount1_not: MATIC_BigDecimal
+  amount1_gt: MATIC_BigDecimal
+  amount1_lt: MATIC_BigDecimal
+  amount1_gte: MATIC_BigDecimal
+  amount1_lte: MATIC_BigDecimal
+  amount1_in: [MATIC_BigDecimal!]
+  amount1_not_in: [MATIC_BigDecimal!]
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2032,56 +2013,56 @@ input ETHEREUM_Mint_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
+  feeTo: MATIC_Bytes
+  feeTo_not: MATIC_Bytes
+  feeTo_in: [MATIC_Bytes!]
+  feeTo_not_in: [MATIC_Bytes!]
+  feeTo_contains: MATIC_Bytes
+  feeTo_not_contains: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+  feeLiquidity_not: MATIC_BigDecimal
+  feeLiquidity_gt: MATIC_BigDecimal
+  feeLiquidity_lt: MATIC_BigDecimal
+  feeLiquidity_gte: MATIC_BigDecimal
+  feeLiquidity_lte: MATIC_BigDecimal
+  feeLiquidity_in: [MATIC_BigDecimal!]
+  feeLiquidity_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_Mint {
+type MATIC_Mint {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MATIC_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  to: ETHEREUM_Bytes!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
+  pair: MATIC_Pair!
+  to: MATIC_Bytes!
+  liquidity: MATIC_BigDecimal!
+  sender: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount1: MATIC_BigDecimal
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  amountUSD: MATIC_BigDecimal
+  feeTo: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
 }
 
-type ETHEREUM_Transaction {
+type MATIC_Transaction {
   id: ID!
   blockNumber: BigInt!
   timestamp: BigInt!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: MATIC_Mint_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Mint_filter): [MATIC_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: MATIC_Burn_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Burn_filter): [MATIC_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: MATIC_Swap_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Swap_filter): [MATIC_Swap]!
 }
 
-enum ETHEREUM_Burn_orderBy {
+enum MATIC_Burn_orderBy {
   id
   transaction
   timestamp
@@ -2098,7 +2079,7 @@ enum ETHEREUM_Burn_orderBy {
   feeLiquidity
 }
 
-input ETHEREUM_Burn_filter {
+input MATIC_Burn_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2155,42 +2136,42 @@ input ETHEREUM_Burn_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount0_not: MATIC_BigDecimal
+  amount0_gt: MATIC_BigDecimal
+  amount0_lt: MATIC_BigDecimal
+  amount0_gte: MATIC_BigDecimal
+  amount0_lte: MATIC_BigDecimal
+  amount0_in: [MATIC_BigDecimal!]
+  amount0_not_in: [MATIC_BigDecimal!]
+  amount1: MATIC_BigDecimal
+  amount1_not: MATIC_BigDecimal
+  amount1_gt: MATIC_BigDecimal
+  amount1_lt: MATIC_BigDecimal
+  amount1_gte: MATIC_BigDecimal
+  amount1_lte: MATIC_BigDecimal
+  amount1_in: [MATIC_BigDecimal!]
+  amount1_not_in: [MATIC_BigDecimal!]
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2199,52 +2180,52 @@ input ETHEREUM_Burn_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
   complete: Boolean
   complete_not: Boolean
   complete_in: [Boolean!]
   complete_not_in: [Boolean!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  feeTo: MATIC_Bytes
+  feeTo_not: MATIC_Bytes
+  feeTo_in: [MATIC_Bytes!]
+  feeTo_not_in: [MATIC_Bytes!]
+  feeTo_contains: MATIC_Bytes
+  feeTo_not_contains: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+  feeLiquidity_not: MATIC_BigDecimal
+  feeLiquidity_gt: MATIC_BigDecimal
+  feeLiquidity_lt: MATIC_BigDecimal
+  feeLiquidity_gte: MATIC_BigDecimal
+  feeLiquidity_lte: MATIC_BigDecimal
+  feeLiquidity_in: [MATIC_BigDecimal!]
+  feeLiquidity_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_Burn {
+type MATIC_Burn {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MATIC_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
-  to: ETHEREUM_Bytes
+  pair: MATIC_Pair!
+  liquidity: MATIC_BigDecimal!
+  sender: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount1: MATIC_BigDecimal
+  to: MATIC_Bytes
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
+  amountUSD: MATIC_BigDecimal
   complete: Boolean!
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  feeTo: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
 }
 
-enum ETHEREUM_Swap_orderBy {
+enum MATIC_Swap_orderBy {
   id
   transaction
   timestamp
@@ -2259,7 +2240,7 @@ enum ETHEREUM_Swap_orderBy {
   amountUSD
 }
 
-input ETHEREUM_Swap_filter {
+input MATIC_Swap_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2316,50 +2297,50 @@ input ETHEREUM_Swap_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0In: ETHEREUM_BigDecimal
-  amount0In_not: ETHEREUM_BigDecimal
-  amount0In_gt: ETHEREUM_BigDecimal
-  amount0In_lt: ETHEREUM_BigDecimal
-  amount0In_gte: ETHEREUM_BigDecimal
-  amount0In_lte: ETHEREUM_BigDecimal
-  amount0In_in: [ETHEREUM_BigDecimal!]
-  amount0In_not_in: [ETHEREUM_BigDecimal!]
-  amount1In: ETHEREUM_BigDecimal
-  amount1In_not: ETHEREUM_BigDecimal
-  amount1In_gt: ETHEREUM_BigDecimal
-  amount1In_lt: ETHEREUM_BigDecimal
-  amount1In_gte: ETHEREUM_BigDecimal
-  amount1In_lte: ETHEREUM_BigDecimal
-  amount1In_in: [ETHEREUM_BigDecimal!]
-  amount1In_not_in: [ETHEREUM_BigDecimal!]
-  amount0Out: ETHEREUM_BigDecimal
-  amount0Out_not: ETHEREUM_BigDecimal
-  amount0Out_gt: ETHEREUM_BigDecimal
-  amount0Out_lt: ETHEREUM_BigDecimal
-  amount0Out_gte: ETHEREUM_BigDecimal
-  amount0Out_lte: ETHEREUM_BigDecimal
-  amount0Out_in: [ETHEREUM_BigDecimal!]
-  amount0Out_not_in: [ETHEREUM_BigDecimal!]
-  amount1Out: ETHEREUM_BigDecimal
-  amount1Out_not: ETHEREUM_BigDecimal
-  amount1Out_gt: ETHEREUM_BigDecimal
-  amount1Out_lt: ETHEREUM_BigDecimal
-  amount1Out_gte: ETHEREUM_BigDecimal
-  amount1Out_lte: ETHEREUM_BigDecimal
-  amount1Out_in: [ETHEREUM_BigDecimal!]
-  amount1Out_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0In: MATIC_BigDecimal
+  amount0In_not: MATIC_BigDecimal
+  amount0In_gt: MATIC_BigDecimal
+  amount0In_lt: MATIC_BigDecimal
+  amount0In_gte: MATIC_BigDecimal
+  amount0In_lte: MATIC_BigDecimal
+  amount0In_in: [MATIC_BigDecimal!]
+  amount0In_not_in: [MATIC_BigDecimal!]
+  amount1In: MATIC_BigDecimal
+  amount1In_not: MATIC_BigDecimal
+  amount1In_gt: MATIC_BigDecimal
+  amount1In_lt: MATIC_BigDecimal
+  amount1In_gte: MATIC_BigDecimal
+  amount1In_lte: MATIC_BigDecimal
+  amount1In_in: [MATIC_BigDecimal!]
+  amount1In_not_in: [MATIC_BigDecimal!]
+  amount0Out: MATIC_BigDecimal
+  amount0Out_not: MATIC_BigDecimal
+  amount0Out_gt: MATIC_BigDecimal
+  amount0Out_lt: MATIC_BigDecimal
+  amount0Out_gte: MATIC_BigDecimal
+  amount0Out_lte: MATIC_BigDecimal
+  amount0Out_in: [MATIC_BigDecimal!]
+  amount0Out_not_in: [MATIC_BigDecimal!]
+  amount1Out: MATIC_BigDecimal
+  amount1Out_not: MATIC_BigDecimal
+  amount1Out_gt: MATIC_BigDecimal
+  amount1Out_lt: MATIC_BigDecimal
+  amount1Out_gte: MATIC_BigDecimal
+  amount1Out_lte: MATIC_BigDecimal
+  amount1Out_in: [MATIC_BigDecimal!]
+  amount1Out_not_in: [MATIC_BigDecimal!]
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2368,37 +2349,37 @@ input ETHEREUM_Swap_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
 }
 
-type ETHEREUM_Swap {
+type MATIC_Swap {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MATIC_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  sender: ETHEREUM_Bytes!
-  amount0In: ETHEREUM_BigDecimal!
-  amount1In: ETHEREUM_BigDecimal!
-  amount0Out: ETHEREUM_BigDecimal!
-  amount1Out: ETHEREUM_BigDecimal!
-  to: ETHEREUM_Bytes!
+  pair: MATIC_Pair!
+  sender: MATIC_Bytes!
+  amount0In: MATIC_BigDecimal!
+  amount1In: MATIC_BigDecimal!
+  amount0Out: MATIC_BigDecimal!
+  amount1Out: MATIC_BigDecimal!
+  to: MATIC_Bytes!
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal!
+  amountUSD: MATIC_BigDecimal!
 }
 
-enum ETHEREUM_User_orderBy {
+enum MATIC_User_orderBy {
   id
   liquidityPositions
 }
 
-input ETHEREUM_User_filter {
+input MATIC_User_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2409,17 +2390,17 @@ input ETHEREUM_User_filter {
   id_not_in: [ID!]
 }
 
-type ETHEREUM_Bundle {
+type MATIC_Bundle {
   id: ID!
-  ethPrice: ETHEREUM_BigDecimal!
+  ethPrice: MATIC_BigDecimal!
 }
 
-enum ETHEREUM_Bundle_orderBy {
+enum MATIC_Bundle_orderBy {
   id
   ethPrice
 }
 
-input ETHEREUM_Bundle_filter {
+input MATIC_Bundle_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2428,17 +2409,17 @@ input ETHEREUM_Bundle_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
-  ethPrice: ETHEREUM_BigDecimal
-  ethPrice_not: ETHEREUM_BigDecimal
-  ethPrice_gt: ETHEREUM_BigDecimal
-  ethPrice_lt: ETHEREUM_BigDecimal
-  ethPrice_gte: ETHEREUM_BigDecimal
-  ethPrice_lte: ETHEREUM_BigDecimal
-  ethPrice_in: [ETHEREUM_BigDecimal!]
-  ethPrice_not_in: [ETHEREUM_BigDecimal!]
+  ethPrice: MATIC_BigDecimal
+  ethPrice_not: MATIC_BigDecimal
+  ethPrice_gt: MATIC_BigDecimal
+  ethPrice_lt: MATIC_BigDecimal
+  ethPrice_gte: MATIC_BigDecimal
+  ethPrice_lte: MATIC_BigDecimal
+  ethPrice_in: [MATIC_BigDecimal!]
+  ethPrice_not_in: [MATIC_BigDecimal!]
 }
 
-enum ETHEREUM_Factory_orderBy {
+enum MATIC_Factory_orderBy {
   id
   pairCount
   volumeUSD
@@ -2455,7 +2436,7 @@ enum ETHEREUM_Factory_orderBy {
   dayData
 }
 
-input ETHEREUM_Factory_filter {
+input MATIC_Factory_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2472,46 +2453,46 @@ input ETHEREUM_Factory_filter {
   pairCount_lte: BigInt
   pairCount_in: [BigInt!]
   pairCount_not_in: [BigInt!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD: MATIC_BigDecimal
+  untrackedVolumeUSD_not: MATIC_BigDecimal
+  untrackedVolumeUSD_gt: MATIC_BigDecimal
+  untrackedVolumeUSD_lt: MATIC_BigDecimal
+  untrackedVolumeUSD_gte: MATIC_BigDecimal
+  untrackedVolumeUSD_lte: MATIC_BigDecimal
+  untrackedVolumeUSD_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2538,7 +2519,7 @@ input ETHEREUM_Factory_filter {
   userCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Transaction_orderBy {
+enum MATIC_Transaction_orderBy {
   id
   blockNumber
   timestamp
@@ -2547,7 +2528,7 @@ enum ETHEREUM_Transaction_orderBy {
   swaps
 }
 
-input ETHEREUM_Transaction_filter {
+input MATIC_Transaction_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2593,7 +2574,7 @@ input ETHEREUM_Transaction_filter {
 }
 
 """The type for the top-level _meta field"""
-type ETHEREUM__Meta_ {
+type MATIC__Meta_ {
   """
   Information about a specific subgraph block. The hash of the block
   will be null if the _meta field has a block constraint that asks for
@@ -2601,327 +2582,327 @@ type ETHEREUM__Meta_ {
   and therefore asks for the latest  block
   
   """
-  block: ETHEREUM__Block_!
+  block: MATIC__Block_!
   """The deployment ID"""
   deployment: String!
   """If `true`, the subgraph encountered indexing errors at some past block"""
   hasIndexingErrors: Boolean!
 }
 
-type ETHEREUM__Block_ {
+type MATIC__Block_ {
   """The hash of the block"""
-  hash: ETHEREUM_Bytes
+  hash: MATIC_Bytes
   """The block number"""
   number: Int!
 }
 
 type Subscription {
-  ETHEREUM_user(
+  MATIC_user(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): MATIC_User
+  MATIC_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: MATIC_User_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_User_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [MATIC_User!]!
+  MATIC_bundle(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): MATIC_Bundle
+  MATIC_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: MATIC_Bundle_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Bundle_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [MATIC_Bundle!]!
+  MATIC_factory(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory
-  ETHEREUM_factories(
+  ): MATIC_Factory
+  MATIC_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: MATIC_Factory_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Factory_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [MATIC_Factory!]!
+  MATIC_hourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): MATIC_HourData
+  MATIC_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: MATIC_HourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_HourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [MATIC_HourData!]!
+  MATIC_dayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): MATIC_DayData
+  MATIC_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: MATIC_DayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_DayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [MATIC_DayData!]!
+  MATIC_token(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): MATIC_Token
+  MATIC_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: MATIC_Token_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Token_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [MATIC_Token!]!
+  MATIC_tokenHourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): MATIC_TokenHourData
+  MATIC_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: MATIC_TokenHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenHourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [MATIC_TokenHourData!]!
+  MATIC_tokenDayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): MATIC_TokenDayData
+  MATIC_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: MATIC_TokenDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenDayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [MATIC_TokenDayData!]!
+  MATIC_pair(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): MATIC_Pair
+  MATIC_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: MATIC_Pair_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Pair_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [MATIC_Pair!]!
+  MATIC_pairHourData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): MATIC_PairHourData
+  MATIC_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: MATIC_PairHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairHourData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [MATIC_PairHourData!]!
+  MATIC_pairDayData(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): MATIC_PairDayData
+  MATIC_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: MATIC_PairDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairDayData_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [MATIC_PairDayData!]!
+  MATIC_liquidityPosition(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): MATIC_LiquidityPosition
+  MATIC_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: MATIC_LiquidityPosition_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPosition_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [MATIC_LiquidityPosition!]!
+  MATIC_liquidityPositionSnapshot(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): MATIC_LiquidityPositionSnapshot
+  MATIC_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPositionSnapshot_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [MATIC_LiquidityPositionSnapshot!]!
+  MATIC_transaction(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): MATIC_Transaction
+  MATIC_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: MATIC_Transaction_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Transaction_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [MATIC_Transaction!]!
+  MATIC_mint(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): MATIC_Mint
+  MATIC_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: MATIC_Mint_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Mint_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [MATIC_Mint!]!
+  MATIC_burn(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): MATIC_Burn
+  MATIC_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: MATIC_Burn_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Burn_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [MATIC_Burn!]!
+  MATIC_swap(
     id: ID!
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): MATIC_Swap
+  MATIC_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: MATIC_Swap_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Swap_filter
     """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: ETHEREUM_Block_height
+    block: MATIC_Block_height
     """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
+  ): [MATIC_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
 }

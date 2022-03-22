@@ -1,4 +1,3 @@
-
 sources:
   - name: ethereum-exchange
     handler:
@@ -10,19 +9,11 @@ sources:
           includeRootOperations: true
           ignore:
             - _SubgraphErrorPolicy_
-      # Rename Account to User to apply Type Merging
-      - rename:
-          - from:
-              type: ETHEREUM_Factory
-            to:
-              type: Factory
-      # Teach Type Merging how to resolve this entity
       - typeMerging:
           queryFields:
             - queryFieldName: ETHEREUM_factory
               keyField: id
               keyArg: id
-
   - name: matic-exchange
     handler:
       graphql:
@@ -33,14 +24,12 @@ sources:
           includeRootOperations: true
           ignore:
             - _SubgraphErrorPolicy_
-            - Factory # Keep User as-is because we need it for Type Merging
       - typeMerging:
           queryFields:
             # Without batching
             - queryFieldName: MATIC_factory
               keyField: id
               keyArg: id
-        
   # - name: moonriver-exchange
   #   handler:
   #     graphql:
@@ -57,10 +46,6 @@ sources:
   #   handler:
   #     graphql:
   #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/celo-exchange
-  # - name: matic-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange
   # - name: bsc-exchange
   #   handler:
   #     graphql:

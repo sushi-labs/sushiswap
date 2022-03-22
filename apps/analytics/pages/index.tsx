@@ -1,5 +1,4 @@
-import client from '../lib/urlq'
-import { FactoriesQueryDocument } from '../.graphclient'
+import { getBuiltGraphSDK } from '../.graphclient'
 
 export default function Analytics(props) {
   console.log({ props })
@@ -10,9 +9,9 @@ export default function Analytics(props) {
   )
 }
 
-export async function getStaticProps() {
-  const { data } = await client.query(FactoriesQueryDocument).toPromise()
-
+export async function getServerSideProps() {
+  const sdk = await getBuiltGraphSDK()
+  const data = await sdk.FactoriesQuery()
   return {
     props: {
       ...data,
