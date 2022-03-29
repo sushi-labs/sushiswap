@@ -58,6 +58,10 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each user that stakes LP tokens.
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
+
+    /// @dev Tokens added
+    mapping (address => bool) public addedTokens;
+
     /// @dev Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint;
 
@@ -89,6 +93,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @param _lpToken Address of the LP ERC-20 token.
     /// @param _rewarder Address of the rewarder delegate.
     function add(uint256 allocPoint, IERC20 _lpToken, IRewarder _rewarder) public onlyOwner {
+        require(addedTokens[address(_lpToken)] == false, "Token already added");
         totalAllocPoint = totalAllocPoint.add(allocPoint);
         lpToken.push(_lpToken);
         rewarder.push(_rewarder);
@@ -98,6 +103,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
             lastRewardTime: block.timestamp.to64(),
             accSushiPerShare: 0
         }));
+        addedTokens[address(_lpToken)] = true;
         emit LogPoolAddition(lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
 
@@ -135,6 +141,9 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         _lpToken.approve(address(migrator), bal);
         IERC20 newLpToken = migrator.migrate(_lpToken);
         require(bal == newLpToken.balanceOf(address(this)), "MasterChefV2: migrated balance must match");
+        require(addedTokens[address(newLpToken)] == false, "Token already added");
+        addedTokens[address(newLpToken)] = true;
+        addedTokens[address(_lpToken)] = false;
         lpToken[_pid] = newLpToken;
     }
 
@@ -222,7 +231,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, msg.sender, to, 0, user.amount);
         }
-        
+
         lpToken[pid].safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, pid, amount, to);
@@ -244,7 +253,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         if (_pendingSushi != 0) {
             SUSHI.safeTransfer(to, _pendingSushi);
         }
-        
+
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward( pid, msg.sender, to, _pendingSushi, user.amount);
@@ -252,7 +261,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
         emit Harvest(msg.sender, pid, _pendingSushi);
     }
-    
+
     /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param amount LP token amount to withdraw.
@@ -266,7 +275,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         // Effects
         user.rewardDebt = accumulatedSushi.sub(int256(amount.mul(pool.accSushiPerShare) / ACC_SUSHI_PRECISION));
         user.amount = user.amount.sub(amount);
-        
+
         // Interactions
         SUSHI.safeTransfer(to, _pendingSushi);
 

@@ -1,0 +1,40 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Multicall2.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.5.0;\npragma experimental ABIEncoderV2;\n\n/// @title Multicall2 - Aggregate results from multiple read-only function calls\n/// @author Michael Elliot <mike@makerdao.com>\n/// @author Joshua Levine <joshua@makerdao.com>\n/// @author Nick Johnson <arachnid@notdot.net>\n\ncontract Multicall2 {\n    struct Call {\n        address target;\n        bytes callData;\n    }\n    struct Result {\n        bool success;\n        bytes returnData;\n    }\n\n    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {\n        blockNumber = block.number;\n        returnData = new bytes[](calls.length);\n        for(uint256 i = 0; i < calls.length; i++) {\n            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n            require(success, \"Multicall aggregate: call failed\");\n            returnData[i] = ret;\n        }\n    }\n    function blockAndAggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {\n        (blockNumber, blockHash, returnData) = tryBlockAndAggregate(true, calls);\n    }\n    function getBlockHash(uint256 blockNumber) public view returns (bytes32 blockHash) {\n        blockHash = blockhash(blockNumber);\n    }\n    function getBlockNumber() public view returns (uint256 blockNumber) {\n        blockNumber = block.number;\n    }\n    function getCurrentBlockCoinbase() public view returns (address coinbase) {\n        coinbase = block.coinbase;\n    }\n    function getCurrentBlockDifficulty() public view returns (uint256 difficulty) {\n        difficulty = block.difficulty;\n    }\n    function getCurrentBlockGasLimit() public view returns (uint256 gaslimit) {\n        gaslimit = block.gaslimit;\n    }\n    function getCurrentBlockTimestamp() public view returns (uint256 timestamp) {\n        timestamp = block.timestamp;\n    }\n    function getEthBalance(address addr) public view returns (uint256 balance) {\n        balance = addr.balance;\n    }\n    function getLastBlockHash() public view returns (bytes32 blockHash) {\n        blockHash = blockhash(block.number - 1);\n    }\n    function tryAggregate(bool requireSuccess, Call[] memory calls) public returns (Result[] memory returnData) {\n        returnData = new Result[](calls.length);\n        for(uint256 i = 0; i < calls.length; i++) {\n            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n\n            if (requireSuccess) {\n                require(success, \"Multicall2 aggregate: call failed\");\n            }\n\n            returnData[i] = Result(success, ret);\n        }\n    }\n    function tryBlockAndAggregate(bool requireSuccess, Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {\n        blockNumber = block.number;\n        blockHash = blockhash(block.number);\n        returnData = tryAggregate(requireSuccess, calls);\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    },
+    "libraries": {
+      "": {
+        "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+      }
+    }
+  }
+}
