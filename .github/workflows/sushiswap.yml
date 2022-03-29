@@ -25,7 +25,7 @@ jobs:
           check-latest: true
 
       - name: Install and Compile
-         id: build
+        id: build
         run: |
           yarn install
           yarn build
