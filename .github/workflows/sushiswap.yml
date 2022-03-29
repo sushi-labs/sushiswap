@@ -1,4 +1,3 @@
-#  workflow pipeline
 name: sushiswap
 
 on: ["push", "pull_request"]
@@ -10,61 +9,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ["14.x", "12.x"]
+        node: ["14.x"]
         os: ["ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
          ref: ${{github.event.pull_request.head.ref}}
          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Nodejs  ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
 
       - name: Install and Compile
+         id: build
         run: |
           yarn install
           yarn build
 
       - name: Test and Coverage
+        id: test
         run: |
           yarn test
 
-  mythx:
-    runs-on: ubuntu-latest
-    env:
-      MYTHX_API_KEY: ${{ secrets.MYTHX }}
+      - name: yarn test:coverage
+        id: coverage
+        run: yarn test:coverage
 
-    steps:
-      - name: Nodejs 14.x
-        uses: actions/setup-node@v2
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
         with:
-          node-version: "14.x"
-          check-latest: true
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
-      - name: Install MythX CLI
-        run: python -m pip install mythx-cli
-      - name: Print version info
-        run: |
-          python3 -V
-          mythx version
-
-      - uses: actions/checkout@v2
-        with:
-         ref: ${{github.event.pull_request.head.ref}}
-         repository: ${{github.event.pull_request.head.repo.full_name}}
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Submit contracts
-        run: mythx analyze
+          github-token: ${{ secrets.GITHUB_TOKEN }}
