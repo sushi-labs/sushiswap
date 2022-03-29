@@ -124,7 +124,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gas: 5198000,
-      gasMultiplier: 2,
+      gasMultiplier: 4,
     },
     fantom: {
       url: "https://rpcapi.fantom.network",
@@ -221,6 +221,7 @@ const config: HardhatUserConfig = {
       chainId: 1666600000,
       live: true,
       saveDeployments: true,
+      gasMultiplier: 2,
     },
     "harmony-testnet": {
       url: "https://api.s0.b.hmny.io",
@@ -263,6 +264,64 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
       gasMultiplier: 2,
+    },
+    celo: {
+      url: "https://forno.celo.org",
+      accounts,
+      chainId: 42220,
+      live: true,
+      saveDeployments: true,
+    },
+    palm: {
+      url: "https://palm-mainnet.infura.io/v3/da5fbfafcca14b109e2665290681e267",
+      accounts,
+      chainId: 11297108109,
+      live: true,
+      saveDeployments: true,
+    },
+    "palm-testnet": {
+      url: "https://palm-testnet.infura.io/v3/da5fbfafcca14b109e2665290681e267",
+      accounts,
+      chainId: 11297108099,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    moonriver: {
+      url: "https://rpc.moonriver.moonbeam.network",
+      accounts,
+      chainId: 1285,
+      live: true,
+      saveDeployments: true,
+    },
+    fuse: {
+      url: "https://rpc.fuse.io",
+      accounts,
+      chainId: 122,
+      live: true,
+      saveDeployments: true,
+    },
+    clover: {
+      url: "https://rpc-ivy.clover.finance",
+      accounts,
+      chainId: 1024,
+      live: true,
+      saveDeployments: true,
+    },
+    telos: {
+      url: "https://rpc1.us.telos.net/evm",
+      accounts,
+      chainId: 40,
+      live: true,
+      saveDeployments: true,
+    },
+    moonbeam: {
+      url: "https://rpc.api.moonbeam.network",
+      accounts,
+      chainId: 1284,
+      live: true,
+      saveDeployments: true,
     },
   },
   paths: {
@@ -310,7 +369,5 @@ const config: HardhatUserConfig = {
     },
   },
 }
-
-
 
 export default config
