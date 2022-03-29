@@ -9,3 +9,5 @@ package-lock.json
 coverage.json
 .env
 .DS_Store
+out/
+dist/
