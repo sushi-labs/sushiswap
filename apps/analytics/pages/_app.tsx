@@ -7,7 +7,9 @@ import 'ui/index.css'
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <App.Shell>
-      <App.Header><App.Nav /></App.Header>
+      <App.Header>
+        <App.Nav />
+      </App.Header>
       <Component {...pageProps} />
     </App.Shell>
   )

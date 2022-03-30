@@ -126,5 +126,69 @@ sources:
             - queryFieldName: BSC_factory
               keyField: id
               keyArg: id
+  # - name: harmony-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange
+  #   transforms:
+  #     - prefix:
+  #         value: HARMONY_
+  #         includeRootOperations: true
+  #         ignore:
+  #           - _SubgraphErrorPolicy_
+  #     - typeMerging:
+  #         queryFields:
+  #           # Without batching
+  #           - queryFieldName: HARMONY_factory
+  #             keyField: id
+  #             keyArg: id
+  - name: celo-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/sushitestsubgraph
+    transforms:
+      - prefix:
+          value: CELO_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: CELO_factory
+              keyField: id
+              keyArg: id
+  - name: fuse-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fuse-exchange
+    transforms:
+      - prefix:
+          value: FUSE_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: FUSE_factory
+              keyField: id
+              keyArg: id
+  - name: moonbeam-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonbeam-exchange
+    transforms:
+      - prefix:
+          value: MOONBEAM_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: MOONBEAM_factory
+              keyField: id
+              keyArg: id
 documents:
   - ./factory-query.graphql

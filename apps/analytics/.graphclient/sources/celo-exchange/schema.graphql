@@ -1,0 +1,3182 @@
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+"Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive."
+directive @entity on OBJECT
+
+"Defined a Subgraph ID for an object type"
+directive @subgraphId(id: String!) on OBJECT
+
+"creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+scalar CELO_BigDecimal
+
+scalar BigInt
+
+"""The block at which the query should be executed."""
+input CELO_Block_height {
+  """Value containing a block hash"""
+  hash: CELO_Bytes
+  """Value containing a block number"""
+  number: Int
+  """
+  Value containing the minimum block number. 
+  In the case of `number_gte`, the query will be executed on the latest block only if
+  the subgraph has progressed to or past the minimum block number.
+  Defaults to the latest block when omitted.
+  
+  """
+  number_gte: Int
+}
+
+type CELO_Bundle {
+  id: ID!
+  ethPrice: CELO_BigDecimal!
+}
+
+input CELO_Bundle_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ethPrice: CELO_BigDecimal
+  ethPrice_not: CELO_BigDecimal
+  ethPrice_gt: CELO_BigDecimal
+  ethPrice_lt: CELO_BigDecimal
+  ethPrice_gte: CELO_BigDecimal
+  ethPrice_lte: CELO_BigDecimal
+  ethPrice_in: [CELO_BigDecimal!]
+  ethPrice_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_Bundle_orderBy {
+  id
+  ethPrice
+}
+
+type CELO_Burn {
+  id: ID!
+  transaction: CELO_Transaction!
+  timestamp: BigInt!
+  pair: CELO_Pair!
+  liquidity: CELO_BigDecimal!
+  sender: CELO_Bytes
+  amount0: CELO_BigDecimal
+  amount1: CELO_BigDecimal
+  to: CELO_Bytes
+  logIndex: BigInt
+  amountUSD: CELO_BigDecimal
+  complete: Boolean!
+  feeTo: CELO_Bytes
+  feeLiquidity: CELO_BigDecimal
+}
+
+input CELO_Burn_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  liquidity: CELO_BigDecimal
+  liquidity_not: CELO_BigDecimal
+  liquidity_gt: CELO_BigDecimal
+  liquidity_lt: CELO_BigDecimal
+  liquidity_gte: CELO_BigDecimal
+  liquidity_lte: CELO_BigDecimal
+  liquidity_in: [CELO_BigDecimal!]
+  liquidity_not_in: [CELO_BigDecimal!]
+  sender: CELO_Bytes
+  sender_not: CELO_Bytes
+  sender_in: [CELO_Bytes!]
+  sender_not_in: [CELO_Bytes!]
+  sender_contains: CELO_Bytes
+  sender_not_contains: CELO_Bytes
+  amount0: CELO_BigDecimal
+  amount0_not: CELO_BigDecimal
+  amount0_gt: CELO_BigDecimal
+  amount0_lt: CELO_BigDecimal
+  amount0_gte: CELO_BigDecimal
+  amount0_lte: CELO_BigDecimal
+  amount0_in: [CELO_BigDecimal!]
+  amount0_not_in: [CELO_BigDecimal!]
+  amount1: CELO_BigDecimal
+  amount1_not: CELO_BigDecimal
+  amount1_gt: CELO_BigDecimal
+  amount1_lt: CELO_BigDecimal
+  amount1_gte: CELO_BigDecimal
+  amount1_lte: CELO_BigDecimal
+  amount1_in: [CELO_BigDecimal!]
+  amount1_not_in: [CELO_BigDecimal!]
+  to: CELO_Bytes
+  to_not: CELO_Bytes
+  to_in: [CELO_Bytes!]
+  to_not_in: [CELO_Bytes!]
+  to_contains: CELO_Bytes
+  to_not_contains: CELO_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: CELO_BigDecimal
+  amountUSD_not: CELO_BigDecimal
+  amountUSD_gt: CELO_BigDecimal
+  amountUSD_lt: CELO_BigDecimal
+  amountUSD_gte: CELO_BigDecimal
+  amountUSD_lte: CELO_BigDecimal
+  amountUSD_in: [CELO_BigDecimal!]
+  amountUSD_not_in: [CELO_BigDecimal!]
+  complete: Boolean
+  complete_not: Boolean
+  complete_in: [Boolean!]
+  complete_not_in: [Boolean!]
+  feeTo: CELO_Bytes
+  feeTo_not: CELO_Bytes
+  feeTo_in: [CELO_Bytes!]
+  feeTo_not_in: [CELO_Bytes!]
+  feeTo_contains: CELO_Bytes
+  feeTo_not_contains: CELO_Bytes
+  feeLiquidity: CELO_BigDecimal
+  feeLiquidity_not: CELO_BigDecimal
+  feeLiquidity_gt: CELO_BigDecimal
+  feeLiquidity_lt: CELO_BigDecimal
+  feeLiquidity_gte: CELO_BigDecimal
+  feeLiquidity_lte: CELO_BigDecimal
+  feeLiquidity_in: [CELO_BigDecimal!]
+  feeLiquidity_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_Burn_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  liquidity
+  sender
+  amount0
+  amount1
+  to
+  logIndex
+  amountUSD
+  complete
+  feeTo
+  feeLiquidity
+}
+
+scalar CELO_Bytes
+
+type CELO_DayData {
+  id: ID!
+  date: Int!
+  factory: CELO_Factory!
+  volumeETH: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  untrackedVolume: CELO_BigDecimal!
+  liquidityETH: CELO_BigDecimal!
+  liquidityUSD: CELO_BigDecimal!
+  txCount: BigInt!
+}
+
+input CELO_DayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: CELO_BigDecimal
+  volumeETH_not: CELO_BigDecimal
+  volumeETH_gt: CELO_BigDecimal
+  volumeETH_lt: CELO_BigDecimal
+  volumeETH_gte: CELO_BigDecimal
+  volumeETH_lte: CELO_BigDecimal
+  volumeETH_in: [CELO_BigDecimal!]
+  volumeETH_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  untrackedVolume: CELO_BigDecimal
+  untrackedVolume_not: CELO_BigDecimal
+  untrackedVolume_gt: CELO_BigDecimal
+  untrackedVolume_lt: CELO_BigDecimal
+  untrackedVolume_gte: CELO_BigDecimal
+  untrackedVolume_lte: CELO_BigDecimal
+  untrackedVolume_in: [CELO_BigDecimal!]
+  untrackedVolume_not_in: [CELO_BigDecimal!]
+  liquidityETH: CELO_BigDecimal
+  liquidityETH_not: CELO_BigDecimal
+  liquidityETH_gt: CELO_BigDecimal
+  liquidityETH_lt: CELO_BigDecimal
+  liquidityETH_gte: CELO_BigDecimal
+  liquidityETH_lte: CELO_BigDecimal
+  liquidityETH_in: [CELO_BigDecimal!]
+  liquidityETH_not_in: [CELO_BigDecimal!]
+  liquidityUSD: CELO_BigDecimal
+  liquidityUSD_not: CELO_BigDecimal
+  liquidityUSD_gt: CELO_BigDecimal
+  liquidityUSD_lt: CELO_BigDecimal
+  liquidityUSD_gte: CELO_BigDecimal
+  liquidityUSD_lte: CELO_BigDecimal
+  liquidityUSD_in: [CELO_BigDecimal!]
+  liquidityUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum CELO_DayData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type CELO_Factory {
+  id: ID!
+  pairCount: BigInt!
+  volumeUSD: CELO_BigDecimal!
+  volumeETH: CELO_BigDecimal!
+  untrackedVolumeUSD: CELO_BigDecimal!
+  liquidityUSD: CELO_BigDecimal!
+  liquidityETH: CELO_BigDecimal!
+  txCount: BigInt!
+  tokenCount: BigInt!
+  userCount: BigInt!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: CELO_Pair_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Pair_filter): [CELO_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: CELO_Token_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Token_filter): [CELO_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: CELO_HourData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_HourData_filter): [CELO_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: CELO_DayData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_DayData_filter): [CELO_DayData!]!
+}
+
+input CELO_Factory_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  pairCount: BigInt
+  pairCount_not: BigInt
+  pairCount_gt: BigInt
+  pairCount_lt: BigInt
+  pairCount_gte: BigInt
+  pairCount_lte: BigInt
+  pairCount_in: [BigInt!]
+  pairCount_not_in: [BigInt!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  volumeETH: CELO_BigDecimal
+  volumeETH_not: CELO_BigDecimal
+  volumeETH_gt: CELO_BigDecimal
+  volumeETH_lt: CELO_BigDecimal
+  volumeETH_gte: CELO_BigDecimal
+  volumeETH_lte: CELO_BigDecimal
+  volumeETH_in: [CELO_BigDecimal!]
+  volumeETH_not_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD: CELO_BigDecimal
+  untrackedVolumeUSD_not: CELO_BigDecimal
+  untrackedVolumeUSD_gt: CELO_BigDecimal
+  untrackedVolumeUSD_lt: CELO_BigDecimal
+  untrackedVolumeUSD_gte: CELO_BigDecimal
+  untrackedVolumeUSD_lte: CELO_BigDecimal
+  untrackedVolumeUSD_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD_not_in: [CELO_BigDecimal!]
+  liquidityUSD: CELO_BigDecimal
+  liquidityUSD_not: CELO_BigDecimal
+  liquidityUSD_gt: CELO_BigDecimal
+  liquidityUSD_lt: CELO_BigDecimal
+  liquidityUSD_gte: CELO_BigDecimal
+  liquidityUSD_lte: CELO_BigDecimal
+  liquidityUSD_in: [CELO_BigDecimal!]
+  liquidityUSD_not_in: [CELO_BigDecimal!]
+  liquidityETH: CELO_BigDecimal
+  liquidityETH_not: CELO_BigDecimal
+  liquidityETH_gt: CELO_BigDecimal
+  liquidityETH_lt: CELO_BigDecimal
+  liquidityETH_gte: CELO_BigDecimal
+  liquidityETH_lte: CELO_BigDecimal
+  liquidityETH_in: [CELO_BigDecimal!]
+  liquidityETH_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+}
+
+enum CELO_Factory_orderBy {
+  id
+  pairCount
+  volumeUSD
+  volumeETH
+  untrackedVolumeUSD
+  liquidityUSD
+  liquidityETH
+  txCount
+  tokenCount
+  userCount
+  pairs
+  tokens
+  hourData
+  dayData
+}
+
+type CELO_HourData {
+  id: ID!
+  date: Int!
+  factory: CELO_Factory!
+  volumeETH: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  untrackedVolume: CELO_BigDecimal!
+  liquidityETH: CELO_BigDecimal!
+  liquidityUSD: CELO_BigDecimal!
+  txCount: BigInt!
+}
+
+input CELO_HourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: CELO_BigDecimal
+  volumeETH_not: CELO_BigDecimal
+  volumeETH_gt: CELO_BigDecimal
+  volumeETH_lt: CELO_BigDecimal
+  volumeETH_gte: CELO_BigDecimal
+  volumeETH_lte: CELO_BigDecimal
+  volumeETH_in: [CELO_BigDecimal!]
+  volumeETH_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  untrackedVolume: CELO_BigDecimal
+  untrackedVolume_not: CELO_BigDecimal
+  untrackedVolume_gt: CELO_BigDecimal
+  untrackedVolume_lt: CELO_BigDecimal
+  untrackedVolume_gte: CELO_BigDecimal
+  untrackedVolume_lte: CELO_BigDecimal
+  untrackedVolume_in: [CELO_BigDecimal!]
+  untrackedVolume_not_in: [CELO_BigDecimal!]
+  liquidityETH: CELO_BigDecimal
+  liquidityETH_not: CELO_BigDecimal
+  liquidityETH_gt: CELO_BigDecimal
+  liquidityETH_lt: CELO_BigDecimal
+  liquidityETH_gte: CELO_BigDecimal
+  liquidityETH_lte: CELO_BigDecimal
+  liquidityETH_in: [CELO_BigDecimal!]
+  liquidityETH_not_in: [CELO_BigDecimal!]
+  liquidityUSD: CELO_BigDecimal
+  liquidityUSD_not: CELO_BigDecimal
+  liquidityUSD_gt: CELO_BigDecimal
+  liquidityUSD_lt: CELO_BigDecimal
+  liquidityUSD_gte: CELO_BigDecimal
+  liquidityUSD_lte: CELO_BigDecimal
+  liquidityUSD_in: [CELO_BigDecimal!]
+  liquidityUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum CELO_HourData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type CELO_LiquidityPosition {
+  id: ID!
+  user: CELO_User!
+  pair: CELO_Pair!
+  liquidityTokenBalance: CELO_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: CELO_LiquidityPositionSnapshot_orderBy, orderDirection: CELO_OrderDirection, where: CELO_LiquidityPositionSnapshot_filter): [CELO_LiquidityPositionSnapshot]!
+  block: Int!
+  timestamp: Int!
+}
+
+type CELO_LiquidityPositionSnapshot {
+  id: ID!
+  liquidityPosition: CELO_LiquidityPosition!
+  timestamp: Int!
+  block: Int!
+  user: CELO_User!
+  pair: CELO_Pair!
+  token0PriceUSD: CELO_BigDecimal!
+  token1PriceUSD: CELO_BigDecimal!
+  reserve0: CELO_BigDecimal!
+  reserve1: CELO_BigDecimal!
+  reserveUSD: CELO_BigDecimal!
+  liquidityTokenTotalSupply: CELO_BigDecimal!
+  liquidityTokenBalance: CELO_BigDecimal!
+}
+
+input CELO_LiquidityPositionSnapshot_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  liquidityPosition: String
+  liquidityPosition_not: String
+  liquidityPosition_gt: String
+  liquidityPosition_lt: String
+  liquidityPosition_gte: String
+  liquidityPosition_lte: String
+  liquidityPosition_in: [String!]
+  liquidityPosition_not_in: [String!]
+  liquidityPosition_contains: String
+  liquidityPosition_contains_nocase: String
+  liquidityPosition_not_contains: String
+  liquidityPosition_not_contains_nocase: String
+  liquidityPosition_starts_with: String
+  liquidityPosition_starts_with_nocase: String
+  liquidityPosition_not_starts_with: String
+  liquidityPosition_not_starts_with_nocase: String
+  liquidityPosition_ends_with: String
+  liquidityPosition_ends_with_nocase: String
+  liquidityPosition_not_ends_with: String
+  liquidityPosition_not_ends_with_nocase: String
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0PriceUSD: CELO_BigDecimal
+  token0PriceUSD_not: CELO_BigDecimal
+  token0PriceUSD_gt: CELO_BigDecimal
+  token0PriceUSD_lt: CELO_BigDecimal
+  token0PriceUSD_gte: CELO_BigDecimal
+  token0PriceUSD_lte: CELO_BigDecimal
+  token0PriceUSD_in: [CELO_BigDecimal!]
+  token0PriceUSD_not_in: [CELO_BigDecimal!]
+  token1PriceUSD: CELO_BigDecimal
+  token1PriceUSD_not: CELO_BigDecimal
+  token1PriceUSD_gt: CELO_BigDecimal
+  token1PriceUSD_lt: CELO_BigDecimal
+  token1PriceUSD_gte: CELO_BigDecimal
+  token1PriceUSD_lte: CELO_BigDecimal
+  token1PriceUSD_in: [CELO_BigDecimal!]
+  token1PriceUSD_not_in: [CELO_BigDecimal!]
+  reserve0: CELO_BigDecimal
+  reserve0_not: CELO_BigDecimal
+  reserve0_gt: CELO_BigDecimal
+  reserve0_lt: CELO_BigDecimal
+  reserve0_gte: CELO_BigDecimal
+  reserve0_lte: CELO_BigDecimal
+  reserve0_in: [CELO_BigDecimal!]
+  reserve0_not_in: [CELO_BigDecimal!]
+  reserve1: CELO_BigDecimal
+  reserve1_not: CELO_BigDecimal
+  reserve1_gt: CELO_BigDecimal
+  reserve1_lt: CELO_BigDecimal
+  reserve1_gte: CELO_BigDecimal
+  reserve1_lte: CELO_BigDecimal
+  reserve1_in: [CELO_BigDecimal!]
+  reserve1_not_in: [CELO_BigDecimal!]
+  reserveUSD: CELO_BigDecimal
+  reserveUSD_not: CELO_BigDecimal
+  reserveUSD_gt: CELO_BigDecimal
+  reserveUSD_lt: CELO_BigDecimal
+  reserveUSD_gte: CELO_BigDecimal
+  reserveUSD_lte: CELO_BigDecimal
+  reserveUSD_in: [CELO_BigDecimal!]
+  reserveUSD_not_in: [CELO_BigDecimal!]
+  liquidityTokenTotalSupply: CELO_BigDecimal
+  liquidityTokenTotalSupply_not: CELO_BigDecimal
+  liquidityTokenTotalSupply_gt: CELO_BigDecimal
+  liquidityTokenTotalSupply_lt: CELO_BigDecimal
+  liquidityTokenTotalSupply_gte: CELO_BigDecimal
+  liquidityTokenTotalSupply_lte: CELO_BigDecimal
+  liquidityTokenTotalSupply_in: [CELO_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [CELO_BigDecimal!]
+  liquidityTokenBalance: CELO_BigDecimal
+  liquidityTokenBalance_not: CELO_BigDecimal
+  liquidityTokenBalance_gt: CELO_BigDecimal
+  liquidityTokenBalance_lt: CELO_BigDecimal
+  liquidityTokenBalance_gte: CELO_BigDecimal
+  liquidityTokenBalance_lte: CELO_BigDecimal
+  liquidityTokenBalance_in: [CELO_BigDecimal!]
+  liquidityTokenBalance_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_LiquidityPositionSnapshot_orderBy {
+  id
+  liquidityPosition
+  timestamp
+  block
+  user
+  pair
+  token0PriceUSD
+  token1PriceUSD
+  reserve0
+  reserve1
+  reserveUSD
+  liquidityTokenTotalSupply
+  liquidityTokenBalance
+}
+
+input CELO_LiquidityPosition_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  liquidityTokenBalance: CELO_BigDecimal
+  liquidityTokenBalance_not: CELO_BigDecimal
+  liquidityTokenBalance_gt: CELO_BigDecimal
+  liquidityTokenBalance_lt: CELO_BigDecimal
+  liquidityTokenBalance_gte: CELO_BigDecimal
+  liquidityTokenBalance_lte: CELO_BigDecimal
+  liquidityTokenBalance_in: [CELO_BigDecimal!]
+  liquidityTokenBalance_not_in: [CELO_BigDecimal!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+}
+
+enum CELO_LiquidityPosition_orderBy {
+  id
+  user
+  pair
+  liquidityTokenBalance
+  snapshots
+  block
+  timestamp
+}
+
+type CELO_Mint {
+  id: ID!
+  transaction: CELO_Transaction!
+  timestamp: BigInt!
+  pair: CELO_Pair!
+  to: CELO_Bytes!
+  liquidity: CELO_BigDecimal!
+  sender: CELO_Bytes
+  amount0: CELO_BigDecimal
+  amount1: CELO_BigDecimal
+  logIndex: BigInt
+  amountUSD: CELO_BigDecimal
+  feeTo: CELO_Bytes
+  feeLiquidity: CELO_BigDecimal
+}
+
+input CELO_Mint_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  to: CELO_Bytes
+  to_not: CELO_Bytes
+  to_in: [CELO_Bytes!]
+  to_not_in: [CELO_Bytes!]
+  to_contains: CELO_Bytes
+  to_not_contains: CELO_Bytes
+  liquidity: CELO_BigDecimal
+  liquidity_not: CELO_BigDecimal
+  liquidity_gt: CELO_BigDecimal
+  liquidity_lt: CELO_BigDecimal
+  liquidity_gte: CELO_BigDecimal
+  liquidity_lte: CELO_BigDecimal
+  liquidity_in: [CELO_BigDecimal!]
+  liquidity_not_in: [CELO_BigDecimal!]
+  sender: CELO_Bytes
+  sender_not: CELO_Bytes
+  sender_in: [CELO_Bytes!]
+  sender_not_in: [CELO_Bytes!]
+  sender_contains: CELO_Bytes
+  sender_not_contains: CELO_Bytes
+  amount0: CELO_BigDecimal
+  amount0_not: CELO_BigDecimal
+  amount0_gt: CELO_BigDecimal
+  amount0_lt: CELO_BigDecimal
+  amount0_gte: CELO_BigDecimal
+  amount0_lte: CELO_BigDecimal
+  amount0_in: [CELO_BigDecimal!]
+  amount0_not_in: [CELO_BigDecimal!]
+  amount1: CELO_BigDecimal
+  amount1_not: CELO_BigDecimal
+  amount1_gt: CELO_BigDecimal
+  amount1_lt: CELO_BigDecimal
+  amount1_gte: CELO_BigDecimal
+  amount1_lte: CELO_BigDecimal
+  amount1_in: [CELO_BigDecimal!]
+  amount1_not_in: [CELO_BigDecimal!]
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: CELO_BigDecimal
+  amountUSD_not: CELO_BigDecimal
+  amountUSD_gt: CELO_BigDecimal
+  amountUSD_lt: CELO_BigDecimal
+  amountUSD_gte: CELO_BigDecimal
+  amountUSD_lte: CELO_BigDecimal
+  amountUSD_in: [CELO_BigDecimal!]
+  amountUSD_not_in: [CELO_BigDecimal!]
+  feeTo: CELO_Bytes
+  feeTo_not: CELO_Bytes
+  feeTo_in: [CELO_Bytes!]
+  feeTo_not_in: [CELO_Bytes!]
+  feeTo_contains: CELO_Bytes
+  feeTo_not_contains: CELO_Bytes
+  feeLiquidity: CELO_BigDecimal
+  feeLiquidity_not: CELO_BigDecimal
+  feeLiquidity_gt: CELO_BigDecimal
+  feeLiquidity_lt: CELO_BigDecimal
+  feeLiquidity_gte: CELO_BigDecimal
+  feeLiquidity_lte: CELO_BigDecimal
+  feeLiquidity_in: [CELO_BigDecimal!]
+  feeLiquidity_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_Mint_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  to
+  liquidity
+  sender
+  amount0
+  amount1
+  logIndex
+  amountUSD
+  feeTo
+  feeLiquidity
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum CELO_OrderDirection {
+  asc
+  desc
+}
+
+type CELO_Pair {
+  id: ID!
+  factory: CELO_Factory!
+  name: String!
+  token0: CELO_Token!
+  token1: CELO_Token!
+  reserve0: CELO_BigDecimal!
+  reserve1: CELO_BigDecimal!
+  totalSupply: CELO_BigDecimal!
+  reserveETH: CELO_BigDecimal!
+  reserveUSD: CELO_BigDecimal!
+  trackedReserveETH: CELO_BigDecimal!
+  token0Price: CELO_BigDecimal!
+  token1Price: CELO_BigDecimal!
+  volumeToken0: CELO_BigDecimal!
+  volumeToken1: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  untrackedVolumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+  liquidityProviderCount: BigInt!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: CELO_LiquidityPosition_orderBy, orderDirection: CELO_OrderDirection, where: CELO_LiquidityPosition_filter): [CELO_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: CELO_LiquidityPositionSnapshot_orderBy, orderDirection: CELO_OrderDirection, where: CELO_LiquidityPositionSnapshot_filter): [CELO_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: CELO_PairDayData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_PairDayData_filter): [CELO_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: CELO_PairHourData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_PairHourData_filter): [CELO_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: CELO_Mint_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Mint_filter): [CELO_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: CELO_Burn_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Burn_filter): [CELO_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: CELO_Swap_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Swap_filter): [CELO_Swap!]!
+  timestamp: BigInt!
+  block: BigInt!
+}
+
+type CELO_PairDayData {
+  id: ID!
+  date: Int!
+  pair: CELO_Pair!
+  token0: CELO_Token!
+  token1: CELO_Token!
+  reserve0: CELO_BigDecimal!
+  reserve1: CELO_BigDecimal!
+  totalSupply: CELO_BigDecimal!
+  reserveUSD: CELO_BigDecimal!
+  volumeToken0: CELO_BigDecimal!
+  volumeToken1: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+}
+
+input CELO_PairDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_contains_nocase: String
+  token0_not_contains: String
+  token0_not_contains_nocase: String
+  token0_starts_with: String
+  token0_starts_with_nocase: String
+  token0_not_starts_with: String
+  token0_not_starts_with_nocase: String
+  token0_ends_with: String
+  token0_ends_with_nocase: String
+  token0_not_ends_with: String
+  token0_not_ends_with_nocase: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_contains_nocase: String
+  token1_not_contains: String
+  token1_not_contains_nocase: String
+  token1_starts_with: String
+  token1_starts_with_nocase: String
+  token1_not_starts_with: String
+  token1_not_starts_with_nocase: String
+  token1_ends_with: String
+  token1_ends_with_nocase: String
+  token1_not_ends_with: String
+  token1_not_ends_with_nocase: String
+  reserve0: CELO_BigDecimal
+  reserve0_not: CELO_BigDecimal
+  reserve0_gt: CELO_BigDecimal
+  reserve0_lt: CELO_BigDecimal
+  reserve0_gte: CELO_BigDecimal
+  reserve0_lte: CELO_BigDecimal
+  reserve0_in: [CELO_BigDecimal!]
+  reserve0_not_in: [CELO_BigDecimal!]
+  reserve1: CELO_BigDecimal
+  reserve1_not: CELO_BigDecimal
+  reserve1_gt: CELO_BigDecimal
+  reserve1_lt: CELO_BigDecimal
+  reserve1_gte: CELO_BigDecimal
+  reserve1_lte: CELO_BigDecimal
+  reserve1_in: [CELO_BigDecimal!]
+  reserve1_not_in: [CELO_BigDecimal!]
+  totalSupply: CELO_BigDecimal
+  totalSupply_not: CELO_BigDecimal
+  totalSupply_gt: CELO_BigDecimal
+  totalSupply_lt: CELO_BigDecimal
+  totalSupply_gte: CELO_BigDecimal
+  totalSupply_lte: CELO_BigDecimal
+  totalSupply_in: [CELO_BigDecimal!]
+  totalSupply_not_in: [CELO_BigDecimal!]
+  reserveUSD: CELO_BigDecimal
+  reserveUSD_not: CELO_BigDecimal
+  reserveUSD_gt: CELO_BigDecimal
+  reserveUSD_lt: CELO_BigDecimal
+  reserveUSD_gte: CELO_BigDecimal
+  reserveUSD_lte: CELO_BigDecimal
+  reserveUSD_in: [CELO_BigDecimal!]
+  reserveUSD_not_in: [CELO_BigDecimal!]
+  volumeToken0: CELO_BigDecimal
+  volumeToken0_not: CELO_BigDecimal
+  volumeToken0_gt: CELO_BigDecimal
+  volumeToken0_lt: CELO_BigDecimal
+  volumeToken0_gte: CELO_BigDecimal
+  volumeToken0_lte: CELO_BigDecimal
+  volumeToken0_in: [CELO_BigDecimal!]
+  volumeToken0_not_in: [CELO_BigDecimal!]
+  volumeToken1: CELO_BigDecimal
+  volumeToken1_not: CELO_BigDecimal
+  volumeToken1_gt: CELO_BigDecimal
+  volumeToken1_lt: CELO_BigDecimal
+  volumeToken1_gte: CELO_BigDecimal
+  volumeToken1_lte: CELO_BigDecimal
+  volumeToken1_in: [CELO_BigDecimal!]
+  volumeToken1_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum CELO_PairDayData_orderBy {
+  id
+  date
+  pair
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+type CELO_PairHourData {
+  id: ID!
+  date: Int!
+  pair: CELO_Pair!
+  reserve0: CELO_BigDecimal!
+  reserve1: CELO_BigDecimal!
+  reserveUSD: CELO_BigDecimal!
+  volumeToken0: CELO_BigDecimal!
+  volumeToken1: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+}
+
+input CELO_PairHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  reserve0: CELO_BigDecimal
+  reserve0_not: CELO_BigDecimal
+  reserve0_gt: CELO_BigDecimal
+  reserve0_lt: CELO_BigDecimal
+  reserve0_gte: CELO_BigDecimal
+  reserve0_lte: CELO_BigDecimal
+  reserve0_in: [CELO_BigDecimal!]
+  reserve0_not_in: [CELO_BigDecimal!]
+  reserve1: CELO_BigDecimal
+  reserve1_not: CELO_BigDecimal
+  reserve1_gt: CELO_BigDecimal
+  reserve1_lt: CELO_BigDecimal
+  reserve1_gte: CELO_BigDecimal
+  reserve1_lte: CELO_BigDecimal
+  reserve1_in: [CELO_BigDecimal!]
+  reserve1_not_in: [CELO_BigDecimal!]
+  reserveUSD: CELO_BigDecimal
+  reserveUSD_not: CELO_BigDecimal
+  reserveUSD_gt: CELO_BigDecimal
+  reserveUSD_lt: CELO_BigDecimal
+  reserveUSD_gte: CELO_BigDecimal
+  reserveUSD_lte: CELO_BigDecimal
+  reserveUSD_in: [CELO_BigDecimal!]
+  reserveUSD_not_in: [CELO_BigDecimal!]
+  volumeToken0: CELO_BigDecimal
+  volumeToken0_not: CELO_BigDecimal
+  volumeToken0_gt: CELO_BigDecimal
+  volumeToken0_lt: CELO_BigDecimal
+  volumeToken0_gte: CELO_BigDecimal
+  volumeToken0_lte: CELO_BigDecimal
+  volumeToken0_in: [CELO_BigDecimal!]
+  volumeToken0_not_in: [CELO_BigDecimal!]
+  volumeToken1: CELO_BigDecimal
+  volumeToken1_not: CELO_BigDecimal
+  volumeToken1_gt: CELO_BigDecimal
+  volumeToken1_lt: CELO_BigDecimal
+  volumeToken1_gte: CELO_BigDecimal
+  volumeToken1_lte: CELO_BigDecimal
+  volumeToken1_in: [CELO_BigDecimal!]
+  volumeToken1_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum CELO_PairHourData_orderBy {
+  id
+  date
+  pair
+  reserve0
+  reserve1
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+input CELO_Pair_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_contains_nocase: String
+  token0_not_contains: String
+  token0_not_contains_nocase: String
+  token0_starts_with: String
+  token0_starts_with_nocase: String
+  token0_not_starts_with: String
+  token0_not_starts_with_nocase: String
+  token0_ends_with: String
+  token0_ends_with_nocase: String
+  token0_not_ends_with: String
+  token0_not_ends_with_nocase: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_contains_nocase: String
+  token1_not_contains: String
+  token1_not_contains_nocase: String
+  token1_starts_with: String
+  token1_starts_with_nocase: String
+  token1_not_starts_with: String
+  token1_not_starts_with_nocase: String
+  token1_ends_with: String
+  token1_ends_with_nocase: String
+  token1_not_ends_with: String
+  token1_not_ends_with_nocase: String
+  reserve0: CELO_BigDecimal
+  reserve0_not: CELO_BigDecimal
+  reserve0_gt: CELO_BigDecimal
+  reserve0_lt: CELO_BigDecimal
+  reserve0_gte: CELO_BigDecimal
+  reserve0_lte: CELO_BigDecimal
+  reserve0_in: [CELO_BigDecimal!]
+  reserve0_not_in: [CELO_BigDecimal!]
+  reserve1: CELO_BigDecimal
+  reserve1_not: CELO_BigDecimal
+  reserve1_gt: CELO_BigDecimal
+  reserve1_lt: CELO_BigDecimal
+  reserve1_gte: CELO_BigDecimal
+  reserve1_lte: CELO_BigDecimal
+  reserve1_in: [CELO_BigDecimal!]
+  reserve1_not_in: [CELO_BigDecimal!]
+  totalSupply: CELO_BigDecimal
+  totalSupply_not: CELO_BigDecimal
+  totalSupply_gt: CELO_BigDecimal
+  totalSupply_lt: CELO_BigDecimal
+  totalSupply_gte: CELO_BigDecimal
+  totalSupply_lte: CELO_BigDecimal
+  totalSupply_in: [CELO_BigDecimal!]
+  totalSupply_not_in: [CELO_BigDecimal!]
+  reserveETH: CELO_BigDecimal
+  reserveETH_not: CELO_BigDecimal
+  reserveETH_gt: CELO_BigDecimal
+  reserveETH_lt: CELO_BigDecimal
+  reserveETH_gte: CELO_BigDecimal
+  reserveETH_lte: CELO_BigDecimal
+  reserveETH_in: [CELO_BigDecimal!]
+  reserveETH_not_in: [CELO_BigDecimal!]
+  reserveUSD: CELO_BigDecimal
+  reserveUSD_not: CELO_BigDecimal
+  reserveUSD_gt: CELO_BigDecimal
+  reserveUSD_lt: CELO_BigDecimal
+  reserveUSD_gte: CELO_BigDecimal
+  reserveUSD_lte: CELO_BigDecimal
+  reserveUSD_in: [CELO_BigDecimal!]
+  reserveUSD_not_in: [CELO_BigDecimal!]
+  trackedReserveETH: CELO_BigDecimal
+  trackedReserveETH_not: CELO_BigDecimal
+  trackedReserveETH_gt: CELO_BigDecimal
+  trackedReserveETH_lt: CELO_BigDecimal
+  trackedReserveETH_gte: CELO_BigDecimal
+  trackedReserveETH_lte: CELO_BigDecimal
+  trackedReserveETH_in: [CELO_BigDecimal!]
+  trackedReserveETH_not_in: [CELO_BigDecimal!]
+  token0Price: CELO_BigDecimal
+  token0Price_not: CELO_BigDecimal
+  token0Price_gt: CELO_BigDecimal
+  token0Price_lt: CELO_BigDecimal
+  token0Price_gte: CELO_BigDecimal
+  token0Price_lte: CELO_BigDecimal
+  token0Price_in: [CELO_BigDecimal!]
+  token0Price_not_in: [CELO_BigDecimal!]
+  token1Price: CELO_BigDecimal
+  token1Price_not: CELO_BigDecimal
+  token1Price_gt: CELO_BigDecimal
+  token1Price_lt: CELO_BigDecimal
+  token1Price_gte: CELO_BigDecimal
+  token1Price_lte: CELO_BigDecimal
+  token1Price_in: [CELO_BigDecimal!]
+  token1Price_not_in: [CELO_BigDecimal!]
+  volumeToken0: CELO_BigDecimal
+  volumeToken0_not: CELO_BigDecimal
+  volumeToken0_gt: CELO_BigDecimal
+  volumeToken0_lt: CELO_BigDecimal
+  volumeToken0_gte: CELO_BigDecimal
+  volumeToken0_lte: CELO_BigDecimal
+  volumeToken0_in: [CELO_BigDecimal!]
+  volumeToken0_not_in: [CELO_BigDecimal!]
+  volumeToken1: CELO_BigDecimal
+  volumeToken1_not: CELO_BigDecimal
+  volumeToken1_gt: CELO_BigDecimal
+  volumeToken1_lt: CELO_BigDecimal
+  volumeToken1_gte: CELO_BigDecimal
+  volumeToken1_lte: CELO_BigDecimal
+  volumeToken1_in: [CELO_BigDecimal!]
+  volumeToken1_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD: CELO_BigDecimal
+  untrackedVolumeUSD_not: CELO_BigDecimal
+  untrackedVolumeUSD_gt: CELO_BigDecimal
+  untrackedVolumeUSD_lt: CELO_BigDecimal
+  untrackedVolumeUSD_gte: CELO_BigDecimal
+  untrackedVolumeUSD_lte: CELO_BigDecimal
+  untrackedVolumeUSD_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidityProviderCount: BigInt
+  liquidityProviderCount_not: BigInt
+  liquidityProviderCount_gt: BigInt
+  liquidityProviderCount_lt: BigInt
+  liquidityProviderCount_gte: BigInt
+  liquidityProviderCount_lte: BigInt
+  liquidityProviderCount_in: [BigInt!]
+  liquidityProviderCount_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+}
+
+enum CELO_Pair_orderBy {
+  id
+  factory
+  name
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveETH
+  reserveUSD
+  trackedReserveETH
+  token0Price
+  token1Price
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidityProviderCount
+  liquidityPositions
+  liquidityPositionSnapshots
+  dayData
+  hourData
+  mints
+  burns
+  swaps
+  timestamp
+  block
+}
+
+type Query {
+  CELO_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_User
+  CELO_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_User_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_User!]!
+  CELO_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Bundle
+  CELO_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Bundle_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Bundle!]!
+  CELO_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Factory @merge(keyField: "id", keyArg: "id")
+  CELO_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Factory_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Factory!]!
+  CELO_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_HourData
+  CELO_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_HourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_HourData!]!
+  CELO_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_DayData
+  CELO_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_DayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_DayData!]!
+  CELO_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Token
+  CELO_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Token_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Token!]!
+  CELO_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_TokenHourData
+  CELO_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_TokenHourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_TokenHourData!]!
+  CELO_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_TokenDayData
+  CELO_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_TokenDayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_TokenDayData!]!
+  CELO_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Pair
+  CELO_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Pair_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Pair!]!
+  CELO_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_PairHourData
+  CELO_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_PairHourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_PairHourData!]!
+  CELO_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_PairDayData
+  CELO_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_PairDayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_PairDayData!]!
+  CELO_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_LiquidityPosition
+  CELO_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_LiquidityPosition_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_LiquidityPosition!]!
+  CELO_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_LiquidityPositionSnapshot
+  CELO_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_LiquidityPositionSnapshot_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_LiquidityPositionSnapshot!]!
+  CELO_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Transaction
+  CELO_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Transaction_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Transaction!]!
+  CELO_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Mint
+  CELO_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Mint_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Mint!]!
+  CELO_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Burn
+  CELO_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Burn_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Burn!]!
+  CELO_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Swap
+  CELO_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Swap_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Swap!]!
+  """Access to subgraph metadata"""
+  CELO__meta(block: CELO_Block_height): CELO__Meta_
+}
+
+type Subscription {
+  CELO_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_User
+  CELO_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_User_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_User!]!
+  CELO_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Bundle
+  CELO_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Bundle_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Bundle!]!
+  CELO_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Factory
+  CELO_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Factory_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Factory!]!
+  CELO_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_HourData
+  CELO_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_HourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_HourData!]!
+  CELO_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_DayData
+  CELO_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_DayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_DayData!]!
+  CELO_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Token
+  CELO_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Token_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Token!]!
+  CELO_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_TokenHourData
+  CELO_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_TokenHourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_TokenHourData!]!
+  CELO_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_TokenDayData
+  CELO_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_TokenDayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_TokenDayData!]!
+  CELO_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Pair
+  CELO_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Pair_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Pair!]!
+  CELO_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_PairHourData
+  CELO_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_PairHourData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_PairHourData!]!
+  CELO_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_PairDayData
+  CELO_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_PairDayData_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_PairDayData!]!
+  CELO_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_LiquidityPosition
+  CELO_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_LiquidityPosition_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_LiquidityPosition!]!
+  CELO_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_LiquidityPositionSnapshot
+  CELO_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_LiquidityPositionSnapshot_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_LiquidityPositionSnapshot!]!
+  CELO_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Transaction
+  CELO_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Transaction_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Transaction!]!
+  CELO_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Mint
+  CELO_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Mint_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Mint!]!
+  CELO_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Burn
+  CELO_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Burn_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Burn!]!
+  CELO_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): CELO_Swap
+  CELO_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: CELO_Swap_orderBy
+    orderDirection: CELO_OrderDirection
+    where: CELO_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: CELO_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [CELO_Swap!]!
+  """Access to subgraph metadata"""
+  CELO__meta(block: CELO_Block_height): CELO__Meta_
+}
+
+type CELO_Swap {
+  id: ID!
+  transaction: CELO_Transaction!
+  timestamp: BigInt!
+  pair: CELO_Pair!
+  sender: CELO_Bytes!
+  amount0In: CELO_BigDecimal!
+  amount1In: CELO_BigDecimal!
+  amount0Out: CELO_BigDecimal!
+  amount1Out: CELO_BigDecimal!
+  to: CELO_Bytes!
+  logIndex: BigInt
+  amountUSD: CELO_BigDecimal!
+}
+
+input CELO_Swap_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  sender: CELO_Bytes
+  sender_not: CELO_Bytes
+  sender_in: [CELO_Bytes!]
+  sender_not_in: [CELO_Bytes!]
+  sender_contains: CELO_Bytes
+  sender_not_contains: CELO_Bytes
+  amount0In: CELO_BigDecimal
+  amount0In_not: CELO_BigDecimal
+  amount0In_gt: CELO_BigDecimal
+  amount0In_lt: CELO_BigDecimal
+  amount0In_gte: CELO_BigDecimal
+  amount0In_lte: CELO_BigDecimal
+  amount0In_in: [CELO_BigDecimal!]
+  amount0In_not_in: [CELO_BigDecimal!]
+  amount1In: CELO_BigDecimal
+  amount1In_not: CELO_BigDecimal
+  amount1In_gt: CELO_BigDecimal
+  amount1In_lt: CELO_BigDecimal
+  amount1In_gte: CELO_BigDecimal
+  amount1In_lte: CELO_BigDecimal
+  amount1In_in: [CELO_BigDecimal!]
+  amount1In_not_in: [CELO_BigDecimal!]
+  amount0Out: CELO_BigDecimal
+  amount0Out_not: CELO_BigDecimal
+  amount0Out_gt: CELO_BigDecimal
+  amount0Out_lt: CELO_BigDecimal
+  amount0Out_gte: CELO_BigDecimal
+  amount0Out_lte: CELO_BigDecimal
+  amount0Out_in: [CELO_BigDecimal!]
+  amount0Out_not_in: [CELO_BigDecimal!]
+  amount1Out: CELO_BigDecimal
+  amount1Out_not: CELO_BigDecimal
+  amount1Out_gt: CELO_BigDecimal
+  amount1Out_lt: CELO_BigDecimal
+  amount1Out_gte: CELO_BigDecimal
+  amount1Out_lte: CELO_BigDecimal
+  amount1Out_in: [CELO_BigDecimal!]
+  amount1Out_not_in: [CELO_BigDecimal!]
+  to: CELO_Bytes
+  to_not: CELO_Bytes
+  to_in: [CELO_Bytes!]
+  to_not_in: [CELO_Bytes!]
+  to_contains: CELO_Bytes
+  to_not_contains: CELO_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: CELO_BigDecimal
+  amountUSD_not: CELO_BigDecimal
+  amountUSD_gt: CELO_BigDecimal
+  amountUSD_lt: CELO_BigDecimal
+  amountUSD_gte: CELO_BigDecimal
+  amountUSD_lte: CELO_BigDecimal
+  amountUSD_in: [CELO_BigDecimal!]
+  amountUSD_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_Swap_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  sender
+  amount0In
+  amount1In
+  amount0Out
+  amount1Out
+  to
+  logIndex
+  amountUSD
+}
+
+type CELO_Token {
+  id: ID!
+  factory: CELO_Factory!
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+  totalSupply: BigInt!
+  volume: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  untrackedVolumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+  liquidity: CELO_BigDecimal!
+  derivedETH: CELO_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: CELO_Pair_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Pair_filter): [CELO_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: CELO_TokenHourData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_TokenHourData_filter): [CELO_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: CELO_TokenDayData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_TokenDayData_filter): [CELO_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: CELO_Pair_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Pair_filter): [CELO_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: CELO_Pair_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Pair_filter): [CELO_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: CELO_PairDayData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_PairDayData_filter): [CELO_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: CELO_PairDayData_orderBy, orderDirection: CELO_OrderDirection, where: CELO_PairDayData_filter): [CELO_PairDayData!]!
+}
+
+type CELO_TokenDayData {
+  id: ID!
+  date: Int!
+  token: CELO_Token!
+  volume: CELO_BigDecimal!
+  volumeETH: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+  liquidity: CELO_BigDecimal!
+  liquidityETH: CELO_BigDecimal!
+  liquidityUSD: CELO_BigDecimal!
+  priceUSD: CELO_BigDecimal!
+}
+
+input CELO_TokenDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: CELO_BigDecimal
+  volume_not: CELO_BigDecimal
+  volume_gt: CELO_BigDecimal
+  volume_lt: CELO_BigDecimal
+  volume_gte: CELO_BigDecimal
+  volume_lte: CELO_BigDecimal
+  volume_in: [CELO_BigDecimal!]
+  volume_not_in: [CELO_BigDecimal!]
+  volumeETH: CELO_BigDecimal
+  volumeETH_not: CELO_BigDecimal
+  volumeETH_gt: CELO_BigDecimal
+  volumeETH_lt: CELO_BigDecimal
+  volumeETH_gte: CELO_BigDecimal
+  volumeETH_lte: CELO_BigDecimal
+  volumeETH_in: [CELO_BigDecimal!]
+  volumeETH_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: CELO_BigDecimal
+  liquidity_not: CELO_BigDecimal
+  liquidity_gt: CELO_BigDecimal
+  liquidity_lt: CELO_BigDecimal
+  liquidity_gte: CELO_BigDecimal
+  liquidity_lte: CELO_BigDecimal
+  liquidity_in: [CELO_BigDecimal!]
+  liquidity_not_in: [CELO_BigDecimal!]
+  liquidityETH: CELO_BigDecimal
+  liquidityETH_not: CELO_BigDecimal
+  liquidityETH_gt: CELO_BigDecimal
+  liquidityETH_lt: CELO_BigDecimal
+  liquidityETH_gte: CELO_BigDecimal
+  liquidityETH_lte: CELO_BigDecimal
+  liquidityETH_in: [CELO_BigDecimal!]
+  liquidityETH_not_in: [CELO_BigDecimal!]
+  liquidityUSD: CELO_BigDecimal
+  liquidityUSD_not: CELO_BigDecimal
+  liquidityUSD_gt: CELO_BigDecimal
+  liquidityUSD_lt: CELO_BigDecimal
+  liquidityUSD_gte: CELO_BigDecimal
+  liquidityUSD_lte: CELO_BigDecimal
+  liquidityUSD_in: [CELO_BigDecimal!]
+  liquidityUSD_not_in: [CELO_BigDecimal!]
+  priceUSD: CELO_BigDecimal
+  priceUSD_not: CELO_BigDecimal
+  priceUSD_gt: CELO_BigDecimal
+  priceUSD_lt: CELO_BigDecimal
+  priceUSD_gte: CELO_BigDecimal
+  priceUSD_lte: CELO_BigDecimal
+  priceUSD_in: [CELO_BigDecimal!]
+  priceUSD_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_TokenDayData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+type CELO_TokenHourData {
+  id: ID!
+  date: Int!
+  token: CELO_Token!
+  volume: CELO_BigDecimal!
+  volumeETH: CELO_BigDecimal!
+  volumeUSD: CELO_BigDecimal!
+  txCount: BigInt!
+  liquidity: CELO_BigDecimal!
+  liquidityETH: CELO_BigDecimal!
+  liquidityUSD: CELO_BigDecimal!
+  priceUSD: CELO_BigDecimal!
+}
+
+input CELO_TokenHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: CELO_BigDecimal
+  volume_not: CELO_BigDecimal
+  volume_gt: CELO_BigDecimal
+  volume_lt: CELO_BigDecimal
+  volume_gte: CELO_BigDecimal
+  volume_lte: CELO_BigDecimal
+  volume_in: [CELO_BigDecimal!]
+  volume_not_in: [CELO_BigDecimal!]
+  volumeETH: CELO_BigDecimal
+  volumeETH_not: CELO_BigDecimal
+  volumeETH_gt: CELO_BigDecimal
+  volumeETH_lt: CELO_BigDecimal
+  volumeETH_gte: CELO_BigDecimal
+  volumeETH_lte: CELO_BigDecimal
+  volumeETH_in: [CELO_BigDecimal!]
+  volumeETH_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: CELO_BigDecimal
+  liquidity_not: CELO_BigDecimal
+  liquidity_gt: CELO_BigDecimal
+  liquidity_lt: CELO_BigDecimal
+  liquidity_gte: CELO_BigDecimal
+  liquidity_lte: CELO_BigDecimal
+  liquidity_in: [CELO_BigDecimal!]
+  liquidity_not_in: [CELO_BigDecimal!]
+  liquidityETH: CELO_BigDecimal
+  liquidityETH_not: CELO_BigDecimal
+  liquidityETH_gt: CELO_BigDecimal
+  liquidityETH_lt: CELO_BigDecimal
+  liquidityETH_gte: CELO_BigDecimal
+  liquidityETH_lte: CELO_BigDecimal
+  liquidityETH_in: [CELO_BigDecimal!]
+  liquidityETH_not_in: [CELO_BigDecimal!]
+  liquidityUSD: CELO_BigDecimal
+  liquidityUSD_not: CELO_BigDecimal
+  liquidityUSD_gt: CELO_BigDecimal
+  liquidityUSD_lt: CELO_BigDecimal
+  liquidityUSD_gte: CELO_BigDecimal
+  liquidityUSD_lte: CELO_BigDecimal
+  liquidityUSD_in: [CELO_BigDecimal!]
+  liquidityUSD_not_in: [CELO_BigDecimal!]
+  priceUSD: CELO_BigDecimal
+  priceUSD_not: CELO_BigDecimal
+  priceUSD_gt: CELO_BigDecimal
+  priceUSD_lt: CELO_BigDecimal
+  priceUSD_gte: CELO_BigDecimal
+  priceUSD_lte: CELO_BigDecimal
+  priceUSD_in: [CELO_BigDecimal!]
+  priceUSD_not_in: [CELO_BigDecimal!]
+}
+
+enum CELO_TokenHourData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+input CELO_Token_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  symbol: String
+  symbol_not: String
+  symbol_gt: String
+  symbol_lt: String
+  symbol_gte: String
+  symbol_lte: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_contains: String
+  symbol_contains_nocase: String
+  symbol_not_contains: String
+  symbol_not_contains_nocase: String
+  symbol_starts_with: String
+  symbol_starts_with_nocase: String
+  symbol_not_starts_with: String
+  symbol_not_starts_with_nocase: String
+  symbol_ends_with: String
+  symbol_ends_with_nocase: String
+  symbol_not_ends_with: String
+  symbol_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  decimals: BigInt
+  decimals_not: BigInt
+  decimals_gt: BigInt
+  decimals_lt: BigInt
+  decimals_gte: BigInt
+  decimals_lte: BigInt
+  decimals_in: [BigInt!]
+  decimals_not_in: [BigInt!]
+  totalSupply: BigInt
+  totalSupply_not: BigInt
+  totalSupply_gt: BigInt
+  totalSupply_lt: BigInt
+  totalSupply_gte: BigInt
+  totalSupply_lte: BigInt
+  totalSupply_in: [BigInt!]
+  totalSupply_not_in: [BigInt!]
+  volume: CELO_BigDecimal
+  volume_not: CELO_BigDecimal
+  volume_gt: CELO_BigDecimal
+  volume_lt: CELO_BigDecimal
+  volume_gte: CELO_BigDecimal
+  volume_lte: CELO_BigDecimal
+  volume_in: [CELO_BigDecimal!]
+  volume_not_in: [CELO_BigDecimal!]
+  volumeUSD: CELO_BigDecimal
+  volumeUSD_not: CELO_BigDecimal
+  volumeUSD_gt: CELO_BigDecimal
+  volumeUSD_lt: CELO_BigDecimal
+  volumeUSD_gte: CELO_BigDecimal
+  volumeUSD_lte: CELO_BigDecimal
+  volumeUSD_in: [CELO_BigDecimal!]
+  volumeUSD_not_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD: CELO_BigDecimal
+  untrackedVolumeUSD_not: CELO_BigDecimal
+  untrackedVolumeUSD_gt: CELO_BigDecimal
+  untrackedVolumeUSD_lt: CELO_BigDecimal
+  untrackedVolumeUSD_gte: CELO_BigDecimal
+  untrackedVolumeUSD_lte: CELO_BigDecimal
+  untrackedVolumeUSD_in: [CELO_BigDecimal!]
+  untrackedVolumeUSD_not_in: [CELO_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: CELO_BigDecimal
+  liquidity_not: CELO_BigDecimal
+  liquidity_gt: CELO_BigDecimal
+  liquidity_lt: CELO_BigDecimal
+  liquidity_gte: CELO_BigDecimal
+  liquidity_lte: CELO_BigDecimal
+  liquidity_in: [CELO_BigDecimal!]
+  liquidity_not_in: [CELO_BigDecimal!]
+  derivedETH: CELO_BigDecimal
+  derivedETH_not: CELO_BigDecimal
+  derivedETH_gt: CELO_BigDecimal
+  derivedETH_lt: CELO_BigDecimal
+  derivedETH_gte: CELO_BigDecimal
+  derivedETH_lte: CELO_BigDecimal
+  derivedETH_in: [CELO_BigDecimal!]
+  derivedETH_not_in: [CELO_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
+}
+
+enum CELO_Token_orderBy {
+  id
+  factory
+  symbol
+  name
+  decimals
+  totalSupply
+  volume
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidity
+  derivedETH
+  whitelistPairs
+  hourData
+  dayData
+  basePairs
+  quotePairs
+  basePairsDayData
+  quotePairsDayData
+}
+
+type CELO_Transaction {
+  id: ID!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  mints(skip: Int = 0, first: Int = 100, orderBy: CELO_Mint_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Mint_filter): [CELO_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: CELO_Burn_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Burn_filter): [CELO_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: CELO_Swap_orderBy, orderDirection: CELO_OrderDirection, where: CELO_Swap_filter): [CELO_Swap]!
+}
+
+input CELO_Transaction_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  mints: [String!]
+  mints_not: [String!]
+  mints_contains: [String!]
+  mints_contains_nocase: [String!]
+  mints_not_contains: [String!]
+  mints_not_contains_nocase: [String!]
+  burns: [String!]
+  burns_not: [String!]
+  burns_contains: [String!]
+  burns_contains_nocase: [String!]
+  burns_not_contains: [String!]
+  burns_not_contains_nocase: [String!]
+  swaps: [String!]
+  swaps_not: [String!]
+  swaps_contains: [String!]
+  swaps_contains_nocase: [String!]
+  swaps_not_contains: [String!]
+  swaps_not_contains_nocase: [String!]
+}
+
+enum CELO_Transaction_orderBy {
+  id
+  blockNumber
+  timestamp
+  mints
+  burns
+  swaps
+}
+
+type CELO_User {
+  id: ID!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: CELO_LiquidityPosition_orderBy, orderDirection: CELO_OrderDirection, where: CELO_LiquidityPosition_filter): [CELO_LiquidityPosition!]!
+}
+
+input CELO_User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+enum CELO_User_orderBy {
+  id
+  liquidityPositions
+}
+
+type CELO__Block_ {
+  """The hash of the block"""
+  hash: CELO_Bytes
+  """The block number"""
+  number: Int!
+}
+
+"""The type for the top-level _meta field"""
+type CELO__Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  
+  """
+  block: CELO__Block_!
+  """The deployment ID"""
+  deployment: String!
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}
