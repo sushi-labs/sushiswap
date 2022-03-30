@@ -41,6 +41,9 @@
         "$DOCS_URL"
       ],
       "outputs": [".next/**"]
+    },
+    "analytics#generate": {
+      "outputs": [".graphclient/**"]
     }
   }
 }

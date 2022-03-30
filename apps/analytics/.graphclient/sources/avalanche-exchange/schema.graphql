@@ -1,0 +1,3182 @@
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+"Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive."
+directive @entity on OBJECT
+
+"Defined a Subgraph ID for an object type"
+directive @subgraphId(id: String!) on OBJECT
+
+"creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+scalar AVALANCHE_BigDecimal
+
+scalar BigInt
+
+"""The block at which the query should be executed."""
+input AVALANCHE_Block_height {
+  """Value containing a block hash"""
+  hash: AVALANCHE_Bytes
+  """Value containing a block number"""
+  number: Int
+  """
+  Value containing the minimum block number. 
+  In the case of `number_gte`, the query will be executed on the latest block only if
+  the subgraph has progressed to or past the minimum block number.
+  Defaults to the latest block when omitted.
+  
+  """
+  number_gte: Int
+}
+
+type AVALANCHE_Bundle {
+  id: ID!
+  ethPrice: AVALANCHE_BigDecimal!
+}
+
+input AVALANCHE_Bundle_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ethPrice: AVALANCHE_BigDecimal
+  ethPrice_not: AVALANCHE_BigDecimal
+  ethPrice_gt: AVALANCHE_BigDecimal
+  ethPrice_lt: AVALANCHE_BigDecimal
+  ethPrice_gte: AVALANCHE_BigDecimal
+  ethPrice_lte: AVALANCHE_BigDecimal
+  ethPrice_in: [AVALANCHE_BigDecimal!]
+  ethPrice_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_Bundle_orderBy {
+  id
+  ethPrice
+}
+
+type AVALANCHE_Burn {
+  id: ID!
+  transaction: AVALANCHE_Transaction!
+  timestamp: BigInt!
+  pair: AVALANCHE_Pair!
+  liquidity: AVALANCHE_BigDecimal!
+  sender: AVALANCHE_Bytes
+  amount0: AVALANCHE_BigDecimal
+  amount1: AVALANCHE_BigDecimal
+  to: AVALANCHE_Bytes
+  logIndex: BigInt
+  amountUSD: AVALANCHE_BigDecimal
+  complete: Boolean!
+  feeTo: AVALANCHE_Bytes
+  feeLiquidity: AVALANCHE_BigDecimal
+}
+
+input AVALANCHE_Burn_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  liquidity: AVALANCHE_BigDecimal
+  liquidity_not: AVALANCHE_BigDecimal
+  liquidity_gt: AVALANCHE_BigDecimal
+  liquidity_lt: AVALANCHE_BigDecimal
+  liquidity_gte: AVALANCHE_BigDecimal
+  liquidity_lte: AVALANCHE_BigDecimal
+  liquidity_in: [AVALANCHE_BigDecimal!]
+  liquidity_not_in: [AVALANCHE_BigDecimal!]
+  sender: AVALANCHE_Bytes
+  sender_not: AVALANCHE_Bytes
+  sender_in: [AVALANCHE_Bytes!]
+  sender_not_in: [AVALANCHE_Bytes!]
+  sender_contains: AVALANCHE_Bytes
+  sender_not_contains: AVALANCHE_Bytes
+  amount0: AVALANCHE_BigDecimal
+  amount0_not: AVALANCHE_BigDecimal
+  amount0_gt: AVALANCHE_BigDecimal
+  amount0_lt: AVALANCHE_BigDecimal
+  amount0_gte: AVALANCHE_BigDecimal
+  amount0_lte: AVALANCHE_BigDecimal
+  amount0_in: [AVALANCHE_BigDecimal!]
+  amount0_not_in: [AVALANCHE_BigDecimal!]
+  amount1: AVALANCHE_BigDecimal
+  amount1_not: AVALANCHE_BigDecimal
+  amount1_gt: AVALANCHE_BigDecimal
+  amount1_lt: AVALANCHE_BigDecimal
+  amount1_gte: AVALANCHE_BigDecimal
+  amount1_lte: AVALANCHE_BigDecimal
+  amount1_in: [AVALANCHE_BigDecimal!]
+  amount1_not_in: [AVALANCHE_BigDecimal!]
+  to: AVALANCHE_Bytes
+  to_not: AVALANCHE_Bytes
+  to_in: [AVALANCHE_Bytes!]
+  to_not_in: [AVALANCHE_Bytes!]
+  to_contains: AVALANCHE_Bytes
+  to_not_contains: AVALANCHE_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: AVALANCHE_BigDecimal
+  amountUSD_not: AVALANCHE_BigDecimal
+  amountUSD_gt: AVALANCHE_BigDecimal
+  amountUSD_lt: AVALANCHE_BigDecimal
+  amountUSD_gte: AVALANCHE_BigDecimal
+  amountUSD_lte: AVALANCHE_BigDecimal
+  amountUSD_in: [AVALANCHE_BigDecimal!]
+  amountUSD_not_in: [AVALANCHE_BigDecimal!]
+  complete: Boolean
+  complete_not: Boolean
+  complete_in: [Boolean!]
+  complete_not_in: [Boolean!]
+  feeTo: AVALANCHE_Bytes
+  feeTo_not: AVALANCHE_Bytes
+  feeTo_in: [AVALANCHE_Bytes!]
+  feeTo_not_in: [AVALANCHE_Bytes!]
+  feeTo_contains: AVALANCHE_Bytes
+  feeTo_not_contains: AVALANCHE_Bytes
+  feeLiquidity: AVALANCHE_BigDecimal
+  feeLiquidity_not: AVALANCHE_BigDecimal
+  feeLiquidity_gt: AVALANCHE_BigDecimal
+  feeLiquidity_lt: AVALANCHE_BigDecimal
+  feeLiquidity_gte: AVALANCHE_BigDecimal
+  feeLiquidity_lte: AVALANCHE_BigDecimal
+  feeLiquidity_in: [AVALANCHE_BigDecimal!]
+  feeLiquidity_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_Burn_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  liquidity
+  sender
+  amount0
+  amount1
+  to
+  logIndex
+  amountUSD
+  complete
+  feeTo
+  feeLiquidity
+}
+
+scalar AVALANCHE_Bytes
+
+type AVALANCHE_DayData {
+  id: ID!
+  date: Int!
+  factory: AVALANCHE_Factory!
+  volumeETH: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  untrackedVolume: AVALANCHE_BigDecimal!
+  liquidityETH: AVALANCHE_BigDecimal!
+  liquidityUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+}
+
+input AVALANCHE_DayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: AVALANCHE_BigDecimal
+  volumeETH_not: AVALANCHE_BigDecimal
+  volumeETH_gt: AVALANCHE_BigDecimal
+  volumeETH_lt: AVALANCHE_BigDecimal
+  volumeETH_gte: AVALANCHE_BigDecimal
+  volumeETH_lte: AVALANCHE_BigDecimal
+  volumeETH_in: [AVALANCHE_BigDecimal!]
+  volumeETH_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  untrackedVolume: AVALANCHE_BigDecimal
+  untrackedVolume_not: AVALANCHE_BigDecimal
+  untrackedVolume_gt: AVALANCHE_BigDecimal
+  untrackedVolume_lt: AVALANCHE_BigDecimal
+  untrackedVolume_gte: AVALANCHE_BigDecimal
+  untrackedVolume_lte: AVALANCHE_BigDecimal
+  untrackedVolume_in: [AVALANCHE_BigDecimal!]
+  untrackedVolume_not_in: [AVALANCHE_BigDecimal!]
+  liquidityETH: AVALANCHE_BigDecimal
+  liquidityETH_not: AVALANCHE_BigDecimal
+  liquidityETH_gt: AVALANCHE_BigDecimal
+  liquidityETH_lt: AVALANCHE_BigDecimal
+  liquidityETH_gte: AVALANCHE_BigDecimal
+  liquidityETH_lte: AVALANCHE_BigDecimal
+  liquidityETH_in: [AVALANCHE_BigDecimal!]
+  liquidityETH_not_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD: AVALANCHE_BigDecimal
+  liquidityUSD_not: AVALANCHE_BigDecimal
+  liquidityUSD_gt: AVALANCHE_BigDecimal
+  liquidityUSD_lt: AVALANCHE_BigDecimal
+  liquidityUSD_gte: AVALANCHE_BigDecimal
+  liquidityUSD_lte: AVALANCHE_BigDecimal
+  liquidityUSD_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum AVALANCHE_DayData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type AVALANCHE_Factory {
+  id: ID!
+  pairCount: BigInt!
+  volumeUSD: AVALANCHE_BigDecimal!
+  volumeETH: AVALANCHE_BigDecimal!
+  untrackedVolumeUSD: AVALANCHE_BigDecimal!
+  liquidityUSD: AVALANCHE_BigDecimal!
+  liquidityETH: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+  tokenCount: BigInt!
+  userCount: BigInt!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Pair_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Pair_filter): [AVALANCHE_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Token_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Token_filter): [AVALANCHE_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_HourData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_HourData_filter): [AVALANCHE_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_DayData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_DayData_filter): [AVALANCHE_DayData!]!
+}
+
+input AVALANCHE_Factory_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  pairCount: BigInt
+  pairCount_not: BigInt
+  pairCount_gt: BigInt
+  pairCount_lt: BigInt
+  pairCount_gte: BigInt
+  pairCount_lte: BigInt
+  pairCount_in: [BigInt!]
+  pairCount_not_in: [BigInt!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  volumeETH: AVALANCHE_BigDecimal
+  volumeETH_not: AVALANCHE_BigDecimal
+  volumeETH_gt: AVALANCHE_BigDecimal
+  volumeETH_lt: AVALANCHE_BigDecimal
+  volumeETH_gte: AVALANCHE_BigDecimal
+  volumeETH_lte: AVALANCHE_BigDecimal
+  volumeETH_in: [AVALANCHE_BigDecimal!]
+  volumeETH_not_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_not: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD: AVALANCHE_BigDecimal
+  liquidityUSD_not: AVALANCHE_BigDecimal
+  liquidityUSD_gt: AVALANCHE_BigDecimal
+  liquidityUSD_lt: AVALANCHE_BigDecimal
+  liquidityUSD_gte: AVALANCHE_BigDecimal
+  liquidityUSD_lte: AVALANCHE_BigDecimal
+  liquidityUSD_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD_not_in: [AVALANCHE_BigDecimal!]
+  liquidityETH: AVALANCHE_BigDecimal
+  liquidityETH_not: AVALANCHE_BigDecimal
+  liquidityETH_gt: AVALANCHE_BigDecimal
+  liquidityETH_lt: AVALANCHE_BigDecimal
+  liquidityETH_gte: AVALANCHE_BigDecimal
+  liquidityETH_lte: AVALANCHE_BigDecimal
+  liquidityETH_in: [AVALANCHE_BigDecimal!]
+  liquidityETH_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+}
+
+enum AVALANCHE_Factory_orderBy {
+  id
+  pairCount
+  volumeUSD
+  volumeETH
+  untrackedVolumeUSD
+  liquidityUSD
+  liquidityETH
+  txCount
+  tokenCount
+  userCount
+  pairs
+  tokens
+  hourData
+  dayData
+}
+
+type AVALANCHE_HourData {
+  id: ID!
+  date: Int!
+  factory: AVALANCHE_Factory!
+  volumeETH: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  untrackedVolume: AVALANCHE_BigDecimal!
+  liquidityETH: AVALANCHE_BigDecimal!
+  liquidityUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+}
+
+input AVALANCHE_HourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: AVALANCHE_BigDecimal
+  volumeETH_not: AVALANCHE_BigDecimal
+  volumeETH_gt: AVALANCHE_BigDecimal
+  volumeETH_lt: AVALANCHE_BigDecimal
+  volumeETH_gte: AVALANCHE_BigDecimal
+  volumeETH_lte: AVALANCHE_BigDecimal
+  volumeETH_in: [AVALANCHE_BigDecimal!]
+  volumeETH_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  untrackedVolume: AVALANCHE_BigDecimal
+  untrackedVolume_not: AVALANCHE_BigDecimal
+  untrackedVolume_gt: AVALANCHE_BigDecimal
+  untrackedVolume_lt: AVALANCHE_BigDecimal
+  untrackedVolume_gte: AVALANCHE_BigDecimal
+  untrackedVolume_lte: AVALANCHE_BigDecimal
+  untrackedVolume_in: [AVALANCHE_BigDecimal!]
+  untrackedVolume_not_in: [AVALANCHE_BigDecimal!]
+  liquidityETH: AVALANCHE_BigDecimal
+  liquidityETH_not: AVALANCHE_BigDecimal
+  liquidityETH_gt: AVALANCHE_BigDecimal
+  liquidityETH_lt: AVALANCHE_BigDecimal
+  liquidityETH_gte: AVALANCHE_BigDecimal
+  liquidityETH_lte: AVALANCHE_BigDecimal
+  liquidityETH_in: [AVALANCHE_BigDecimal!]
+  liquidityETH_not_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD: AVALANCHE_BigDecimal
+  liquidityUSD_not: AVALANCHE_BigDecimal
+  liquidityUSD_gt: AVALANCHE_BigDecimal
+  liquidityUSD_lt: AVALANCHE_BigDecimal
+  liquidityUSD_gte: AVALANCHE_BigDecimal
+  liquidityUSD_lte: AVALANCHE_BigDecimal
+  liquidityUSD_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum AVALANCHE_HourData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type AVALANCHE_LiquidityPosition {
+  id: ID!
+  user: AVALANCHE_User!
+  pair: AVALANCHE_Pair!
+  liquidityTokenBalance: AVALANCHE_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_LiquidityPositionSnapshot_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_LiquidityPositionSnapshot_filter): [AVALANCHE_LiquidityPositionSnapshot]!
+  block: Int!
+  timestamp: Int!
+}
+
+type AVALANCHE_LiquidityPositionSnapshot {
+  id: ID!
+  liquidityPosition: AVALANCHE_LiquidityPosition!
+  timestamp: Int!
+  block: Int!
+  user: AVALANCHE_User!
+  pair: AVALANCHE_Pair!
+  token0PriceUSD: AVALANCHE_BigDecimal!
+  token1PriceUSD: AVALANCHE_BigDecimal!
+  reserve0: AVALANCHE_BigDecimal!
+  reserve1: AVALANCHE_BigDecimal!
+  reserveUSD: AVALANCHE_BigDecimal!
+  liquidityTokenTotalSupply: AVALANCHE_BigDecimal!
+  liquidityTokenBalance: AVALANCHE_BigDecimal!
+}
+
+input AVALANCHE_LiquidityPositionSnapshot_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  liquidityPosition: String
+  liquidityPosition_not: String
+  liquidityPosition_gt: String
+  liquidityPosition_lt: String
+  liquidityPosition_gte: String
+  liquidityPosition_lte: String
+  liquidityPosition_in: [String!]
+  liquidityPosition_not_in: [String!]
+  liquidityPosition_contains: String
+  liquidityPosition_contains_nocase: String
+  liquidityPosition_not_contains: String
+  liquidityPosition_not_contains_nocase: String
+  liquidityPosition_starts_with: String
+  liquidityPosition_starts_with_nocase: String
+  liquidityPosition_not_starts_with: String
+  liquidityPosition_not_starts_with_nocase: String
+  liquidityPosition_ends_with: String
+  liquidityPosition_ends_with_nocase: String
+  liquidityPosition_not_ends_with: String
+  liquidityPosition_not_ends_with_nocase: String
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0PriceUSD: AVALANCHE_BigDecimal
+  token0PriceUSD_not: AVALANCHE_BigDecimal
+  token0PriceUSD_gt: AVALANCHE_BigDecimal
+  token0PriceUSD_lt: AVALANCHE_BigDecimal
+  token0PriceUSD_gte: AVALANCHE_BigDecimal
+  token0PriceUSD_lte: AVALANCHE_BigDecimal
+  token0PriceUSD_in: [AVALANCHE_BigDecimal!]
+  token0PriceUSD_not_in: [AVALANCHE_BigDecimal!]
+  token1PriceUSD: AVALANCHE_BigDecimal
+  token1PriceUSD_not: AVALANCHE_BigDecimal
+  token1PriceUSD_gt: AVALANCHE_BigDecimal
+  token1PriceUSD_lt: AVALANCHE_BigDecimal
+  token1PriceUSD_gte: AVALANCHE_BigDecimal
+  token1PriceUSD_lte: AVALANCHE_BigDecimal
+  token1PriceUSD_in: [AVALANCHE_BigDecimal!]
+  token1PriceUSD_not_in: [AVALANCHE_BigDecimal!]
+  reserve0: AVALANCHE_BigDecimal
+  reserve0_not: AVALANCHE_BigDecimal
+  reserve0_gt: AVALANCHE_BigDecimal
+  reserve0_lt: AVALANCHE_BigDecimal
+  reserve0_gte: AVALANCHE_BigDecimal
+  reserve0_lte: AVALANCHE_BigDecimal
+  reserve0_in: [AVALANCHE_BigDecimal!]
+  reserve0_not_in: [AVALANCHE_BigDecimal!]
+  reserve1: AVALANCHE_BigDecimal
+  reserve1_not: AVALANCHE_BigDecimal
+  reserve1_gt: AVALANCHE_BigDecimal
+  reserve1_lt: AVALANCHE_BigDecimal
+  reserve1_gte: AVALANCHE_BigDecimal
+  reserve1_lte: AVALANCHE_BigDecimal
+  reserve1_in: [AVALANCHE_BigDecimal!]
+  reserve1_not_in: [AVALANCHE_BigDecimal!]
+  reserveUSD: AVALANCHE_BigDecimal
+  reserveUSD_not: AVALANCHE_BigDecimal
+  reserveUSD_gt: AVALANCHE_BigDecimal
+  reserveUSD_lt: AVALANCHE_BigDecimal
+  reserveUSD_gte: AVALANCHE_BigDecimal
+  reserveUSD_lte: AVALANCHE_BigDecimal
+  reserveUSD_in: [AVALANCHE_BigDecimal!]
+  reserveUSD_not_in: [AVALANCHE_BigDecimal!]
+  liquidityTokenTotalSupply: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_not: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_gt: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_lt: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_gte: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_lte: AVALANCHE_BigDecimal
+  liquidityTokenTotalSupply_in: [AVALANCHE_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [AVALANCHE_BigDecimal!]
+  liquidityTokenBalance: AVALANCHE_BigDecimal
+  liquidityTokenBalance_not: AVALANCHE_BigDecimal
+  liquidityTokenBalance_gt: AVALANCHE_BigDecimal
+  liquidityTokenBalance_lt: AVALANCHE_BigDecimal
+  liquidityTokenBalance_gte: AVALANCHE_BigDecimal
+  liquidityTokenBalance_lte: AVALANCHE_BigDecimal
+  liquidityTokenBalance_in: [AVALANCHE_BigDecimal!]
+  liquidityTokenBalance_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_LiquidityPositionSnapshot_orderBy {
+  id
+  liquidityPosition
+  timestamp
+  block
+  user
+  pair
+  token0PriceUSD
+  token1PriceUSD
+  reserve0
+  reserve1
+  reserveUSD
+  liquidityTokenTotalSupply
+  liquidityTokenBalance
+}
+
+input AVALANCHE_LiquidityPosition_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  liquidityTokenBalance: AVALANCHE_BigDecimal
+  liquidityTokenBalance_not: AVALANCHE_BigDecimal
+  liquidityTokenBalance_gt: AVALANCHE_BigDecimal
+  liquidityTokenBalance_lt: AVALANCHE_BigDecimal
+  liquidityTokenBalance_gte: AVALANCHE_BigDecimal
+  liquidityTokenBalance_lte: AVALANCHE_BigDecimal
+  liquidityTokenBalance_in: [AVALANCHE_BigDecimal!]
+  liquidityTokenBalance_not_in: [AVALANCHE_BigDecimal!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+}
+
+enum AVALANCHE_LiquidityPosition_orderBy {
+  id
+  user
+  pair
+  liquidityTokenBalance
+  snapshots
+  block
+  timestamp
+}
+
+type AVALANCHE_Mint {
+  id: ID!
+  transaction: AVALANCHE_Transaction!
+  timestamp: BigInt!
+  pair: AVALANCHE_Pair!
+  to: AVALANCHE_Bytes!
+  liquidity: AVALANCHE_BigDecimal!
+  sender: AVALANCHE_Bytes
+  amount0: AVALANCHE_BigDecimal
+  amount1: AVALANCHE_BigDecimal
+  logIndex: BigInt
+  amountUSD: AVALANCHE_BigDecimal
+  feeTo: AVALANCHE_Bytes
+  feeLiquidity: AVALANCHE_BigDecimal
+}
+
+input AVALANCHE_Mint_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  to: AVALANCHE_Bytes
+  to_not: AVALANCHE_Bytes
+  to_in: [AVALANCHE_Bytes!]
+  to_not_in: [AVALANCHE_Bytes!]
+  to_contains: AVALANCHE_Bytes
+  to_not_contains: AVALANCHE_Bytes
+  liquidity: AVALANCHE_BigDecimal
+  liquidity_not: AVALANCHE_BigDecimal
+  liquidity_gt: AVALANCHE_BigDecimal
+  liquidity_lt: AVALANCHE_BigDecimal
+  liquidity_gte: AVALANCHE_BigDecimal
+  liquidity_lte: AVALANCHE_BigDecimal
+  liquidity_in: [AVALANCHE_BigDecimal!]
+  liquidity_not_in: [AVALANCHE_BigDecimal!]
+  sender: AVALANCHE_Bytes
+  sender_not: AVALANCHE_Bytes
+  sender_in: [AVALANCHE_Bytes!]
+  sender_not_in: [AVALANCHE_Bytes!]
+  sender_contains: AVALANCHE_Bytes
+  sender_not_contains: AVALANCHE_Bytes
+  amount0: AVALANCHE_BigDecimal
+  amount0_not: AVALANCHE_BigDecimal
+  amount0_gt: AVALANCHE_BigDecimal
+  amount0_lt: AVALANCHE_BigDecimal
+  amount0_gte: AVALANCHE_BigDecimal
+  amount0_lte: AVALANCHE_BigDecimal
+  amount0_in: [AVALANCHE_BigDecimal!]
+  amount0_not_in: [AVALANCHE_BigDecimal!]
+  amount1: AVALANCHE_BigDecimal
+  amount1_not: AVALANCHE_BigDecimal
+  amount1_gt: AVALANCHE_BigDecimal
+  amount1_lt: AVALANCHE_BigDecimal
+  amount1_gte: AVALANCHE_BigDecimal
+  amount1_lte: AVALANCHE_BigDecimal
+  amount1_in: [AVALANCHE_BigDecimal!]
+  amount1_not_in: [AVALANCHE_BigDecimal!]
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: AVALANCHE_BigDecimal
+  amountUSD_not: AVALANCHE_BigDecimal
+  amountUSD_gt: AVALANCHE_BigDecimal
+  amountUSD_lt: AVALANCHE_BigDecimal
+  amountUSD_gte: AVALANCHE_BigDecimal
+  amountUSD_lte: AVALANCHE_BigDecimal
+  amountUSD_in: [AVALANCHE_BigDecimal!]
+  amountUSD_not_in: [AVALANCHE_BigDecimal!]
+  feeTo: AVALANCHE_Bytes
+  feeTo_not: AVALANCHE_Bytes
+  feeTo_in: [AVALANCHE_Bytes!]
+  feeTo_not_in: [AVALANCHE_Bytes!]
+  feeTo_contains: AVALANCHE_Bytes
+  feeTo_not_contains: AVALANCHE_Bytes
+  feeLiquidity: AVALANCHE_BigDecimal
+  feeLiquidity_not: AVALANCHE_BigDecimal
+  feeLiquidity_gt: AVALANCHE_BigDecimal
+  feeLiquidity_lt: AVALANCHE_BigDecimal
+  feeLiquidity_gte: AVALANCHE_BigDecimal
+  feeLiquidity_lte: AVALANCHE_BigDecimal
+  feeLiquidity_in: [AVALANCHE_BigDecimal!]
+  feeLiquidity_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_Mint_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  to
+  liquidity
+  sender
+  amount0
+  amount1
+  logIndex
+  amountUSD
+  feeTo
+  feeLiquidity
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum AVALANCHE_OrderDirection {
+  asc
+  desc
+}
+
+type AVALANCHE_Pair {
+  id: ID!
+  factory: AVALANCHE_Factory!
+  name: String!
+  token0: AVALANCHE_Token!
+  token1: AVALANCHE_Token!
+  reserve0: AVALANCHE_BigDecimal!
+  reserve1: AVALANCHE_BigDecimal!
+  totalSupply: AVALANCHE_BigDecimal!
+  reserveETH: AVALANCHE_BigDecimal!
+  reserveUSD: AVALANCHE_BigDecimal!
+  trackedReserveETH: AVALANCHE_BigDecimal!
+  token0Price: AVALANCHE_BigDecimal!
+  token1Price: AVALANCHE_BigDecimal!
+  volumeToken0: AVALANCHE_BigDecimal!
+  volumeToken1: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  untrackedVolumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+  liquidityProviderCount: BigInt!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_LiquidityPosition_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_LiquidityPosition_filter): [AVALANCHE_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_LiquidityPositionSnapshot_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_LiquidityPositionSnapshot_filter): [AVALANCHE_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_PairDayData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_PairDayData_filter): [AVALANCHE_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_PairHourData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_PairHourData_filter): [AVALANCHE_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Mint_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Mint_filter): [AVALANCHE_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Burn_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Burn_filter): [AVALANCHE_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Swap_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Swap_filter): [AVALANCHE_Swap!]!
+  timestamp: BigInt!
+  block: BigInt!
+}
+
+type AVALANCHE_PairDayData {
+  id: ID!
+  date: Int!
+  pair: AVALANCHE_Pair!
+  token0: AVALANCHE_Token!
+  token1: AVALANCHE_Token!
+  reserve0: AVALANCHE_BigDecimal!
+  reserve1: AVALANCHE_BigDecimal!
+  totalSupply: AVALANCHE_BigDecimal!
+  reserveUSD: AVALANCHE_BigDecimal!
+  volumeToken0: AVALANCHE_BigDecimal!
+  volumeToken1: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+}
+
+input AVALANCHE_PairDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_contains_nocase: String
+  token0_not_contains: String
+  token0_not_contains_nocase: String
+  token0_starts_with: String
+  token0_starts_with_nocase: String
+  token0_not_starts_with: String
+  token0_not_starts_with_nocase: String
+  token0_ends_with: String
+  token0_ends_with_nocase: String
+  token0_not_ends_with: String
+  token0_not_ends_with_nocase: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_contains_nocase: String
+  token1_not_contains: String
+  token1_not_contains_nocase: String
+  token1_starts_with: String
+  token1_starts_with_nocase: String
+  token1_not_starts_with: String
+  token1_not_starts_with_nocase: String
+  token1_ends_with: String
+  token1_ends_with_nocase: String
+  token1_not_ends_with: String
+  token1_not_ends_with_nocase: String
+  reserve0: AVALANCHE_BigDecimal
+  reserve0_not: AVALANCHE_BigDecimal
+  reserve0_gt: AVALANCHE_BigDecimal
+  reserve0_lt: AVALANCHE_BigDecimal
+  reserve0_gte: AVALANCHE_BigDecimal
+  reserve0_lte: AVALANCHE_BigDecimal
+  reserve0_in: [AVALANCHE_BigDecimal!]
+  reserve0_not_in: [AVALANCHE_BigDecimal!]
+  reserve1: AVALANCHE_BigDecimal
+  reserve1_not: AVALANCHE_BigDecimal
+  reserve1_gt: AVALANCHE_BigDecimal
+  reserve1_lt: AVALANCHE_BigDecimal
+  reserve1_gte: AVALANCHE_BigDecimal
+  reserve1_lte: AVALANCHE_BigDecimal
+  reserve1_in: [AVALANCHE_BigDecimal!]
+  reserve1_not_in: [AVALANCHE_BigDecimal!]
+  totalSupply: AVALANCHE_BigDecimal
+  totalSupply_not: AVALANCHE_BigDecimal
+  totalSupply_gt: AVALANCHE_BigDecimal
+  totalSupply_lt: AVALANCHE_BigDecimal
+  totalSupply_gte: AVALANCHE_BigDecimal
+  totalSupply_lte: AVALANCHE_BigDecimal
+  totalSupply_in: [AVALANCHE_BigDecimal!]
+  totalSupply_not_in: [AVALANCHE_BigDecimal!]
+  reserveUSD: AVALANCHE_BigDecimal
+  reserveUSD_not: AVALANCHE_BigDecimal
+  reserveUSD_gt: AVALANCHE_BigDecimal
+  reserveUSD_lt: AVALANCHE_BigDecimal
+  reserveUSD_gte: AVALANCHE_BigDecimal
+  reserveUSD_lte: AVALANCHE_BigDecimal
+  reserveUSD_in: [AVALANCHE_BigDecimal!]
+  reserveUSD_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken0: AVALANCHE_BigDecimal
+  volumeToken0_not: AVALANCHE_BigDecimal
+  volumeToken0_gt: AVALANCHE_BigDecimal
+  volumeToken0_lt: AVALANCHE_BigDecimal
+  volumeToken0_gte: AVALANCHE_BigDecimal
+  volumeToken0_lte: AVALANCHE_BigDecimal
+  volumeToken0_in: [AVALANCHE_BigDecimal!]
+  volumeToken0_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken1: AVALANCHE_BigDecimal
+  volumeToken1_not: AVALANCHE_BigDecimal
+  volumeToken1_gt: AVALANCHE_BigDecimal
+  volumeToken1_lt: AVALANCHE_BigDecimal
+  volumeToken1_gte: AVALANCHE_BigDecimal
+  volumeToken1_lte: AVALANCHE_BigDecimal
+  volumeToken1_in: [AVALANCHE_BigDecimal!]
+  volumeToken1_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum AVALANCHE_PairDayData_orderBy {
+  id
+  date
+  pair
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+type AVALANCHE_PairHourData {
+  id: ID!
+  date: Int!
+  pair: AVALANCHE_Pair!
+  reserve0: AVALANCHE_BigDecimal!
+  reserve1: AVALANCHE_BigDecimal!
+  reserveUSD: AVALANCHE_BigDecimal!
+  volumeToken0: AVALANCHE_BigDecimal!
+  volumeToken1: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+}
+
+input AVALANCHE_PairHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  reserve0: AVALANCHE_BigDecimal
+  reserve0_not: AVALANCHE_BigDecimal
+  reserve0_gt: AVALANCHE_BigDecimal
+  reserve0_lt: AVALANCHE_BigDecimal
+  reserve0_gte: AVALANCHE_BigDecimal
+  reserve0_lte: AVALANCHE_BigDecimal
+  reserve0_in: [AVALANCHE_BigDecimal!]
+  reserve0_not_in: [AVALANCHE_BigDecimal!]
+  reserve1: AVALANCHE_BigDecimal
+  reserve1_not: AVALANCHE_BigDecimal
+  reserve1_gt: AVALANCHE_BigDecimal
+  reserve1_lt: AVALANCHE_BigDecimal
+  reserve1_gte: AVALANCHE_BigDecimal
+  reserve1_lte: AVALANCHE_BigDecimal
+  reserve1_in: [AVALANCHE_BigDecimal!]
+  reserve1_not_in: [AVALANCHE_BigDecimal!]
+  reserveUSD: AVALANCHE_BigDecimal
+  reserveUSD_not: AVALANCHE_BigDecimal
+  reserveUSD_gt: AVALANCHE_BigDecimal
+  reserveUSD_lt: AVALANCHE_BigDecimal
+  reserveUSD_gte: AVALANCHE_BigDecimal
+  reserveUSD_lte: AVALANCHE_BigDecimal
+  reserveUSD_in: [AVALANCHE_BigDecimal!]
+  reserveUSD_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken0: AVALANCHE_BigDecimal
+  volumeToken0_not: AVALANCHE_BigDecimal
+  volumeToken0_gt: AVALANCHE_BigDecimal
+  volumeToken0_lt: AVALANCHE_BigDecimal
+  volumeToken0_gte: AVALANCHE_BigDecimal
+  volumeToken0_lte: AVALANCHE_BigDecimal
+  volumeToken0_in: [AVALANCHE_BigDecimal!]
+  volumeToken0_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken1: AVALANCHE_BigDecimal
+  volumeToken1_not: AVALANCHE_BigDecimal
+  volumeToken1_gt: AVALANCHE_BigDecimal
+  volumeToken1_lt: AVALANCHE_BigDecimal
+  volumeToken1_gte: AVALANCHE_BigDecimal
+  volumeToken1_lte: AVALANCHE_BigDecimal
+  volumeToken1_in: [AVALANCHE_BigDecimal!]
+  volumeToken1_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum AVALANCHE_PairHourData_orderBy {
+  id
+  date
+  pair
+  reserve0
+  reserve1
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
+}
+
+input AVALANCHE_Pair_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_contains_nocase: String
+  token0_not_contains: String
+  token0_not_contains_nocase: String
+  token0_starts_with: String
+  token0_starts_with_nocase: String
+  token0_not_starts_with: String
+  token0_not_starts_with_nocase: String
+  token0_ends_with: String
+  token0_ends_with_nocase: String
+  token0_not_ends_with: String
+  token0_not_ends_with_nocase: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_contains_nocase: String
+  token1_not_contains: String
+  token1_not_contains_nocase: String
+  token1_starts_with: String
+  token1_starts_with_nocase: String
+  token1_not_starts_with: String
+  token1_not_starts_with_nocase: String
+  token1_ends_with: String
+  token1_ends_with_nocase: String
+  token1_not_ends_with: String
+  token1_not_ends_with_nocase: String
+  reserve0: AVALANCHE_BigDecimal
+  reserve0_not: AVALANCHE_BigDecimal
+  reserve0_gt: AVALANCHE_BigDecimal
+  reserve0_lt: AVALANCHE_BigDecimal
+  reserve0_gte: AVALANCHE_BigDecimal
+  reserve0_lte: AVALANCHE_BigDecimal
+  reserve0_in: [AVALANCHE_BigDecimal!]
+  reserve0_not_in: [AVALANCHE_BigDecimal!]
+  reserve1: AVALANCHE_BigDecimal
+  reserve1_not: AVALANCHE_BigDecimal
+  reserve1_gt: AVALANCHE_BigDecimal
+  reserve1_lt: AVALANCHE_BigDecimal
+  reserve1_gte: AVALANCHE_BigDecimal
+  reserve1_lte: AVALANCHE_BigDecimal
+  reserve1_in: [AVALANCHE_BigDecimal!]
+  reserve1_not_in: [AVALANCHE_BigDecimal!]
+  totalSupply: AVALANCHE_BigDecimal
+  totalSupply_not: AVALANCHE_BigDecimal
+  totalSupply_gt: AVALANCHE_BigDecimal
+  totalSupply_lt: AVALANCHE_BigDecimal
+  totalSupply_gte: AVALANCHE_BigDecimal
+  totalSupply_lte: AVALANCHE_BigDecimal
+  totalSupply_in: [AVALANCHE_BigDecimal!]
+  totalSupply_not_in: [AVALANCHE_BigDecimal!]
+  reserveETH: AVALANCHE_BigDecimal
+  reserveETH_not: AVALANCHE_BigDecimal
+  reserveETH_gt: AVALANCHE_BigDecimal
+  reserveETH_lt: AVALANCHE_BigDecimal
+  reserveETH_gte: AVALANCHE_BigDecimal
+  reserveETH_lte: AVALANCHE_BigDecimal
+  reserveETH_in: [AVALANCHE_BigDecimal!]
+  reserveETH_not_in: [AVALANCHE_BigDecimal!]
+  reserveUSD: AVALANCHE_BigDecimal
+  reserveUSD_not: AVALANCHE_BigDecimal
+  reserveUSD_gt: AVALANCHE_BigDecimal
+  reserveUSD_lt: AVALANCHE_BigDecimal
+  reserveUSD_gte: AVALANCHE_BigDecimal
+  reserveUSD_lte: AVALANCHE_BigDecimal
+  reserveUSD_in: [AVALANCHE_BigDecimal!]
+  reserveUSD_not_in: [AVALANCHE_BigDecimal!]
+  trackedReserveETH: AVALANCHE_BigDecimal
+  trackedReserveETH_not: AVALANCHE_BigDecimal
+  trackedReserveETH_gt: AVALANCHE_BigDecimal
+  trackedReserveETH_lt: AVALANCHE_BigDecimal
+  trackedReserveETH_gte: AVALANCHE_BigDecimal
+  trackedReserveETH_lte: AVALANCHE_BigDecimal
+  trackedReserveETH_in: [AVALANCHE_BigDecimal!]
+  trackedReserveETH_not_in: [AVALANCHE_BigDecimal!]
+  token0Price: AVALANCHE_BigDecimal
+  token0Price_not: AVALANCHE_BigDecimal
+  token0Price_gt: AVALANCHE_BigDecimal
+  token0Price_lt: AVALANCHE_BigDecimal
+  token0Price_gte: AVALANCHE_BigDecimal
+  token0Price_lte: AVALANCHE_BigDecimal
+  token0Price_in: [AVALANCHE_BigDecimal!]
+  token0Price_not_in: [AVALANCHE_BigDecimal!]
+  token1Price: AVALANCHE_BigDecimal
+  token1Price_not: AVALANCHE_BigDecimal
+  token1Price_gt: AVALANCHE_BigDecimal
+  token1Price_lt: AVALANCHE_BigDecimal
+  token1Price_gte: AVALANCHE_BigDecimal
+  token1Price_lte: AVALANCHE_BigDecimal
+  token1Price_in: [AVALANCHE_BigDecimal!]
+  token1Price_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken0: AVALANCHE_BigDecimal
+  volumeToken0_not: AVALANCHE_BigDecimal
+  volumeToken0_gt: AVALANCHE_BigDecimal
+  volumeToken0_lt: AVALANCHE_BigDecimal
+  volumeToken0_gte: AVALANCHE_BigDecimal
+  volumeToken0_lte: AVALANCHE_BigDecimal
+  volumeToken0_in: [AVALANCHE_BigDecimal!]
+  volumeToken0_not_in: [AVALANCHE_BigDecimal!]
+  volumeToken1: AVALANCHE_BigDecimal
+  volumeToken1_not: AVALANCHE_BigDecimal
+  volumeToken1_gt: AVALANCHE_BigDecimal
+  volumeToken1_lt: AVALANCHE_BigDecimal
+  volumeToken1_gte: AVALANCHE_BigDecimal
+  volumeToken1_lte: AVALANCHE_BigDecimal
+  volumeToken1_in: [AVALANCHE_BigDecimal!]
+  volumeToken1_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_not: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidityProviderCount: BigInt
+  liquidityProviderCount_not: BigInt
+  liquidityProviderCount_gt: BigInt
+  liquidityProviderCount_lt: BigInt
+  liquidityProviderCount_gte: BigInt
+  liquidityProviderCount_lte: BigInt
+  liquidityProviderCount_in: [BigInt!]
+  liquidityProviderCount_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+}
+
+enum AVALANCHE_Pair_orderBy {
+  id
+  factory
+  name
+  token0
+  token1
+  reserve0
+  reserve1
+  totalSupply
+  reserveETH
+  reserveUSD
+  trackedReserveETH
+  token0Price
+  token1Price
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidityProviderCount
+  liquidityPositions
+  liquidityPositionSnapshots
+  dayData
+  hourData
+  mints
+  burns
+  swaps
+  timestamp
+  block
+}
+
+type Query {
+  AVALANCHE_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_User
+  AVALANCHE_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_User_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_User!]!
+  AVALANCHE_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Bundle
+  AVALANCHE_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Bundle_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Bundle!]!
+  AVALANCHE_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Factory @merge(keyField: "id", keyArg: "id")
+  AVALANCHE_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Factory_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Factory!]!
+  AVALANCHE_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_HourData
+  AVALANCHE_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_HourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_HourData!]!
+  AVALANCHE_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_DayData
+  AVALANCHE_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_DayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_DayData!]!
+  AVALANCHE_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Token
+  AVALANCHE_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Token_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Token!]!
+  AVALANCHE_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_TokenHourData
+  AVALANCHE_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_TokenHourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_TokenHourData!]!
+  AVALANCHE_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_TokenDayData
+  AVALANCHE_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_TokenDayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_TokenDayData!]!
+  AVALANCHE_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Pair
+  AVALANCHE_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Pair_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Pair!]!
+  AVALANCHE_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_PairHourData
+  AVALANCHE_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_PairHourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_PairHourData!]!
+  AVALANCHE_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_PairDayData
+  AVALANCHE_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_PairDayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_PairDayData!]!
+  AVALANCHE_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_LiquidityPosition
+  AVALANCHE_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_LiquidityPosition_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_LiquidityPosition!]!
+  AVALANCHE_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_LiquidityPositionSnapshot
+  AVALANCHE_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_LiquidityPositionSnapshot_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_LiquidityPositionSnapshot!]!
+  AVALANCHE_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Transaction
+  AVALANCHE_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Transaction_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Transaction!]!
+  AVALANCHE_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Mint
+  AVALANCHE_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Mint_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Mint!]!
+  AVALANCHE_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Burn
+  AVALANCHE_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Burn_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Burn!]!
+  AVALANCHE_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Swap
+  AVALANCHE_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Swap_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Swap!]!
+  """Access to subgraph metadata"""
+  AVALANCHE__meta(block: AVALANCHE_Block_height): AVALANCHE__Meta_
+}
+
+type Subscription {
+  AVALANCHE_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_User
+  AVALANCHE_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_User_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_User!]!
+  AVALANCHE_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Bundle
+  AVALANCHE_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Bundle_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Bundle!]!
+  AVALANCHE_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Factory
+  AVALANCHE_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Factory_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Factory!]!
+  AVALANCHE_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_HourData
+  AVALANCHE_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_HourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_HourData!]!
+  AVALANCHE_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_DayData
+  AVALANCHE_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_DayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_DayData!]!
+  AVALANCHE_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Token
+  AVALANCHE_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Token_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Token!]!
+  AVALANCHE_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_TokenHourData
+  AVALANCHE_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_TokenHourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_TokenHourData!]!
+  AVALANCHE_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_TokenDayData
+  AVALANCHE_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_TokenDayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_TokenDayData!]!
+  AVALANCHE_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Pair
+  AVALANCHE_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Pair_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Pair!]!
+  AVALANCHE_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_PairHourData
+  AVALANCHE_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_PairHourData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_PairHourData!]!
+  AVALANCHE_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_PairDayData
+  AVALANCHE_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_PairDayData_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_PairDayData!]!
+  AVALANCHE_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_LiquidityPosition
+  AVALANCHE_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_LiquidityPosition_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_LiquidityPosition!]!
+  AVALANCHE_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_LiquidityPositionSnapshot
+  AVALANCHE_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_LiquidityPositionSnapshot_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_LiquidityPositionSnapshot!]!
+  AVALANCHE_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Transaction
+  AVALANCHE_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Transaction_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Transaction!]!
+  AVALANCHE_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Mint
+  AVALANCHE_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Mint_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Mint!]!
+  AVALANCHE_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Burn
+  AVALANCHE_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Burn_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Burn!]!
+  AVALANCHE_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AVALANCHE_Swap
+  AVALANCHE_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AVALANCHE_Swap_orderBy
+    orderDirection: AVALANCHE_OrderDirection
+    where: AVALANCHE_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: AVALANCHE_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AVALANCHE_Swap!]!
+  """Access to subgraph metadata"""
+  AVALANCHE__meta(block: AVALANCHE_Block_height): AVALANCHE__Meta_
+}
+
+type AVALANCHE_Swap {
+  id: ID!
+  transaction: AVALANCHE_Transaction!
+  timestamp: BigInt!
+  pair: AVALANCHE_Pair!
+  sender: AVALANCHE_Bytes!
+  amount0In: AVALANCHE_BigDecimal!
+  amount1In: AVALANCHE_BigDecimal!
+  amount0Out: AVALANCHE_BigDecimal!
+  amount1Out: AVALANCHE_BigDecimal!
+  to: AVALANCHE_Bytes!
+  logIndex: BigInt
+  amountUSD: AVALANCHE_BigDecimal!
+}
+
+input AVALANCHE_Swap_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  sender: AVALANCHE_Bytes
+  sender_not: AVALANCHE_Bytes
+  sender_in: [AVALANCHE_Bytes!]
+  sender_not_in: [AVALANCHE_Bytes!]
+  sender_contains: AVALANCHE_Bytes
+  sender_not_contains: AVALANCHE_Bytes
+  amount0In: AVALANCHE_BigDecimal
+  amount0In_not: AVALANCHE_BigDecimal
+  amount0In_gt: AVALANCHE_BigDecimal
+  amount0In_lt: AVALANCHE_BigDecimal
+  amount0In_gte: AVALANCHE_BigDecimal
+  amount0In_lte: AVALANCHE_BigDecimal
+  amount0In_in: [AVALANCHE_BigDecimal!]
+  amount0In_not_in: [AVALANCHE_BigDecimal!]
+  amount1In: AVALANCHE_BigDecimal
+  amount1In_not: AVALANCHE_BigDecimal
+  amount1In_gt: AVALANCHE_BigDecimal
+  amount1In_lt: AVALANCHE_BigDecimal
+  amount1In_gte: AVALANCHE_BigDecimal
+  amount1In_lte: AVALANCHE_BigDecimal
+  amount1In_in: [AVALANCHE_BigDecimal!]
+  amount1In_not_in: [AVALANCHE_BigDecimal!]
+  amount0Out: AVALANCHE_BigDecimal
+  amount0Out_not: AVALANCHE_BigDecimal
+  amount0Out_gt: AVALANCHE_BigDecimal
+  amount0Out_lt: AVALANCHE_BigDecimal
+  amount0Out_gte: AVALANCHE_BigDecimal
+  amount0Out_lte: AVALANCHE_BigDecimal
+  amount0Out_in: [AVALANCHE_BigDecimal!]
+  amount0Out_not_in: [AVALANCHE_BigDecimal!]
+  amount1Out: AVALANCHE_BigDecimal
+  amount1Out_not: AVALANCHE_BigDecimal
+  amount1Out_gt: AVALANCHE_BigDecimal
+  amount1Out_lt: AVALANCHE_BigDecimal
+  amount1Out_gte: AVALANCHE_BigDecimal
+  amount1Out_lte: AVALANCHE_BigDecimal
+  amount1Out_in: [AVALANCHE_BigDecimal!]
+  amount1Out_not_in: [AVALANCHE_BigDecimal!]
+  to: AVALANCHE_Bytes
+  to_not: AVALANCHE_Bytes
+  to_in: [AVALANCHE_Bytes!]
+  to_not_in: [AVALANCHE_Bytes!]
+  to_contains: AVALANCHE_Bytes
+  to_not_contains: AVALANCHE_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: AVALANCHE_BigDecimal
+  amountUSD_not: AVALANCHE_BigDecimal
+  amountUSD_gt: AVALANCHE_BigDecimal
+  amountUSD_lt: AVALANCHE_BigDecimal
+  amountUSD_gte: AVALANCHE_BigDecimal
+  amountUSD_lte: AVALANCHE_BigDecimal
+  amountUSD_in: [AVALANCHE_BigDecimal!]
+  amountUSD_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_Swap_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  sender
+  amount0In
+  amount1In
+  amount0Out
+  amount1Out
+  to
+  logIndex
+  amountUSD
+}
+
+type AVALANCHE_Token {
+  id: ID!
+  factory: AVALANCHE_Factory!
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+  totalSupply: BigInt!
+  volume: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  untrackedVolumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+  liquidity: AVALANCHE_BigDecimal!
+  derivedETH: AVALANCHE_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Pair_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Pair_filter): [AVALANCHE_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_TokenHourData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_TokenHourData_filter): [AVALANCHE_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_TokenDayData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_TokenDayData_filter): [AVALANCHE_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Pair_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Pair_filter): [AVALANCHE_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Pair_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Pair_filter): [AVALANCHE_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_PairDayData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_PairDayData_filter): [AVALANCHE_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_PairDayData_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_PairDayData_filter): [AVALANCHE_PairDayData!]!
+}
+
+type AVALANCHE_TokenDayData {
+  id: ID!
+  date: Int!
+  token: AVALANCHE_Token!
+  volume: AVALANCHE_BigDecimal!
+  volumeETH: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+  liquidity: AVALANCHE_BigDecimal!
+  liquidityETH: AVALANCHE_BigDecimal!
+  liquidityUSD: AVALANCHE_BigDecimal!
+  priceUSD: AVALANCHE_BigDecimal!
+}
+
+input AVALANCHE_TokenDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: AVALANCHE_BigDecimal
+  volume_not: AVALANCHE_BigDecimal
+  volume_gt: AVALANCHE_BigDecimal
+  volume_lt: AVALANCHE_BigDecimal
+  volume_gte: AVALANCHE_BigDecimal
+  volume_lte: AVALANCHE_BigDecimal
+  volume_in: [AVALANCHE_BigDecimal!]
+  volume_not_in: [AVALANCHE_BigDecimal!]
+  volumeETH: AVALANCHE_BigDecimal
+  volumeETH_not: AVALANCHE_BigDecimal
+  volumeETH_gt: AVALANCHE_BigDecimal
+  volumeETH_lt: AVALANCHE_BigDecimal
+  volumeETH_gte: AVALANCHE_BigDecimal
+  volumeETH_lte: AVALANCHE_BigDecimal
+  volumeETH_in: [AVALANCHE_BigDecimal!]
+  volumeETH_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: AVALANCHE_BigDecimal
+  liquidity_not: AVALANCHE_BigDecimal
+  liquidity_gt: AVALANCHE_BigDecimal
+  liquidity_lt: AVALANCHE_BigDecimal
+  liquidity_gte: AVALANCHE_BigDecimal
+  liquidity_lte: AVALANCHE_BigDecimal
+  liquidity_in: [AVALANCHE_BigDecimal!]
+  liquidity_not_in: [AVALANCHE_BigDecimal!]
+  liquidityETH: AVALANCHE_BigDecimal
+  liquidityETH_not: AVALANCHE_BigDecimal
+  liquidityETH_gt: AVALANCHE_BigDecimal
+  liquidityETH_lt: AVALANCHE_BigDecimal
+  liquidityETH_gte: AVALANCHE_BigDecimal
+  liquidityETH_lte: AVALANCHE_BigDecimal
+  liquidityETH_in: [AVALANCHE_BigDecimal!]
+  liquidityETH_not_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD: AVALANCHE_BigDecimal
+  liquidityUSD_not: AVALANCHE_BigDecimal
+  liquidityUSD_gt: AVALANCHE_BigDecimal
+  liquidityUSD_lt: AVALANCHE_BigDecimal
+  liquidityUSD_gte: AVALANCHE_BigDecimal
+  liquidityUSD_lte: AVALANCHE_BigDecimal
+  liquidityUSD_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD_not_in: [AVALANCHE_BigDecimal!]
+  priceUSD: AVALANCHE_BigDecimal
+  priceUSD_not: AVALANCHE_BigDecimal
+  priceUSD_gt: AVALANCHE_BigDecimal
+  priceUSD_lt: AVALANCHE_BigDecimal
+  priceUSD_gte: AVALANCHE_BigDecimal
+  priceUSD_lte: AVALANCHE_BigDecimal
+  priceUSD_in: [AVALANCHE_BigDecimal!]
+  priceUSD_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_TokenDayData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+type AVALANCHE_TokenHourData {
+  id: ID!
+  date: Int!
+  token: AVALANCHE_Token!
+  volume: AVALANCHE_BigDecimal!
+  volumeETH: AVALANCHE_BigDecimal!
+  volumeUSD: AVALANCHE_BigDecimal!
+  txCount: BigInt!
+  liquidity: AVALANCHE_BigDecimal!
+  liquidityETH: AVALANCHE_BigDecimal!
+  liquidityUSD: AVALANCHE_BigDecimal!
+  priceUSD: AVALANCHE_BigDecimal!
+}
+
+input AVALANCHE_TokenHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: AVALANCHE_BigDecimal
+  volume_not: AVALANCHE_BigDecimal
+  volume_gt: AVALANCHE_BigDecimal
+  volume_lt: AVALANCHE_BigDecimal
+  volume_gte: AVALANCHE_BigDecimal
+  volume_lte: AVALANCHE_BigDecimal
+  volume_in: [AVALANCHE_BigDecimal!]
+  volume_not_in: [AVALANCHE_BigDecimal!]
+  volumeETH: AVALANCHE_BigDecimal
+  volumeETH_not: AVALANCHE_BigDecimal
+  volumeETH_gt: AVALANCHE_BigDecimal
+  volumeETH_lt: AVALANCHE_BigDecimal
+  volumeETH_gte: AVALANCHE_BigDecimal
+  volumeETH_lte: AVALANCHE_BigDecimal
+  volumeETH_in: [AVALANCHE_BigDecimal!]
+  volumeETH_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: AVALANCHE_BigDecimal
+  liquidity_not: AVALANCHE_BigDecimal
+  liquidity_gt: AVALANCHE_BigDecimal
+  liquidity_lt: AVALANCHE_BigDecimal
+  liquidity_gte: AVALANCHE_BigDecimal
+  liquidity_lte: AVALANCHE_BigDecimal
+  liquidity_in: [AVALANCHE_BigDecimal!]
+  liquidity_not_in: [AVALANCHE_BigDecimal!]
+  liquidityETH: AVALANCHE_BigDecimal
+  liquidityETH_not: AVALANCHE_BigDecimal
+  liquidityETH_gt: AVALANCHE_BigDecimal
+  liquidityETH_lt: AVALANCHE_BigDecimal
+  liquidityETH_gte: AVALANCHE_BigDecimal
+  liquidityETH_lte: AVALANCHE_BigDecimal
+  liquidityETH_in: [AVALANCHE_BigDecimal!]
+  liquidityETH_not_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD: AVALANCHE_BigDecimal
+  liquidityUSD_not: AVALANCHE_BigDecimal
+  liquidityUSD_gt: AVALANCHE_BigDecimal
+  liquidityUSD_lt: AVALANCHE_BigDecimal
+  liquidityUSD_gte: AVALANCHE_BigDecimal
+  liquidityUSD_lte: AVALANCHE_BigDecimal
+  liquidityUSD_in: [AVALANCHE_BigDecimal!]
+  liquidityUSD_not_in: [AVALANCHE_BigDecimal!]
+  priceUSD: AVALANCHE_BigDecimal
+  priceUSD_not: AVALANCHE_BigDecimal
+  priceUSD_gt: AVALANCHE_BigDecimal
+  priceUSD_lt: AVALANCHE_BigDecimal
+  priceUSD_gte: AVALANCHE_BigDecimal
+  priceUSD_lte: AVALANCHE_BigDecimal
+  priceUSD_in: [AVALANCHE_BigDecimal!]
+  priceUSD_not_in: [AVALANCHE_BigDecimal!]
+}
+
+enum AVALANCHE_TokenHourData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+input AVALANCHE_Token_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  symbol: String
+  symbol_not: String
+  symbol_gt: String
+  symbol_lt: String
+  symbol_gte: String
+  symbol_lte: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_contains: String
+  symbol_contains_nocase: String
+  symbol_not_contains: String
+  symbol_not_contains_nocase: String
+  symbol_starts_with: String
+  symbol_starts_with_nocase: String
+  symbol_not_starts_with: String
+  symbol_not_starts_with_nocase: String
+  symbol_ends_with: String
+  symbol_ends_with_nocase: String
+  symbol_not_ends_with: String
+  symbol_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  decimals: BigInt
+  decimals_not: BigInt
+  decimals_gt: BigInt
+  decimals_lt: BigInt
+  decimals_gte: BigInt
+  decimals_lte: BigInt
+  decimals_in: [BigInt!]
+  decimals_not_in: [BigInt!]
+  totalSupply: BigInt
+  totalSupply_not: BigInt
+  totalSupply_gt: BigInt
+  totalSupply_lt: BigInt
+  totalSupply_gte: BigInt
+  totalSupply_lte: BigInt
+  totalSupply_in: [BigInt!]
+  totalSupply_not_in: [BigInt!]
+  volume: AVALANCHE_BigDecimal
+  volume_not: AVALANCHE_BigDecimal
+  volume_gt: AVALANCHE_BigDecimal
+  volume_lt: AVALANCHE_BigDecimal
+  volume_gte: AVALANCHE_BigDecimal
+  volume_lte: AVALANCHE_BigDecimal
+  volume_in: [AVALANCHE_BigDecimal!]
+  volume_not_in: [AVALANCHE_BigDecimal!]
+  volumeUSD: AVALANCHE_BigDecimal
+  volumeUSD_not: AVALANCHE_BigDecimal
+  volumeUSD_gt: AVALANCHE_BigDecimal
+  volumeUSD_lt: AVALANCHE_BigDecimal
+  volumeUSD_gte: AVALANCHE_BigDecimal
+  volumeUSD_lte: AVALANCHE_BigDecimal
+  volumeUSD_in: [AVALANCHE_BigDecimal!]
+  volumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_not: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lt: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_gte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_lte: AVALANCHE_BigDecimal
+  untrackedVolumeUSD_in: [AVALANCHE_BigDecimal!]
+  untrackedVolumeUSD_not_in: [AVALANCHE_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: AVALANCHE_BigDecimal
+  liquidity_not: AVALANCHE_BigDecimal
+  liquidity_gt: AVALANCHE_BigDecimal
+  liquidity_lt: AVALANCHE_BigDecimal
+  liquidity_gte: AVALANCHE_BigDecimal
+  liquidity_lte: AVALANCHE_BigDecimal
+  liquidity_in: [AVALANCHE_BigDecimal!]
+  liquidity_not_in: [AVALANCHE_BigDecimal!]
+  derivedETH: AVALANCHE_BigDecimal
+  derivedETH_not: AVALANCHE_BigDecimal
+  derivedETH_gt: AVALANCHE_BigDecimal
+  derivedETH_lt: AVALANCHE_BigDecimal
+  derivedETH_gte: AVALANCHE_BigDecimal
+  derivedETH_lte: AVALANCHE_BigDecimal
+  derivedETH_in: [AVALANCHE_BigDecimal!]
+  derivedETH_not_in: [AVALANCHE_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
+}
+
+enum AVALANCHE_Token_orderBy {
+  id
+  factory
+  symbol
+  name
+  decimals
+  totalSupply
+  volume
+  volumeUSD
+  untrackedVolumeUSD
+  txCount
+  liquidity
+  derivedETH
+  whitelistPairs
+  hourData
+  dayData
+  basePairs
+  quotePairs
+  basePairsDayData
+  quotePairsDayData
+}
+
+type AVALANCHE_Transaction {
+  id: ID!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  mints(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Mint_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Mint_filter): [AVALANCHE_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Burn_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Burn_filter): [AVALANCHE_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_Swap_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_Swap_filter): [AVALANCHE_Swap]!
+}
+
+input AVALANCHE_Transaction_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  mints: [String!]
+  mints_not: [String!]
+  mints_contains: [String!]
+  mints_contains_nocase: [String!]
+  mints_not_contains: [String!]
+  mints_not_contains_nocase: [String!]
+  burns: [String!]
+  burns_not: [String!]
+  burns_contains: [String!]
+  burns_contains_nocase: [String!]
+  burns_not_contains: [String!]
+  burns_not_contains_nocase: [String!]
+  swaps: [String!]
+  swaps_not: [String!]
+  swaps_contains: [String!]
+  swaps_contains_nocase: [String!]
+  swaps_not_contains: [String!]
+  swaps_not_contains_nocase: [String!]
+}
+
+enum AVALANCHE_Transaction_orderBy {
+  id
+  blockNumber
+  timestamp
+  mints
+  burns
+  swaps
+}
+
+type AVALANCHE_User {
+  id: ID!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: AVALANCHE_LiquidityPosition_orderBy, orderDirection: AVALANCHE_OrderDirection, where: AVALANCHE_LiquidityPosition_filter): [AVALANCHE_LiquidityPosition!]!
+}
+
+input AVALANCHE_User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+enum AVALANCHE_User_orderBy {
+  id
+  liquidityPositions
+}
+
+type AVALANCHE__Block_ {
+  """The hash of the block"""
+  hash: AVALANCHE_Bytes
+  """The block number"""
+  number: Int!
+}
+
+"""The type for the top-level _meta field"""
+type AVALANCHE__Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  
+  """
+  block: AVALANCHE__Block_!
+  """The deployment ID"""
+  deployment: String!
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}

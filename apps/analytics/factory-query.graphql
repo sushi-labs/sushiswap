@@ -1,0 +1,50 @@
+query FactoriesQuery {
+    ETHEREUM_factory(id: "0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    MATIC_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    ARBITRUM_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    FANTOM_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    XDAI_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    AVALANCHE_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    MOONRIVER_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+    BSC_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+        __typename
+        id
+        volumeUSD
+        liquidityUSD
+    }
+}
