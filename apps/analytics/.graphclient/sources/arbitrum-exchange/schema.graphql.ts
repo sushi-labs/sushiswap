@@ -2021,45 +2021,6 @@ type Query {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Swap!]!
-  tokenSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a \`{ hash: Bytes }\` value containing a block hash, a \`{ number: Int }\` containing the block number, or a \`{ number_gte: Int }\` containing the minimum block number. In the case of \`number_gte\`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: Block_height
-    """
-    Set to \`allow\` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [Token!]!
-  pairSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a \`{ hash: Bytes }\` value containing a block hash, a \`{ number: Int }\` containing the block number, or a \`{ number_gte: Int }\` containing the minimum block number. In the case of \`number_gte\`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: Block_height
-    """
-    Set to \`allow\` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [Pair!]!
-  userSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a \`{ hash: Bytes }\` value containing a block hash, a \`{ number: Int }\` containing the block number, or a \`{ number_gte: Int }\` containing the minimum block number. In the case of \`number_gte\`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: Block_height
-    """
-    Set to \`allow\` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [User!]!
   """Access to subgraph metadata"""
   _meta(block: Block_height): _Meta_
 }
@@ -2673,6 +2634,7 @@ type Token {
   txCount: BigInt!
   liquidity: BigDecimal!
   derivedETH: BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: Pair_orderBy, orderDirection: OrderDirection, where: Pair_filter): [Pair!]!
   hourData(skip: Int = 0, first: Int = 100, orderBy: TokenHourData_orderBy, orderDirection: OrderDirection, where: TokenHourData_filter): [TokenHourData!]!
   dayData(skip: Int = 0, first: Int = 100, orderBy: TokenDayData_orderBy, orderDirection: OrderDirection, where: TokenDayData_filter): [TokenDayData!]!
   basePairs(skip: Int = 0, first: Int = 100, orderBy: Pair_orderBy, orderDirection: OrderDirection, where: Pair_filter): [Pair!]!
@@ -3076,6 +3038,12 @@ input Token_filter {
   derivedETH_lte: BigDecimal
   derivedETH_in: [BigDecimal!]
   derivedETH_not_in: [BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
 }
 
 enum Token_orderBy {
@@ -3091,6 +3059,7 @@ enum Token_orderBy {
   txCount
   liquidity
   derivedETH
+  whitelistPairs
   hourData
   dayData
   basePairs
@@ -3214,7 +3183,7 @@ enum _SubgraphErrorPolicy_ {
   """
   deny
 }
-`, `.graphclient/sources/ethereum-exchange/schema.graphql`);
+`, `.graphclient/sources/arbitrum-exchange/schema.graphql`);
 
 export default buildSchema(source, {
   assumeValid: true,

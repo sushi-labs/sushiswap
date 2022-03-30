@@ -12,14 +12,14 @@ directive @subgraphId(id: String!) on OBJECT
 "creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
-scalar ETHEREUM_BigDecimal
+scalar MOONRIVER_BigDecimal
 
 scalar BigInt
 
 """The block at which the query should be executed."""
-input ETHEREUM_Block_height {
+input MOONRIVER_Block_height {
   """Value containing a block hash"""
-  hash: ETHEREUM_Bytes
+  hash: MOONRIVER_Bytes
   """Value containing a block number"""
   number: Int
   """
@@ -32,12 +32,12 @@ input ETHEREUM_Block_height {
   number_gte: Int
 }
 
-type ETHEREUM_Bundle {
+type MOONRIVER_Bundle {
   id: ID!
-  ethPrice: ETHEREUM_BigDecimal!
+  ethPrice: MOONRIVER_BigDecimal!
 }
 
-input ETHEREUM_Bundle_filter {
+input MOONRIVER_Bundle_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -46,39 +46,39 @@ input ETHEREUM_Bundle_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
-  ethPrice: ETHEREUM_BigDecimal
-  ethPrice_not: ETHEREUM_BigDecimal
-  ethPrice_gt: ETHEREUM_BigDecimal
-  ethPrice_lt: ETHEREUM_BigDecimal
-  ethPrice_gte: ETHEREUM_BigDecimal
-  ethPrice_lte: ETHEREUM_BigDecimal
-  ethPrice_in: [ETHEREUM_BigDecimal!]
-  ethPrice_not_in: [ETHEREUM_BigDecimal!]
+  ethPrice: MOONRIVER_BigDecimal
+  ethPrice_not: MOONRIVER_BigDecimal
+  ethPrice_gt: MOONRIVER_BigDecimal
+  ethPrice_lt: MOONRIVER_BigDecimal
+  ethPrice_gte: MOONRIVER_BigDecimal
+  ethPrice_lte: MOONRIVER_BigDecimal
+  ethPrice_in: [MOONRIVER_BigDecimal!]
+  ethPrice_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_Bundle_orderBy {
+enum MOONRIVER_Bundle_orderBy {
   id
   ethPrice
 }
 
-type ETHEREUM_Burn {
+type MOONRIVER_Burn {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MOONRIVER_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
-  to: ETHEREUM_Bytes
+  pair: MOONRIVER_Pair!
+  liquidity: MOONRIVER_BigDecimal!
+  sender: MOONRIVER_Bytes
+  amount0: MOONRIVER_BigDecimal
+  amount1: MOONRIVER_BigDecimal
+  to: MOONRIVER_Bytes
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
+  amountUSD: MOONRIVER_BigDecimal
   complete: Boolean!
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  feeTo: MOONRIVER_Bytes
+  feeLiquidity: MOONRIVER_BigDecimal
 }
 
-input ETHEREUM_Burn_filter {
+input MOONRIVER_Burn_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -135,42 +135,42 @@ input ETHEREUM_Burn_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  liquidity: MOONRIVER_BigDecimal
+  liquidity_not: MOONRIVER_BigDecimal
+  liquidity_gt: MOONRIVER_BigDecimal
+  liquidity_lt: MOONRIVER_BigDecimal
+  liquidity_gte: MOONRIVER_BigDecimal
+  liquidity_lte: MOONRIVER_BigDecimal
+  liquidity_in: [MOONRIVER_BigDecimal!]
+  liquidity_not_in: [MOONRIVER_BigDecimal!]
+  sender: MOONRIVER_Bytes
+  sender_not: MOONRIVER_Bytes
+  sender_in: [MOONRIVER_Bytes!]
+  sender_not_in: [MOONRIVER_Bytes!]
+  sender_contains: MOONRIVER_Bytes
+  sender_not_contains: MOONRIVER_Bytes
+  amount0: MOONRIVER_BigDecimal
+  amount0_not: MOONRIVER_BigDecimal
+  amount0_gt: MOONRIVER_BigDecimal
+  amount0_lt: MOONRIVER_BigDecimal
+  amount0_gte: MOONRIVER_BigDecimal
+  amount0_lte: MOONRIVER_BigDecimal
+  amount0_in: [MOONRIVER_BigDecimal!]
+  amount0_not_in: [MOONRIVER_BigDecimal!]
+  amount1: MOONRIVER_BigDecimal
+  amount1_not: MOONRIVER_BigDecimal
+  amount1_gt: MOONRIVER_BigDecimal
+  amount1_lt: MOONRIVER_BigDecimal
+  amount1_gte: MOONRIVER_BigDecimal
+  amount1_lte: MOONRIVER_BigDecimal
+  amount1_in: [MOONRIVER_BigDecimal!]
+  amount1_not_in: [MOONRIVER_BigDecimal!]
+  to: MOONRIVER_Bytes
+  to_not: MOONRIVER_Bytes
+  to_in: [MOONRIVER_Bytes!]
+  to_not_in: [MOONRIVER_Bytes!]
+  to_contains: MOONRIVER_Bytes
+  to_not_contains: MOONRIVER_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -179,35 +179,35 @@ input ETHEREUM_Burn_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MOONRIVER_BigDecimal
+  amountUSD_not: MOONRIVER_BigDecimal
+  amountUSD_gt: MOONRIVER_BigDecimal
+  amountUSD_lt: MOONRIVER_BigDecimal
+  amountUSD_gte: MOONRIVER_BigDecimal
+  amountUSD_lte: MOONRIVER_BigDecimal
+  amountUSD_in: [MOONRIVER_BigDecimal!]
+  amountUSD_not_in: [MOONRIVER_BigDecimal!]
   complete: Boolean
   complete_not: Boolean
   complete_in: [Boolean!]
   complete_not_in: [Boolean!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  feeTo: MOONRIVER_Bytes
+  feeTo_not: MOONRIVER_Bytes
+  feeTo_in: [MOONRIVER_Bytes!]
+  feeTo_not_in: [MOONRIVER_Bytes!]
+  feeTo_contains: MOONRIVER_Bytes
+  feeTo_not_contains: MOONRIVER_Bytes
+  feeLiquidity: MOONRIVER_BigDecimal
+  feeLiquidity_not: MOONRIVER_BigDecimal
+  feeLiquidity_gt: MOONRIVER_BigDecimal
+  feeLiquidity_lt: MOONRIVER_BigDecimal
+  feeLiquidity_gte: MOONRIVER_BigDecimal
+  feeLiquidity_lte: MOONRIVER_BigDecimal
+  feeLiquidity_in: [MOONRIVER_BigDecimal!]
+  feeLiquidity_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_Burn_orderBy {
+enum MOONRIVER_Burn_orderBy {
   id
   transaction
   timestamp
@@ -224,21 +224,21 @@ enum ETHEREUM_Burn_orderBy {
   feeLiquidity
 }
 
-scalar ETHEREUM_Bytes
+scalar MOONRIVER_Bytes
 
-type ETHEREUM_DayData {
+type MOONRIVER_DayData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: MOONRIVER_Factory!
+  volumeETH: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
+  untrackedVolume: MOONRIVER_BigDecimal!
+  liquidityETH: MOONRIVER_BigDecimal!
+  liquidityUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_DayData_filter {
+input MOONRIVER_DayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -275,46 +275,46 @@ input ETHEREUM_DayData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: MOONRIVER_BigDecimal
+  volumeETH_not: MOONRIVER_BigDecimal
+  volumeETH_gt: MOONRIVER_BigDecimal
+  volumeETH_lt: MOONRIVER_BigDecimal
+  volumeETH_gte: MOONRIVER_BigDecimal
+  volumeETH_lte: MOONRIVER_BigDecimal
+  volumeETH_in: [MOONRIVER_BigDecimal!]
+  volumeETH_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  untrackedVolume: MOONRIVER_BigDecimal
+  untrackedVolume_not: MOONRIVER_BigDecimal
+  untrackedVolume_gt: MOONRIVER_BigDecimal
+  untrackedVolume_lt: MOONRIVER_BigDecimal
+  untrackedVolume_gte: MOONRIVER_BigDecimal
+  untrackedVolume_lte: MOONRIVER_BigDecimal
+  untrackedVolume_in: [MOONRIVER_BigDecimal!]
+  untrackedVolume_not_in: [MOONRIVER_BigDecimal!]
+  liquidityETH: MOONRIVER_BigDecimal
+  liquidityETH_not: MOONRIVER_BigDecimal
+  liquidityETH_gt: MOONRIVER_BigDecimal
+  liquidityETH_lt: MOONRIVER_BigDecimal
+  liquidityETH_gte: MOONRIVER_BigDecimal
+  liquidityETH_lte: MOONRIVER_BigDecimal
+  liquidityETH_in: [MOONRIVER_BigDecimal!]
+  liquidityETH_not_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD: MOONRIVER_BigDecimal
+  liquidityUSD_not: MOONRIVER_BigDecimal
+  liquidityUSD_gt: MOONRIVER_BigDecimal
+  liquidityUSD_lt: MOONRIVER_BigDecimal
+  liquidityUSD_gte: MOONRIVER_BigDecimal
+  liquidityUSD_lte: MOONRIVER_BigDecimal
+  liquidityUSD_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -325,7 +325,7 @@ input ETHEREUM_DayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_DayData_orderBy {
+enum MOONRIVER_DayData_orderBy {
   id
   date
   factory
@@ -337,24 +337,24 @@ enum ETHEREUM_DayData_orderBy {
   txCount
 }
 
-type ETHEREUM_Factory {
+type MOONRIVER_Factory {
   id: ID!
   pairCount: BigInt!
-  volumeUSD: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
+  volumeETH: MOONRIVER_BigDecimal!
+  untrackedVolumeUSD: MOONRIVER_BigDecimal!
+  liquidityUSD: MOONRIVER_BigDecimal!
+  liquidityETH: MOONRIVER_BigDecimal!
   txCount: BigInt!
   tokenCount: BigInt!
   userCount: BigInt!
-  pairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  tokens(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Token_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Token_filter): [ETHEREUM_Token!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_HourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_HourData_filter): [ETHEREUM_HourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_DayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_DayData_filter): [ETHEREUM_DayData!]!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Pair_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Pair_filter): [MOONRIVER_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Token_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Token_filter): [MOONRIVER_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_HourData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_HourData_filter): [MOONRIVER_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_DayData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_DayData_filter): [MOONRIVER_DayData!]!
 }
 
-input ETHEREUM_Factory_filter {
+input MOONRIVER_Factory_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -371,46 +371,46 @@ input ETHEREUM_Factory_filter {
   pairCount_lte: BigInt
   pairCount_in: [BigInt!]
   pairCount_not_in: [BigInt!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  volumeETH: MOONRIVER_BigDecimal
+  volumeETH_not: MOONRIVER_BigDecimal
+  volumeETH_gt: MOONRIVER_BigDecimal
+  volumeETH_lt: MOONRIVER_BigDecimal
+  volumeETH_gte: MOONRIVER_BigDecimal
+  volumeETH_lte: MOONRIVER_BigDecimal
+  volumeETH_in: [MOONRIVER_BigDecimal!]
+  volumeETH_not_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_not: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD: MOONRIVER_BigDecimal
+  liquidityUSD_not: MOONRIVER_BigDecimal
+  liquidityUSD_gt: MOONRIVER_BigDecimal
+  liquidityUSD_lt: MOONRIVER_BigDecimal
+  liquidityUSD_gte: MOONRIVER_BigDecimal
+  liquidityUSD_lte: MOONRIVER_BigDecimal
+  liquidityUSD_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD_not_in: [MOONRIVER_BigDecimal!]
+  liquidityETH: MOONRIVER_BigDecimal
+  liquidityETH_not: MOONRIVER_BigDecimal
+  liquidityETH_gt: MOONRIVER_BigDecimal
+  liquidityETH_lt: MOONRIVER_BigDecimal
+  liquidityETH_gte: MOONRIVER_BigDecimal
+  liquidityETH_lte: MOONRIVER_BigDecimal
+  liquidityETH_in: [MOONRIVER_BigDecimal!]
+  liquidityETH_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -437,7 +437,7 @@ input ETHEREUM_Factory_filter {
   userCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Factory_orderBy {
+enum MOONRIVER_Factory_orderBy {
   id
   pairCount
   volumeUSD
@@ -454,19 +454,19 @@ enum ETHEREUM_Factory_orderBy {
   dayData
 }
 
-type ETHEREUM_HourData {
+type MOONRIVER_HourData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: MOONRIVER_Factory!
+  volumeETH: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
+  untrackedVolume: MOONRIVER_BigDecimal!
+  liquidityETH: MOONRIVER_BigDecimal!
+  liquidityUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_HourData_filter {
+input MOONRIVER_HourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -503,46 +503,46 @@ input ETHEREUM_HourData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: MOONRIVER_BigDecimal
+  volumeETH_not: MOONRIVER_BigDecimal
+  volumeETH_gt: MOONRIVER_BigDecimal
+  volumeETH_lt: MOONRIVER_BigDecimal
+  volumeETH_gte: MOONRIVER_BigDecimal
+  volumeETH_lte: MOONRIVER_BigDecimal
+  volumeETH_in: [MOONRIVER_BigDecimal!]
+  volumeETH_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  untrackedVolume: MOONRIVER_BigDecimal
+  untrackedVolume_not: MOONRIVER_BigDecimal
+  untrackedVolume_gt: MOONRIVER_BigDecimal
+  untrackedVolume_lt: MOONRIVER_BigDecimal
+  untrackedVolume_gte: MOONRIVER_BigDecimal
+  untrackedVolume_lte: MOONRIVER_BigDecimal
+  untrackedVolume_in: [MOONRIVER_BigDecimal!]
+  untrackedVolume_not_in: [MOONRIVER_BigDecimal!]
+  liquidityETH: MOONRIVER_BigDecimal
+  liquidityETH_not: MOONRIVER_BigDecimal
+  liquidityETH_gt: MOONRIVER_BigDecimal
+  liquidityETH_lt: MOONRIVER_BigDecimal
+  liquidityETH_gte: MOONRIVER_BigDecimal
+  liquidityETH_lte: MOONRIVER_BigDecimal
+  liquidityETH_in: [MOONRIVER_BigDecimal!]
+  liquidityETH_not_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD: MOONRIVER_BigDecimal
+  liquidityUSD_not: MOONRIVER_BigDecimal
+  liquidityUSD_gt: MOONRIVER_BigDecimal
+  liquidityUSD_lt: MOONRIVER_BigDecimal
+  liquidityUSD_gte: MOONRIVER_BigDecimal
+  liquidityUSD_lte: MOONRIVER_BigDecimal
+  liquidityUSD_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -553,7 +553,7 @@ input ETHEREUM_HourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_HourData_orderBy {
+enum MOONRIVER_HourData_orderBy {
   id
   date
   factory
@@ -565,33 +565,33 @@ enum ETHEREUM_HourData_orderBy {
   txCount
 }
 
-type ETHEREUM_LiquidityPosition {
+type MOONRIVER_LiquidityPosition {
   id: ID!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
-  snapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot]!
+  user: MOONRIVER_User!
+  pair: MOONRIVER_Pair!
+  liquidityTokenBalance: MOONRIVER_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_LiquidityPositionSnapshot_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_LiquidityPositionSnapshot_filter): [MOONRIVER_LiquidityPositionSnapshot]!
   block: Int!
   timestamp: Int!
 }
 
-type ETHEREUM_LiquidityPositionSnapshot {
+type MOONRIVER_LiquidityPositionSnapshot {
   id: ID!
-  liquidityPosition: ETHEREUM_LiquidityPosition!
+  liquidityPosition: MOONRIVER_LiquidityPosition!
   timestamp: Int!
   block: Int!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  token0PriceUSD: ETHEREUM_BigDecimal!
-  token1PriceUSD: ETHEREUM_BigDecimal!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
+  user: MOONRIVER_User!
+  pair: MOONRIVER_Pair!
+  token0PriceUSD: MOONRIVER_BigDecimal!
+  token1PriceUSD: MOONRIVER_BigDecimal!
+  reserve0: MOONRIVER_BigDecimal!
+  reserve1: MOONRIVER_BigDecimal!
+  reserveUSD: MOONRIVER_BigDecimal!
+  liquidityTokenTotalSupply: MOONRIVER_BigDecimal!
+  liquidityTokenBalance: MOONRIVER_BigDecimal!
 }
 
-input ETHEREUM_LiquidityPositionSnapshot_filter {
+input MOONRIVER_LiquidityPositionSnapshot_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -676,65 +676,65 @@ input ETHEREUM_LiquidityPositionSnapshot_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  token0PriceUSD: ETHEREUM_BigDecimal
-  token0PriceUSD_not: ETHEREUM_BigDecimal
-  token0PriceUSD_gt: ETHEREUM_BigDecimal
-  token0PriceUSD_lt: ETHEREUM_BigDecimal
-  token0PriceUSD_gte: ETHEREUM_BigDecimal
-  token0PriceUSD_lte: ETHEREUM_BigDecimal
-  token0PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token0PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD: ETHEREUM_BigDecimal
-  token1PriceUSD_not: ETHEREUM_BigDecimal
-  token1PriceUSD_gt: ETHEREUM_BigDecimal
-  token1PriceUSD_lt: ETHEREUM_BigDecimal
-  token1PriceUSD_gte: ETHEREUM_BigDecimal
-  token1PriceUSD_lte: ETHEREUM_BigDecimal
-  token1PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_not: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  token0PriceUSD: MOONRIVER_BigDecimal
+  token0PriceUSD_not: MOONRIVER_BigDecimal
+  token0PriceUSD_gt: MOONRIVER_BigDecimal
+  token0PriceUSD_lt: MOONRIVER_BigDecimal
+  token0PriceUSD_gte: MOONRIVER_BigDecimal
+  token0PriceUSD_lte: MOONRIVER_BigDecimal
+  token0PriceUSD_in: [MOONRIVER_BigDecimal!]
+  token0PriceUSD_not_in: [MOONRIVER_BigDecimal!]
+  token1PriceUSD: MOONRIVER_BigDecimal
+  token1PriceUSD_not: MOONRIVER_BigDecimal
+  token1PriceUSD_gt: MOONRIVER_BigDecimal
+  token1PriceUSD_lt: MOONRIVER_BigDecimal
+  token1PriceUSD_gte: MOONRIVER_BigDecimal
+  token1PriceUSD_lte: MOONRIVER_BigDecimal
+  token1PriceUSD_in: [MOONRIVER_BigDecimal!]
+  token1PriceUSD_not_in: [MOONRIVER_BigDecimal!]
+  reserve0: MOONRIVER_BigDecimal
+  reserve0_not: MOONRIVER_BigDecimal
+  reserve0_gt: MOONRIVER_BigDecimal
+  reserve0_lt: MOONRIVER_BigDecimal
+  reserve0_gte: MOONRIVER_BigDecimal
+  reserve0_lte: MOONRIVER_BigDecimal
+  reserve0_in: [MOONRIVER_BigDecimal!]
+  reserve0_not_in: [MOONRIVER_BigDecimal!]
+  reserve1: MOONRIVER_BigDecimal
+  reserve1_not: MOONRIVER_BigDecimal
+  reserve1_gt: MOONRIVER_BigDecimal
+  reserve1_lt: MOONRIVER_BigDecimal
+  reserve1_gte: MOONRIVER_BigDecimal
+  reserve1_lte: MOONRIVER_BigDecimal
+  reserve1_in: [MOONRIVER_BigDecimal!]
+  reserve1_not_in: [MOONRIVER_BigDecimal!]
+  reserveUSD: MOONRIVER_BigDecimal
+  reserveUSD_not: MOONRIVER_BigDecimal
+  reserveUSD_gt: MOONRIVER_BigDecimal
+  reserveUSD_lt: MOONRIVER_BigDecimal
+  reserveUSD_gte: MOONRIVER_BigDecimal
+  reserveUSD_lte: MOONRIVER_BigDecimal
+  reserveUSD_in: [MOONRIVER_BigDecimal!]
+  reserveUSD_not_in: [MOONRIVER_BigDecimal!]
+  liquidityTokenTotalSupply: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_not: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_gt: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_lt: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_gte: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_lte: MOONRIVER_BigDecimal
+  liquidityTokenTotalSupply_in: [MOONRIVER_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [MOONRIVER_BigDecimal!]
+  liquidityTokenBalance: MOONRIVER_BigDecimal
+  liquidityTokenBalance_not: MOONRIVER_BigDecimal
+  liquidityTokenBalance_gt: MOONRIVER_BigDecimal
+  liquidityTokenBalance_lt: MOONRIVER_BigDecimal
+  liquidityTokenBalance_gte: MOONRIVER_BigDecimal
+  liquidityTokenBalance_lte: MOONRIVER_BigDecimal
+  liquidityTokenBalance_in: [MOONRIVER_BigDecimal!]
+  liquidityTokenBalance_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
+enum MOONRIVER_LiquidityPositionSnapshot_orderBy {
   id
   liquidityPosition
   timestamp
@@ -750,7 +750,7 @@ enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
   liquidityTokenBalance
 }
 
-input ETHEREUM_LiquidityPosition_filter {
+input MOONRIVER_LiquidityPosition_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -799,14 +799,14 @@ input ETHEREUM_LiquidityPosition_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance: MOONRIVER_BigDecimal
+  liquidityTokenBalance_not: MOONRIVER_BigDecimal
+  liquidityTokenBalance_gt: MOONRIVER_BigDecimal
+  liquidityTokenBalance_lt: MOONRIVER_BigDecimal
+  liquidityTokenBalance_gte: MOONRIVER_BigDecimal
+  liquidityTokenBalance_lte: MOONRIVER_BigDecimal
+  liquidityTokenBalance_in: [MOONRIVER_BigDecimal!]
+  liquidityTokenBalance_not_in: [MOONRIVER_BigDecimal!]
   block: Int
   block_not: Int
   block_gt: Int
@@ -825,7 +825,7 @@ input ETHEREUM_LiquidityPosition_filter {
   timestamp_not_in: [Int!]
 }
 
-enum ETHEREUM_LiquidityPosition_orderBy {
+enum MOONRIVER_LiquidityPosition_orderBy {
   id
   user
   pair
@@ -835,23 +835,23 @@ enum ETHEREUM_LiquidityPosition_orderBy {
   timestamp
 }
 
-type ETHEREUM_Mint {
+type MOONRIVER_Mint {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MOONRIVER_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  to: ETHEREUM_Bytes!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
+  pair: MOONRIVER_Pair!
+  to: MOONRIVER_Bytes!
+  liquidity: MOONRIVER_BigDecimal!
+  sender: MOONRIVER_Bytes
+  amount0: MOONRIVER_BigDecimal
+  amount1: MOONRIVER_BigDecimal
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  amountUSD: MOONRIVER_BigDecimal
+  feeTo: MOONRIVER_Bytes
+  feeLiquidity: MOONRIVER_BigDecimal
 }
 
-input ETHEREUM_Mint_filter {
+input MOONRIVER_Mint_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -908,42 +908,42 @@ input ETHEREUM_Mint_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
+  to: MOONRIVER_Bytes
+  to_not: MOONRIVER_Bytes
+  to_in: [MOONRIVER_Bytes!]
+  to_not_in: [MOONRIVER_Bytes!]
+  to_contains: MOONRIVER_Bytes
+  to_not_contains: MOONRIVER_Bytes
+  liquidity: MOONRIVER_BigDecimal
+  liquidity_not: MOONRIVER_BigDecimal
+  liquidity_gt: MOONRIVER_BigDecimal
+  liquidity_lt: MOONRIVER_BigDecimal
+  liquidity_gte: MOONRIVER_BigDecimal
+  liquidity_lte: MOONRIVER_BigDecimal
+  liquidity_in: [MOONRIVER_BigDecimal!]
+  liquidity_not_in: [MOONRIVER_BigDecimal!]
+  sender: MOONRIVER_Bytes
+  sender_not: MOONRIVER_Bytes
+  sender_in: [MOONRIVER_Bytes!]
+  sender_not_in: [MOONRIVER_Bytes!]
+  sender_contains: MOONRIVER_Bytes
+  sender_not_contains: MOONRIVER_Bytes
+  amount0: MOONRIVER_BigDecimal
+  amount0_not: MOONRIVER_BigDecimal
+  amount0_gt: MOONRIVER_BigDecimal
+  amount0_lt: MOONRIVER_BigDecimal
+  amount0_gte: MOONRIVER_BigDecimal
+  amount0_lte: MOONRIVER_BigDecimal
+  amount0_in: [MOONRIVER_BigDecimal!]
+  amount0_not_in: [MOONRIVER_BigDecimal!]
+  amount1: MOONRIVER_BigDecimal
+  amount1_not: MOONRIVER_BigDecimal
+  amount1_gt: MOONRIVER_BigDecimal
+  amount1_lt: MOONRIVER_BigDecimal
+  amount1_gte: MOONRIVER_BigDecimal
+  amount1_lte: MOONRIVER_BigDecimal
+  amount1_in: [MOONRIVER_BigDecimal!]
+  amount1_not_in: [MOONRIVER_BigDecimal!]
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -952,31 +952,31 @@ input ETHEREUM_Mint_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MOONRIVER_BigDecimal
+  amountUSD_not: MOONRIVER_BigDecimal
+  amountUSD_gt: MOONRIVER_BigDecimal
+  amountUSD_lt: MOONRIVER_BigDecimal
+  amountUSD_gte: MOONRIVER_BigDecimal
+  amountUSD_lte: MOONRIVER_BigDecimal
+  amountUSD_in: [MOONRIVER_BigDecimal!]
+  amountUSD_not_in: [MOONRIVER_BigDecimal!]
+  feeTo: MOONRIVER_Bytes
+  feeTo_not: MOONRIVER_Bytes
+  feeTo_in: [MOONRIVER_Bytes!]
+  feeTo_not_in: [MOONRIVER_Bytes!]
+  feeTo_contains: MOONRIVER_Bytes
+  feeTo_not_contains: MOONRIVER_Bytes
+  feeLiquidity: MOONRIVER_BigDecimal
+  feeLiquidity_not: MOONRIVER_BigDecimal
+  feeLiquidity_gt: MOONRIVER_BigDecimal
+  feeLiquidity_lt: MOONRIVER_BigDecimal
+  feeLiquidity_gte: MOONRIVER_BigDecimal
+  feeLiquidity_lte: MOONRIVER_BigDecimal
+  feeLiquidity_in: [MOONRIVER_BigDecimal!]
+  feeLiquidity_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_Mint_orderBy {
+enum MOONRIVER_Mint_orderBy {
   id
   transaction
   timestamp
@@ -993,59 +993,59 @@ enum ETHEREUM_Mint_orderBy {
 }
 
 """Defines the order direction, either ascending or descending"""
-enum ETHEREUM_OrderDirection {
+enum MOONRIVER_OrderDirection {
   asc
   desc
 }
 
-type ETHEREUM_Pair {
+type MOONRIVER_Pair {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: MOONRIVER_Factory!
   name: String!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveETH: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  trackedReserveETH: ETHEREUM_BigDecimal!
-  token0Price: ETHEREUM_BigDecimal!
-  token1Price: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  token0: MOONRIVER_Token!
+  token1: MOONRIVER_Token!
+  reserve0: MOONRIVER_BigDecimal!
+  reserve1: MOONRIVER_BigDecimal!
+  totalSupply: MOONRIVER_BigDecimal!
+  reserveETH: MOONRIVER_BigDecimal!
+  reserveUSD: MOONRIVER_BigDecimal!
+  trackedReserveETH: MOONRIVER_BigDecimal!
+  token0Price: MOONRIVER_BigDecimal!
+  token1Price: MOONRIVER_BigDecimal!
+  volumeToken0: MOONRIVER_BigDecimal!
+  volumeToken1: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
+  untrackedVolumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
   liquidityProviderCount: BigInt!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
-  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairHourData_filter): [ETHEREUM_PairHourData!]!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint!]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn!]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_LiquidityPosition_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_LiquidityPosition_filter): [MOONRIVER_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_LiquidityPositionSnapshot_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_LiquidityPositionSnapshot_filter): [MOONRIVER_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_PairDayData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_PairDayData_filter): [MOONRIVER_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_PairHourData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_PairHourData_filter): [MOONRIVER_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Mint_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Mint_filter): [MOONRIVER_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Burn_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Burn_filter): [MOONRIVER_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Swap_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Swap_filter): [MOONRIVER_Swap!]!
   timestamp: BigInt!
   block: BigInt!
 }
 
-type ETHEREUM_PairDayData {
+type MOONRIVER_PairDayData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: MOONRIVER_Pair!
+  token0: MOONRIVER_Token!
+  token1: MOONRIVER_Token!
+  reserve0: MOONRIVER_BigDecimal!
+  reserve1: MOONRIVER_BigDecimal!
+  totalSupply: MOONRIVER_BigDecimal!
+  reserveUSD: MOONRIVER_BigDecimal!
+  volumeToken0: MOONRIVER_BigDecimal!
+  volumeToken1: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairDayData_filter {
+input MOONRIVER_PairDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1122,62 +1122,62 @@ input ETHEREUM_PairDayData_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MOONRIVER_BigDecimal
+  reserve0_not: MOONRIVER_BigDecimal
+  reserve0_gt: MOONRIVER_BigDecimal
+  reserve0_lt: MOONRIVER_BigDecimal
+  reserve0_gte: MOONRIVER_BigDecimal
+  reserve0_lte: MOONRIVER_BigDecimal
+  reserve0_in: [MOONRIVER_BigDecimal!]
+  reserve0_not_in: [MOONRIVER_BigDecimal!]
+  reserve1: MOONRIVER_BigDecimal
+  reserve1_not: MOONRIVER_BigDecimal
+  reserve1_gt: MOONRIVER_BigDecimal
+  reserve1_lt: MOONRIVER_BigDecimal
+  reserve1_gte: MOONRIVER_BigDecimal
+  reserve1_lte: MOONRIVER_BigDecimal
+  reserve1_in: [MOONRIVER_BigDecimal!]
+  reserve1_not_in: [MOONRIVER_BigDecimal!]
+  totalSupply: MOONRIVER_BigDecimal
+  totalSupply_not: MOONRIVER_BigDecimal
+  totalSupply_gt: MOONRIVER_BigDecimal
+  totalSupply_lt: MOONRIVER_BigDecimal
+  totalSupply_gte: MOONRIVER_BigDecimal
+  totalSupply_lte: MOONRIVER_BigDecimal
+  totalSupply_in: [MOONRIVER_BigDecimal!]
+  totalSupply_not_in: [MOONRIVER_BigDecimal!]
+  reserveUSD: MOONRIVER_BigDecimal
+  reserveUSD_not: MOONRIVER_BigDecimal
+  reserveUSD_gt: MOONRIVER_BigDecimal
+  reserveUSD_lt: MOONRIVER_BigDecimal
+  reserveUSD_gte: MOONRIVER_BigDecimal
+  reserveUSD_lte: MOONRIVER_BigDecimal
+  reserveUSD_in: [MOONRIVER_BigDecimal!]
+  reserveUSD_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken0: MOONRIVER_BigDecimal
+  volumeToken0_not: MOONRIVER_BigDecimal
+  volumeToken0_gt: MOONRIVER_BigDecimal
+  volumeToken0_lt: MOONRIVER_BigDecimal
+  volumeToken0_gte: MOONRIVER_BigDecimal
+  volumeToken0_lte: MOONRIVER_BigDecimal
+  volumeToken0_in: [MOONRIVER_BigDecimal!]
+  volumeToken0_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken1: MOONRIVER_BigDecimal
+  volumeToken1_not: MOONRIVER_BigDecimal
+  volumeToken1_gt: MOONRIVER_BigDecimal
+  volumeToken1_lt: MOONRIVER_BigDecimal
+  volumeToken1_gte: MOONRIVER_BigDecimal
+  volumeToken1_lte: MOONRIVER_BigDecimal
+  volumeToken1_in: [MOONRIVER_BigDecimal!]
+  volumeToken1_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1188,7 +1188,7 @@ input ETHEREUM_PairDayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairDayData_orderBy {
+enum MOONRIVER_PairDayData_orderBy {
   id
   date
   pair
@@ -1204,20 +1204,20 @@ enum ETHEREUM_PairDayData_orderBy {
   txCount
 }
 
-type ETHEREUM_PairHourData {
+type MOONRIVER_PairHourData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: MOONRIVER_Pair!
+  reserve0: MOONRIVER_BigDecimal!
+  reserve1: MOONRIVER_BigDecimal!
+  reserveUSD: MOONRIVER_BigDecimal!
+  volumeToken0: MOONRIVER_BigDecimal!
+  volumeToken1: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairHourData_filter {
+input MOONRIVER_PairHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1254,54 +1254,54 @@ input ETHEREUM_PairHourData_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MOONRIVER_BigDecimal
+  reserve0_not: MOONRIVER_BigDecimal
+  reserve0_gt: MOONRIVER_BigDecimal
+  reserve0_lt: MOONRIVER_BigDecimal
+  reserve0_gte: MOONRIVER_BigDecimal
+  reserve0_lte: MOONRIVER_BigDecimal
+  reserve0_in: [MOONRIVER_BigDecimal!]
+  reserve0_not_in: [MOONRIVER_BigDecimal!]
+  reserve1: MOONRIVER_BigDecimal
+  reserve1_not: MOONRIVER_BigDecimal
+  reserve1_gt: MOONRIVER_BigDecimal
+  reserve1_lt: MOONRIVER_BigDecimal
+  reserve1_gte: MOONRIVER_BigDecimal
+  reserve1_lte: MOONRIVER_BigDecimal
+  reserve1_in: [MOONRIVER_BigDecimal!]
+  reserve1_not_in: [MOONRIVER_BigDecimal!]
+  reserveUSD: MOONRIVER_BigDecimal
+  reserveUSD_not: MOONRIVER_BigDecimal
+  reserveUSD_gt: MOONRIVER_BigDecimal
+  reserveUSD_lt: MOONRIVER_BigDecimal
+  reserveUSD_gte: MOONRIVER_BigDecimal
+  reserveUSD_lte: MOONRIVER_BigDecimal
+  reserveUSD_in: [MOONRIVER_BigDecimal!]
+  reserveUSD_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken0: MOONRIVER_BigDecimal
+  volumeToken0_not: MOONRIVER_BigDecimal
+  volumeToken0_gt: MOONRIVER_BigDecimal
+  volumeToken0_lt: MOONRIVER_BigDecimal
+  volumeToken0_gte: MOONRIVER_BigDecimal
+  volumeToken0_lte: MOONRIVER_BigDecimal
+  volumeToken0_in: [MOONRIVER_BigDecimal!]
+  volumeToken0_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken1: MOONRIVER_BigDecimal
+  volumeToken1_not: MOONRIVER_BigDecimal
+  volumeToken1_gt: MOONRIVER_BigDecimal
+  volumeToken1_lt: MOONRIVER_BigDecimal
+  volumeToken1_gte: MOONRIVER_BigDecimal
+  volumeToken1_lte: MOONRIVER_BigDecimal
+  volumeToken1_in: [MOONRIVER_BigDecimal!]
+  volumeToken1_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1312,7 +1312,7 @@ input ETHEREUM_PairHourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairHourData_orderBy {
+enum MOONRIVER_PairHourData_orderBy {
   id
   date
   pair
@@ -1325,7 +1325,7 @@ enum ETHEREUM_PairHourData_orderBy {
   txCount
 }
 
-input ETHEREUM_Pair_filter {
+input MOONRIVER_Pair_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1414,102 +1414,102 @@ input ETHEREUM_Pair_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveETH: ETHEREUM_BigDecimal
-  reserveETH_not: ETHEREUM_BigDecimal
-  reserveETH_gt: ETHEREUM_BigDecimal
-  reserveETH_lt: ETHEREUM_BigDecimal
-  reserveETH_gte: ETHEREUM_BigDecimal
-  reserveETH_lte: ETHEREUM_BigDecimal
-  reserveETH_in: [ETHEREUM_BigDecimal!]
-  reserveETH_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH: ETHEREUM_BigDecimal
-  trackedReserveETH_not: ETHEREUM_BigDecimal
-  trackedReserveETH_gt: ETHEREUM_BigDecimal
-  trackedReserveETH_lt: ETHEREUM_BigDecimal
-  trackedReserveETH_gte: ETHEREUM_BigDecimal
-  trackedReserveETH_lte: ETHEREUM_BigDecimal
-  trackedReserveETH_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH_not_in: [ETHEREUM_BigDecimal!]
-  token0Price: ETHEREUM_BigDecimal
-  token0Price_not: ETHEREUM_BigDecimal
-  token0Price_gt: ETHEREUM_BigDecimal
-  token0Price_lt: ETHEREUM_BigDecimal
-  token0Price_gte: ETHEREUM_BigDecimal
-  token0Price_lte: ETHEREUM_BigDecimal
-  token0Price_in: [ETHEREUM_BigDecimal!]
-  token0Price_not_in: [ETHEREUM_BigDecimal!]
-  token1Price: ETHEREUM_BigDecimal
-  token1Price_not: ETHEREUM_BigDecimal
-  token1Price_gt: ETHEREUM_BigDecimal
-  token1Price_lt: ETHEREUM_BigDecimal
-  token1Price_gte: ETHEREUM_BigDecimal
-  token1Price_lte: ETHEREUM_BigDecimal
-  token1Price_in: [ETHEREUM_BigDecimal!]
-  token1Price_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: MOONRIVER_BigDecimal
+  reserve0_not: MOONRIVER_BigDecimal
+  reserve0_gt: MOONRIVER_BigDecimal
+  reserve0_lt: MOONRIVER_BigDecimal
+  reserve0_gte: MOONRIVER_BigDecimal
+  reserve0_lte: MOONRIVER_BigDecimal
+  reserve0_in: [MOONRIVER_BigDecimal!]
+  reserve0_not_in: [MOONRIVER_BigDecimal!]
+  reserve1: MOONRIVER_BigDecimal
+  reserve1_not: MOONRIVER_BigDecimal
+  reserve1_gt: MOONRIVER_BigDecimal
+  reserve1_lt: MOONRIVER_BigDecimal
+  reserve1_gte: MOONRIVER_BigDecimal
+  reserve1_lte: MOONRIVER_BigDecimal
+  reserve1_in: [MOONRIVER_BigDecimal!]
+  reserve1_not_in: [MOONRIVER_BigDecimal!]
+  totalSupply: MOONRIVER_BigDecimal
+  totalSupply_not: MOONRIVER_BigDecimal
+  totalSupply_gt: MOONRIVER_BigDecimal
+  totalSupply_lt: MOONRIVER_BigDecimal
+  totalSupply_gte: MOONRIVER_BigDecimal
+  totalSupply_lte: MOONRIVER_BigDecimal
+  totalSupply_in: [MOONRIVER_BigDecimal!]
+  totalSupply_not_in: [MOONRIVER_BigDecimal!]
+  reserveETH: MOONRIVER_BigDecimal
+  reserveETH_not: MOONRIVER_BigDecimal
+  reserveETH_gt: MOONRIVER_BigDecimal
+  reserveETH_lt: MOONRIVER_BigDecimal
+  reserveETH_gte: MOONRIVER_BigDecimal
+  reserveETH_lte: MOONRIVER_BigDecimal
+  reserveETH_in: [MOONRIVER_BigDecimal!]
+  reserveETH_not_in: [MOONRIVER_BigDecimal!]
+  reserveUSD: MOONRIVER_BigDecimal
+  reserveUSD_not: MOONRIVER_BigDecimal
+  reserveUSD_gt: MOONRIVER_BigDecimal
+  reserveUSD_lt: MOONRIVER_BigDecimal
+  reserveUSD_gte: MOONRIVER_BigDecimal
+  reserveUSD_lte: MOONRIVER_BigDecimal
+  reserveUSD_in: [MOONRIVER_BigDecimal!]
+  reserveUSD_not_in: [MOONRIVER_BigDecimal!]
+  trackedReserveETH: MOONRIVER_BigDecimal
+  trackedReserveETH_not: MOONRIVER_BigDecimal
+  trackedReserveETH_gt: MOONRIVER_BigDecimal
+  trackedReserveETH_lt: MOONRIVER_BigDecimal
+  trackedReserveETH_gte: MOONRIVER_BigDecimal
+  trackedReserveETH_lte: MOONRIVER_BigDecimal
+  trackedReserveETH_in: [MOONRIVER_BigDecimal!]
+  trackedReserveETH_not_in: [MOONRIVER_BigDecimal!]
+  token0Price: MOONRIVER_BigDecimal
+  token0Price_not: MOONRIVER_BigDecimal
+  token0Price_gt: MOONRIVER_BigDecimal
+  token0Price_lt: MOONRIVER_BigDecimal
+  token0Price_gte: MOONRIVER_BigDecimal
+  token0Price_lte: MOONRIVER_BigDecimal
+  token0Price_in: [MOONRIVER_BigDecimal!]
+  token0Price_not_in: [MOONRIVER_BigDecimal!]
+  token1Price: MOONRIVER_BigDecimal
+  token1Price_not: MOONRIVER_BigDecimal
+  token1Price_gt: MOONRIVER_BigDecimal
+  token1Price_lt: MOONRIVER_BigDecimal
+  token1Price_gte: MOONRIVER_BigDecimal
+  token1Price_lte: MOONRIVER_BigDecimal
+  token1Price_in: [MOONRIVER_BigDecimal!]
+  token1Price_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken0: MOONRIVER_BigDecimal
+  volumeToken0_not: MOONRIVER_BigDecimal
+  volumeToken0_gt: MOONRIVER_BigDecimal
+  volumeToken0_lt: MOONRIVER_BigDecimal
+  volumeToken0_gte: MOONRIVER_BigDecimal
+  volumeToken0_lte: MOONRIVER_BigDecimal
+  volumeToken0_in: [MOONRIVER_BigDecimal!]
+  volumeToken0_not_in: [MOONRIVER_BigDecimal!]
+  volumeToken1: MOONRIVER_BigDecimal
+  volumeToken1_not: MOONRIVER_BigDecimal
+  volumeToken1_gt: MOONRIVER_BigDecimal
+  volumeToken1_lt: MOONRIVER_BigDecimal
+  volumeToken1_gte: MOONRIVER_BigDecimal
+  volumeToken1_lte: MOONRIVER_BigDecimal
+  volumeToken1_in: [MOONRIVER_BigDecimal!]
+  volumeToken1_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_not: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1544,7 +1544,7 @@ input ETHEREUM_Pair_filter {
   block_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Pair_orderBy {
+enum MOONRIVER_Pair_orderBy {
   id
   factory
   name
@@ -1576,954 +1576,915 @@ enum ETHEREUM_Pair_orderBy {
 }
 
 type Query {
-  ETHEREUM_user(
+  MOONRIVER_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): MOONRIVER_User
+  MOONRIVER_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: MOONRIVER_User_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [MOONRIVER_User!]!
+  MOONRIVER_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): MOONRIVER_Bundle
+  MOONRIVER_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: MOONRIVER_Bundle_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [MOONRIVER_Bundle!]!
+  MOONRIVER_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory @merge(keyField: "id", keyArg: "id")
-  ETHEREUM_factories(
+  ): MOONRIVER_Factory @merge(keyField: "id", keyArg: "id")
+  MOONRIVER_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: MOONRIVER_Factory_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [MOONRIVER_Factory!]!
+  MOONRIVER_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): MOONRIVER_HourData
+  MOONRIVER_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: MOONRIVER_HourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [MOONRIVER_HourData!]!
+  MOONRIVER_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): MOONRIVER_DayData
+  MOONRIVER_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: MOONRIVER_DayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [MOONRIVER_DayData!]!
+  MOONRIVER_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): MOONRIVER_Token
+  MOONRIVER_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: MOONRIVER_Token_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [MOONRIVER_Token!]!
+  MOONRIVER_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): MOONRIVER_TokenHourData
+  MOONRIVER_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: MOONRIVER_TokenHourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [MOONRIVER_TokenHourData!]!
+  MOONRIVER_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): MOONRIVER_TokenDayData
+  MOONRIVER_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: MOONRIVER_TokenDayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [MOONRIVER_TokenDayData!]!
+  MOONRIVER_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): MOONRIVER_Pair
+  MOONRIVER_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: MOONRIVER_Pair_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [MOONRIVER_Pair!]!
+  MOONRIVER_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): MOONRIVER_PairHourData
+  MOONRIVER_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: MOONRIVER_PairHourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [MOONRIVER_PairHourData!]!
+  MOONRIVER_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): MOONRIVER_PairDayData
+  MOONRIVER_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: MOONRIVER_PairDayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [MOONRIVER_PairDayData!]!
+  MOONRIVER_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): MOONRIVER_LiquidityPosition
+  MOONRIVER_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: MOONRIVER_LiquidityPosition_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [MOONRIVER_LiquidityPosition!]!
+  MOONRIVER_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): MOONRIVER_LiquidityPositionSnapshot
+  MOONRIVER_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: MOONRIVER_LiquidityPositionSnapshot_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [MOONRIVER_LiquidityPositionSnapshot!]!
+  MOONRIVER_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): MOONRIVER_Transaction
+  MOONRIVER_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: MOONRIVER_Transaction_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [MOONRIVER_Transaction!]!
+  MOONRIVER_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): MOONRIVER_Mint
+  MOONRIVER_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: MOONRIVER_Mint_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [MOONRIVER_Mint!]!
+  MOONRIVER_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): MOONRIVER_Burn
+  MOONRIVER_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: MOONRIVER_Burn_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [MOONRIVER_Burn!]!
+  MOONRIVER_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): MOONRIVER_Swap
+  MOONRIVER_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: MOONRIVER_Swap_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
-  ETHEREUM_tokenSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_pairSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_userSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
+  ): [MOONRIVER_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  MOONRIVER__meta(block: MOONRIVER_Block_height): MOONRIVER__Meta_
 }
 
 type Subscription {
-  ETHEREUM_user(
+  MOONRIVER_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): MOONRIVER_User
+  MOONRIVER_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: MOONRIVER_User_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [MOONRIVER_User!]!
+  MOONRIVER_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): MOONRIVER_Bundle
+  MOONRIVER_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: MOONRIVER_Bundle_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [MOONRIVER_Bundle!]!
+  MOONRIVER_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory
-  ETHEREUM_factories(
+  ): MOONRIVER_Factory
+  MOONRIVER_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: MOONRIVER_Factory_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [MOONRIVER_Factory!]!
+  MOONRIVER_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): MOONRIVER_HourData
+  MOONRIVER_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: MOONRIVER_HourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [MOONRIVER_HourData!]!
+  MOONRIVER_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): MOONRIVER_DayData
+  MOONRIVER_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: MOONRIVER_DayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [MOONRIVER_DayData!]!
+  MOONRIVER_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): MOONRIVER_Token
+  MOONRIVER_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: MOONRIVER_Token_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [MOONRIVER_Token!]!
+  MOONRIVER_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): MOONRIVER_TokenHourData
+  MOONRIVER_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: MOONRIVER_TokenHourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [MOONRIVER_TokenHourData!]!
+  MOONRIVER_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): MOONRIVER_TokenDayData
+  MOONRIVER_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: MOONRIVER_TokenDayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [MOONRIVER_TokenDayData!]!
+  MOONRIVER_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): MOONRIVER_Pair
+  MOONRIVER_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: MOONRIVER_Pair_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [MOONRIVER_Pair!]!
+  MOONRIVER_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): MOONRIVER_PairHourData
+  MOONRIVER_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: MOONRIVER_PairHourData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [MOONRIVER_PairHourData!]!
+  MOONRIVER_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): MOONRIVER_PairDayData
+  MOONRIVER_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: MOONRIVER_PairDayData_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [MOONRIVER_PairDayData!]!
+  MOONRIVER_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): MOONRIVER_LiquidityPosition
+  MOONRIVER_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: MOONRIVER_LiquidityPosition_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [MOONRIVER_LiquidityPosition!]!
+  MOONRIVER_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): MOONRIVER_LiquidityPositionSnapshot
+  MOONRIVER_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: MOONRIVER_LiquidityPositionSnapshot_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [MOONRIVER_LiquidityPositionSnapshot!]!
+  MOONRIVER_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): MOONRIVER_Transaction
+  MOONRIVER_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: MOONRIVER_Transaction_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [MOONRIVER_Transaction!]!
+  MOONRIVER_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): MOONRIVER_Mint
+  MOONRIVER_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: MOONRIVER_Mint_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [MOONRIVER_Mint!]!
+  MOONRIVER_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): MOONRIVER_Burn
+  MOONRIVER_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: MOONRIVER_Burn_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [MOONRIVER_Burn!]!
+  MOONRIVER_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): MOONRIVER_Swap
+  MOONRIVER_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: MOONRIVER_Swap_orderBy
+    orderDirection: MOONRIVER_OrderDirection
+    where: MOONRIVER_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: MOONRIVER_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
+  ): [MOONRIVER_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  MOONRIVER__meta(block: MOONRIVER_Block_height): MOONRIVER__Meta_
 }
 
-type ETHEREUM_Swap {
+type MOONRIVER_Swap {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: MOONRIVER_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  sender: ETHEREUM_Bytes!
-  amount0In: ETHEREUM_BigDecimal!
-  amount1In: ETHEREUM_BigDecimal!
-  amount0Out: ETHEREUM_BigDecimal!
-  amount1Out: ETHEREUM_BigDecimal!
-  to: ETHEREUM_Bytes!
+  pair: MOONRIVER_Pair!
+  sender: MOONRIVER_Bytes!
+  amount0In: MOONRIVER_BigDecimal!
+  amount1In: MOONRIVER_BigDecimal!
+  amount0Out: MOONRIVER_BigDecimal!
+  amount1Out: MOONRIVER_BigDecimal!
+  to: MOONRIVER_Bytes!
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal!
+  amountUSD: MOONRIVER_BigDecimal!
 }
 
-input ETHEREUM_Swap_filter {
+input MOONRIVER_Swap_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2580,50 +2541,50 @@ input ETHEREUM_Swap_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0In: ETHEREUM_BigDecimal
-  amount0In_not: ETHEREUM_BigDecimal
-  amount0In_gt: ETHEREUM_BigDecimal
-  amount0In_lt: ETHEREUM_BigDecimal
-  amount0In_gte: ETHEREUM_BigDecimal
-  amount0In_lte: ETHEREUM_BigDecimal
-  amount0In_in: [ETHEREUM_BigDecimal!]
-  amount0In_not_in: [ETHEREUM_BigDecimal!]
-  amount1In: ETHEREUM_BigDecimal
-  amount1In_not: ETHEREUM_BigDecimal
-  amount1In_gt: ETHEREUM_BigDecimal
-  amount1In_lt: ETHEREUM_BigDecimal
-  amount1In_gte: ETHEREUM_BigDecimal
-  amount1In_lte: ETHEREUM_BigDecimal
-  amount1In_in: [ETHEREUM_BigDecimal!]
-  amount1In_not_in: [ETHEREUM_BigDecimal!]
-  amount0Out: ETHEREUM_BigDecimal
-  amount0Out_not: ETHEREUM_BigDecimal
-  amount0Out_gt: ETHEREUM_BigDecimal
-  amount0Out_lt: ETHEREUM_BigDecimal
-  amount0Out_gte: ETHEREUM_BigDecimal
-  amount0Out_lte: ETHEREUM_BigDecimal
-  amount0Out_in: [ETHEREUM_BigDecimal!]
-  amount0Out_not_in: [ETHEREUM_BigDecimal!]
-  amount1Out: ETHEREUM_BigDecimal
-  amount1Out_not: ETHEREUM_BigDecimal
-  amount1Out_gt: ETHEREUM_BigDecimal
-  amount1Out_lt: ETHEREUM_BigDecimal
-  amount1Out_gte: ETHEREUM_BigDecimal
-  amount1Out_lte: ETHEREUM_BigDecimal
-  amount1Out_in: [ETHEREUM_BigDecimal!]
-  amount1Out_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  sender: MOONRIVER_Bytes
+  sender_not: MOONRIVER_Bytes
+  sender_in: [MOONRIVER_Bytes!]
+  sender_not_in: [MOONRIVER_Bytes!]
+  sender_contains: MOONRIVER_Bytes
+  sender_not_contains: MOONRIVER_Bytes
+  amount0In: MOONRIVER_BigDecimal
+  amount0In_not: MOONRIVER_BigDecimal
+  amount0In_gt: MOONRIVER_BigDecimal
+  amount0In_lt: MOONRIVER_BigDecimal
+  amount0In_gte: MOONRIVER_BigDecimal
+  amount0In_lte: MOONRIVER_BigDecimal
+  amount0In_in: [MOONRIVER_BigDecimal!]
+  amount0In_not_in: [MOONRIVER_BigDecimal!]
+  amount1In: MOONRIVER_BigDecimal
+  amount1In_not: MOONRIVER_BigDecimal
+  amount1In_gt: MOONRIVER_BigDecimal
+  amount1In_lt: MOONRIVER_BigDecimal
+  amount1In_gte: MOONRIVER_BigDecimal
+  amount1In_lte: MOONRIVER_BigDecimal
+  amount1In_in: [MOONRIVER_BigDecimal!]
+  amount1In_not_in: [MOONRIVER_BigDecimal!]
+  amount0Out: MOONRIVER_BigDecimal
+  amount0Out_not: MOONRIVER_BigDecimal
+  amount0Out_gt: MOONRIVER_BigDecimal
+  amount0Out_lt: MOONRIVER_BigDecimal
+  amount0Out_gte: MOONRIVER_BigDecimal
+  amount0Out_lte: MOONRIVER_BigDecimal
+  amount0Out_in: [MOONRIVER_BigDecimal!]
+  amount0Out_not_in: [MOONRIVER_BigDecimal!]
+  amount1Out: MOONRIVER_BigDecimal
+  amount1Out_not: MOONRIVER_BigDecimal
+  amount1Out_gt: MOONRIVER_BigDecimal
+  amount1Out_lt: MOONRIVER_BigDecimal
+  amount1Out_gte: MOONRIVER_BigDecimal
+  amount1Out_lte: MOONRIVER_BigDecimal
+  amount1Out_in: [MOONRIVER_BigDecimal!]
+  amount1Out_not_in: [MOONRIVER_BigDecimal!]
+  to: MOONRIVER_Bytes
+  to_not: MOONRIVER_Bytes
+  to_in: [MOONRIVER_Bytes!]
+  to_not_in: [MOONRIVER_Bytes!]
+  to_contains: MOONRIVER_Bytes
+  to_not_contains: MOONRIVER_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2632,17 +2593,17 @@ input ETHEREUM_Swap_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: MOONRIVER_BigDecimal
+  amountUSD_not: MOONRIVER_BigDecimal
+  amountUSD_gt: MOONRIVER_BigDecimal
+  amountUSD_lt: MOONRIVER_BigDecimal
+  amountUSD_gte: MOONRIVER_BigDecimal
+  amountUSD_lte: MOONRIVER_BigDecimal
+  amountUSD_in: [MOONRIVER_BigDecimal!]
+  amountUSD_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_Swap_orderBy {
+enum MOONRIVER_Swap_orderBy {
   id
   transaction
   timestamp
@@ -2657,42 +2618,43 @@ enum ETHEREUM_Swap_orderBy {
   amountUSD
 }
 
-type ETHEREUM_Token {
+type MOONRIVER_Token {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: MOONRIVER_Factory!
   symbol: String!
   name: String!
   decimals: BigInt!
   totalSupply: BigInt!
-  volume: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  volume: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
+  untrackedVolumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  derivedETH: ETHEREUM_BigDecimal!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenHourData_filter): [ETHEREUM_TokenHourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenDayData_filter): [ETHEREUM_TokenDayData!]!
-  basePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  liquidity: MOONRIVER_BigDecimal!
+  derivedETH: MOONRIVER_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Pair_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Pair_filter): [MOONRIVER_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_TokenHourData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_TokenHourData_filter): [MOONRIVER_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_TokenDayData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_TokenDayData_filter): [MOONRIVER_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Pair_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Pair_filter): [MOONRIVER_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Pair_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Pair_filter): [MOONRIVER_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_PairDayData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_PairDayData_filter): [MOONRIVER_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_PairDayData_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_PairDayData_filter): [MOONRIVER_PairDayData!]!
 }
 
-type ETHEREUM_TokenDayData {
+type MOONRIVER_TokenDayData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: MOONRIVER_Token!
+  volume: MOONRIVER_BigDecimal!
+  volumeETH: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: MOONRIVER_BigDecimal!
+  liquidityETH: MOONRIVER_BigDecimal!
+  liquidityUSD: MOONRIVER_BigDecimal!
+  priceUSD: MOONRIVER_BigDecimal!
 }
 
-input ETHEREUM_TokenDayData_filter {
+input MOONRIVER_TokenDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2729,30 +2691,30 @@ input ETHEREUM_TokenDayData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MOONRIVER_BigDecimal
+  volume_not: MOONRIVER_BigDecimal
+  volume_gt: MOONRIVER_BigDecimal
+  volume_lt: MOONRIVER_BigDecimal
+  volume_gte: MOONRIVER_BigDecimal
+  volume_lte: MOONRIVER_BigDecimal
+  volume_in: [MOONRIVER_BigDecimal!]
+  volume_not_in: [MOONRIVER_BigDecimal!]
+  volumeETH: MOONRIVER_BigDecimal
+  volumeETH_not: MOONRIVER_BigDecimal
+  volumeETH_gt: MOONRIVER_BigDecimal
+  volumeETH_lt: MOONRIVER_BigDecimal
+  volumeETH_gte: MOONRIVER_BigDecimal
+  volumeETH_lte: MOONRIVER_BigDecimal
+  volumeETH_in: [MOONRIVER_BigDecimal!]
+  volumeETH_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2761,41 +2723,41 @@ input ETHEREUM_TokenDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MOONRIVER_BigDecimal
+  liquidity_not: MOONRIVER_BigDecimal
+  liquidity_gt: MOONRIVER_BigDecimal
+  liquidity_lt: MOONRIVER_BigDecimal
+  liquidity_gte: MOONRIVER_BigDecimal
+  liquidity_lte: MOONRIVER_BigDecimal
+  liquidity_in: [MOONRIVER_BigDecimal!]
+  liquidity_not_in: [MOONRIVER_BigDecimal!]
+  liquidityETH: MOONRIVER_BigDecimal
+  liquidityETH_not: MOONRIVER_BigDecimal
+  liquidityETH_gt: MOONRIVER_BigDecimal
+  liquidityETH_lt: MOONRIVER_BigDecimal
+  liquidityETH_gte: MOONRIVER_BigDecimal
+  liquidityETH_lte: MOONRIVER_BigDecimal
+  liquidityETH_in: [MOONRIVER_BigDecimal!]
+  liquidityETH_not_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD: MOONRIVER_BigDecimal
+  liquidityUSD_not: MOONRIVER_BigDecimal
+  liquidityUSD_gt: MOONRIVER_BigDecimal
+  liquidityUSD_lt: MOONRIVER_BigDecimal
+  liquidityUSD_gte: MOONRIVER_BigDecimal
+  liquidityUSD_lte: MOONRIVER_BigDecimal
+  liquidityUSD_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD_not_in: [MOONRIVER_BigDecimal!]
+  priceUSD: MOONRIVER_BigDecimal
+  priceUSD_not: MOONRIVER_BigDecimal
+  priceUSD_gt: MOONRIVER_BigDecimal
+  priceUSD_lt: MOONRIVER_BigDecimal
+  priceUSD_gte: MOONRIVER_BigDecimal
+  priceUSD_lte: MOONRIVER_BigDecimal
+  priceUSD_in: [MOONRIVER_BigDecimal!]
+  priceUSD_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_TokenDayData_orderBy {
+enum MOONRIVER_TokenDayData_orderBy {
   id
   date
   token
@@ -2809,21 +2771,21 @@ enum ETHEREUM_TokenDayData_orderBy {
   priceUSD
 }
 
-type ETHEREUM_TokenHourData {
+type MOONRIVER_TokenHourData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: MOONRIVER_Token!
+  volume: MOONRIVER_BigDecimal!
+  volumeETH: MOONRIVER_BigDecimal!
+  volumeUSD: MOONRIVER_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: MOONRIVER_BigDecimal!
+  liquidityETH: MOONRIVER_BigDecimal!
+  liquidityUSD: MOONRIVER_BigDecimal!
+  priceUSD: MOONRIVER_BigDecimal!
 }
 
-input ETHEREUM_TokenHourData_filter {
+input MOONRIVER_TokenHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2860,30 +2822,30 @@ input ETHEREUM_TokenHourData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MOONRIVER_BigDecimal
+  volume_not: MOONRIVER_BigDecimal
+  volume_gt: MOONRIVER_BigDecimal
+  volume_lt: MOONRIVER_BigDecimal
+  volume_gte: MOONRIVER_BigDecimal
+  volume_lte: MOONRIVER_BigDecimal
+  volume_in: [MOONRIVER_BigDecimal!]
+  volume_not_in: [MOONRIVER_BigDecimal!]
+  volumeETH: MOONRIVER_BigDecimal
+  volumeETH_not: MOONRIVER_BigDecimal
+  volumeETH_gt: MOONRIVER_BigDecimal
+  volumeETH_lt: MOONRIVER_BigDecimal
+  volumeETH_gte: MOONRIVER_BigDecimal
+  volumeETH_lte: MOONRIVER_BigDecimal
+  volumeETH_in: [MOONRIVER_BigDecimal!]
+  volumeETH_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2892,41 +2854,41 @@ input ETHEREUM_TokenHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MOONRIVER_BigDecimal
+  liquidity_not: MOONRIVER_BigDecimal
+  liquidity_gt: MOONRIVER_BigDecimal
+  liquidity_lt: MOONRIVER_BigDecimal
+  liquidity_gte: MOONRIVER_BigDecimal
+  liquidity_lte: MOONRIVER_BigDecimal
+  liquidity_in: [MOONRIVER_BigDecimal!]
+  liquidity_not_in: [MOONRIVER_BigDecimal!]
+  liquidityETH: MOONRIVER_BigDecimal
+  liquidityETH_not: MOONRIVER_BigDecimal
+  liquidityETH_gt: MOONRIVER_BigDecimal
+  liquidityETH_lt: MOONRIVER_BigDecimal
+  liquidityETH_gte: MOONRIVER_BigDecimal
+  liquidityETH_lte: MOONRIVER_BigDecimal
+  liquidityETH_in: [MOONRIVER_BigDecimal!]
+  liquidityETH_not_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD: MOONRIVER_BigDecimal
+  liquidityUSD_not: MOONRIVER_BigDecimal
+  liquidityUSD_gt: MOONRIVER_BigDecimal
+  liquidityUSD_lt: MOONRIVER_BigDecimal
+  liquidityUSD_gte: MOONRIVER_BigDecimal
+  liquidityUSD_lte: MOONRIVER_BigDecimal
+  liquidityUSD_in: [MOONRIVER_BigDecimal!]
+  liquidityUSD_not_in: [MOONRIVER_BigDecimal!]
+  priceUSD: MOONRIVER_BigDecimal
+  priceUSD_not: MOONRIVER_BigDecimal
+  priceUSD_gt: MOONRIVER_BigDecimal
+  priceUSD_lt: MOONRIVER_BigDecimal
+  priceUSD_gte: MOONRIVER_BigDecimal
+  priceUSD_lte: MOONRIVER_BigDecimal
+  priceUSD_in: [MOONRIVER_BigDecimal!]
+  priceUSD_not_in: [MOONRIVER_BigDecimal!]
 }
 
-enum ETHEREUM_TokenHourData_orderBy {
+enum MOONRIVER_TokenHourData_orderBy {
   id
   date
   token
@@ -2940,7 +2902,7 @@ enum ETHEREUM_TokenHourData_orderBy {
   priceUSD
 }
 
-input ETHEREUM_Token_filter {
+input MOONRIVER_Token_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3025,30 +2987,30 @@ input ETHEREUM_Token_filter {
   totalSupply_lte: BigInt
   totalSupply_in: [BigInt!]
   totalSupply_not_in: [BigInt!]
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: MOONRIVER_BigDecimal
+  volume_not: MOONRIVER_BigDecimal
+  volume_gt: MOONRIVER_BigDecimal
+  volume_lt: MOONRIVER_BigDecimal
+  volume_gte: MOONRIVER_BigDecimal
+  volume_lte: MOONRIVER_BigDecimal
+  volume_in: [MOONRIVER_BigDecimal!]
+  volume_not_in: [MOONRIVER_BigDecimal!]
+  volumeUSD: MOONRIVER_BigDecimal
+  volumeUSD_not: MOONRIVER_BigDecimal
+  volumeUSD_gt: MOONRIVER_BigDecimal
+  volumeUSD_lt: MOONRIVER_BigDecimal
+  volumeUSD_gte: MOONRIVER_BigDecimal
+  volumeUSD_lte: MOONRIVER_BigDecimal
+  volumeUSD_in: [MOONRIVER_BigDecimal!]
+  volumeUSD_not_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_not: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lt: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_gte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_lte: MOONRIVER_BigDecimal
+  untrackedVolumeUSD_in: [MOONRIVER_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MOONRIVER_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -3057,25 +3019,31 @@ input ETHEREUM_Token_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  derivedETH: ETHEREUM_BigDecimal
-  derivedETH_not: ETHEREUM_BigDecimal
-  derivedETH_gt: ETHEREUM_BigDecimal
-  derivedETH_lt: ETHEREUM_BigDecimal
-  derivedETH_gte: ETHEREUM_BigDecimal
-  derivedETH_lte: ETHEREUM_BigDecimal
-  derivedETH_in: [ETHEREUM_BigDecimal!]
-  derivedETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: MOONRIVER_BigDecimal
+  liquidity_not: MOONRIVER_BigDecimal
+  liquidity_gt: MOONRIVER_BigDecimal
+  liquidity_lt: MOONRIVER_BigDecimal
+  liquidity_gte: MOONRIVER_BigDecimal
+  liquidity_lte: MOONRIVER_BigDecimal
+  liquidity_in: [MOONRIVER_BigDecimal!]
+  liquidity_not_in: [MOONRIVER_BigDecimal!]
+  derivedETH: MOONRIVER_BigDecimal
+  derivedETH_not: MOONRIVER_BigDecimal
+  derivedETH_gt: MOONRIVER_BigDecimal
+  derivedETH_lt: MOONRIVER_BigDecimal
+  derivedETH_gte: MOONRIVER_BigDecimal
+  derivedETH_lte: MOONRIVER_BigDecimal
+  derivedETH_in: [MOONRIVER_BigDecimal!]
+  derivedETH_not_in: [MOONRIVER_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Token_orderBy {
+enum MOONRIVER_Token_orderBy {
   id
   factory
   symbol
@@ -3088,6 +3056,7 @@ enum ETHEREUM_Token_orderBy {
   txCount
   liquidity
   derivedETH
+  whitelistPairs
   hourData
   dayData
   basePairs
@@ -3096,16 +3065,16 @@ enum ETHEREUM_Token_orderBy {
   quotePairsDayData
 }
 
-type ETHEREUM_Transaction {
+type MOONRIVER_Transaction {
   id: ID!
   blockNumber: BigInt!
   timestamp: BigInt!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Mint_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Mint_filter): [MOONRIVER_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Burn_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Burn_filter): [MOONRIVER_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_Swap_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_Swap_filter): [MOONRIVER_Swap]!
 }
 
-input ETHEREUM_Transaction_filter {
+input MOONRIVER_Transaction_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3150,7 +3119,7 @@ input ETHEREUM_Transaction_filter {
   swaps_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Transaction_orderBy {
+enum MOONRIVER_Transaction_orderBy {
   id
   blockNumber
   timestamp
@@ -3159,12 +3128,12 @@ enum ETHEREUM_Transaction_orderBy {
   swaps
 }
 
-type ETHEREUM_User {
+type MOONRIVER_User {
   id: ID!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MOONRIVER_LiquidityPosition_orderBy, orderDirection: MOONRIVER_OrderDirection, where: MOONRIVER_LiquidityPosition_filter): [MOONRIVER_LiquidityPosition!]!
 }
 
-input ETHEREUM_User_filter {
+input MOONRIVER_User_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3175,20 +3144,20 @@ input ETHEREUM_User_filter {
   id_not_in: [ID!]
 }
 
-enum ETHEREUM_User_orderBy {
+enum MOONRIVER_User_orderBy {
   id
   liquidityPositions
 }
 
-type ETHEREUM__Block_ {
+type MOONRIVER__Block_ {
   """The hash of the block"""
-  hash: ETHEREUM_Bytes
+  hash: MOONRIVER_Bytes
   """The block number"""
   number: Int!
 }
 
 """The type for the top-level _meta field"""
-type ETHEREUM__Meta_ {
+type MOONRIVER__Meta_ {
   """
   Information about a specific subgraph block. The hash of the block
   will be null if the _meta field has a block constraint that asks for
@@ -3196,7 +3165,7 @@ type ETHEREUM__Meta_ {
   and therefore asks for the latest  block
   
   """
-  block: ETHEREUM__Block_!
+  block: MOONRIVER__Block_!
   """The deployment ID"""
   deployment: String!
   """If `true`, the subgraph encountered indexing errors at some past block"""

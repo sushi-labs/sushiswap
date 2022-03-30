@@ -30,33 +30,101 @@ sources:
             - queryFieldName: MATIC_factory
               keyField: id
               keyArg: id
-  # - name: moonriver-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonriver-exchange
-  # - name: fuse-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fuse-exchange
-  # - name: arbitrum-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange
-  # - name: celo-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/celo-exchange
-  # - name: bsc-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange
-  # - name: xdai-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/xdai-exchange
-  # - name: fantom-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange
+  - name: arbitrum-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange
+    transforms:
+      - prefix:
+          value: ARBITRUM_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: ARBITRUM_factory
+              keyField: id
+              keyArg: id
+  - name: fantom-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange
+    transforms:
+      - prefix:
+          value: FANTOM_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: FANTOM_factory
+              keyField: id
+              keyArg: id
+  - name: xdai-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/xdai-exchange
+    transforms:
+      - prefix:
+          value: XDAI_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: XDAI_factory
+              keyField: id
+              keyArg: id
+  - name: moonriver-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonriver-exchange
+    transforms:
+      - prefix:
+          value: MOONRIVER_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: MOONRIVER_factory
+              keyField: id
+              keyArg: id
+  - name: avalanche-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange
+    transforms:
+      - prefix:
+          value: AVALANCHE_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: AVALANCHE_factory
+              keyField: id
+              keyArg: id
+  - name: bsc-exchange
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange
+    transforms:
+      - prefix:
+          value: BSC_
+          includeRootOperations: true
+          ignore:
+            - _SubgraphErrorPolicy_
+      - typeMerging:
+          queryFields:
+            # Without batching
+            - queryFieldName: BSC_factory
+              keyField: id
+              keyArg: id
 documents:
   - ./factory-query.graphql

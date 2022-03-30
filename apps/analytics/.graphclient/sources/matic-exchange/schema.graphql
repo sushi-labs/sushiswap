@@ -12,316 +12,9 @@ directive @subgraphId(id: String!) on OBJECT
 "creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
-type Query {
-  MATIC_user(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_User
-  MATIC_users(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_User_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_User_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_User!]!
-  MATIC_bundle(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Bundle
-  MATIC_bundles(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Bundle_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Bundle_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Bundle!]!
-  MATIC_factory(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Factory @merge(keyField: "id", keyArg: "id")
-  MATIC_factories(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Factory_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Factory_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Factory!]!
-  MATIC_hourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_HourData
-  MATIC_hourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_HourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_HourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_HourData!]!
-  MATIC_dayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_DayData
-  MATIC_dayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_DayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_DayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_DayData!]!
-  MATIC_token(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Token
-  MATIC_tokens(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Token_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Token_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Token!]!
-  MATIC_tokenHourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_TokenHourData
-  MATIC_tokenHourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_TokenHourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_TokenHourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_TokenHourData!]!
-  MATIC_tokenDayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_TokenDayData
-  MATIC_tokenDayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_TokenDayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_TokenDayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_TokenDayData!]!
-  MATIC_pair(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Pair
-  MATIC_pairs(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Pair_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Pair_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Pair!]!
-  MATIC_pairHourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_PairHourData
-  MATIC_pairHourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_PairHourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_PairHourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_PairHourData!]!
-  MATIC_pairDayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_PairDayData
-  MATIC_pairDayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_PairDayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_PairDayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_PairDayData!]!
-  MATIC_liquidityPosition(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_LiquidityPosition
-  MATIC_liquidityPositions(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_LiquidityPosition_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_LiquidityPosition_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_LiquidityPosition!]!
-  MATIC_liquidityPositionSnapshot(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_LiquidityPositionSnapshot
-  MATIC_liquidityPositionSnapshots(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_LiquidityPositionSnapshot_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_LiquidityPositionSnapshot!]!
-  MATIC_transaction(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Transaction
-  MATIC_transactions(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Transaction_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Transaction_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Transaction!]!
-  MATIC_mint(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Mint
-  MATIC_mints(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Mint_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Mint_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Mint!]!
-  MATIC_burn(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Burn
-  MATIC_burns(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Burn_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Burn_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Burn!]!
-  MATIC_swap(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Swap
-  MATIC_swaps(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Swap_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Swap_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Swap!]!
-  """Access to subgraph metadata"""
-  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
-}
+scalar MATIC_BigDecimal
+
+scalar BigInt
 
 """The block at which the query should be executed."""
 input MATIC_Block_height {
@@ -339,34 +32,722 @@ input MATIC_Block_height {
   number_gte: Int
 }
 
+type MATIC_Bundle {
+  id: ID!
+  ethPrice: MATIC_BigDecimal!
+}
+
+input MATIC_Bundle_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ethPrice: MATIC_BigDecimal
+  ethPrice_not: MATIC_BigDecimal
+  ethPrice_gt: MATIC_BigDecimal
+  ethPrice_lt: MATIC_BigDecimal
+  ethPrice_gte: MATIC_BigDecimal
+  ethPrice_lte: MATIC_BigDecimal
+  ethPrice_in: [MATIC_BigDecimal!]
+  ethPrice_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_Bundle_orderBy {
+  id
+  ethPrice
+}
+
+type MATIC_Burn {
+  id: ID!
+  transaction: MATIC_Transaction!
+  timestamp: BigInt!
+  pair: MATIC_Pair!
+  liquidity: MATIC_BigDecimal!
+  sender: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount1: MATIC_BigDecimal
+  to: MATIC_Bytes
+  logIndex: BigInt
+  amountUSD: MATIC_BigDecimal
+  complete: Boolean!
+  feeTo: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+}
+
+input MATIC_Burn_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount0_not: MATIC_BigDecimal
+  amount0_gt: MATIC_BigDecimal
+  amount0_lt: MATIC_BigDecimal
+  amount0_gte: MATIC_BigDecimal
+  amount0_lte: MATIC_BigDecimal
+  amount0_in: [MATIC_BigDecimal!]
+  amount0_not_in: [MATIC_BigDecimal!]
+  amount1: MATIC_BigDecimal
+  amount1_not: MATIC_BigDecimal
+  amount1_gt: MATIC_BigDecimal
+  amount1_lt: MATIC_BigDecimal
+  amount1_gte: MATIC_BigDecimal
+  amount1_lte: MATIC_BigDecimal
+  amount1_in: [MATIC_BigDecimal!]
+  amount1_not_in: [MATIC_BigDecimal!]
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
+  complete: Boolean
+  complete_not: Boolean
+  complete_in: [Boolean!]
+  complete_not_in: [Boolean!]
+  feeTo: MATIC_Bytes
+  feeTo_not: MATIC_Bytes
+  feeTo_in: [MATIC_Bytes!]
+  feeTo_not_in: [MATIC_Bytes!]
+  feeTo_contains: MATIC_Bytes
+  feeTo_not_contains: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+  feeLiquidity_not: MATIC_BigDecimal
+  feeLiquidity_gt: MATIC_BigDecimal
+  feeLiquidity_lt: MATIC_BigDecimal
+  feeLiquidity_gte: MATIC_BigDecimal
+  feeLiquidity_lte: MATIC_BigDecimal
+  feeLiquidity_in: [MATIC_BigDecimal!]
+  feeLiquidity_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_Burn_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  liquidity
+  sender
+  amount0
+  amount1
+  to
+  logIndex
+  amountUSD
+  complete
+  feeTo
+  feeLiquidity
+}
+
 scalar MATIC_Bytes
 
-enum _SubgraphErrorPolicy_ {
-  """Data will be returned even if the subgraph has indexing errors"""
-  allow
-  """If the subgraph has indexing errors, data will be omitted. The default."""
-  deny
-}
-
-type MATIC_User {
+type MATIC_DayData {
   id: ID!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPosition_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPosition_filter): [MATIC_LiquidityPosition!]!
+  date: Int!
+  factory: MATIC_Factory!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolume: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  txCount: BigInt!
 }
 
-enum MATIC_LiquidityPosition_orderBy {
+input MATIC_DayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolume: MATIC_BigDecimal
+  untrackedVolume_not: MATIC_BigDecimal
+  untrackedVolume_gt: MATIC_BigDecimal
+  untrackedVolume_lt: MATIC_BigDecimal
+  untrackedVolume_gte: MATIC_BigDecimal
+  untrackedVolume_lte: MATIC_BigDecimal
+  untrackedVolume_in: [MATIC_BigDecimal!]
+  untrackedVolume_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum MATIC_DayData_orderBy {
   id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type MATIC_Factory {
+  id: ID!
+  pairCount: BigInt!
+  volumeUSD: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  untrackedVolumeUSD: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  txCount: BigInt!
+  tokenCount: BigInt!
+  userCount: BigInt!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: MATIC_Token_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Token_filter): [MATIC_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_HourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_HourData_filter): [MATIC_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_DayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_DayData_filter): [MATIC_DayData!]!
+}
+
+input MATIC_Factory_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  pairCount: BigInt
+  pairCount_not: BigInt
+  pairCount_gt: BigInt
+  pairCount_lt: BigInt
+  pairCount_gte: BigInt
+  pairCount_lte: BigInt
+  pairCount_in: [BigInt!]
+  pairCount_not_in: [BigInt!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD: MATIC_BigDecimal
+  untrackedVolumeUSD_not: MATIC_BigDecimal
+  untrackedVolumeUSD_gt: MATIC_BigDecimal
+  untrackedVolumeUSD_lt: MATIC_BigDecimal
+  untrackedVolumeUSD_gte: MATIC_BigDecimal
+  untrackedVolumeUSD_lte: MATIC_BigDecimal
+  untrackedVolumeUSD_in: [MATIC_BigDecimal!]
+  untrackedVolumeUSD_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+}
+
+enum MATIC_Factory_orderBy {
+  id
+  pairCount
+  volumeUSD
+  volumeETH
+  untrackedVolumeUSD
+  liquidityUSD
+  liquidityETH
+  txCount
+  tokenCount
+  userCount
+  pairs
+  tokens
+  hourData
+  dayData
+}
+
+type MATIC_HourData {
+  id: ID!
+  date: Int!
+  factory: MATIC_Factory!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolume: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  txCount: BigInt!
+}
+
+input MATIC_HourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  factory: String
+  factory_not: String
+  factory_gt: String
+  factory_lt: String
+  factory_gte: String
+  factory_lte: String
+  factory_in: [String!]
+  factory_not_in: [String!]
+  factory_contains: String
+  factory_contains_nocase: String
+  factory_not_contains: String
+  factory_not_contains_nocase: String
+  factory_starts_with: String
+  factory_starts_with_nocase: String
+  factory_not_starts_with: String
+  factory_not_starts_with_nocase: String
+  factory_ends_with: String
+  factory_ends_with_nocase: String
+  factory_not_ends_with: String
+  factory_not_ends_with_nocase: String
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  untrackedVolume: MATIC_BigDecimal
+  untrackedVolume_not: MATIC_BigDecimal
+  untrackedVolume_gt: MATIC_BigDecimal
+  untrackedVolume_lt: MATIC_BigDecimal
+  untrackedVolume_gte: MATIC_BigDecimal
+  untrackedVolume_lte: MATIC_BigDecimal
+  untrackedVolume_in: [MATIC_BigDecimal!]
+  untrackedVolume_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum MATIC_HourData_orderBy {
+  id
+  date
+  factory
+  volumeETH
+  volumeUSD
+  untrackedVolume
+  liquidityETH
+  liquidityUSD
+  txCount
+}
+
+type MATIC_LiquidityPosition {
+  id: ID!
+  user: MATIC_User!
+  pair: MATIC_Pair!
+  liquidityTokenBalance: MATIC_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPositionSnapshot_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPositionSnapshot_filter): [MATIC_LiquidityPositionSnapshot]!
+  block: Int!
+  timestamp: Int!
+}
+
+type MATIC_LiquidityPositionSnapshot {
+  id: ID!
+  liquidityPosition: MATIC_LiquidityPosition!
+  timestamp: Int!
+  block: Int!
+  user: MATIC_User!
+  pair: MATIC_Pair!
+  token0PriceUSD: MATIC_BigDecimal!
+  token1PriceUSD: MATIC_BigDecimal!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  liquidityTokenTotalSupply: MATIC_BigDecimal!
+  liquidityTokenBalance: MATIC_BigDecimal!
+}
+
+input MATIC_LiquidityPositionSnapshot_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  liquidityPosition: String
+  liquidityPosition_not: String
+  liquidityPosition_gt: String
+  liquidityPosition_lt: String
+  liquidityPosition_gte: String
+  liquidityPosition_lte: String
+  liquidityPosition_in: [String!]
+  liquidityPosition_not_in: [String!]
+  liquidityPosition_contains: String
+  liquidityPosition_contains_nocase: String
+  liquidityPosition_not_contains: String
+  liquidityPosition_not_contains_nocase: String
+  liquidityPosition_starts_with: String
+  liquidityPosition_starts_with_nocase: String
+  liquidityPosition_not_starts_with: String
+  liquidityPosition_not_starts_with_nocase: String
+  liquidityPosition_ends_with: String
+  liquidityPosition_ends_with_nocase: String
+  liquidityPosition_not_ends_with: String
+  liquidityPosition_not_ends_with_nocase: String
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_gt: Int
+  timestamp_lt: Int
+  timestamp_gte: Int
+  timestamp_lte: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+  block: Int
+  block_not: Int
+  block_gt: Int
+  block_lt: Int
+  block_gte: Int
+  block_lte: Int
+  block_in: [Int!]
+  block_not_in: [Int!]
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0PriceUSD: MATIC_BigDecimal
+  token0PriceUSD_not: MATIC_BigDecimal
+  token0PriceUSD_gt: MATIC_BigDecimal
+  token0PriceUSD_lt: MATIC_BigDecimal
+  token0PriceUSD_gte: MATIC_BigDecimal
+  token0PriceUSD_lte: MATIC_BigDecimal
+  token0PriceUSD_in: [MATIC_BigDecimal!]
+  token0PriceUSD_not_in: [MATIC_BigDecimal!]
+  token1PriceUSD: MATIC_BigDecimal
+  token1PriceUSD_not: MATIC_BigDecimal
+  token1PriceUSD_gt: MATIC_BigDecimal
+  token1PriceUSD_lt: MATIC_BigDecimal
+  token1PriceUSD_gte: MATIC_BigDecimal
+  token1PriceUSD_lte: MATIC_BigDecimal
+  token1PriceUSD_in: [MATIC_BigDecimal!]
+  token1PriceUSD_not_in: [MATIC_BigDecimal!]
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  liquidityTokenTotalSupply: MATIC_BigDecimal
+  liquidityTokenTotalSupply_not: MATIC_BigDecimal
+  liquidityTokenTotalSupply_gt: MATIC_BigDecimal
+  liquidityTokenTotalSupply_lt: MATIC_BigDecimal
+  liquidityTokenTotalSupply_gte: MATIC_BigDecimal
+  liquidityTokenTotalSupply_lte: MATIC_BigDecimal
+  liquidityTokenTotalSupply_in: [MATIC_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [MATIC_BigDecimal!]
+  liquidityTokenBalance: MATIC_BigDecimal
+  liquidityTokenBalance_not: MATIC_BigDecimal
+  liquidityTokenBalance_gt: MATIC_BigDecimal
+  liquidityTokenBalance_lt: MATIC_BigDecimal
+  liquidityTokenBalance_gte: MATIC_BigDecimal
+  liquidityTokenBalance_lte: MATIC_BigDecimal
+  liquidityTokenBalance_in: [MATIC_BigDecimal!]
+  liquidityTokenBalance_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_LiquidityPositionSnapshot_orderBy {
+  id
+  liquidityPosition
+  timestamp
+  block
   user
   pair
+  token0PriceUSD
+  token1PriceUSD
+  reserve0
+  reserve1
+  reserveUSD
+  liquidityTokenTotalSupply
   liquidityTokenBalance
-  snapshots
-  block
-  timestamp
-}
-
-"""Defines the order direction, either ascending or descending"""
-enum MATIC_OrderDirection {
-  asc
-  desc
 }
 
 input MATIC_LiquidityPosition_filter {
@@ -444,16 +825,177 @@ input MATIC_LiquidityPosition_filter {
   timestamp_not_in: [Int!]
 }
 
-scalar MATIC_BigDecimal
+enum MATIC_LiquidityPosition_orderBy {
+  id
+  user
+  pair
+  liquidityTokenBalance
+  snapshots
+  block
+  timestamp
+}
 
-type MATIC_LiquidityPosition {
+type MATIC_Mint {
   id: ID!
-  user: MATIC_User!
+  transaction: MATIC_Transaction!
+  timestamp: BigInt!
   pair: MATIC_Pair!
-  liquidityTokenBalance: MATIC_BigDecimal!
-  snapshots(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPositionSnapshot_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPositionSnapshot_filter): [MATIC_LiquidityPositionSnapshot]!
-  block: Int!
-  timestamp: Int!
+  to: MATIC_Bytes!
+  liquidity: MATIC_BigDecimal!
+  sender: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount1: MATIC_BigDecimal
+  logIndex: BigInt
+  amountUSD: MATIC_BigDecimal
+  feeTo: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+}
+
+input MATIC_Mint_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0: MATIC_BigDecimal
+  amount0_not: MATIC_BigDecimal
+  amount0_gt: MATIC_BigDecimal
+  amount0_lt: MATIC_BigDecimal
+  amount0_gte: MATIC_BigDecimal
+  amount0_lte: MATIC_BigDecimal
+  amount0_in: [MATIC_BigDecimal!]
+  amount0_not_in: [MATIC_BigDecimal!]
+  amount1: MATIC_BigDecimal
+  amount1_not: MATIC_BigDecimal
+  amount1_gt: MATIC_BigDecimal
+  amount1_lt: MATIC_BigDecimal
+  amount1_gte: MATIC_BigDecimal
+  amount1_lte: MATIC_BigDecimal
+  amount1_in: [MATIC_BigDecimal!]
+  amount1_not_in: [MATIC_BigDecimal!]
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
+  feeTo: MATIC_Bytes
+  feeTo_not: MATIC_Bytes
+  feeTo_in: [MATIC_Bytes!]
+  feeTo_not_in: [MATIC_Bytes!]
+  feeTo_contains: MATIC_Bytes
+  feeTo_not_contains: MATIC_Bytes
+  feeLiquidity: MATIC_BigDecimal
+  feeLiquidity_not: MATIC_BigDecimal
+  feeLiquidity_gt: MATIC_BigDecimal
+  feeLiquidity_lt: MATIC_BigDecimal
+  feeLiquidity_gte: MATIC_BigDecimal
+  feeLiquidity_lte: MATIC_BigDecimal
+  feeLiquidity_in: [MATIC_BigDecimal!]
+  feeLiquidity_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_Mint_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  to
+  liquidity
+  sender
+  amount0
+  amount1
+  logIndex
+  amountUSD
+  feeTo
+  feeLiquidity
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum MATIC_OrderDirection {
+  asc
+  desc
 }
 
 type MATIC_Pair {
@@ -487,54 +1029,300 @@ type MATIC_Pair {
   block: BigInt!
 }
 
-type MATIC_Factory {
+type MATIC_PairDayData {
   id: ID!
-  pairCount: BigInt!
+  date: Int!
+  pair: MATIC_Pair!
+  token0: MATIC_Token!
+  token1: MATIC_Token!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  totalSupply: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  volumeToken0: MATIC_BigDecimal!
+  volumeToken1: MATIC_BigDecimal!
   volumeUSD: MATIC_BigDecimal!
-  volumeETH: MATIC_BigDecimal!
-  untrackedVolumeUSD: MATIC_BigDecimal!
-  liquidityUSD: MATIC_BigDecimal!
-  liquidityETH: MATIC_BigDecimal!
   txCount: BigInt!
-  tokenCount: BigInt!
-  userCount: BigInt!
-  pairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
-  tokens(skip: Int = 0, first: Int = 100, orderBy: MATIC_Token_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Token_filter): [MATIC_Token!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_HourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_HourData_filter): [MATIC_HourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_DayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_DayData_filter): [MATIC_DayData!]!
 }
 
-scalar BigInt
+input MATIC_PairDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  token0: String
+  token0_not: String
+  token0_gt: String
+  token0_lt: String
+  token0_gte: String
+  token0_lte: String
+  token0_in: [String!]
+  token0_not_in: [String!]
+  token0_contains: String
+  token0_contains_nocase: String
+  token0_not_contains: String
+  token0_not_contains_nocase: String
+  token0_starts_with: String
+  token0_starts_with_nocase: String
+  token0_not_starts_with: String
+  token0_not_starts_with_nocase: String
+  token0_ends_with: String
+  token0_ends_with_nocase: String
+  token0_not_ends_with: String
+  token0_not_ends_with_nocase: String
+  token1: String
+  token1_not: String
+  token1_gt: String
+  token1_lt: String
+  token1_gte: String
+  token1_lte: String
+  token1_in: [String!]
+  token1_not_in: [String!]
+  token1_contains: String
+  token1_contains_nocase: String
+  token1_not_contains: String
+  token1_not_contains_nocase: String
+  token1_starts_with: String
+  token1_starts_with_nocase: String
+  token1_not_starts_with: String
+  token1_not_starts_with_nocase: String
+  token1_ends_with: String
+  token1_ends_with_nocase: String
+  token1_not_ends_with: String
+  token1_not_ends_with_nocase: String
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  totalSupply: MATIC_BigDecimal
+  totalSupply_not: MATIC_BigDecimal
+  totalSupply_gt: MATIC_BigDecimal
+  totalSupply_lt: MATIC_BigDecimal
+  totalSupply_gte: MATIC_BigDecimal
+  totalSupply_lte: MATIC_BigDecimal
+  totalSupply_in: [MATIC_BigDecimal!]
+  totalSupply_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  volumeToken0: MATIC_BigDecimal
+  volumeToken0_not: MATIC_BigDecimal
+  volumeToken0_gt: MATIC_BigDecimal
+  volumeToken0_lt: MATIC_BigDecimal
+  volumeToken0_gte: MATIC_BigDecimal
+  volumeToken0_lte: MATIC_BigDecimal
+  volumeToken0_in: [MATIC_BigDecimal!]
+  volumeToken0_not_in: [MATIC_BigDecimal!]
+  volumeToken1: MATIC_BigDecimal
+  volumeToken1_not: MATIC_BigDecimal
+  volumeToken1_gt: MATIC_BigDecimal
+  volumeToken1_lt: MATIC_BigDecimal
+  volumeToken1_gte: MATIC_BigDecimal
+  volumeToken1_lte: MATIC_BigDecimal
+  volumeToken1_in: [MATIC_BigDecimal!]
+  volumeToken1_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
 
-enum MATIC_Pair_orderBy {
+enum MATIC_PairDayData_orderBy {
   id
-  factory
-  name
+  date
+  pair
   token0
   token1
   reserve0
   reserve1
   totalSupply
-  reserveETH
   reserveUSD
-  trackedReserveETH
-  token0Price
-  token1Price
   volumeToken0
   volumeToken1
   volumeUSD
-  untrackedVolumeUSD
   txCount
-  liquidityProviderCount
-  liquidityPositions
-  liquidityPositionSnapshots
-  dayData
-  hourData
-  mints
-  burns
-  swaps
-  timestamp
-  block
+}
+
+type MATIC_PairHourData {
+  id: ID!
+  date: Int!
+  pair: MATIC_Pair!
+  reserve0: MATIC_BigDecimal!
+  reserve1: MATIC_BigDecimal!
+  reserveUSD: MATIC_BigDecimal!
+  volumeToken0: MATIC_BigDecimal!
+  volumeToken1: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  txCount: BigInt!
+}
+
+input MATIC_PairHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  reserve0: MATIC_BigDecimal
+  reserve0_not: MATIC_BigDecimal
+  reserve0_gt: MATIC_BigDecimal
+  reserve0_lt: MATIC_BigDecimal
+  reserve0_gte: MATIC_BigDecimal
+  reserve0_lte: MATIC_BigDecimal
+  reserve0_in: [MATIC_BigDecimal!]
+  reserve0_not_in: [MATIC_BigDecimal!]
+  reserve1: MATIC_BigDecimal
+  reserve1_not: MATIC_BigDecimal
+  reserve1_gt: MATIC_BigDecimal
+  reserve1_lt: MATIC_BigDecimal
+  reserve1_gte: MATIC_BigDecimal
+  reserve1_lte: MATIC_BigDecimal
+  reserve1_in: [MATIC_BigDecimal!]
+  reserve1_not_in: [MATIC_BigDecimal!]
+  reserveUSD: MATIC_BigDecimal
+  reserveUSD_not: MATIC_BigDecimal
+  reserveUSD_gt: MATIC_BigDecimal
+  reserveUSD_lt: MATIC_BigDecimal
+  reserveUSD_gte: MATIC_BigDecimal
+  reserveUSD_lte: MATIC_BigDecimal
+  reserveUSD_in: [MATIC_BigDecimal!]
+  reserveUSD_not_in: [MATIC_BigDecimal!]
+  volumeToken0: MATIC_BigDecimal
+  volumeToken0_not: MATIC_BigDecimal
+  volumeToken0_gt: MATIC_BigDecimal
+  volumeToken0_lt: MATIC_BigDecimal
+  volumeToken0_gte: MATIC_BigDecimal
+  volumeToken0_lte: MATIC_BigDecimal
+  volumeToken0_in: [MATIC_BigDecimal!]
+  volumeToken0_not_in: [MATIC_BigDecimal!]
+  volumeToken1: MATIC_BigDecimal
+  volumeToken1_not: MATIC_BigDecimal
+  volumeToken1_gt: MATIC_BigDecimal
+  volumeToken1_lt: MATIC_BigDecimal
+  volumeToken1_gte: MATIC_BigDecimal
+  volumeToken1_lte: MATIC_BigDecimal
+  volumeToken1_in: [MATIC_BigDecimal!]
+  volumeToken1_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+}
+
+enum MATIC_PairHourData_orderBy {
+  id
+  date
+  pair
+  reserve0
+  reserve1
+  reserveUSD
+  volumeToken0
+  volumeToken1
+  volumeUSD
+  txCount
 }
 
 input MATIC_Pair_filter {
@@ -756,26 +1544,1362 @@ input MATIC_Pair_filter {
   block_not_in: [BigInt!]
 }
 
-enum MATIC_Token_orderBy {
+enum MATIC_Pair_orderBy {
   id
   factory
-  symbol
   name
-  decimals
+  token0
+  token1
+  reserve0
+  reserve1
   totalSupply
-  volume
+  reserveETH
+  reserveUSD
+  trackedReserveETH
+  token0Price
+  token1Price
+  volumeToken0
+  volumeToken1
   volumeUSD
   untrackedVolumeUSD
   txCount
-  liquidity
-  derivedETH
-  whitelistPairs
-  hourData
+  liquidityProviderCount
+  liquidityPositions
+  liquidityPositionSnapshots
   dayData
-  basePairs
-  quotePairs
-  basePairsDayData
-  quotePairsDayData
+  hourData
+  mints
+  burns
+  swaps
+  timestamp
+  block
+}
+
+type Query {
+  MATIC_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_User
+  MATIC_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_User_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_User!]!
+  MATIC_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Bundle
+  MATIC_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Bundle_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Bundle!]!
+  MATIC_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Factory @merge(keyField: "id", keyArg: "id")
+  MATIC_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Factory_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Factory!]!
+  MATIC_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_HourData
+  MATIC_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_HourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_HourData!]!
+  MATIC_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_DayData
+  MATIC_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_DayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_DayData!]!
+  MATIC_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Token
+  MATIC_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Token_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Token!]!
+  MATIC_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_TokenHourData
+  MATIC_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_TokenHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_TokenHourData!]!
+  MATIC_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_TokenDayData
+  MATIC_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_TokenDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_TokenDayData!]!
+  MATIC_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Pair
+  MATIC_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Pair_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Pair!]!
+  MATIC_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_PairHourData
+  MATIC_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_PairHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_PairHourData!]!
+  MATIC_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_PairDayData
+  MATIC_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_PairDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_PairDayData!]!
+  MATIC_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_LiquidityPosition
+  MATIC_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_LiquidityPosition_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_LiquidityPosition!]!
+  MATIC_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_LiquidityPositionSnapshot
+  MATIC_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_LiquidityPositionSnapshot!]!
+  MATIC_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Transaction
+  MATIC_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Transaction_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Transaction!]!
+  MATIC_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Mint
+  MATIC_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Mint_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Mint!]!
+  MATIC_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Burn
+  MATIC_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Burn_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Burn!]!
+  MATIC_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Swap
+  MATIC_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Swap_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Swap!]!
+  """Access to subgraph metadata"""
+  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
+}
+
+type Subscription {
+  MATIC_user(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_User
+  MATIC_users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_User_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_User_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_User!]!
+  MATIC_bundle(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Bundle
+  MATIC_bundles(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Bundle_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Bundle_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Bundle!]!
+  MATIC_factory(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Factory
+  MATIC_factories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Factory_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Factory_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Factory!]!
+  MATIC_hourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_HourData
+  MATIC_hourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_HourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_HourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_HourData!]!
+  MATIC_dayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_DayData
+  MATIC_dayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_DayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_DayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_DayData!]!
+  MATIC_token(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Token
+  MATIC_tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Token_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Token_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Token!]!
+  MATIC_tokenHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_TokenHourData
+  MATIC_tokenHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_TokenHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_TokenHourData!]!
+  MATIC_tokenDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_TokenDayData
+  MATIC_tokenDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_TokenDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_TokenDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_TokenDayData!]!
+  MATIC_pair(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Pair
+  MATIC_pairs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Pair_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Pair_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Pair!]!
+  MATIC_pairHourData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_PairHourData
+  MATIC_pairHourDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_PairHourData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairHourData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_PairHourData!]!
+  MATIC_pairDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_PairDayData
+  MATIC_pairDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_PairDayData_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_PairDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_PairDayData!]!
+  MATIC_liquidityPosition(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_LiquidityPosition
+  MATIC_liquidityPositions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_LiquidityPosition_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPosition_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_LiquidityPosition!]!
+  MATIC_liquidityPositionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_LiquidityPositionSnapshot
+  MATIC_liquidityPositionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_LiquidityPositionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_LiquidityPositionSnapshot!]!
+  MATIC_transaction(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Transaction
+  MATIC_transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Transaction_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Transaction_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Transaction!]!
+  MATIC_mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Mint
+  MATIC_mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Mint_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Mint!]!
+  MATIC_burn(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Burn
+  MATIC_burns(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Burn_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Burn_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Burn!]!
+  MATIC_swap(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MATIC_Swap
+  MATIC_swaps(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MATIC_Swap_orderBy
+    orderDirection: MATIC_OrderDirection
+    where: MATIC_Swap_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: MATIC_Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MATIC_Swap!]!
+  """Access to subgraph metadata"""
+  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
+}
+
+type MATIC_Swap {
+  id: ID!
+  transaction: MATIC_Transaction!
+  timestamp: BigInt!
+  pair: MATIC_Pair!
+  sender: MATIC_Bytes!
+  amount0In: MATIC_BigDecimal!
+  amount1In: MATIC_BigDecimal!
+  amount0Out: MATIC_BigDecimal!
+  amount1Out: MATIC_BigDecimal!
+  to: MATIC_Bytes!
+  logIndex: BigInt
+  amountUSD: MATIC_BigDecimal!
+}
+
+input MATIC_Swap_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  transaction: String
+  transaction_not: String
+  transaction_gt: String
+  transaction_lt: String
+  transaction_gte: String
+  transaction_lte: String
+  transaction_in: [String!]
+  transaction_not_in: [String!]
+  transaction_contains: String
+  transaction_contains_nocase: String
+  transaction_not_contains: String
+  transaction_not_contains_nocase: String
+  transaction_starts_with: String
+  transaction_starts_with_nocase: String
+  transaction_not_starts_with: String
+  transaction_not_starts_with_nocase: String
+  transaction_ends_with: String
+  transaction_ends_with_nocase: String
+  transaction_not_ends_with: String
+  transaction_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  pair: String
+  pair_not: String
+  pair_gt: String
+  pair_lt: String
+  pair_gte: String
+  pair_lte: String
+  pair_in: [String!]
+  pair_not_in: [String!]
+  pair_contains: String
+  pair_contains_nocase: String
+  pair_not_contains: String
+  pair_not_contains_nocase: String
+  pair_starts_with: String
+  pair_starts_with_nocase: String
+  pair_not_starts_with: String
+  pair_not_starts_with_nocase: String
+  pair_ends_with: String
+  pair_ends_with_nocase: String
+  pair_not_ends_with: String
+  pair_not_ends_with_nocase: String
+  sender: MATIC_Bytes
+  sender_not: MATIC_Bytes
+  sender_in: [MATIC_Bytes!]
+  sender_not_in: [MATIC_Bytes!]
+  sender_contains: MATIC_Bytes
+  sender_not_contains: MATIC_Bytes
+  amount0In: MATIC_BigDecimal
+  amount0In_not: MATIC_BigDecimal
+  amount0In_gt: MATIC_BigDecimal
+  amount0In_lt: MATIC_BigDecimal
+  amount0In_gte: MATIC_BigDecimal
+  amount0In_lte: MATIC_BigDecimal
+  amount0In_in: [MATIC_BigDecimal!]
+  amount0In_not_in: [MATIC_BigDecimal!]
+  amount1In: MATIC_BigDecimal
+  amount1In_not: MATIC_BigDecimal
+  amount1In_gt: MATIC_BigDecimal
+  amount1In_lt: MATIC_BigDecimal
+  amount1In_gte: MATIC_BigDecimal
+  amount1In_lte: MATIC_BigDecimal
+  amount1In_in: [MATIC_BigDecimal!]
+  amount1In_not_in: [MATIC_BigDecimal!]
+  amount0Out: MATIC_BigDecimal
+  amount0Out_not: MATIC_BigDecimal
+  amount0Out_gt: MATIC_BigDecimal
+  amount0Out_lt: MATIC_BigDecimal
+  amount0Out_gte: MATIC_BigDecimal
+  amount0Out_lte: MATIC_BigDecimal
+  amount0Out_in: [MATIC_BigDecimal!]
+  amount0Out_not_in: [MATIC_BigDecimal!]
+  amount1Out: MATIC_BigDecimal
+  amount1Out_not: MATIC_BigDecimal
+  amount1Out_gt: MATIC_BigDecimal
+  amount1Out_lt: MATIC_BigDecimal
+  amount1Out_gte: MATIC_BigDecimal
+  amount1Out_lte: MATIC_BigDecimal
+  amount1Out_in: [MATIC_BigDecimal!]
+  amount1Out_not_in: [MATIC_BigDecimal!]
+  to: MATIC_Bytes
+  to_not: MATIC_Bytes
+  to_in: [MATIC_Bytes!]
+  to_not_in: [MATIC_Bytes!]
+  to_contains: MATIC_Bytes
+  to_not_contains: MATIC_Bytes
+  logIndex: BigInt
+  logIndex_not: BigInt
+  logIndex_gt: BigInt
+  logIndex_lt: BigInt
+  logIndex_gte: BigInt
+  logIndex_lte: BigInt
+  logIndex_in: [BigInt!]
+  logIndex_not_in: [BigInt!]
+  amountUSD: MATIC_BigDecimal
+  amountUSD_not: MATIC_BigDecimal
+  amountUSD_gt: MATIC_BigDecimal
+  amountUSD_lt: MATIC_BigDecimal
+  amountUSD_gte: MATIC_BigDecimal
+  amountUSD_lte: MATIC_BigDecimal
+  amountUSD_in: [MATIC_BigDecimal!]
+  amountUSD_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_Swap_orderBy {
+  id
+  transaction
+  timestamp
+  pair
+  sender
+  amount0In
+  amount1In
+  amount0Out
+  amount1Out
+  to
+  logIndex
+  amountUSD
+}
+
+type MATIC_Token {
+  id: ID!
+  factory: MATIC_Factory!
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+  totalSupply: BigInt!
+  volume: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  untrackedVolumeUSD: MATIC_BigDecimal!
+  txCount: BigInt!
+  liquidity: MATIC_BigDecimal!
+  derivedETH: MATIC_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenHourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenHourData_filter): [MATIC_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenDayData_filter): [MATIC_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
+}
+
+type MATIC_TokenDayData {
+  id: ID!
+  date: Int!
+  token: MATIC_Token!
+  volume: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  txCount: BigInt!
+  liquidity: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  priceUSD: MATIC_BigDecimal!
+}
+
+input MATIC_TokenDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: MATIC_BigDecimal
+  volume_not: MATIC_BigDecimal
+  volume_gt: MATIC_BigDecimal
+  volume_lt: MATIC_BigDecimal
+  volume_gte: MATIC_BigDecimal
+  volume_lte: MATIC_BigDecimal
+  volume_in: [MATIC_BigDecimal!]
+  volume_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  priceUSD: MATIC_BigDecimal
+  priceUSD_not: MATIC_BigDecimal
+  priceUSD_gt: MATIC_BigDecimal
+  priceUSD_lt: MATIC_BigDecimal
+  priceUSD_gte: MATIC_BigDecimal
+  priceUSD_lte: MATIC_BigDecimal
+  priceUSD_in: [MATIC_BigDecimal!]
+  priceUSD_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_TokenDayData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
+}
+
+type MATIC_TokenHourData {
+  id: ID!
+  date: Int!
+  token: MATIC_Token!
+  volume: MATIC_BigDecimal!
+  volumeETH: MATIC_BigDecimal!
+  volumeUSD: MATIC_BigDecimal!
+  txCount: BigInt!
+  liquidity: MATIC_BigDecimal!
+  liquidityETH: MATIC_BigDecimal!
+  liquidityUSD: MATIC_BigDecimal!
+  priceUSD: MATIC_BigDecimal!
+}
+
+input MATIC_TokenHourData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  volume: MATIC_BigDecimal
+  volume_not: MATIC_BigDecimal
+  volume_gt: MATIC_BigDecimal
+  volume_lt: MATIC_BigDecimal
+  volume_gte: MATIC_BigDecimal
+  volume_lte: MATIC_BigDecimal
+  volume_in: [MATIC_BigDecimal!]
+  volume_not_in: [MATIC_BigDecimal!]
+  volumeETH: MATIC_BigDecimal
+  volumeETH_not: MATIC_BigDecimal
+  volumeETH_gt: MATIC_BigDecimal
+  volumeETH_lt: MATIC_BigDecimal
+  volumeETH_gte: MATIC_BigDecimal
+  volumeETH_lte: MATIC_BigDecimal
+  volumeETH_in: [MATIC_BigDecimal!]
+  volumeETH_not_in: [MATIC_BigDecimal!]
+  volumeUSD: MATIC_BigDecimal
+  volumeUSD_not: MATIC_BigDecimal
+  volumeUSD_gt: MATIC_BigDecimal
+  volumeUSD_lt: MATIC_BigDecimal
+  volumeUSD_gte: MATIC_BigDecimal
+  volumeUSD_lte: MATIC_BigDecimal
+  volumeUSD_in: [MATIC_BigDecimal!]
+  volumeUSD_not_in: [MATIC_BigDecimal!]
+  txCount: BigInt
+  txCount_not: BigInt
+  txCount_gt: BigInt
+  txCount_lt: BigInt
+  txCount_gte: BigInt
+  txCount_lte: BigInt
+  txCount_in: [BigInt!]
+  txCount_not_in: [BigInt!]
+  liquidity: MATIC_BigDecimal
+  liquidity_not: MATIC_BigDecimal
+  liquidity_gt: MATIC_BigDecimal
+  liquidity_lt: MATIC_BigDecimal
+  liquidity_gte: MATIC_BigDecimal
+  liquidity_lte: MATIC_BigDecimal
+  liquidity_in: [MATIC_BigDecimal!]
+  liquidity_not_in: [MATIC_BigDecimal!]
+  liquidityETH: MATIC_BigDecimal
+  liquidityETH_not: MATIC_BigDecimal
+  liquidityETH_gt: MATIC_BigDecimal
+  liquidityETH_lt: MATIC_BigDecimal
+  liquidityETH_gte: MATIC_BigDecimal
+  liquidityETH_lte: MATIC_BigDecimal
+  liquidityETH_in: [MATIC_BigDecimal!]
+  liquidityETH_not_in: [MATIC_BigDecimal!]
+  liquidityUSD: MATIC_BigDecimal
+  liquidityUSD_not: MATIC_BigDecimal
+  liquidityUSD_gt: MATIC_BigDecimal
+  liquidityUSD_lt: MATIC_BigDecimal
+  liquidityUSD_gte: MATIC_BigDecimal
+  liquidityUSD_lte: MATIC_BigDecimal
+  liquidityUSD_in: [MATIC_BigDecimal!]
+  liquidityUSD_not_in: [MATIC_BigDecimal!]
+  priceUSD: MATIC_BigDecimal
+  priceUSD_not: MATIC_BigDecimal
+  priceUSD_gt: MATIC_BigDecimal
+  priceUSD_lt: MATIC_BigDecimal
+  priceUSD_gte: MATIC_BigDecimal
+  priceUSD_lte: MATIC_BigDecimal
+  priceUSD_in: [MATIC_BigDecimal!]
+  priceUSD_not_in: [MATIC_BigDecimal!]
+}
+
+enum MATIC_TokenHourData_orderBy {
+  id
+  date
+  token
+  volume
+  volumeETH
+  volumeUSD
+  txCount
+  liquidity
+  liquidityETH
+  liquidityUSD
+  priceUSD
 }
 
 input MATIC_Token_filter {
@@ -919,1138 +3043,26 @@ input MATIC_Token_filter {
   whitelistPairs_not_contains_nocase: [String!]
 }
 
-type MATIC_Token {
-  id: ID!
-  factory: MATIC_Factory!
-  symbol: String!
-  name: String!
-  decimals: BigInt!
-  totalSupply: BigInt!
-  volume: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  untrackedVolumeUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-  liquidity: MATIC_BigDecimal!
-  derivedETH: MATIC_BigDecimal!
-  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenHourData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenHourData_filter): [MATIC_TokenHourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_TokenDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_TokenDayData_filter): [MATIC_TokenDayData!]!
-  basePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
-  quotePairs(skip: Int = 0, first: Int = 100, orderBy: MATIC_Pair_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Pair_filter): [MATIC_Pair!]!
-  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
-  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: MATIC_PairDayData_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_PairDayData_filter): [MATIC_PairDayData!]!
-}
-
-enum MATIC_TokenHourData_orderBy {
+enum MATIC_Token_orderBy {
   id
-  date
-  token
-  volume
-  volumeETH
-  volumeUSD
-  txCount
-  liquidity
-  liquidityETH
-  liquidityUSD
-  priceUSD
-}
-
-input MATIC_TokenHourData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  token: String
-  token_not: String
-  token_gt: String
-  token_lt: String
-  token_gte: String
-  token_lte: String
-  token_in: [String!]
-  token_not_in: [String!]
-  token_contains: String
-  token_contains_nocase: String
-  token_not_contains: String
-  token_not_contains_nocase: String
-  token_starts_with: String
-  token_starts_with_nocase: String
-  token_not_starts_with: String
-  token_not_starts_with_nocase: String
-  token_ends_with: String
-  token_ends_with_nocase: String
-  token_not_ends_with: String
-  token_not_ends_with_nocase: String
-  volume: MATIC_BigDecimal
-  volume_not: MATIC_BigDecimal
-  volume_gt: MATIC_BigDecimal
-  volume_lt: MATIC_BigDecimal
-  volume_gte: MATIC_BigDecimal
-  volume_lte: MATIC_BigDecimal
-  volume_in: [MATIC_BigDecimal!]
-  volume_not_in: [MATIC_BigDecimal!]
-  volumeETH: MATIC_BigDecimal
-  volumeETH_not: MATIC_BigDecimal
-  volumeETH_gt: MATIC_BigDecimal
-  volumeETH_lt: MATIC_BigDecimal
-  volumeETH_gte: MATIC_BigDecimal
-  volumeETH_lte: MATIC_BigDecimal
-  volumeETH_in: [MATIC_BigDecimal!]
-  volumeETH_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-  liquidity: MATIC_BigDecimal
-  liquidity_not: MATIC_BigDecimal
-  liquidity_gt: MATIC_BigDecimal
-  liquidity_lt: MATIC_BigDecimal
-  liquidity_gte: MATIC_BigDecimal
-  liquidity_lte: MATIC_BigDecimal
-  liquidity_in: [MATIC_BigDecimal!]
-  liquidity_not_in: [MATIC_BigDecimal!]
-  liquidityETH: MATIC_BigDecimal
-  liquidityETH_not: MATIC_BigDecimal
-  liquidityETH_gt: MATIC_BigDecimal
-  liquidityETH_lt: MATIC_BigDecimal
-  liquidityETH_gte: MATIC_BigDecimal
-  liquidityETH_lte: MATIC_BigDecimal
-  liquidityETH_in: [MATIC_BigDecimal!]
-  liquidityETH_not_in: [MATIC_BigDecimal!]
-  liquidityUSD: MATIC_BigDecimal
-  liquidityUSD_not: MATIC_BigDecimal
-  liquidityUSD_gt: MATIC_BigDecimal
-  liquidityUSD_lt: MATIC_BigDecimal
-  liquidityUSD_gte: MATIC_BigDecimal
-  liquidityUSD_lte: MATIC_BigDecimal
-  liquidityUSD_in: [MATIC_BigDecimal!]
-  liquidityUSD_not_in: [MATIC_BigDecimal!]
-  priceUSD: MATIC_BigDecimal
-  priceUSD_not: MATIC_BigDecimal
-  priceUSD_gt: MATIC_BigDecimal
-  priceUSD_lt: MATIC_BigDecimal
-  priceUSD_gte: MATIC_BigDecimal
-  priceUSD_lte: MATIC_BigDecimal
-  priceUSD_in: [MATIC_BigDecimal!]
-  priceUSD_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_TokenHourData {
-  id: ID!
-  date: Int!
-  token: MATIC_Token!
-  volume: MATIC_BigDecimal!
-  volumeETH: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-  liquidity: MATIC_BigDecimal!
-  liquidityETH: MATIC_BigDecimal!
-  liquidityUSD: MATIC_BigDecimal!
-  priceUSD: MATIC_BigDecimal!
-}
-
-enum MATIC_TokenDayData_orderBy {
-  id
-  date
-  token
-  volume
-  volumeETH
-  volumeUSD
-  txCount
-  liquidity
-  liquidityETH
-  liquidityUSD
-  priceUSD
-}
-
-input MATIC_TokenDayData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  token: String
-  token_not: String
-  token_gt: String
-  token_lt: String
-  token_gte: String
-  token_lte: String
-  token_in: [String!]
-  token_not_in: [String!]
-  token_contains: String
-  token_contains_nocase: String
-  token_not_contains: String
-  token_not_contains_nocase: String
-  token_starts_with: String
-  token_starts_with_nocase: String
-  token_not_starts_with: String
-  token_not_starts_with_nocase: String
-  token_ends_with: String
-  token_ends_with_nocase: String
-  token_not_ends_with: String
-  token_not_ends_with_nocase: String
-  volume: MATIC_BigDecimal
-  volume_not: MATIC_BigDecimal
-  volume_gt: MATIC_BigDecimal
-  volume_lt: MATIC_BigDecimal
-  volume_gte: MATIC_BigDecimal
-  volume_lte: MATIC_BigDecimal
-  volume_in: [MATIC_BigDecimal!]
-  volume_not_in: [MATIC_BigDecimal!]
-  volumeETH: MATIC_BigDecimal
-  volumeETH_not: MATIC_BigDecimal
-  volumeETH_gt: MATIC_BigDecimal
-  volumeETH_lt: MATIC_BigDecimal
-  volumeETH_gte: MATIC_BigDecimal
-  volumeETH_lte: MATIC_BigDecimal
-  volumeETH_in: [MATIC_BigDecimal!]
-  volumeETH_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-  liquidity: MATIC_BigDecimal
-  liquidity_not: MATIC_BigDecimal
-  liquidity_gt: MATIC_BigDecimal
-  liquidity_lt: MATIC_BigDecimal
-  liquidity_gte: MATIC_BigDecimal
-  liquidity_lte: MATIC_BigDecimal
-  liquidity_in: [MATIC_BigDecimal!]
-  liquidity_not_in: [MATIC_BigDecimal!]
-  liquidityETH: MATIC_BigDecimal
-  liquidityETH_not: MATIC_BigDecimal
-  liquidityETH_gt: MATIC_BigDecimal
-  liquidityETH_lt: MATIC_BigDecimal
-  liquidityETH_gte: MATIC_BigDecimal
-  liquidityETH_lte: MATIC_BigDecimal
-  liquidityETH_in: [MATIC_BigDecimal!]
-  liquidityETH_not_in: [MATIC_BigDecimal!]
-  liquidityUSD: MATIC_BigDecimal
-  liquidityUSD_not: MATIC_BigDecimal
-  liquidityUSD_gt: MATIC_BigDecimal
-  liquidityUSD_lt: MATIC_BigDecimal
-  liquidityUSD_gte: MATIC_BigDecimal
-  liquidityUSD_lte: MATIC_BigDecimal
-  liquidityUSD_in: [MATIC_BigDecimal!]
-  liquidityUSD_not_in: [MATIC_BigDecimal!]
-  priceUSD: MATIC_BigDecimal
-  priceUSD_not: MATIC_BigDecimal
-  priceUSD_gt: MATIC_BigDecimal
-  priceUSD_lt: MATIC_BigDecimal
-  priceUSD_gte: MATIC_BigDecimal
-  priceUSD_lte: MATIC_BigDecimal
-  priceUSD_in: [MATIC_BigDecimal!]
-  priceUSD_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_TokenDayData {
-  id: ID!
-  date: Int!
-  token: MATIC_Token!
-  volume: MATIC_BigDecimal!
-  volumeETH: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-  liquidity: MATIC_BigDecimal!
-  liquidityETH: MATIC_BigDecimal!
-  liquidityUSD: MATIC_BigDecimal!
-  priceUSD: MATIC_BigDecimal!
-}
-
-enum MATIC_PairDayData_orderBy {
-  id
-  date
-  pair
-  token0
-  token1
-  reserve0
-  reserve1
+  factory
+  symbol
+  name
+  decimals
   totalSupply
-  reserveUSD
-  volumeToken0
-  volumeToken1
+  volume
   volumeUSD
+  untrackedVolumeUSD
   txCount
-}
-
-input MATIC_PairDayData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  token0: String
-  token0_not: String
-  token0_gt: String
-  token0_lt: String
-  token0_gte: String
-  token0_lte: String
-  token0_in: [String!]
-  token0_not_in: [String!]
-  token0_contains: String
-  token0_contains_nocase: String
-  token0_not_contains: String
-  token0_not_contains_nocase: String
-  token0_starts_with: String
-  token0_starts_with_nocase: String
-  token0_not_starts_with: String
-  token0_not_starts_with_nocase: String
-  token0_ends_with: String
-  token0_ends_with_nocase: String
-  token0_not_ends_with: String
-  token0_not_ends_with_nocase: String
-  token1: String
-  token1_not: String
-  token1_gt: String
-  token1_lt: String
-  token1_gte: String
-  token1_lte: String
-  token1_in: [String!]
-  token1_not_in: [String!]
-  token1_contains: String
-  token1_contains_nocase: String
-  token1_not_contains: String
-  token1_not_contains_nocase: String
-  token1_starts_with: String
-  token1_starts_with_nocase: String
-  token1_not_starts_with: String
-  token1_not_starts_with_nocase: String
-  token1_ends_with: String
-  token1_ends_with_nocase: String
-  token1_not_ends_with: String
-  token1_not_ends_with_nocase: String
-  reserve0: MATIC_BigDecimal
-  reserve0_not: MATIC_BigDecimal
-  reserve0_gt: MATIC_BigDecimal
-  reserve0_lt: MATIC_BigDecimal
-  reserve0_gte: MATIC_BigDecimal
-  reserve0_lte: MATIC_BigDecimal
-  reserve0_in: [MATIC_BigDecimal!]
-  reserve0_not_in: [MATIC_BigDecimal!]
-  reserve1: MATIC_BigDecimal
-  reserve1_not: MATIC_BigDecimal
-  reserve1_gt: MATIC_BigDecimal
-  reserve1_lt: MATIC_BigDecimal
-  reserve1_gte: MATIC_BigDecimal
-  reserve1_lte: MATIC_BigDecimal
-  reserve1_in: [MATIC_BigDecimal!]
-  reserve1_not_in: [MATIC_BigDecimal!]
-  totalSupply: MATIC_BigDecimal
-  totalSupply_not: MATIC_BigDecimal
-  totalSupply_gt: MATIC_BigDecimal
-  totalSupply_lt: MATIC_BigDecimal
-  totalSupply_gte: MATIC_BigDecimal
-  totalSupply_lte: MATIC_BigDecimal
-  totalSupply_in: [MATIC_BigDecimal!]
-  totalSupply_not_in: [MATIC_BigDecimal!]
-  reserveUSD: MATIC_BigDecimal
-  reserveUSD_not: MATIC_BigDecimal
-  reserveUSD_gt: MATIC_BigDecimal
-  reserveUSD_lt: MATIC_BigDecimal
-  reserveUSD_gte: MATIC_BigDecimal
-  reserveUSD_lte: MATIC_BigDecimal
-  reserveUSD_in: [MATIC_BigDecimal!]
-  reserveUSD_not_in: [MATIC_BigDecimal!]
-  volumeToken0: MATIC_BigDecimal
-  volumeToken0_not: MATIC_BigDecimal
-  volumeToken0_gt: MATIC_BigDecimal
-  volumeToken0_lt: MATIC_BigDecimal
-  volumeToken0_gte: MATIC_BigDecimal
-  volumeToken0_lte: MATIC_BigDecimal
-  volumeToken0_in: [MATIC_BigDecimal!]
-  volumeToken0_not_in: [MATIC_BigDecimal!]
-  volumeToken1: MATIC_BigDecimal
-  volumeToken1_not: MATIC_BigDecimal
-  volumeToken1_gt: MATIC_BigDecimal
-  volumeToken1_lt: MATIC_BigDecimal
-  volumeToken1_gte: MATIC_BigDecimal
-  volumeToken1_lte: MATIC_BigDecimal
-  volumeToken1_in: [MATIC_BigDecimal!]
-  volumeToken1_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-}
-
-type MATIC_PairDayData {
-  id: ID!
-  date: Int!
-  pair: MATIC_Pair!
-  token0: MATIC_Token!
-  token1: MATIC_Token!
-  reserve0: MATIC_BigDecimal!
-  reserve1: MATIC_BigDecimal!
-  totalSupply: MATIC_BigDecimal!
-  reserveUSD: MATIC_BigDecimal!
-  volumeToken0: MATIC_BigDecimal!
-  volumeToken1: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-}
-
-enum MATIC_HourData_orderBy {
-  id
-  date
-  factory
-  volumeETH
-  volumeUSD
-  untrackedVolume
-  liquidityETH
-  liquidityUSD
-  txCount
-}
-
-input MATIC_HourData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  factory: String
-  factory_not: String
-  factory_gt: String
-  factory_lt: String
-  factory_gte: String
-  factory_lte: String
-  factory_in: [String!]
-  factory_not_in: [String!]
-  factory_contains: String
-  factory_contains_nocase: String
-  factory_not_contains: String
-  factory_not_contains_nocase: String
-  factory_starts_with: String
-  factory_starts_with_nocase: String
-  factory_not_starts_with: String
-  factory_not_starts_with_nocase: String
-  factory_ends_with: String
-  factory_ends_with_nocase: String
-  factory_not_ends_with: String
-  factory_not_ends_with_nocase: String
-  volumeETH: MATIC_BigDecimal
-  volumeETH_not: MATIC_BigDecimal
-  volumeETH_gt: MATIC_BigDecimal
-  volumeETH_lt: MATIC_BigDecimal
-  volumeETH_gte: MATIC_BigDecimal
-  volumeETH_lte: MATIC_BigDecimal
-  volumeETH_in: [MATIC_BigDecimal!]
-  volumeETH_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  untrackedVolume: MATIC_BigDecimal
-  untrackedVolume_not: MATIC_BigDecimal
-  untrackedVolume_gt: MATIC_BigDecimal
-  untrackedVolume_lt: MATIC_BigDecimal
-  untrackedVolume_gte: MATIC_BigDecimal
-  untrackedVolume_lte: MATIC_BigDecimal
-  untrackedVolume_in: [MATIC_BigDecimal!]
-  untrackedVolume_not_in: [MATIC_BigDecimal!]
-  liquidityETH: MATIC_BigDecimal
-  liquidityETH_not: MATIC_BigDecimal
-  liquidityETH_gt: MATIC_BigDecimal
-  liquidityETH_lt: MATIC_BigDecimal
-  liquidityETH_gte: MATIC_BigDecimal
-  liquidityETH_lte: MATIC_BigDecimal
-  liquidityETH_in: [MATIC_BigDecimal!]
-  liquidityETH_not_in: [MATIC_BigDecimal!]
-  liquidityUSD: MATIC_BigDecimal
-  liquidityUSD_not: MATIC_BigDecimal
-  liquidityUSD_gt: MATIC_BigDecimal
-  liquidityUSD_lt: MATIC_BigDecimal
-  liquidityUSD_gte: MATIC_BigDecimal
-  liquidityUSD_lte: MATIC_BigDecimal
-  liquidityUSD_in: [MATIC_BigDecimal!]
-  liquidityUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-}
-
-type MATIC_HourData {
-  id: ID!
-  date: Int!
-  factory: MATIC_Factory!
-  volumeETH: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  untrackedVolume: MATIC_BigDecimal!
-  liquidityETH: MATIC_BigDecimal!
-  liquidityUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-}
-
-enum MATIC_DayData_orderBy {
-  id
-  date
-  factory
-  volumeETH
-  volumeUSD
-  untrackedVolume
-  liquidityETH
-  liquidityUSD
-  txCount
-}
-
-input MATIC_DayData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  factory: String
-  factory_not: String
-  factory_gt: String
-  factory_lt: String
-  factory_gte: String
-  factory_lte: String
-  factory_in: [String!]
-  factory_not_in: [String!]
-  factory_contains: String
-  factory_contains_nocase: String
-  factory_not_contains: String
-  factory_not_contains_nocase: String
-  factory_starts_with: String
-  factory_starts_with_nocase: String
-  factory_not_starts_with: String
-  factory_not_starts_with_nocase: String
-  factory_ends_with: String
-  factory_ends_with_nocase: String
-  factory_not_ends_with: String
-  factory_not_ends_with_nocase: String
-  volumeETH: MATIC_BigDecimal
-  volumeETH_not: MATIC_BigDecimal
-  volumeETH_gt: MATIC_BigDecimal
-  volumeETH_lt: MATIC_BigDecimal
-  volumeETH_gte: MATIC_BigDecimal
-  volumeETH_lte: MATIC_BigDecimal
-  volumeETH_in: [MATIC_BigDecimal!]
-  volumeETH_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  untrackedVolume: MATIC_BigDecimal
-  untrackedVolume_not: MATIC_BigDecimal
-  untrackedVolume_gt: MATIC_BigDecimal
-  untrackedVolume_lt: MATIC_BigDecimal
-  untrackedVolume_gte: MATIC_BigDecimal
-  untrackedVolume_lte: MATIC_BigDecimal
-  untrackedVolume_in: [MATIC_BigDecimal!]
-  untrackedVolume_not_in: [MATIC_BigDecimal!]
-  liquidityETH: MATIC_BigDecimal
-  liquidityETH_not: MATIC_BigDecimal
-  liquidityETH_gt: MATIC_BigDecimal
-  liquidityETH_lt: MATIC_BigDecimal
-  liquidityETH_gte: MATIC_BigDecimal
-  liquidityETH_lte: MATIC_BigDecimal
-  liquidityETH_in: [MATIC_BigDecimal!]
-  liquidityETH_not_in: [MATIC_BigDecimal!]
-  liquidityUSD: MATIC_BigDecimal
-  liquidityUSD_not: MATIC_BigDecimal
-  liquidityUSD_gt: MATIC_BigDecimal
-  liquidityUSD_lt: MATIC_BigDecimal
-  liquidityUSD_gte: MATIC_BigDecimal
-  liquidityUSD_lte: MATIC_BigDecimal
-  liquidityUSD_in: [MATIC_BigDecimal!]
-  liquidityUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-}
-
-type MATIC_DayData {
-  id: ID!
-  date: Int!
-  factory: MATIC_Factory!
-  volumeETH: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  untrackedVolume: MATIC_BigDecimal!
-  liquidityETH: MATIC_BigDecimal!
-  liquidityUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-}
-
-enum MATIC_LiquidityPositionSnapshot_orderBy {
-  id
-  liquidityPosition
-  timestamp
-  block
-  user
-  pair
-  token0PriceUSD
-  token1PriceUSD
-  reserve0
-  reserve1
-  reserveUSD
-  liquidityTokenTotalSupply
-  liquidityTokenBalance
-}
-
-input MATIC_LiquidityPositionSnapshot_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  liquidityPosition: String
-  liquidityPosition_not: String
-  liquidityPosition_gt: String
-  liquidityPosition_lt: String
-  liquidityPosition_gte: String
-  liquidityPosition_lte: String
-  liquidityPosition_in: [String!]
-  liquidityPosition_not_in: [String!]
-  liquidityPosition_contains: String
-  liquidityPosition_contains_nocase: String
-  liquidityPosition_not_contains: String
-  liquidityPosition_not_contains_nocase: String
-  liquidityPosition_starts_with: String
-  liquidityPosition_starts_with_nocase: String
-  liquidityPosition_not_starts_with: String
-  liquidityPosition_not_starts_with_nocase: String
-  liquidityPosition_ends_with: String
-  liquidityPosition_ends_with_nocase: String
-  liquidityPosition_not_ends_with: String
-  liquidityPosition_not_ends_with_nocase: String
-  timestamp: Int
-  timestamp_not: Int
-  timestamp_gt: Int
-  timestamp_lt: Int
-  timestamp_gte: Int
-  timestamp_lte: Int
-  timestamp_in: [Int!]
-  timestamp_not_in: [Int!]
-  block: Int
-  block_not: Int
-  block_gt: Int
-  block_lt: Int
-  block_gte: Int
-  block_lte: Int
-  block_in: [Int!]
-  block_not_in: [Int!]
-  user: String
-  user_not: String
-  user_gt: String
-  user_lt: String
-  user_gte: String
-  user_lte: String
-  user_in: [String!]
-  user_not_in: [String!]
-  user_contains: String
-  user_contains_nocase: String
-  user_not_contains: String
-  user_not_contains_nocase: String
-  user_starts_with: String
-  user_starts_with_nocase: String
-  user_not_starts_with: String
-  user_not_starts_with_nocase: String
-  user_ends_with: String
-  user_ends_with_nocase: String
-  user_not_ends_with: String
-  user_not_ends_with_nocase: String
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  token0PriceUSD: MATIC_BigDecimal
-  token0PriceUSD_not: MATIC_BigDecimal
-  token0PriceUSD_gt: MATIC_BigDecimal
-  token0PriceUSD_lt: MATIC_BigDecimal
-  token0PriceUSD_gte: MATIC_BigDecimal
-  token0PriceUSD_lte: MATIC_BigDecimal
-  token0PriceUSD_in: [MATIC_BigDecimal!]
-  token0PriceUSD_not_in: [MATIC_BigDecimal!]
-  token1PriceUSD: MATIC_BigDecimal
-  token1PriceUSD_not: MATIC_BigDecimal
-  token1PriceUSD_gt: MATIC_BigDecimal
-  token1PriceUSD_lt: MATIC_BigDecimal
-  token1PriceUSD_gte: MATIC_BigDecimal
-  token1PriceUSD_lte: MATIC_BigDecimal
-  token1PriceUSD_in: [MATIC_BigDecimal!]
-  token1PriceUSD_not_in: [MATIC_BigDecimal!]
-  reserve0: MATIC_BigDecimal
-  reserve0_not: MATIC_BigDecimal
-  reserve0_gt: MATIC_BigDecimal
-  reserve0_lt: MATIC_BigDecimal
-  reserve0_gte: MATIC_BigDecimal
-  reserve0_lte: MATIC_BigDecimal
-  reserve0_in: [MATIC_BigDecimal!]
-  reserve0_not_in: [MATIC_BigDecimal!]
-  reserve1: MATIC_BigDecimal
-  reserve1_not: MATIC_BigDecimal
-  reserve1_gt: MATIC_BigDecimal
-  reserve1_lt: MATIC_BigDecimal
-  reserve1_gte: MATIC_BigDecimal
-  reserve1_lte: MATIC_BigDecimal
-  reserve1_in: [MATIC_BigDecimal!]
-  reserve1_not_in: [MATIC_BigDecimal!]
-  reserveUSD: MATIC_BigDecimal
-  reserveUSD_not: MATIC_BigDecimal
-  reserveUSD_gt: MATIC_BigDecimal
-  reserveUSD_lt: MATIC_BigDecimal
-  reserveUSD_gte: MATIC_BigDecimal
-  reserveUSD_lte: MATIC_BigDecimal
-  reserveUSD_in: [MATIC_BigDecimal!]
-  reserveUSD_not_in: [MATIC_BigDecimal!]
-  liquidityTokenTotalSupply: MATIC_BigDecimal
-  liquidityTokenTotalSupply_not: MATIC_BigDecimal
-  liquidityTokenTotalSupply_gt: MATIC_BigDecimal
-  liquidityTokenTotalSupply_lt: MATIC_BigDecimal
-  liquidityTokenTotalSupply_gte: MATIC_BigDecimal
-  liquidityTokenTotalSupply_lte: MATIC_BigDecimal
-  liquidityTokenTotalSupply_in: [MATIC_BigDecimal!]
-  liquidityTokenTotalSupply_not_in: [MATIC_BigDecimal!]
-  liquidityTokenBalance: MATIC_BigDecimal
-  liquidityTokenBalance_not: MATIC_BigDecimal
-  liquidityTokenBalance_gt: MATIC_BigDecimal
-  liquidityTokenBalance_lt: MATIC_BigDecimal
-  liquidityTokenBalance_gte: MATIC_BigDecimal
-  liquidityTokenBalance_lte: MATIC_BigDecimal
-  liquidityTokenBalance_in: [MATIC_BigDecimal!]
-  liquidityTokenBalance_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_LiquidityPositionSnapshot {
-  id: ID!
-  liquidityPosition: MATIC_LiquidityPosition!
-  timestamp: Int!
-  block: Int!
-  user: MATIC_User!
-  pair: MATIC_Pair!
-  token0PriceUSD: MATIC_BigDecimal!
-  token1PriceUSD: MATIC_BigDecimal!
-  reserve0: MATIC_BigDecimal!
-  reserve1: MATIC_BigDecimal!
-  reserveUSD: MATIC_BigDecimal!
-  liquidityTokenTotalSupply: MATIC_BigDecimal!
-  liquidityTokenBalance: MATIC_BigDecimal!
-}
-
-enum MATIC_PairHourData_orderBy {
-  id
-  date
-  pair
-  reserve0
-  reserve1
-  reserveUSD
-  volumeToken0
-  volumeToken1
-  volumeUSD
-  txCount
-}
-
-input MATIC_PairHourData_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  date: Int
-  date_not: Int
-  date_gt: Int
-  date_lt: Int
-  date_gte: Int
-  date_lte: Int
-  date_in: [Int!]
-  date_not_in: [Int!]
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  reserve0: MATIC_BigDecimal
-  reserve0_not: MATIC_BigDecimal
-  reserve0_gt: MATIC_BigDecimal
-  reserve0_lt: MATIC_BigDecimal
-  reserve0_gte: MATIC_BigDecimal
-  reserve0_lte: MATIC_BigDecimal
-  reserve0_in: [MATIC_BigDecimal!]
-  reserve0_not_in: [MATIC_BigDecimal!]
-  reserve1: MATIC_BigDecimal
-  reserve1_not: MATIC_BigDecimal
-  reserve1_gt: MATIC_BigDecimal
-  reserve1_lt: MATIC_BigDecimal
-  reserve1_gte: MATIC_BigDecimal
-  reserve1_lte: MATIC_BigDecimal
-  reserve1_in: [MATIC_BigDecimal!]
-  reserve1_not_in: [MATIC_BigDecimal!]
-  reserveUSD: MATIC_BigDecimal
-  reserveUSD_not: MATIC_BigDecimal
-  reserveUSD_gt: MATIC_BigDecimal
-  reserveUSD_lt: MATIC_BigDecimal
-  reserveUSD_gte: MATIC_BigDecimal
-  reserveUSD_lte: MATIC_BigDecimal
-  reserveUSD_in: [MATIC_BigDecimal!]
-  reserveUSD_not_in: [MATIC_BigDecimal!]
-  volumeToken0: MATIC_BigDecimal
-  volumeToken0_not: MATIC_BigDecimal
-  volumeToken0_gt: MATIC_BigDecimal
-  volumeToken0_lt: MATIC_BigDecimal
-  volumeToken0_gte: MATIC_BigDecimal
-  volumeToken0_lte: MATIC_BigDecimal
-  volumeToken0_in: [MATIC_BigDecimal!]
-  volumeToken0_not_in: [MATIC_BigDecimal!]
-  volumeToken1: MATIC_BigDecimal
-  volumeToken1_not: MATIC_BigDecimal
-  volumeToken1_gt: MATIC_BigDecimal
-  volumeToken1_lt: MATIC_BigDecimal
-  volumeToken1_gte: MATIC_BigDecimal
-  volumeToken1_lte: MATIC_BigDecimal
-  volumeToken1_in: [MATIC_BigDecimal!]
-  volumeToken1_not_in: [MATIC_BigDecimal!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-}
-
-type MATIC_PairHourData {
-  id: ID!
-  date: Int!
-  pair: MATIC_Pair!
-  reserve0: MATIC_BigDecimal!
-  reserve1: MATIC_BigDecimal!
-  reserveUSD: MATIC_BigDecimal!
-  volumeToken0: MATIC_BigDecimal!
-  volumeToken1: MATIC_BigDecimal!
-  volumeUSD: MATIC_BigDecimal!
-  txCount: BigInt!
-}
-
-enum MATIC_Mint_orderBy {
-  id
-  transaction
-  timestamp
-  pair
-  to
   liquidity
-  sender
-  amount0
-  amount1
-  logIndex
-  amountUSD
-  feeTo
-  feeLiquidity
-}
-
-input MATIC_Mint_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  transaction: String
-  transaction_not: String
-  transaction_gt: String
-  transaction_lt: String
-  transaction_gte: String
-  transaction_lte: String
-  transaction_in: [String!]
-  transaction_not_in: [String!]
-  transaction_contains: String
-  transaction_contains_nocase: String
-  transaction_not_contains: String
-  transaction_not_contains_nocase: String
-  transaction_starts_with: String
-  transaction_starts_with_nocase: String
-  transaction_not_starts_with: String
-  transaction_not_starts_with_nocase: String
-  transaction_ends_with: String
-  transaction_ends_with_nocase: String
-  transaction_not_ends_with: String
-  transaction_not_ends_with_nocase: String
-  timestamp: BigInt
-  timestamp_not: BigInt
-  timestamp_gt: BigInt
-  timestamp_lt: BigInt
-  timestamp_gte: BigInt
-  timestamp_lte: BigInt
-  timestamp_in: [BigInt!]
-  timestamp_not_in: [BigInt!]
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  to: MATIC_Bytes
-  to_not: MATIC_Bytes
-  to_in: [MATIC_Bytes!]
-  to_not_in: [MATIC_Bytes!]
-  to_contains: MATIC_Bytes
-  to_not_contains: MATIC_Bytes
-  liquidity: MATIC_BigDecimal
-  liquidity_not: MATIC_BigDecimal
-  liquidity_gt: MATIC_BigDecimal
-  liquidity_lt: MATIC_BigDecimal
-  liquidity_gte: MATIC_BigDecimal
-  liquidity_lte: MATIC_BigDecimal
-  liquidity_in: [MATIC_BigDecimal!]
-  liquidity_not_in: [MATIC_BigDecimal!]
-  sender: MATIC_Bytes
-  sender_not: MATIC_Bytes
-  sender_in: [MATIC_Bytes!]
-  sender_not_in: [MATIC_Bytes!]
-  sender_contains: MATIC_Bytes
-  sender_not_contains: MATIC_Bytes
-  amount0: MATIC_BigDecimal
-  amount0_not: MATIC_BigDecimal
-  amount0_gt: MATIC_BigDecimal
-  amount0_lt: MATIC_BigDecimal
-  amount0_gte: MATIC_BigDecimal
-  amount0_lte: MATIC_BigDecimal
-  amount0_in: [MATIC_BigDecimal!]
-  amount0_not_in: [MATIC_BigDecimal!]
-  amount1: MATIC_BigDecimal
-  amount1_not: MATIC_BigDecimal
-  amount1_gt: MATIC_BigDecimal
-  amount1_lt: MATIC_BigDecimal
-  amount1_gte: MATIC_BigDecimal
-  amount1_lte: MATIC_BigDecimal
-  amount1_in: [MATIC_BigDecimal!]
-  amount1_not_in: [MATIC_BigDecimal!]
-  logIndex: BigInt
-  logIndex_not: BigInt
-  logIndex_gt: BigInt
-  logIndex_lt: BigInt
-  logIndex_gte: BigInt
-  logIndex_lte: BigInt
-  logIndex_in: [BigInt!]
-  logIndex_not_in: [BigInt!]
-  amountUSD: MATIC_BigDecimal
-  amountUSD_not: MATIC_BigDecimal
-  amountUSD_gt: MATIC_BigDecimal
-  amountUSD_lt: MATIC_BigDecimal
-  amountUSD_gte: MATIC_BigDecimal
-  amountUSD_lte: MATIC_BigDecimal
-  amountUSD_in: [MATIC_BigDecimal!]
-  amountUSD_not_in: [MATIC_BigDecimal!]
-  feeTo: MATIC_Bytes
-  feeTo_not: MATIC_Bytes
-  feeTo_in: [MATIC_Bytes!]
-  feeTo_not_in: [MATIC_Bytes!]
-  feeTo_contains: MATIC_Bytes
-  feeTo_not_contains: MATIC_Bytes
-  feeLiquidity: MATIC_BigDecimal
-  feeLiquidity_not: MATIC_BigDecimal
-  feeLiquidity_gt: MATIC_BigDecimal
-  feeLiquidity_lt: MATIC_BigDecimal
-  feeLiquidity_gte: MATIC_BigDecimal
-  feeLiquidity_lte: MATIC_BigDecimal
-  feeLiquidity_in: [MATIC_BigDecimal!]
-  feeLiquidity_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_Mint {
-  id: ID!
-  transaction: MATIC_Transaction!
-  timestamp: BigInt!
-  pair: MATIC_Pair!
-  to: MATIC_Bytes!
-  liquidity: MATIC_BigDecimal!
-  sender: MATIC_Bytes
-  amount0: MATIC_BigDecimal
-  amount1: MATIC_BigDecimal
-  logIndex: BigInt
-  amountUSD: MATIC_BigDecimal
-  feeTo: MATIC_Bytes
-  feeLiquidity: MATIC_BigDecimal
+  derivedETH
+  whitelistPairs
+  hourData
+  dayData
+  basePairs
+  quotePairs
+  basePairsDayData
+  quotePairsDayData
 }
 
 type MATIC_Transaction {
@@ -2060,472 +3072,6 @@ type MATIC_Transaction {
   mints(skip: Int = 0, first: Int = 100, orderBy: MATIC_Mint_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Mint_filter): [MATIC_Mint]!
   burns(skip: Int = 0, first: Int = 100, orderBy: MATIC_Burn_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Burn_filter): [MATIC_Burn]!
   swaps(skip: Int = 0, first: Int = 100, orderBy: MATIC_Swap_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_Swap_filter): [MATIC_Swap]!
-}
-
-enum MATIC_Burn_orderBy {
-  id
-  transaction
-  timestamp
-  pair
-  liquidity
-  sender
-  amount0
-  amount1
-  to
-  logIndex
-  amountUSD
-  complete
-  feeTo
-  feeLiquidity
-}
-
-input MATIC_Burn_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  transaction: String
-  transaction_not: String
-  transaction_gt: String
-  transaction_lt: String
-  transaction_gte: String
-  transaction_lte: String
-  transaction_in: [String!]
-  transaction_not_in: [String!]
-  transaction_contains: String
-  transaction_contains_nocase: String
-  transaction_not_contains: String
-  transaction_not_contains_nocase: String
-  transaction_starts_with: String
-  transaction_starts_with_nocase: String
-  transaction_not_starts_with: String
-  transaction_not_starts_with_nocase: String
-  transaction_ends_with: String
-  transaction_ends_with_nocase: String
-  transaction_not_ends_with: String
-  transaction_not_ends_with_nocase: String
-  timestamp: BigInt
-  timestamp_not: BigInt
-  timestamp_gt: BigInt
-  timestamp_lt: BigInt
-  timestamp_gte: BigInt
-  timestamp_lte: BigInt
-  timestamp_in: [BigInt!]
-  timestamp_not_in: [BigInt!]
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  liquidity: MATIC_BigDecimal
-  liquidity_not: MATIC_BigDecimal
-  liquidity_gt: MATIC_BigDecimal
-  liquidity_lt: MATIC_BigDecimal
-  liquidity_gte: MATIC_BigDecimal
-  liquidity_lte: MATIC_BigDecimal
-  liquidity_in: [MATIC_BigDecimal!]
-  liquidity_not_in: [MATIC_BigDecimal!]
-  sender: MATIC_Bytes
-  sender_not: MATIC_Bytes
-  sender_in: [MATIC_Bytes!]
-  sender_not_in: [MATIC_Bytes!]
-  sender_contains: MATIC_Bytes
-  sender_not_contains: MATIC_Bytes
-  amount0: MATIC_BigDecimal
-  amount0_not: MATIC_BigDecimal
-  amount0_gt: MATIC_BigDecimal
-  amount0_lt: MATIC_BigDecimal
-  amount0_gte: MATIC_BigDecimal
-  amount0_lte: MATIC_BigDecimal
-  amount0_in: [MATIC_BigDecimal!]
-  amount0_not_in: [MATIC_BigDecimal!]
-  amount1: MATIC_BigDecimal
-  amount1_not: MATIC_BigDecimal
-  amount1_gt: MATIC_BigDecimal
-  amount1_lt: MATIC_BigDecimal
-  amount1_gte: MATIC_BigDecimal
-  amount1_lte: MATIC_BigDecimal
-  amount1_in: [MATIC_BigDecimal!]
-  amount1_not_in: [MATIC_BigDecimal!]
-  to: MATIC_Bytes
-  to_not: MATIC_Bytes
-  to_in: [MATIC_Bytes!]
-  to_not_in: [MATIC_Bytes!]
-  to_contains: MATIC_Bytes
-  to_not_contains: MATIC_Bytes
-  logIndex: BigInt
-  logIndex_not: BigInt
-  logIndex_gt: BigInt
-  logIndex_lt: BigInt
-  logIndex_gte: BigInt
-  logIndex_lte: BigInt
-  logIndex_in: [BigInt!]
-  logIndex_not_in: [BigInt!]
-  amountUSD: MATIC_BigDecimal
-  amountUSD_not: MATIC_BigDecimal
-  amountUSD_gt: MATIC_BigDecimal
-  amountUSD_lt: MATIC_BigDecimal
-  amountUSD_gte: MATIC_BigDecimal
-  amountUSD_lte: MATIC_BigDecimal
-  amountUSD_in: [MATIC_BigDecimal!]
-  amountUSD_not_in: [MATIC_BigDecimal!]
-  complete: Boolean
-  complete_not: Boolean
-  complete_in: [Boolean!]
-  complete_not_in: [Boolean!]
-  feeTo: MATIC_Bytes
-  feeTo_not: MATIC_Bytes
-  feeTo_in: [MATIC_Bytes!]
-  feeTo_not_in: [MATIC_Bytes!]
-  feeTo_contains: MATIC_Bytes
-  feeTo_not_contains: MATIC_Bytes
-  feeLiquidity: MATIC_BigDecimal
-  feeLiquidity_not: MATIC_BigDecimal
-  feeLiquidity_gt: MATIC_BigDecimal
-  feeLiquidity_lt: MATIC_BigDecimal
-  feeLiquidity_gte: MATIC_BigDecimal
-  feeLiquidity_lte: MATIC_BigDecimal
-  feeLiquidity_in: [MATIC_BigDecimal!]
-  feeLiquidity_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_Burn {
-  id: ID!
-  transaction: MATIC_Transaction!
-  timestamp: BigInt!
-  pair: MATIC_Pair!
-  liquidity: MATIC_BigDecimal!
-  sender: MATIC_Bytes
-  amount0: MATIC_BigDecimal
-  amount1: MATIC_BigDecimal
-  to: MATIC_Bytes
-  logIndex: BigInt
-  amountUSD: MATIC_BigDecimal
-  complete: Boolean!
-  feeTo: MATIC_Bytes
-  feeLiquidity: MATIC_BigDecimal
-}
-
-enum MATIC_Swap_orderBy {
-  id
-  transaction
-  timestamp
-  pair
-  sender
-  amount0In
-  amount1In
-  amount0Out
-  amount1Out
-  to
-  logIndex
-  amountUSD
-}
-
-input MATIC_Swap_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  transaction: String
-  transaction_not: String
-  transaction_gt: String
-  transaction_lt: String
-  transaction_gte: String
-  transaction_lte: String
-  transaction_in: [String!]
-  transaction_not_in: [String!]
-  transaction_contains: String
-  transaction_contains_nocase: String
-  transaction_not_contains: String
-  transaction_not_contains_nocase: String
-  transaction_starts_with: String
-  transaction_starts_with_nocase: String
-  transaction_not_starts_with: String
-  transaction_not_starts_with_nocase: String
-  transaction_ends_with: String
-  transaction_ends_with_nocase: String
-  transaction_not_ends_with: String
-  transaction_not_ends_with_nocase: String
-  timestamp: BigInt
-  timestamp_not: BigInt
-  timestamp_gt: BigInt
-  timestamp_lt: BigInt
-  timestamp_gte: BigInt
-  timestamp_lte: BigInt
-  timestamp_in: [BigInt!]
-  timestamp_not_in: [BigInt!]
-  pair: String
-  pair_not: String
-  pair_gt: String
-  pair_lt: String
-  pair_gte: String
-  pair_lte: String
-  pair_in: [String!]
-  pair_not_in: [String!]
-  pair_contains: String
-  pair_contains_nocase: String
-  pair_not_contains: String
-  pair_not_contains_nocase: String
-  pair_starts_with: String
-  pair_starts_with_nocase: String
-  pair_not_starts_with: String
-  pair_not_starts_with_nocase: String
-  pair_ends_with: String
-  pair_ends_with_nocase: String
-  pair_not_ends_with: String
-  pair_not_ends_with_nocase: String
-  sender: MATIC_Bytes
-  sender_not: MATIC_Bytes
-  sender_in: [MATIC_Bytes!]
-  sender_not_in: [MATIC_Bytes!]
-  sender_contains: MATIC_Bytes
-  sender_not_contains: MATIC_Bytes
-  amount0In: MATIC_BigDecimal
-  amount0In_not: MATIC_BigDecimal
-  amount0In_gt: MATIC_BigDecimal
-  amount0In_lt: MATIC_BigDecimal
-  amount0In_gte: MATIC_BigDecimal
-  amount0In_lte: MATIC_BigDecimal
-  amount0In_in: [MATIC_BigDecimal!]
-  amount0In_not_in: [MATIC_BigDecimal!]
-  amount1In: MATIC_BigDecimal
-  amount1In_not: MATIC_BigDecimal
-  amount1In_gt: MATIC_BigDecimal
-  amount1In_lt: MATIC_BigDecimal
-  amount1In_gte: MATIC_BigDecimal
-  amount1In_lte: MATIC_BigDecimal
-  amount1In_in: [MATIC_BigDecimal!]
-  amount1In_not_in: [MATIC_BigDecimal!]
-  amount0Out: MATIC_BigDecimal
-  amount0Out_not: MATIC_BigDecimal
-  amount0Out_gt: MATIC_BigDecimal
-  amount0Out_lt: MATIC_BigDecimal
-  amount0Out_gte: MATIC_BigDecimal
-  amount0Out_lte: MATIC_BigDecimal
-  amount0Out_in: [MATIC_BigDecimal!]
-  amount0Out_not_in: [MATIC_BigDecimal!]
-  amount1Out: MATIC_BigDecimal
-  amount1Out_not: MATIC_BigDecimal
-  amount1Out_gt: MATIC_BigDecimal
-  amount1Out_lt: MATIC_BigDecimal
-  amount1Out_gte: MATIC_BigDecimal
-  amount1Out_lte: MATIC_BigDecimal
-  amount1Out_in: [MATIC_BigDecimal!]
-  amount1Out_not_in: [MATIC_BigDecimal!]
-  to: MATIC_Bytes
-  to_not: MATIC_Bytes
-  to_in: [MATIC_Bytes!]
-  to_not_in: [MATIC_Bytes!]
-  to_contains: MATIC_Bytes
-  to_not_contains: MATIC_Bytes
-  logIndex: BigInt
-  logIndex_not: BigInt
-  logIndex_gt: BigInt
-  logIndex_lt: BigInt
-  logIndex_gte: BigInt
-  logIndex_lte: BigInt
-  logIndex_in: [BigInt!]
-  logIndex_not_in: [BigInt!]
-  amountUSD: MATIC_BigDecimal
-  amountUSD_not: MATIC_BigDecimal
-  amountUSD_gt: MATIC_BigDecimal
-  amountUSD_lt: MATIC_BigDecimal
-  amountUSD_gte: MATIC_BigDecimal
-  amountUSD_lte: MATIC_BigDecimal
-  amountUSD_in: [MATIC_BigDecimal!]
-  amountUSD_not_in: [MATIC_BigDecimal!]
-}
-
-type MATIC_Swap {
-  id: ID!
-  transaction: MATIC_Transaction!
-  timestamp: BigInt!
-  pair: MATIC_Pair!
-  sender: MATIC_Bytes!
-  amount0In: MATIC_BigDecimal!
-  amount1In: MATIC_BigDecimal!
-  amount0Out: MATIC_BigDecimal!
-  amount1Out: MATIC_BigDecimal!
-  to: MATIC_Bytes!
-  logIndex: BigInt
-  amountUSD: MATIC_BigDecimal!
-}
-
-enum MATIC_User_orderBy {
-  id
-  liquidityPositions
-}
-
-input MATIC_User_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-}
-
-type MATIC_Bundle {
-  id: ID!
-  ethPrice: MATIC_BigDecimal!
-}
-
-enum MATIC_Bundle_orderBy {
-  id
-  ethPrice
-}
-
-input MATIC_Bundle_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  ethPrice: MATIC_BigDecimal
-  ethPrice_not: MATIC_BigDecimal
-  ethPrice_gt: MATIC_BigDecimal
-  ethPrice_lt: MATIC_BigDecimal
-  ethPrice_gte: MATIC_BigDecimal
-  ethPrice_lte: MATIC_BigDecimal
-  ethPrice_in: [MATIC_BigDecimal!]
-  ethPrice_not_in: [MATIC_BigDecimal!]
-}
-
-enum MATIC_Factory_orderBy {
-  id
-  pairCount
-  volumeUSD
-  volumeETH
-  untrackedVolumeUSD
-  liquidityUSD
-  liquidityETH
-  txCount
-  tokenCount
-  userCount
-  pairs
-  tokens
-  hourData
-  dayData
-}
-
-input MATIC_Factory_filter {
-  id: ID
-  id_not: ID
-  id_gt: ID
-  id_lt: ID
-  id_gte: ID
-  id_lte: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  pairCount: BigInt
-  pairCount_not: BigInt
-  pairCount_gt: BigInt
-  pairCount_lt: BigInt
-  pairCount_gte: BigInt
-  pairCount_lte: BigInt
-  pairCount_in: [BigInt!]
-  pairCount_not_in: [BigInt!]
-  volumeUSD: MATIC_BigDecimal
-  volumeUSD_not: MATIC_BigDecimal
-  volumeUSD_gt: MATIC_BigDecimal
-  volumeUSD_lt: MATIC_BigDecimal
-  volumeUSD_gte: MATIC_BigDecimal
-  volumeUSD_lte: MATIC_BigDecimal
-  volumeUSD_in: [MATIC_BigDecimal!]
-  volumeUSD_not_in: [MATIC_BigDecimal!]
-  volumeETH: MATIC_BigDecimal
-  volumeETH_not: MATIC_BigDecimal
-  volumeETH_gt: MATIC_BigDecimal
-  volumeETH_lt: MATIC_BigDecimal
-  volumeETH_gte: MATIC_BigDecimal
-  volumeETH_lte: MATIC_BigDecimal
-  volumeETH_in: [MATIC_BigDecimal!]
-  volumeETH_not_in: [MATIC_BigDecimal!]
-  untrackedVolumeUSD: MATIC_BigDecimal
-  untrackedVolumeUSD_not: MATIC_BigDecimal
-  untrackedVolumeUSD_gt: MATIC_BigDecimal
-  untrackedVolumeUSD_lt: MATIC_BigDecimal
-  untrackedVolumeUSD_gte: MATIC_BigDecimal
-  untrackedVolumeUSD_lte: MATIC_BigDecimal
-  untrackedVolumeUSD_in: [MATIC_BigDecimal!]
-  untrackedVolumeUSD_not_in: [MATIC_BigDecimal!]
-  liquidityUSD: MATIC_BigDecimal
-  liquidityUSD_not: MATIC_BigDecimal
-  liquidityUSD_gt: MATIC_BigDecimal
-  liquidityUSD_lt: MATIC_BigDecimal
-  liquidityUSD_gte: MATIC_BigDecimal
-  liquidityUSD_lte: MATIC_BigDecimal
-  liquidityUSD_in: [MATIC_BigDecimal!]
-  liquidityUSD_not_in: [MATIC_BigDecimal!]
-  liquidityETH: MATIC_BigDecimal
-  liquidityETH_not: MATIC_BigDecimal
-  liquidityETH_gt: MATIC_BigDecimal
-  liquidityETH_lt: MATIC_BigDecimal
-  liquidityETH_gte: MATIC_BigDecimal
-  liquidityETH_lte: MATIC_BigDecimal
-  liquidityETH_in: [MATIC_BigDecimal!]
-  liquidityETH_not_in: [MATIC_BigDecimal!]
-  txCount: BigInt
-  txCount_not: BigInt
-  txCount_gt: BigInt
-  txCount_lt: BigInt
-  txCount_gte: BigInt
-  txCount_lte: BigInt
-  txCount_in: [BigInt!]
-  txCount_not_in: [BigInt!]
-  tokenCount: BigInt
-  tokenCount_not: BigInt
-  tokenCount_gt: BigInt
-  tokenCount_lt: BigInt
-  tokenCount_gte: BigInt
-  tokenCount_lte: BigInt
-  tokenCount_in: [BigInt!]
-  tokenCount_not_in: [BigInt!]
-  userCount: BigInt
-  userCount_not: BigInt
-  userCount_gt: BigInt
-  userCount_lt: BigInt
-  userCount_gte: BigInt
-  userCount_lte: BigInt
-  userCount_in: [BigInt!]
-  userCount_not_in: [BigInt!]
-}
-
-enum MATIC_Transaction_orderBy {
-  id
-  blockNumber
-  timestamp
-  mints
-  burns
-  swaps
 }
 
 input MATIC_Transaction_filter {
@@ -2573,6 +3119,43 @@ input MATIC_Transaction_filter {
   swaps_not_contains_nocase: [String!]
 }
 
+enum MATIC_Transaction_orderBy {
+  id
+  blockNumber
+  timestamp
+  mints
+  burns
+  swaps
+}
+
+type MATIC_User {
+  id: ID!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: MATIC_LiquidityPosition_orderBy, orderDirection: MATIC_OrderDirection, where: MATIC_LiquidityPosition_filter): [MATIC_LiquidityPosition!]!
+}
+
+input MATIC_User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+enum MATIC_User_orderBy {
+  id
+  liquidityPositions
+}
+
+type MATIC__Block_ {
+  """The hash of the block"""
+  hash: MATIC_Bytes
+  """The block number"""
+  number: Int!
+}
+
 """The type for the top-level _meta field"""
 type MATIC__Meta_ {
   """
@@ -2589,320 +3172,11 @@ type MATIC__Meta_ {
   hasIndexingErrors: Boolean!
 }
 
-type MATIC__Block_ {
-  """The hash of the block"""
-  hash: MATIC_Bytes
-  """The block number"""
-  number: Int!
-}
-
-type Subscription {
-  MATIC_user(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_User
-  MATIC_users(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_User_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_User_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_User!]!
-  MATIC_bundle(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Bundle
-  MATIC_bundles(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Bundle_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Bundle_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Bundle!]!
-  MATIC_factory(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Factory
-  MATIC_factories(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Factory_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Factory_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Factory!]!
-  MATIC_hourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_HourData
-  MATIC_hourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_HourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_HourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_HourData!]!
-  MATIC_dayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_DayData
-  MATIC_dayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_DayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_DayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_DayData!]!
-  MATIC_token(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Token
-  MATIC_tokens(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Token_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Token_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Token!]!
-  MATIC_tokenHourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_TokenHourData
-  MATIC_tokenHourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_TokenHourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_TokenHourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_TokenHourData!]!
-  MATIC_tokenDayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_TokenDayData
-  MATIC_tokenDayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_TokenDayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_TokenDayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_TokenDayData!]!
-  MATIC_pair(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Pair
-  MATIC_pairs(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Pair_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Pair_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Pair!]!
-  MATIC_pairHourData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_PairHourData
-  MATIC_pairHourDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_PairHourData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_PairHourData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_PairHourData!]!
-  MATIC_pairDayData(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_PairDayData
-  MATIC_pairDayDatas(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_PairDayData_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_PairDayData_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_PairDayData!]!
-  MATIC_liquidityPosition(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_LiquidityPosition
-  MATIC_liquidityPositions(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_LiquidityPosition_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_LiquidityPosition_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_LiquidityPosition!]!
-  MATIC_liquidityPositionSnapshot(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_LiquidityPositionSnapshot
-  MATIC_liquidityPositionSnapshots(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_LiquidityPositionSnapshot_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_LiquidityPositionSnapshot_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_LiquidityPositionSnapshot!]!
-  MATIC_transaction(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Transaction
-  MATIC_transactions(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Transaction_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Transaction_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Transaction!]!
-  MATIC_mint(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Mint
-  MATIC_mints(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Mint_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Mint_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Mint!]!
-  MATIC_burn(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Burn
-  MATIC_burns(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Burn_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Burn_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Burn!]!
-  MATIC_swap(
-    id: ID!
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): MATIC_Swap
-  MATIC_swaps(
-    skip: Int = 0
-    first: Int = 100
-    orderBy: MATIC_Swap_orderBy
-    orderDirection: MATIC_OrderDirection
-    where: MATIC_Swap_filter
-    """The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted."""
-    block: MATIC_Block_height
-    """Set to `allow` to receive data even if the subgraph has skipped over errors while syncing."""
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [MATIC_Swap!]!
-  """Access to subgraph metadata"""
-  MATIC__meta(block: MATIC_Block_height): MATIC__Meta_
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
 }

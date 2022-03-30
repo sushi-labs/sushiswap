@@ -12,14 +12,14 @@ directive @subgraphId(id: String!) on OBJECT
 "creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
-scalar ETHEREUM_BigDecimal
+scalar ARBITRUM_BigDecimal
 
 scalar BigInt
 
 """The block at which the query should be executed."""
-input ETHEREUM_Block_height {
+input ARBITRUM_Block_height {
   """Value containing a block hash"""
-  hash: ETHEREUM_Bytes
+  hash: ARBITRUM_Bytes
   """Value containing a block number"""
   number: Int
   """
@@ -32,12 +32,12 @@ input ETHEREUM_Block_height {
   number_gte: Int
 }
 
-type ETHEREUM_Bundle {
+type ARBITRUM_Bundle {
   id: ID!
-  ethPrice: ETHEREUM_BigDecimal!
+  ethPrice: ARBITRUM_BigDecimal!
 }
 
-input ETHEREUM_Bundle_filter {
+input ARBITRUM_Bundle_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -46,39 +46,39 @@ input ETHEREUM_Bundle_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
-  ethPrice: ETHEREUM_BigDecimal
-  ethPrice_not: ETHEREUM_BigDecimal
-  ethPrice_gt: ETHEREUM_BigDecimal
-  ethPrice_lt: ETHEREUM_BigDecimal
-  ethPrice_gte: ETHEREUM_BigDecimal
-  ethPrice_lte: ETHEREUM_BigDecimal
-  ethPrice_in: [ETHEREUM_BigDecimal!]
-  ethPrice_not_in: [ETHEREUM_BigDecimal!]
+  ethPrice: ARBITRUM_BigDecimal
+  ethPrice_not: ARBITRUM_BigDecimal
+  ethPrice_gt: ARBITRUM_BigDecimal
+  ethPrice_lt: ARBITRUM_BigDecimal
+  ethPrice_gte: ARBITRUM_BigDecimal
+  ethPrice_lte: ARBITRUM_BigDecimal
+  ethPrice_in: [ARBITRUM_BigDecimal!]
+  ethPrice_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_Bundle_orderBy {
+enum ARBITRUM_Bundle_orderBy {
   id
   ethPrice
 }
 
-type ETHEREUM_Burn {
+type ARBITRUM_Burn {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: ARBITRUM_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
-  to: ETHEREUM_Bytes
+  pair: ARBITRUM_Pair!
+  liquidity: ARBITRUM_BigDecimal!
+  sender: ARBITRUM_Bytes
+  amount0: ARBITRUM_BigDecimal
+  amount1: ARBITRUM_BigDecimal
+  to: ARBITRUM_Bytes
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
+  amountUSD: ARBITRUM_BigDecimal
   complete: Boolean!
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  feeTo: ARBITRUM_Bytes
+  feeLiquidity: ARBITRUM_BigDecimal
 }
 
-input ETHEREUM_Burn_filter {
+input ARBITRUM_Burn_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -135,42 +135,42 @@ input ETHEREUM_Burn_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  liquidity: ARBITRUM_BigDecimal
+  liquidity_not: ARBITRUM_BigDecimal
+  liquidity_gt: ARBITRUM_BigDecimal
+  liquidity_lt: ARBITRUM_BigDecimal
+  liquidity_gte: ARBITRUM_BigDecimal
+  liquidity_lte: ARBITRUM_BigDecimal
+  liquidity_in: [ARBITRUM_BigDecimal!]
+  liquidity_not_in: [ARBITRUM_BigDecimal!]
+  sender: ARBITRUM_Bytes
+  sender_not: ARBITRUM_Bytes
+  sender_in: [ARBITRUM_Bytes!]
+  sender_not_in: [ARBITRUM_Bytes!]
+  sender_contains: ARBITRUM_Bytes
+  sender_not_contains: ARBITRUM_Bytes
+  amount0: ARBITRUM_BigDecimal
+  amount0_not: ARBITRUM_BigDecimal
+  amount0_gt: ARBITRUM_BigDecimal
+  amount0_lt: ARBITRUM_BigDecimal
+  amount0_gte: ARBITRUM_BigDecimal
+  amount0_lte: ARBITRUM_BigDecimal
+  amount0_in: [ARBITRUM_BigDecimal!]
+  amount0_not_in: [ARBITRUM_BigDecimal!]
+  amount1: ARBITRUM_BigDecimal
+  amount1_not: ARBITRUM_BigDecimal
+  amount1_gt: ARBITRUM_BigDecimal
+  amount1_lt: ARBITRUM_BigDecimal
+  amount1_gte: ARBITRUM_BigDecimal
+  amount1_lte: ARBITRUM_BigDecimal
+  amount1_in: [ARBITRUM_BigDecimal!]
+  amount1_not_in: [ARBITRUM_BigDecimal!]
+  to: ARBITRUM_Bytes
+  to_not: ARBITRUM_Bytes
+  to_in: [ARBITRUM_Bytes!]
+  to_not_in: [ARBITRUM_Bytes!]
+  to_contains: ARBITRUM_Bytes
+  to_not_contains: ARBITRUM_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -179,35 +179,35 @@ input ETHEREUM_Burn_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: ARBITRUM_BigDecimal
+  amountUSD_not: ARBITRUM_BigDecimal
+  amountUSD_gt: ARBITRUM_BigDecimal
+  amountUSD_lt: ARBITRUM_BigDecimal
+  amountUSD_gte: ARBITRUM_BigDecimal
+  amountUSD_lte: ARBITRUM_BigDecimal
+  amountUSD_in: [ARBITRUM_BigDecimal!]
+  amountUSD_not_in: [ARBITRUM_BigDecimal!]
   complete: Boolean
   complete_not: Boolean
   complete_in: [Boolean!]
   complete_not_in: [Boolean!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  feeTo: ARBITRUM_Bytes
+  feeTo_not: ARBITRUM_Bytes
+  feeTo_in: [ARBITRUM_Bytes!]
+  feeTo_not_in: [ARBITRUM_Bytes!]
+  feeTo_contains: ARBITRUM_Bytes
+  feeTo_not_contains: ARBITRUM_Bytes
+  feeLiquidity: ARBITRUM_BigDecimal
+  feeLiquidity_not: ARBITRUM_BigDecimal
+  feeLiquidity_gt: ARBITRUM_BigDecimal
+  feeLiquidity_lt: ARBITRUM_BigDecimal
+  feeLiquidity_gte: ARBITRUM_BigDecimal
+  feeLiquidity_lte: ARBITRUM_BigDecimal
+  feeLiquidity_in: [ARBITRUM_BigDecimal!]
+  feeLiquidity_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_Burn_orderBy {
+enum ARBITRUM_Burn_orderBy {
   id
   transaction
   timestamp
@@ -224,21 +224,21 @@ enum ETHEREUM_Burn_orderBy {
   feeLiquidity
 }
 
-scalar ETHEREUM_Bytes
+scalar ARBITRUM_Bytes
 
-type ETHEREUM_DayData {
+type ARBITRUM_DayData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: ARBITRUM_Factory!
+  volumeETH: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
+  untrackedVolume: ARBITRUM_BigDecimal!
+  liquidityETH: ARBITRUM_BigDecimal!
+  liquidityUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_DayData_filter {
+input ARBITRUM_DayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -275,46 +275,46 @@ input ETHEREUM_DayData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: ARBITRUM_BigDecimal
+  volumeETH_not: ARBITRUM_BigDecimal
+  volumeETH_gt: ARBITRUM_BigDecimal
+  volumeETH_lt: ARBITRUM_BigDecimal
+  volumeETH_gte: ARBITRUM_BigDecimal
+  volumeETH_lte: ARBITRUM_BigDecimal
+  volumeETH_in: [ARBITRUM_BigDecimal!]
+  volumeETH_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  untrackedVolume: ARBITRUM_BigDecimal
+  untrackedVolume_not: ARBITRUM_BigDecimal
+  untrackedVolume_gt: ARBITRUM_BigDecimal
+  untrackedVolume_lt: ARBITRUM_BigDecimal
+  untrackedVolume_gte: ARBITRUM_BigDecimal
+  untrackedVolume_lte: ARBITRUM_BigDecimal
+  untrackedVolume_in: [ARBITRUM_BigDecimal!]
+  untrackedVolume_not_in: [ARBITRUM_BigDecimal!]
+  liquidityETH: ARBITRUM_BigDecimal
+  liquidityETH_not: ARBITRUM_BigDecimal
+  liquidityETH_gt: ARBITRUM_BigDecimal
+  liquidityETH_lt: ARBITRUM_BigDecimal
+  liquidityETH_gte: ARBITRUM_BigDecimal
+  liquidityETH_lte: ARBITRUM_BigDecimal
+  liquidityETH_in: [ARBITRUM_BigDecimal!]
+  liquidityETH_not_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD: ARBITRUM_BigDecimal
+  liquidityUSD_not: ARBITRUM_BigDecimal
+  liquidityUSD_gt: ARBITRUM_BigDecimal
+  liquidityUSD_lt: ARBITRUM_BigDecimal
+  liquidityUSD_gte: ARBITRUM_BigDecimal
+  liquidityUSD_lte: ARBITRUM_BigDecimal
+  liquidityUSD_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -325,7 +325,7 @@ input ETHEREUM_DayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_DayData_orderBy {
+enum ARBITRUM_DayData_orderBy {
   id
   date
   factory
@@ -337,24 +337,24 @@ enum ETHEREUM_DayData_orderBy {
   txCount
 }
 
-type ETHEREUM_Factory {
+type ARBITRUM_Factory {
   id: ID!
   pairCount: BigInt!
-  volumeUSD: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
+  volumeETH: ARBITRUM_BigDecimal!
+  untrackedVolumeUSD: ARBITRUM_BigDecimal!
+  liquidityUSD: ARBITRUM_BigDecimal!
+  liquidityETH: ARBITRUM_BigDecimal!
   txCount: BigInt!
   tokenCount: BigInt!
   userCount: BigInt!
-  pairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  tokens(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Token_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Token_filter): [ETHEREUM_Token!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_HourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_HourData_filter): [ETHEREUM_HourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_DayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_DayData_filter): [ETHEREUM_DayData!]!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Pair_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Pair_filter): [ARBITRUM_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Token_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Token_filter): [ARBITRUM_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_HourData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_HourData_filter): [ARBITRUM_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_DayData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_DayData_filter): [ARBITRUM_DayData!]!
 }
 
-input ETHEREUM_Factory_filter {
+input ARBITRUM_Factory_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -371,46 +371,46 @@ input ETHEREUM_Factory_filter {
   pairCount_lte: BigInt
   pairCount_in: [BigInt!]
   pairCount_not_in: [BigInt!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  volumeETH: ARBITRUM_BigDecimal
+  volumeETH_not: ARBITRUM_BigDecimal
+  volumeETH_gt: ARBITRUM_BigDecimal
+  volumeETH_lt: ARBITRUM_BigDecimal
+  volumeETH_gte: ARBITRUM_BigDecimal
+  volumeETH_lte: ARBITRUM_BigDecimal
+  volumeETH_in: [ARBITRUM_BigDecimal!]
+  volumeETH_not_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_not: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD: ARBITRUM_BigDecimal
+  liquidityUSD_not: ARBITRUM_BigDecimal
+  liquidityUSD_gt: ARBITRUM_BigDecimal
+  liquidityUSD_lt: ARBITRUM_BigDecimal
+  liquidityUSD_gte: ARBITRUM_BigDecimal
+  liquidityUSD_lte: ARBITRUM_BigDecimal
+  liquidityUSD_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD_not_in: [ARBITRUM_BigDecimal!]
+  liquidityETH: ARBITRUM_BigDecimal
+  liquidityETH_not: ARBITRUM_BigDecimal
+  liquidityETH_gt: ARBITRUM_BigDecimal
+  liquidityETH_lt: ARBITRUM_BigDecimal
+  liquidityETH_gte: ARBITRUM_BigDecimal
+  liquidityETH_lte: ARBITRUM_BigDecimal
+  liquidityETH_in: [ARBITRUM_BigDecimal!]
+  liquidityETH_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -437,7 +437,7 @@ input ETHEREUM_Factory_filter {
   userCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Factory_orderBy {
+enum ARBITRUM_Factory_orderBy {
   id
   pairCount
   volumeUSD
@@ -454,19 +454,19 @@ enum ETHEREUM_Factory_orderBy {
   dayData
 }
 
-type ETHEREUM_HourData {
+type ARBITRUM_HourData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: ARBITRUM_Factory!
+  volumeETH: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
+  untrackedVolume: ARBITRUM_BigDecimal!
+  liquidityETH: ARBITRUM_BigDecimal!
+  liquidityUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_HourData_filter {
+input ARBITRUM_HourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -503,46 +503,46 @@ input ETHEREUM_HourData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: ARBITRUM_BigDecimal
+  volumeETH_not: ARBITRUM_BigDecimal
+  volumeETH_gt: ARBITRUM_BigDecimal
+  volumeETH_lt: ARBITRUM_BigDecimal
+  volumeETH_gte: ARBITRUM_BigDecimal
+  volumeETH_lte: ARBITRUM_BigDecimal
+  volumeETH_in: [ARBITRUM_BigDecimal!]
+  volumeETH_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  untrackedVolume: ARBITRUM_BigDecimal
+  untrackedVolume_not: ARBITRUM_BigDecimal
+  untrackedVolume_gt: ARBITRUM_BigDecimal
+  untrackedVolume_lt: ARBITRUM_BigDecimal
+  untrackedVolume_gte: ARBITRUM_BigDecimal
+  untrackedVolume_lte: ARBITRUM_BigDecimal
+  untrackedVolume_in: [ARBITRUM_BigDecimal!]
+  untrackedVolume_not_in: [ARBITRUM_BigDecimal!]
+  liquidityETH: ARBITRUM_BigDecimal
+  liquidityETH_not: ARBITRUM_BigDecimal
+  liquidityETH_gt: ARBITRUM_BigDecimal
+  liquidityETH_lt: ARBITRUM_BigDecimal
+  liquidityETH_gte: ARBITRUM_BigDecimal
+  liquidityETH_lte: ARBITRUM_BigDecimal
+  liquidityETH_in: [ARBITRUM_BigDecimal!]
+  liquidityETH_not_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD: ARBITRUM_BigDecimal
+  liquidityUSD_not: ARBITRUM_BigDecimal
+  liquidityUSD_gt: ARBITRUM_BigDecimal
+  liquidityUSD_lt: ARBITRUM_BigDecimal
+  liquidityUSD_gte: ARBITRUM_BigDecimal
+  liquidityUSD_lte: ARBITRUM_BigDecimal
+  liquidityUSD_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -553,7 +553,7 @@ input ETHEREUM_HourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_HourData_orderBy {
+enum ARBITRUM_HourData_orderBy {
   id
   date
   factory
@@ -565,33 +565,33 @@ enum ETHEREUM_HourData_orderBy {
   txCount
 }
 
-type ETHEREUM_LiquidityPosition {
+type ARBITRUM_LiquidityPosition {
   id: ID!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
-  snapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot]!
+  user: ARBITRUM_User!
+  pair: ARBITRUM_Pair!
+  liquidityTokenBalance: ARBITRUM_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_LiquidityPositionSnapshot_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_LiquidityPositionSnapshot_filter): [ARBITRUM_LiquidityPositionSnapshot]!
   block: Int!
   timestamp: Int!
 }
 
-type ETHEREUM_LiquidityPositionSnapshot {
+type ARBITRUM_LiquidityPositionSnapshot {
   id: ID!
-  liquidityPosition: ETHEREUM_LiquidityPosition!
+  liquidityPosition: ARBITRUM_LiquidityPosition!
   timestamp: Int!
   block: Int!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  token0PriceUSD: ETHEREUM_BigDecimal!
-  token1PriceUSD: ETHEREUM_BigDecimal!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
+  user: ARBITRUM_User!
+  pair: ARBITRUM_Pair!
+  token0PriceUSD: ARBITRUM_BigDecimal!
+  token1PriceUSD: ARBITRUM_BigDecimal!
+  reserve0: ARBITRUM_BigDecimal!
+  reserve1: ARBITRUM_BigDecimal!
+  reserveUSD: ARBITRUM_BigDecimal!
+  liquidityTokenTotalSupply: ARBITRUM_BigDecimal!
+  liquidityTokenBalance: ARBITRUM_BigDecimal!
 }
 
-input ETHEREUM_LiquidityPositionSnapshot_filter {
+input ARBITRUM_LiquidityPositionSnapshot_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -676,65 +676,65 @@ input ETHEREUM_LiquidityPositionSnapshot_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  token0PriceUSD: ETHEREUM_BigDecimal
-  token0PriceUSD_not: ETHEREUM_BigDecimal
-  token0PriceUSD_gt: ETHEREUM_BigDecimal
-  token0PriceUSD_lt: ETHEREUM_BigDecimal
-  token0PriceUSD_gte: ETHEREUM_BigDecimal
-  token0PriceUSD_lte: ETHEREUM_BigDecimal
-  token0PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token0PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD: ETHEREUM_BigDecimal
-  token1PriceUSD_not: ETHEREUM_BigDecimal
-  token1PriceUSD_gt: ETHEREUM_BigDecimal
-  token1PriceUSD_lt: ETHEREUM_BigDecimal
-  token1PriceUSD_gte: ETHEREUM_BigDecimal
-  token1PriceUSD_lte: ETHEREUM_BigDecimal
-  token1PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_not: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  token0PriceUSD: ARBITRUM_BigDecimal
+  token0PriceUSD_not: ARBITRUM_BigDecimal
+  token0PriceUSD_gt: ARBITRUM_BigDecimal
+  token0PriceUSD_lt: ARBITRUM_BigDecimal
+  token0PriceUSD_gte: ARBITRUM_BigDecimal
+  token0PriceUSD_lte: ARBITRUM_BigDecimal
+  token0PriceUSD_in: [ARBITRUM_BigDecimal!]
+  token0PriceUSD_not_in: [ARBITRUM_BigDecimal!]
+  token1PriceUSD: ARBITRUM_BigDecimal
+  token1PriceUSD_not: ARBITRUM_BigDecimal
+  token1PriceUSD_gt: ARBITRUM_BigDecimal
+  token1PriceUSD_lt: ARBITRUM_BigDecimal
+  token1PriceUSD_gte: ARBITRUM_BigDecimal
+  token1PriceUSD_lte: ARBITRUM_BigDecimal
+  token1PriceUSD_in: [ARBITRUM_BigDecimal!]
+  token1PriceUSD_not_in: [ARBITRUM_BigDecimal!]
+  reserve0: ARBITRUM_BigDecimal
+  reserve0_not: ARBITRUM_BigDecimal
+  reserve0_gt: ARBITRUM_BigDecimal
+  reserve0_lt: ARBITRUM_BigDecimal
+  reserve0_gte: ARBITRUM_BigDecimal
+  reserve0_lte: ARBITRUM_BigDecimal
+  reserve0_in: [ARBITRUM_BigDecimal!]
+  reserve0_not_in: [ARBITRUM_BigDecimal!]
+  reserve1: ARBITRUM_BigDecimal
+  reserve1_not: ARBITRUM_BigDecimal
+  reserve1_gt: ARBITRUM_BigDecimal
+  reserve1_lt: ARBITRUM_BigDecimal
+  reserve1_gte: ARBITRUM_BigDecimal
+  reserve1_lte: ARBITRUM_BigDecimal
+  reserve1_in: [ARBITRUM_BigDecimal!]
+  reserve1_not_in: [ARBITRUM_BigDecimal!]
+  reserveUSD: ARBITRUM_BigDecimal
+  reserveUSD_not: ARBITRUM_BigDecimal
+  reserveUSD_gt: ARBITRUM_BigDecimal
+  reserveUSD_lt: ARBITRUM_BigDecimal
+  reserveUSD_gte: ARBITRUM_BigDecimal
+  reserveUSD_lte: ARBITRUM_BigDecimal
+  reserveUSD_in: [ARBITRUM_BigDecimal!]
+  reserveUSD_not_in: [ARBITRUM_BigDecimal!]
+  liquidityTokenTotalSupply: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_not: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_gt: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_lt: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_gte: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_lte: ARBITRUM_BigDecimal
+  liquidityTokenTotalSupply_in: [ARBITRUM_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [ARBITRUM_BigDecimal!]
+  liquidityTokenBalance: ARBITRUM_BigDecimal
+  liquidityTokenBalance_not: ARBITRUM_BigDecimal
+  liquidityTokenBalance_gt: ARBITRUM_BigDecimal
+  liquidityTokenBalance_lt: ARBITRUM_BigDecimal
+  liquidityTokenBalance_gte: ARBITRUM_BigDecimal
+  liquidityTokenBalance_lte: ARBITRUM_BigDecimal
+  liquidityTokenBalance_in: [ARBITRUM_BigDecimal!]
+  liquidityTokenBalance_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
+enum ARBITRUM_LiquidityPositionSnapshot_orderBy {
   id
   liquidityPosition
   timestamp
@@ -750,7 +750,7 @@ enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
   liquidityTokenBalance
 }
 
-input ETHEREUM_LiquidityPosition_filter {
+input ARBITRUM_LiquidityPosition_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -799,14 +799,14 @@ input ETHEREUM_LiquidityPosition_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance: ARBITRUM_BigDecimal
+  liquidityTokenBalance_not: ARBITRUM_BigDecimal
+  liquidityTokenBalance_gt: ARBITRUM_BigDecimal
+  liquidityTokenBalance_lt: ARBITRUM_BigDecimal
+  liquidityTokenBalance_gte: ARBITRUM_BigDecimal
+  liquidityTokenBalance_lte: ARBITRUM_BigDecimal
+  liquidityTokenBalance_in: [ARBITRUM_BigDecimal!]
+  liquidityTokenBalance_not_in: [ARBITRUM_BigDecimal!]
   block: Int
   block_not: Int
   block_gt: Int
@@ -825,7 +825,7 @@ input ETHEREUM_LiquidityPosition_filter {
   timestamp_not_in: [Int!]
 }
 
-enum ETHEREUM_LiquidityPosition_orderBy {
+enum ARBITRUM_LiquidityPosition_orderBy {
   id
   user
   pair
@@ -835,23 +835,23 @@ enum ETHEREUM_LiquidityPosition_orderBy {
   timestamp
 }
 
-type ETHEREUM_Mint {
+type ARBITRUM_Mint {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: ARBITRUM_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  to: ETHEREUM_Bytes!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
+  pair: ARBITRUM_Pair!
+  to: ARBITRUM_Bytes!
+  liquidity: ARBITRUM_BigDecimal!
+  sender: ARBITRUM_Bytes
+  amount0: ARBITRUM_BigDecimal
+  amount1: ARBITRUM_BigDecimal
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  amountUSD: ARBITRUM_BigDecimal
+  feeTo: ARBITRUM_Bytes
+  feeLiquidity: ARBITRUM_BigDecimal
 }
 
-input ETHEREUM_Mint_filter {
+input ARBITRUM_Mint_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -908,42 +908,42 @@ input ETHEREUM_Mint_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
+  to: ARBITRUM_Bytes
+  to_not: ARBITRUM_Bytes
+  to_in: [ARBITRUM_Bytes!]
+  to_not_in: [ARBITRUM_Bytes!]
+  to_contains: ARBITRUM_Bytes
+  to_not_contains: ARBITRUM_Bytes
+  liquidity: ARBITRUM_BigDecimal
+  liquidity_not: ARBITRUM_BigDecimal
+  liquidity_gt: ARBITRUM_BigDecimal
+  liquidity_lt: ARBITRUM_BigDecimal
+  liquidity_gte: ARBITRUM_BigDecimal
+  liquidity_lte: ARBITRUM_BigDecimal
+  liquidity_in: [ARBITRUM_BigDecimal!]
+  liquidity_not_in: [ARBITRUM_BigDecimal!]
+  sender: ARBITRUM_Bytes
+  sender_not: ARBITRUM_Bytes
+  sender_in: [ARBITRUM_Bytes!]
+  sender_not_in: [ARBITRUM_Bytes!]
+  sender_contains: ARBITRUM_Bytes
+  sender_not_contains: ARBITRUM_Bytes
+  amount0: ARBITRUM_BigDecimal
+  amount0_not: ARBITRUM_BigDecimal
+  amount0_gt: ARBITRUM_BigDecimal
+  amount0_lt: ARBITRUM_BigDecimal
+  amount0_gte: ARBITRUM_BigDecimal
+  amount0_lte: ARBITRUM_BigDecimal
+  amount0_in: [ARBITRUM_BigDecimal!]
+  amount0_not_in: [ARBITRUM_BigDecimal!]
+  amount1: ARBITRUM_BigDecimal
+  amount1_not: ARBITRUM_BigDecimal
+  amount1_gt: ARBITRUM_BigDecimal
+  amount1_lt: ARBITRUM_BigDecimal
+  amount1_gte: ARBITRUM_BigDecimal
+  amount1_lte: ARBITRUM_BigDecimal
+  amount1_in: [ARBITRUM_BigDecimal!]
+  amount1_not_in: [ARBITRUM_BigDecimal!]
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -952,31 +952,31 @@ input ETHEREUM_Mint_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: ARBITRUM_BigDecimal
+  amountUSD_not: ARBITRUM_BigDecimal
+  amountUSD_gt: ARBITRUM_BigDecimal
+  amountUSD_lt: ARBITRUM_BigDecimal
+  amountUSD_gte: ARBITRUM_BigDecimal
+  amountUSD_lte: ARBITRUM_BigDecimal
+  amountUSD_in: [ARBITRUM_BigDecimal!]
+  amountUSD_not_in: [ARBITRUM_BigDecimal!]
+  feeTo: ARBITRUM_Bytes
+  feeTo_not: ARBITRUM_Bytes
+  feeTo_in: [ARBITRUM_Bytes!]
+  feeTo_not_in: [ARBITRUM_Bytes!]
+  feeTo_contains: ARBITRUM_Bytes
+  feeTo_not_contains: ARBITRUM_Bytes
+  feeLiquidity: ARBITRUM_BigDecimal
+  feeLiquidity_not: ARBITRUM_BigDecimal
+  feeLiquidity_gt: ARBITRUM_BigDecimal
+  feeLiquidity_lt: ARBITRUM_BigDecimal
+  feeLiquidity_gte: ARBITRUM_BigDecimal
+  feeLiquidity_lte: ARBITRUM_BigDecimal
+  feeLiquidity_in: [ARBITRUM_BigDecimal!]
+  feeLiquidity_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_Mint_orderBy {
+enum ARBITRUM_Mint_orderBy {
   id
   transaction
   timestamp
@@ -993,59 +993,59 @@ enum ETHEREUM_Mint_orderBy {
 }
 
 """Defines the order direction, either ascending or descending"""
-enum ETHEREUM_OrderDirection {
+enum ARBITRUM_OrderDirection {
   asc
   desc
 }
 
-type ETHEREUM_Pair {
+type ARBITRUM_Pair {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: ARBITRUM_Factory!
   name: String!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveETH: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  trackedReserveETH: ETHEREUM_BigDecimal!
-  token0Price: ETHEREUM_BigDecimal!
-  token1Price: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  token0: ARBITRUM_Token!
+  token1: ARBITRUM_Token!
+  reserve0: ARBITRUM_BigDecimal!
+  reserve1: ARBITRUM_BigDecimal!
+  totalSupply: ARBITRUM_BigDecimal!
+  reserveETH: ARBITRUM_BigDecimal!
+  reserveUSD: ARBITRUM_BigDecimal!
+  trackedReserveETH: ARBITRUM_BigDecimal!
+  token0Price: ARBITRUM_BigDecimal!
+  token1Price: ARBITRUM_BigDecimal!
+  volumeToken0: ARBITRUM_BigDecimal!
+  volumeToken1: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
+  untrackedVolumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
   liquidityProviderCount: BigInt!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
-  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairHourData_filter): [ETHEREUM_PairHourData!]!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint!]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn!]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_LiquidityPosition_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_LiquidityPosition_filter): [ARBITRUM_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_LiquidityPositionSnapshot_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_LiquidityPositionSnapshot_filter): [ARBITRUM_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_PairDayData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_PairDayData_filter): [ARBITRUM_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_PairHourData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_PairHourData_filter): [ARBITRUM_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Mint_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Mint_filter): [ARBITRUM_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Burn_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Burn_filter): [ARBITRUM_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Swap_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Swap_filter): [ARBITRUM_Swap!]!
   timestamp: BigInt!
   block: BigInt!
 }
 
-type ETHEREUM_PairDayData {
+type ARBITRUM_PairDayData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: ARBITRUM_Pair!
+  token0: ARBITRUM_Token!
+  token1: ARBITRUM_Token!
+  reserve0: ARBITRUM_BigDecimal!
+  reserve1: ARBITRUM_BigDecimal!
+  totalSupply: ARBITRUM_BigDecimal!
+  reserveUSD: ARBITRUM_BigDecimal!
+  volumeToken0: ARBITRUM_BigDecimal!
+  volumeToken1: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairDayData_filter {
+input ARBITRUM_PairDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1122,62 +1122,62 @@ input ETHEREUM_PairDayData_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: ARBITRUM_BigDecimal
+  reserve0_not: ARBITRUM_BigDecimal
+  reserve0_gt: ARBITRUM_BigDecimal
+  reserve0_lt: ARBITRUM_BigDecimal
+  reserve0_gte: ARBITRUM_BigDecimal
+  reserve0_lte: ARBITRUM_BigDecimal
+  reserve0_in: [ARBITRUM_BigDecimal!]
+  reserve0_not_in: [ARBITRUM_BigDecimal!]
+  reserve1: ARBITRUM_BigDecimal
+  reserve1_not: ARBITRUM_BigDecimal
+  reserve1_gt: ARBITRUM_BigDecimal
+  reserve1_lt: ARBITRUM_BigDecimal
+  reserve1_gte: ARBITRUM_BigDecimal
+  reserve1_lte: ARBITRUM_BigDecimal
+  reserve1_in: [ARBITRUM_BigDecimal!]
+  reserve1_not_in: [ARBITRUM_BigDecimal!]
+  totalSupply: ARBITRUM_BigDecimal
+  totalSupply_not: ARBITRUM_BigDecimal
+  totalSupply_gt: ARBITRUM_BigDecimal
+  totalSupply_lt: ARBITRUM_BigDecimal
+  totalSupply_gte: ARBITRUM_BigDecimal
+  totalSupply_lte: ARBITRUM_BigDecimal
+  totalSupply_in: [ARBITRUM_BigDecimal!]
+  totalSupply_not_in: [ARBITRUM_BigDecimal!]
+  reserveUSD: ARBITRUM_BigDecimal
+  reserveUSD_not: ARBITRUM_BigDecimal
+  reserveUSD_gt: ARBITRUM_BigDecimal
+  reserveUSD_lt: ARBITRUM_BigDecimal
+  reserveUSD_gte: ARBITRUM_BigDecimal
+  reserveUSD_lte: ARBITRUM_BigDecimal
+  reserveUSD_in: [ARBITRUM_BigDecimal!]
+  reserveUSD_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken0: ARBITRUM_BigDecimal
+  volumeToken0_not: ARBITRUM_BigDecimal
+  volumeToken0_gt: ARBITRUM_BigDecimal
+  volumeToken0_lt: ARBITRUM_BigDecimal
+  volumeToken0_gte: ARBITRUM_BigDecimal
+  volumeToken0_lte: ARBITRUM_BigDecimal
+  volumeToken0_in: [ARBITRUM_BigDecimal!]
+  volumeToken0_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken1: ARBITRUM_BigDecimal
+  volumeToken1_not: ARBITRUM_BigDecimal
+  volumeToken1_gt: ARBITRUM_BigDecimal
+  volumeToken1_lt: ARBITRUM_BigDecimal
+  volumeToken1_gte: ARBITRUM_BigDecimal
+  volumeToken1_lte: ARBITRUM_BigDecimal
+  volumeToken1_in: [ARBITRUM_BigDecimal!]
+  volumeToken1_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1188,7 +1188,7 @@ input ETHEREUM_PairDayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairDayData_orderBy {
+enum ARBITRUM_PairDayData_orderBy {
   id
   date
   pair
@@ -1204,20 +1204,20 @@ enum ETHEREUM_PairDayData_orderBy {
   txCount
 }
 
-type ETHEREUM_PairHourData {
+type ARBITRUM_PairHourData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: ARBITRUM_Pair!
+  reserve0: ARBITRUM_BigDecimal!
+  reserve1: ARBITRUM_BigDecimal!
+  reserveUSD: ARBITRUM_BigDecimal!
+  volumeToken0: ARBITRUM_BigDecimal!
+  volumeToken1: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairHourData_filter {
+input ARBITRUM_PairHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1254,54 +1254,54 @@ input ETHEREUM_PairHourData_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: ARBITRUM_BigDecimal
+  reserve0_not: ARBITRUM_BigDecimal
+  reserve0_gt: ARBITRUM_BigDecimal
+  reserve0_lt: ARBITRUM_BigDecimal
+  reserve0_gte: ARBITRUM_BigDecimal
+  reserve0_lte: ARBITRUM_BigDecimal
+  reserve0_in: [ARBITRUM_BigDecimal!]
+  reserve0_not_in: [ARBITRUM_BigDecimal!]
+  reserve1: ARBITRUM_BigDecimal
+  reserve1_not: ARBITRUM_BigDecimal
+  reserve1_gt: ARBITRUM_BigDecimal
+  reserve1_lt: ARBITRUM_BigDecimal
+  reserve1_gte: ARBITRUM_BigDecimal
+  reserve1_lte: ARBITRUM_BigDecimal
+  reserve1_in: [ARBITRUM_BigDecimal!]
+  reserve1_not_in: [ARBITRUM_BigDecimal!]
+  reserveUSD: ARBITRUM_BigDecimal
+  reserveUSD_not: ARBITRUM_BigDecimal
+  reserveUSD_gt: ARBITRUM_BigDecimal
+  reserveUSD_lt: ARBITRUM_BigDecimal
+  reserveUSD_gte: ARBITRUM_BigDecimal
+  reserveUSD_lte: ARBITRUM_BigDecimal
+  reserveUSD_in: [ARBITRUM_BigDecimal!]
+  reserveUSD_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken0: ARBITRUM_BigDecimal
+  volumeToken0_not: ARBITRUM_BigDecimal
+  volumeToken0_gt: ARBITRUM_BigDecimal
+  volumeToken0_lt: ARBITRUM_BigDecimal
+  volumeToken0_gte: ARBITRUM_BigDecimal
+  volumeToken0_lte: ARBITRUM_BigDecimal
+  volumeToken0_in: [ARBITRUM_BigDecimal!]
+  volumeToken0_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken1: ARBITRUM_BigDecimal
+  volumeToken1_not: ARBITRUM_BigDecimal
+  volumeToken1_gt: ARBITRUM_BigDecimal
+  volumeToken1_lt: ARBITRUM_BigDecimal
+  volumeToken1_gte: ARBITRUM_BigDecimal
+  volumeToken1_lte: ARBITRUM_BigDecimal
+  volumeToken1_in: [ARBITRUM_BigDecimal!]
+  volumeToken1_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1312,7 +1312,7 @@ input ETHEREUM_PairHourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairHourData_orderBy {
+enum ARBITRUM_PairHourData_orderBy {
   id
   date
   pair
@@ -1325,7 +1325,7 @@ enum ETHEREUM_PairHourData_orderBy {
   txCount
 }
 
-input ETHEREUM_Pair_filter {
+input ARBITRUM_Pair_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1414,102 +1414,102 @@ input ETHEREUM_Pair_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveETH: ETHEREUM_BigDecimal
-  reserveETH_not: ETHEREUM_BigDecimal
-  reserveETH_gt: ETHEREUM_BigDecimal
-  reserveETH_lt: ETHEREUM_BigDecimal
-  reserveETH_gte: ETHEREUM_BigDecimal
-  reserveETH_lte: ETHEREUM_BigDecimal
-  reserveETH_in: [ETHEREUM_BigDecimal!]
-  reserveETH_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH: ETHEREUM_BigDecimal
-  trackedReserveETH_not: ETHEREUM_BigDecimal
-  trackedReserveETH_gt: ETHEREUM_BigDecimal
-  trackedReserveETH_lt: ETHEREUM_BigDecimal
-  trackedReserveETH_gte: ETHEREUM_BigDecimal
-  trackedReserveETH_lte: ETHEREUM_BigDecimal
-  trackedReserveETH_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH_not_in: [ETHEREUM_BigDecimal!]
-  token0Price: ETHEREUM_BigDecimal
-  token0Price_not: ETHEREUM_BigDecimal
-  token0Price_gt: ETHEREUM_BigDecimal
-  token0Price_lt: ETHEREUM_BigDecimal
-  token0Price_gte: ETHEREUM_BigDecimal
-  token0Price_lte: ETHEREUM_BigDecimal
-  token0Price_in: [ETHEREUM_BigDecimal!]
-  token0Price_not_in: [ETHEREUM_BigDecimal!]
-  token1Price: ETHEREUM_BigDecimal
-  token1Price_not: ETHEREUM_BigDecimal
-  token1Price_gt: ETHEREUM_BigDecimal
-  token1Price_lt: ETHEREUM_BigDecimal
-  token1Price_gte: ETHEREUM_BigDecimal
-  token1Price_lte: ETHEREUM_BigDecimal
-  token1Price_in: [ETHEREUM_BigDecimal!]
-  token1Price_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: ARBITRUM_BigDecimal
+  reserve0_not: ARBITRUM_BigDecimal
+  reserve0_gt: ARBITRUM_BigDecimal
+  reserve0_lt: ARBITRUM_BigDecimal
+  reserve0_gte: ARBITRUM_BigDecimal
+  reserve0_lte: ARBITRUM_BigDecimal
+  reserve0_in: [ARBITRUM_BigDecimal!]
+  reserve0_not_in: [ARBITRUM_BigDecimal!]
+  reserve1: ARBITRUM_BigDecimal
+  reserve1_not: ARBITRUM_BigDecimal
+  reserve1_gt: ARBITRUM_BigDecimal
+  reserve1_lt: ARBITRUM_BigDecimal
+  reserve1_gte: ARBITRUM_BigDecimal
+  reserve1_lte: ARBITRUM_BigDecimal
+  reserve1_in: [ARBITRUM_BigDecimal!]
+  reserve1_not_in: [ARBITRUM_BigDecimal!]
+  totalSupply: ARBITRUM_BigDecimal
+  totalSupply_not: ARBITRUM_BigDecimal
+  totalSupply_gt: ARBITRUM_BigDecimal
+  totalSupply_lt: ARBITRUM_BigDecimal
+  totalSupply_gte: ARBITRUM_BigDecimal
+  totalSupply_lte: ARBITRUM_BigDecimal
+  totalSupply_in: [ARBITRUM_BigDecimal!]
+  totalSupply_not_in: [ARBITRUM_BigDecimal!]
+  reserveETH: ARBITRUM_BigDecimal
+  reserveETH_not: ARBITRUM_BigDecimal
+  reserveETH_gt: ARBITRUM_BigDecimal
+  reserveETH_lt: ARBITRUM_BigDecimal
+  reserveETH_gte: ARBITRUM_BigDecimal
+  reserveETH_lte: ARBITRUM_BigDecimal
+  reserveETH_in: [ARBITRUM_BigDecimal!]
+  reserveETH_not_in: [ARBITRUM_BigDecimal!]
+  reserveUSD: ARBITRUM_BigDecimal
+  reserveUSD_not: ARBITRUM_BigDecimal
+  reserveUSD_gt: ARBITRUM_BigDecimal
+  reserveUSD_lt: ARBITRUM_BigDecimal
+  reserveUSD_gte: ARBITRUM_BigDecimal
+  reserveUSD_lte: ARBITRUM_BigDecimal
+  reserveUSD_in: [ARBITRUM_BigDecimal!]
+  reserveUSD_not_in: [ARBITRUM_BigDecimal!]
+  trackedReserveETH: ARBITRUM_BigDecimal
+  trackedReserveETH_not: ARBITRUM_BigDecimal
+  trackedReserveETH_gt: ARBITRUM_BigDecimal
+  trackedReserveETH_lt: ARBITRUM_BigDecimal
+  trackedReserveETH_gte: ARBITRUM_BigDecimal
+  trackedReserveETH_lte: ARBITRUM_BigDecimal
+  trackedReserveETH_in: [ARBITRUM_BigDecimal!]
+  trackedReserveETH_not_in: [ARBITRUM_BigDecimal!]
+  token0Price: ARBITRUM_BigDecimal
+  token0Price_not: ARBITRUM_BigDecimal
+  token0Price_gt: ARBITRUM_BigDecimal
+  token0Price_lt: ARBITRUM_BigDecimal
+  token0Price_gte: ARBITRUM_BigDecimal
+  token0Price_lte: ARBITRUM_BigDecimal
+  token0Price_in: [ARBITRUM_BigDecimal!]
+  token0Price_not_in: [ARBITRUM_BigDecimal!]
+  token1Price: ARBITRUM_BigDecimal
+  token1Price_not: ARBITRUM_BigDecimal
+  token1Price_gt: ARBITRUM_BigDecimal
+  token1Price_lt: ARBITRUM_BigDecimal
+  token1Price_gte: ARBITRUM_BigDecimal
+  token1Price_lte: ARBITRUM_BigDecimal
+  token1Price_in: [ARBITRUM_BigDecimal!]
+  token1Price_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken0: ARBITRUM_BigDecimal
+  volumeToken0_not: ARBITRUM_BigDecimal
+  volumeToken0_gt: ARBITRUM_BigDecimal
+  volumeToken0_lt: ARBITRUM_BigDecimal
+  volumeToken0_gte: ARBITRUM_BigDecimal
+  volumeToken0_lte: ARBITRUM_BigDecimal
+  volumeToken0_in: [ARBITRUM_BigDecimal!]
+  volumeToken0_not_in: [ARBITRUM_BigDecimal!]
+  volumeToken1: ARBITRUM_BigDecimal
+  volumeToken1_not: ARBITRUM_BigDecimal
+  volumeToken1_gt: ARBITRUM_BigDecimal
+  volumeToken1_lt: ARBITRUM_BigDecimal
+  volumeToken1_gte: ARBITRUM_BigDecimal
+  volumeToken1_lte: ARBITRUM_BigDecimal
+  volumeToken1_in: [ARBITRUM_BigDecimal!]
+  volumeToken1_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_not: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1544,7 +1544,7 @@ input ETHEREUM_Pair_filter {
   block_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Pair_orderBy {
+enum ARBITRUM_Pair_orderBy {
   id
   factory
   name
@@ -1576,954 +1576,915 @@ enum ETHEREUM_Pair_orderBy {
 }
 
 type Query {
-  ETHEREUM_user(
+  ARBITRUM_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): ARBITRUM_User
+  ARBITRUM_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: ARBITRUM_User_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [ARBITRUM_User!]!
+  ARBITRUM_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): ARBITRUM_Bundle
+  ARBITRUM_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: ARBITRUM_Bundle_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [ARBITRUM_Bundle!]!
+  ARBITRUM_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory @merge(keyField: "id", keyArg: "id")
-  ETHEREUM_factories(
+  ): ARBITRUM_Factory @merge(keyField: "id", keyArg: "id")
+  ARBITRUM_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: ARBITRUM_Factory_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [ARBITRUM_Factory!]!
+  ARBITRUM_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): ARBITRUM_HourData
+  ARBITRUM_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: ARBITRUM_HourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [ARBITRUM_HourData!]!
+  ARBITRUM_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): ARBITRUM_DayData
+  ARBITRUM_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: ARBITRUM_DayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [ARBITRUM_DayData!]!
+  ARBITRUM_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): ARBITRUM_Token
+  ARBITRUM_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: ARBITRUM_Token_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [ARBITRUM_Token!]!
+  ARBITRUM_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): ARBITRUM_TokenHourData
+  ARBITRUM_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: ARBITRUM_TokenHourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [ARBITRUM_TokenHourData!]!
+  ARBITRUM_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): ARBITRUM_TokenDayData
+  ARBITRUM_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: ARBITRUM_TokenDayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [ARBITRUM_TokenDayData!]!
+  ARBITRUM_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): ARBITRUM_Pair
+  ARBITRUM_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: ARBITRUM_Pair_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [ARBITRUM_Pair!]!
+  ARBITRUM_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): ARBITRUM_PairHourData
+  ARBITRUM_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: ARBITRUM_PairHourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [ARBITRUM_PairHourData!]!
+  ARBITRUM_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): ARBITRUM_PairDayData
+  ARBITRUM_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: ARBITRUM_PairDayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [ARBITRUM_PairDayData!]!
+  ARBITRUM_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): ARBITRUM_LiquidityPosition
+  ARBITRUM_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: ARBITRUM_LiquidityPosition_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [ARBITRUM_LiquidityPosition!]!
+  ARBITRUM_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): ARBITRUM_LiquidityPositionSnapshot
+  ARBITRUM_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: ARBITRUM_LiquidityPositionSnapshot_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [ARBITRUM_LiquidityPositionSnapshot!]!
+  ARBITRUM_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): ARBITRUM_Transaction
+  ARBITRUM_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: ARBITRUM_Transaction_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [ARBITRUM_Transaction!]!
+  ARBITRUM_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): ARBITRUM_Mint
+  ARBITRUM_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: ARBITRUM_Mint_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [ARBITRUM_Mint!]!
+  ARBITRUM_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): ARBITRUM_Burn
+  ARBITRUM_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: ARBITRUM_Burn_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [ARBITRUM_Burn!]!
+  ARBITRUM_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): ARBITRUM_Swap
+  ARBITRUM_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: ARBITRUM_Swap_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
-  ETHEREUM_tokenSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_pairSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_userSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
+  ): [ARBITRUM_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  ARBITRUM__meta(block: ARBITRUM_Block_height): ARBITRUM__Meta_
 }
 
 type Subscription {
-  ETHEREUM_user(
+  ARBITRUM_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): ARBITRUM_User
+  ARBITRUM_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: ARBITRUM_User_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [ARBITRUM_User!]!
+  ARBITRUM_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): ARBITRUM_Bundle
+  ARBITRUM_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: ARBITRUM_Bundle_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [ARBITRUM_Bundle!]!
+  ARBITRUM_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory
-  ETHEREUM_factories(
+  ): ARBITRUM_Factory
+  ARBITRUM_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: ARBITRUM_Factory_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [ARBITRUM_Factory!]!
+  ARBITRUM_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): ARBITRUM_HourData
+  ARBITRUM_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: ARBITRUM_HourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [ARBITRUM_HourData!]!
+  ARBITRUM_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): ARBITRUM_DayData
+  ARBITRUM_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: ARBITRUM_DayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [ARBITRUM_DayData!]!
+  ARBITRUM_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): ARBITRUM_Token
+  ARBITRUM_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: ARBITRUM_Token_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [ARBITRUM_Token!]!
+  ARBITRUM_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): ARBITRUM_TokenHourData
+  ARBITRUM_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: ARBITRUM_TokenHourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [ARBITRUM_TokenHourData!]!
+  ARBITRUM_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): ARBITRUM_TokenDayData
+  ARBITRUM_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: ARBITRUM_TokenDayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [ARBITRUM_TokenDayData!]!
+  ARBITRUM_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): ARBITRUM_Pair
+  ARBITRUM_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: ARBITRUM_Pair_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [ARBITRUM_Pair!]!
+  ARBITRUM_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): ARBITRUM_PairHourData
+  ARBITRUM_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: ARBITRUM_PairHourData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [ARBITRUM_PairHourData!]!
+  ARBITRUM_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): ARBITRUM_PairDayData
+  ARBITRUM_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: ARBITRUM_PairDayData_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [ARBITRUM_PairDayData!]!
+  ARBITRUM_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): ARBITRUM_LiquidityPosition
+  ARBITRUM_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: ARBITRUM_LiquidityPosition_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [ARBITRUM_LiquidityPosition!]!
+  ARBITRUM_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): ARBITRUM_LiquidityPositionSnapshot
+  ARBITRUM_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: ARBITRUM_LiquidityPositionSnapshot_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [ARBITRUM_LiquidityPositionSnapshot!]!
+  ARBITRUM_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): ARBITRUM_Transaction
+  ARBITRUM_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: ARBITRUM_Transaction_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [ARBITRUM_Transaction!]!
+  ARBITRUM_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): ARBITRUM_Mint
+  ARBITRUM_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: ARBITRUM_Mint_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [ARBITRUM_Mint!]!
+  ARBITRUM_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): ARBITRUM_Burn
+  ARBITRUM_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: ARBITRUM_Burn_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [ARBITRUM_Burn!]!
+  ARBITRUM_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): ARBITRUM_Swap
+  ARBITRUM_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: ARBITRUM_Swap_orderBy
+    orderDirection: ARBITRUM_OrderDirection
+    where: ARBITRUM_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: ARBITRUM_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
+  ): [ARBITRUM_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  ARBITRUM__meta(block: ARBITRUM_Block_height): ARBITRUM__Meta_
 }
 
-type ETHEREUM_Swap {
+type ARBITRUM_Swap {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: ARBITRUM_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  sender: ETHEREUM_Bytes!
-  amount0In: ETHEREUM_BigDecimal!
-  amount1In: ETHEREUM_BigDecimal!
-  amount0Out: ETHEREUM_BigDecimal!
-  amount1Out: ETHEREUM_BigDecimal!
-  to: ETHEREUM_Bytes!
+  pair: ARBITRUM_Pair!
+  sender: ARBITRUM_Bytes!
+  amount0In: ARBITRUM_BigDecimal!
+  amount1In: ARBITRUM_BigDecimal!
+  amount0Out: ARBITRUM_BigDecimal!
+  amount1Out: ARBITRUM_BigDecimal!
+  to: ARBITRUM_Bytes!
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal!
+  amountUSD: ARBITRUM_BigDecimal!
 }
 
-input ETHEREUM_Swap_filter {
+input ARBITRUM_Swap_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2580,50 +2541,50 @@ input ETHEREUM_Swap_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0In: ETHEREUM_BigDecimal
-  amount0In_not: ETHEREUM_BigDecimal
-  amount0In_gt: ETHEREUM_BigDecimal
-  amount0In_lt: ETHEREUM_BigDecimal
-  amount0In_gte: ETHEREUM_BigDecimal
-  amount0In_lte: ETHEREUM_BigDecimal
-  amount0In_in: [ETHEREUM_BigDecimal!]
-  amount0In_not_in: [ETHEREUM_BigDecimal!]
-  amount1In: ETHEREUM_BigDecimal
-  amount1In_not: ETHEREUM_BigDecimal
-  amount1In_gt: ETHEREUM_BigDecimal
-  amount1In_lt: ETHEREUM_BigDecimal
-  amount1In_gte: ETHEREUM_BigDecimal
-  amount1In_lte: ETHEREUM_BigDecimal
-  amount1In_in: [ETHEREUM_BigDecimal!]
-  amount1In_not_in: [ETHEREUM_BigDecimal!]
-  amount0Out: ETHEREUM_BigDecimal
-  amount0Out_not: ETHEREUM_BigDecimal
-  amount0Out_gt: ETHEREUM_BigDecimal
-  amount0Out_lt: ETHEREUM_BigDecimal
-  amount0Out_gte: ETHEREUM_BigDecimal
-  amount0Out_lte: ETHEREUM_BigDecimal
-  amount0Out_in: [ETHEREUM_BigDecimal!]
-  amount0Out_not_in: [ETHEREUM_BigDecimal!]
-  amount1Out: ETHEREUM_BigDecimal
-  amount1Out_not: ETHEREUM_BigDecimal
-  amount1Out_gt: ETHEREUM_BigDecimal
-  amount1Out_lt: ETHEREUM_BigDecimal
-  amount1Out_gte: ETHEREUM_BigDecimal
-  amount1Out_lte: ETHEREUM_BigDecimal
-  amount1Out_in: [ETHEREUM_BigDecimal!]
-  amount1Out_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  sender: ARBITRUM_Bytes
+  sender_not: ARBITRUM_Bytes
+  sender_in: [ARBITRUM_Bytes!]
+  sender_not_in: [ARBITRUM_Bytes!]
+  sender_contains: ARBITRUM_Bytes
+  sender_not_contains: ARBITRUM_Bytes
+  amount0In: ARBITRUM_BigDecimal
+  amount0In_not: ARBITRUM_BigDecimal
+  amount0In_gt: ARBITRUM_BigDecimal
+  amount0In_lt: ARBITRUM_BigDecimal
+  amount0In_gte: ARBITRUM_BigDecimal
+  amount0In_lte: ARBITRUM_BigDecimal
+  amount0In_in: [ARBITRUM_BigDecimal!]
+  amount0In_not_in: [ARBITRUM_BigDecimal!]
+  amount1In: ARBITRUM_BigDecimal
+  amount1In_not: ARBITRUM_BigDecimal
+  amount1In_gt: ARBITRUM_BigDecimal
+  amount1In_lt: ARBITRUM_BigDecimal
+  amount1In_gte: ARBITRUM_BigDecimal
+  amount1In_lte: ARBITRUM_BigDecimal
+  amount1In_in: [ARBITRUM_BigDecimal!]
+  amount1In_not_in: [ARBITRUM_BigDecimal!]
+  amount0Out: ARBITRUM_BigDecimal
+  amount0Out_not: ARBITRUM_BigDecimal
+  amount0Out_gt: ARBITRUM_BigDecimal
+  amount0Out_lt: ARBITRUM_BigDecimal
+  amount0Out_gte: ARBITRUM_BigDecimal
+  amount0Out_lte: ARBITRUM_BigDecimal
+  amount0Out_in: [ARBITRUM_BigDecimal!]
+  amount0Out_not_in: [ARBITRUM_BigDecimal!]
+  amount1Out: ARBITRUM_BigDecimal
+  amount1Out_not: ARBITRUM_BigDecimal
+  amount1Out_gt: ARBITRUM_BigDecimal
+  amount1Out_lt: ARBITRUM_BigDecimal
+  amount1Out_gte: ARBITRUM_BigDecimal
+  amount1Out_lte: ARBITRUM_BigDecimal
+  amount1Out_in: [ARBITRUM_BigDecimal!]
+  amount1Out_not_in: [ARBITRUM_BigDecimal!]
+  to: ARBITRUM_Bytes
+  to_not: ARBITRUM_Bytes
+  to_in: [ARBITRUM_Bytes!]
+  to_not_in: [ARBITRUM_Bytes!]
+  to_contains: ARBITRUM_Bytes
+  to_not_contains: ARBITRUM_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2632,17 +2593,17 @@ input ETHEREUM_Swap_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: ARBITRUM_BigDecimal
+  amountUSD_not: ARBITRUM_BigDecimal
+  amountUSD_gt: ARBITRUM_BigDecimal
+  amountUSD_lt: ARBITRUM_BigDecimal
+  amountUSD_gte: ARBITRUM_BigDecimal
+  amountUSD_lte: ARBITRUM_BigDecimal
+  amountUSD_in: [ARBITRUM_BigDecimal!]
+  amountUSD_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_Swap_orderBy {
+enum ARBITRUM_Swap_orderBy {
   id
   transaction
   timestamp
@@ -2657,42 +2618,43 @@ enum ETHEREUM_Swap_orderBy {
   amountUSD
 }
 
-type ETHEREUM_Token {
+type ARBITRUM_Token {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: ARBITRUM_Factory!
   symbol: String!
   name: String!
   decimals: BigInt!
   totalSupply: BigInt!
-  volume: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  volume: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
+  untrackedVolumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  derivedETH: ETHEREUM_BigDecimal!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenHourData_filter): [ETHEREUM_TokenHourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenDayData_filter): [ETHEREUM_TokenDayData!]!
-  basePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  liquidity: ARBITRUM_BigDecimal!
+  derivedETH: ARBITRUM_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Pair_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Pair_filter): [ARBITRUM_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_TokenHourData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_TokenHourData_filter): [ARBITRUM_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_TokenDayData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_TokenDayData_filter): [ARBITRUM_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Pair_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Pair_filter): [ARBITRUM_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Pair_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Pair_filter): [ARBITRUM_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_PairDayData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_PairDayData_filter): [ARBITRUM_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_PairDayData_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_PairDayData_filter): [ARBITRUM_PairDayData!]!
 }
 
-type ETHEREUM_TokenDayData {
+type ARBITRUM_TokenDayData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: ARBITRUM_Token!
+  volume: ARBITRUM_BigDecimal!
+  volumeETH: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: ARBITRUM_BigDecimal!
+  liquidityETH: ARBITRUM_BigDecimal!
+  liquidityUSD: ARBITRUM_BigDecimal!
+  priceUSD: ARBITRUM_BigDecimal!
 }
 
-input ETHEREUM_TokenDayData_filter {
+input ARBITRUM_TokenDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2729,30 +2691,30 @@ input ETHEREUM_TokenDayData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: ARBITRUM_BigDecimal
+  volume_not: ARBITRUM_BigDecimal
+  volume_gt: ARBITRUM_BigDecimal
+  volume_lt: ARBITRUM_BigDecimal
+  volume_gte: ARBITRUM_BigDecimal
+  volume_lte: ARBITRUM_BigDecimal
+  volume_in: [ARBITRUM_BigDecimal!]
+  volume_not_in: [ARBITRUM_BigDecimal!]
+  volumeETH: ARBITRUM_BigDecimal
+  volumeETH_not: ARBITRUM_BigDecimal
+  volumeETH_gt: ARBITRUM_BigDecimal
+  volumeETH_lt: ARBITRUM_BigDecimal
+  volumeETH_gte: ARBITRUM_BigDecimal
+  volumeETH_lte: ARBITRUM_BigDecimal
+  volumeETH_in: [ARBITRUM_BigDecimal!]
+  volumeETH_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2761,41 +2723,41 @@ input ETHEREUM_TokenDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: ARBITRUM_BigDecimal
+  liquidity_not: ARBITRUM_BigDecimal
+  liquidity_gt: ARBITRUM_BigDecimal
+  liquidity_lt: ARBITRUM_BigDecimal
+  liquidity_gte: ARBITRUM_BigDecimal
+  liquidity_lte: ARBITRUM_BigDecimal
+  liquidity_in: [ARBITRUM_BigDecimal!]
+  liquidity_not_in: [ARBITRUM_BigDecimal!]
+  liquidityETH: ARBITRUM_BigDecimal
+  liquidityETH_not: ARBITRUM_BigDecimal
+  liquidityETH_gt: ARBITRUM_BigDecimal
+  liquidityETH_lt: ARBITRUM_BigDecimal
+  liquidityETH_gte: ARBITRUM_BigDecimal
+  liquidityETH_lte: ARBITRUM_BigDecimal
+  liquidityETH_in: [ARBITRUM_BigDecimal!]
+  liquidityETH_not_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD: ARBITRUM_BigDecimal
+  liquidityUSD_not: ARBITRUM_BigDecimal
+  liquidityUSD_gt: ARBITRUM_BigDecimal
+  liquidityUSD_lt: ARBITRUM_BigDecimal
+  liquidityUSD_gte: ARBITRUM_BigDecimal
+  liquidityUSD_lte: ARBITRUM_BigDecimal
+  liquidityUSD_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD_not_in: [ARBITRUM_BigDecimal!]
+  priceUSD: ARBITRUM_BigDecimal
+  priceUSD_not: ARBITRUM_BigDecimal
+  priceUSD_gt: ARBITRUM_BigDecimal
+  priceUSD_lt: ARBITRUM_BigDecimal
+  priceUSD_gte: ARBITRUM_BigDecimal
+  priceUSD_lte: ARBITRUM_BigDecimal
+  priceUSD_in: [ARBITRUM_BigDecimal!]
+  priceUSD_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_TokenDayData_orderBy {
+enum ARBITRUM_TokenDayData_orderBy {
   id
   date
   token
@@ -2809,21 +2771,21 @@ enum ETHEREUM_TokenDayData_orderBy {
   priceUSD
 }
 
-type ETHEREUM_TokenHourData {
+type ARBITRUM_TokenHourData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: ARBITRUM_Token!
+  volume: ARBITRUM_BigDecimal!
+  volumeETH: ARBITRUM_BigDecimal!
+  volumeUSD: ARBITRUM_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: ARBITRUM_BigDecimal!
+  liquidityETH: ARBITRUM_BigDecimal!
+  liquidityUSD: ARBITRUM_BigDecimal!
+  priceUSD: ARBITRUM_BigDecimal!
 }
 
-input ETHEREUM_TokenHourData_filter {
+input ARBITRUM_TokenHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2860,30 +2822,30 @@ input ETHEREUM_TokenHourData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: ARBITRUM_BigDecimal
+  volume_not: ARBITRUM_BigDecimal
+  volume_gt: ARBITRUM_BigDecimal
+  volume_lt: ARBITRUM_BigDecimal
+  volume_gte: ARBITRUM_BigDecimal
+  volume_lte: ARBITRUM_BigDecimal
+  volume_in: [ARBITRUM_BigDecimal!]
+  volume_not_in: [ARBITRUM_BigDecimal!]
+  volumeETH: ARBITRUM_BigDecimal
+  volumeETH_not: ARBITRUM_BigDecimal
+  volumeETH_gt: ARBITRUM_BigDecimal
+  volumeETH_lt: ARBITRUM_BigDecimal
+  volumeETH_gte: ARBITRUM_BigDecimal
+  volumeETH_lte: ARBITRUM_BigDecimal
+  volumeETH_in: [ARBITRUM_BigDecimal!]
+  volumeETH_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2892,41 +2854,41 @@ input ETHEREUM_TokenHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: ARBITRUM_BigDecimal
+  liquidity_not: ARBITRUM_BigDecimal
+  liquidity_gt: ARBITRUM_BigDecimal
+  liquidity_lt: ARBITRUM_BigDecimal
+  liquidity_gte: ARBITRUM_BigDecimal
+  liquidity_lte: ARBITRUM_BigDecimal
+  liquidity_in: [ARBITRUM_BigDecimal!]
+  liquidity_not_in: [ARBITRUM_BigDecimal!]
+  liquidityETH: ARBITRUM_BigDecimal
+  liquidityETH_not: ARBITRUM_BigDecimal
+  liquidityETH_gt: ARBITRUM_BigDecimal
+  liquidityETH_lt: ARBITRUM_BigDecimal
+  liquidityETH_gte: ARBITRUM_BigDecimal
+  liquidityETH_lte: ARBITRUM_BigDecimal
+  liquidityETH_in: [ARBITRUM_BigDecimal!]
+  liquidityETH_not_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD: ARBITRUM_BigDecimal
+  liquidityUSD_not: ARBITRUM_BigDecimal
+  liquidityUSD_gt: ARBITRUM_BigDecimal
+  liquidityUSD_lt: ARBITRUM_BigDecimal
+  liquidityUSD_gte: ARBITRUM_BigDecimal
+  liquidityUSD_lte: ARBITRUM_BigDecimal
+  liquidityUSD_in: [ARBITRUM_BigDecimal!]
+  liquidityUSD_not_in: [ARBITRUM_BigDecimal!]
+  priceUSD: ARBITRUM_BigDecimal
+  priceUSD_not: ARBITRUM_BigDecimal
+  priceUSD_gt: ARBITRUM_BigDecimal
+  priceUSD_lt: ARBITRUM_BigDecimal
+  priceUSD_gte: ARBITRUM_BigDecimal
+  priceUSD_lte: ARBITRUM_BigDecimal
+  priceUSD_in: [ARBITRUM_BigDecimal!]
+  priceUSD_not_in: [ARBITRUM_BigDecimal!]
 }
 
-enum ETHEREUM_TokenHourData_orderBy {
+enum ARBITRUM_TokenHourData_orderBy {
   id
   date
   token
@@ -2940,7 +2902,7 @@ enum ETHEREUM_TokenHourData_orderBy {
   priceUSD
 }
 
-input ETHEREUM_Token_filter {
+input ARBITRUM_Token_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3025,30 +2987,30 @@ input ETHEREUM_Token_filter {
   totalSupply_lte: BigInt
   totalSupply_in: [BigInt!]
   totalSupply_not_in: [BigInt!]
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: ARBITRUM_BigDecimal
+  volume_not: ARBITRUM_BigDecimal
+  volume_gt: ARBITRUM_BigDecimal
+  volume_lt: ARBITRUM_BigDecimal
+  volume_gte: ARBITRUM_BigDecimal
+  volume_lte: ARBITRUM_BigDecimal
+  volume_in: [ARBITRUM_BigDecimal!]
+  volume_not_in: [ARBITRUM_BigDecimal!]
+  volumeUSD: ARBITRUM_BigDecimal
+  volumeUSD_not: ARBITRUM_BigDecimal
+  volumeUSD_gt: ARBITRUM_BigDecimal
+  volumeUSD_lt: ARBITRUM_BigDecimal
+  volumeUSD_gte: ARBITRUM_BigDecimal
+  volumeUSD_lte: ARBITRUM_BigDecimal
+  volumeUSD_in: [ARBITRUM_BigDecimal!]
+  volumeUSD_not_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_not: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lt: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_gte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_lte: ARBITRUM_BigDecimal
+  untrackedVolumeUSD_in: [ARBITRUM_BigDecimal!]
+  untrackedVolumeUSD_not_in: [ARBITRUM_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -3057,25 +3019,31 @@ input ETHEREUM_Token_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  derivedETH: ETHEREUM_BigDecimal
-  derivedETH_not: ETHEREUM_BigDecimal
-  derivedETH_gt: ETHEREUM_BigDecimal
-  derivedETH_lt: ETHEREUM_BigDecimal
-  derivedETH_gte: ETHEREUM_BigDecimal
-  derivedETH_lte: ETHEREUM_BigDecimal
-  derivedETH_in: [ETHEREUM_BigDecimal!]
-  derivedETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: ARBITRUM_BigDecimal
+  liquidity_not: ARBITRUM_BigDecimal
+  liquidity_gt: ARBITRUM_BigDecimal
+  liquidity_lt: ARBITRUM_BigDecimal
+  liquidity_gte: ARBITRUM_BigDecimal
+  liquidity_lte: ARBITRUM_BigDecimal
+  liquidity_in: [ARBITRUM_BigDecimal!]
+  liquidity_not_in: [ARBITRUM_BigDecimal!]
+  derivedETH: ARBITRUM_BigDecimal
+  derivedETH_not: ARBITRUM_BigDecimal
+  derivedETH_gt: ARBITRUM_BigDecimal
+  derivedETH_lt: ARBITRUM_BigDecimal
+  derivedETH_gte: ARBITRUM_BigDecimal
+  derivedETH_lte: ARBITRUM_BigDecimal
+  derivedETH_in: [ARBITRUM_BigDecimal!]
+  derivedETH_not_in: [ARBITRUM_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Token_orderBy {
+enum ARBITRUM_Token_orderBy {
   id
   factory
   symbol
@@ -3088,6 +3056,7 @@ enum ETHEREUM_Token_orderBy {
   txCount
   liquidity
   derivedETH
+  whitelistPairs
   hourData
   dayData
   basePairs
@@ -3096,16 +3065,16 @@ enum ETHEREUM_Token_orderBy {
   quotePairsDayData
 }
 
-type ETHEREUM_Transaction {
+type ARBITRUM_Transaction {
   id: ID!
   blockNumber: BigInt!
   timestamp: BigInt!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Mint_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Mint_filter): [ARBITRUM_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Burn_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Burn_filter): [ARBITRUM_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_Swap_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_Swap_filter): [ARBITRUM_Swap]!
 }
 
-input ETHEREUM_Transaction_filter {
+input ARBITRUM_Transaction_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3150,7 +3119,7 @@ input ETHEREUM_Transaction_filter {
   swaps_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Transaction_orderBy {
+enum ARBITRUM_Transaction_orderBy {
   id
   blockNumber
   timestamp
@@ -3159,12 +3128,12 @@ enum ETHEREUM_Transaction_orderBy {
   swaps
 }
 
-type ETHEREUM_User {
+type ARBITRUM_User {
   id: ID!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ARBITRUM_LiquidityPosition_orderBy, orderDirection: ARBITRUM_OrderDirection, where: ARBITRUM_LiquidityPosition_filter): [ARBITRUM_LiquidityPosition!]!
 }
 
-input ETHEREUM_User_filter {
+input ARBITRUM_User_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3175,20 +3144,20 @@ input ETHEREUM_User_filter {
   id_not_in: [ID!]
 }
 
-enum ETHEREUM_User_orderBy {
+enum ARBITRUM_User_orderBy {
   id
   liquidityPositions
 }
 
-type ETHEREUM__Block_ {
+type ARBITRUM__Block_ {
   """The hash of the block"""
-  hash: ETHEREUM_Bytes
+  hash: ARBITRUM_Bytes
   """The block number"""
   number: Int!
 }
 
 """The type for the top-level _meta field"""
-type ETHEREUM__Meta_ {
+type ARBITRUM__Meta_ {
   """
   Information about a specific subgraph block. The hash of the block
   will be null if the _meta field has a block constraint that asks for
@@ -3196,7 +3165,7 @@ type ETHEREUM__Meta_ {
   and therefore asks for the latest  block
   
   """
-  block: ETHEREUM__Block_!
+  block: ARBITRUM__Block_!
   """The deployment ID"""
   deployment: String!
   """If `true`, the subgraph encountered indexing errors at some past block"""

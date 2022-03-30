@@ -12,14 +12,14 @@ directive @subgraphId(id: String!) on OBJECT
 "creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
-scalar ETHEREUM_BigDecimal
+scalar XDAI_BigDecimal
 
 scalar BigInt
 
 """The block at which the query should be executed."""
-input ETHEREUM_Block_height {
+input XDAI_Block_height {
   """Value containing a block hash"""
-  hash: ETHEREUM_Bytes
+  hash: XDAI_Bytes
   """Value containing a block number"""
   number: Int
   """
@@ -32,12 +32,12 @@ input ETHEREUM_Block_height {
   number_gte: Int
 }
 
-type ETHEREUM_Bundle {
+type XDAI_Bundle {
   id: ID!
-  ethPrice: ETHEREUM_BigDecimal!
+  ethPrice: XDAI_BigDecimal!
 }
 
-input ETHEREUM_Bundle_filter {
+input XDAI_Bundle_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -46,39 +46,39 @@ input ETHEREUM_Bundle_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
-  ethPrice: ETHEREUM_BigDecimal
-  ethPrice_not: ETHEREUM_BigDecimal
-  ethPrice_gt: ETHEREUM_BigDecimal
-  ethPrice_lt: ETHEREUM_BigDecimal
-  ethPrice_gte: ETHEREUM_BigDecimal
-  ethPrice_lte: ETHEREUM_BigDecimal
-  ethPrice_in: [ETHEREUM_BigDecimal!]
-  ethPrice_not_in: [ETHEREUM_BigDecimal!]
+  ethPrice: XDAI_BigDecimal
+  ethPrice_not: XDAI_BigDecimal
+  ethPrice_gt: XDAI_BigDecimal
+  ethPrice_lt: XDAI_BigDecimal
+  ethPrice_gte: XDAI_BigDecimal
+  ethPrice_lte: XDAI_BigDecimal
+  ethPrice_in: [XDAI_BigDecimal!]
+  ethPrice_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_Bundle_orderBy {
+enum XDAI_Bundle_orderBy {
   id
   ethPrice
 }
 
-type ETHEREUM_Burn {
+type XDAI_Burn {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: XDAI_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
-  to: ETHEREUM_Bytes
+  pair: XDAI_Pair!
+  liquidity: XDAI_BigDecimal!
+  sender: XDAI_Bytes
+  amount0: XDAI_BigDecimal
+  amount1: XDAI_BigDecimal
+  to: XDAI_Bytes
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
+  amountUSD: XDAI_BigDecimal
   complete: Boolean!
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  feeTo: XDAI_Bytes
+  feeLiquidity: XDAI_BigDecimal
 }
 
-input ETHEREUM_Burn_filter {
+input XDAI_Burn_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -135,42 +135,42 @@ input ETHEREUM_Burn_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  liquidity: XDAI_BigDecimal
+  liquidity_not: XDAI_BigDecimal
+  liquidity_gt: XDAI_BigDecimal
+  liquidity_lt: XDAI_BigDecimal
+  liquidity_gte: XDAI_BigDecimal
+  liquidity_lte: XDAI_BigDecimal
+  liquidity_in: [XDAI_BigDecimal!]
+  liquidity_not_in: [XDAI_BigDecimal!]
+  sender: XDAI_Bytes
+  sender_not: XDAI_Bytes
+  sender_in: [XDAI_Bytes!]
+  sender_not_in: [XDAI_Bytes!]
+  sender_contains: XDAI_Bytes
+  sender_not_contains: XDAI_Bytes
+  amount0: XDAI_BigDecimal
+  amount0_not: XDAI_BigDecimal
+  amount0_gt: XDAI_BigDecimal
+  amount0_lt: XDAI_BigDecimal
+  amount0_gte: XDAI_BigDecimal
+  amount0_lte: XDAI_BigDecimal
+  amount0_in: [XDAI_BigDecimal!]
+  amount0_not_in: [XDAI_BigDecimal!]
+  amount1: XDAI_BigDecimal
+  amount1_not: XDAI_BigDecimal
+  amount1_gt: XDAI_BigDecimal
+  amount1_lt: XDAI_BigDecimal
+  amount1_gte: XDAI_BigDecimal
+  amount1_lte: XDAI_BigDecimal
+  amount1_in: [XDAI_BigDecimal!]
+  amount1_not_in: [XDAI_BigDecimal!]
+  to: XDAI_Bytes
+  to_not: XDAI_Bytes
+  to_in: [XDAI_Bytes!]
+  to_not_in: [XDAI_Bytes!]
+  to_contains: XDAI_Bytes
+  to_not_contains: XDAI_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -179,35 +179,35 @@ input ETHEREUM_Burn_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: XDAI_BigDecimal
+  amountUSD_not: XDAI_BigDecimal
+  amountUSD_gt: XDAI_BigDecimal
+  amountUSD_lt: XDAI_BigDecimal
+  amountUSD_gte: XDAI_BigDecimal
+  amountUSD_lte: XDAI_BigDecimal
+  amountUSD_in: [XDAI_BigDecimal!]
+  amountUSD_not_in: [XDAI_BigDecimal!]
   complete: Boolean
   complete_not: Boolean
   complete_in: [Boolean!]
   complete_not_in: [Boolean!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  feeTo: XDAI_Bytes
+  feeTo_not: XDAI_Bytes
+  feeTo_in: [XDAI_Bytes!]
+  feeTo_not_in: [XDAI_Bytes!]
+  feeTo_contains: XDAI_Bytes
+  feeTo_not_contains: XDAI_Bytes
+  feeLiquidity: XDAI_BigDecimal
+  feeLiquidity_not: XDAI_BigDecimal
+  feeLiquidity_gt: XDAI_BigDecimal
+  feeLiquidity_lt: XDAI_BigDecimal
+  feeLiquidity_gte: XDAI_BigDecimal
+  feeLiquidity_lte: XDAI_BigDecimal
+  feeLiquidity_in: [XDAI_BigDecimal!]
+  feeLiquidity_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_Burn_orderBy {
+enum XDAI_Burn_orderBy {
   id
   transaction
   timestamp
@@ -224,21 +224,21 @@ enum ETHEREUM_Burn_orderBy {
   feeLiquidity
 }
 
-scalar ETHEREUM_Bytes
+scalar XDAI_Bytes
 
-type ETHEREUM_DayData {
+type XDAI_DayData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: XDAI_Factory!
+  volumeETH: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
+  untrackedVolume: XDAI_BigDecimal!
+  liquidityETH: XDAI_BigDecimal!
+  liquidityUSD: XDAI_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_DayData_filter {
+input XDAI_DayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -275,46 +275,46 @@ input ETHEREUM_DayData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: XDAI_BigDecimal
+  volumeETH_not: XDAI_BigDecimal
+  volumeETH_gt: XDAI_BigDecimal
+  volumeETH_lt: XDAI_BigDecimal
+  volumeETH_gte: XDAI_BigDecimal
+  volumeETH_lte: XDAI_BigDecimal
+  volumeETH_in: [XDAI_BigDecimal!]
+  volumeETH_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
+  untrackedVolume: XDAI_BigDecimal
+  untrackedVolume_not: XDAI_BigDecimal
+  untrackedVolume_gt: XDAI_BigDecimal
+  untrackedVolume_lt: XDAI_BigDecimal
+  untrackedVolume_gte: XDAI_BigDecimal
+  untrackedVolume_lte: XDAI_BigDecimal
+  untrackedVolume_in: [XDAI_BigDecimal!]
+  untrackedVolume_not_in: [XDAI_BigDecimal!]
+  liquidityETH: XDAI_BigDecimal
+  liquidityETH_not: XDAI_BigDecimal
+  liquidityETH_gt: XDAI_BigDecimal
+  liquidityETH_lt: XDAI_BigDecimal
+  liquidityETH_gte: XDAI_BigDecimal
+  liquidityETH_lte: XDAI_BigDecimal
+  liquidityETH_in: [XDAI_BigDecimal!]
+  liquidityETH_not_in: [XDAI_BigDecimal!]
+  liquidityUSD: XDAI_BigDecimal
+  liquidityUSD_not: XDAI_BigDecimal
+  liquidityUSD_gt: XDAI_BigDecimal
+  liquidityUSD_lt: XDAI_BigDecimal
+  liquidityUSD_gte: XDAI_BigDecimal
+  liquidityUSD_lte: XDAI_BigDecimal
+  liquidityUSD_in: [XDAI_BigDecimal!]
+  liquidityUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -325,7 +325,7 @@ input ETHEREUM_DayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_DayData_orderBy {
+enum XDAI_DayData_orderBy {
   id
   date
   factory
@@ -337,24 +337,24 @@ enum ETHEREUM_DayData_orderBy {
   txCount
 }
 
-type ETHEREUM_Factory {
+type XDAI_Factory {
   id: ID!
   pairCount: BigInt!
-  volumeUSD: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
+  volumeETH: XDAI_BigDecimal!
+  untrackedVolumeUSD: XDAI_BigDecimal!
+  liquidityUSD: XDAI_BigDecimal!
+  liquidityETH: XDAI_BigDecimal!
   txCount: BigInt!
   tokenCount: BigInt!
   userCount: BigInt!
-  pairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  tokens(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Token_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Token_filter): [ETHEREUM_Token!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_HourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_HourData_filter): [ETHEREUM_HourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_DayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_DayData_filter): [ETHEREUM_DayData!]!
+  pairs(skip: Int = 0, first: Int = 100, orderBy: XDAI_Pair_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Pair_filter): [XDAI_Pair!]!
+  tokens(skip: Int = 0, first: Int = 100, orderBy: XDAI_Token_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Token_filter): [XDAI_Token!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: XDAI_HourData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_HourData_filter): [XDAI_HourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: XDAI_DayData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_DayData_filter): [XDAI_DayData!]!
 }
 
-input ETHEREUM_Factory_filter {
+input XDAI_Factory_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -371,46 +371,46 @@ input ETHEREUM_Factory_filter {
   pairCount_lte: BigInt
   pairCount_in: [BigInt!]
   pairCount_not_in: [BigInt!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
+  volumeETH: XDAI_BigDecimal
+  volumeETH_not: XDAI_BigDecimal
+  volumeETH_gt: XDAI_BigDecimal
+  volumeETH_lt: XDAI_BigDecimal
+  volumeETH_gte: XDAI_BigDecimal
+  volumeETH_lte: XDAI_BigDecimal
+  volumeETH_in: [XDAI_BigDecimal!]
+  volumeETH_not_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD: XDAI_BigDecimal
+  untrackedVolumeUSD_not: XDAI_BigDecimal
+  untrackedVolumeUSD_gt: XDAI_BigDecimal
+  untrackedVolumeUSD_lt: XDAI_BigDecimal
+  untrackedVolumeUSD_gte: XDAI_BigDecimal
+  untrackedVolumeUSD_lte: XDAI_BigDecimal
+  untrackedVolumeUSD_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD_not_in: [XDAI_BigDecimal!]
+  liquidityUSD: XDAI_BigDecimal
+  liquidityUSD_not: XDAI_BigDecimal
+  liquidityUSD_gt: XDAI_BigDecimal
+  liquidityUSD_lt: XDAI_BigDecimal
+  liquidityUSD_gte: XDAI_BigDecimal
+  liquidityUSD_lte: XDAI_BigDecimal
+  liquidityUSD_in: [XDAI_BigDecimal!]
+  liquidityUSD_not_in: [XDAI_BigDecimal!]
+  liquidityETH: XDAI_BigDecimal
+  liquidityETH_not: XDAI_BigDecimal
+  liquidityETH_gt: XDAI_BigDecimal
+  liquidityETH_lt: XDAI_BigDecimal
+  liquidityETH_gte: XDAI_BigDecimal
+  liquidityETH_lte: XDAI_BigDecimal
+  liquidityETH_in: [XDAI_BigDecimal!]
+  liquidityETH_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -437,7 +437,7 @@ input ETHEREUM_Factory_filter {
   userCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Factory_orderBy {
+enum XDAI_Factory_orderBy {
   id
   pairCount
   volumeUSD
@@ -454,19 +454,19 @@ enum ETHEREUM_Factory_orderBy {
   dayData
 }
 
-type ETHEREUM_HourData {
+type XDAI_HourData {
   id: ID!
   date: Int!
-  factory: ETHEREUM_Factory!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolume: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
+  factory: XDAI_Factory!
+  volumeETH: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
+  untrackedVolume: XDAI_BigDecimal!
+  liquidityETH: XDAI_BigDecimal!
+  liquidityUSD: XDAI_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_HourData_filter {
+input XDAI_HourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -503,46 +503,46 @@ input ETHEREUM_HourData_filter {
   factory_ends_with_nocase: String
   factory_not_ends_with: String
   factory_not_ends_with_nocase: String
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume: ETHEREUM_BigDecimal
-  untrackedVolume_not: ETHEREUM_BigDecimal
-  untrackedVolume_gt: ETHEREUM_BigDecimal
-  untrackedVolume_lt: ETHEREUM_BigDecimal
-  untrackedVolume_gte: ETHEREUM_BigDecimal
-  untrackedVolume_lte: ETHEREUM_BigDecimal
-  untrackedVolume_in: [ETHEREUM_BigDecimal!]
-  untrackedVolume_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
+  volumeETH: XDAI_BigDecimal
+  volumeETH_not: XDAI_BigDecimal
+  volumeETH_gt: XDAI_BigDecimal
+  volumeETH_lt: XDAI_BigDecimal
+  volumeETH_gte: XDAI_BigDecimal
+  volumeETH_lte: XDAI_BigDecimal
+  volumeETH_in: [XDAI_BigDecimal!]
+  volumeETH_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
+  untrackedVolume: XDAI_BigDecimal
+  untrackedVolume_not: XDAI_BigDecimal
+  untrackedVolume_gt: XDAI_BigDecimal
+  untrackedVolume_lt: XDAI_BigDecimal
+  untrackedVolume_gte: XDAI_BigDecimal
+  untrackedVolume_lte: XDAI_BigDecimal
+  untrackedVolume_in: [XDAI_BigDecimal!]
+  untrackedVolume_not_in: [XDAI_BigDecimal!]
+  liquidityETH: XDAI_BigDecimal
+  liquidityETH_not: XDAI_BigDecimal
+  liquidityETH_gt: XDAI_BigDecimal
+  liquidityETH_lt: XDAI_BigDecimal
+  liquidityETH_gte: XDAI_BigDecimal
+  liquidityETH_lte: XDAI_BigDecimal
+  liquidityETH_in: [XDAI_BigDecimal!]
+  liquidityETH_not_in: [XDAI_BigDecimal!]
+  liquidityUSD: XDAI_BigDecimal
+  liquidityUSD_not: XDAI_BigDecimal
+  liquidityUSD_gt: XDAI_BigDecimal
+  liquidityUSD_lt: XDAI_BigDecimal
+  liquidityUSD_gte: XDAI_BigDecimal
+  liquidityUSD_lte: XDAI_BigDecimal
+  liquidityUSD_in: [XDAI_BigDecimal!]
+  liquidityUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -553,7 +553,7 @@ input ETHEREUM_HourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_HourData_orderBy {
+enum XDAI_HourData_orderBy {
   id
   date
   factory
@@ -565,33 +565,33 @@ enum ETHEREUM_HourData_orderBy {
   txCount
 }
 
-type ETHEREUM_LiquidityPosition {
+type XDAI_LiquidityPosition {
   id: ID!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
-  snapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot]!
+  user: XDAI_User!
+  pair: XDAI_Pair!
+  liquidityTokenBalance: XDAI_BigDecimal!
+  snapshots(skip: Int = 0, first: Int = 100, orderBy: XDAI_LiquidityPositionSnapshot_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_LiquidityPositionSnapshot_filter): [XDAI_LiquidityPositionSnapshot]!
   block: Int!
   timestamp: Int!
 }
 
-type ETHEREUM_LiquidityPositionSnapshot {
+type XDAI_LiquidityPositionSnapshot {
   id: ID!
-  liquidityPosition: ETHEREUM_LiquidityPosition!
+  liquidityPosition: XDAI_LiquidityPosition!
   timestamp: Int!
   block: Int!
-  user: ETHEREUM_User!
-  pair: ETHEREUM_Pair!
-  token0PriceUSD: ETHEREUM_BigDecimal!
-  token1PriceUSD: ETHEREUM_BigDecimal!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal!
-  liquidityTokenBalance: ETHEREUM_BigDecimal!
+  user: XDAI_User!
+  pair: XDAI_Pair!
+  token0PriceUSD: XDAI_BigDecimal!
+  token1PriceUSD: XDAI_BigDecimal!
+  reserve0: XDAI_BigDecimal!
+  reserve1: XDAI_BigDecimal!
+  reserveUSD: XDAI_BigDecimal!
+  liquidityTokenTotalSupply: XDAI_BigDecimal!
+  liquidityTokenBalance: XDAI_BigDecimal!
 }
 
-input ETHEREUM_LiquidityPositionSnapshot_filter {
+input XDAI_LiquidityPositionSnapshot_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -676,65 +676,65 @@ input ETHEREUM_LiquidityPositionSnapshot_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  token0PriceUSD: ETHEREUM_BigDecimal
-  token0PriceUSD_not: ETHEREUM_BigDecimal
-  token0PriceUSD_gt: ETHEREUM_BigDecimal
-  token0PriceUSD_lt: ETHEREUM_BigDecimal
-  token0PriceUSD_gte: ETHEREUM_BigDecimal
-  token0PriceUSD_lte: ETHEREUM_BigDecimal
-  token0PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token0PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD: ETHEREUM_BigDecimal
-  token1PriceUSD_not: ETHEREUM_BigDecimal
-  token1PriceUSD_gt: ETHEREUM_BigDecimal
-  token1PriceUSD_lt: ETHEREUM_BigDecimal
-  token1PriceUSD_gte: ETHEREUM_BigDecimal
-  token1PriceUSD_lte: ETHEREUM_BigDecimal
-  token1PriceUSD_in: [ETHEREUM_BigDecimal!]
-  token1PriceUSD_not_in: [ETHEREUM_BigDecimal!]
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_not: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lt: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_gte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_lte: ETHEREUM_BigDecimal
-  liquidityTokenTotalSupply_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenTotalSupply_not_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  token0PriceUSD: XDAI_BigDecimal
+  token0PriceUSD_not: XDAI_BigDecimal
+  token0PriceUSD_gt: XDAI_BigDecimal
+  token0PriceUSD_lt: XDAI_BigDecimal
+  token0PriceUSD_gte: XDAI_BigDecimal
+  token0PriceUSD_lte: XDAI_BigDecimal
+  token0PriceUSD_in: [XDAI_BigDecimal!]
+  token0PriceUSD_not_in: [XDAI_BigDecimal!]
+  token1PriceUSD: XDAI_BigDecimal
+  token1PriceUSD_not: XDAI_BigDecimal
+  token1PriceUSD_gt: XDAI_BigDecimal
+  token1PriceUSD_lt: XDAI_BigDecimal
+  token1PriceUSD_gte: XDAI_BigDecimal
+  token1PriceUSD_lte: XDAI_BigDecimal
+  token1PriceUSD_in: [XDAI_BigDecimal!]
+  token1PriceUSD_not_in: [XDAI_BigDecimal!]
+  reserve0: XDAI_BigDecimal
+  reserve0_not: XDAI_BigDecimal
+  reserve0_gt: XDAI_BigDecimal
+  reserve0_lt: XDAI_BigDecimal
+  reserve0_gte: XDAI_BigDecimal
+  reserve0_lte: XDAI_BigDecimal
+  reserve0_in: [XDAI_BigDecimal!]
+  reserve0_not_in: [XDAI_BigDecimal!]
+  reserve1: XDAI_BigDecimal
+  reserve1_not: XDAI_BigDecimal
+  reserve1_gt: XDAI_BigDecimal
+  reserve1_lt: XDAI_BigDecimal
+  reserve1_gte: XDAI_BigDecimal
+  reserve1_lte: XDAI_BigDecimal
+  reserve1_in: [XDAI_BigDecimal!]
+  reserve1_not_in: [XDAI_BigDecimal!]
+  reserveUSD: XDAI_BigDecimal
+  reserveUSD_not: XDAI_BigDecimal
+  reserveUSD_gt: XDAI_BigDecimal
+  reserveUSD_lt: XDAI_BigDecimal
+  reserveUSD_gte: XDAI_BigDecimal
+  reserveUSD_lte: XDAI_BigDecimal
+  reserveUSD_in: [XDAI_BigDecimal!]
+  reserveUSD_not_in: [XDAI_BigDecimal!]
+  liquidityTokenTotalSupply: XDAI_BigDecimal
+  liquidityTokenTotalSupply_not: XDAI_BigDecimal
+  liquidityTokenTotalSupply_gt: XDAI_BigDecimal
+  liquidityTokenTotalSupply_lt: XDAI_BigDecimal
+  liquidityTokenTotalSupply_gte: XDAI_BigDecimal
+  liquidityTokenTotalSupply_lte: XDAI_BigDecimal
+  liquidityTokenTotalSupply_in: [XDAI_BigDecimal!]
+  liquidityTokenTotalSupply_not_in: [XDAI_BigDecimal!]
+  liquidityTokenBalance: XDAI_BigDecimal
+  liquidityTokenBalance_not: XDAI_BigDecimal
+  liquidityTokenBalance_gt: XDAI_BigDecimal
+  liquidityTokenBalance_lt: XDAI_BigDecimal
+  liquidityTokenBalance_gte: XDAI_BigDecimal
+  liquidityTokenBalance_lte: XDAI_BigDecimal
+  liquidityTokenBalance_in: [XDAI_BigDecimal!]
+  liquidityTokenBalance_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
+enum XDAI_LiquidityPositionSnapshot_orderBy {
   id
   liquidityPosition
   timestamp
@@ -750,7 +750,7 @@ enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
   liquidityTokenBalance
 }
 
-input ETHEREUM_LiquidityPosition_filter {
+input XDAI_LiquidityPosition_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -799,14 +799,14 @@ input ETHEREUM_LiquidityPosition_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  liquidityTokenBalance: ETHEREUM_BigDecimal
-  liquidityTokenBalance_not: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lt: ETHEREUM_BigDecimal
-  liquidityTokenBalance_gte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_lte: ETHEREUM_BigDecimal
-  liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
-  liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  liquidityTokenBalance: XDAI_BigDecimal
+  liquidityTokenBalance_not: XDAI_BigDecimal
+  liquidityTokenBalance_gt: XDAI_BigDecimal
+  liquidityTokenBalance_lt: XDAI_BigDecimal
+  liquidityTokenBalance_gte: XDAI_BigDecimal
+  liquidityTokenBalance_lte: XDAI_BigDecimal
+  liquidityTokenBalance_in: [XDAI_BigDecimal!]
+  liquidityTokenBalance_not_in: [XDAI_BigDecimal!]
   block: Int
   block_not: Int
   block_gt: Int
@@ -825,7 +825,7 @@ input ETHEREUM_LiquidityPosition_filter {
   timestamp_not_in: [Int!]
 }
 
-enum ETHEREUM_LiquidityPosition_orderBy {
+enum XDAI_LiquidityPosition_orderBy {
   id
   user
   pair
@@ -835,23 +835,23 @@ enum ETHEREUM_LiquidityPosition_orderBy {
   timestamp
 }
 
-type ETHEREUM_Mint {
+type XDAI_Mint {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: XDAI_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  to: ETHEREUM_Bytes!
-  liquidity: ETHEREUM_BigDecimal!
-  sender: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount1: ETHEREUM_BigDecimal
+  pair: XDAI_Pair!
+  to: XDAI_Bytes!
+  liquidity: XDAI_BigDecimal!
+  sender: XDAI_Bytes
+  amount0: XDAI_BigDecimal
+  amount1: XDAI_BigDecimal
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal
-  feeTo: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
+  amountUSD: XDAI_BigDecimal
+  feeTo: XDAI_Bytes
+  feeLiquidity: XDAI_BigDecimal
 }
 
-input ETHEREUM_Mint_filter {
+input XDAI_Mint_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -908,42 +908,42 @@ input ETHEREUM_Mint_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0: ETHEREUM_BigDecimal
-  amount0_not: ETHEREUM_BigDecimal
-  amount0_gt: ETHEREUM_BigDecimal
-  amount0_lt: ETHEREUM_BigDecimal
-  amount0_gte: ETHEREUM_BigDecimal
-  amount0_lte: ETHEREUM_BigDecimal
-  amount0_in: [ETHEREUM_BigDecimal!]
-  amount0_not_in: [ETHEREUM_BigDecimal!]
-  amount1: ETHEREUM_BigDecimal
-  amount1_not: ETHEREUM_BigDecimal
-  amount1_gt: ETHEREUM_BigDecimal
-  amount1_lt: ETHEREUM_BigDecimal
-  amount1_gte: ETHEREUM_BigDecimal
-  amount1_lte: ETHEREUM_BigDecimal
-  amount1_in: [ETHEREUM_BigDecimal!]
-  amount1_not_in: [ETHEREUM_BigDecimal!]
+  to: XDAI_Bytes
+  to_not: XDAI_Bytes
+  to_in: [XDAI_Bytes!]
+  to_not_in: [XDAI_Bytes!]
+  to_contains: XDAI_Bytes
+  to_not_contains: XDAI_Bytes
+  liquidity: XDAI_BigDecimal
+  liquidity_not: XDAI_BigDecimal
+  liquidity_gt: XDAI_BigDecimal
+  liquidity_lt: XDAI_BigDecimal
+  liquidity_gte: XDAI_BigDecimal
+  liquidity_lte: XDAI_BigDecimal
+  liquidity_in: [XDAI_BigDecimal!]
+  liquidity_not_in: [XDAI_BigDecimal!]
+  sender: XDAI_Bytes
+  sender_not: XDAI_Bytes
+  sender_in: [XDAI_Bytes!]
+  sender_not_in: [XDAI_Bytes!]
+  sender_contains: XDAI_Bytes
+  sender_not_contains: XDAI_Bytes
+  amount0: XDAI_BigDecimal
+  amount0_not: XDAI_BigDecimal
+  amount0_gt: XDAI_BigDecimal
+  amount0_lt: XDAI_BigDecimal
+  amount0_gte: XDAI_BigDecimal
+  amount0_lte: XDAI_BigDecimal
+  amount0_in: [XDAI_BigDecimal!]
+  amount0_not_in: [XDAI_BigDecimal!]
+  amount1: XDAI_BigDecimal
+  amount1_not: XDAI_BigDecimal
+  amount1_gt: XDAI_BigDecimal
+  amount1_lt: XDAI_BigDecimal
+  amount1_gte: XDAI_BigDecimal
+  amount1_lte: XDAI_BigDecimal
+  amount1_in: [XDAI_BigDecimal!]
+  amount1_not_in: [XDAI_BigDecimal!]
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -952,31 +952,31 @@ input ETHEREUM_Mint_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
-  feeTo: ETHEREUM_Bytes
-  feeTo_not: ETHEREUM_Bytes
-  feeTo_in: [ETHEREUM_Bytes!]
-  feeTo_not_in: [ETHEREUM_Bytes!]
-  feeTo_contains: ETHEREUM_Bytes
-  feeTo_not_contains: ETHEREUM_Bytes
-  feeLiquidity: ETHEREUM_BigDecimal
-  feeLiquidity_not: ETHEREUM_BigDecimal
-  feeLiquidity_gt: ETHEREUM_BigDecimal
-  feeLiquidity_lt: ETHEREUM_BigDecimal
-  feeLiquidity_gte: ETHEREUM_BigDecimal
-  feeLiquidity_lte: ETHEREUM_BigDecimal
-  feeLiquidity_in: [ETHEREUM_BigDecimal!]
-  feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: XDAI_BigDecimal
+  amountUSD_not: XDAI_BigDecimal
+  amountUSD_gt: XDAI_BigDecimal
+  amountUSD_lt: XDAI_BigDecimal
+  amountUSD_gte: XDAI_BigDecimal
+  amountUSD_lte: XDAI_BigDecimal
+  amountUSD_in: [XDAI_BigDecimal!]
+  amountUSD_not_in: [XDAI_BigDecimal!]
+  feeTo: XDAI_Bytes
+  feeTo_not: XDAI_Bytes
+  feeTo_in: [XDAI_Bytes!]
+  feeTo_not_in: [XDAI_Bytes!]
+  feeTo_contains: XDAI_Bytes
+  feeTo_not_contains: XDAI_Bytes
+  feeLiquidity: XDAI_BigDecimal
+  feeLiquidity_not: XDAI_BigDecimal
+  feeLiquidity_gt: XDAI_BigDecimal
+  feeLiquidity_lt: XDAI_BigDecimal
+  feeLiquidity_gte: XDAI_BigDecimal
+  feeLiquidity_lte: XDAI_BigDecimal
+  feeLiquidity_in: [XDAI_BigDecimal!]
+  feeLiquidity_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_Mint_orderBy {
+enum XDAI_Mint_orderBy {
   id
   transaction
   timestamp
@@ -993,59 +993,59 @@ enum ETHEREUM_Mint_orderBy {
 }
 
 """Defines the order direction, either ascending or descending"""
-enum ETHEREUM_OrderDirection {
+enum XDAI_OrderDirection {
   asc
   desc
 }
 
-type ETHEREUM_Pair {
+type XDAI_Pair {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: XDAI_Factory!
   name: String!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveETH: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  trackedReserveETH: ETHEREUM_BigDecimal!
-  token0Price: ETHEREUM_BigDecimal!
-  token1Price: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  token0: XDAI_Token!
+  token1: XDAI_Token!
+  reserve0: XDAI_BigDecimal!
+  reserve1: XDAI_BigDecimal!
+  totalSupply: XDAI_BigDecimal!
+  reserveETH: XDAI_BigDecimal!
+  reserveUSD: XDAI_BigDecimal!
+  trackedReserveETH: XDAI_BigDecimal!
+  token0Price: XDAI_BigDecimal!
+  token1Price: XDAI_BigDecimal!
+  volumeToken0: XDAI_BigDecimal!
+  volumeToken1: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
+  untrackedVolumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
   liquidityProviderCount: BigInt!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
-  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPositionSnapshot_filter): [ETHEREUM_LiquidityPositionSnapshot!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairHourData_filter): [ETHEREUM_PairHourData!]!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint!]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn!]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: XDAI_LiquidityPosition_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_LiquidityPosition_filter): [XDAI_LiquidityPosition!]!
+  liquidityPositionSnapshots(skip: Int = 0, first: Int = 100, orderBy: XDAI_LiquidityPositionSnapshot_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_LiquidityPositionSnapshot_filter): [XDAI_LiquidityPositionSnapshot!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: XDAI_PairDayData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_PairDayData_filter): [XDAI_PairDayData!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: XDAI_PairHourData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_PairHourData_filter): [XDAI_PairHourData!]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: XDAI_Mint_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Mint_filter): [XDAI_Mint!]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: XDAI_Burn_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Burn_filter): [XDAI_Burn!]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: XDAI_Swap_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Swap_filter): [XDAI_Swap!]!
   timestamp: BigInt!
   block: BigInt!
 }
 
-type ETHEREUM_PairDayData {
+type XDAI_PairDayData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  token0: ETHEREUM_Token!
-  token1: ETHEREUM_Token!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  totalSupply: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: XDAI_Pair!
+  token0: XDAI_Token!
+  token1: XDAI_Token!
+  reserve0: XDAI_BigDecimal!
+  reserve1: XDAI_BigDecimal!
+  totalSupply: XDAI_BigDecimal!
+  reserveUSD: XDAI_BigDecimal!
+  volumeToken0: XDAI_BigDecimal!
+  volumeToken1: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairDayData_filter {
+input XDAI_PairDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1122,62 +1122,62 @@ input ETHEREUM_PairDayData_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: XDAI_BigDecimal
+  reserve0_not: XDAI_BigDecimal
+  reserve0_gt: XDAI_BigDecimal
+  reserve0_lt: XDAI_BigDecimal
+  reserve0_gte: XDAI_BigDecimal
+  reserve0_lte: XDAI_BigDecimal
+  reserve0_in: [XDAI_BigDecimal!]
+  reserve0_not_in: [XDAI_BigDecimal!]
+  reserve1: XDAI_BigDecimal
+  reserve1_not: XDAI_BigDecimal
+  reserve1_gt: XDAI_BigDecimal
+  reserve1_lt: XDAI_BigDecimal
+  reserve1_gte: XDAI_BigDecimal
+  reserve1_lte: XDAI_BigDecimal
+  reserve1_in: [XDAI_BigDecimal!]
+  reserve1_not_in: [XDAI_BigDecimal!]
+  totalSupply: XDAI_BigDecimal
+  totalSupply_not: XDAI_BigDecimal
+  totalSupply_gt: XDAI_BigDecimal
+  totalSupply_lt: XDAI_BigDecimal
+  totalSupply_gte: XDAI_BigDecimal
+  totalSupply_lte: XDAI_BigDecimal
+  totalSupply_in: [XDAI_BigDecimal!]
+  totalSupply_not_in: [XDAI_BigDecimal!]
+  reserveUSD: XDAI_BigDecimal
+  reserveUSD_not: XDAI_BigDecimal
+  reserveUSD_gt: XDAI_BigDecimal
+  reserveUSD_lt: XDAI_BigDecimal
+  reserveUSD_gte: XDAI_BigDecimal
+  reserveUSD_lte: XDAI_BigDecimal
+  reserveUSD_in: [XDAI_BigDecimal!]
+  reserveUSD_not_in: [XDAI_BigDecimal!]
+  volumeToken0: XDAI_BigDecimal
+  volumeToken0_not: XDAI_BigDecimal
+  volumeToken0_gt: XDAI_BigDecimal
+  volumeToken0_lt: XDAI_BigDecimal
+  volumeToken0_gte: XDAI_BigDecimal
+  volumeToken0_lte: XDAI_BigDecimal
+  volumeToken0_in: [XDAI_BigDecimal!]
+  volumeToken0_not_in: [XDAI_BigDecimal!]
+  volumeToken1: XDAI_BigDecimal
+  volumeToken1_not: XDAI_BigDecimal
+  volumeToken1_gt: XDAI_BigDecimal
+  volumeToken1_lt: XDAI_BigDecimal
+  volumeToken1_gte: XDAI_BigDecimal
+  volumeToken1_lte: XDAI_BigDecimal
+  volumeToken1_in: [XDAI_BigDecimal!]
+  volumeToken1_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1188,7 +1188,7 @@ input ETHEREUM_PairDayData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairDayData_orderBy {
+enum XDAI_PairDayData_orderBy {
   id
   date
   pair
@@ -1204,20 +1204,20 @@ enum ETHEREUM_PairDayData_orderBy {
   txCount
 }
 
-type ETHEREUM_PairHourData {
+type XDAI_PairHourData {
   id: ID!
   date: Int!
-  pair: ETHEREUM_Pair!
-  reserve0: ETHEREUM_BigDecimal!
-  reserve1: ETHEREUM_BigDecimal!
-  reserveUSD: ETHEREUM_BigDecimal!
-  volumeToken0: ETHEREUM_BigDecimal!
-  volumeToken1: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  pair: XDAI_Pair!
+  reserve0: XDAI_BigDecimal!
+  reserve1: XDAI_BigDecimal!
+  reserveUSD: XDAI_BigDecimal!
+  volumeToken0: XDAI_BigDecimal!
+  volumeToken1: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
 }
 
-input ETHEREUM_PairHourData_filter {
+input XDAI_PairHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1254,54 +1254,54 @@ input ETHEREUM_PairHourData_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: XDAI_BigDecimal
+  reserve0_not: XDAI_BigDecimal
+  reserve0_gt: XDAI_BigDecimal
+  reserve0_lt: XDAI_BigDecimal
+  reserve0_gte: XDAI_BigDecimal
+  reserve0_lte: XDAI_BigDecimal
+  reserve0_in: [XDAI_BigDecimal!]
+  reserve0_not_in: [XDAI_BigDecimal!]
+  reserve1: XDAI_BigDecimal
+  reserve1_not: XDAI_BigDecimal
+  reserve1_gt: XDAI_BigDecimal
+  reserve1_lt: XDAI_BigDecimal
+  reserve1_gte: XDAI_BigDecimal
+  reserve1_lte: XDAI_BigDecimal
+  reserve1_in: [XDAI_BigDecimal!]
+  reserve1_not_in: [XDAI_BigDecimal!]
+  reserveUSD: XDAI_BigDecimal
+  reserveUSD_not: XDAI_BigDecimal
+  reserveUSD_gt: XDAI_BigDecimal
+  reserveUSD_lt: XDAI_BigDecimal
+  reserveUSD_gte: XDAI_BigDecimal
+  reserveUSD_lte: XDAI_BigDecimal
+  reserveUSD_in: [XDAI_BigDecimal!]
+  reserveUSD_not_in: [XDAI_BigDecimal!]
+  volumeToken0: XDAI_BigDecimal
+  volumeToken0_not: XDAI_BigDecimal
+  volumeToken0_gt: XDAI_BigDecimal
+  volumeToken0_lt: XDAI_BigDecimal
+  volumeToken0_gte: XDAI_BigDecimal
+  volumeToken0_lte: XDAI_BigDecimal
+  volumeToken0_in: [XDAI_BigDecimal!]
+  volumeToken0_not_in: [XDAI_BigDecimal!]
+  volumeToken1: XDAI_BigDecimal
+  volumeToken1_not: XDAI_BigDecimal
+  volumeToken1_gt: XDAI_BigDecimal
+  volumeToken1_lt: XDAI_BigDecimal
+  volumeToken1_gte: XDAI_BigDecimal
+  volumeToken1_lte: XDAI_BigDecimal
+  volumeToken1_in: [XDAI_BigDecimal!]
+  volumeToken1_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1312,7 +1312,7 @@ input ETHEREUM_PairHourData_filter {
   txCount_not_in: [BigInt!]
 }
 
-enum ETHEREUM_PairHourData_orderBy {
+enum XDAI_PairHourData_orderBy {
   id
   date
   pair
@@ -1325,7 +1325,7 @@ enum ETHEREUM_PairHourData_orderBy {
   txCount
 }
 
-input ETHEREUM_Pair_filter {
+input XDAI_Pair_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -1414,102 +1414,102 @@ input ETHEREUM_Pair_filter {
   token1_ends_with_nocase: String
   token1_not_ends_with: String
   token1_not_ends_with_nocase: String
-  reserve0: ETHEREUM_BigDecimal
-  reserve0_not: ETHEREUM_BigDecimal
-  reserve0_gt: ETHEREUM_BigDecimal
-  reserve0_lt: ETHEREUM_BigDecimal
-  reserve0_gte: ETHEREUM_BigDecimal
-  reserve0_lte: ETHEREUM_BigDecimal
-  reserve0_in: [ETHEREUM_BigDecimal!]
-  reserve0_not_in: [ETHEREUM_BigDecimal!]
-  reserve1: ETHEREUM_BigDecimal
-  reserve1_not: ETHEREUM_BigDecimal
-  reserve1_gt: ETHEREUM_BigDecimal
-  reserve1_lt: ETHEREUM_BigDecimal
-  reserve1_gte: ETHEREUM_BigDecimal
-  reserve1_lte: ETHEREUM_BigDecimal
-  reserve1_in: [ETHEREUM_BigDecimal!]
-  reserve1_not_in: [ETHEREUM_BigDecimal!]
-  totalSupply: ETHEREUM_BigDecimal
-  totalSupply_not: ETHEREUM_BigDecimal
-  totalSupply_gt: ETHEREUM_BigDecimal
-  totalSupply_lt: ETHEREUM_BigDecimal
-  totalSupply_gte: ETHEREUM_BigDecimal
-  totalSupply_lte: ETHEREUM_BigDecimal
-  totalSupply_in: [ETHEREUM_BigDecimal!]
-  totalSupply_not_in: [ETHEREUM_BigDecimal!]
-  reserveETH: ETHEREUM_BigDecimal
-  reserveETH_not: ETHEREUM_BigDecimal
-  reserveETH_gt: ETHEREUM_BigDecimal
-  reserveETH_lt: ETHEREUM_BigDecimal
-  reserveETH_gte: ETHEREUM_BigDecimal
-  reserveETH_lte: ETHEREUM_BigDecimal
-  reserveETH_in: [ETHEREUM_BigDecimal!]
-  reserveETH_not_in: [ETHEREUM_BigDecimal!]
-  reserveUSD: ETHEREUM_BigDecimal
-  reserveUSD_not: ETHEREUM_BigDecimal
-  reserveUSD_gt: ETHEREUM_BigDecimal
-  reserveUSD_lt: ETHEREUM_BigDecimal
-  reserveUSD_gte: ETHEREUM_BigDecimal
-  reserveUSD_lte: ETHEREUM_BigDecimal
-  reserveUSD_in: [ETHEREUM_BigDecimal!]
-  reserveUSD_not_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH: ETHEREUM_BigDecimal
-  trackedReserveETH_not: ETHEREUM_BigDecimal
-  trackedReserveETH_gt: ETHEREUM_BigDecimal
-  trackedReserveETH_lt: ETHEREUM_BigDecimal
-  trackedReserveETH_gte: ETHEREUM_BigDecimal
-  trackedReserveETH_lte: ETHEREUM_BigDecimal
-  trackedReserveETH_in: [ETHEREUM_BigDecimal!]
-  trackedReserveETH_not_in: [ETHEREUM_BigDecimal!]
-  token0Price: ETHEREUM_BigDecimal
-  token0Price_not: ETHEREUM_BigDecimal
-  token0Price_gt: ETHEREUM_BigDecimal
-  token0Price_lt: ETHEREUM_BigDecimal
-  token0Price_gte: ETHEREUM_BigDecimal
-  token0Price_lte: ETHEREUM_BigDecimal
-  token0Price_in: [ETHEREUM_BigDecimal!]
-  token0Price_not_in: [ETHEREUM_BigDecimal!]
-  token1Price: ETHEREUM_BigDecimal
-  token1Price_not: ETHEREUM_BigDecimal
-  token1Price_gt: ETHEREUM_BigDecimal
-  token1Price_lt: ETHEREUM_BigDecimal
-  token1Price_gte: ETHEREUM_BigDecimal
-  token1Price_lte: ETHEREUM_BigDecimal
-  token1Price_in: [ETHEREUM_BigDecimal!]
-  token1Price_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken0: ETHEREUM_BigDecimal
-  volumeToken0_not: ETHEREUM_BigDecimal
-  volumeToken0_gt: ETHEREUM_BigDecimal
-  volumeToken0_lt: ETHEREUM_BigDecimal
-  volumeToken0_gte: ETHEREUM_BigDecimal
-  volumeToken0_lte: ETHEREUM_BigDecimal
-  volumeToken0_in: [ETHEREUM_BigDecimal!]
-  volumeToken0_not_in: [ETHEREUM_BigDecimal!]
-  volumeToken1: ETHEREUM_BigDecimal
-  volumeToken1_not: ETHEREUM_BigDecimal
-  volumeToken1_gt: ETHEREUM_BigDecimal
-  volumeToken1_lt: ETHEREUM_BigDecimal
-  volumeToken1_gte: ETHEREUM_BigDecimal
-  volumeToken1_lte: ETHEREUM_BigDecimal
-  volumeToken1_in: [ETHEREUM_BigDecimal!]
-  volumeToken1_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  reserve0: XDAI_BigDecimal
+  reserve0_not: XDAI_BigDecimal
+  reserve0_gt: XDAI_BigDecimal
+  reserve0_lt: XDAI_BigDecimal
+  reserve0_gte: XDAI_BigDecimal
+  reserve0_lte: XDAI_BigDecimal
+  reserve0_in: [XDAI_BigDecimal!]
+  reserve0_not_in: [XDAI_BigDecimal!]
+  reserve1: XDAI_BigDecimal
+  reserve1_not: XDAI_BigDecimal
+  reserve1_gt: XDAI_BigDecimal
+  reserve1_lt: XDAI_BigDecimal
+  reserve1_gte: XDAI_BigDecimal
+  reserve1_lte: XDAI_BigDecimal
+  reserve1_in: [XDAI_BigDecimal!]
+  reserve1_not_in: [XDAI_BigDecimal!]
+  totalSupply: XDAI_BigDecimal
+  totalSupply_not: XDAI_BigDecimal
+  totalSupply_gt: XDAI_BigDecimal
+  totalSupply_lt: XDAI_BigDecimal
+  totalSupply_gte: XDAI_BigDecimal
+  totalSupply_lte: XDAI_BigDecimal
+  totalSupply_in: [XDAI_BigDecimal!]
+  totalSupply_not_in: [XDAI_BigDecimal!]
+  reserveETH: XDAI_BigDecimal
+  reserveETH_not: XDAI_BigDecimal
+  reserveETH_gt: XDAI_BigDecimal
+  reserveETH_lt: XDAI_BigDecimal
+  reserveETH_gte: XDAI_BigDecimal
+  reserveETH_lte: XDAI_BigDecimal
+  reserveETH_in: [XDAI_BigDecimal!]
+  reserveETH_not_in: [XDAI_BigDecimal!]
+  reserveUSD: XDAI_BigDecimal
+  reserveUSD_not: XDAI_BigDecimal
+  reserveUSD_gt: XDAI_BigDecimal
+  reserveUSD_lt: XDAI_BigDecimal
+  reserveUSD_gte: XDAI_BigDecimal
+  reserveUSD_lte: XDAI_BigDecimal
+  reserveUSD_in: [XDAI_BigDecimal!]
+  reserveUSD_not_in: [XDAI_BigDecimal!]
+  trackedReserveETH: XDAI_BigDecimal
+  trackedReserveETH_not: XDAI_BigDecimal
+  trackedReserveETH_gt: XDAI_BigDecimal
+  trackedReserveETH_lt: XDAI_BigDecimal
+  trackedReserveETH_gte: XDAI_BigDecimal
+  trackedReserveETH_lte: XDAI_BigDecimal
+  trackedReserveETH_in: [XDAI_BigDecimal!]
+  trackedReserveETH_not_in: [XDAI_BigDecimal!]
+  token0Price: XDAI_BigDecimal
+  token0Price_not: XDAI_BigDecimal
+  token0Price_gt: XDAI_BigDecimal
+  token0Price_lt: XDAI_BigDecimal
+  token0Price_gte: XDAI_BigDecimal
+  token0Price_lte: XDAI_BigDecimal
+  token0Price_in: [XDAI_BigDecimal!]
+  token0Price_not_in: [XDAI_BigDecimal!]
+  token1Price: XDAI_BigDecimal
+  token1Price_not: XDAI_BigDecimal
+  token1Price_gt: XDAI_BigDecimal
+  token1Price_lt: XDAI_BigDecimal
+  token1Price_gte: XDAI_BigDecimal
+  token1Price_lte: XDAI_BigDecimal
+  token1Price_in: [XDAI_BigDecimal!]
+  token1Price_not_in: [XDAI_BigDecimal!]
+  volumeToken0: XDAI_BigDecimal
+  volumeToken0_not: XDAI_BigDecimal
+  volumeToken0_gt: XDAI_BigDecimal
+  volumeToken0_lt: XDAI_BigDecimal
+  volumeToken0_gte: XDAI_BigDecimal
+  volumeToken0_lte: XDAI_BigDecimal
+  volumeToken0_in: [XDAI_BigDecimal!]
+  volumeToken0_not_in: [XDAI_BigDecimal!]
+  volumeToken1: XDAI_BigDecimal
+  volumeToken1_not: XDAI_BigDecimal
+  volumeToken1_gt: XDAI_BigDecimal
+  volumeToken1_lt: XDAI_BigDecimal
+  volumeToken1_gte: XDAI_BigDecimal
+  volumeToken1_lte: XDAI_BigDecimal
+  volumeToken1_in: [XDAI_BigDecimal!]
+  volumeToken1_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD: XDAI_BigDecimal
+  untrackedVolumeUSD_not: XDAI_BigDecimal
+  untrackedVolumeUSD_gt: XDAI_BigDecimal
+  untrackedVolumeUSD_lt: XDAI_BigDecimal
+  untrackedVolumeUSD_gte: XDAI_BigDecimal
+  untrackedVolumeUSD_lte: XDAI_BigDecimal
+  untrackedVolumeUSD_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -1544,7 +1544,7 @@ input ETHEREUM_Pair_filter {
   block_not_in: [BigInt!]
 }
 
-enum ETHEREUM_Pair_orderBy {
+enum XDAI_Pair_orderBy {
   id
   factory
   name
@@ -1576,954 +1576,915 @@ enum ETHEREUM_Pair_orderBy {
 }
 
 type Query {
-  ETHEREUM_user(
+  XDAI_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): XDAI_User
+  XDAI_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: XDAI_User_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [XDAI_User!]!
+  XDAI_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): XDAI_Bundle
+  XDAI_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: XDAI_Bundle_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [XDAI_Bundle!]!
+  XDAI_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory @merge(keyField: "id", keyArg: "id")
-  ETHEREUM_factories(
+  ): XDAI_Factory @merge(keyField: "id", keyArg: "id")
+  XDAI_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: XDAI_Factory_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [XDAI_Factory!]!
+  XDAI_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): XDAI_HourData
+  XDAI_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: XDAI_HourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [XDAI_HourData!]!
+  XDAI_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): XDAI_DayData
+  XDAI_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: XDAI_DayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [XDAI_DayData!]!
+  XDAI_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): XDAI_Token
+  XDAI_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: XDAI_Token_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [XDAI_Token!]!
+  XDAI_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): XDAI_TokenHourData
+  XDAI_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: XDAI_TokenHourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [XDAI_TokenHourData!]!
+  XDAI_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): XDAI_TokenDayData
+  XDAI_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: XDAI_TokenDayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [XDAI_TokenDayData!]!
+  XDAI_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): XDAI_Pair
+  XDAI_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: XDAI_Pair_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [XDAI_Pair!]!
+  XDAI_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): XDAI_PairHourData
+  XDAI_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: XDAI_PairHourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [XDAI_PairHourData!]!
+  XDAI_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): XDAI_PairDayData
+  XDAI_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: XDAI_PairDayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [XDAI_PairDayData!]!
+  XDAI_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): XDAI_LiquidityPosition
+  XDAI_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: XDAI_LiquidityPosition_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [XDAI_LiquidityPosition!]!
+  XDAI_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): XDAI_LiquidityPositionSnapshot
+  XDAI_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: XDAI_LiquidityPositionSnapshot_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [XDAI_LiquidityPositionSnapshot!]!
+  XDAI_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): XDAI_Transaction
+  XDAI_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: XDAI_Transaction_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [XDAI_Transaction!]!
+  XDAI_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): XDAI_Mint
+  XDAI_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: XDAI_Mint_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [XDAI_Mint!]!
+  XDAI_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): XDAI_Burn
+  XDAI_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: XDAI_Burn_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [XDAI_Burn!]!
+  XDAI_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): XDAI_Swap
+  XDAI_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: XDAI_Swap_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
-  ETHEREUM_tokenSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_pairSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_userSearch(
-    text: String!
-    first: Int = 100
-    skip: Int = 0
-    """
-    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
-    """
-    block: ETHEREUM_Block_height
-    """
-    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
-    """
-    subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
+  ): [XDAI_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  XDAI__meta(block: XDAI_Block_height): XDAI__Meta_
 }
 
 type Subscription {
-  ETHEREUM_user(
+  XDAI_user(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_User
-  ETHEREUM_users(
+  ): XDAI_User
+  XDAI_users(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_User_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_User_filter
+    orderBy: XDAI_User_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_User_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_User!]!
-  ETHEREUM_bundle(
+  ): [XDAI_User!]!
+  XDAI_bundle(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Bundle
-  ETHEREUM_bundles(
+  ): XDAI_Bundle
+  XDAI_bundles(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Bundle_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Bundle_filter
+    orderBy: XDAI_Bundle_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Bundle_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Bundle!]!
-  ETHEREUM_factory(
+  ): [XDAI_Bundle!]!
+  XDAI_factory(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Factory
-  ETHEREUM_factories(
+  ): XDAI_Factory
+  XDAI_factories(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Factory_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Factory_filter
+    orderBy: XDAI_Factory_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Factory_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Factory!]!
-  ETHEREUM_hourData(
+  ): [XDAI_Factory!]!
+  XDAI_hourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_HourData
-  ETHEREUM_hourDatas(
+  ): XDAI_HourData
+  XDAI_hourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_HourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_HourData_filter
+    orderBy: XDAI_HourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_HourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_HourData!]!
-  ETHEREUM_dayData(
+  ): [XDAI_HourData!]!
+  XDAI_dayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_DayData
-  ETHEREUM_dayDatas(
+  ): XDAI_DayData
+  XDAI_dayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_DayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_DayData_filter
+    orderBy: XDAI_DayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_DayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_DayData!]!
-  ETHEREUM_token(
+  ): [XDAI_DayData!]!
+  XDAI_token(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Token
-  ETHEREUM_tokens(
+  ): XDAI_Token
+  XDAI_tokens(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Token_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Token_filter
+    orderBy: XDAI_Token_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Token_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Token!]!
-  ETHEREUM_tokenHourData(
+  ): [XDAI_Token!]!
+  XDAI_tokenHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenHourData
-  ETHEREUM_tokenHourDatas(
+  ): XDAI_TokenHourData
+  XDAI_tokenHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenHourData_filter
+    orderBy: XDAI_TokenHourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_TokenHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenHourData!]!
-  ETHEREUM_tokenDayData(
+  ): [XDAI_TokenHourData!]!
+  XDAI_tokenDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_TokenDayData
-  ETHEREUM_tokenDayDatas(
+  ): XDAI_TokenDayData
+  XDAI_tokenDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_TokenDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_TokenDayData_filter
+    orderBy: XDAI_TokenDayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_TokenDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_TokenDayData!]!
-  ETHEREUM_pair(
+  ): [XDAI_TokenDayData!]!
+  XDAI_pair(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Pair
-  ETHEREUM_pairs(
+  ): XDAI_Pair
+  XDAI_pairs(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Pair_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Pair_filter
+    orderBy: XDAI_Pair_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Pair_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Pair!]!
-  ETHEREUM_pairHourData(
+  ): [XDAI_Pair!]!
+  XDAI_pairHourData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairHourData
-  ETHEREUM_pairHourDatas(
+  ): XDAI_PairHourData
+  XDAI_pairHourDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairHourData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairHourData_filter
+    orderBy: XDAI_PairHourData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_PairHourData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairHourData!]!
-  ETHEREUM_pairDayData(
+  ): [XDAI_PairHourData!]!
+  XDAI_pairDayData(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_PairDayData
-  ETHEREUM_pairDayDatas(
+  ): XDAI_PairDayData
+  XDAI_pairDayDatas(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_PairDayData_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_PairDayData_filter
+    orderBy: XDAI_PairDayData_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_PairDayData_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_PairDayData!]!
-  ETHEREUM_liquidityPosition(
+  ): [XDAI_PairDayData!]!
+  XDAI_liquidityPosition(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPosition
-  ETHEREUM_liquidityPositions(
+  ): XDAI_LiquidityPosition
+  XDAI_liquidityPositions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPosition_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPosition_filter
+    orderBy: XDAI_LiquidityPosition_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_LiquidityPosition_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPosition!]!
-  ETHEREUM_liquidityPositionSnapshot(
+  ): [XDAI_LiquidityPosition!]!
+  XDAI_liquidityPositionSnapshot(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_LiquidityPositionSnapshot
-  ETHEREUM_liquidityPositionSnapshots(
+  ): XDAI_LiquidityPositionSnapshot
+  XDAI_liquidityPositionSnapshots(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_LiquidityPositionSnapshot_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_LiquidityPositionSnapshot_filter
+    orderBy: XDAI_LiquidityPositionSnapshot_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_LiquidityPositionSnapshot_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_LiquidityPositionSnapshot!]!
-  ETHEREUM_transaction(
+  ): [XDAI_LiquidityPositionSnapshot!]!
+  XDAI_transaction(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Transaction
-  ETHEREUM_transactions(
+  ): XDAI_Transaction
+  XDAI_transactions(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Transaction_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Transaction_filter
+    orderBy: XDAI_Transaction_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Transaction_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Transaction!]!
-  ETHEREUM_mint(
+  ): [XDAI_Transaction!]!
+  XDAI_mint(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Mint
-  ETHEREUM_mints(
+  ): XDAI_Mint
+  XDAI_mints(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Mint_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Mint_filter
+    orderBy: XDAI_Mint_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Mint_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Mint!]!
-  ETHEREUM_burn(
+  ): [XDAI_Mint!]!
+  XDAI_burn(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Burn
-  ETHEREUM_burns(
+  ): XDAI_Burn
+  XDAI_burns(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Burn_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Burn_filter
+    orderBy: XDAI_Burn_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Burn_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Burn!]!
-  ETHEREUM_swap(
+  ): [XDAI_Burn!]!
+  XDAI_swap(
     id: ID!
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): ETHEREUM_Swap
-  ETHEREUM_swaps(
+  ): XDAI_Swap
+  XDAI_swaps(
     skip: Int = 0
     first: Int = 100
-    orderBy: ETHEREUM_Swap_orderBy
-    orderDirection: ETHEREUM_OrderDirection
-    where: ETHEREUM_Swap_filter
+    orderBy: XDAI_Swap_orderBy
+    orderDirection: XDAI_OrderDirection
+    where: XDAI_Swap_filter
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
-    block: ETHEREUM_Block_height
+    block: XDAI_Block_height
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [ETHEREUM_Swap!]!
+  ): [XDAI_Swap!]!
   """Access to subgraph metadata"""
-  ETHEREUM__meta(block: ETHEREUM_Block_height): ETHEREUM__Meta_
+  XDAI__meta(block: XDAI_Block_height): XDAI__Meta_
 }
 
-type ETHEREUM_Swap {
+type XDAI_Swap {
   id: ID!
-  transaction: ETHEREUM_Transaction!
+  transaction: XDAI_Transaction!
   timestamp: BigInt!
-  pair: ETHEREUM_Pair!
-  sender: ETHEREUM_Bytes!
-  amount0In: ETHEREUM_BigDecimal!
-  amount1In: ETHEREUM_BigDecimal!
-  amount0Out: ETHEREUM_BigDecimal!
-  amount1Out: ETHEREUM_BigDecimal!
-  to: ETHEREUM_Bytes!
+  pair: XDAI_Pair!
+  sender: XDAI_Bytes!
+  amount0In: XDAI_BigDecimal!
+  amount1In: XDAI_BigDecimal!
+  amount0Out: XDAI_BigDecimal!
+  amount1Out: XDAI_BigDecimal!
+  to: XDAI_Bytes!
   logIndex: BigInt
-  amountUSD: ETHEREUM_BigDecimal!
+  amountUSD: XDAI_BigDecimal!
 }
 
-input ETHEREUM_Swap_filter {
+input XDAI_Swap_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2580,50 +2541,50 @@ input ETHEREUM_Swap_filter {
   pair_ends_with_nocase: String
   pair_not_ends_with: String
   pair_not_ends_with_nocase: String
-  sender: ETHEREUM_Bytes
-  sender_not: ETHEREUM_Bytes
-  sender_in: [ETHEREUM_Bytes!]
-  sender_not_in: [ETHEREUM_Bytes!]
-  sender_contains: ETHEREUM_Bytes
-  sender_not_contains: ETHEREUM_Bytes
-  amount0In: ETHEREUM_BigDecimal
-  amount0In_not: ETHEREUM_BigDecimal
-  amount0In_gt: ETHEREUM_BigDecimal
-  amount0In_lt: ETHEREUM_BigDecimal
-  amount0In_gte: ETHEREUM_BigDecimal
-  amount0In_lte: ETHEREUM_BigDecimal
-  amount0In_in: [ETHEREUM_BigDecimal!]
-  amount0In_not_in: [ETHEREUM_BigDecimal!]
-  amount1In: ETHEREUM_BigDecimal
-  amount1In_not: ETHEREUM_BigDecimal
-  amount1In_gt: ETHEREUM_BigDecimal
-  amount1In_lt: ETHEREUM_BigDecimal
-  amount1In_gte: ETHEREUM_BigDecimal
-  amount1In_lte: ETHEREUM_BigDecimal
-  amount1In_in: [ETHEREUM_BigDecimal!]
-  amount1In_not_in: [ETHEREUM_BigDecimal!]
-  amount0Out: ETHEREUM_BigDecimal
-  amount0Out_not: ETHEREUM_BigDecimal
-  amount0Out_gt: ETHEREUM_BigDecimal
-  amount0Out_lt: ETHEREUM_BigDecimal
-  amount0Out_gte: ETHEREUM_BigDecimal
-  amount0Out_lte: ETHEREUM_BigDecimal
-  amount0Out_in: [ETHEREUM_BigDecimal!]
-  amount0Out_not_in: [ETHEREUM_BigDecimal!]
-  amount1Out: ETHEREUM_BigDecimal
-  amount1Out_not: ETHEREUM_BigDecimal
-  amount1Out_gt: ETHEREUM_BigDecimal
-  amount1Out_lt: ETHEREUM_BigDecimal
-  amount1Out_gte: ETHEREUM_BigDecimal
-  amount1Out_lte: ETHEREUM_BigDecimal
-  amount1Out_in: [ETHEREUM_BigDecimal!]
-  amount1Out_not_in: [ETHEREUM_BigDecimal!]
-  to: ETHEREUM_Bytes
-  to_not: ETHEREUM_Bytes
-  to_in: [ETHEREUM_Bytes!]
-  to_not_in: [ETHEREUM_Bytes!]
-  to_contains: ETHEREUM_Bytes
-  to_not_contains: ETHEREUM_Bytes
+  sender: XDAI_Bytes
+  sender_not: XDAI_Bytes
+  sender_in: [XDAI_Bytes!]
+  sender_not_in: [XDAI_Bytes!]
+  sender_contains: XDAI_Bytes
+  sender_not_contains: XDAI_Bytes
+  amount0In: XDAI_BigDecimal
+  amount0In_not: XDAI_BigDecimal
+  amount0In_gt: XDAI_BigDecimal
+  amount0In_lt: XDAI_BigDecimal
+  amount0In_gte: XDAI_BigDecimal
+  amount0In_lte: XDAI_BigDecimal
+  amount0In_in: [XDAI_BigDecimal!]
+  amount0In_not_in: [XDAI_BigDecimal!]
+  amount1In: XDAI_BigDecimal
+  amount1In_not: XDAI_BigDecimal
+  amount1In_gt: XDAI_BigDecimal
+  amount1In_lt: XDAI_BigDecimal
+  amount1In_gte: XDAI_BigDecimal
+  amount1In_lte: XDAI_BigDecimal
+  amount1In_in: [XDAI_BigDecimal!]
+  amount1In_not_in: [XDAI_BigDecimal!]
+  amount0Out: XDAI_BigDecimal
+  amount0Out_not: XDAI_BigDecimal
+  amount0Out_gt: XDAI_BigDecimal
+  amount0Out_lt: XDAI_BigDecimal
+  amount0Out_gte: XDAI_BigDecimal
+  amount0Out_lte: XDAI_BigDecimal
+  amount0Out_in: [XDAI_BigDecimal!]
+  amount0Out_not_in: [XDAI_BigDecimal!]
+  amount1Out: XDAI_BigDecimal
+  amount1Out_not: XDAI_BigDecimal
+  amount1Out_gt: XDAI_BigDecimal
+  amount1Out_lt: XDAI_BigDecimal
+  amount1Out_gte: XDAI_BigDecimal
+  amount1Out_lte: XDAI_BigDecimal
+  amount1Out_in: [XDAI_BigDecimal!]
+  amount1Out_not_in: [XDAI_BigDecimal!]
+  to: XDAI_Bytes
+  to_not: XDAI_Bytes
+  to_in: [XDAI_Bytes!]
+  to_not_in: [XDAI_Bytes!]
+  to_contains: XDAI_Bytes
+  to_not_contains: XDAI_Bytes
   logIndex: BigInt
   logIndex_not: BigInt
   logIndex_gt: BigInt
@@ -2632,17 +2593,17 @@ input ETHEREUM_Swap_filter {
   logIndex_lte: BigInt
   logIndex_in: [BigInt!]
   logIndex_not_in: [BigInt!]
-  amountUSD: ETHEREUM_BigDecimal
-  amountUSD_not: ETHEREUM_BigDecimal
-  amountUSD_gt: ETHEREUM_BigDecimal
-  amountUSD_lt: ETHEREUM_BigDecimal
-  amountUSD_gte: ETHEREUM_BigDecimal
-  amountUSD_lte: ETHEREUM_BigDecimal
-  amountUSD_in: [ETHEREUM_BigDecimal!]
-  amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  amountUSD: XDAI_BigDecimal
+  amountUSD_not: XDAI_BigDecimal
+  amountUSD_gt: XDAI_BigDecimal
+  amountUSD_lt: XDAI_BigDecimal
+  amountUSD_gte: XDAI_BigDecimal
+  amountUSD_lte: XDAI_BigDecimal
+  amountUSD_in: [XDAI_BigDecimal!]
+  amountUSD_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_Swap_orderBy {
+enum XDAI_Swap_orderBy {
   id
   transaction
   timestamp
@@ -2657,42 +2618,43 @@ enum ETHEREUM_Swap_orderBy {
   amountUSD
 }
 
-type ETHEREUM_Token {
+type XDAI_Token {
   id: ID!
-  factory: ETHEREUM_Factory!
+  factory: XDAI_Factory!
   symbol: String!
   name: String!
   decimals: BigInt!
   totalSupply: BigInt!
-  volume: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
-  untrackedVolumeUSD: ETHEREUM_BigDecimal!
+  volume: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
+  untrackedVolumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  derivedETH: ETHEREUM_BigDecimal!
-  hourData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenHourData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenHourData_filter): [ETHEREUM_TokenHourData!]!
-  dayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_TokenDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_TokenDayData_filter): [ETHEREUM_TokenDayData!]!
-  basePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  quotePairs(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Pair_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Pair_filter): [ETHEREUM_Pair!]!
-  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
-  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_PairDayData_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_PairDayData_filter): [ETHEREUM_PairDayData!]!
+  liquidity: XDAI_BigDecimal!
+  derivedETH: XDAI_BigDecimal!
+  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: XDAI_Pair_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Pair_filter): [XDAI_Pair!]!
+  hourData(skip: Int = 0, first: Int = 100, orderBy: XDAI_TokenHourData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_TokenHourData_filter): [XDAI_TokenHourData!]!
+  dayData(skip: Int = 0, first: Int = 100, orderBy: XDAI_TokenDayData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_TokenDayData_filter): [XDAI_TokenDayData!]!
+  basePairs(skip: Int = 0, first: Int = 100, orderBy: XDAI_Pair_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Pair_filter): [XDAI_Pair!]!
+  quotePairs(skip: Int = 0, first: Int = 100, orderBy: XDAI_Pair_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Pair_filter): [XDAI_Pair!]!
+  basePairsDayData(skip: Int = 0, first: Int = 100, orderBy: XDAI_PairDayData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_PairDayData_filter): [XDAI_PairDayData!]!
+  quotePairsDayData(skip: Int = 0, first: Int = 100, orderBy: XDAI_PairDayData_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_PairDayData_filter): [XDAI_PairDayData!]!
 }
 
-type ETHEREUM_TokenDayData {
+type XDAI_TokenDayData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: XDAI_Token!
+  volume: XDAI_BigDecimal!
+  volumeETH: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: XDAI_BigDecimal!
+  liquidityETH: XDAI_BigDecimal!
+  liquidityUSD: XDAI_BigDecimal!
+  priceUSD: XDAI_BigDecimal!
 }
 
-input ETHEREUM_TokenDayData_filter {
+input XDAI_TokenDayData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2729,30 +2691,30 @@ input ETHEREUM_TokenDayData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: XDAI_BigDecimal
+  volume_not: XDAI_BigDecimal
+  volume_gt: XDAI_BigDecimal
+  volume_lt: XDAI_BigDecimal
+  volume_gte: XDAI_BigDecimal
+  volume_lte: XDAI_BigDecimal
+  volume_in: [XDAI_BigDecimal!]
+  volume_not_in: [XDAI_BigDecimal!]
+  volumeETH: XDAI_BigDecimal
+  volumeETH_not: XDAI_BigDecimal
+  volumeETH_gt: XDAI_BigDecimal
+  volumeETH_lt: XDAI_BigDecimal
+  volumeETH_gte: XDAI_BigDecimal
+  volumeETH_lte: XDAI_BigDecimal
+  volumeETH_in: [XDAI_BigDecimal!]
+  volumeETH_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2761,41 +2723,41 @@ input ETHEREUM_TokenDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: XDAI_BigDecimal
+  liquidity_not: XDAI_BigDecimal
+  liquidity_gt: XDAI_BigDecimal
+  liquidity_lt: XDAI_BigDecimal
+  liquidity_gte: XDAI_BigDecimal
+  liquidity_lte: XDAI_BigDecimal
+  liquidity_in: [XDAI_BigDecimal!]
+  liquidity_not_in: [XDAI_BigDecimal!]
+  liquidityETH: XDAI_BigDecimal
+  liquidityETH_not: XDAI_BigDecimal
+  liquidityETH_gt: XDAI_BigDecimal
+  liquidityETH_lt: XDAI_BigDecimal
+  liquidityETH_gte: XDAI_BigDecimal
+  liquidityETH_lte: XDAI_BigDecimal
+  liquidityETH_in: [XDAI_BigDecimal!]
+  liquidityETH_not_in: [XDAI_BigDecimal!]
+  liquidityUSD: XDAI_BigDecimal
+  liquidityUSD_not: XDAI_BigDecimal
+  liquidityUSD_gt: XDAI_BigDecimal
+  liquidityUSD_lt: XDAI_BigDecimal
+  liquidityUSD_gte: XDAI_BigDecimal
+  liquidityUSD_lte: XDAI_BigDecimal
+  liquidityUSD_in: [XDAI_BigDecimal!]
+  liquidityUSD_not_in: [XDAI_BigDecimal!]
+  priceUSD: XDAI_BigDecimal
+  priceUSD_not: XDAI_BigDecimal
+  priceUSD_gt: XDAI_BigDecimal
+  priceUSD_lt: XDAI_BigDecimal
+  priceUSD_gte: XDAI_BigDecimal
+  priceUSD_lte: XDAI_BigDecimal
+  priceUSD_in: [XDAI_BigDecimal!]
+  priceUSD_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_TokenDayData_orderBy {
+enum XDAI_TokenDayData_orderBy {
   id
   date
   token
@@ -2809,21 +2771,21 @@ enum ETHEREUM_TokenDayData_orderBy {
   priceUSD
 }
 
-type ETHEREUM_TokenHourData {
+type XDAI_TokenHourData {
   id: ID!
   date: Int!
-  token: ETHEREUM_Token!
-  volume: ETHEREUM_BigDecimal!
-  volumeETH: ETHEREUM_BigDecimal!
-  volumeUSD: ETHEREUM_BigDecimal!
+  token: XDAI_Token!
+  volume: XDAI_BigDecimal!
+  volumeETH: XDAI_BigDecimal!
+  volumeUSD: XDAI_BigDecimal!
   txCount: BigInt!
-  liquidity: ETHEREUM_BigDecimal!
-  liquidityETH: ETHEREUM_BigDecimal!
-  liquidityUSD: ETHEREUM_BigDecimal!
-  priceUSD: ETHEREUM_BigDecimal!
+  liquidity: XDAI_BigDecimal!
+  liquidityETH: XDAI_BigDecimal!
+  liquidityUSD: XDAI_BigDecimal!
+  priceUSD: XDAI_BigDecimal!
 }
 
-input ETHEREUM_TokenHourData_filter {
+input XDAI_TokenHourData_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -2860,30 +2822,30 @@ input ETHEREUM_TokenHourData_filter {
   token_ends_with_nocase: String
   token_not_ends_with: String
   token_not_ends_with_nocase: String
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeETH: ETHEREUM_BigDecimal
-  volumeETH_not: ETHEREUM_BigDecimal
-  volumeETH_gt: ETHEREUM_BigDecimal
-  volumeETH_lt: ETHEREUM_BigDecimal
-  volumeETH_gte: ETHEREUM_BigDecimal
-  volumeETH_lte: ETHEREUM_BigDecimal
-  volumeETH_in: [ETHEREUM_BigDecimal!]
-  volumeETH_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: XDAI_BigDecimal
+  volume_not: XDAI_BigDecimal
+  volume_gt: XDAI_BigDecimal
+  volume_lt: XDAI_BigDecimal
+  volume_gte: XDAI_BigDecimal
+  volume_lte: XDAI_BigDecimal
+  volume_in: [XDAI_BigDecimal!]
+  volume_not_in: [XDAI_BigDecimal!]
+  volumeETH: XDAI_BigDecimal
+  volumeETH_not: XDAI_BigDecimal
+  volumeETH_gt: XDAI_BigDecimal
+  volumeETH_lt: XDAI_BigDecimal
+  volumeETH_gte: XDAI_BigDecimal
+  volumeETH_lte: XDAI_BigDecimal
+  volumeETH_in: [XDAI_BigDecimal!]
+  volumeETH_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -2892,41 +2854,41 @@ input ETHEREUM_TokenHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  liquidityETH: ETHEREUM_BigDecimal
-  liquidityETH_not: ETHEREUM_BigDecimal
-  liquidityETH_gt: ETHEREUM_BigDecimal
-  liquidityETH_lt: ETHEREUM_BigDecimal
-  liquidityETH_gte: ETHEREUM_BigDecimal
-  liquidityETH_lte: ETHEREUM_BigDecimal
-  liquidityETH_in: [ETHEREUM_BigDecimal!]
-  liquidityETH_not_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD: ETHEREUM_BigDecimal
-  liquidityUSD_not: ETHEREUM_BigDecimal
-  liquidityUSD_gt: ETHEREUM_BigDecimal
-  liquidityUSD_lt: ETHEREUM_BigDecimal
-  liquidityUSD_gte: ETHEREUM_BigDecimal
-  liquidityUSD_lte: ETHEREUM_BigDecimal
-  liquidityUSD_in: [ETHEREUM_BigDecimal!]
-  liquidityUSD_not_in: [ETHEREUM_BigDecimal!]
-  priceUSD: ETHEREUM_BigDecimal
-  priceUSD_not: ETHEREUM_BigDecimal
-  priceUSD_gt: ETHEREUM_BigDecimal
-  priceUSD_lt: ETHEREUM_BigDecimal
-  priceUSD_gte: ETHEREUM_BigDecimal
-  priceUSD_lte: ETHEREUM_BigDecimal
-  priceUSD_in: [ETHEREUM_BigDecimal!]
-  priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: XDAI_BigDecimal
+  liquidity_not: XDAI_BigDecimal
+  liquidity_gt: XDAI_BigDecimal
+  liquidity_lt: XDAI_BigDecimal
+  liquidity_gte: XDAI_BigDecimal
+  liquidity_lte: XDAI_BigDecimal
+  liquidity_in: [XDAI_BigDecimal!]
+  liquidity_not_in: [XDAI_BigDecimal!]
+  liquidityETH: XDAI_BigDecimal
+  liquidityETH_not: XDAI_BigDecimal
+  liquidityETH_gt: XDAI_BigDecimal
+  liquidityETH_lt: XDAI_BigDecimal
+  liquidityETH_gte: XDAI_BigDecimal
+  liquidityETH_lte: XDAI_BigDecimal
+  liquidityETH_in: [XDAI_BigDecimal!]
+  liquidityETH_not_in: [XDAI_BigDecimal!]
+  liquidityUSD: XDAI_BigDecimal
+  liquidityUSD_not: XDAI_BigDecimal
+  liquidityUSD_gt: XDAI_BigDecimal
+  liquidityUSD_lt: XDAI_BigDecimal
+  liquidityUSD_gte: XDAI_BigDecimal
+  liquidityUSD_lte: XDAI_BigDecimal
+  liquidityUSD_in: [XDAI_BigDecimal!]
+  liquidityUSD_not_in: [XDAI_BigDecimal!]
+  priceUSD: XDAI_BigDecimal
+  priceUSD_not: XDAI_BigDecimal
+  priceUSD_gt: XDAI_BigDecimal
+  priceUSD_lt: XDAI_BigDecimal
+  priceUSD_gte: XDAI_BigDecimal
+  priceUSD_lte: XDAI_BigDecimal
+  priceUSD_in: [XDAI_BigDecimal!]
+  priceUSD_not_in: [XDAI_BigDecimal!]
 }
 
-enum ETHEREUM_TokenHourData_orderBy {
+enum XDAI_TokenHourData_orderBy {
   id
   date
   token
@@ -2940,7 +2902,7 @@ enum ETHEREUM_TokenHourData_orderBy {
   priceUSD
 }
 
-input ETHEREUM_Token_filter {
+input XDAI_Token_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3025,30 +2987,30 @@ input ETHEREUM_Token_filter {
   totalSupply_lte: BigInt
   totalSupply_in: [BigInt!]
   totalSupply_not_in: [BigInt!]
-  volume: ETHEREUM_BigDecimal
-  volume_not: ETHEREUM_BigDecimal
-  volume_gt: ETHEREUM_BigDecimal
-  volume_lt: ETHEREUM_BigDecimal
-  volume_gte: ETHEREUM_BigDecimal
-  volume_lte: ETHEREUM_BigDecimal
-  volume_in: [ETHEREUM_BigDecimal!]
-  volume_not_in: [ETHEREUM_BigDecimal!]
-  volumeUSD: ETHEREUM_BigDecimal
-  volumeUSD_not: ETHEREUM_BigDecimal
-  volumeUSD_gt: ETHEREUM_BigDecimal
-  volumeUSD_lt: ETHEREUM_BigDecimal
-  volumeUSD_gte: ETHEREUM_BigDecimal
-  volumeUSD_lte: ETHEREUM_BigDecimal
-  volumeUSD_in: [ETHEREUM_BigDecimal!]
-  volumeUSD_not_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_not: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lt: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_gte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_lte: ETHEREUM_BigDecimal
-  untrackedVolumeUSD_in: [ETHEREUM_BigDecimal!]
-  untrackedVolumeUSD_not_in: [ETHEREUM_BigDecimal!]
+  volume: XDAI_BigDecimal
+  volume_not: XDAI_BigDecimal
+  volume_gt: XDAI_BigDecimal
+  volume_lt: XDAI_BigDecimal
+  volume_gte: XDAI_BigDecimal
+  volume_lte: XDAI_BigDecimal
+  volume_in: [XDAI_BigDecimal!]
+  volume_not_in: [XDAI_BigDecimal!]
+  volumeUSD: XDAI_BigDecimal
+  volumeUSD_not: XDAI_BigDecimal
+  volumeUSD_gt: XDAI_BigDecimal
+  volumeUSD_lt: XDAI_BigDecimal
+  volumeUSD_gte: XDAI_BigDecimal
+  volumeUSD_lte: XDAI_BigDecimal
+  volumeUSD_in: [XDAI_BigDecimal!]
+  volumeUSD_not_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD: XDAI_BigDecimal
+  untrackedVolumeUSD_not: XDAI_BigDecimal
+  untrackedVolumeUSD_gt: XDAI_BigDecimal
+  untrackedVolumeUSD_lt: XDAI_BigDecimal
+  untrackedVolumeUSD_gte: XDAI_BigDecimal
+  untrackedVolumeUSD_lte: XDAI_BigDecimal
+  untrackedVolumeUSD_in: [XDAI_BigDecimal!]
+  untrackedVolumeUSD_not_in: [XDAI_BigDecimal!]
   txCount: BigInt
   txCount_not: BigInt
   txCount_gt: BigInt
@@ -3057,25 +3019,31 @@ input ETHEREUM_Token_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
-  liquidity: ETHEREUM_BigDecimal
-  liquidity_not: ETHEREUM_BigDecimal
-  liquidity_gt: ETHEREUM_BigDecimal
-  liquidity_lt: ETHEREUM_BigDecimal
-  liquidity_gte: ETHEREUM_BigDecimal
-  liquidity_lte: ETHEREUM_BigDecimal
-  liquidity_in: [ETHEREUM_BigDecimal!]
-  liquidity_not_in: [ETHEREUM_BigDecimal!]
-  derivedETH: ETHEREUM_BigDecimal
-  derivedETH_not: ETHEREUM_BigDecimal
-  derivedETH_gt: ETHEREUM_BigDecimal
-  derivedETH_lt: ETHEREUM_BigDecimal
-  derivedETH_gte: ETHEREUM_BigDecimal
-  derivedETH_lte: ETHEREUM_BigDecimal
-  derivedETH_in: [ETHEREUM_BigDecimal!]
-  derivedETH_not_in: [ETHEREUM_BigDecimal!]
+  liquidity: XDAI_BigDecimal
+  liquidity_not: XDAI_BigDecimal
+  liquidity_gt: XDAI_BigDecimal
+  liquidity_lt: XDAI_BigDecimal
+  liquidity_gte: XDAI_BigDecimal
+  liquidity_lte: XDAI_BigDecimal
+  liquidity_in: [XDAI_BigDecimal!]
+  liquidity_not_in: [XDAI_BigDecimal!]
+  derivedETH: XDAI_BigDecimal
+  derivedETH_not: XDAI_BigDecimal
+  derivedETH_gt: XDAI_BigDecimal
+  derivedETH_lt: XDAI_BigDecimal
+  derivedETH_gte: XDAI_BigDecimal
+  derivedETH_lte: XDAI_BigDecimal
+  derivedETH_in: [XDAI_BigDecimal!]
+  derivedETH_not_in: [XDAI_BigDecimal!]
+  whitelistPairs: [String!]
+  whitelistPairs_not: [String!]
+  whitelistPairs_contains: [String!]
+  whitelistPairs_contains_nocase: [String!]
+  whitelistPairs_not_contains: [String!]
+  whitelistPairs_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Token_orderBy {
+enum XDAI_Token_orderBy {
   id
   factory
   symbol
@@ -3088,6 +3056,7 @@ enum ETHEREUM_Token_orderBy {
   txCount
   liquidity
   derivedETH
+  whitelistPairs
   hourData
   dayData
   basePairs
@@ -3096,16 +3065,16 @@ enum ETHEREUM_Token_orderBy {
   quotePairsDayData
 }
 
-type ETHEREUM_Transaction {
+type XDAI_Transaction {
   id: ID!
   blockNumber: BigInt!
   timestamp: BigInt!
-  mints(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Mint_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Mint_filter): [ETHEREUM_Mint]!
-  burns(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Burn_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Burn_filter): [ETHEREUM_Burn]!
-  swaps(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_Swap_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_Swap_filter): [ETHEREUM_Swap]!
+  mints(skip: Int = 0, first: Int = 100, orderBy: XDAI_Mint_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Mint_filter): [XDAI_Mint]!
+  burns(skip: Int = 0, first: Int = 100, orderBy: XDAI_Burn_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Burn_filter): [XDAI_Burn]!
+  swaps(skip: Int = 0, first: Int = 100, orderBy: XDAI_Swap_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_Swap_filter): [XDAI_Swap]!
 }
 
-input ETHEREUM_Transaction_filter {
+input XDAI_Transaction_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3150,7 +3119,7 @@ input ETHEREUM_Transaction_filter {
   swaps_not_contains_nocase: [String!]
 }
 
-enum ETHEREUM_Transaction_orderBy {
+enum XDAI_Transaction_orderBy {
   id
   blockNumber
   timestamp
@@ -3159,12 +3128,12 @@ enum ETHEREUM_Transaction_orderBy {
   swaps
 }
 
-type ETHEREUM_User {
+type XDAI_User {
   id: ID!
-  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: ETHEREUM_LiquidityPosition_orderBy, orderDirection: ETHEREUM_OrderDirection, where: ETHEREUM_LiquidityPosition_filter): [ETHEREUM_LiquidityPosition!]!
+  liquidityPositions(skip: Int = 0, first: Int = 100, orderBy: XDAI_LiquidityPosition_orderBy, orderDirection: XDAI_OrderDirection, where: XDAI_LiquidityPosition_filter): [XDAI_LiquidityPosition!]!
 }
 
-input ETHEREUM_User_filter {
+input XDAI_User_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -3175,20 +3144,20 @@ input ETHEREUM_User_filter {
   id_not_in: [ID!]
 }
 
-enum ETHEREUM_User_orderBy {
+enum XDAI_User_orderBy {
   id
   liquidityPositions
 }
 
-type ETHEREUM__Block_ {
+type XDAI__Block_ {
   """The hash of the block"""
-  hash: ETHEREUM_Bytes
+  hash: XDAI_Bytes
   """The block number"""
   number: Int!
 }
 
 """The type for the top-level _meta field"""
-type ETHEREUM__Meta_ {
+type XDAI__Meta_ {
   """
   Information about a specific subgraph block. The hash of the block
   will be null if the _meta field has a block constraint that asks for
@@ -3196,7 +3165,7 @@ type ETHEREUM__Meta_ {
   and therefore asks for the latest  block
   
   """
-  block: ETHEREUM__Block_!
+  block: XDAI__Block_!
   """The deployment ID"""
   deployment: String!
   """If `true`, the subgraph encountered indexing errors at some past block"""
