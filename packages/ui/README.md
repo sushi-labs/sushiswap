@@ -1,6 +1,6 @@
 # UI
 
-Currency library
+UI library
 
 ## Goals
 
