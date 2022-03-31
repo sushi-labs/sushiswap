@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
@@ -49,6 +50,7 @@ const Streams: FC<StreamsProps> = (props) => {
                 {stream.amount} {``} {stream.token.symbol} {``}
                 {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
+                {<Link href={'/streams/'.concat(stream.id)}> View</Link>}
               </div>
             ))
           ) : (
