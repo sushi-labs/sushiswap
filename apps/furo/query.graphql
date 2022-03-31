@@ -14,6 +14,7 @@ query UserStreams($id: String) {
         id
         symbol
         name
+        decimals
       }
     }
     createdStreams(orderBy: startedAt) {
@@ -30,6 +31,7 @@ query UserStreams($id: String) {
         id
         symbol
         name
+        decimals
       }
     }
   }
@@ -46,6 +48,24 @@ query Stream($id: String) {
       id
       symbol
       name
+      decimals
+    }
+  }
+}
+
+query Transactions($id: String) {
+  transactions(where: { stream: $id }) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    token {
+      id
+      name
+      symbol
+      decimals
     }
   }
 }
