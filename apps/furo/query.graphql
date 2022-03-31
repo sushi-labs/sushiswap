@@ -1,22 +1,30 @@
-query StreamsQuery {
-    streams(first: 15) {
-        __typename
-        id
-        status
-        startedAt
-        expiresAt
-        amount
-        recipient {
-        id
-        }
-        createdBy {
-        id
-        }
-        transactionCount
-        token {
+query UserStreams($id: String){
+  user(id: $id) {
+    revenueStreams(orderBy: startedAt) {
+      id
+      status
+      startedAt
+      expiresAt
+      amount
+      withdrawnAmount
+      token {
         id
         symbol
         name
-        }
+      }
     }
+    createdStreams(orderBy: startedAt) {
+      id
+      status
+      startedAt
+      expiresAt
+      amount
+      withdrawnAmount
+      token {
+        id
+        symbol
+        name
+      }
+    }
+  }
 }

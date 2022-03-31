@@ -2060,7 +2060,7 @@ import { DefaultLogger } from '@graphql-mesh/utils';
 import GraphqlHandler from '@graphql-mesh/graphql'
 import BareMerger from '@graphql-mesh/merger-bare';
 import { resolveAdditionalResolvers } from '@graphql-mesh/utils';
-export const rawConfig: YamlConfig.Config = {"sources":[{"name":"furostream_kovan","handler":{"graphql":{"endpoint":"https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan"}}}],"documents":["./factory-query.graphql"]} as any
+export const rawConfig: YamlConfig.Config = {"sources":[{"name":"furostream_kovan","handler":{"graphql":{"endpoint":"https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan"}}}],"documents":["./query.graphql"]} as any
 export async function getMeshOptions(): Promise<GetMeshOptions> {
 const pubsub = new PubSub();
 const cache = new (MeshCache as any)({
@@ -2120,25 +2120,33 @@ const additionalEnvelopPlugins = [];
   };
 }
 
-export const documentsInSDL = /*#__PURE__*/ [/* GraphQL */`query StreamsQuery {
-  streams(first: 15) {
-    __typename
-    id
-    status
-    startedAt
-    expiresAt
-    amount
-    recipient {
+export const documentsInSDL = /*#__PURE__*/ [/* GraphQL */`query UserStreams($id: String) {
+  user(id: $id) {
+    revenueStreams(orderBy: startedAt) {
       id
+      status
+      startedAt
+      expiresAt
+      amount
+      withdrawnAmount
+      token {
+        id
+        symbol
+        name
+      }
     }
-    createdBy {
+    createdStreams(orderBy: startedAt) {
       id
-    }
-    transactionCount
-    token {
-      id
-      symbol
-      name
+      status
+      startedAt
+      expiresAt
+      amount
+      withdrawnAmount
+      token {
+        id
+        symbol
+        name
+      }
     }
   }
 }`];
@@ -2152,17 +2160,21 @@ export async function getBuiltGraphSDK<TGlobalContext = any, TGlobalRoot = any, 
   const { schema } = await getBuiltGraphClient();
   return getSdk<TGlobalContext, TGlobalRoot, TOperationContext, TOperationRoot>(schema, sdkOptions);
 }
-export type StreamsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserStreamsQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type StreamsQueryQuery = { streams: Array<(
-    { __typename: 'Stream' }
-    & Pick<Stream, 'id' | 'status' | 'startedAt' | 'expiresAt' | 'amount' | 'transactionCount'>
-    & { recipient: Pick<User, 'id'>, createdBy: Pick<User, 'id'>, token: Pick<Token, 'id' | 'symbol' | 'name'> }
-  )> };
+export type UserStreamsQuery = { user?: Maybe<{ revenueStreams: Array<(
+      Pick<Stream, 'id' | 'status' | 'startedAt' | 'expiresAt' | 'amount' | 'withdrawnAmount'>
+      & { token: Pick<Token, 'id' | 'symbol' | 'name'> }
+    )>, createdStreams: Array<(
+      Pick<Stream, 'id' | 'status' | 'startedAt' | 'expiresAt' | 'amount' | 'withdrawnAmount'>
+      & { token: Pick<Token, 'id' | 'symbol' | 'name'> }
+    )> }> };
 
 
-export const StreamsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"StreamsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"streams"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"startedAt"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"transactionCount"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<StreamsQueryQuery, StreamsQueryQueryVariables>;
+export const UserStreamsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserStreams"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revenueStreams"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"startedAt"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"startedAt"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"withdrawnAmount"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdStreams"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"startedAt"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"startedAt"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"withdrawnAmount"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserStreamsQuery, UserStreamsQueryVariables>;
 
 
 function handleExecutionResult<T>(result: ExecutionResult, operationName: string) {
@@ -2178,22 +2190,22 @@ export interface SdkOptions<TGlobalContext = any, TGlobalRoot = any> {
   jitOptions?: Partial<CompilerOptions>;
 }
 export function getSdk<TGlobalContext = any, TGlobalRoot = any, TOperationContext = any, TOperationRoot = any>(schema: GraphQLSchema, { globalContext, globalRoot, jitOptions = {} }: SdkOptions<TGlobalContext, TGlobalRoot> = {}) {
-    const StreamsQueryCompiled = compileQuery(schema, StreamsQueryDocument, 'StreamsQuery', jitOptions);
-    if(!(isCompiledQuery(StreamsQueryCompiled))) {
-      const originalErrors = StreamsQueryCompiled?.errors?.map(error => error.originalError || error) || [];
-      throw new AggregateError(originalErrors, `Failed to compile StreamsQuery: \n\t${originalErrors.join('\n\t')}`);
+    const UserStreamsCompiled = compileQuery(schema, UserStreamsDocument, 'UserStreams', jitOptions);
+    if(!(isCompiledQuery(UserStreamsCompiled))) {
+      const originalErrors = UserStreamsCompiled?.errors?.map(error => error.originalError || error) || [];
+      throw new AggregateError(originalErrors, `Failed to compile UserStreams: \n\t${originalErrors.join('\n\t')}`);
     }
 
   return {
-    async StreamsQuery(variables?: StreamsQueryQueryVariables, context?: TOperationContext, root?: TOperationRoot): Promise<StreamsQueryQuery> {
-      const result = await StreamsQueryCompiled.query({
+    async UserStreams(variables?: UserStreamsQueryVariables, context?: TOperationContext, root?: TOperationRoot): Promise<UserStreamsQuery> {
+      const result = await UserStreamsCompiled.query({
         ...globalRoot,
         ...root
       }, {
         ...globalContext,
         ...context
       }, variables);
-      return handleExecutionResult(result, 'StreamsQuery');
+      return handleExecutionResult(result, 'UserStreams');
     }
   };
 }
