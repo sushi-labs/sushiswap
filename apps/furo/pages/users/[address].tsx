@@ -3,12 +3,9 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 
-
 interface StreamsProps {
-  user: {
-    revenueStreams: Stream[]
-    createdStreams: Stream[]
-  }
+  revenueStreams: Stream[]
+  createdStreams: Stream[]
 }
 
 interface Stream {
@@ -25,7 +22,7 @@ interface Stream {
 interface Token {
   id: string
   symbol: string
-  name: string  
+  name: string
   decimals: string
 }
 
@@ -36,15 +33,16 @@ interface User {
 const Streams: FC<StreamsProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
+  let {revenueStreams, createdStreams} = props
 
   return (
     <>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Streams</h1>
-        <h2>Incoming streams</h2>
+        <h1 className="py-4 text-2xl font-bold">Incoming streams</h1>
         <div className="grid gap-2">
-          {props.user.revenueStreams.length ? (
-            Object.values(props.user.revenueStreams).map((stream) => (
+          {revenueStreams.length ? (
+            Object.values(revenueStreams).map((stream) => (
               <div key={stream.id}>
                 {stream.status} {``}
                 {stream.createdBy.id} {``}
@@ -55,14 +53,16 @@ const Streams: FC<StreamsProps> = (props) => {
               </div>
             ))
           ) : (
-            <div><i>No streams found..</i></div>
+            <div>
+              <i>No streams found..</i>
+            </div>
           )}
         </div>
 
-        <h2>Outgoing streams</h2>
+        <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
         <div className="grid gap-2">
-          {props.user.createdStreams.length ? (
-            Object.values(props.user.createdStreams).map((stream) => (
+          {createdStreams.length ? (
+            Object.values(createdStreams).map((stream) => (
               <div key={stream.id}>
                 {stream.status} {``}
                 {stream.createdBy.id} {``}
@@ -72,7 +72,9 @@ const Streams: FC<StreamsProps> = (props) => {
               </div>
             ))
           ) : (
-            <div><i>No streams found..</i></div>
+            <div>
+              <i>No streams found..</i>
+            </div>
           )}
         </div>
       </div>
@@ -85,6 +87,6 @@ export default Streams
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   return {
-    props: await sdk.UserStreams({ id: query.address }),
+    props: (await sdk.UserStreams({ id: query.address })).user,
   }
 }
