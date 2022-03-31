@@ -34,10 +34,9 @@ export default function Analytics(props: FactoriesQueryQuery) {
 export async function getStaticProps() {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = await getBuiltGraphSDK()
-  const data = await sdk.FactoriesQuery()
   return {
     props: {
-      ...data,
+      ...(await sdk.FactoriesQuery()),
     },
     revalidate: 60,
   }
