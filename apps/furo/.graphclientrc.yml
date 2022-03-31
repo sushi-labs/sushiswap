@@ -3,16 +3,9 @@ sources:
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
-    # transforms:
-    #   - prefix:
-    #       # value: ETHEREUM_
-    #       includeRootOperations: true
-    #       ignore:
-    #         - _SubgraphErrorPolicy_
-    #   - typeMerging:
-    #       queryFields:
-    #         - queryFieldName: StreamsQuery
-    #           keyField: id
-    #           keyArg: id
+  # - name: furovesting_kovan
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-kovan
 documents:
   - ./query.graphql

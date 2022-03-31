@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { getBuiltGraphSDK } from '../../../.graphclient'
 
 interface StreamsProps {
   revenueStreams: Stream[]
