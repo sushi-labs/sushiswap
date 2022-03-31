@@ -1,5 +1,6 @@
 query StreamsQuery {
     streams(first: 15) {
+        __typename
         id
         status
         startedAt
