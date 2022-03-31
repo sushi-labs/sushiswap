@@ -25,7 +25,8 @@ interface Stream {
 interface Token {
   id: string
   symbol: string
-  name: string
+  name: string  
+  decimals: string
 }
 
 interface User {
