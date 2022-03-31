@@ -1,4 +1,5 @@
-import { FactoriesQueryQuery, getBuiltGraphSDK } from '../.graphclient'
+import { FactoriesQueryQuery } from '../.graphclient'
+
 import { KPI } from '../components'
 
 export default function Analytics(props: FactoriesQueryQuery) {
@@ -31,10 +32,12 @@ export default function Analytics(props: FactoriesQueryQuery) {
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = await getBuiltGraphSDK()
+  const props = await sdk.FactoriesQuery()
   return {
-    props: await sdk.FactoriesQuery(),
+    props,
     revalidate: 60,
   }
 }
