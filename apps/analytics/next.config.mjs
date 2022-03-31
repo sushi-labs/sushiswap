@@ -5,5 +5,5 @@ const withTranspileModules = transpileModules(['ui'], { resolveSymlinks: true, d
 export default withTranspileModules({
   basePath: '/analytics',
   reactStrictMode: true,
-  // swcMinify: true,
+  swcMinify: true,
 })
