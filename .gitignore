@@ -42,4 +42,4 @@ yarn-error.log*
 .env
 
 # graphql
-.graphqlclient
+.graphclient
