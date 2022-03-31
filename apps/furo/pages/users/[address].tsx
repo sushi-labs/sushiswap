@@ -1,9 +1,7 @@
 import { useRouter } from 'next/router'
-import { FC, useEffect, useState } from 'react'
-import useSWR from 'swr'
-// import useSWR from 'swr'
-import { UserStreamsQuery, getBuiltGraphSDK } from '../../.graphclient'
-// import useSWR from "swr"
+import { FC } from 'react'
+import { getBuiltGraphSDK } from '../../.graphclient'
+
 
 interface StreamsProps {
   user: {

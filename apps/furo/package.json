@@ -14,7 +14,6 @@
     "next": "12.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "swr": "^1.2.2",
     "ui": "workspace:*",
     "@graphql-mesh/transform-prefix": "0.11.12",
     "@graphql-mesh/transform-rename": "0.12.12",
