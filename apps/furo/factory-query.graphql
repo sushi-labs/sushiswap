@@ -1,0 +1,21 @@
+query StreamsQuery {
+    streams(first: 15) {
+        id
+        status
+        startedAt
+        expiresAt
+        amount
+        recipient {
+        id
+        }
+        createdBy {
+        id
+        }
+        transactionCount
+        token {
+        id
+        symbol
+        name
+        }
+    }
+}
