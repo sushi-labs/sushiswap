@@ -35,18 +35,8 @@ interface User {
 
 const Streams: FC<StreamsProps> = (props) => {
   const router = useRouter()
-  const address = router.query.id as string
-  // const [incomingStreams, setIncomingStreams] = useState<Stream[]>()
-  // const [outGoingStreams, setOutgoingStreams] = useState<Stream[]>()
+  const address = router.query.address as string
 
-  // useEffect(() => {
-  //   setIncomingStreams(props.revenueStreams)
-  //   console.log("got it, ", {incomingStreams})
-  //   setOutgoingStreams(props.createdStreams)
-  // }, [props, incomingStreams])
-
-  console.log(props)
-  // if (!props) return null
   return (
     <>
       <div className="px-2 pt-16">
@@ -94,6 +84,6 @@ export default Streams
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   return {
-    props: await sdk.UserStreams({ id: query.id }),
+    props: await sdk.UserStreams({ id: query.address }),
   }
 }
