@@ -4,8 +4,8 @@ import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../.graphclient'
 
 interface StreamsProps {
-  revenueStreams: Stream[]
-  createdStreams: Stream[]
+  incomingStreams: Stream[]
+  outgoingStreams: Stream[]
 }
 
 interface Stream {
@@ -15,6 +15,7 @@ interface Stream {
   withdrawnAmount: string
   expiresAt: string
   startedAt: string
+  recipient: User
   createdBy: User
   token: Token
 }
@@ -33,7 +34,7 @@ interface User {
 const Streams: FC<StreamsProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
-  let {revenueStreams, createdStreams} = props
+  let {incomingStreams, outgoingStreams} = props
 
   return (
     <>
@@ -41,8 +42,8 @@ const Streams: FC<StreamsProps> = (props) => {
         <h1 className="py-4 text-2xl font-bold">Streams</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming streams</h1>
         <div className="grid gap-2">
-          {revenueStreams.length ? (
-            Object.values(revenueStreams).map((stream) => (
+          {incomingStreams.length ? (
+            Object.values(incomingStreams).map((stream) => (
               <div key={stream.id}>
                 {stream.status} {``}
                 {stream.createdBy.id} {``}
@@ -61,14 +62,15 @@ const Streams: FC<StreamsProps> = (props) => {
 
         <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
         <div className="grid gap-2">
-          {createdStreams.length ? (
-            Object.values(createdStreams).map((stream) => (
+          {outgoingStreams.length ? (
+            Object.values(outgoingStreams).map((stream) => (
               <div key={stream.id}>
                 {stream.status} {``}
-                {stream.createdBy.id} {``}
+                {stream.recipient.id} {``}
                 {stream.amount} {``} {stream.token.symbol} {``}
                 {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
+                {<Link href={'/streams/'.concat(stream.id)}> View</Link>}
               </div>
             ))
           ) : (

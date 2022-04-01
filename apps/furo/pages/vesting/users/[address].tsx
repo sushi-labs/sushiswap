@@ -4,7 +4,8 @@ import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../.graphclient'
 
 interface UserProps {
-  vestings: Vesting[]
+  incomingVestings: Vesting[]
+  outgoingVestings: Vesting[]
 }
 
 interface Vesting {
@@ -39,7 +40,7 @@ interface User {
 const Vestings: FC<UserProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
-  let {vestings} = props
+  let {incomingVestings, outgoingVestings} = props
 
   return (
     <>
@@ -47,11 +48,30 @@ const Vestings: FC<UserProps> = (props) => {
         <h1 className="py-4 text-2xl font-bold">Vestings</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming vestings</h1>
         <div className="grid gap-2">
-          {vestings.length ? (
-            Object.values(vestings).map((vesting) => (
+          {incomingVestings.length ? (
+            Object.values(incomingVestings).map((vesting) => (
               <div key={vesting.id}>
                 {vesting.status} {``}
                 {vesting.createdBy.id} {``}
+                {vesting.totalAmount} {``} {vesting.token.symbol} {``}
+                {new Date(parseInt(vesting.startedAt) * 1000).toLocaleString()} {``}
+                {new Date(parseInt(vesting.expiresAt) * 1000).toLocaleString()}
+                {<Link href={'/vestings/'.concat(vesting.id)}> View</Link>}
+              </div>
+            ))
+          ) : (
+            <div>
+              <i>No vestings found..</i>
+            </div>
+          )}
+        </div>
+        <h1 className="py-4 text-2xl font-bold">Outgoing vestings</h1>
+        <div className="grid gap-2">
+          {outgoingVestings.length ? (
+            Object.values(outgoingVestings).map((vesting) => (
+              <div key={vesting.id}>
+                {vesting.status} {``}
+                {vesting.recipient.id} {``}
                 {vesting.totalAmount} {``} {vesting.token.symbol} {``}
                 {new Date(parseInt(vesting.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(vesting.expiresAt) * 1000).toLocaleString()}
