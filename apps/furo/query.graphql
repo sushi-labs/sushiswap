@@ -178,3 +178,16 @@ query VestingTransactions($id: String) {
     }
   }
 }
+
+query VestingSchedule($id: ID!) {
+    vesting(id: $id) {
+    schedule {
+      periods(orderBy: time) {
+        id
+        type
+        time
+        amount
+      }
+    }
+  }
+}
