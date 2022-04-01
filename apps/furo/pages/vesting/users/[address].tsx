@@ -73,7 +73,7 @@ export default Streams
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const user = (await sdk.UserVesting({ id: query.address })).vestingUser
+  const user = (await sdk.UserVestings({ id: query.address })).vestingUser
   return {
     props: user,
   }

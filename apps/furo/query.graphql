@@ -69,7 +69,7 @@ query Transactions($id: String) {
     }
   }
 }
-query UserVesting($id: ID!) {
+query UserVestings($id: ID!) {
   vestingUser(id: $id) {
     vestings {
       id
@@ -97,6 +97,53 @@ query UserVesting($id: ID!) {
       createdBy {
         id
       }
+    }
+  }
+}
+
+query Vesting($id: ID!) {
+  vesting(id: $id) {
+    id
+    status
+    steps
+    startedAt
+    expiresAt
+    cliffDuration
+    stepDuration
+    stepAmount
+    cliffAmount
+    totalAmount
+    withdrawnAmount
+    fromBentoBox
+    token {
+      symbol
+    }
+    status
+    schedule {
+      id
+    }
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+  }
+}
+
+query VestingTransactions($id: String) {
+  vestingTransactions(where: { vesting: $id }) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    token {
+      id
+      name
+      symbol
+      decimals
     }
   }
 }
