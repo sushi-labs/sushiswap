@@ -1,6 +1,16 @@
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
+import { useTableOptions } from './hooks'
+import {
+  AnimatedAxis, // any of these can be non-animated equivalents
+  AnimatedGrid,
+  AnimatedLineSeries,
+  XYChart,
+  Tooltip,
+} from '@visx/xychart';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 interface Props {
   vesting: Vesting
@@ -63,7 +73,23 @@ const Vesting: FC<Props> = (props) => {
   const router = useRouter()
   const id = router.query.id as string
   let { vesting, transactions, schedule } = props
+  const [chartData, setChartData] = useState<any>()
 
+  useEffect( () => {
+    const data = schedule.periods.map( period => (
+      {
+        x: new Date(parseInt(period.time) * 1000).toLocaleString(),
+        y: period.amount
+      } as any
+    ))
+    setChartData(data)
+  }, [schedule])
+
+  const options = useTableOptions()
+  const accessors = {
+    xAccessor: d => d.x,
+    yAccessor: d => d.y,
+  };
 
   return (
     <>
@@ -100,6 +126,29 @@ const Vesting: FC<Props> = (props) => {
           )}
         </div>
 
+        <XYChart height={300} xScale={{ type: 'band' }} yScale={{ type: 'linear' }}>
+    <AnimatedAxis orientation="left" />
+    <AnimatedAxis orientation="bottom" />
+    <AnimatedGrid columns={false} numTicks={4} />
+    <AnimatedLineSeries dataKey="Line 1" data={chartData} {...accessors} />
+    <Tooltip
+      snapTooltipToDatumX
+      snapTooltipToDatumY
+      showVerticalCrosshair
+      showSeriesGlyphs
+      renderTooltip={({ tooltipData, colorScale }) => (
+        <div>
+          <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+            {tooltipData.nearestDatum.key}
+          </div>
+          {accessors.xAccessor(tooltipData.nearestDatum.datum)}
+          {', '}
+          {accessors.yAccessor(tooltipData.nearestDatum.datum)}
+        </div>
+      )}
+    />
+  </XYChart>
+  
         <h2 className="py-4 text-2xl font-bold">Schedule periods</h2>
         <div className="grid gap-2">
           {schedule.periods.length ? (
