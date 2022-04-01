@@ -208,7 +208,6 @@ importers:
       postcss: ^8.4.7
       react: 17.0.2
       react-dom: 17.0.2
-      swr: ^1.2.2
       tailwindcss: ^3.0.23
       typescript: 4.6.2
       ui: workspace:*
@@ -220,7 +219,6 @@ importers:
       next: 12.1.0_react-dom@17.0.2+react@17.0.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      swr: 1.2.2_react@17.0.2
       ui: link:../../packages/ui
     devDependencies:
       '@graphprotocol/client-cli': 0.0.2_a827a5d0da07b11b42534ab7eb813b16
@@ -8266,14 +8264,6 @@ packages:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.0.0-rc.2-next-b9de50d2f-20220308
-    dev: false
-
-  /swr/1.2.2_react@17.0.2:
-    resolution: {integrity: sha512-ky0BskS/V47GpW8d6RU7CPsr6J8cr7mQD6+do5eky3bM0IyJaoi3vO8UhvrzJaObuTlGhPl2szodeB2dUd76Xw==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 17.0.2
     dev: false
 
   /symbol-observable/1.2.0:

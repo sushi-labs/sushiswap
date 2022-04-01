@@ -1,4 +1,4 @@
-query UserStreams($id: String) {
+query UserStreams($id: ID!) {
   user(id: $id) {
     revenueStreams(orderBy: startedAt) {
       id
@@ -36,7 +36,7 @@ query UserStreams($id: String) {
     }
   }
 }
-query Stream($id: String) {
+query Stream($id: ID!) {
   stream(id: $id) {
     id
     status

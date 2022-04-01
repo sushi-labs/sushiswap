@@ -41,6 +41,7 @@ const Streams: FC<Props> = (props) => {
   const router = useRouter()
   const id = router.query.id as string
   let {stream, transactions} = props
+
   return (
     <>
       <div className="px-2 pt-16">
@@ -80,10 +81,13 @@ export default Streams
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
+  const stream = (await sdk.Stream({ id: query.id })).stream
+  const transactions = (await sdk.Transactions({id: query.id})).transactions
+  console.log({stream, transactions})
   return {
     props: {
-      stream: (await sdk.Stream({ id: query.id })).stream,
-      transactions: (await sdk.Transactions({id: query.id})).transactions
+      stream,
+      transactions,
   },
   }
 }
