@@ -199,7 +199,9 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.3.22
       '@types/node': 17.0.21
       '@types/react': 17.0.41
+      '@visx/curve': ^2.1.0
       '@visx/react-spring': ^2.6.0
+      '@visx/shape': ^2.4.0
       '@visx/xychart': ^2.9.0
       autoprefixer: ^10.4.2
       config: workspace:*
@@ -218,7 +220,9 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.12_graphql@16.3.0
       '@graphql-mesh/transform-rename': 0.12.12_graphql@16.3.0
       '@graphql-mesh/transform-type-merging': 0.3.22_graphql@16.3.0
+      '@visx/curve': 2.1.0
       '@visx/react-spring': 2.6.0_react-spring@9.4.4+react@17.0.2
+      '@visx/shape': 2.4.0_react@17.0.2
       '@visx/xychart': 2.9.0_f327a5bd080a98c8644755366dc71cc3
       graphql: 16.3.0
       next: 12.1.0_react-dom@17.0.2+react@17.0.2

@@ -1,16 +1,16 @@
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import { useTableOptions } from './hooks'
 import {
   AnimatedAxis, // any of these can be non-animated equivalents
   AnimatedGrid,
   AnimatedLineSeries,
   XYChart,
   Tooltip,
-} from '@visx/xychart';
-import { useEffect } from 'react';
-import { useState } from 'react';
+} from '@visx/xychart'
+import { useEffect } from 'react'
+import { useState } from 'react'
+import { curveStep } from '@visx/curve'
 
 interface Props {
   vesting: Vesting
@@ -73,23 +73,23 @@ const Vesting: FC<Props> = (props) => {
   const router = useRouter()
   const id = router.query.id as string
   let { vesting, transactions, schedule } = props
-  const [chartData, setChartData] = useState<any>()
+  const [chartData, setChartData] = useState<{ x; y }[]>()
 
-  useEffect( () => {
-    const data = schedule.periods.map( period => (
-      {
-        x: new Date(parseInt(period.time) * 1000).toLocaleString(),
-        y: period.amount
-      } as any
-    ))
+  useEffect(() => {
+    const data = schedule.periods.map((period) => {
+      const date = new Date(parseInt(period.time) * 1000)
+      return {
+        x: date.toISOString().slice(0, 10),
+        y: period.amount,
+      }
+    })
     setChartData(data)
   }, [schedule])
 
-  const options = useTableOptions()
   const accessors = {
-    xAccessor: d => d.x,
-    yAccessor: d => d.y,
-  };
+    xAccessor: (d) => d.x,
+    yAccessor: (d) => d.y,
+  }
 
   return (
     <>
@@ -116,7 +116,7 @@ const Vesting: FC<Props> = (props) => {
               <div key={transaction.id}>
                 {transaction.type} {``}
                 {transaction.amount} {``} {transaction.token.symbol} {``}
-                {new Date(parseInt(transaction.createdAtTimestamp) * 1000).toLocaleString()} {``}
+                {new Date(parseInt(transaction.createdAtTimestamp) * 1000).toLocaleDateString()} {``}
               </div>
             ))
           ) : (
@@ -126,29 +126,31 @@ const Vesting: FC<Props> = (props) => {
           )}
         </div>
 
-        <XYChart height={300} xScale={{ type: 'band' }} yScale={{ type: 'linear' }}>
-    <AnimatedAxis orientation="left" />
-    <AnimatedAxis orientation="bottom" />
-    <AnimatedGrid columns={false} numTicks={4} />
-    <AnimatedLineSeries dataKey="Line 1" data={chartData} {...accessors} />
-    <Tooltip
-      snapTooltipToDatumX
-      snapTooltipToDatumY
-      showVerticalCrosshair
-      showSeriesGlyphs
-      renderTooltip={({ tooltipData, colorScale }) => (
-        <div>
-          <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
-            {tooltipData.nearestDatum.key}
-          </div>
-          {accessors.xAccessor(tooltipData.nearestDatum.datum)}
-          {', '}
-          {accessors.yAccessor(tooltipData.nearestDatum.datum)}
-        </div>
-      )}
-    />
-  </XYChart>
-  
+        <XYChart
+          height={350}
+          width={900}
+          xScale={{ type: 'band' }}
+          yScale={{ type: 'linear', domain: [0, parseInt(vesting.totalAmount) * 1.33] }}
+        >
+          <AnimatedAxis orientation="left" numTicks={4} />
+          <AnimatedAxis orientation="bottom" />
+          <AnimatedGrid columns={false} numTicks={4} />
+          <AnimatedLineSeries dataKey={''} data={chartData ?? []} {...accessors} curve={curveStep} />
+          <Tooltip
+            snapTooltipToDatumX
+            snapTooltipToDatumY
+            showSeriesGlyphs
+            renderTooltip={({ tooltipData, colorScale }) => (
+              <div>
+                <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>{tooltipData.nearestDatum.key}</div>
+                {accessors.xAccessor(tooltipData.nearestDatum.datum)}
+                {', '}
+                {accessors.yAccessor(tooltipData.nearestDatum.datum)}
+              </div>
+            )}
+          />
+        </XYChart>
+
         <h2 className="py-4 text-2xl font-bold">Schedule periods</h2>
         <div className="grid gap-2">
           {schedule.periods.length ? (
