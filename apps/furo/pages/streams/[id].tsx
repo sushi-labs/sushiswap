@@ -83,7 +83,6 @@ export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   const stream = (await sdk.Stream({ id: query.id })).stream
   const transactions = (await sdk.Transactions({id: query.id})).transactions
-  console.log({stream, transactions})
   return {
     props: {
       stream,

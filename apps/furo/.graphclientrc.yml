@@ -3,18 +3,6 @@ sources:
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
-    # transforms:
-    #   - rename:
-    #       mode: bare
-    #       renames:
-    #         - from:
-    #             type: Transaction
-    #           to:
-    #             type: StreamTransaction
-    #         - from:
-    #             type: User
-    #           to:
-    #             type: StreamUser
   - name: furovesting_kovan
     handler:
       graphql:
