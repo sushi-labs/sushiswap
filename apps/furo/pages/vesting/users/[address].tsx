@@ -36,7 +36,7 @@ interface User {
   id: string
 }
 
-const Streams: FC<UserProps> = (props) => {
+const Vestings: FC<UserProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
   let {vestings} = props
@@ -69,7 +69,7 @@ const Streams: FC<UserProps> = (props) => {
   )
 }
 
-export default Streams
+export default Vestings
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
