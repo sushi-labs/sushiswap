@@ -197,6 +197,7 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.12
       '@graphql-mesh/transform-rename': 0.12.12
       '@graphql-mesh/transform-type-merging': 0.3.22
+      '@headlessui/react': ^1.5.0
       '@types/node': 17.0.21
       '@types/react': 17.0.41
       '@visx/curve': ^2.1.0
@@ -221,6 +222,7 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.12_graphql@16.3.0
       '@graphql-mesh/transform-rename': 0.12.12_graphql@16.3.0
       '@graphql-mesh/transform-type-merging': 0.3.22_graphql@16.3.0
+      '@headlessui/react': 1.5.0_react-dom@17.0.2+react@17.0.2
       '@visx/curve': 2.1.0
       '@visx/react-spring': 2.6.0_react-spring@9.4.4+react@17.0.2
       '@visx/xychart': 2.9.0_f327a5bd080a98c8644755366dc71cc3
@@ -2588,6 +2590,17 @@ packages:
     dependencies:
       react: 18.0.0-rc.2-next-b9de50d2f-20220308
       react-dom: 18.0.0-rc.2-next-b9de50d2f-20220308_b6535743ded9d6e615b152ed8c889920
+    dev: false
+
+  /@headlessui/react/1.5.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-aaRnYxBb3MU2FNJf3Ut9RMTUqqU3as0aI1lQhgo2n9Fa67wRu14iOGqx93xB+uMNVfNwZ5B3y/Ndm7qZGuFeMQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /@heroicons/react/1.0.6:
