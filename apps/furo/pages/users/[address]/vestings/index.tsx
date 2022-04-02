@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { getBuiltGraphSDK } from '../../../.graphclient'
+import { getBuiltGraphSDK } from '../../../../.graphclient'
 
 interface UserProps {
   incomingVestings: Vesting[]
@@ -56,7 +56,7 @@ const Vestings: FC<UserProps> = (props) => {
                 {vesting.totalAmount} {``} {vesting.token.symbol} {``}
                 {new Date(parseInt(vesting.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(vesting.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/vestings/'.concat(vesting.id)}> View</Link>}
+                {<Link href={'/vesting/'.concat(vesting.id)}> View</Link>}
               </div>
             ))
           ) : (
@@ -75,7 +75,7 @@ const Vestings: FC<UserProps> = (props) => {
                 {vesting.totalAmount} {``} {vesting.token.symbol} {``}
                 {new Date(parseInt(vesting.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(vesting.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/vestings/'.concat(vesting.id)}> View</Link>}
+                {<Link href={'/vesting/'.concat(vesting.id)}> View</Link>}
               </div>
             ))
           ) : (

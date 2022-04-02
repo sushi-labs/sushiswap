@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { getBuiltGraphSDK } from '../../../.graphclient'
+import { getBuiltGraphSDK } from '../../../../.graphclient'
 
 interface StreamsProps {
   incomingStreams: Stream[]
@@ -50,7 +50,7 @@ const Streams: FC<StreamsProps> = (props) => {
                 {stream.amount} {``} {stream.token.symbol} {``}
                 {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/streams/'.concat(stream.id)}> View</Link>}
+                {<Link href={'/stream/'.concat(stream.id)}> View</Link>}
               </div>
             ))
           ) : (
@@ -70,7 +70,7 @@ const Streams: FC<StreamsProps> = (props) => {
                 {stream.amount} {``} {stream.token.symbol} {``}
                 {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/streams/'.concat(stream.id)}> View</Link>}
+                {<Link href={'/stream/'.concat('/').concat(stream.id)}> View</Link>}
               </div>
             ))
           ) : (
