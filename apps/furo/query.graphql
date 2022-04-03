@@ -60,7 +60,7 @@ query Stream($id: ID!) {
 }
 
 query Transactions($id: String) {
-  transactions(where: { stream: $id }) {
+  transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
     id
     type
     amount
@@ -72,6 +72,9 @@ query Transactions($id: String) {
       name
       symbol
       decimals
+    }
+    to {
+      id
     }
   }
 }
