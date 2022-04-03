@@ -1,7 +1,11 @@
+import { toUtf8Bytes } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { Dialog } from 'ui'
+import DialogContent from 'ui/dialog/DialogContent'
+import { useContract, useSigner } from 'wagmi'
 import { getBuiltGraphSDK } from '../../.graphclient'
-
+import FuroStreamABI from '../../abis/FuroStream.json'
 
 interface Props {
   stream: Stream
@@ -36,31 +40,81 @@ interface Token {
   decimals: string
 }
 
-
 const Streams: FC<Props> = (props) => {
   const router = useRouter()
   const id = router.query.id as string
-  let {stream, transactions} = props
+  let { stream, transactions } = props
+  let [isOpen, setIsOpen] = useState(false)
+  const [amount, setAmount] = useState<number>()
+  const [{ data, error, loading }, getSigner] = useSigner()
+  const contract = useContract({
+    addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
+    contractInterface: FuroStreamABI,
+    signerOrProvider: data,
+  })
 
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+
+  async function withdraw() {
+    if (amount) {
+      const address = await data.getAddress()
+      contract.withdrawFromStream(stream.id, amount, address, true, '0x')
+    } else {
+      console.log('insufficient amount')
+    }
+
+  }
+  
   return (
     <>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Stream</h1>
         <div className="grid gap-2">
           {stream ? (
-              <div key={stream.id}>
-                {stream.status} {``}
-                {stream.amount} {``} {stream.token.symbol} {``}
-                {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
-                {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-              </div>
+            <div key={stream.id}>
+              {stream.status} {``}
+              {stream.amount} {``} {stream.token.symbol} {``}
+              {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
+              {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
+            </div>
           ) : (
-            <div><i>No stream found..</i></div>
+            <div>
+              <i>No stream found..</i>
+            </div>
           )}
         </div>
+
+        <button type="button" onClick={openModal} className="font-medium text-white">
+          Withdraw
+        </button>
+        <Dialog open={isOpen} onClose={closeModal}>
+          <DialogContent>
+            {/* TODO: replace with Select component from ui package */}
+
+            <div className="text-blue-600">
+              <div>
+                How much do you want to withdraw?
+                <input
+                  type={'number'}
+                  defaultValue={500000}
+                  onChange={(e) => setAmount(parseInt(e.target.value))}
+                ></input>
+              </div>
+
+              <button onClick={withdraw}>Withdraw</button>
+            </div>
+          </DialogContent>
+        </Dialog>
         <h2 className="py-4 text-2xl font-bold">Transactions</h2>
         <div className="grid gap-2">
-        {transactions.length ? (
+          {transactions.length ? (
             Object.values(transactions).map((transaction) => (
               <div key={transaction.id}>
                 {transaction.type} {``}
@@ -69,7 +123,9 @@ const Streams: FC<Props> = (props) => {
               </div>
             ))
           ) : (
-            <div><i>No transactions found..</i></div>
+            <div>
+              <i>No transactions found..</i>
+            </div>
           )}
         </div>
       </div>
@@ -82,11 +138,11 @@ export default Streams
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   const stream = (await sdk.Stream({ id: query.id })).stream
-  const transactions = (await sdk.Transactions({id: query.id})).transactions
+  const transactions = (await sdk.Transactions({ id: query.id })).transactions
   return {
     props: {
       stream,
       transactions,
-  },
+    },
   }
 }

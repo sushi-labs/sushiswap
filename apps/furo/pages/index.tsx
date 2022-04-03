@@ -11,11 +11,10 @@ export default function Furo() {
       <h1 className="py-4 text-2xl font-bold">Overview</h1>
       {data.connectors.map((connector) => (
         <button disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
-          {`Connect to: ` + connector.name}
-          {!connector.ready && ' (unsupported)'}
+          {`Connect to: ` + connector.name + ` ${accountData?.address}`}
         </button>
       ))}
-      {!error && accountData.address ? (
+      {!error && accountData?.address ? (
         <>
           <div>
             <Link href={`/users/${accountData.address.toLowerCase()}/streams/`}>Streams</Link>

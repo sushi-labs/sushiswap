@@ -6,7 +6,7 @@ import { Dialog } from 'ui'
 import DialogContent from 'ui/dialog/DialogContent'
 import { erc20ABI, useContract, useContractWrite, useSigner } from 'wagmi'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
-// import FuroStreamABI from '../../../../abis/FuroStream.json'
+import FuroStreamABI from '../../../../abis/FuroStream.json'
 
 interface StreamsProps {
   incomingStreams: Stream[]
@@ -41,7 +41,6 @@ const Streams: FC<StreamsProps> = (props) => {
   const address = router.query.address as string
   let { incomingStreams, outgoingStreams } = props
   let [isOpen, setIsOpen] = useState(false)
-  const FuroStreamABI = require("../../../../abis/FuroStream.json")
   const [{ data, error, loading }, getSigner] = useSigner()
 
   const contract = useContract({
