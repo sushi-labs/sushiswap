@@ -1,6 +1,7 @@
+import { BigNumber, BigNumberish } from 'ethers'
 import { toUtf8Bytes } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Dialog } from 'ui'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useContract, useSigner } from 'wagmi'
@@ -46,6 +47,7 @@ const Streams: FC<Props> = (props) => {
   let { stream, transactions } = props
   let [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState<number>()
+  const [balance, setBalance] = useState(null)
   const [{ data, error, loading }, getSigner] = useSigner()
   const contract = useContract({
     addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
@@ -61,6 +63,19 @@ const Streams: FC<Props> = (props) => {
     setIsOpen(true)
   }
 
+  useEffect(() => {
+    if (!data || !contract || !stream.id) {
+      return
+    }
+    const fetchBalance = async () => {
+      const result = await contract.streamBalanceOf(stream.id)
+      console.log(result)
+      const balance = result.recipientBalance as BigNumber
+      setBalance(balance.toNumber())
+
+    }
+    fetchBalance()
+  }, [contract, stream.id, data])
 
   async function withdraw() {
     if (amount) {
@@ -69,9 +84,8 @@ const Streams: FC<Props> = (props) => {
     } else {
       console.log('insufficient amount')
     }
-
   }
-  
+
   return (
     <>
       <div className="px-2 pt-16">
@@ -79,10 +93,22 @@ const Streams: FC<Props> = (props) => {
         <div className="grid gap-2">
           {stream ? (
             <div key={stream.id}>
-              {stream.status} {``}
-              {stream.amount} {``} {stream.token.symbol} {``}
-              {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
-              {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
+              <div>Status: {stream.status}</div>
+              <div>
+                Total: {stream.amount} {``} {stream.token.symbol}{' '}
+              </div>
+              <div>
+                Withdrawn amount: {stream.withdrawnAmount} {stream.token.symbol}{' '}
+              </div>
+              <div>
+                Balance: {balance} {stream.token.symbol}{' '}
+              </div>
+              <div>
+                Started: {} {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()}{' '}
+              </div>
+              <div>
+                Expires: {} {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}{' '}
+              </div>
             </div>
           ) : (
             <div>
