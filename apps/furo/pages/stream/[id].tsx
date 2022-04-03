@@ -32,6 +32,11 @@ interface Transaction {
   createdAtBlock: string
   createdAtTimestamp: string
   token: Token
+  to: User
+}
+
+interface User {
+  id: string
 }
 
 interface Token {
@@ -145,6 +150,7 @@ const Streams: FC<Props> = (props) => {
               <div key={transaction.id}>
                 {transaction.type} {``}
                 {transaction.amount} {``} {transaction.token.symbol} {``}
+                {transaction.to.id} {``}
                 {new Date(parseInt(transaction.createdAtTimestamp) * 1000).toLocaleString()} {``}
               </div>
             ))
