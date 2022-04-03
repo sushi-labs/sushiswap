@@ -70,14 +70,10 @@ const Streams: FC<StreamsProps> = (props) => {
     console.log({token, amount, recipient, startDate, endDate})
     console.log(contract)
     contract.createStream(recipient, token, startDate.getTime() / 1000, endDate.getTime() / 1000, amount, false)
-      // write({args: [
-      //   recipient,
-      //   token,
-      //   startDate.getTime(),
-      //   endDate.getTime(),
-      //   amount,
-      //   false
-      // ]})
+  }
+
+  function cancelStream(id: string) {
+    contract.cancelStream(id, true)
   }
 
   return (
@@ -157,7 +153,8 @@ const Streams: FC<StreamsProps> = (props) => {
                 {stream.amount} {``} {stream.token.symbol} {``}
                 {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
                 {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/stream/'.concat('/').concat(stream.id)}> View</Link>}
+                {<Link href={'/stream/'.concat('/').concat(stream.id)}> View </Link>}
+              <button onClick={() => cancelStream(stream.id)}>Cancel</button>
               </div>
             ))
           ) : (
