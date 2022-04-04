@@ -1,3 +1,4 @@
+import { shortenAddress } from 'format'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
@@ -27,6 +28,7 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
       {
         Header: 'TO',
         accessor: 'recipient.id',
+        Cell: (props) => shortenAddress(props.value),
       },
       {
         Header: 'STREAMED',
@@ -62,7 +64,7 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Cell: (props) => {
           return (
             <>
-              <Link href={'/stream/'.concat('/').concat(props.row.original.id)}> View </Link>
+              <Link href={'/stream/'.concat(props.row.original.id)}> View </Link>
               <p>Edit</p>
               {/* <button onClick={() => cancelStream(stream.id)}>Cancel</button> */}
             </>
@@ -76,28 +78,12 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data })
 
   return (
-    <table
-      {...getTableProps()}
-      style={{
-        border: 'solid 1px #2E3348',
-        borderRadius: '10px',
-      }}
-    >
+    <table {...getTableProps()}>
       <thead>
         {headerGroups.map((headerGroup, i) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={i}>
             {headerGroup.headers.map((column, i) => (
-              <th
-                {...column.getHeaderProps()}
-                style={{
-                  borderBottom: 'solid 3px #2E3348',
-                  background: '#202231',
-                  color: '#7F7F7F',
-                  padding: '5px',
-                  fontWeight: 'normal',
-                }}
-                key={i}
-              >
+              <th {...column.getHeaderProps()} key={i}>
                 {column.render('Header')}
               </th>
             ))}
@@ -111,16 +97,7 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
             <tr {...row.getRowProps()} key={i}>
               {row.cells.map((cell, i) => {
                 return (
-                  <td
-                    {...cell.getCellProps()}
-                    style={{
-                      padding: '10px',
-                      borderBottom: 'solid 1px #2E3348',
-                      background: '#161522',
-                      color: '#7F7F7F',
-                    }}
-                    key={i}
-                  >
+                  <td {...cell.getCellProps()} key={i}>
                     {cell.render('Cell')}
                   </td>
                 )

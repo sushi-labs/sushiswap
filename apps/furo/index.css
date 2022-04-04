@@ -3,3 +3,48 @@
 @tailwind components;
 
 @tailwind utilities;
+
+
+
+thead th:first-child {
+  
+    border-radius: 10px 0 0 0;
+}
+
+thead th:last-child {
+    border-radius: 0 10px 0 0;
+}
+
+tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 10px;
+}
+tbody tr:last-child td:last-child {
+    border-radius: 0 0 10px 0;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+table {
+
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+tbody td {
+    color: #7F7F7F;
+    background-color: #161522;
+    border-bottom: solid 1px #2E3348;
+    padding: 10px;
+}
+
+
+thead th {
+    background-color: #202231;
+    border: none;
+    padding: 5px;
+    font-weight: normal;
+    color: #7F7F7F;
+}

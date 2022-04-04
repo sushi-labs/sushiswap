@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import { Stream } from '../../interfaces/stream'
-// import { formatUSD, shortenAddress } from 'format'
+import { shortenAddress } from 'format'
 
 interface StreamsProps {
   incomingStreams: Stream[]
@@ -27,10 +27,11 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
       {
         Header: 'FROM',
         accessor: 'createdBy.id',
+        Cell: (props) => shortenAddress(props.value),
       },
       {
         Header: 'STREAMED',
-        accessor: 'dunno',
+        accessor: 'streamed',
       },
       {
         Header: 'START',
@@ -59,9 +60,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
       {
         Header: '',
         accessor: 'view',
-        Cell: (props) => {
-          return <Link href={'/stream/'.concat(props.row.original.id)}> View </Link>
-        },
+        Cell: (props) => <Link href={'/stream/'.concat(props.row.original.id)}> View </Link>,
       },
     ],
     [],
@@ -72,10 +71,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
   return (
     <table
       {...getTableProps()}
-      style={{
-        border: 'solid 1px #2E3348',
-        borderRadius: '10px',
-      }}
+
     >
       <thead>
         {headerGroups.map((headerGroup, i) => (
@@ -83,13 +79,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
             {headerGroup.headers.map((column, i) => (
               <th
                 {...column.getHeaderProps()}
-                style={{
-                  borderBottom: 'solid 3px #2E3348',
-                  background: '#202231',
-                  color: '#7F7F7F',
-                  padding: '5px',
-                  fontWeight: 'normal',
-                }}
+
                 key={i}
               >
                 {column.render('Header')}
@@ -107,12 +97,6 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
                 return (
                   <td
                     {...cell.getCellProps()}
-                    style={{
-                      padding: '10px',
-                      borderBottom: 'solid 1px #2E3348',
-                      background: '#161522',
-                      color: '#7F7F7F',
-                    }}
                     key={i}
                   >
                     {cell.render('Cell')}

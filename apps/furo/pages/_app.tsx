@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { App } from 'ui'
 import 'ui/index.css'
 import { Provider } from 'wagmi'
+import '../index.css'
 
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
