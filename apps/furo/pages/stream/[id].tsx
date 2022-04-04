@@ -8,6 +8,7 @@ import { Dialog } from 'ui'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useContract, useSigner } from 'wagmi'
 import { getBuiltGraphSDK } from '../../.graphclient'
+import
 import FuroStreamABI from '../../abis/FuroStream.json'
 
 interface Props {

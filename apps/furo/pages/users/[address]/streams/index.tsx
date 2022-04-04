@@ -1,12 +1,6 @@
-import { ContractInterface } from 'ethers'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react'
-import { Dialog } from 'ui'
-import DialogContent from 'ui/dialog/DialogContent'
-import { erc20ABI, useContract, useContractWrite, useSigner } from 'wagmi'
+import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
-import FuroStreamABI from '../../../../abis/FuroStream.json'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
 import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
 import { Stream } from '../../../../interfaces/stream'
@@ -16,102 +10,32 @@ interface StreamsProps {
   outgoingStreams: Stream[]
 }
 
-
 const Streams: FC<StreamsProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
   let { incomingStreams, outgoingStreams } = props
-  let [isOpen, setIsOpen] = useState(false)
-  const [{ data, error, loading }, getSigner] = useSigner()
-
-  const contract = useContract({
-    addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
-    contractInterface: FuroStreamABI,
-    signerOrProvider: data
-  }
-  )
-  const [token, setToken] = useState<string>("0xb7a4F3E9097C08dA09517b5aB877F7a917224ede")
-  const [amount, setAmount] = useState<number>()
-  const [recipient, setRecipient] = useState<string>()
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-
-  function createStream() {
-    if(!token || !amount || !recipient || !startDate || !endDate) {
-      console.log("missing required field")
-    }
-    console.log({token, amount, recipient, startDate, endDate})
-    console.log(contract)
-    contract.createStream(recipient, token, startDate.getTime() / 1000, endDate.getTime() / 1000, amount, false)
-  }
-
-  function cancelStream(id: string) {
-    contract.cancelStream(id, true)
-  }
 
   return (
     <>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Dashboard</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming streams</h1>
-      
-        <IncomingStreamsTable incomingStreams={incomingStreams}/>
 
+        {incomingStreams.length > 0 ? (
+          <IncomingStreamsTable incomingStreams={incomingStreams} />
+        ) : (
+          <div>No outgoing streams</div>
+        )}
 
         <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
-        <button type="button" onClick={openModal} className="font-medium text-white">
-          Create stream
-        </button>
-        <OutgoingStreamsTable outgoingStreams={outgoingStreams}/>
 
-        <Dialog open={isOpen} onClose={closeModal}>
-          
-          <DialogContent>
-            {/* TODO: replace with Select component from ui package */}
-            <div className="text-blue-600">
-              Which asset do you want to stream?
-              <div>
-                <select>
-                  <option value="0xb7a4F3E9097C08dA09517b5aB877F7a917224ede">USDC</option>
-                </select>
-              </div>
-              <div>
-                How much do you want to send?
-                <input
-                  type={'number'}
-                  defaultValue={500000}
-                  onChange={(e) => setAmount(parseInt(e.target.value))}
-                ></input>
-              </div>
-              <div>
-                Who is the recipient?
-                <input
-                  type={'text'}
-                  defaultValue={'0x23defc2ca207e7fbd84ae43b00048fb5cb4db5b2'}
-                  onChange={(e) => setRecipient(e.target.value)}
-                ></input>
-              </div>
-              <div>
-                When should the stream start?
-                <input type="datetime-local" onChange={(e) => setStartDate(new Date(e.target.value))}></input>
-              </div>
-              <div>
-                When should the stream end?
-                <input type="datetime-local" onChange={(e) => setEndDate(new Date(e.target.value))}></input>
-              </div>
-              <button onClick={createStream}>Create stream</button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
+        {/* <CreateStreamModal/> */}
+        
+        {outgoingStreams.length > 0 ? (
+          <OutgoingStreamsTable outgoingStreams={outgoingStreams} />
+        ) : (
+          <div>No outgoing streams</div>
+        )}
       </div>
     </>
   )
