@@ -8,6 +8,7 @@ import { erc20ABI, useContract, useContractWrite, useSigner } from 'wagmi'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
 import FuroStreamABI from '../../../../abis/FuroStream.json'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
+import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
 import { Stream } from '../../../../interfaces/stream'
 
 interface StreamsProps {
@@ -59,32 +60,18 @@ const Streams: FC<StreamsProps> = (props) => {
   return (
     <>
       <div className="px-2 pt-16">
-        <h1 className="py-4 text-2xl font-bold">Streams</h1>
+        <h1 className="py-4 text-2xl font-bold">Dashboard</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming streams</h1>
-        <div className="grid gap-2">
-          {incomingStreams.length ? (
-            Object.values(incomingStreams).map((stream) => (
-              <div key={stream.id}>
-                {stream.status} {``}
-                {stream.createdBy.id} {``}
-                {stream.amount} {``} {stream.token.symbol} {``}
-                {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
-                {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/stream/'.concat(stream.id)}> View</Link>}
-              </div>
-            ))
-          ) : (
-            <div>
-              <i>No incoming streams found..</i>
-            </div>
-          )}
-        </div>
+      
         <IncomingStreamsTable incomingStreams={incomingStreams}/>
+
 
         <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
         <button type="button" onClick={openModal} className="font-medium text-white">
           Create stream
         </button>
+        <OutgoingStreamsTable outgoingStreams={outgoingStreams}/>
+
         <Dialog open={isOpen} onClose={closeModal}>
           
           <DialogContent>
@@ -125,25 +112,6 @@ const Streams: FC<StreamsProps> = (props) => {
           </DialogContent>
         </Dialog>
 
-        <div className="grid gap-2">
-          {outgoingStreams.length ? (
-            Object.values(outgoingStreams).map((stream) => (
-              <div key={stream.id}>
-                {stream.status} {``}
-                {stream.recipient.id} {``}
-                {stream.amount} {``} {stream.token.symbol} {``}
-                {new Date(parseInt(stream.startedAt) * 1000).toLocaleString()} {``}
-                {new Date(parseInt(stream.expiresAt) * 1000).toLocaleString()}
-                {<Link href={'/stream/'.concat('/').concat(stream.id)}> View </Link>}
-              <button onClick={() => cancelStream(stream.id)}>Cancel</button>
-              </div>
-            ))
-          ) : (
-            <div>
-              <i>No outgoing streams found..</i>
-            </div>
-          )}
-        </div>
       </div>
     </>
   )

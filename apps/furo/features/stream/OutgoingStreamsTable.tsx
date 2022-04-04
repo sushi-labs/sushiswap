@@ -5,13 +5,13 @@ import { Stream } from '../../interfaces/stream'
 // import { formatUSD, shortenAddress } from 'format'
 
 interface StreamsProps {
-    incomingStreams: Stream[]
+    outgoingStreams: Stream[]
   }
   
   
  
-const IncomingStreamsTable: FC<StreamsProps> = (props) => {
-    const data = props.incomingStreams ?? []
+const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
+    const data = props.outgoingStreams ?? []
 
   const columns = React.useMemo(
     () => [
@@ -25,8 +25,8 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
         },
       },
       {
-        Header: 'From',
-        accessor: 'createdBy.id',
+        Header: 'To',
+        accessor: 'recipient.id',
       },
       {
         Header: 'Streamed',
@@ -56,7 +56,11 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
         Header: '',
         accessor: 'view',
         Cell: (props) => {
-          return <Link href={'/stream/'.concat('/').concat(props.row.original.id)}> View </Link>
+          return <>
+          <Link href={'/stream/'.concat('/').concat(props.row.original.id)}> View </Link>
+          <p>Edit</p>
+          {/* <button onClick={() => cancelStream(stream.id)}>Cancel</button> */}
+          </>
         },
 
       },
@@ -123,4 +127,4 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
   </table>
   )
 }
-export default IncomingStreamsTable
+export default OutgoingStreamsTable
