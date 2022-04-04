@@ -28,23 +28,25 @@ tbody tr:last-child td {
 
 
 table {
-
+    width: 1000px;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
 tbody td {
-    color: #7F7F7F;
+    color: #AAAAAC;
     background-color: #161522;
     border-bottom: solid 1px #2E3348;
     padding: 10px;
+    text-align: justify;
 }
 
 
 thead th {
     background-color: #202231;
     border: none;
-    padding: 5px;
+    padding: 10px;
+    text-align: justify;
     font-weight: normal;
     color: #7F7F7F;
 }

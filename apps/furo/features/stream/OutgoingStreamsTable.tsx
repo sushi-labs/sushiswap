@@ -1,7 +1,10 @@
-import { shortenAddress } from 'format'
+import { formatUnits } from '@ethersproject/units'
+import { BigNumber } from 'ethers'
+import { formatNumber, shortenAddress } from 'format'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
+import ProgressBar from '../../components'
 import { Stream } from '../../interfaces/stream'
 // import { formatUSD, shortenAddress } from 'format'
 
@@ -31,11 +34,33 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Cell: (props) => shortenAddress(props.value),
       },
       {
-        Header: 'STREAMED',
-        accessor: 'dunno',
+        Header: 'VALUE',
+        accessor: 'amount',
+        Cell: (props) => {
+          const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
+          const formattedAmount = formatNumber(amount)
+          return `${formattedAmount} ${props.row.original.token.symbol}`
+        },
       },
       {
-        Header: 'START',
+        Header: 'STREAMED',
+        accessor: 'streamed',
+        Cell: (props) => {
+          const start = new Date(parseInt(props.row.original.startedAt)).getTime()
+          const end = new Date(parseInt(props.row.original.expiresAt)).getTime()
+          const now = Date.now()
+          const total = end - start
+          const current = now - start
+          const percentage = (current / total).toFixed(3)
+          return (
+            <div className="w-40">
+              <ProgressBar progress={percentage} />
+            </div>
+          )
+        },
+      },
+      {
+        Header: 'START TIME',
         accessor: 'startedAt',
         Cell: (props) => {
           return (
@@ -47,7 +72,7 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         },
       },
       {
-        Header: 'END',
+        Header: 'END TIME',
         accessor: 'expiresAt',
         Cell: (props) => {
           return (
