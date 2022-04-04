@@ -11,16 +11,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "12.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "ui": "workspace:*",
     "@graphql-mesh/transform-prefix": "0.11.12",
     "@graphql-mesh/transform-rename": "0.12.12",
     "@graphql-mesh/transform-type-merging": "0.3.22",
     "graphql": "16.3.0",
+    "isomorphic-fetch": "^3.0.0",
     "long": "^5.2.0",
-    "uglify-es": "^3.3.9"
+    "next": "12.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "uglify-es": "^3.3.9",
+    "ui": "workspace:*"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.2",
