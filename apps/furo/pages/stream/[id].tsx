@@ -1,5 +1,7 @@
-import { BigNumber, BigNumberish } from 'ethers'
-import { toUtf8Bytes } from 'ethers/lib/utils'
+import { Group } from '@visx/group'
+import { Pie } from '@visx/shape'
+import { Text } from '@visx/text'
+import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import { Dialog } from 'ui'
@@ -77,7 +79,6 @@ const Streams: FC<Props> = (props) => {
       console.log(result)
       const balance = result.recipientBalance as BigNumber
       setBalance(balance.toNumber())
-
     }
     fetchBalance()
   }, [contract, stream.id, data])
@@ -90,6 +91,17 @@ const Streams: FC<Props> = (props) => {
       console.log('insufficient amount')
     }
   }
+
+  const withdrawn = [
+  ]
+  const streamed = [
+    { type: 'Streamed', amount: balance, color: '#0033ad'},
+    { type: 'Withdrawn', amount: parseInt(stream.withdrawnAmount), color: 'red'},
+    { type: 'Total', amount: parseInt(stream.amount) - balance, color: 'grey' },
+  ]
+  const width = 400
+  const half = width / 2
+  const [active, setActive] = useState(null)
 
   return (
     <>
@@ -121,6 +133,58 @@ const Streams: FC<Props> = (props) => {
             </div>
           )}
         </div>
+        <svg width={width} height={width}>
+          <Group top={half} left={half}>
+            <Pie
+              data={streamed}
+              pieSort={null}
+              pieValue={(data) => data.amount}
+              outerRadius={half}
+              innerRadius={({ data }) => {
+                const size = 10
+                const radius = half - size
+                return radius
+              }}
+              padAngle={0.01}
+            >
+              {(pie) => {
+                return pie.arcs.map((arc) => {
+                  return (
+                    <g
+                      key={arc.data.type}
+                      onMouseEnter={() => setActive(arc.data)}
+                      onMouseLeave={() => setActive(null)}
+                    >
+                      <path d={pie.path(arc)} fill={arc.data.color}></path>
+                    </g>
+                  )
+                })
+              }}
+            </Pie>
+
+            {active ? (
+              <>
+                <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
+                  {`${Math.floor(active.amount)}`}
+                </Text>
+
+                <Text textAnchor="middle" fill={active.color} fontSize={20} dy={20}>
+                  {`${active.type}`}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
+                  {`$${balance}`}
+                </Text>
+
+                <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
+                  {`${balance} `}
+                </Text>
+              </>
+            )}
+          </Group>
+        </svg>
 
         <button type="button" onClick={openModal} className="font-medium text-white">
           Withdraw
