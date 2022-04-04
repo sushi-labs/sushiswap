@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { buildSchema, Source } from 'graphql';
 
 const source = new Source(/* GraphQL */`
@@ -2634,7 +2635,6 @@ type Token {
   txCount: BigInt!
   liquidity: BigDecimal!
   derivedETH: BigDecimal!
-  whitelistPairs(skip: Int = 0, first: Int = 100, orderBy: Pair_orderBy, orderDirection: OrderDirection, where: Pair_filter): [Pair!]!
   hourData(skip: Int = 0, first: Int = 100, orderBy: TokenHourData_orderBy, orderDirection: OrderDirection, where: TokenHourData_filter): [TokenHourData!]!
   dayData(skip: Int = 0, first: Int = 100, orderBy: TokenDayData_orderBy, orderDirection: OrderDirection, where: TokenDayData_filter): [TokenDayData!]!
   basePairs(skip: Int = 0, first: Int = 100, orderBy: Pair_orderBy, orderDirection: OrderDirection, where: Pair_filter): [Pair!]!
@@ -3038,12 +3038,6 @@ input Token_filter {
   derivedETH_lte: BigDecimal
   derivedETH_in: [BigDecimal!]
   derivedETH_not_in: [BigDecimal!]
-  whitelistPairs: [String!]
-  whitelistPairs_not: [String!]
-  whitelistPairs_contains: [String!]
-  whitelistPairs_contains_nocase: [String!]
-  whitelistPairs_not_contains: [String!]
-  whitelistPairs_not_contains_nocase: [String!]
 }
 
 enum Token_orderBy {
@@ -3059,7 +3053,6 @@ enum Token_orderBy {
   txCount
   liquidity
   derivedETH
-  whitelistPairs
   hourData
   dayData
   basePairs
@@ -3183,7 +3176,7 @@ enum _SubgraphErrorPolicy_ {
   """
   deny
 }
-`, `.graphclient/sources/matic-exchange/schema.graphql`);
+`, `.graphclient/sources/fantom-exchange/introspectionSchema`);
 
 export default buildSchema(source, {
   assumeValid: true,

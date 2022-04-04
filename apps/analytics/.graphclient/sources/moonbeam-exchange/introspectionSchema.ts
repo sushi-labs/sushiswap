@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { buildSchema, Source } from 'graphql';
 
 const source = new Source(/* GraphQL */`
@@ -3183,7 +3184,7 @@ enum _SubgraphErrorPolicy_ {
   """
   deny
 }
-`, `.graphclient/sources/celo-exchange/schema.graphql`);
+`, `.graphclient/sources/moonbeam-exchange/introspectionSchema`);
 
 export default buildSchema(source, {
   assumeValid: true,
