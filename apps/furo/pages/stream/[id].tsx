@@ -140,7 +140,7 @@ const Streams: FC<Props> = (props) => {
               pieSort={null}
               pieValue={(data) => data.amount}
               outerRadius={half}
-              innerRadius={({ data }) => {
+              innerRadius={() => {
                 const size = 10
                 const radius = half - size
                 return radius

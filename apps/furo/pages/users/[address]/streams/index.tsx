@@ -7,34 +7,14 @@ import DialogContent from 'ui/dialog/DialogContent'
 import { erc20ABI, useContract, useContractWrite, useSigner } from 'wagmi'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
 import FuroStreamABI from '../../../../abis/FuroStream.json'
+import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
+import { Stream } from '../../../../interfaces/stream'
 
 interface StreamsProps {
   incomingStreams: Stream[]
   outgoingStreams: Stream[]
 }
 
-interface Stream {
-  id: string
-  status: string
-  amount: string
-  withdrawnAmount: string
-  expiresAt: string
-  startedAt: string
-  recipient: User
-  createdBy: User
-  token: Token
-}
-
-interface Token {
-  id: string
-  symbol: string
-  name: string
-  decimals: string
-}
-
-interface User {
-  id: string
-}
 
 const Streams: FC<StreamsProps> = (props) => {
   const router = useRouter()
@@ -99,6 +79,7 @@ const Streams: FC<StreamsProps> = (props) => {
             </div>
           )}
         </div>
+        <IncomingStreamsTable incomingStreams={incomingStreams}/>
 
         <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
         <button type="button" onClick={openModal} className="font-medium text-white">

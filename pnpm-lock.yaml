@@ -217,6 +217,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2
       react-spring: ^9.4.4
+      react-table: ^7.7.0
       tailwindcss: ^3.0.23
       typescript: 4.6.2
       ui: workspace:*
@@ -238,6 +239,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-spring: 9.4.4_react-dom@17.0.2+react@17.0.2
+      react-table: 7.7.0_react@17.0.2
       ui: link:../../packages/ui
       wagmi: 0.2.24_ethers@5.6.1+react@17.0.2
     devDependencies:
@@ -8992,6 +8994,14 @@ packages:
       - react-zdog
       - three
       - zdog
+    dev: false
+
+  /react-table/7.7.0_react@17.0.2:
+    resolution: {integrity: sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==}
+    peerDependencies:
+      react: ^16.8.3 || ^17.0.0-0
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /react-ticker/1.3.1_3b3c4dafaa7e2bc132922eb3215c558b:
