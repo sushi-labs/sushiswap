@@ -2,31 +2,36 @@ import { formatUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import { formatNumber, shortenAddress } from 'format'
 import Link from 'next/link'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useTable } from 'react-table'
-import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { Stream } from './context/Stream'
 import { RawStream, StreamStatus } from './context/types'
+import { ProgressColor } from 'ui'
+import ProgressBar from 'ui/progressbar/ProgressBar'
+import Typography from 'ui/typography/Typography'
+import { classNames } from 'ui/lib/classNames'
 
 interface StreamsProps {
-  incomingStreams: RawStream[]
+  streams: RawStream[]
 }
 
-const IncomingStreamsTable: FC<StreamsProps> = (props) => {
-  const data = props.incomingStreams.map((stream) => new Stream({ stream }))
+const StreamTable: FC<StreamsProps> = ({ streams }) => {
+  const data = useMemo(() => streams.map((stream) => new Stream({ stream })), [streams])
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => [
       {
         Header: 'STATUS',
         accessor: 'status',
-        Cell: (props) => {
-          return props.value !== 'CANCELLED' ? (
-            <p style={{ color: '#7CFD6B' }}>{props.value}</p>
-          ) : (
-            <p style={{ color: '#fc6c6c' }}>{props.value}</p>
-          )
-        },
+        Cell: ({ value }) => (
+          <Typography
+            variant="sm"
+            weight={700}
+            className={classNames('uppercase', value !== 'CANCELLED' ? 'text-green' : 'text-red')}
+          >
+            {value}
+          </Typography>
+        ),
       },
       {
         Header: 'FROM',
@@ -93,12 +98,12 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data })
 
   return (
-    <table {...getTableProps()}>
+    <table {...getTableProps()} className="bg-dark-900 border border-dark-800 rounded-3xl">
       <thead>
         {headerGroups.map((headerGroup, i) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={i}>
             {headerGroup.headers.map((column, i) => (
-              <th {...column.getHeaderProps()} key={i}>
+              <th {...column.getHeaderProps()} key={i} className="text-xs font-medium text-secondary h-10">
                 {column.render('Header')}
               </th>
             ))}
@@ -124,4 +129,5 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
     </table>
   )
 }
-export default IncomingStreamsTable
+
+export default StreamTable

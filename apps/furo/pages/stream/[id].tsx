@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
+import Container from 'ui/container/Container'
+import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import Container from '../../components/Container'
 import Main from '../../components/Main'
-import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import BalanceChart from '../../features/stream/BalanceChart'
 import { Stream } from '../../features/stream/context/Stream'
 import { RawStream, Transaction } from '../../features/stream/context/types'
@@ -16,16 +16,11 @@ interface Props {
 
 const Streams: FC<Props> = (props) => {
   let { stream: rawStream, transactions } = props
-  const stream = new Stream({ stream: rawStream })
+  const stream = useMemo(() => new Stream({ stream: rawStream }), [rawStream])
 
   return (
     <Main>
-      <Container maxWidth={'6xl'}>
-        {/* <div className="px-2 pt-16">
-        <StreamDetails stream={stream} />
-        <TransactionHistory transactions={transactions} />
-      </div> */}
-
+      <Container maxWidth="6xl">
         <div className="grid grid-flow-col grid-cols-7 grid-rows-6 gap-6 md:grid-flow-row auto-rows-max md:auto-rows-min">
           <div className="flex flex-col items-center col-span-5 row-span-6 ">
             <BalanceChart stream={stream} />

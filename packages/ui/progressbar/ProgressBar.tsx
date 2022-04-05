@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { classNames } from '../../functions'
+import { classNames } from '../lib/classNames'
 
 export enum ProgressColor {
   PINK,

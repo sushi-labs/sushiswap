@@ -1,5 +1,5 @@
 import { FC, ReactNode, useState } from 'react'
-import Typography from '../../components/Typography'
+import Typography from 'ui/typography/Typography'
 import useInterval from '../../hooks/useInterval'
 import { Stream } from './context/Stream'
 

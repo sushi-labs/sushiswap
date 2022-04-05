@@ -6,5 +6,4 @@ export default withTranspileModules({
   basePath: '/furo',
   reactStrictMode: true,
   swcMinify: true,
-  
 })
