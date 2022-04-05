@@ -7,7 +7,7 @@ import BalanceChart from '../../features/stream/BalanceChart'
 import StreamDetails from '../../features/stream/StreamDetails'
 import TransactionHistory from '../../features/stream/TransactionHistory'
 import { RawStream, Transaction } from '../../interfaces/stream/types'
-import { calculateTimePassed, calculateWithdrawnPercentage } from '../../functions'
+import { calculateStreamedPercentage, calculateWithdrawnPercentage } from '../../functions'
 import { Stream } from '../../interfaces/stream/Stream'
 
 interface Props {
@@ -16,15 +16,16 @@ interface Props {
 }
 
 const Streams: FC<Props> = (props) => {
-  let { stream, transactions } = props
-  const [withdrawnAmount, setWithdrawnAmount] = useState<number>()
-  const [streamedAmount, setStreamedAmount] = useState<number>()
-  useEffect(() => {
-    if (stream?.amount && stream?.withdrawnAmount) {
-      setStreamedAmount(parseFloat(calculateTimePassed(stream)))
-      setWithdrawnAmount(parseFloat(calculateWithdrawnPercentage(stream)))
-    }
-  }, [stream])
+  let { stream: rawStream, transactions } = props
+  const stream = new Stream({stream: rawStream})
+  // const [withdrawnAmount, setWithdrawnAmount] = useState<number>()
+  // const [streamedAmount, setStreamedAmount] = useState<number>()
+  // useEffect(() => {
+  //   if (stream?.amount && stream?.withdrawnAmount) {
+  //     setStreamedAmount(stream))
+  //     setWithdrawnAmount(stream))
+  //   }
+  // }, [stream])
 
   return (
     <Main>
@@ -41,13 +42,13 @@ const Streams: FC<Props> = (props) => {
 
           <div className="col-span-2 col-start-6 row-start-2 border rounded border-dark-800 bg-dark-900">
             <div>Streamed:</div>
-            <div>{(streamedAmount * 100).toFixed(2)}%</div>
-            <ProgressBar progress={streamedAmount} color={ProgressColor.BLUE} showLabel={false} />
+            <div>{stream.streamedPercentage.toFixed(2)}%</div>
+            <ProgressBar progress={stream.streamedPercentage} color={ProgressColor.BLUE} showLabel={false} />
           </div>
           <div className="col-span-2 col-start-6 row-start-3 border rounded border-dark-800 bg-dark-900">
             <div>Withdrawn:</div>
-            <div>{(withdrawnAmount * 100).toFixed(2)}%</div>
-            <ProgressBar progress={withdrawnAmount} color={ProgressColor.PINK} showLabel={false} />
+            <div>{(stream.withdrawnPercentage * 100).toFixed(2)}%</div>
+            <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
           </div>
           <div className="col-span-2 col-start-6 row-start-4 border rounded border-dark-800 bg-dark-900">
             <p>208</p>

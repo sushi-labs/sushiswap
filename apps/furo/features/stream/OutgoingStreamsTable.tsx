@@ -5,7 +5,8 @@ import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
-import { calculateTimePassed } from '../../functions'
+import { calculateStreamedPercentage } from '../../functions'
+import { Stream } from '../../interfaces/stream/Stream'
 import { RawStream, StreamStatus } from '../../interfaces/stream/types'
 // import { formatUSD, shortenAddress } from 'format'
 
@@ -14,7 +15,7 @@ interface StreamsProps {
 }
 
 const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
-  const data = props.outgoingStreams ?? []
+  const data = props.outgoingStreams.map((stream) => new Stream({ stream })) ?? []
 
   const columns = React.useMemo(
     () => [
@@ -48,35 +49,35 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
       },
       {
         Header: 'STREAMED',
-        accessor: 'streamed',
+        accessor: 'streamedPercentage',
         Cell: (props) => {
           return (
             <div className="w-40">
-              <ProgressBar progress={calculateTimePassed(props.row.original)} color={ProgressColor.BLUE} />
+              <ProgressBar progress={props.value} color={ProgressColor.BLUE} />
             </div>
           )
         },
       },
       {
         Header: 'START TIME',
-        accessor: 'startedAt',
+        accessor: 'startTime',
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
+              <div>{props.value.toLocaleDateString()}</div>
+              <div>{props.value.toLocaleTimeString()}</div>
             </>
           )
         },
       },
       {
         Header: 'END TIME',
-        accessor: 'expiresAt',
+        accessor: 'endTime',
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
+              <div>{props.value.toLocaleDateString()}</div>
+              <div>{props.value.toLocaleTimeString()}</div>
             </>
           )
         },

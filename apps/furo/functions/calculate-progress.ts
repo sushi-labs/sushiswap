@@ -3,7 +3,7 @@ import { Decimal } from 'math'
 import { RawStream, StreamStatus } from '../interfaces/stream/types'
 
 
-export function calculateTimePassed(stream: RawStream): string {
+export function calculateStreamedPercentage(stream: RawStream): number {
   const start = new Date(parseInt(stream.startedAt)).getTime()
 
   const end = new Date(parseInt(stream.expiresAt)).getTime()
@@ -14,11 +14,11 @@ export function calculateTimePassed(stream: RawStream): string {
 
   const total = end - start
   const current = now - start
-  return (current / total).toFixed(4)
+  return (current / total)
 }
 
-export function calculateWithdrawnPercentage(stream: RawStream): string {
+export function calculateWithdrawnPercentage(stream: RawStream): number {
   const withdrawn = Decimal(stream.withdrawnAmount)
   const amount =  Decimal(stream.amount)
-  return (withdrawn / amount).toFixed(4)
+  return (withdrawn / amount)
 }

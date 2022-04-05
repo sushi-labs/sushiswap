@@ -1,6 +1,6 @@
 export interface RawStream {
   id: string
-  status: StreamStatus
+  status: string
   amount: string
   withdrawnAmount: string
   expiresAt: string

@@ -6,14 +6,15 @@ import { formatNumber, shortenAddress } from 'format'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { formatUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
-import { calculateTimePassed } from '../../functions'
+import { calculateStreamedPercentage } from '../../functions'
+import { Stream } from '../../interfaces/stream/Stream'
 
 interface StreamsProps {
   incomingStreams: RawStream[]
 }
 
 const IncomingStreamsTable: FC<StreamsProps> = (props) => {
-  const data = props.incomingStreams ?? []
+  const data = props.incomingStreams.map((stream) => new Stream({ stream }))
 
   const columns = React.useMemo(
     () => [
@@ -40,7 +41,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
           if (props.row.original.status === StreamStatus.CANCELLED) {
             return `-`
           }
-          
+
           const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
           const formattedAmount = formatNumber(amount)
           return `${formattedAmount} ${props.row.original.token.symbol}`
@@ -48,32 +49,35 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
       },
       {
         Header: 'STREAMED',
-        accessor: 'streamed',
-        Cell: (props) => 
-        {
-        return <div className="w-40"><ProgressBar progress={calculateTimePassed(props.row.original)} color={ProgressColor.BLUE}/></div>
-      },
+        accessor: 'streamedPercentage',
+        Cell: (props) => {
+          return (
+            <div className="w-40">
+              <ProgressBar progress={props.value} color={ProgressColor.BLUE} />
+            </div>
+          )
+        },
       },
       {
         Header: 'START TIME',
-        accessor: 'startedAt',
+        accessor: 'startTime',
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
+              <div>{props.value.toLocaleDateString()}</div>
+              <div>{props.value.toLocaleTimeString()}</div>
             </>
           )
         },
       },
       {
         Header: 'END TIME',
-        accessor: 'expiresAt',
+        accessor: 'endTime',
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
+              <div>{props.value.toLocaleDateString()}</div>
+              <div>{props.value.toLocaleTimeString()}</div>
             </>
           )
         },
@@ -90,18 +94,12 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data })
 
   return (
-    <table
-      {...getTableProps()}
-    >
+    <table {...getTableProps()}>
       <thead>
         {headerGroups.map((headerGroup, i) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={i}>
             {headerGroup.headers.map((column, i) => (
-              <th
-                {...column.getHeaderProps()}
-
-                key={i}
-              >
+              <th {...column.getHeaderProps()} key={i}>
                 {column.render('Header')}
               </th>
             ))}
@@ -115,10 +113,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
             <tr {...row.getRowProps()} key={i}>
               {row.cells.map((cell, i) => {
                 return (
-                  <td
-                    {...cell.getCellProps()}
-                    key={i}
-                  >
+                  <td {...cell.getCellProps()} key={i}>
                     {cell.render('Cell')}
                   </td>
                 )

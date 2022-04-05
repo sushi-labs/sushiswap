@@ -2,26 +2,24 @@ import { Group } from '@visx/group'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
 import { BigNumber } from 'ethers'
-import { useState } from 'react'
-import { useEffect } from 'react'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
-import { RawStream } from '../../interfaces/stream/types'
+import { Stream } from '../../interfaces/stream/Stream'
 
 interface Props {
-  stream: RawStream
+  stream: Stream
 }
 const BalanceChart: FC<Props> = (props) => {
   const stream = props.stream
   const [balance, setBalance] = useState(null)
   const [{ data, error, loading }, getSigner] = useSigner()
+  const [streamed, setStreamed] = useState([])
   const contract = useContract({
     addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
     contractInterface: FuroStreamABI,
     signerOrProvider: data,
   })
-
 
   useEffect(() => {
     if (!data || !contract || !stream.id) {
@@ -35,14 +33,25 @@ const BalanceChart: FC<Props> = (props) => {
     fetchBalance()
   }, [contract, stream.id, data])
 
-  const streamed = [
-    { type: 'Streamed', amount: balance, color: '#0033ad' },
-    { type: 'Withdrawn', amount: parseInt(stream.withdrawnAmount), color: 'red' },
-    { type: 'Total', amount: parseInt(stream.amount) - balance, color: 'grey' },
-  ]
+  useEffect(() => {
+    if(!stream.amount && !balance) {
+      setStreamed([
+        { type: 'Streamed', amount: balance, color: '#0033ad' },
+        { type: 'Withdrawn', amount: stream.withdrawnAmount.toNumber(), color: 'red' },
+        { type: 'Total', amount: stream.amount.sub(balance).toNumber(), color: 'grey' },
+      ])
+    }
+  },[balance, stream.amount, stream.withdrawnAmount])
+
+
   const width = 550
   const half = width / 2
   const [active, setActive] = useState(null)
+
+  if (!streamed) {
+    return
+  }
+
   return (
     <svg width={width} height={width}>
       <Group top={half} left={half}>
