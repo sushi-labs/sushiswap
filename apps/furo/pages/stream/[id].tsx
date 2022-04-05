@@ -6,11 +6,12 @@ import Main from '../../components/Main'
 import BalanceChart from '../../features/stream/BalanceChart'
 import StreamDetails from '../../features/stream/StreamDetails'
 import TransactionHistory from '../../features/stream/TransactionHistory'
-import { Stream, Transaction } from '../../interfaces/stream'
+import { RawStream, Transaction } from '../../interfaces/stream/types'
 import { calculateTimePassed, calculateWithdrawnPercentage } from '../../functions'
+import { Stream } from '../../interfaces/stream/Stream'
 
 interface Props {
-  stream: Stream
+  stream: RawStream
   transactions: Transaction[]
 }
 
@@ -20,7 +21,6 @@ const Streams: FC<Props> = (props) => {
   const [streamedAmount, setStreamedAmount] = useState<number>()
   useEffect(() => {
     if (stream?.amount && stream?.withdrawnAmount) {
-      console.log(stream)
       setStreamedAmount(parseFloat(calculateTimePassed(stream)))
       setWithdrawnAmount(parseFloat(calculateWithdrawnPercentage(stream)))
     }

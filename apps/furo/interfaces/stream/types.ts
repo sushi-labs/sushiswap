@@ -1,4 +1,4 @@
-export interface Stream {
+export interface RawStream {
   id: string
   status: StreamStatus
   amount: string

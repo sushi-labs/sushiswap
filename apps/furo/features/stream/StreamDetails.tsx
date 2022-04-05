@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { Stream } from '../../interfaces/stream'
+import { RawStream } from '../../interfaces/stream/types'
 
 interface Props {
-  stream: Stream
+  stream: RawStream
 }
 const StreamDetails: FC<Props> = (props) => {
   const stream = props.stream

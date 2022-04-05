@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Transaction } from '../../interfaces/stream'
+import { Transaction } from '../../interfaces/stream/types'
 
 interface Props {
   transactions: Transaction[]

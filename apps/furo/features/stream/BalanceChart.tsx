@@ -7,10 +7,10 @@ import { useEffect } from 'react'
 import { FC } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
-import { Stream } from '../../interfaces/stream'
+import { RawStream } from '../../interfaces/stream/types'
 
 interface Props {
-  stream: Stream
+  stream: RawStream
 }
 const BalanceChart: FC<Props> = (props) => {
   const stream = props.stream

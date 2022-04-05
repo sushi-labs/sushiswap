@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers'
 import { Decimal } from 'math'
-import { Stream, StreamStatus } from '../interfaces/stream'
+import { RawStream, StreamStatus } from '../interfaces/stream/types'
 
 
-export function calculateTimePassed(stream: Stream): string {
+export function calculateTimePassed(stream: RawStream): string {
   const start = new Date(parseInt(stream.startedAt)).getTime()
 
   const end = new Date(parseInt(stream.expiresAt)).getTime()
@@ -17,7 +17,7 @@ export function calculateTimePassed(stream: Stream): string {
   return (current / total).toFixed(4)
 }
 
-export function calculateWithdrawnPercentage(stream: Stream): string {
+export function calculateWithdrawnPercentage(stream: RawStream): string {
   const withdrawn = Decimal(stream.withdrawnAmount)
   const amount =  Decimal(stream.amount)
   return (withdrawn / amount).toFixed(4)

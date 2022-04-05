@@ -6,11 +6,11 @@ import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { calculateTimePassed } from '../../functions'
-import { Stream, StreamStatus } from '../../interfaces/stream'
+import { RawStream, StreamStatus } from '../../interfaces/stream/types'
 // import { formatUSD, shortenAddress } from 'format'
 
 interface StreamsProps {
-  outgoingStreams: Stream[]
+  outgoingStreams: RawStream[]
 }
 
 const OutgoingStreamsTable: FC<StreamsProps> = (props) => {

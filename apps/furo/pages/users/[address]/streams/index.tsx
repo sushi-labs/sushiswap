@@ -4,11 +4,11 @@ import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Main from '../../../../components/Main'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
 import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
-import { Stream } from '../../../../interfaces/stream'
+import { RawStream } from '../../../../interfaces/stream/types'
 
 interface StreamsProps {
-  incomingStreams: Stream[]
-  outgoingStreams: Stream[]
+  incomingStreams: RawStream[]
+  outgoingStreams: RawStream[]
 }
 
 const Streams: FC<StreamsProps> = (props) => {

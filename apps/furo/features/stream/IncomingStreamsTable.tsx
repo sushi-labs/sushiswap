@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
-import { Stream, StreamStatus } from '../../interfaces/stream'
+import { RawStream, StreamStatus } from '../../interfaces/stream/types'
 import { formatNumber, shortenAddress } from 'format'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { formatUnits } from '@ethersproject/units'
@@ -9,7 +9,7 @@ import { BigNumber } from 'ethers'
 import { calculateTimePassed } from '../../functions'
 
 interface StreamsProps {
-  incomingStreams: Stream[]
+  incomingStreams: RawStream[]
 }
 
 const IncomingStreamsTable: FC<StreamsProps> = (props) => {
