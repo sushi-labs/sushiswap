@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import { Stream, StreamStatus } from '../../interfaces/stream'
 import { formatNumber, shortenAddress } from 'format'
-import ProgressBar from '../../components'
+import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { formatUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import { calculateProgress } from '../../functions'
@@ -51,7 +51,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
         accessor: 'streamed',
         Cell: (props) => 
         {
-        return <div className="w-40"><ProgressBar progress={calculateProgress(props.row.original)}/></div>
+        return <div className="w-40"><ProgressBar progress={calculateProgress(props.row.original)} color={ProgressColor.BLUE}/></div>
       },
       },
       {

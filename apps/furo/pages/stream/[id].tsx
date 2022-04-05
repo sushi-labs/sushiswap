@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
+import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import Container from '../../components/Container'
 import Main from '../../components/Main'
 import BalanceChart from '../../features/stream/BalanceChart'
@@ -23,22 +24,37 @@ const Streams: FC<Props> = (props) => {
         <TransactionHistory transactions={transactions} />
       </div> */}
 
-      <div className="grid grid-flow-col grid-cols-7 grid-rows-6 gap-6 bg-slate-900 md:grid-flow-row">
-      <div className="flex flex-col items-center col-span-5 row-span-6 bg-slate-600 ">01  
-
+      <div className="grid grid-flow-col grid-cols-7 grid-rows-6 gap-6 md:grid-flow-row auto-rows-max md:auto-rows-min">
+      <div className="flex flex-col items-center col-span-5 row-span-6 ">
       <BalanceChart stream={stream} />
       </div>
-      <div className="col-span-2 col-start-6 row-start-2 bg-slate-500">Streamed</div>
-      <div className="col-span-2 col-start-6 row-start-3 bg-slate-500">Withdraw</div>
-      <div className="col-span-2 col-start-6 row-start-4 bg-slate-500">Time remaining</div>
-      <div className="col-span-2 col-start-6 row-span-2 row-start-6 bg-slate-500">
-        <div>Withdraw</div>
-        <div>Transfer</div>
+      
+      <div className="col-span-2 col-start-6 row-start-2 border rounded border-dark-800 bg-dark-900">
+
+        Streamed:
+        <ProgressBar progress={0.35} color={ProgressColor.BLUE} showLabel={false}/>
+      </div>
+      <div className="col-span-2 col-start-6 row-start-3 border rounded border-dark-800 bg-dark-900">
+        
+        Withdrawn:
+        <ProgressBar progress={0.35} color={ProgressColor.PINK} showLabel={false}/>
+        </div>
+      <div className="col-span-2 col-start-6 row-start-4 border rounded border-dark-800 bg-dark-900">
+
+        <p>208</p>
+        <p>Days</p>
+        REMAINING
+        </div>
+      <div className="col-span-2 col-start-6 row-span-2 row-start-6 border rounded border-dark-800 bg-dark-900">
+      <button type="button" className="rounded bg-gradient-to-r from-blue-400 to-pink-500">
+        WITHDRAW
+      </button>
+        <div>TRANSFER</div>
         </div>
       
-      <div className="col-span-1 col-start-2 bg-slate-400">02</div>
-      <div className="col-span-1 bg-slate-400">02</div>
-      <div className="col-span-1 bg-slate-400">02</div>
+      <div className="col-span-1 col-start-2 border rounded border-dark-800 bg-dark-900">02</div>
+      <div className="col-span-1 border rounded border-dark-800 bg-dark-900">02</div>
+      <div className="col-span-1 border rounded border-dark-800 bg-dark-900">02</div>
     </div>
     </Container>
     </Main>

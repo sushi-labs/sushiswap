@@ -4,7 +4,7 @@ import { formatNumber, shortenAddress } from 'format'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
-import ProgressBar from '../../components'
+import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { calculateProgress } from '../../functions'
 import { Stream, StreamStatus } from '../../interfaces/stream'
 // import { formatUSD, shortenAddress } from 'format'
@@ -52,7 +52,7 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Cell: (props) => {
           return (
             <div className="w-40">
-              <ProgressBar progress={calculateProgress(props.row.original)} />
+              <ProgressBar progress={calculateProgress(props.row.original)} color={ProgressColor.BLUE} />
             </div>
           )
         },
