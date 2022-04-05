@@ -6,7 +6,7 @@ import { formatNumber, shortenAddress } from 'format'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { formatUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
-import { calculateProgress } from '../../functions'
+import { calculateTimePassed } from '../../functions'
 
 interface StreamsProps {
   incomingStreams: Stream[]
@@ -51,7 +51,7 @@ const IncomingStreamsTable: FC<StreamsProps> = (props) => {
         accessor: 'streamed',
         Cell: (props) => 
         {
-        return <div className="w-40"><ProgressBar progress={calculateProgress(props.row.original)} color={ProgressColor.BLUE}/></div>
+        return <div className="w-40"><ProgressBar progress={calculateTimePassed(props.row.original)} color={ProgressColor.BLUE}/></div>
       },
       },
       {
