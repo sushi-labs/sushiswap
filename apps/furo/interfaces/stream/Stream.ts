@@ -21,8 +21,8 @@ export class Stream {
     this.status = StreamStatus[stream.status]
     this.amount = BigNumber.from(stream.amount)
     this.withdrawnAmount = BigNumber.from(stream.withdrawnAmount)
-    this.startTime = new Date(parseInt(stream.expiresAt) * 1000)
-    this.endTime = new Date(parseInt(stream.startedAt) * 1000)
+    this.startTime = new Date(parseInt(stream.startedAt) * 1000)
+    this.endTime = new Date(parseInt(stream.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(stream.modifiedAtTimestamp) * 1000)
     this.streamedPercentage = calculateStreamedPercentage(stream)
     this.withdrawnPercentage = calculateWithdrawnPercentage(stream)
@@ -36,6 +36,7 @@ export class Stream {
     if (this.status !== StreamStatus.CANCELLED) {
       const now = Date.now()
       const interval = this.endTime.getTime() - now
+
 
       let days = Math.floor(interval / (1000 * 60 * 60 * 24))
       let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))

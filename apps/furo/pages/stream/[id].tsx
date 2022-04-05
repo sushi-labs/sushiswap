@@ -9,6 +9,7 @@ import TransactionHistory from '../../features/stream/TransactionHistory'
 import { RawStream, Transaction } from '../../interfaces/stream/types'
 import { calculateStreamedPercentage, calculateWithdrawnPercentage } from '../../functions'
 import { Stream } from '../../interfaces/stream/Stream'
+import StreamTimer from '../../features/stream/StreamTimer'
 
 interface Props {
   stream: RawStream
@@ -50,10 +51,8 @@ const Streams: FC<Props> = (props) => {
             <div>{(stream.withdrawnPercentage * 100).toFixed(2)}%</div>
             <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
           </div>
-          <div className="col-span-2 col-start-6 row-start-4 border rounded border-dark-800 bg-dark-900">
-            <p>208</p>
-            <p>Days</p>
-            REMAINING
+          <div className="col-span-2 col-start-6 row-start-4">
+            <StreamTimer stream={stream}/>
           </div>
           <div className="col-span-2 col-start-6 row-span-2 row-start-6 border rounded border-dark-800 bg-dark-900">
            

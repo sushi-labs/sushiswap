@@ -1,4 +1,4 @@
-import { classNames } from 'app/functions'
+import { classNames } from '../../functions'
 import React, { FC, forwardRef } from 'react'
 
 export type TypographyWeight = 400 | 500 | 700
@@ -62,5 +62,6 @@ const Typography: FC<TypographyProps> = forwardRef(
     )
   }
 )
+Typography.displayName = 'Typography'
 
 export default Typography
