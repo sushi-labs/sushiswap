@@ -7,6 +7,7 @@ import BalanceChart from '../../features/stream/BalanceChart'
 import { Stream } from '../../features/stream/context/Stream'
 import { RawStream, Transaction } from '../../features/stream/context/types'
 import StreamTimer from '../../features/stream/StreamTimer'
+import TransactionHistory from '../../features/stream/TransactionHistory'
 
 interface Props {
   stream: RawStream
@@ -52,6 +53,7 @@ const Streams: FC<Props> = (props) => {
           <div className="col-span-1 border rounded border-dark-800 bg-dark-900">Details</div>
           <div className="col-span-1 border rounded border-dark-800 bg-dark-900">History</div>
         </div>
+        <TransactionHistory transactions={transactions} />
       </Container>
     </Main>
   )
