@@ -8,14 +8,16 @@ import '../index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
+    <div className="bg-[url('/furo/images/circuit.png')] bg-[length:250px_250px] bg-repeat">
     <App.Shell>
       <App.Header>
         <App.Nav />
       </App.Header>
       <Provider autoConnect>
-      <Component {...pageProps} />
+        <Component {...pageProps}/>
       </Provider>
     </App.Shell>
+        </div>
   )
 }
 

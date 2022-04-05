@@ -11,7 +11,9 @@ module.exports = {
       gridTemplateColumns: {
         'token-section': 'auto minmax(auto, 1fr) auto',
       },
-
+      backgroundImage: () => ({
+        circuit: "url('/furo/images/circuit.png')",
+      }),
       linearBorderGradients: (theme) => ({
         directions: {
           t: 'to top',
