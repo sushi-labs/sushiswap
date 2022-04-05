@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { RawStream } from '../../interfaces/stream/types'
+import { RawStream } from './context/types'
 
 interface Props {
   stream: RawStream

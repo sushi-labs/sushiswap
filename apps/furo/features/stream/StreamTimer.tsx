@@ -1,7 +1,7 @@
 import { FC, ReactNode, useState } from 'react'
 import Typography from '../../components/Typography'
 import useInterval from '../../hooks/useInterval'
-import { Stream } from '../../interfaces/stream/Stream'
+import { Stream } from './context/Stream'
 
 interface StreamTimerState {
   days: string

@@ -4,7 +4,7 @@ import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Main from '../../../../components/Main'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
 import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
-import { RawStream } from '../../../../interfaces/stream/types'
+import { RawStream } from '../../../../features/stream/context/types'
 
 interface StreamsProps {
   incomingStreams: RawStream[]

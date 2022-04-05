@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
-import { RawStream, StreamStatus } from '../../interfaces/stream/types'
+import { RawStream, StreamStatus } from './context/types'
 import { formatNumber, shortenAddress } from 'format'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { formatUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import { calculateStreamedPercentage } from '../../functions'
-import { Stream } from '../../interfaces/stream/Stream'
+import { Stream } from './context/Stream'
 
 interface StreamsProps {
   incomingStreams: RawStream[]

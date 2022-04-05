@@ -6,9 +6,9 @@ import Main from '../../components/Main'
 import BalanceChart from '../../features/stream/BalanceChart'
 import StreamDetails from '../../features/stream/StreamDetails'
 import TransactionHistory from '../../features/stream/TransactionHistory'
-import { RawStream, Transaction } from '../../interfaces/stream/types'
+import { RawStream, Transaction } from '../../features/stream/context/types'
 import { calculateStreamedPercentage, calculateWithdrawnPercentage } from '../../functions'
-import { Stream } from '../../interfaces/stream/Stream'
+import { Stream } from '../../features/stream/context/Stream'
 import StreamTimer from '../../features/stream/StreamTimer'
 
 interface Props {

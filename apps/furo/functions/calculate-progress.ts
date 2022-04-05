@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import { Decimal } from 'math'
-import { RawStream, StreamStatus } from '../interfaces/stream/types'
+import { RawStream, StreamStatus } from '../features/stream/context/types'
 
 
 export function calculateStreamedPercentage(stream: RawStream): number {

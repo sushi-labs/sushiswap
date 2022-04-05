@@ -6,8 +6,8 @@ import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import { calculateStreamedPercentage } from '../../functions'
-import { Stream } from '../../interfaces/stream/Stream'
-import { RawStream, StreamStatus } from '../../interfaces/stream/types'
+import { Stream } from './context/Stream'
+import { RawStream, StreamStatus } from './context/types'
 // import { formatUSD, shortenAddress } from 'format'
 
 interface StreamsProps {
