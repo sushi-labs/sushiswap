@@ -41,7 +41,7 @@ interface User {
 const Vestings: FC<UserProps> = (props) => {
   const router = useRouter()
   const address = router.query.address as string
-  let {incomingVestings, outgoingVestings} = props
+  let { incomingVestings, outgoingVestings } = props
 
   return (
     <Main>
@@ -86,8 +86,7 @@ const Vestings: FC<UserProps> = (props) => {
           )}
         </div>
       </div>
-    
-      </Main>
+    </Main>
   )
 }
 

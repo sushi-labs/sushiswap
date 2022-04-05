@@ -34,15 +34,14 @@ const BalanceChart: FC<Props> = (props) => {
   }, [contract, stream.id, data])
 
   useEffect(() => {
-    if(!stream.amount && !balance) {
+    if (!stream.amount && !balance) {
       setStreamed([
         { type: 'Streamed', amount: balance, color: '#0033ad' },
         { type: 'Withdrawn', amount: stream.withdrawnAmount.toNumber(), color: 'red' },
         { type: 'Total', amount: stream.amount.sub(balance).toNumber(), color: 'grey' },
       ])
     }
-  },[balance, stream.amount, stream.withdrawnAmount])
-
+  }, [balance, stream.amount, stream.withdrawnAmount])
 
   const width = 550
   const half = width / 2

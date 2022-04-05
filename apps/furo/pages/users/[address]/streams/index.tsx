@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
 import Main from '../../../../components/Main'
+import { RawStream } from '../../../../features/stream/context/types'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
 import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
-import { RawStream } from '../../../../features/stream/context/types'
 
 interface StreamsProps {
   incomingStreams: RawStream[]
@@ -17,7 +17,6 @@ const Streams: FC<StreamsProps> = (props) => {
   let { incomingStreams, outgoingStreams } = props
 
   return (
-
     <Main>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Dashboard</h1>
@@ -32,7 +31,7 @@ const Streams: FC<StreamsProps> = (props) => {
         <h1 className="py-4 text-2xl font-bold">Outgoing streams</h1>
 
         {/* <CreateStreamModal/> */}
-        
+
         {outgoingStreams.length > 0 ? (
           <OutgoingStreamsTable outgoingStreams={outgoingStreams} />
         ) : (

@@ -1,14 +1,11 @@
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import Container from '../../components/Container'
 import Main from '../../components/Main'
+import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
 import BalanceChart from '../../features/stream/BalanceChart'
-import StreamDetails from '../../features/stream/StreamDetails'
-import TransactionHistory from '../../features/stream/TransactionHistory'
-import { RawStream, Transaction } from '../../features/stream/context/types'
-import { calculateStreamedPercentage, calculateWithdrawnPercentage } from '../../functions'
 import { Stream } from '../../features/stream/context/Stream'
+import { RawStream, Transaction } from '../../features/stream/context/types'
 import StreamTimer from '../../features/stream/StreamTimer'
 
 interface Props {
@@ -18,15 +15,7 @@ interface Props {
 
 const Streams: FC<Props> = (props) => {
   let { stream: rawStream, transactions } = props
-  const stream = new Stream({stream: rawStream})
-  // const [withdrawnAmount, setWithdrawnAmount] = useState<number>()
-  // const [streamedAmount, setStreamedAmount] = useState<number>()
-  // useEffect(() => {
-  //   if (stream?.amount && stream?.withdrawnAmount) {
-  //     setStreamedAmount(stream))
-  //     setWithdrawnAmount(stream))
-  //   }
-  // }, [stream])
+  const stream = new Stream({ stream: rawStream })
 
   return (
     <Main>
@@ -52,12 +41,10 @@ const Streams: FC<Props> = (props) => {
             <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
           </div>
           <div className="col-span-2 col-start-6 row-start-4">
-            <StreamTimer stream={stream}/>
+            <StreamTimer stream={stream} />
           </div>
           <div className="col-span-2 col-start-6 row-span-2 row-start-6 border rounded border-dark-800 bg-dark-900">
-           
-              WITHDRAW
-         
+            WITHDRAW
             <div>TRANSFER</div>
           </div>
 

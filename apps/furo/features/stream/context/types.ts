@@ -35,7 +35,7 @@ export interface Transaction {
 }
 
 export enum StreamStatus {
-  ACTIVE = "ACTIVE",
-  EXTENDED = "EXTENDED",
-  CANCELLED = "CANCELLED"
+  ACTIVE = 'ACTIVE',
+  EXTENDED = 'EXTENDED',
+  CANCELLED = 'CANCELLED',
 }

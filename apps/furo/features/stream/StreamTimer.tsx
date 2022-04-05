@@ -36,49 +36,49 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   // Render normally
   if (remaining) {
     return (
-      <div className='flex flex-col items-center'>
-      <div className="grid grid-flow-col grid-cols-4 grid-rows-2 gap-3">
-        <div>
-          <Typography variant="h3" className="text-mono">
-            {remaining.days}
-          </Typography>
+      <div className="flex flex-col items-center">
+        <div className="grid grid-flow-col grid-cols-4 grid-rows-2 gap-3">
+          <div>
+            <Typography variant="h3" className="text-mono">
+              {remaining.days}
+            </Typography>
+          </div>
+          <div className="row-start-2">
+            <Typography variant="lg" className="text-mono">
+              days
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="h3" className="text-mono">
+              {remaining.hours}
+            </Typography>
+          </div>
+          <div className="row-start-2">
+            <Typography variant="lg" className="text-mono">
+              hours
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="h3" className="text-mono">
+              {remaining.minutes}
+            </Typography>
+          </div>
+          <div className="row-start-2">
+            <Typography variant="lg" className="text-mono">
+              min
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="h3" className="text-mono">
+              {remaining.seconds}
+            </Typography>
+          </div>
+          <div className="row-start-2">
+            <Typography variant="lg" className="text-mono">
+              sec
+            </Typography>
+          </div>
         </div>
-        <div className="row-start-2">
-          <Typography variant="lg" className="text-mono">
-            days
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="h3" className="text-mono">
-            {remaining.hours}
-          </Typography>
-        </div>
-        <div className="row-start-2">
-          <Typography variant="lg" className="text-mono">
-            hours
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="h3" className="text-mono">
-            {remaining.minutes}
-          </Typography>
-        </div>
-        <div className="row-start-2">
-          <Typography variant="lg" className="text-mono">
-            min
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="h3" className="text-mono">
-            {remaining.seconds}
-          </Typography>
-        </div>
-        <div className="row-start-2">
-          <Typography variant="lg" className="text-mono">
-            sec
-          </Typography>
-        </div>
-      </div>
         Remaining
       </div>
     )

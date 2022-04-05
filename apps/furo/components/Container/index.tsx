@@ -1,5 +1,5 @@
-import { classNames } from '../../functions'
 import { ReactNode } from 'react'
+import { classNames } from '../../functions'
 
 export type MaxWidth = 'full' | '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
 

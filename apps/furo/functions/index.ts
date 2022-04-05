@@ -1,2 +1,2 @@
-export * from './styling'
 export * from './calculate-progress'
+export * from './styling'

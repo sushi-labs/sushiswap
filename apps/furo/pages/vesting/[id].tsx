@@ -1,16 +1,8 @@
-import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
-import { getBuiltGraphSDK } from '../../.graphclient'
-import {
-  AnimatedAxis, // any of these can be non-animated equivalents
-  AnimatedGrid,
-  AnimatedLineSeries,
-  XYChart,
-  Tooltip,
-} from '@visx/xychart'
-import { useEffect } from 'react'
-import { useState } from 'react'
 import { curveStep } from '@visx/curve'
+import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from '@visx/xychart'
+import { useRouter } from 'next/router'
+import { FC, useEffect, useState } from 'react'
+import { getBuiltGraphSDK } from '../../.graphclient'
 import Main from '../../components/Main'
 
 interface Props {

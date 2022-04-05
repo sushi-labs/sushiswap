@@ -1,5 +1,5 @@
-import { classNames } from '../../functions'
 import React, { FC, forwardRef } from 'react'
+import { classNames } from '../../functions'
 
 export type TypographyWeight = 400 | 500 | 700
 
@@ -42,7 +42,7 @@ const Typography: FC<TypographyProps> = forwardRef(
       onClick = undefined,
       ...rest
     },
-    ref
+    ref,
   ) => {
     return React.createElement(
       component,
@@ -52,15 +52,15 @@ const Typography: FC<TypographyProps> = forwardRef(
           // @ts-ignore TYPE NEEDS FIXING
           WEIGHTS[weight],
           onClick ? 'cursor-pointer select-none' : '',
-          className
+          className,
         ),
         onClick,
         ...rest,
         ref,
       },
-      children
+      children,
     )
-  }
+  },
 )
 Typography.displayName = 'Typography'
 

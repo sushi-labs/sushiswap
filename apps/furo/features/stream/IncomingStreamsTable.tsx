@@ -1,13 +1,12 @@
+import { formatUnits } from '@ethersproject/units'
+import { BigNumber } from 'ethers'
+import { formatNumber, shortenAddress } from 'format'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
-import { RawStream, StreamStatus } from './context/types'
-import { formatNumber, shortenAddress } from 'format'
 import ProgressBar, { ProgressColor } from '../../components/ProgressBar'
-import { formatUnits } from '@ethersproject/units'
-import { BigNumber } from 'ethers'
-import { calculateStreamedPercentage } from '../../functions'
 import { Stream } from './context/Stream'
+import { RawStream, StreamStatus } from './context/types'
 
 interface StreamsProps {
   incomingStreams: RawStream[]

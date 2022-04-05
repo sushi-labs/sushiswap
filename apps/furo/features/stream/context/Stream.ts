@@ -31,12 +31,10 @@ export class Stream {
     this.token = stream.token
   }
 
-
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
     if (this.status !== StreamStatus.CANCELLED) {
       const now = Date.now()
       const interval = this.endTime.getTime() - now
-
 
       let days = Math.floor(interval / (1000 * 60 * 60 * 24))
       let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
@@ -47,7 +45,4 @@ export class Stream {
     }
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
-
-
-
 }
