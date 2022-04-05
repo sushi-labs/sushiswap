@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
+import Main from '../../../../components/Main'
 import IncomingStreamsTable from '../../../../features/stream/IncomingStreamsTable'
 import OutgoingStreamsTable from '../../../../features/stream/OutgoingStreamsTable'
 import { Stream } from '../../../../interfaces/stream'
@@ -16,7 +17,8 @@ const Streams: FC<StreamsProps> = (props) => {
   let { incomingStreams, outgoingStreams } = props
 
   return (
-    <>
+
+    <Main>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Dashboard</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming streams</h1>
@@ -37,7 +39,7 @@ const Streams: FC<StreamsProps> = (props) => {
           <div>No outgoing streams</div>
         )}
       </div>
-    </>
+    </Main>
   )
 }
 

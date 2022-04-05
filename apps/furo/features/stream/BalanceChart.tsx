@@ -40,7 +40,7 @@ const BalanceChart: FC<Props> = (props) => {
     { type: 'Withdrawn', amount: parseInt(stream.withdrawnAmount), color: 'red' },
     { type: 'Total', amount: parseInt(stream.amount) - balance, color: 'grey' },
   ]
-  const width = 400
+  const width = 550
   const half = width / 2
   const [active, setActive] = useState(null)
   return (

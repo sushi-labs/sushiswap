@@ -11,6 +11,7 @@ import {
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { curveStep } from '@visx/curve'
+import Main from '../../components/Main'
 
 interface Props {
   vesting: Vesting
@@ -92,7 +93,7 @@ const Vesting: FC<Props> = (props) => {
   }
 
   return (
-    <>
+    <Main>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Vesting</h1>
         <div className="grid gap-2">
@@ -166,7 +167,7 @@ const Vesting: FC<Props> = (props) => {
           )}
         </div>
       </div>
-    </>
+    </Main>
   )
 }
 

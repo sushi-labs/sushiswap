@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
+import Main from '../../../../components/Main'
 
 interface UserProps {
   incomingVestings: Vesting[]
@@ -43,7 +44,7 @@ const Vestings: FC<UserProps> = (props) => {
   let {incomingVestings, outgoingVestings} = props
 
   return (
-    <>
+    <Main>
       <div className="px-2 pt-16">
         <h1 className="py-4 text-2xl font-bold">Vestings</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming vestings</h1>
@@ -85,7 +86,8 @@ const Vestings: FC<UserProps> = (props) => {
           )}
         </div>
       </div>
-    </>
+    
+      </Main>
   )
 }
 
