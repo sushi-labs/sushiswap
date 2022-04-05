@@ -5,7 +5,8 @@ import Link from 'next/link'
 import React, { FC } from 'react'
 import { useTable } from 'react-table'
 import ProgressBar from '../../components'
-import { Stream } from '../../interfaces/stream'
+import { calculateProgress } from '../../functions'
+import { Stream, StreamStatus } from '../../interfaces/stream'
 // import { formatUSD, shortenAddress } from 'format'
 
 interface StreamsProps {
@@ -37,6 +38,9 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Header: 'VALUE',
         accessor: 'amount',
         Cell: (props) => {
+          if (props.row.original.status === StreamStatus.CANCELLED) {
+            return `-`
+          }
           const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
           const formattedAmount = formatNumber(amount)
           return `${formattedAmount} ${props.row.original.token.symbol}`
@@ -46,15 +50,9 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Header: 'STREAMED',
         accessor: 'streamed',
         Cell: (props) => {
-          const start = new Date(parseInt(props.row.original.startedAt)).getTime()
-          const end = new Date(parseInt(props.row.original.expiresAt)).getTime()
-          const now = Date.now()
-          const total = end - start
-          const current = now - start
-          const percentage = (current / total).toFixed(3)
           return (
             <div className="w-40">
-              <ProgressBar progress={percentage} />
+              <ProgressBar progress={calculateProgress(props.row.original)} />
             </div>
           )
         },
@@ -65,8 +63,8 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value)).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value)).toLocaleTimeString()}</div>
+              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
+              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
             </>
           )
         },
@@ -77,8 +75,8 @@ const OutgoingStreamsTable: FC<StreamsProps> = (props) => {
         Cell: (props) => {
           return (
             <>
-              <div>{new Date(parseInt(props.value)).toLocaleDateString()}</div>
-              <div>{new Date(parseInt(props.value)).toLocaleTimeString()}</div>
+              <div>{new Date(parseInt(props.value) * 1000).toLocaleDateString()}</div>
+              <div>{new Date(parseInt(props.value) * 1000).toLocaleTimeString()}</div>
             </>
           )
         },

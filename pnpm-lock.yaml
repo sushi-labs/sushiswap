@@ -193,6 +193,7 @@ importers:
 
   apps/furo:
     specifiers:
+      '@ethersproject/units': ^5.6.0
       '@graphprotocol/client-cli': 0.0.2
       '@graphql-mesh/transform-prefix': 0.11.12
       '@graphql-mesh/transform-rename': 0.12.12
@@ -224,6 +225,7 @@ importers:
       ui: workspace:*
       wagmi: ^0.2.24
     dependencies:
+      '@ethersproject/units': 5.6.0
       '@graphql-mesh/transform-prefix': 0.11.12_graphql@16.3.0
       '@graphql-mesh/transform-rename': 0.12.12_graphql@16.3.0
       '@graphql-mesh/transform-type-merging': 0.3.22_graphql@16.3.0

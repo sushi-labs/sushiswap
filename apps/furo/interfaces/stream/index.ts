@@ -1,10 +1,11 @@
 export interface Stream {
   id: string
-  status: string
+  status: StreamStatus
   amount: string
   withdrawnAmount: string
   expiresAt: string
   startedAt: string
+  modifiedAtTimestamp: string
   recipient: User
   createdBy: User
   token: Token
@@ -19,4 +20,10 @@ export interface Token {
 
 export interface User {
   id: string
+}
+
+export enum StreamStatus {
+  ACTIVE = "ACTIVE",
+  EXTENDED = "EXTENDED",
+  CANCELLED = "CANCELLED"
 }
