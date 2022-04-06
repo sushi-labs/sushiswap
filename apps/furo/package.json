@@ -16,6 +16,7 @@
     "@graphql-mesh/transform-rename": "0.12.12",
     "@graphql-mesh/transform-type-merging": "0.3.22",
     "@headlessui/react": "^1.5.0",
+    "@heroicons/react": "^1.0.0",
     "@visx/curve": "^2.1.0",
     "@visx/group": "^2.1.0",
     "@visx/react-spring": "^2.6.0",

@@ -1,7 +1,7 @@
 :root,
 ::before,
 ::after {
-  --font-sans: -apple-system, system-ui, BlinkMacSystemFont, 'Helvetica Neue',
+  --font-sans: "DM Sans", -apple-system, system-ui, BlinkMacSystemFont, 'Helvetica Neue',
     'Helvetica', sans-serif;
   --background-color: #0d0415;
   --color: #ffffff;

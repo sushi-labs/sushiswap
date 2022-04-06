@@ -1,4 +1,7 @@
 @tailwind base;
+
+@import '@fontsource/dm-sans/index.css';
+
 @tailwind components;
 @tailwind utilities;
 

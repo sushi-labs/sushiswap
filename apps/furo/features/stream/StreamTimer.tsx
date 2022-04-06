@@ -36,50 +36,44 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   // Render normally
   if (remaining) {
     return (
-      <div className="flex flex-col items-center">
-        <div className="grid grid-flow-col grid-cols-4 grid-rows-2 gap-3">
-          <div>
-            <Typography variant="h3" className="text-mono">
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-6 text-high-emphesis justify-center">
+          <div className="flex flex-col text-center">
+            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
               {remaining.days}
             </Typography>
-          </div>
-          <div className="row-start-2">
-            <Typography variant="lg" className="text-mono">
+            <Typography variant="sm" className="text-secondary">
               days
             </Typography>
           </div>
-          <div>
-            <Typography variant="h3" className="text-mono">
+          <div className="flex flex-col text-center">
+            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
               {remaining.hours}
             </Typography>
-          </div>
-          <div className="row-start-2">
-            <Typography variant="lg" className="text-mono">
+            <Typography variant="sm" className="text-secondary">
               hours
             </Typography>
           </div>
-          <div>
-            <Typography variant="h3" className="text-mono">
+          <div className="flex flex-col text-center">
+            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
               {remaining.minutes}
             </Typography>
-          </div>
-          <div className="row-start-2">
-            <Typography variant="lg" className="text-mono">
+            <Typography variant="sm" className="text-secondary">
               min
             </Typography>
           </div>
-          <div>
-            <Typography variant="h3" className="text-mono">
+          <div className="flex flex-col text-center">
+            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
               {remaining.seconds}
             </Typography>
-          </div>
-          <div className="row-start-2">
-            <Typography variant="lg" className="text-mono">
+            <Typography variant="sm" className="text-secondary">
               sec
             </Typography>
           </div>
         </div>
-        Remaining
+        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
+          REMAINING
+        </Typography>
       </div>
     )
   }

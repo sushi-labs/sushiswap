@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
-import Main from '../../../../components/Main'
 import { RawStream } from '../../../../features/stream/context/types'
 import Typography from '../../../../../../packages/ui/typography/Typography'
 import StreamTable from '../../../../features/stream/StreamTable'
+import Layout from '../../../../components/Layout'
 
 interface StreamsProps {
   incomingStreams: RawStream[]
@@ -12,8 +12,8 @@ interface StreamsProps {
 
 const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {
   return (
-    <Main>
-      <div className="flex flex-col gap-12">
+    <Layout>
+      <div className="flex flex-col gap-12 h-full pt-40">
         <Typography variant="h2" weight={700} className="text-high-emphesis">
           Dashboard
         </Typography>
@@ -33,7 +33,7 @@ const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {
           </div>
         </div>
       </div>
-    </Main>
+    </Layout>
   )
 }
 

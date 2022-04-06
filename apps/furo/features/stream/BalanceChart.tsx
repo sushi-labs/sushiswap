@@ -61,8 +61,7 @@ const BalanceChart: FC<Props> = (props) => {
           outerRadius={half}
           innerRadius={() => {
             const size = 10
-            const radius = half - size
-            return radius
+            return half - size
           }}
           padAngle={0.01}
         >
@@ -70,7 +69,7 @@ const BalanceChart: FC<Props> = (props) => {
             return pie.arcs.map((arc) => {
               return (
                 <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-                  <path d={pie.path(arc)} fill={arc.data.color}></path>
+                  <path d={pie.path(arc)} fill={arc.data.color} />
                 </g>
               )
             })
@@ -80,21 +79,19 @@ const BalanceChart: FC<Props> = (props) => {
         {active ? (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {`${Math.floor(active.amount)}`}
+              {Math.floor(active.amount)}
             </Text>
-
             <Text textAnchor="middle" fill={active.color} fontSize={20} dy={20}>
-              {`${active.type}`}
+              {active.type}
             </Text>
           </>
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {`$${balance}`}
+              {balance}
             </Text>
-
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-              {`${balance} `}
+              {balance}
             </Text>
           </>
         )}

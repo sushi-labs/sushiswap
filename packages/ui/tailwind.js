@@ -1,10 +1,7 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
-  // `content` is replaced instead of extended, so this line has to be added in
-  // the `content` of each app' tailwind.config.js
   content: ['node_modules/ui/**/*.{js,ts,jsx,tsx}'],
-  // theme: {
-  //   extend: {},
-  // },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
@@ -13,6 +10,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: () => ({
+        'gradient-radial': 'radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops))',
+      }),
+      boxShadow: {
+        'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.25)',
+      },
       colors: {
         purple: {
           DEFAULT: '#A755DD',
@@ -139,6 +142,9 @@ module.exports = {
         'high-emphesis': '#E3E3E3',
         'higher-emphesis': '#FCFCFD',
       },
+    },
+    fontFamily: {
+      sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
     },
   },
 }
