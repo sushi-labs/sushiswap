@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port 3008",
     "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build --tsOnly",
     "build": "next build",
