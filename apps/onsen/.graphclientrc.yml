@@ -1,0 +1,8 @@
+sources:
+  - name: auctionmaker
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/staking-kovan
+  - name: auctionmaker
+documents:
+  - ./query.graphql

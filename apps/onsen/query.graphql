@@ -1,0 +1,46 @@
+# query UserStreams($id: ID!) {
+#   user(id: $id) {
+#     incomingStreams(orderBy: startedAt) {
+#       id
+#       status
+#       startedAt
+#       expiresAt
+#       modifiedAtTimestamp
+#       amount
+#       withdrawnAmount
+#       recipient {
+#         id
+#       }
+#       createdBy {
+#         id
+#       }
+#       token {
+#         id
+#         symbol
+#         name
+#         decimals
+#       }
+#     }
+#     outgoingStreams(orderBy: startedAt) {
+#       id
+#       status
+#       startedAt
+#       expiresAt
+#       modifiedAtTimestamp
+#       amount
+#       withdrawnAmount
+#       recipient {
+#         id
+#       }
+#       createdBy {
+#         id
+#       }
+#       token {
+#         id
+#         symbol
+#         name
+#         decimals
+#       }
+#     }
+#   }
+# }
