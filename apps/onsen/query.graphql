@@ -16,3 +16,22 @@ query Farms {
     liquidityStaked
   }
 }
+
+query Farm($id: ID) {
+  incentive(id: $id) {
+    id
+    token {
+      id
+    }
+    rewardToken {
+      id
+    }
+    creator {
+      id
+    }
+    endTime
+    lastRewardTime
+    rewardRemaining
+    liquidityStaked
+  }
+}
