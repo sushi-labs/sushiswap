@@ -1,8 +1,7 @@
 sources:
-  - name: auctionmaker
+  - name: stake
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/staking-kovan
-  - name: auctionmaker
+        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/stake
 documents:
   - ./query.graphql
