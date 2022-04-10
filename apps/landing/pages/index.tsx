@@ -14,6 +14,7 @@ import thicker from '../public/thicker-neon.png'
 import getBentoTVL from '../functions/graph/fetchers/bentobox'
 import { getLegacyExchangeData } from '../functions/graph/fetchers/exchange'
 import { getTridentExchangeData } from '../functions/graph/queries/trident'
+import Head from 'next/head'
 
 interface StateEntry {
   formatted: string
@@ -33,6 +34,12 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
 
   return (
     <>
+      <Head>
+        <title>Sushi</title>
+        <meta name="description" content="Sushi" />
+        <meta key="twitter:description" name="twitter:description" content="Sushi" />
+        <meta key="og:description" property="og:description" content="Sushi" />
+      </Head>
       <div className="relative min-h-screen overflow-hidden bg-[#0D0415] ">
         <div className="relative pt-6">
           <Image
