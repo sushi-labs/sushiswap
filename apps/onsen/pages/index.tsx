@@ -54,4 +54,20 @@ export async function getServerSideProps() {
   return {
     props: {farms: farms},
   }
+
+  // TODO: something like this?
+  // const sdk = await getBuiltGraphSDK()
+  // const incentive = await sdk.Incentive()
+  // let token
+  // if (incentive.token.name === "SLP Token") {
+  //     token = await sdk.Pool()
+  //     if (!token) {
+  //     token = await sdk.Pair()
+  //     }
+  //     if (!token) {
+  //     token = await sdk.Kashi() // ?
+  //     }
+  // } else {
+  //     token = await sdk.Token()
+  // }
 }

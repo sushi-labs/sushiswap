@@ -3,30 +3,6 @@ sources:
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/stake
-    additionalResolvers:
-    - targetTypeName: Incentive
-      targetFieldName: token
-      sourceName: Pools # Which source does the target field belong to?
-      sourceTypeName: Query # Which root type does the target field belong to?
-    # transforms:
-    #   - rename:
-    #       mode: wrap
-    #       renames:
-    #         - from:
-    #             type: Token
-    #           to:
-    #             type: Pool
-    #         - from:
-    #             type: Query
-    #             field: token
-    #           to:
-    #             type: Query
-    #             field: pool
-      # - typeMerging:
-      #     queryFields:
-      #       - queryFieldName: pool
-      #         keyField: id
-      #         keyArg: ids
   - name: trident
     handler:
       graphql:
@@ -36,10 +12,5 @@ sources:
           mode: wrap
           filters:
             - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot}
-      # - typeMerging:
-      #     queryFields:
-      #       - queryFieldName: pool
-      #         keyField: id
-      #         keyArg: ids
 documents:
   - ./query.graphql
