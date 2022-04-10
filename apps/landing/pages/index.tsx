@@ -11,6 +11,9 @@ import millify from 'millify'
 import Image from 'next/image'
 import background from '../public/neon-street.jpg'
 import thicker from '../public/thicker-neon.png'
+import getBentoTVL from '../functions/graph/fetchers/bentobox'
+import { getLegacyExchangeData } from '../functions/graph/fetchers/exchange'
+import { getTridentExchangeData } from '../functions/graph/queries/trident'
 
 interface StateEntry {
   formatted: string
@@ -226,31 +229,41 @@ const Landing = ({ stats }: { stats: StateEntry[] }) => {
 
 // This function runs only on the server side
 export async function getStaticProps() {
-  const results = await Promise.all([sushiData.sushi.priceUSD(), sushiData.exchange.factory()])
+  const [sushiPrice, bentoTVL, legacyExchangeData, tridentExchangeData] = await Promise.all([
+    sushiData.sushi.priceUSD(),
+    getBentoTVL(),
+    getLegacyExchangeData(),
+    getTridentExchangeData(),
+  ])
+
+  const totalTVL = bentoTVL + legacyExchangeData.tvlUSD
+  const totalVolume = legacyExchangeData.volumeUSD + tridentExchangeData.volumeUSD
+  const totalPoolCount = legacyExchangeData.pairCount + tridentExchangeData.poolCount
+
   return {
     props: {
       stats: [
         {
-          formatted: `$${millify(results[0])}`,
-          number: Number(results[0]),
+          formatted: `$${millify(sushiPrice)}`,
+          number: Number(sushiPrice),
           title: '$SUSHI Price',
           decimalPlaces: 2,
         },
         {
-          formatted: `$${millify(results[1].liquidityUSD)}`,
-          number: Number(results[1].liquidityUSD),
+          formatted: `$${millify(totalTVL)}`,
+          number: totalTVL,
           title: 'Total Liquidity',
           decimalPlaces: 0,
         },
         {
-          formatted: `$${millify(results[1].volumeUSD)}`,
-          number: Number(results[1].volumeUSD),
+          formatted: `$${millify(totalVolume)}`,
+          number: totalVolume,
           title: 'Total Volume',
           decimalPlaces: 0,
         },
         {
-          formatted: `${millify(results[1].pairCount)}`,
-          number: Number(results[1].pairCount),
+          formatted: `${millify(totalPoolCount)}`,
+          number: totalPoolCount,
           title: 'Total Pairs',
           decimalPlaces: 0,
         },
