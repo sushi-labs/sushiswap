@@ -7,10 +7,10 @@ sources:
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident
-    transforms:
-      - filterSchema:
-          mode: wrap
-          filters:
-            - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot}
+    # transforms:
+    #   - filterSchema:
+    #       mode: wrap
+    #       filters:
+    #         - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot}
 documents:
   - ./query.graphql

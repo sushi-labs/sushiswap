@@ -3,9 +3,11 @@ query Farms {
     id
     token {
       id
+      name
     }
     rewardToken {
       id
+      name
     }
     creator {
       id
@@ -22,9 +24,11 @@ query Farm($id: ID) {
     id
     token {
       id
+      name
     }
     rewardToken {
       id
+      name
     }
     creator {
       id

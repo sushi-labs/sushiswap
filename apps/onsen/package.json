@@ -13,9 +13,6 @@
   "dependencies": {
     "@ethersproject/units": "^5.6.0",
     "@graphql-mesh/transform-filter-schema": "^0.14.40",
-    "@graphql-mesh/transform-prefix": "0.11.12",
-    "@graphql-mesh/transform-rename": "0.12.12",
-    "@graphql-mesh/transform-type-merging": "0.3.22",
     "@heroicons/react": "^1.0.0",
     "ethers": "^5.6.1",
     "format": "workspace:*",
