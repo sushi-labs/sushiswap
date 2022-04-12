@@ -167,9 +167,9 @@ export default Vesting
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const vesting = (await sdk.Vesting({ id: query.id })).vesting
-  const transactions = (await sdk.VestingTransactions({ id: query.id })).vestingTransactions
-  const schedule = (await sdk.VestingSchedule({ id: query.id })).vesting.schedule
+  const vesting = (await sdk.Vesting({ id: query.id })).VESTING_vesting
+  const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions
+  const schedule = (await sdk.VestingSchedule({ id: query.id })).VESTING_vesting.schedule
   return {
     props: {
       vesting,

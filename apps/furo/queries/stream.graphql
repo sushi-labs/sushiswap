@@ -1,0 +1,83 @@
+query UserStreams($id: ID!) {
+  STREAM_user(id: $id) {
+    incomingStreams(orderBy: startedAt) {
+      id
+      status
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      amount
+      withdrawnAmount
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+      token {
+        id
+        symbol
+        name
+        decimals
+      }
+    }
+    outgoingStreams(orderBy: startedAt) {
+      id
+      status
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      amount
+      withdrawnAmount
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+      token {
+        id
+        symbol
+        name
+        decimals
+      }
+    }
+  }
+}
+
+query Stream($id: ID!) {
+  STREAM_stream(id: $id) {
+    id
+    status
+    startedAt
+    expiresAt
+    amount
+    withdrawnAmount
+    token {
+      id
+      symbol
+      name
+      decimals
+    }
+  }
+}
+
+query StreamTransactions($id: String) {
+  STREAM_transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    to {
+      id
+    }
+  }
+}

@@ -13,7 +13,7 @@ interface StreamsProps {
 const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {
   return (
     <Layout>
-      <div className="flex flex-col gap-12 h-full pt-40">
+      <div className="flex flex-col h-full gap-12 pt-40">
         <Typography variant="h2" weight={700} className="text-high-emphesis">
           Dashboard
         </Typography>
@@ -41,7 +41,7 @@ export default Streams
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const user = (await sdk.UserStreams({ id: query.address })).user
+  const user = (await sdk.UserStreams({ id: query.address })).STREAM_user
   return {
     props: user,
   }

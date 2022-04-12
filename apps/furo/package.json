@@ -6,6 +6,7 @@
     "dev": "next dev --port 3008",
     "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build --tsOnly",
+    "validate": "graphclient validate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

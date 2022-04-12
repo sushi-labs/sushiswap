@@ -94,7 +94,7 @@ export default Vestings
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const user = (await sdk.UserVestings({ id: query.address })).vestingUser
+  const user = (await sdk.UserVestings({ id: query.address })).VESTING_user
   return {
     props: user,
   }
