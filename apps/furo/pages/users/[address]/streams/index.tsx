@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
-import { RawStream } from '../../../../features/stream/context/types'
-import Typography from '../../../../../../packages/ui/typography/Typography'
-import StreamTable from '../../../../features/stream/StreamTable'
-import Layout from '../../../../components/Layout'
+import { RawStream } from 'app/features/stream/context/types'
+import { Typography } from 'ui/typography'
+import StreamTable from 'app/features/stream/StreamTable'
+import Layout from 'app/components/Layout'
 
 interface StreamsProps {
   incomingStreams: RawStream[]

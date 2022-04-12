@@ -16,7 +16,7 @@ interface StreamsProps {
   streams: RawStream[]
 }
 
-const StreamTable: FC<StreamsProps> = ({ streams }) => {
+export const StreamTable: FC<StreamsProps> = ({ streams }) => {
   const router = useRouter()
   const data = useMemo(() => streams.map((stream) => new Stream({ stream })), [streams])
 
@@ -106,7 +106,7 @@ const StreamTable: FC<StreamsProps> = ({ streams }) => {
         maxWidth: 60,
         accessor: 'view',
         Cell: () => (
-          <div className="w-full flex justify-end inline-flex rounded-full hover:text-white cursor-pointer">
+          <div className="flex inline-flex justify-end w-full rounded-full cursor-pointer hover:text-white">
             <ChevronRightIcon width={20} height={20} />
           </div>
         ),

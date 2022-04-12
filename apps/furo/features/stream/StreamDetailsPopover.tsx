@@ -7,7 +7,7 @@ const StreamDetailsPopover = () => {
   return (
     <Popover>
       <Popover.Button>
-        <div className="cursor-pointer flex items-center gap-2 shadow-md shadow-dark-1000 border border-dark-800 bg-dark-900 rounded-xl px-5 h-11">
+        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
           <NotepadIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-high-emphesis">
             Details
@@ -15,42 +15,42 @@ const StreamDetailsPopover = () => {
         </div>
       </Popover.Button>
       <Popover.Panel className="absolute z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]">
-        <div className="flex gap-4 justify-between">
+        <div className="flex justify-between gap-4">
           <Typography variant="lg" weight={700} className="text-high-emphesis">
             Details
           </Typography>
           <div className="flex gap-6">
-            <div className="flex gap-2 items-center justify-end">
+            <div className="flex items-center justify-end gap-2">
               <Typography variant="xs" weight={700}>
                 From:
               </Typography>
               <Typography
                 weight={700}
                 variant="xs"
-                className="px-4 border border-dark-800 rounded-full py-2 shadow-depth-1"
+                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
                 0x19b3....19e7
               </Typography>
             </div>
-            <div className="flex gap-2 items-center justify-end">
+            <div className="flex items-center justify-end gap-2">
               <Typography variant="xs" weight={700}>
                 To:
               </Typography>
               <Typography
                 weight={700}
                 variant="xs"
-                className="px-4 border border-dark-800 rounded-full py-2 shadow-depth-1"
+                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
                 0x19b3....19e7
               </Typography>
             </div>
           </div>
         </div>
-        <div className="flex flex-col rounded-xl shadow-depth-1 p-4 border border-dark-800">
+        <div className="flex flex-col p-4 border rounded-xl shadow-depth-1 border-dark-800">
           <Typography variant="xs" weight={400} className="text-secondary">
             Time Remaining
           </Typography>
-          <Typography variant="lg" weight={700} className="text-high-emphesis mt-1">
+          <Typography variant="lg" weight={700} className="mt-1 text-high-emphesis">
             Time Remaining
           </Typography>
           <Typography variant="xs" weight={400} className="mt-3">
@@ -67,7 +67,7 @@ const StreamDetailsPopover = () => {
               <Typography variant="xs" className="text-secondary" weight={500}>
                 Value of Stream
               </Typography>
-              <Typography variant="h2" className="text-high-emphesis mt-3 items-center flex" weight={700}>
+              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
                 119
                 <Typography variant="lg" component="span" weight={700}>
                   .994k
@@ -83,7 +83,7 @@ const StreamDetailsPopover = () => {
               <Typography variant="xs" weight={500}>
                 42.67% of total
               </Typography>
-              <Typography variant="h2" className="text-high-emphesis mt-3 items-center flex" weight={700}>
+              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
                 51
                 <Typography variant="lg" component="span" weight={700}>
                   .329k
@@ -99,7 +99,7 @@ const StreamDetailsPopover = () => {
               <Typography variant="xs" weight={500}>
                 38.67% of total
               </Typography>
-              <Typography variant="h2" className="text-high-emphesis mt-3 items-center flex" weight={700}>
+              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
                 49
                 <Typography variant="lg" component="span" weight={700}>
                   .105k

@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { calculateStreamedPercentage, calculateWithdrawnPercentage } from '../../../functions'
+import { calculateStreamedPercentage, calculateWithdrawnPercentage } from 'app/functions'
 import { RawStream, StreamStatus, Token, User } from './types'
 
 export class Stream {

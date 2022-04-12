@@ -3,7 +3,7 @@ import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import Main from '../../components/Main'
+import Main from 'app/components/Main'
 
 interface Props {
   vesting: Vesting
