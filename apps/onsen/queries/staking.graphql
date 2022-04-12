@@ -19,7 +19,7 @@ query Farms {
   }
 }
 
-query Farm($id: ID) {
+query Incentive($id: ID!) {
   incentive(id: $id) {
     id
     token {

@@ -1,0 +1,16 @@
+query Pool($id: ID!) {
+  pool(id: $id) {
+    id
+    assets {
+      token {
+        id
+        symbol
+        name
+      }
+    }
+    kpi {
+      volume
+      volumeUSD
+    }
+  }
+}

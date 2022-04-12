@@ -3,9 +3,11 @@ import { getBuiltGraphSDK } from '../../.graphclient'
 import { isKashiPair, isLegacyPair, isTridentPool } from '../../functions'
 
 interface Props {
-  farm: Farm
+  incentive: Incentive
+  tridentFarm: TridentPool
 }
-interface Farm {
+
+interface Incentive {
   id: string
   token: Token
   rewardToken: Token
@@ -18,25 +20,63 @@ interface Farm {
 interface Token {
   id: string
   name: string
+  symbol: string
+}
+
+interface TridentPool {
+  id: string
+  assets: {
+    token: Token
+  }
+  kpi: {
+    volume: string
+    volumeUSD: string
+  }
 }
 
 const FarmPage: FC<Props> = (props) => {
-  const { farm } = props
+  const { incentive, tridentFarm } = props
+  console.log(props)
+  const trident = (pool: TridentPool) => {
+    return (
+      <div key={pool.id}>
+        <div>
+          {' '}
+          Pool: {pool.assets[0].token.symbol}
+          {`/`}
+          {pool.assets[1].token.symbol}
+        </div>
+        <div> Volume: {pool.kpi.volume}</div>
+        <div> Volume USD: {pool.kpi.volumeUSD}</div>
+      </div>
+    )
+  }
+
   return (
     <>
-      {farm ? (
-        <div key={farm.id}>
-          {farm.id} {``}
-          {farm.token.id} {``}
-          {farm.rewardToken.id} {``}
-          {new Date(parseInt(farm.endTime) * 1000).toLocaleString()} {``}
-          {new Date(parseInt(farm.lastRewardTime) * 1000).toLocaleString()} {``}
-          {farm.rewardRemaining} {``}
-          {farm.liquidityStaked} {``}
+    <h1>Farm</h1>
+      {tridentFarm ? (
+        trident(tridentFarm)
+      ) : (
+        <div>
+          <i>No Farm found..</i>
+        </div>
+      )}
+
+    <h2>Reward</h2>
+      {incentive ? (
+        <div key={incentive.id}>
+          {incentive.id} {``}
+          {incentive.token.name} {``}
+          {incentive.rewardToken.name} {``}
+          {new Date(parseInt(incentive.endTime) * 1000).toLocaleString()} {``}
+          {new Date(parseInt(incentive.lastRewardTime) * 1000).toLocaleString()} {``}
+          {incentive.rewardRemaining} {``}
+          {incentive.liquidityStaked} {``}
         </div>
       ) : (
         <div>
-          <i>No farm found..</i>
+          <i>No Incentive found..</i>
         </div>
       )}
     </>
@@ -45,20 +85,23 @@ const FarmPage: FC<Props> = (props) => {
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const farm = await (await sdk.Farm({ id: query.id })).incentive
-  let token
+  const incentive = await (await sdk.Incentive({ id: query.id })).incentive
+  let tridentFarm
+  let legacyFarm
+  let kashiFarm
+  let singleTokenFarm
 
-  if (isTridentPool(farm.token.name)) {
-    console.log('Trident')
-  } else if (isLegacyPair(farm.token.name)) {
+  if (isTridentPool(incentive.token.name)) {
+    tridentFarm = await (await sdk.Pool({ id: incentive.token.id })).pool
+  } else if (isLegacyPair(incentive.token.name)) {
     console.log('Legacy')
-  } else if (isKashiPair(farm.token.name)) {
+  } else if (isKashiPair(incentive.token.name)) {
     console.log('Kashi')
   } else {
     console.log('Single token')
   }
   return {
-    props: { farm },
+    props: { incentive, tridentFarm },
   }
 }
 
