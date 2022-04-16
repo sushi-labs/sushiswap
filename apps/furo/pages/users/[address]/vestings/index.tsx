@@ -1,41 +1,13 @@
+import Main from 'app/components/Main'
+import { VestingRepresentation } from 'app/features/context/representations'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
-import Main from 'app/components/Main'
 
 interface UserProps {
-  incomingVestings: Vesting[]
-  outgoingVestings: Vesting[]
-}
-
-interface Vesting {
-  id: string
-  status: string
-  steps: string
-  startedAt: string
-  expiresAt: string
-  cliffDuration: string
-  stepDuration: string
-  stepAmount: string
-  cliffAmount: string
-  totalAmount: string
-  withdrawnAmount: string
-  fromBentoBox: boolean
-  token: Token
-  recipient: User
-  createdBy: User
-}
-
-interface Token {
-  id: string
-  symbol: string
-  name: string
-  decimals: string
-}
-
-interface User {
-  id: string
+  incomingVestings: VestingRepresentation[]
+  outgoingVestings: VestingRepresentation[]
 }
 
 const Vestings: FC<UserProps> = (props) => {

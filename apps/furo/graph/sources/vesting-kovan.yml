@@ -1,0 +1,10 @@
+name: furovesting_kovan
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-kovan
+transforms:
+  - prefix:
+      value: VESTING_
+      includeRootOperations: true
+      ignore:
+        - _SubgraphErrorPolicy_

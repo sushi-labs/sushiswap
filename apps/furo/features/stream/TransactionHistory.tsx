@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { Transaction } from './context/types'
+import { TransactionRepresentation } from '../context/representations'
 
 interface Props {
-  transactions: Transaction[]
+  transactions: TransactionRepresentation[]
 }
 const TransactionHistory: FC<Props> = (props) => {
   const transactions = props.transactions

@@ -1,13 +1,13 @@
-import { FC } from 'react'
-import { getBuiltGraphSDK } from '../../../../.graphclient'
-import { RawStream } from 'app/features/stream/context/types'
-import { Typography } from 'ui/typography'
-import StreamTable from 'app/features/stream/StreamTable'
 import Layout from 'app/components/Layout'
+import { StreamRepresentation } from 'app/features/context/representations'
+import StreamTable from 'app/features/stream/StreamTable'
+import { FC } from 'react'
+import { Typography } from 'ui/typography'
+import { getBuiltGraphSDK } from '../../../../.graphclient'
 
 interface StreamsProps {
-  incomingStreams: RawStream[]
-  outgoingStreams: RawStream[]
+  incomingStreams: StreamRepresentation[]
+  outgoingStreams: StreamRepresentation[]
 }
 
 const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {

@@ -1,20 +1,20 @@
-import { FC, useMemo } from 'react'
-import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { LinkIcon } from '@heroicons/react/solid'
 import Layout from 'app/components/Layout'
+import { StreamRepresentation, TransactionRepresentation } from 'app/features/context/representations'
+import { Stream } from 'app/features/context/Stream'
 import BalanceChart from 'app/features/stream/BalanceChart'
-import { Stream } from 'app/features/stream/context/Stream'
-import { RawStream, Transaction } from 'app/features/stream/context/types'
+import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
 import TransactionHistory from 'app/features/stream/TransactionHistory'
-import { Typography } from 'ui/typography'
-import { LinkIcon } from '@heroicons/react/solid'
+import { FC, useMemo } from 'react'
 import { HistoryIcon } from 'ui/icons'
-import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
+import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
+import { Typography } from 'ui/typography'
+import { getBuiltGraphSDK } from '../../.graphclient'
 
 interface Props {
-  stream: RawStream
-  transactions: Transaction[]
+  stream: StreamRepresentation
+  transactions: TransactionRepresentation[]
 }
 
 const Streams: FC<Props> = (props) => {
@@ -50,7 +50,7 @@ const Streams: FC<Props> = (props) => {
                   Streamed:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {stream.streamedPercentage.toFixed(2)}%
+                  {(stream.streamedPercentage * 100).toFixed(2)}%
                 </Typography>
               </div>
               <ProgressBar progress={stream.streamedPercentage} color={ProgressColor.BLUE} showLabel={false} />
@@ -61,7 +61,7 @@ const Streams: FC<Props> = (props) => {
                   Withdrawn:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {stream.withdrawnPercentage.toFixed(2)}%
+                  {(stream.withdrawnPercentage * 100).toFixed(2)}%
                 </Typography>
               </div>
               <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />

@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { RawStream } from './context/types'
+import { StreamRepresentation } from '../context/representations'
 
 interface Props {
-  stream: RawStream
+  stream: StreamRepresentation
 }
 const StreamDetails: FC<Props> = (props) => {
   const stream = props.stream
@@ -14,7 +14,7 @@ const StreamDetails: FC<Props> = (props) => {
           <div key={stream.id}>
             <div>Status: {stream.status}</div>
             <div>
-              Total: {stream.amount} {``} {stream.token.symbol}{' '}
+              Total: {stream.totalAmount} {``} {stream.token.symbol}{' '}
             </div>
             <div>
               Withdrawn amount: {stream.withdrawnAmount} {stream.token.symbol}{' '}

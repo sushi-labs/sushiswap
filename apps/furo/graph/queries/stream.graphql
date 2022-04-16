@@ -6,7 +6,7 @@ query UserStreams($id: ID!) {
       startedAt
       expiresAt
       modifiedAtTimestamp
-      amount
+      totalAmount
       withdrawnAmount
       recipient {
         id
@@ -27,7 +27,7 @@ query UserStreams($id: ID!) {
       startedAt
       expiresAt
       modifiedAtTimestamp
-      amount
+      totalAmount
       withdrawnAmount
       recipient {
         id
@@ -51,7 +51,7 @@ query Stream($id: ID!) {
     status
     startedAt
     expiresAt
-    amount
+    totalAmount
     withdrawnAmount
     token {
       id

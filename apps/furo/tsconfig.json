@@ -3,16 +3,14 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "app/components": ["./components/index.ts"],
       "app/components/*": ["./components/*"],
       "app/features": ["./features/index.ts"],
       "app/features/*": ["./features/*"],
-      "app/functions": ["./functions/index.ts"],
-      "app/functions/*": ["./functions/*"],
       "app/hooks": ["./hooks/index.ts"],
-      "app/hooks/*": ["./hooks/*"],
+      "app/hooks/*": ["./hooks/*"]
     }
   }
 }

@@ -1,23 +1,3 @@
-sources:
-  - name: furostream_kovan
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
-    transforms:
-      - prefix:
-          value: STREAM_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-  - name: furovesting_kovan
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-kovan
-    transforms:
-      - prefix:
-          value: VESTING_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
+sources: !includes ./graph/sources
 documents:
-  - './queries/*.graphql'
+  - './graph/queries/*.graphql'

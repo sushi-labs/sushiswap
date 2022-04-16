@@ -3,8 +3,8 @@ import { BigNumber } from 'ethers'
 import { formatNumber, shortenAddress } from 'format'
 import React, { FC, useMemo } from 'react'
 import { useTable, useFlexLayout } from 'react-table'
-import { Stream } from './context/Stream'
-import { RawStream, StreamStatus } from './context/types'
+import { Stream } from '../context/Stream'
+import { StreamRepresentation, Status } from '../context/representations'
 import { ProgressColor, Table } from 'ui'
 import ProgressBar from 'ui/progressbar/ProgressBar'
 import Typography from 'ui/typography/Typography'
@@ -13,13 +13,12 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import { useRouter } from 'next/router'
 
 interface StreamsProps {
-  streams: RawStream[]
+  streams: StreamRepresentation[]
 }
 
 export const StreamTable: FC<StreamsProps> = ({ streams }) => {
   const router = useRouter()
   const data = useMemo(() => streams.map((stream) => new Stream({ stream })), [streams])
-
   const columns = useMemo(
     () => [
       {
@@ -46,10 +45,9 @@ export const StreamTable: FC<StreamsProps> = ({ streams }) => {
         Header: 'VALUE',
         accessor: 'amount',
         Cell: (props) => {
-          if (props.row.original.status === StreamStatus.CANCELLED) {
+          if (props.row.original.status === Status.CANCELLED) {
             return `-`
           }
-
           const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
           const formattedAmount = formatNumber(amount)
           return `${formattedAmount} ${props.row.original.token.symbol}`

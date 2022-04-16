@@ -1,0 +1,10 @@
+name: furostream_kovan
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
+transforms:
+  - prefix:
+      value: STREAM_
+      includeRootOperations: true
+      ignore:
+        - _SubgraphErrorPolicy_
