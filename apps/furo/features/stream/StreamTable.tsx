@@ -63,7 +63,7 @@ export const StreamTable: FC<StreamsProps> = ({ streams }) => {
           <div className="flex flex-grow gap-2">
             <ProgressBar
               showLabel={false}
-              className="max-w-[160px]"
+              className="min-w-[160px] max-w-[160px]"
               progress={Math.min(Math.max(props.value, 0), 1)}
               color={ProgressColor.BLUE}
             />
