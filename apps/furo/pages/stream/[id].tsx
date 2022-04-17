@@ -2,7 +2,9 @@ import { LinkIcon } from '@heroicons/react/solid'
 import Layout from 'app/components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'app/features/context/representations'
 import { Stream } from 'app/features/context/Stream'
+import { Transaction } from 'app/features/context/Transaction'
 import BalanceChart from 'app/features/stream/BalanceChart'
+import HistoryPopover from 'app/features/stream/History'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
 import TransactionHistory from 'app/features/stream/TransactionHistory'
@@ -21,6 +23,7 @@ const Streams: FC<Props> = (props) => {
   let { stream: streamRepresentation, transactions } = props
   const stream = useMemo(() => new Stream({ stream: streamRepresentation }), [streamRepresentation])
 
+
   return (
     <Layout>
       <div className="flex gap-16">
@@ -34,12 +37,7 @@ const Streams: FC<Props> = (props) => {
               </Typography>
             </div>
             <StreamDetailsPopover stream={stream}/>
-            <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
-              <HistoryIcon width={18} height={18} />
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
-                History
-              </Typography>
-            </div>
+            <HistoryPopover transactionRepresentations={transactions}/>
           </div>
         </div>
         <div className="w-[280px] flex flex-col col-span-2 justify-between">
@@ -76,7 +74,6 @@ const Streams: FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <TransactionHistory transactions={transactions} />
     </Layout>
   )
 }

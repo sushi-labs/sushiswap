@@ -36,8 +36,7 @@ export interface TransactionRepresentation {
   id: string
   type: string
   amount: string
-  toBentoBox: false
-  withdrawnAmount: string
+  toBentoBox: boolean
   createdAtBlock: string
   createdAtTimestamp: string
   token: TokenRepresentation
@@ -59,4 +58,11 @@ export enum Status {
   ACTIVE = 'ACTIVE',
   EXTENDED = 'EXTENDED',
   CANCELLED = 'CANCELLED',
+}
+
+export enum TransactionType {
+  DEPOSIT = 'DEPOSIT',
+  EXTEND = 'EXTEND',
+  WITHDRAWAL = 'WITHDRAWAL',
+  DISBURSEMENT = 'DISBURSEMENT', // Payment to a sender and reciever when stream is cancelled
 }
