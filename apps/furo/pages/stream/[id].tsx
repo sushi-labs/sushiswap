@@ -18,8 +18,8 @@ interface Props {
 }
 
 const Streams: FC<Props> = (props) => {
-  let { stream: rawStream, transactions } = props
-  const stream = useMemo(() => new Stream({ stream: rawStream }), [rawStream])
+  let { stream: streamRepresentation, transactions } = props
+  const stream = useMemo(() => new Stream({ stream: streamRepresentation }), [streamRepresentation])
 
   return (
     <Layout>
@@ -33,7 +33,7 @@ const Streams: FC<Props> = (props) => {
                 Links
               </Typography>
             </div>
-            <StreamDetailsPopover />
+            <StreamDetailsPopover stream={stream}/>
             <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
               <HistoryIcon width={18} height={18} />
               <Typography variant="sm" weight={700} className="text-high-emphesis">

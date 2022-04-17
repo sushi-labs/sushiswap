@@ -51,8 +51,15 @@ query Stream($id: ID!) {
     status
     startedAt
     expiresAt
+    modifiedAtTimestamp
     totalAmount
     withdrawnAmount
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
     token {
       id
       symbol

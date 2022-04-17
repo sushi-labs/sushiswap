@@ -2,8 +2,79 @@ import { FC } from 'react'
 import { Popover } from '@headlessui/react'
 import Typography from 'ui/typography/Typography'
 import { NotepadIcon } from 'ui/icons'
+import { Stream } from '../context/Stream'
+import { shortenAddress } from 'format'
+import { useState } from 'react'
+import useInterval from 'app/hooks/useInterval'
+import { Status } from '../context/representations'
+import StreamTimer from './StreamTimer'
 
-const StreamDetailsPopover = () => {
+interface StreamTimerState {
+  days: string
+  hours: string
+  minutes: string
+  seconds: string
+}
+
+interface Props {
+  stream: Stream
+}
+
+const StreamDetailsPopover: FC<Props> = ({ stream }) => {
+  const [remaining, setRemaining] = useState<StreamTimerState>()
+
+  useInterval(() => {
+    if (!stream?.remainingTime) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+
+    const { days, hours, minutes, seconds } = stream.remainingTime
+    setRemaining({
+      days: String(Math.max(days, 0)),
+      hours: String(Math.max(hours, 0)),
+      minutes: String(Math.max(minutes, 0)),
+      seconds: String(Math.max(seconds, 0)),
+    })
+  }, 1000)
+
+  const ActiveStreamDetails = () => {
+    return (
+      <>
+        <Typography variant="xs" weight={400} className="text-secondary">
+          Time Remaining
+        </Typography>
+        <Typography variant="lg" weight={700} className="mt-1 text-high-emphesis">
+          {`${remaining?.days} days ${remaining?.hours} hours ${remaining?.minutes} min ${remaining?.seconds} sec`}
+        </Typography>
+        <Typography variant="xs" weight={400} className="mt-3">
+          {`The stream was started on ${stream.startTime.toLocaleDateString()} @ ${stream.startTime.toLocaleTimeString()} and has been active for 
+            ${stream.activeTime.days} days ${stream.activeTime.hours} hours ${stream.activeTime.minutes} minutes.
+              If the sender does not cancel the stream, the full amount will be disbursed to you on 
+              ${stream.endTime.toLocaleDateString()} @ ${stream.endTime.toLocaleTimeString()}.`}
+        </Typography>
+      </>
+    )
+  }
+
+  const CancelledStreamDetails = () => {
+    return (
+      <>
+        <Typography variant="xs" weight={400} className="text-secondary">
+          Time Remaining
+        </Typography>
+        <Typography variant="lg" weight={700} className="mt-1 text-high-emphesis">
+          -
+        </Typography>
+        <Typography variant="xs" weight={400} className="mt-3">
+          {`The stream was cancelled on ${stream.modifiedAtTimestamp.toLocaleDateString()} @ ${stream.modifiedAtTimestamp.toLocaleTimeString()} and was active for 
+          ${stream.activeTime.days} days ${stream.activeTime.hours} hours ${stream.activeTime.minutes} minutes. `}
+        </Typography>
+      </>
+    )
+  }
+
+  const StreamDetails = () => {
+    return stream.status !== Status.CANCELLED ? <ActiveStreamDetails/> : <CancelledStreamDetails/> 
+  }
+
   return (
     <Popover>
       <Popover.Button>
@@ -29,7 +100,7 @@ const StreamDetailsPopover = () => {
                 variant="xs"
                 className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
-                0x19b3....19e7
+                {shortenAddress(stream.createdBy.id)}
               </Typography>
             </div>
             <div className="flex items-center justify-end gap-2">
@@ -41,22 +112,13 @@ const StreamDetailsPopover = () => {
                 variant="xs"
                 className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
-                0x19b3....19e7
+                {shortenAddress(stream.recipient.id)}
               </Typography>
             </div>
           </div>
         </div>
         <div className="flex flex-col p-4 border rounded-xl shadow-depth-1 border-dark-800">
-          <Typography variant="xs" weight={400} className="text-secondary">
-            Time Remaining
-          </Typography>
-          <Typography variant="lg" weight={700} className="mt-1 text-high-emphesis">
-            Time Remaining
-          </Typography>
-          <Typography variant="xs" weight={400} className="mt-3">
-            The stream was started on 15 Feb 2021 @ 7:00pm and has been active for 156 days 3 hours 17 minutes. If the
-            sender does not cancel the stream, the full amount will be disbursed to you on 15 Feb 2022 @ 7:00pm.
-          </Typography>
+          <StreamDetails />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="flex flex-col gap-4 p-4 border border-dark-800 rounded-xl shadow-depth-1">
