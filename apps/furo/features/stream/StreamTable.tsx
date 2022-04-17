@@ -1,16 +1,16 @@
 import { formatUnits } from '@ethersproject/units'
+import { ChevronRightIcon } from '@heroicons/react/solid'
 import { BigNumber } from 'ethers'
 import { formatNumber, shortenAddress } from 'format'
+import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
-import { useTable, useFlexLayout } from 'react-table'
-import { Stream } from '../context/Stream'
-import { StreamRepresentation, Status } from '../context/representations'
+import { useFlexLayout, useTable } from 'react-table'
 import { ProgressColor, Table } from 'ui'
+import { classNames } from 'ui/lib/classNames'
 import ProgressBar from 'ui/progressbar/ProgressBar'
 import Typography from 'ui/typography/Typography'
-import { classNames } from 'ui/lib/classNames'
-import { ChevronRightIcon } from '@heroicons/react/solid'
-import { useRouter } from 'next/router'
+import { Status, StreamRepresentation } from '../context/representations'
+import { Stream } from '../context/Stream'
 
 interface StreamsProps {
   streams: StreamRepresentation[]

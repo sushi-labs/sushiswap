@@ -1,13 +1,11 @@
-import { FC } from 'react'
 import { Popover } from '@headlessui/react'
-import Typography from 'ui/typography/Typography'
-import { NotepadIcon } from 'ui/icons'
-import { Stream } from '../context/Stream'
-import { shortenAddress } from 'format'
-import { useState } from 'react'
 import useInterval from 'app/hooks/useInterval'
+import { shortenAddress } from 'format'
+import { FC, useState } from 'react'
+import { NotepadIcon } from 'ui/icons'
+import Typography from 'ui/typography/Typography'
 import { Status } from '../context/representations'
-import StreamTimer from './StreamTimer'
+import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
   days: string
@@ -72,7 +70,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   }
 
   const StreamDetails = () => {
-    return stream.status !== Status.CANCELLED ? <ActiveStreamDetails/> : <CancelledStreamDetails/> 
+    return stream.status !== Status.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
   }
 
   return (

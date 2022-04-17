@@ -1,6 +1,6 @@
+import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
 import Typography from 'ui/typography/Typography'
-import useInterval from 'app/hooks/useInterval'
 import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
