@@ -1,5 +1,6 @@
 import Layout from 'app/components/Layout'
 import { StreamRepresentation } from 'app/features/context/representations'
+import CreateStreamModal from 'app/features/stream/CreateStreamModal'
 import StreamTable from 'app/features/stream/StreamTable'
 import { FC } from 'react'
 import { Typography } from 'ui/typography'
@@ -24,7 +25,7 @@ const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {
             </Typography>
             <StreamTable streams={incomingStreams} />
           </div>
-
+          <CreateStreamModal/>
           <div className="flex flex-col gap-5">
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Outgoing streams
@@ -43,6 +44,6 @@ export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   const user = (await sdk.UserStreams({ id: query.address })).STREAM_user
   return {
-    props: user,
+    props: user || {},
   }
 }

@@ -18,7 +18,7 @@ interface StreamsProps {
 
 export const StreamTable: FC<StreamsProps> = ({ streams }) => {
   const router = useRouter()
-  const data = useMemo(() => streams.map((stream) => new Stream({ stream })), [streams])
+  const data = useMemo(() => streams?.map((stream) => new Stream({ stream })) ?? [], [streams])
   const columns = useMemo(
     () => [
       {

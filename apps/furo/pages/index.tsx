@@ -1,31 +1,48 @@
 import Link from 'next/link'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 export default function Furo() {
-  const [{ data, error }, connect] = useConnect()
+  const [{ data: connection, error: connectError}, connect] = useConnect()
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   })
-
-  return (
-    <div className="px-2 pt-16">
-      <h1 className="py-4 text-2xl font-bold">Overview</h1>
-      {data.connectors.map((connector) => (
-        <button disabled={!connector.ready} key={connector.id} onClick={() => connect(connector)}>
-          {`Connect to: ` + connector.name + ` ${accountData?.address}`}
+  // how do I get the chainId?
+  const Wallet = () => {
+    if (accountData) {
+      return (
+        <>
+          <div>{accountData.ens?.name ? `${accountData.ens?.name} (${accountData.address})` : accountData.address}</div>
+          <div>Connected to {accountData.connector.name}</div>
+          <button onClick={disconnect}>Disconnect</button>
+        </>
+      )
+    } else {
+      return (
+        <button
+          onClick={() => {
+            connect(connection.connectors[0])
+          }}
+        >
+          Connect Wallet
         </button>
-      ))}
-      {!error && accountData?.address ? (
+      )
+    }
+  }
+  return (
+    <div className="h-full">
+      <h1 className="py-4 text-2xl font-bold">Overview</h1>
+      <Wallet />
+      {!connectError && accountData?.address ? (
         <>
           <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/streams/`}>Streams</Link>
+            <Link href={`/users/${accountData.address.toLowerCase()}/streams/`}>[Streams]</Link>
           </div>
           <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/vestings/`}>Vestings</Link>
+            <Link href={`/users/${accountData.address.toLowerCase()}/vestings/`}>[Vestings]</Link>
           </div>
         </>
       ) : (
-        <div>{error?.message ?? 'Failed to connect'}</div>
+        <div>{connectError?.message ?? 'Failed to connect'}</div>
       )}
     </div>
   )

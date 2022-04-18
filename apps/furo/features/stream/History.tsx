@@ -16,7 +16,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
     () => transactionRepresentations.map((transaction) => new Transaction({ transaction })),
     [transactionRepresentations],
   )
-  console.log(transactions)
+
   return (
     <Popover>
       <Popover.Button>

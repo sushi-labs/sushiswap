@@ -1,8 +1,10 @@
 import { FC, useState } from 'react'
 import { Dialog } from 'ui'
 import DialogContent from 'ui/dialog/DialogContent'
-import { useContract, useSigner } from 'wagmi'
-import FuroStreamABI from '../../abis/FuroStream.json'
+import { useContract, useNetwork, useSigner } from 'wagmi'
+import FUROSTREAM from 'furo/typechain/FuroStream'
+import FuroExport from 'furo/exports/kovan.json'
+import { useFuroContract } from 'app/hooks/useFuroContract'
 
 const CreateStreamModal: FC = () => {
   let [isOpen, setIsOpen] = useState(false)
@@ -12,12 +14,8 @@ const CreateStreamModal: FC = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
   const [{ data, error, loading }, getSigner] = useSigner()
-
-  const contract = useContract({
-    addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
-    contractInterface: FuroStreamABI,
-    signerOrProvider: data,
-  })
+  const [{ data: network }, switchNetwork] = useNetwork()
+  const contract = useFuroContract()
 
   function openModal() {
     setIsOpen(true)
@@ -29,9 +27,8 @@ const CreateStreamModal: FC = () => {
   function createStream() {
     if (!token || !amount || !recipient || !startDate || !endDate) {
       console.log('missing required field')
+      return
     }
-    console.log({ token, amount, recipient, startDate, endDate })
-    console.log(contract)
     contract.createStream(recipient, token, startDate.getTime() / 1000, endDate.getTime() / 1000, amount, false)
   }
 
