@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { buildSchema, Source } from 'graphql';
 
 const source = new Source(/* GraphQL */`
@@ -3184,7 +3183,7 @@ enum _SubgraphErrorPolicy_ {
   """
   deny
 }
-`, `.graphclient/sources/matic-exchange/introspectionSchema`);
+`, `.graphclient/sources/avalanche-exchange/schema.graphql`);
 
 export default buildSchema(source, {
   assumeValid: true,
