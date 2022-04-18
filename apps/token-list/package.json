@@ -5,5 +5,8 @@
   "dependencies": {
     "@sushiswap/default-token-list": "^27.1.0",
     "@vercel/node": "^1.14.1"
+  },
+  "devDependencies": {
+    "config": "workspace:*"
   }
 }
