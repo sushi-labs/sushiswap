@@ -32,11 +32,12 @@
     "preset": "scripts/jest/node"
   },
   "dependencies": {
+    "@sushiswap/default-token-list": "^27.1.0",
     "body-parser": "^1.19.0",
     "config": "workspace:*",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "logger": "*",
+    "logger": "workspace:*",
     "morgan": "^1.10.0"
   }
 }

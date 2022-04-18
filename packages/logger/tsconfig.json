@@ -3,8 +3,7 @@
     "lib": ["ES2015"],
     "module": "CommonJS",
     "outDir": "./dist",
-    "rootDir": "./src",
-    "resolveJsonModule": true
+    "rootDir": "./src"
   },
   "exclude": ["node_modules"],
   "extends": "config/typescript/base.json",

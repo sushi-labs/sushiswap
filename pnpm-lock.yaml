@@ -14,7 +14,7 @@ importers:
       jest: 27.5.1
       prettier: 2.6.1
       ts-jest: 27.1.4_jest@27.5.1
-      turbo: 1.1.10
+      turbo: 1.2.4
 
   apps/_root:
     specifiers:
@@ -246,6 +246,7 @@ importers:
 
   apps/token-list:
     specifiers:
+      '@sushiswap/default-token-list': ^27.1.0
       '@types/body-parser': ^1.19.0
       '@types/cors': ^2.8.10
       '@types/express': ^4.17.12
@@ -261,7 +262,7 @@ importers:
       eslint: ^7.32.0
       express: ^4.17.1
       jest: ^26.6.3
-      logger: '*'
+      logger: workspace:*
       morgan: ^1.10.0
       nodemon: ^2.0.15
       scripts: '*'
@@ -269,11 +270,12 @@ importers:
       tsconfig: '*'
       typescript: ^4.5.3
     dependencies:
+      '@sushiswap/default-token-list': 27.1.0
       body-parser: 1.19.2
       config: link:../../packages/config
       cors: 2.8.5
       express: 4.17.3
-      logger: 0.0.1
+      logger: link:../../packages/logger
       morgan: 1.10.0
     devDependencies:
       '@types/body-parser': 1.19.2
@@ -408,6 +410,20 @@ importers:
       '@types/jest': 27.4.1
       config: link:../config
       jest: 27.5.1
+      typescript: 4.6.3
+
+  packages/logger:
+    specifiers:
+      '@types/jest': ^26.0.22
+      config: workspace:*
+      eslint: ^7.32.0
+      jest: ^26.6.3
+      typescript: ^4.5.3
+    devDependencies:
+      '@types/jest': 26.0.24
+      config: link:../config
+      eslint: 7.32.0
+      jest: 26.6.3
       typescript: 4.6.3
 
   packages/math:
@@ -3401,6 +3417,10 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: false
+
+  /@sushiswap/default-token-list/27.1.0:
+    resolution: {integrity: sha512-bPZVykpbWB9DdCj7JdssXEviWdf2NIh9vN3V0co2czmER7sPFl5C01MPR/7C7nzUlXzHZyVQIKA4xFMp99LMqg==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -8495,11 +8515,6 @@ packages:
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
-  /logger/0.0.1:
-    resolution: {integrity: sha1-ywgXH4pvb2dLhJna31C+1L77csQ=}
-    engines: {node: '>=0.1.90'}
-    dev: false
-
   /long/5.2.0:
     resolution: {integrity: sha512-9RTUNjK60eJbx3uz+TEGF7fUr29ZDxR5QzXcyDpeSfeH28S9ycINflOgOlppit5U+4kNTe83KQnMEerw7GmE8w==}
     dev: false
@@ -10898,119 +10913,119 @@ packages:
       typescript: 4.6.3
     dev: false
 
-  /turbo-darwin-64/1.1.10:
-    resolution: {integrity: sha512-MY/1mHg+tS/GaZKG805e5JSGNS8A4j/M2GzLwCbNL+lwGMfneNASri1vAd80ss3T2MgMsfsFMVyIQJljqpDBvA==}
+  /turbo-darwin-64/1.2.4:
+    resolution: {integrity: sha512-fIseb9faJZdrJ2LXJAMZmSI5hV5MbHiRKIEnwt6pqk9+8HcJnsz3Rfo7uSNH07Qo64moXyoDHa0YFj00PH2Aeg==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.1.10:
-    resolution: {integrity: sha512-gMPLseYqGKwdy6UHVWKMLA433ZTfQRV5FlYz5n4XVtx30cF6ajOqq12ykeCUUX/lZkH4Uq5zT0tNEYpUhUw7mA==}
+  /turbo-darwin-arm64/1.2.4:
+    resolution: {integrity: sha512-/iAKexDsoXLHeLpM71+MMHDL7x95++M1GSIVkME1MJyUwG0RMfjlciBG99ZCBlya39rJhc0ifSLhZVWUttTmJA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.1.10:
-    resolution: {integrity: sha512-wra27mvakr5ZFceQnCCSR8gHQtKV8Q0EhtzO/wEdyhEssw0wVaNtMHUOOdvFN0HLmjQmmLZgmfZbURc83UDuZQ==}
+  /turbo-freebsd-64/1.2.4:
+    resolution: {integrity: sha512-YULjq/JW8e2ax/McguL+yHmZxGdLXseKVIVWP1f2dhuF9ztAbGTaagdDnQ8atsqDO0gFsb3WiRo4+4X/NAbgvQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.1.10:
-    resolution: {integrity: sha512-J2I76pTwtrEVjHt1+zWY/s/Y0YIGdWHBIWOjhCXi1E8dav98oGw+WUaiFwzAkcksAblOhNpDL3qhnrnm7kHqrg==}
+  /turbo-freebsd-arm64/1.2.4:
+    resolution: {integrity: sha512-GCi7soURYBOu7TOEeqAcShKzaOxuN0w60+2BejCKWYe2VtzRvM8ACGTNXRcle/r/9JICiyw3LpxvieJpqdSnOw==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.1.10:
-    resolution: {integrity: sha512-d1ILhEv2B/lOtpH4niFUKGb8YMU6G7gNCQCY6wG+SXARWJtDti+KiNWESechD5DycCIMgtE40XNy/c1US+LI5g==}
+  /turbo-linux-32/1.2.4:
+    resolution: {integrity: sha512-9+Yyig9JWkDgLT7Y4L9LPH4ik0Tlb3E2ac2fJFI4shMp2ETcV1ehyjDXT/LzLTSkf4mGLsww+WYKtzXJNVThRg==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.1.10:
-    resolution: {integrity: sha512-8VEOiNJFNfUMZOyrN32wOcdT1Ik1nlIuTwkO4UeonAJhuWjTvdDLPCQkz0SECTu60q90l6nXCnNYtoZA6LrZzA==}
+  /turbo-linux-64/1.2.4:
+    resolution: {integrity: sha512-MDnDrfWrtK4BOWh2+a3nrkFacjtEy7sUZnnIhTqUM5FOKD8ISh8VTS3C16hi2BfAjCnZhqIrynbNH/P1YH6j3Q==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.1.10:
-    resolution: {integrity: sha512-qJ50K/s5MjpHjam+UdnK3GniEIv5XOBCZOGslgMMyz8V/q43vhB9BU9HQODclM89uQgsKxhs8Fue6ytOY4vIpg==}
+  /turbo-linux-arm/1.2.4:
+    resolution: {integrity: sha512-Vx2YIFhNqgz4L3Z7zKauPmhgA4QzEtUsjekN0HeEpkZkhWONbcF2gc2j9LTNzicLbI+RoiKrwJWt9qkydqU6mg==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.1.10:
-    resolution: {integrity: sha512-ng3dEEL4SbBudF/UZzsOrfyJh8DLtTHawTepeS30FdtvYuVBXdCPc5BAhbawGoau/2AV4vrN3qzh9e3LCqD6Qg==}
+  /turbo-linux-arm64/1.2.4:
+    resolution: {integrity: sha512-gs3mhARtzNBoEQn6S05mefYrmcKtWJexwnDQiQZ8fXIkAE9IqvIWNk7S+MyixQH/11jwUqFPtRsn1yQWbvZDhQ==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.1.10:
-    resolution: {integrity: sha512-Jd4yH7ZEXCo0xmdJWZ6YsyqcNLyL5vRU3j5ZT+1W97YJCT+g+1on3/nd3rBVPzVz52lb8JIqgGtrBrnOO0AWJg==}
+  /turbo-linux-mips64le/1.2.4:
+    resolution: {integrity: sha512-99k9FbOJBbIjhoUOE4uOioh65kZI0VHZzf3JlhpYo3j9r+KGhu7aYTbbvd7j1qQ9o5vToic5vc3OkOm2LKgvig==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.1.10:
-    resolution: {integrity: sha512-YF8+Oi53glqY29O1A7KJsHZxBzeVBobYFnPEXMt8vm+ouuo8kkbxXxShOP4h+33YGEkesTw/CTXtfDC1Xj1hDw==}
+  /turbo-linux-ppc64le/1.2.4:
+    resolution: {integrity: sha512-M+/sBWQ4UXVplSt5/pIvIRBT6NfEOVFvcOpbzWNjAhLE0vE/ZYeU07S/HjRZd6PMiodT61UyC7BwDQOa2pDOQg==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.1.10:
-    resolution: {integrity: sha512-IO92tVTCtWVPPgcCjf8J7AmBEcwnjv1zPq7t9GFdqZ/6QA06atgPJNzQ/QvyzbzJgUsJUN2ByzwT04o4QUbrBQ==}
+  /turbo-windows-32/1.2.4:
+    resolution: {integrity: sha512-Y2R5ZmOHOTgr/pAQAVY39BpRDMRCjyaeLxwIAIkvyNSBpkU/TtnJZXMlt2so42Qv9Jren1mlvxm+g1nb0zAQQg==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.1.10:
-    resolution: {integrity: sha512-g/RIXaVDaOgliHEJuOsuB6Tefwue9fXBH1/iIH9dmT3Z7lL0banGh+C10RW6Jd6PBPMoPBWir9PLYuzxoPcCNQ==}
+  /turbo-windows-64/1.2.4:
+    resolution: {integrity: sha512-F8tapVNGeWXdNSFJDybOSNWxmi6xF59oZIP7+c043D/IBvkIGTQG449QD9EdUtSq8pe20zM95VKmW9mUjqHYPQ==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.1.10:
-    resolution: {integrity: sha512-y8vx8uIyBRFI3aFjZ3PeGaOvYtNk6t7xNLzRsPY+xtnknTeqdBad56ElS8z+j0RyVwKCvI+wgvTHGkEle4VnJA==}
+  /turbo/1.2.4:
+    resolution: {integrity: sha512-3MPu+uvaKvmW5R0JncX8TJRli/5Z5Mz/H260oCfmGlEuVdvdn7Gf6ZefDnYiuDe5ofltq78SL0LTIAqLYbUmiw==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.1.10
-      turbo-darwin-arm64: 1.1.10
-      turbo-freebsd-64: 1.1.10
-      turbo-freebsd-arm64: 1.1.10
-      turbo-linux-32: 1.1.10
-      turbo-linux-64: 1.1.10
-      turbo-linux-arm: 1.1.10
-      turbo-linux-arm64: 1.1.10
-      turbo-linux-mips64le: 1.1.10
-      turbo-linux-ppc64le: 1.1.10
-      turbo-windows-32: 1.1.10
-      turbo-windows-64: 1.1.10
+      turbo-darwin-64: 1.2.4
+      turbo-darwin-arm64: 1.2.4
+      turbo-freebsd-64: 1.2.4
+      turbo-freebsd-arm64: 1.2.4
+      turbo-linux-32: 1.2.4
+      turbo-linux-64: 1.2.4
+      turbo-linux-arm: 1.2.4
+      turbo-linux-arm64: 1.2.4
+      turbo-linux-mips64le: 1.2.4
+      turbo-linux-ppc64le: 1.2.4
+      turbo-windows-32: 1.2.4
+      turbo-windows-64: 1.2.4
     dev: true
 
   /type-check/0.3.2:
