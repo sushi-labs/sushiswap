@@ -3,8 +3,10 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "preserveSymlinks": true,
     "paths": {
+      "app/abis/*": ["./abis/*"],
       "app/components": ["./components/index.ts"],
       "app/components/*": ["./components/*"],
       "app/features": ["./features/index.ts"],

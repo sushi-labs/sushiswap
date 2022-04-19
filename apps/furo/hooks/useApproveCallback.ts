@@ -20,7 +20,7 @@ export function useApproveCallback(
 ): [ApprovalState, () => Promise<void>] {
   const [{ data: account }] = useAccount()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useTokenAllowance(token, account.address ?? undefined, spender)
+  const currentAllowance = useTokenAllowance(token, account?.address ?? undefined, spender)
   const [_, wait] = useWaitForTransaction({
     skip: true,
   });

@@ -193,6 +193,8 @@ importers:
 
   apps/furo:
     specifiers:
+      '@ethersproject/constants': ^5.6.0
+      '@ethersproject/providers': ^5.6.1
       '@ethersproject/units': ^5.6.0
       '@graphprotocol/client-cli': 0.0.2
       '@graphql-mesh/transform-prefix': 0.11.12
@@ -200,8 +202,12 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.3.22
       '@headlessui/react': ^1.5.0
       '@heroicons/react': ^1.0.0
+      '@ramp-network/ramp-instant-sdk': ^2.5.0
+      '@reduxjs/toolkit': ^1.8.0
+      '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@types/node': 17.0.21
       '@types/react': 17.0.41
+      '@uniswap/redux-multicall': ^1.1.0
       '@visx/curve': ^2.1.0
       '@visx/group': ^2.1.0
       '@visx/react-spring': ^2.6.0
@@ -211,30 +217,40 @@ importers:
       autoprefixer: ^10.4.2
       chain: workspace:*
       config: workspace:*
+      currency: workspace:*
       eslint: 8.10.0
       ethers: ^5.6.1
       format: workspace:*
       furo: github:sushiswap/furo#feature/furo-deploy
       graphql: 16.3.0
+      jotai: ^1.6.1
       math: workspace:*
       next: 12.1.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.7
       react: 17.0.2
       react-dom: 17.0.2
+      react-redux: ^7.2.6
       react-spring: ^9.4.4
       react-table: ^7.7.0
+      redux: ^4.1.0
       tailwindcss: ^3.0.23
       typescript: 4.6.2
       ui: workspace:*
       wagmi: ^0.2.24
     dependencies:
+      '@ethersproject/constants': 5.6.0
+      '@ethersproject/providers': 5.6.1
       '@ethersproject/units': 5.6.0
       '@graphql-mesh/transform-prefix': 0.11.12_graphql@16.3.0
       '@graphql-mesh/transform-rename': 0.12.12_graphql@16.3.0
       '@graphql-mesh/transform-type-merging': 0.3.22_graphql@16.3.0
       '@headlessui/react': 1.5.0_react-dom@17.0.2+react@17.0.2
       '@heroicons/react': 1.0.6_react@17.0.2
+      '@ramp-network/ramp-instant-sdk': 2.5.2
+      '@reduxjs/toolkit': 1.8.0_react-redux@7.2.6+react@17.0.2
+      '@sushiswap/core-sdk': 1.0.0-canary.85
+      '@uniswap/redux-multicall': 1.1.0_b25a7f902dd7c557a9c29f1e4c7ffacf
       '@visx/curve': 2.1.0
       '@visx/group': 2.1.0_react@17.0.2
       '@visx/react-spring': 2.6.0_react-spring@9.4.4+react@17.0.2
@@ -242,16 +258,20 @@ importers:
       '@visx/text': 2.3.0_react@17.0.2
       '@visx/xychart': 2.9.0_f327a5bd080a98c8644755366dc71cc3
       chain: link:../../packages/chain
+      currency: link:../../packages/currency
       ethers: 5.6.1
       format: link:../../packages/format
       furo: github.com/sushiswap/furo/d7989e3ac7558d9bd82f4094ab370b24630f69a4
       graphql: 16.3.0
+      jotai: 1.6.4_react@17.0.2
       math: link:../../packages/math
       next: 12.1.0_react-dom@17.0.2+react@17.0.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
       react-spring: 9.4.4_react-dom@17.0.2+react@17.0.2
       react-table: 7.7.0_react@17.0.2
+      redux: 4.2.0
       ui: link:../../packages/ui
       wagmi: 0.2.24_ethers@5.6.1+react@17.0.2
     devDependencies:
@@ -3984,6 +4004,13 @@ packages:
     resolution: {integrity: sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==}
     dev: false
 
+  /@ramp-network/ramp-instant-sdk/2.5.2:
+    resolution: {integrity: sha512-cfZdFZGz6j3gren+Gua7hANJNKx9ZnjMy4koR3gAqxRFhhqB0JhbrK8ySbpmfU2LTMAn0X1uiDVdSD78ldN9/g==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      body-scroll-lock: 2.7.1
+    dev: false
+
   /@rari-capital/solmate/6.2.0:
     resolution: {integrity: sha512-g94F+Ra9ixyJyNgvnOIufNjUz488uEG0nxIEEtJ7+g+tA1XGUupRB2kB5b+VO7WYO26RNOVD2fW6xE4e14iWpg==}
     dev: false
@@ -4113,6 +4140,25 @@ packages:
       immer: 9.0.12
       react: 18.0.0-rc.2-next-b9de50d2f-20220308
       react-redux: 7.2.6_3b3c4dafaa7e2bc132922eb3215c558b
+      redux: 4.1.2
+      redux-thunk: 2.4.1_redux@4.1.2
+      reselect: 4.1.5
+    dev: false
+
+  /@reduxjs/toolkit/1.8.0_react-redux@7.2.6+react@17.0.2:
+    resolution: {integrity: sha512-cdfHWfcvLyhBUDicoFwG1u32JqvwKDxLxDd7zSmSoFw/RhYLOygIRtmaMjPRUUHmVmmAGAvquLLsKKU/677kSQ==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || 18.0.0-beta
+      react-redux: ^7.2.1 || ^8.0.0-beta
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-redux:
+        optional: true
+    dependencies:
+      immer: 9.0.12
+      react: 17.0.2
+      react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
       redux: 4.1.2
       redux-thunk: 2.4.1_redux@4.1.2
       reselect: 4.1.5
@@ -4335,7 +4381,7 @@ packages:
   /@types/hoist-non-react-statics/3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     dependencies:
-      '@types/react': 17.0.40
+      '@types/react': 17.0.41
       hoist-non-react-statics: 3.3.2
     dev: false
 
@@ -4401,9 +4447,9 @@ packages:
     resolution: {integrity: sha512-D02o3FPfqQlfu2WeEYwh3x2otYd2Dk1o8wAfsA0B1C2AJEFxE663Ozu7JzuWbznGgW248NaOF6wsqCGNq9d3qw==}
     dependencies:
       '@types/hoist-non-react-statics': 3.3.1
-      '@types/react': 17.0.40
+      '@types/react': 17.0.41
       hoist-non-react-statics: 3.3.2
-      redux: 4.1.2
+      redux: 4.2.0
     dev: false
 
   /@types/react/17.0.39:
@@ -4420,6 +4466,7 @@ packages:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
       csstype: 3.0.11
+    dev: true
 
   /@types/react/17.0.41:
     resolution: {integrity: sha512-chYZ9ogWUodyC7VUTRBfblysKLjnohhFY9bGLwvnUFFy48+vB9DikmB3lW0qTFmBcKSzmdglcvkHK71IioOlDA==}
@@ -4526,6 +4573,21 @@ packages:
   /@uniswap/lib/4.0.1-alpha:
     resolution: {integrity: sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==}
     engines: {node: '>=10'}
+    dev: false
+
+  /@uniswap/redux-multicall/1.1.0_b25a7f902dd7c557a9c29f1e4c7ffacf:
+    resolution: {integrity: sha512-SaHlDZZL/PzWkD9raey/WJ2OgGmfiong/cqQXMfp8baHeXz1HdqriJt/I0d43dczSp5fjp40ZFGF7/qoepRXXg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@reduxjs/toolkit': 1.x
+      ethers: 5.x
+      react: ^17.x
+      react-redux: ^7.x
+    dependencies:
+      '@reduxjs/toolkit': 1.8.0_react-redux@7.2.6+react@17.0.2
+      ethers: 5.6.1
+      react: 17.0.2
+      react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /@uniswap/redux-multicall/1.1.0_c9ff65056fb281f634ccd18451830e84:
@@ -5691,6 +5753,10 @@ packages:
       raw-body: 2.4.3
       type-is: 1.6.18
     dev: true
+
+  /body-scroll-lock/2.7.1:
+    resolution: {integrity: sha512-hS53SQ8RhM0e4DsQ3PKz6Gr2O7Kpdh59TWU98GHjaQznL7y4dFycEPk7pFQAikqBaUSCArkc5E3pe7CWIt2fZA==}
+    dev: false
 
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -8688,6 +8754,43 @@ packages:
       - utf-8-validate
     dev: true
 
+  /jotai/1.6.4_react@17.0.2:
+    resolution: {integrity: sha512-XC0ExLhdE6FEBdIjKTe6kMlHaAUV/QiwN7vZond76gNr/WdcdonJOEW79+5t8u38sR41bJXi26B1dRi7cCRz9A==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      '@babel/template': '*'
+      '@urql/core': '*'
+      immer: '*'
+      optics-ts: '*'
+      react: '>=16.8'
+      react-query: '*'
+      valtio: '*'
+      wonka: '*'
+      xstate: '*'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@babel/template':
+        optional: true
+      '@urql/core':
+        optional: true
+      immer:
+        optional: true
+      optics-ts:
+        optional: true
+      react-query:
+        optional: true
+      valtio:
+        optional: true
+      wonka:
+        optional: true
+      xstate:
+        optional: true
+    dependencies:
+      react: 17.0.2
+    dev: false
+
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -10064,6 +10167,28 @@ packages:
       react-is: 17.0.2
     dev: false
 
+  /react-redux/7.2.6_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==}
+    peerDependencies:
+      react: ^16.8.3 || ^17
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.17.7
+      '@types/react-redux': 7.1.23
+      hoist-non-react-statics: 3.3.2
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-is: 17.0.2
+    dev: false
+
   /react-spring/9.4.4_react-dom@17.0.2+react@17.0.2:
     resolution: {integrity: sha512-VOqilh9DJBsS6Pf550YLhdReS3j9a2AQVh7NcsNtWoxTYIeuErWi6ym0++6bBhQp4yT5xvVvUDaJ8ez8vrFgaw==}
     dependencies:
@@ -10207,6 +10332,12 @@ packages:
 
   /redux/4.1.2:
     resolution: {integrity: sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==}
+    dependencies:
+      '@babel/runtime': 7.17.7
+    dev: false
+
+  /redux/4.2.0:
+    resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.17.7
     dev: false

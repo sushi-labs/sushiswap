@@ -1,11 +1,12 @@
 import { FC, useState } from 'react'
-import { Dialog } from 'ui'
+import {Dialog} from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import DialogContent from 'ui/dialog/DialogContent'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import FUROSTREAM from 'furo/typechain/FuroStream'
 import FuroExport from 'furo/exports/kovan.json'
 import { useFuroContract } from 'app/hooks/useFuroContract'
 import { useApproveCallback, useTokenAllowance } from 'app/hooks'
+// import {Dial} from '@headlessui/react'
 
 const CreateStreamModal: FC = () => {
   let [isOpen, setIsOpen] = useState(false)
@@ -17,8 +18,8 @@ const CreateStreamModal: FC = () => {
   const [{ data, error, loading }, getSigner] = useSigner()
   const [{ data: network }, switchNetwork] = useNetwork()
   const contract = useFuroContract()
-  // TODO: need Token from tokenlist
-  const [] = useApproveCallback()
+  
+  // const [] = useApproveCallback() // TODO: need Token from tokenlist
 
   function openModal() {
     setIsOpen(true)
@@ -32,7 +33,7 @@ const CreateStreamModal: FC = () => {
       console.log('missing required field')
       return
     }
-    contract.createStream(recipient, token, startDate.getTime() / 1000, endDate.getTime() / 1000, amount, false)
+    // contract.createStream(recipient, token, startDate.getTime() / 1000, endDate.getTime() / 1000, amount, false)
   }
 
   return (
