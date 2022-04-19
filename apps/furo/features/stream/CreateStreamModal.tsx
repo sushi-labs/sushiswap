@@ -5,6 +5,7 @@ import { useContract, useNetwork, useSigner } from 'wagmi'
 import FUROSTREAM from 'furo/typechain/FuroStream'
 import FuroExport from 'furo/exports/kovan.json'
 import { useFuroContract } from 'app/hooks/useFuroContract'
+import { useApproveCallback, useTokenAllowance } from 'app/hooks'
 
 const CreateStreamModal: FC = () => {
   let [isOpen, setIsOpen] = useState(false)
@@ -16,6 +17,8 @@ const CreateStreamModal: FC = () => {
   const [{ data, error, loading }, getSigner] = useSigner()
   const [{ data: network }, switchNetwork] = useNetwork()
   const contract = useFuroContract()
+  // TODO: need Token from tokenlist
+  const [] = useApproveCallback()
 
   function openModal() {
     setIsOpen(true)

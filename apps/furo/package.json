@@ -25,6 +25,7 @@
     "@visx/text": "^2.3.0",
     "@visx/xychart": "^2.9.0",
     "chain": "workspace:*",
+    "currency": "workspace:*",
     "ethers": "^5.6.1",
     "format": "workspace:*",
     "furo": "github:sushiswap/furo#feature/furo-deploy",
