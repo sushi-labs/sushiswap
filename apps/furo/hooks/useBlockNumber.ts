@@ -5,10 +5,6 @@ import { useNetwork, useProvider } from 'wagmi'
 import useDebounce from './useDebounce'
 import useIsWindowVisible from './useIsWindowVisible'
 
-interface ChainBlock {
-  chainId?: number
-  block?: number
-}
 
 function useBlock() {
   const [{ data: network }] = useNetwork()

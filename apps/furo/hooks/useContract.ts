@@ -5,7 +5,9 @@ import MULTICALL_ABI from 'app/abis/interface-multicall.json'
 import { Contract } from 'ethers'
 import { isAddress } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-import { useAccount, useNetwork, useProvider } from 'wagmi'
+
+import { ERC20_BYTES32_ABI } from 'app/abis/erc20'
+import { erc20ABI, useAccount, useNetwork, useProvider } from 'wagmi'
 
 const MULTICALL_ADDRESS = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
@@ -59,6 +61,15 @@ export function useContract<T extends Contract = Contract>(
       return null
     }
   }, [addressOrAddressMap, ABI, provider, chainId, withSignerIfPossible, account]) as T
+}
+
+export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(tokenAddress, ERC20_BYTES32_ABI, withSignerIfPossible)
+}
+
+
+export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(tokenAddress, erc20ABI, withSignerIfPossible)
 }
 
 // account is optional

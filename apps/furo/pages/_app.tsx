@@ -3,10 +3,13 @@ import type { AppProps } from 'next/app'
 import { FC } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { MulticallUpdater, store } from 'state/multicall'
+import ListsUpdater from 'app/state/lists/updater'
 import { App } from 'ui'
 import 'ui/index.css'
 import { defaultChains, InjectedConnector, WagmiProvider } from 'wagmi'
 import '../index.css'
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistor } from 'app/state'
 
 type ConnectorsConfig = { chainId?: number }
 const chains = defaultChains
@@ -21,7 +24,6 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
   ]
 }
 
-
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <App.Shell>
@@ -29,11 +31,14 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <App.Nav />
       </App.Header>
       <WagmiProvider autoConnect connectors={connectors}>
-        <ReduxProvider store={store}>
-          <BlockUpdater />
-          <MulticallUpdater />
-          <Component {...pageProps} />
-        </ReduxProvider>
+        <PersistGate persistor={persistor}>
+          <ReduxProvider store={store}>
+            <ListsUpdater />
+            <BlockUpdater />
+            <MulticallUpdater />
+            <Component {...pageProps} />
+          </ReduxProvider>
+        </PersistGate>
       </WagmiProvider>
     </App.Shell>
   )
