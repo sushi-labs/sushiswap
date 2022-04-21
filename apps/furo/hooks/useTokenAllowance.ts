@@ -15,6 +15,5 @@ export function useTokenAllowance(token?: Token, owner?: string, spender?: strin
     { args: useMemo(() => [owner, spender], [owner, spender]), skip: !token },
   )
   
-  console.log({data, error, loading})
   return data ? Amount.fromRawAmount(token, data.toString() ?? undefined) : undefined
 }

@@ -1,9 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { calculateGasMargin } from 'app/functions/trade'
 import { Amount, Token } from 'currency'
+import { Contract } from 'ethers'
 import { MAX_UINT256 } from 'math'
+import { useState } from 'react'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContract, useWaitForTransaction } from 'wagmi'
+import { erc20ABI, useAccount, useContract, useSigner, useWaitForTransaction } from 'wagmi'
 import { useTokenAllowance } from './useTokenAllowance'
 
 
@@ -20,11 +22,13 @@ export function useApproveCallback(
   spender?: string,
 ): [ApprovalState, () => Promise<void>] {
   const [{ data: account }] = useAccount()
+  const [{ data: signer }, getSigner] = useSigner()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account?.address ?? undefined, spender)
   const [_, wait] = useWaitForTransaction({
     skip: true,
   });
+
   console.log({currentAllowance})
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -37,9 +41,10 @@ export function useApproveCallback(
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
   }, [amountToApprove, currentAllowance, spender])
 
-  const tokenContract = useContract({
+  const tokenContract = useContract<Contract>({
     addressOrName: token?.address ?? AddressZero,
     contractInterface: erc20ABI,
+    signerOrProvider: signer
   })
 
 
@@ -75,11 +80,17 @@ export function useApproveCallback(
       return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
     })
 
-    const { hash } = tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MAX_UINT256, {
+    const tx = await tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MAX_UINT256, {
       gasLimit: calculateGasMargin(estimatedGas),
     })
-    const waitForApproval = await wait({ confirmations: 1, hash });
-    console.log({waitForApproval})
+    
+    const waitForApproval = await wait({ confirmations: 1, hash: tx.hash });
+    if (waitForApproval.data && !waitForApproval.error) {
+      console.log("Successfully approved token") // TODO: should probably refactor and update the state?
+    } else {
+      console.log(waitForApproval)
+    }
+
 
   }, [approvalState, token, tokenContract, amountToApprove, spender, wait])
 

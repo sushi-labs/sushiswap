@@ -10,9 +10,13 @@ import { defaultChains, InjectedConnector, WagmiProvider } from 'wagmi'
 import '../index.css'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from 'app/state'
+import { providers } from 'ethers'
 
 type ConnectorsConfig = { chainId?: number }
 const chains = defaultChains
+
+const provider = ({ chainId }) =>
+  new providers.InfuraProvider(chainId, process.env.INFURA_URL)
 
 const connectors = ({ chainId }: ConnectorsConfig) => {
   // const rpcUrl = chains.find((x) => x.id === chainId)?.rpcUrls?.[0] ?? chains.mainnet.rpcUrls[0]
@@ -30,7 +34,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <App.Header>
         <App.Nav />
       </App.Header>
-      <WagmiProvider autoConnect connectors={connectors}>
+      <WagmiProvider autoConnect connectors={connectors} provider={provider}>
         <PersistGate persistor={persistor}>
           <ReduxProvider store={store}>
             <ListsUpdater />
