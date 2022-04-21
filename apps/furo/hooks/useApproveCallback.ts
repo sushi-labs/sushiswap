@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { calculateGasMargin } from 'app/functions/trade'
 import { Amount, Token } from 'currency'
 import { MAX_UINT256 } from 'math'
@@ -24,7 +25,7 @@ export function useApproveCallback(
   const [_, wait] = useWaitForTransaction({
     skip: true,
   });
-
+  console.log({currentAllowance})
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
@@ -37,7 +38,7 @@ export function useApproveCallback(
   }, [amountToApprove, currentAllowance, spender])
 
   const tokenContract = useContract({
-    addressOrName: token?.address,
+    addressOrName: token?.address ?? AddressZero,
     contractInterface: erc20ABI,
   })
 
