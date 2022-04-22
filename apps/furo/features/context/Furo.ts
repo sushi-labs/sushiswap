@@ -16,12 +16,12 @@ export abstract class Furo {
 
   public constructor({ furo }: { furo: FuroRepresentation }) {
     this.id = furo.id
-    this.status = Status[furo.status]
     this.amount = BigNumber.from(furo.totalAmount)
     this.withdrawnAmount = BigNumber.from(furo.withdrawnAmount)
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
+    this.status = this.setStatus(Status[furo.status])
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.token = furo.token
@@ -42,9 +42,8 @@ export abstract class Furo {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
 
-
   public get startingInTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-    if (this.status === Status.ACTIVE) {
+    if (this.status === Status.ACTIVE || this.status === Status.UPCOMING) {
       const now = Date.now()
       const interval = this.startTime.getTime() - now
 
@@ -80,7 +79,7 @@ export abstract class Furo {
     const total = this.endTime.getTime() - this.startTime.getTime()
     const current = now - this.startTime.getTime()
     const streamed = current / total
-    return streamed < 1 ? streamed : 1 
+    return streamed < 1 ? streamed : 1
   }
 
   public get withdrawnPercentage(): number {
@@ -88,6 +87,18 @@ export abstract class Furo {
   }
 
   public get isStarted(): boolean {
-    return (this.startTime.getTime() <= Date.now())
+    return this.startTime.getTime() <= Date.now()
+  }
+
+  public get isEnded(): boolean {
+    return this.status === Status.CANCELLED || this.endTime.getTime() <= Date.now()
+  }
+
+  private setStatus(status: Status): Status {
+    if (!this.isStarted) return Status.UPCOMING
+    if (status === Status.CANCELLED || status === Status.EXTENDED) return status
+    console.log(this.isEnded)
+    if (this.isEnded) return Status.COMPLETED
+    return status
   }
 }

@@ -58,6 +58,8 @@ export enum Status {
   ACTIVE = 'ACTIVE',
   EXTENDED = 'EXTENDED',
   CANCELLED = 'CANCELLED',
+  UPCOMING = 'UPCOMING',
+  COMPLETED = 'COMPLETED',
 }
 
 export enum TransactionType {

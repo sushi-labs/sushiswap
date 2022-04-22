@@ -104,7 +104,7 @@ export const StreamTable: FC<StreamsProps> = ({ streams }) => {
         maxWidth: 60,
         accessor: 'view',
         Cell: () => (
-          <div className="flex inline-flex justify-end w-full rounded-full cursor-pointer hover:text-white">
+          <div className="inline-flex justify-end w-full rounded-full cursor-pointer hover:text-white">
             <ChevronRightIcon width={20} height={20} />
           </div>
         ),

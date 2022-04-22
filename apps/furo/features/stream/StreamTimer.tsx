@@ -1,6 +1,7 @@
 import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
 import Typography from 'ui/typography/Typography'
+import { Status } from '../context/representations'
 import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
@@ -19,9 +20,10 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   const [remaining, setRemaining] = useState<StreamTimerState>()
 
   useInterval(() => {
-   
-    const { days, hours, minutes, seconds } = (stream?.isStarted) ? stream.remainingTime : stream.startingInTime
-  
+    if (stream?.status === Status.CANCELLED || stream?.status === Status.COMPLETED) return
+    const { days, hours, minutes, seconds } =
+      stream?.status === Status.ACTIVE ? stream.remainingTime : stream.startingInTime
+
     setRemaining({
       days: String(Math.max(days, 0)).padStart(2, '0'),
       hours: String(Math.max(hours, 0)).padStart(2, '0'),
