@@ -42,6 +42,22 @@ export abstract class Furo {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
 
+
+  public get startingInTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
+    if (this.status === Status.ACTIVE) {
+      const now = Date.now()
+      const interval = this.startTime.getTime() - now
+
+      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+
+      return { days, hours, minutes, seconds }
+    }
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
+
   public get activeTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
     const now = this.status !== Status.CANCELLED ? Date.now() : new Date(this.modifiedAtTimestamp).getTime()
 
@@ -59,6 +75,7 @@ export abstract class Furo {
    * Returns streamed percentage in decimals, e.g. 0.562
    */
   public get streamedPercentage(): number {
+    if (!this.isStarted) return 0
     const now = this.status !== Status.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
     const total = this.endTime.getTime() - this.startTime.getTime()
     const current = now - this.startTime.getTime()
@@ -67,5 +84,9 @@ export abstract class Furo {
 
   public get withdrawnPercentage(): number {
     return Decimal(this.withdrawnAmount.toString()) / Decimal(this.amount.toString())
+  }
+
+  public get isStarted(): boolean {
+    return (this.startTime.getTime() <= Date.now())
   }
 }

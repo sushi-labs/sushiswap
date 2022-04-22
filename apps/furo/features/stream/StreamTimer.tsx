@@ -19,9 +19,9 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   const [remaining, setRemaining] = useState<StreamTimerState>()
 
   useInterval(() => {
-    if (!stream?.remainingTime) return
-
-    const { days, hours, minutes, seconds } = stream.remainingTime
+   
+    const { days, hours, minutes, seconds } = (stream?.isStarted) ? stream.remainingTime : stream.startingInTime
+  
     setRemaining({
       days: String(Math.max(days, 0)).padStart(2, '0'),
       hours: String(Math.max(hours, 0)).padStart(2, '0'),
@@ -72,7 +72,7 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
           </div>
         </div>
         <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
-          REMAINING
+          {stream?.isStarted ? `REMAINING` : `STARTS IN`}
         </Typography>
       </div>
     )
