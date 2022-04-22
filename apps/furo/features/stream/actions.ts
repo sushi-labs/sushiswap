@@ -1,5 +1,6 @@
 import { Amount, Token } from 'currency'
 import { BigNumber, Contract, Signature } from 'ethers'
+import { useSignMessage } from 'wagmi'
 
 interface Batch {
   contract: Contract
@@ -34,15 +35,16 @@ export interface ApproveBentoBoxActionProps {
   signature?: Signature
 }
 
-export const approveBentoBoxAction = ({ contract, user }: ApproveBentoBoxActionProps) => {
-  // TODO: Where do I get signature from?
+export const approveBentoBoxAction = ({ contract, user, signature}: ApproveBentoBoxActionProps) => {
+  if (!signature) return undefined
 
+  const { v, r, s } = signature
   return contract.interface.encodeFunctionData('setBentoBoxApproval', [
     user,
     true,
-    '0',
-    '0x0000000000000000000000000000000000000000000000000000000000000000',
-    '0x0000000000000000000000000000000000000000000000000000000000000000',
+    v,
+    r,
+    s,
   ])
 }
 

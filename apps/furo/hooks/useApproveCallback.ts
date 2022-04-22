@@ -29,7 +29,6 @@ export function useApproveCallback(
     skip: true,
   });
 
-  console.log({currentAllowance})
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
@@ -86,7 +85,7 @@ export function useApproveCallback(
     
     const waitForApproval = await wait({ confirmations: 1, hash: tx.hash });
     if (waitForApproval.data && !waitForApproval.error) {
-      console.log("Successfully approved token") // TODO: should probably refactor and update the state?
+      console.log("Successfully approved token") // TODO: should probably refactor and update the state to PENDING?
     } else {
       console.log(waitForApproval)
     }

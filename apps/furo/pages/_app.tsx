@@ -38,7 +38,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <PersistGate persistor={persistor}>
           <ReduxProvider store={store}>
             <ListsUpdater />
-            <BlockUpdater />
+            {/* <BlockUpdater /> */}
             <MulticallUpdater />
             <Component {...pageProps} />
           </ReduxProvider>
