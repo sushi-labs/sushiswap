@@ -6,6 +6,7 @@ import BalanceChart from 'app/features/stream/BalanceChart'
 import HistoryPopover from 'app/features/stream/History'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
+import WithdrawModal from 'app/features/stream/WithdrawModal'
 import { FC, useMemo } from 'react'
 import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
 import { Typography } from 'ui/typography'
@@ -66,7 +67,7 @@ const Streams: FC<Props> = (props) => {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <button>Withdraw</button>
+            <WithdrawModal stream={stream}/>
             <button>Transfer</button>
           </div>
         </div>
