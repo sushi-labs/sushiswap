@@ -79,7 +79,8 @@ export abstract class Furo {
     const now = this.status !== Status.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
     const total = this.endTime.getTime() - this.startTime.getTime()
     const current = now - this.startTime.getTime()
-    return current / total
+    const streamed = current / total
+    return streamed < 1 ? streamed : 1 
   }
 
   public get withdrawnPercentage(): number {
