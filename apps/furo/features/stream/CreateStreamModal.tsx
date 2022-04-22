@@ -1,19 +1,15 @@
-import { splitSignature, Signature } from '@ethersproject/bytes'
 import { Dialog, Listbox } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { ApprovalState, useApproveCallback } from 'app/hooks'
 import { useAllTokens } from 'app/hooks/Tokens'
+import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
 import { useFuroContract } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
-import { useEffect } from 'react'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
-import { useAccount, useContractRead, useNetwork, useSigner, useSignMessage, useSignTypedData, useTransaction, useWaitForTransaction } from 'wagmi'
+import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from './actions'
-import { AddressZero } from '@ethersproject/constants'
-import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
 // import {Dial} from '@headlessui/react'
-
 
 const CreateStreamModal: FC = () => {
   let [isOpen, setIsOpen] = useState(false)
@@ -24,13 +20,12 @@ const CreateStreamModal: FC = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
   const [{ data: account }] = useAccount()
-  const [{ data: network }, switchNetwork] = useNetwork()
+  const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
 
   const tokens = useAllTokens()
   const contract = useFuroContract()
-  const [permitSignature, setPermitSignature] = useState<Signature>()
-  const [{ data: txData, error: txError }, sendTransaction] = useTransaction()
+  const [, sendTransaction] = useTransaction()
   const [{ data: waitTxData }, wait] = useWaitForTransaction({
     skip: true,
   })
@@ -45,23 +40,19 @@ const CreateStreamModal: FC = () => {
     setIsOpen(false)
   }
 
-
   console.log({ tokenApprovalState, bentoBoxApprovalState })
 
   async function createStream() {
-
-    // await signTypedData({domain: {name: "FuroStream"}})
-    // console.log(signatureData)
     if (!token || !amount || !recipient || !startDate || !endDate) {
       console.log('missing required field', { token, amount, recipient, startDate, endDate })
       return
     }
-    
+
     const actions = [
-      approveBentoBoxAction({ contract, user: account.address, signature}),
+      approveBentoBoxAction({ contract, user: account.address, signature }),
       streamCreationAction({ contract, recipient, token, startDate, endDate, amount, fromBentoBox }),
     ]
-    console.log({ actions })
+
     const tx = await sendTransaction({
       request: {
         from: account.address,
@@ -72,7 +63,7 @@ const CreateStreamModal: FC = () => {
 
     if (tx.data && !tx.error) {
       await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log({ waitTxData })
+      console.log("stream created", waitTxData )
     }
   }
 
@@ -144,10 +135,12 @@ const CreateStreamModal: FC = () => {
               <input type="datetime-local" onChange={(e) => setEndDate(new Date(e.target.value))}></input>
             </div>
             <ApproveTokenButton />
-            <SignBentoBox/>
+            <SignBentoBox />
             <button
               onClick={createStream}
-              disabled={tokenApprovalState === ApprovalState.PENDING || tokenApprovalState === ApprovalState.NOT_APPROVED }
+              disabled={
+                tokenApprovalState === ApprovalState.PENDING || tokenApprovalState === ApprovalState.NOT_APPROVED
+              }
             >{`Create stream`}</button>
           </div>
         </DialogContent>

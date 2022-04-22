@@ -25,6 +25,7 @@ export const batchAction = <T = any>({ contract, actions = [] }: Batch): string 
 
   // Call batch function with valid actions
   if (validated.length > 1) {
+    console.log(validated.toString())
     return contract.interface.encodeFunctionData('batch', [validated, true])
   }
 }
@@ -68,7 +69,7 @@ export const streamCreationAction = ({
   fromBentoBox,
 }: StreamCreationActionProps): string => {
   return contract.interface.encodeFunctionData('createStream', [
-    // [string, string, BigNumberish, BigNumberish, BigNumberish, boolean]
+    // TODO: check wnative address, pass in value
     recipient,
     token.address,
     startDate.getTime() / 1000,

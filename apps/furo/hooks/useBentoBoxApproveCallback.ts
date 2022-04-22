@@ -52,8 +52,9 @@ export function useBentoBoxApproveCallback(
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (loading || isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
+    if (signature && !isBentoBoxApproved) return ApprovalState.PENDING
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
-  }, [isBentoBoxApproved, loading])
+  }, [isBentoBoxApproved, signature, loading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
@@ -91,7 +92,7 @@ export function useBentoBoxApproveCallback(
         nonce: nonces,
       },
     })
-    console.log('signed ', { data, error })
+    console.log('signed ', { data, error})
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
   }, [account?.address, approvalState, getNonces, chainId, masterContractAddress, signTypedData])
