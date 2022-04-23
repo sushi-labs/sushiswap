@@ -12,11 +12,17 @@ import Typography from 'ui/typography/Typography'
 import { Status, StreamRepresentation } from '../context/representations'
 import { Stream } from '../context/Stream'
 
-interface StreamsProps {
-  streams: StreamRepresentation[]
+export enum StreamTableType {
+  INCOMING,
+  OUTGOING,
 }
 
-export const StreamTable: FC<StreamsProps> = ({ streams }) => {
+interface StreamsProps {
+  streams: StreamRepresentation[]
+  type: StreamTableType
+}
+
+export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
   const router = useRouter()
   const data = useMemo(() => streams?.map((stream) => new Stream({ stream })) ?? [], [streams])
   const columns = useMemo(
@@ -36,8 +42,8 @@ export const StreamTable: FC<StreamsProps> = ({ streams }) => {
         ),
       },
       {
-        Header: 'FROM',
-        accessor: 'createdBy.id',
+        Header: type === StreamTableType.INCOMING ? 'FROM' : 'TO',
+        accessor: type === StreamTableType.INCOMING ? 'createdBy.id' : 'recipient.id',
         maxWidth: 120,
         Cell: (props) => shortenAddress(props.value),
       },
