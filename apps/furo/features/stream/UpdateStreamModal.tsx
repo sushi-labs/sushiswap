@@ -5,12 +5,9 @@ import { useFuroContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from 'format'
-import { useMemo } from 'react'
-import { useEffect } from 'react'
-import { useCallback } from 'react'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
-import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
@@ -20,20 +17,10 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
-  const [recipient, setRecipient] = useState<string>('0xC39C2d6Eb8adef85f9caa141Ec95e7c0B34D8Dec')
   const [newEndTime, setNewEndTime] = useState<Date>()
- 
-
   const [{ data: account }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
-
   const token = useToken(stream?.token.id)
   const contract = useFuroContract()
-  const [, sendTransaction] = useTransaction()
-  const [{ data: waitTxData }, wait] = useWaitForTransaction({
-    skip: true,
-  })
   const balance = useStreamBalance(stream?.id)
 
   function openModal() {
@@ -45,12 +32,12 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
 
   async function update() {
     if (!stream || (!amount && !newEndTime)) {
-      console.log({ stream, amount, recipient })
+      console.log({ stream, amount })
       return
     }
     const difference = (newEndTime?.getTime() - stream?.endTime.getTime()) / 1000
     const topUpAmount = amount?.greaterThan(0) ? amount.toSignificant() : '0'
-    const tx = contract.updateStream(
+    const tx = await contract.updateStream(
       BigNumber.from(stream.id),
       BigNumber.from(topUpAmount),
       difference > 0 ? difference : 0,

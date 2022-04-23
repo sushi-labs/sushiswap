@@ -6,6 +6,7 @@ import BalanceChart from 'app/features/stream/BalanceChart'
 import HistoryPopover from 'app/features/stream/History'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
+import TransferStreamModal from 'app/features/stream/TransferStreamModal'
 import UpdateStreamModal from 'app/features/stream/UpdateStreamModal'
 import WithdrawModal from 'app/features/stream/WithdrawModal'
 import { FC, useMemo } from 'react'
@@ -70,6 +71,7 @@ const Streams: FC<Props> = (props) => {
           <div className="flex flex-col gap-1">
             <WithdrawModal stream={stream}/>
             <UpdateStreamModal stream={stream}/>
+            <TransferStreamModal stream={stream}/>
           </div>
         </div>
       </div>

@@ -22,7 +22,6 @@ const CreateStreamModal: FC = () => {
   const [{ data: account }] = useAccount()
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
-
   const tokens = useAllTokens()
   const contract = useFuroContract()
   const [, sendTransaction] = useTransaction()
@@ -30,7 +29,6 @@ const CreateStreamModal: FC = () => {
     skip: true,
   })
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(contract.address)
-
   const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId]) // approve bentobox
 
   function openModal() {
@@ -63,7 +61,7 @@ const CreateStreamModal: FC = () => {
 
     if (tx.data && !tx.error) {
       await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log("stream created", waitTxData )
+      console.log('stream created', waitTxData)
     }
   }
 
