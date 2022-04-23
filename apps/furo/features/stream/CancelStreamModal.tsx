@@ -5,14 +5,13 @@ import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useEnsResolveName } from 'wagmi'
 
-interface TransferStreamModalProps {
+interface CancelStreamModalProps {
   stream?: Stream
 }
 
-const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
+const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
-  const [recipient, setRecipient] = useState<string>()
-  const [, resolveName] = useEnsResolveName({ skip: true })
+  const [toBentoBox, setToBentoBox] = useState<boolean>(true)
   const [{ data: account }] = useAccount()
   const contract = useFuroContract()
   const balance = useStreamBalance(stream?.id)
@@ -24,30 +23,27 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
     setIsOpen(false)
   }
 
-  async function transferStream() {
-    if (!stream || !account || !recipient) {
-      console.log(stream, account.address, recipient)
+  async function cancelStream() {
+    if (!stream || !account) {
+      console.log(stream, account.address)
       return
     }
-    const { data: resolvedAddress, error } = await resolveName({ name: recipient })
-    if (!resolvedAddress || error) {
-      console.log('error resolving ens')
-      return
-    }
-    console.log(account.address, resolvedAddress, stream?.id)
-    const tx = await contract.transferFrom(account?.address, resolvedAddress, stream?.id)
+    const tx = await contract.cancelStream(stream?.id, toBentoBox)
     console.log({ tx })
   }
 
+  const handleBentoBoxCheck = () => {
+    setToBentoBox(!toBentoBox)
+  }
 
   return (
     <>
       <button
         type="button"
-        disabled={stream?.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
+        disabled={stream?.createdBy.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
         onClick={openModal}
       >
-        Transfer
+        Cancel
       </button>
       <Dialog open={isOpen} onClose={closeModal}>
         <div className="text-blue-600">
@@ -55,15 +51,14 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
             <div>
               Amount left: {stream?.amount.sub(balance ?? 0).toString()} {stream?.token.symbol}
             </div>
-            Recipient ETH address or ENS name:
             <div>
-              <input type={'text'} defaultValue={recipient} onChange={(e) => setRecipient(e.target.value)}></input>
+              from BentoBox: <input type="checkbox" defaultChecked={toBentoBox} onChange={handleBentoBoxCheck} />
             </div>
-            <button onClick={transferStream}>{`Transfer Ownership`}</button>
+            <button onClick={cancelStream}>{`Cancel Stream`}</button>
           </DialogContent>
         </div>
       </Dialog>
     </>
   )
 }
-export default TransferStreamModal
+export default CancelStreamModal

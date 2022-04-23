@@ -3,6 +3,7 @@ import Layout from 'app/components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'app/features/context/representations'
 import { Stream } from 'app/features/context/Stream'
 import BalanceChart from 'app/features/stream/BalanceChart'
+import CancelStreamModal from 'app/features/stream/CancelStreamModal'
 import HistoryPopover from 'app/features/stream/History'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
@@ -22,7 +23,6 @@ interface Props {
 const Streams: FC<Props> = (props) => {
   let { stream: streamRepresentation, transactions } = props
   const stream = useMemo(() => new Stream({ stream: streamRepresentation }), [streamRepresentation])
-
 
   return (
     <Layout>
@@ -70,8 +70,9 @@ const Streams: FC<Props> = (props) => {
           </div>
           <div className="flex flex-col gap-1">
             <WithdrawModal stream={stream}/>
-            <UpdateStreamModal stream={stream}/>
             <TransferStreamModal stream={stream}/>
+            <UpdateStreamModal stream={stream}/>
+            <CancelStreamModal stream={stream}/>
           </div>
         </div>
       </div>
