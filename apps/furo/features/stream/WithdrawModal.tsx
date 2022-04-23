@@ -1,16 +1,12 @@
-import { Dialog, Listbox } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
-import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
-import { ApprovalState, useApproveCallback } from 'app/hooks'
-import { useAllTokens } from 'app/hooks/Tokens'
-import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
+import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
+import { Stream } from 'app/features/context/Stream'
+import { useToken } from 'app/hooks/Tokens'
 import { useFuroContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
+import { BigNumber } from 'ethers'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
-import { Stream } from 'app/features/context/Stream'
-import { approveBentoBoxAction, batchAction, streamCreationAction } from './actions'
-// import {Dial} from '@headlessui/react'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -18,17 +14,15 @@ interface WithdrawModalProps {
 
 const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
-  const [token, setToken] = useState<Token>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
+  const [toBentoBox, setToBentoBox] = useState<boolean>(true)
   const [recipient, setRecipient] = useState<string>('0xC39C2d6Eb8adef85f9caa141Ec95e7c0B34D8Dec')
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
+
   const [{ data: account }] = useAccount()
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
 
-  const tokens = useAllTokens()
+  const token = useToken(stream?.token.id)
   const contract = useFuroContract()
   const [, sendTransaction] = useTransaction()
   const [{ data: waitTxData }, wait] = useWaitForTransaction({
@@ -43,11 +37,32 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     setIsOpen(false)
   }
 
-  async function withdraw() {}
+  async function withdraw() {
+    if (!stream || !amount || !recipient) {
+      console.log({ stream, amount, recipient })
+      return
+    }
+    const tx = contract.withdrawFromStream(
+      BigNumber.from(stream.id),
+      BigNumber.from(amount.quotient.toString()),
+      recipient,
+      toBentoBox,
+      '0x',
+    )
+    console.log({ tx })
+  }
+
+  const handleBentoBoxCheck = () => {
+    setToBentoBox(!toBentoBox)
+  }
 
   return (
     <>
-      <button type="button" onClick={openModal}>
+      <button
+        type="button"
+        disabled={stream.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
+        onClick={openModal}
+      >
         Withdraw
       </button>
       <Dialog open={isOpen} onClose={closeModal}>
@@ -62,25 +77,22 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             <div>
               Available: {balance ? balance.toString() : ''} {stream?.token.symbol}
             </div>
-
-            <div>
-              <Listbox value={token} onChange={setToken}>
-                <Listbox.Button>{token?.symbol ?? 'Select token'}</Listbox.Button>
-                <Listbox.Options>
-                  {Object.values(tokens).map((token) => (
-                    <Listbox.Option key={token.address} value={token}>
-                      {token.symbol}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Listbox>
-            </div>
             <div>
               Amount:
               <input
                 type={'number'}
-                // defaultValue={amount}
                 onChange={(e) => setAmount(Amount.fromRawAmount(token, parseInt(e.target.value)))}
+              ></input>
+            </div>
+            <div>
+              from BentoBox: <input type="checkbox" defaultChecked={toBentoBox} onChange={handleBentoBoxCheck} />
+            </div>
+            Who is the recipient?
+            <div>
+              <input
+                type={'text'}
+                defaultValue={account?.address}
+                onChange={(e) => setRecipient(e.target.value)}
               ></input>
             </div>
             <button onClick={withdraw}>{`Withdraw`}</button>
