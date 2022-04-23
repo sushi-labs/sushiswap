@@ -5,6 +5,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "preserveSymlinks": true,
+    "declaration": false,
+    "declarationMap": false,
     "paths": {
       "app/abis/*": ["./abis/*"],
       "app/config": ["./config/index.ts"],

@@ -1,4 +1,3 @@
-import { BlockUpdater } from 'app/hooks/useBlockNumber'
 import type { AppProps } from 'next/app'
 import { FC } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'

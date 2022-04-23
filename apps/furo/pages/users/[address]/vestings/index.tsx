@@ -21,7 +21,7 @@ const Vestings: FC<UserProps> = (props) => {
         <h1 className="py-4 text-2xl font-bold">Vestings</h1>
         <h1 className="py-4 text-2xl font-bold">Incoming vestings</h1>
         <div className="grid gap-2">
-          {incomingVestings.length ? (
+          {incomingVestings?.length ? (
             Object.values(incomingVestings).map((vesting) => (
               <div key={vesting.id}>
                 {vesting.status} {``}
@@ -40,7 +40,7 @@ const Vestings: FC<UserProps> = (props) => {
         </div>
         <h1 className="py-4 text-2xl font-bold">Outgoing vestings</h1>
         <div className="grid gap-2">
-          {outgoingVestings.length ? (
+          {outgoingVestings?.length ? (
             Object.values(outgoingVestings).map((vesting) => (
               <div key={vesting.id}>
                 {vesting.status} {``}
@@ -68,6 +68,6 @@ export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
   const user = (await sdk.UserVestings({ id: query.address })).VESTING_user
   return {
-    props: user,
+    props: user || {},
   }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 export default function Furo() {
   const [{ data: connection, error: connectError}, connect] = useConnect()

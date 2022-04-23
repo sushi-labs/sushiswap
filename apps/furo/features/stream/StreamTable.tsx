@@ -116,7 +116,7 @@ export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
         ),
       },
     ],
-    [],
+    [type],
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(

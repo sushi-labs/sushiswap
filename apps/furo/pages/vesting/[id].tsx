@@ -1,4 +1,5 @@
 import { curveStep } from '@visx/curve'
+import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from '@visx/xychart'
 import Main from 'app/components/Main'
 import {
@@ -83,7 +84,7 @@ const Vesting: FC<Props> = (props) => {
           <AnimatedAxis orientation="bottom" />
           <AnimatedGrid columns={false} numTicks={4} />
           <AnimatedLineSeries dataKey={''} data={chartData ?? []} {...accessors} curve={curveStep} />
-          <Tooltip
+          <TooltipWithBounds
             snapTooltipToDatumX
             snapTooltipToDatumY
             showSeriesGlyphs
