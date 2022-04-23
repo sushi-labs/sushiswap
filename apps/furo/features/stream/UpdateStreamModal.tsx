@@ -59,7 +59,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
       >
         Edit
       </button>
-      <Dialog open={isOpen} onClose={closeModal}>
+      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
         <div className="text-blue-600">
           <DialogContent>
             <div>Recipient: {shortenAddress(stream?.recipient.id)}</div>

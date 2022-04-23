@@ -45,7 +45,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
       >
         Cancel
       </button>
-      <Dialog open={isOpen} onClose={closeModal}>
+      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
         <div className="text-blue-600">
           <DialogContent>
             <div>

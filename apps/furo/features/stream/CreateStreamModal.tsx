@@ -94,7 +94,7 @@ const CreateStreamModal: FC = () => {
       <button type="button" onClick={openModal} className="font-medium text-white">
         Create stream
       </button>
-      <Dialog open={isOpen} onClose={closeModal}>
+      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
         <DialogContent>
           {/* TODO: replace with Select component from ui package? */}
           <div className="text-blue-600">
