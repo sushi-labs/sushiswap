@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@sushiswap/default-token-list": "^27.3.0",
+    "@sushiswap/chainlink-token-list": "^0.1.0",
     "@vercel/node": "^1.14.1"
   },
   "devDependencies": {

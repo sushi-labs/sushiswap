@@ -252,10 +252,12 @@ importers:
 
   apps/token-list:
     specifiers:
+      '@sushiswap/chainlink-token-list': ^0.1.0
       '@sushiswap/default-token-list': ^27.3.0
       '@vercel/node': ^1.14.1
       config: workspace:*
     dependencies:
+      '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/default-token-list': 27.3.0
       '@vercel/node': 1.14.1
     devDependencies:
@@ -3382,6 +3384,10 @@ packages:
     dependencies:
       '@sinonjs/commons': 1.8.3
     dev: true
+
+  /@sushiswap/chainlink-token-list/0.1.0:
+    resolution: {integrity: sha512-OQwr4BIYbF3FlMKYMslYhjGXXzdsduW+CfSTq86tUQZm9okJG4fKBmyA8ZYkZ+oW8dTDRuI5LGGidUYVQUFH7A==}
+    dev: false
 
   /@sushiswap/core-sdk/1.0.0-canary.90:
     resolution: {integrity: sha512-YnKbCqxoybroPkePlGRrGteGctoCu3bt7s+UV4yqguaWZfGE1T03K4KjQc1mrNfS8MU72IxiyzDkNc3wErFSBg==}
