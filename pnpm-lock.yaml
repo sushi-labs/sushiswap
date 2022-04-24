@@ -253,12 +253,12 @@ importers:
   apps/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^27.3.0
+      '@sushiswap/default-token-list': ^27.4.0
       '@vercel/node': ^1.14.1
       config: workspace:*
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 27.3.0
+      '@sushiswap/default-token-list': 27.4.0
       '@vercel/node': 1.14.1
     devDependencies:
       config: link:../../packages/config
@@ -3407,8 +3407,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@sushiswap/default-token-list/27.3.0:
-    resolution: {integrity: sha512-FCk5oI88fT+s8jUjdLtTWvqG/yiijqfAk+CT9tNr7Gw9kxipQciJgh8pgfYqRhNwWzS4RuSUJn2IrUDzkeiDsA==}
+  /@sushiswap/default-token-list/27.4.0:
+    resolution: {integrity: sha512-tMSVDVl3UI8C1bDqo/sd+ONhTf0myXz/iPDcXfoGlJyfDySZCKOnFSD+YuPlTxQyl629kdvWZz6cyk6zNdFRBA==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
