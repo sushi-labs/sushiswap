@@ -2,6 +2,7 @@ query UserVestings($id: ID!) {
   VESTING_user(id: $id) {
     incomingVestings {
       id
+      __typename
       status
       steps
       startedAt
@@ -28,6 +29,7 @@ query UserVestings($id: ID!) {
     }
     outgoingVestings {
       id
+      __typename
       status
       steps
       startedAt
@@ -58,6 +60,7 @@ query UserVestings($id: ID!) {
 query Vesting($id: ID!) {
   VESTING_vesting(id: $id) {
     id
+      __typename
     status
     steps
     startedAt

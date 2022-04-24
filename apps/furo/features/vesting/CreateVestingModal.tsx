@@ -137,7 +137,7 @@ const CreateVestingModal: FC = () => {
   }
 
   return (
-    <div>
+    <>
       <button type="button" onClick={openModal} className="font-medium text-white">
         Create Vesting
       </button>
@@ -225,7 +225,7 @@ const CreateVestingModal: FC = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }
 export default CreateVestingModal

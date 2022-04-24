@@ -9,24 +9,38 @@ import { ProgressColor, Table } from 'ui'
 import { classNames } from 'ui/lib/classNames'
 import ProgressBar from 'ui/progressbar/ProgressBar'
 import Typography from 'ui/typography/Typography'
-import { Status, StreamRepresentation } from '../context/representations'
+import { Status, StreamRepresentation, VestingRepresentation } from '../context/representations'
 import { Stream } from '../context/Stream'
+import { Vesting } from '../context/Vesting'
 
-export enum StreamTableType {
+export enum FuroTableType {
   INCOMING,
   OUTGOING,
 }
 
-interface StreamsProps {
+interface FuroTableProps {
   streams: StreamRepresentation[]
-  type: StreamTableType
+  vestings: VestingRepresentation[]
+  type: FuroTableType
 }
 
-export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
+export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
   const router = useRouter()
-  const data = useMemo(() => streams?.map((stream) => new Stream({ stream })) ?? [], [streams])
+  const data = useMemo(
+    () =>
+      streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
+      [],
+    [streams, vestings],
+  )
+  console.log({data})
   const columns = useMemo(
     () => [
+      {
+        Header: 'TYPE',
+        accessor: 'type',
+        maxWidth: 80,
+        Cell: ({ value }) => value,
+      },
       {
         Header: 'STATUS',
         accessor: 'status',
@@ -42,8 +56,8 @@ export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
         ),
       },
       {
-        Header: type === StreamTableType.INCOMING ? 'FROM' : 'TO',
-        accessor: type === StreamTableType.INCOMING ? 'createdBy.id' : 'recipient.id',
+        Header: type === FuroTableType.INCOMING ? 'FROM' : 'TO',
+        accessor: type === FuroTableType.INCOMING ? 'createdBy.id' : 'recipient.id',
         maxWidth: 120,
         Cell: (props) => shortenAddress(props.value),
       },
@@ -60,11 +74,11 @@ export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
         },
       },
       {
-        Header: 'STREAMED',
+        Header: 'PROGRESS',
         accessor: 'streamedPercentage',
         width: 220,
-        minWidth: 220,
-        maxWidth: 220,
+        minWidth: 230,
+        maxWidth: 230,
         Cell: (props) => (
           <div className="flex flex-grow gap-2">
             <ProgressBar
@@ -142,7 +156,7 @@ export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
           {rows.map((row, i) => {
             prepareRow(row)
             return (
-              <Table.tr {...row.getRowProps()} onClick={() => router.push(`/stream/${row.original.id}`)} key={i}>
+              <Table.tr {...row.getRowProps()} onClick={() => router.push(`/${row.original.type.toLowerCase()}/${row.original.id}`)} key={i}>
                 {row.cells.map((cell, i) => {
                   return (
                     <Table.td {...cell.getCellProps()} key={i}>
@@ -159,4 +173,4 @@ export const StreamTable: FC<StreamsProps> = ({ streams, type }) => {
   )
 }
 
-export default StreamTable
+export default FuroTable

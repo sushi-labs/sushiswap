@@ -1,9 +1,10 @@
 import { BigNumber } from 'ethers'
 import { Decimal } from 'math'
-import { FuroRepresentation, Status, TokenRepresentation, UserRepresentation } from './representations'
+import { FuroRepresentation, FuroType, Status, TokenRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
   public readonly id: string
+  public readonly type: FuroType
   public readonly status: Status
   public readonly amount: BigNumber
   public readonly withdrawnAmount: BigNumber
@@ -16,6 +17,7 @@ export abstract class Furo {
 
   public constructor({ furo }: { furo: FuroRepresentation }) {
     this.id = furo.id
+    this.type = furo.__typename
     this.amount = BigNumber.from(furo.totalAmount)
     this.withdrawnAmount = BigNumber.from(furo.withdrawnAmount)
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)

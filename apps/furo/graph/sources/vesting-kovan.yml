@@ -6,5 +6,6 @@ transforms:
   - prefix:
       value: VESTING_
       includeRootOperations: true
+      includeTypes: false
       ignore:
         - _SubgraphErrorPolicy_

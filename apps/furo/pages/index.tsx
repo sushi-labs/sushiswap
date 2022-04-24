@@ -35,10 +35,7 @@ export default function Furo() {
       {!connectError && accountData?.address ? (
         <>
           <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/streams/`}>[Streams]</Link>
-          </div>
-          <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/vestings/`}>[Vestings]</Link>
+            <Link href={`/users/${accountData.address.toLowerCase()}/`}>[Dashboard]</Link>
           </div>
         </>
       ) : (

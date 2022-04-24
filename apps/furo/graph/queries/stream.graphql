@@ -2,6 +2,7 @@ query UserStreams($id: ID!) {
   STREAM_user(id: $id) {
     incomingStreams(orderBy: startedAt) {
       id
+      __typename
       status
       startedAt
       expiresAt
@@ -23,6 +24,7 @@ query UserStreams($id: ID!) {
     }
     outgoingStreams(orderBy: startedAt) {
       id
+      __typename
       status
       startedAt
       expiresAt
@@ -48,6 +50,7 @@ query UserStreams($id: ID!) {
 query Stream($id: ID!) {
   STREAM_stream(id: $id) {
     id
+      __typename
     status
     startedAt
     expiresAt

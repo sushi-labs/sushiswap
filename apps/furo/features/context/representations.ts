@@ -1,5 +1,6 @@
 export interface FuroRepresentation {
   id: string
+  __typename: FuroType
   status: string
   totalAmount: string
   withdrawnAmount: string
@@ -52,6 +53,11 @@ export interface PeriodRepresentation {
   type: string
   time: string
   amount: string
+}
+
+export enum FuroType {
+  STREAM = 'Stream',
+  VESTING = 'Vesting',
 }
 
 export enum Status {

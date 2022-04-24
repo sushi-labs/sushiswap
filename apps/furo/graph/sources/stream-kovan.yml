@@ -6,5 +6,6 @@ transforms:
   - prefix:
       value: STREAM_
       includeRootOperations: true
-      ignore:
+      includeTypes: false
+      ignore: 
         - _SubgraphErrorPolicy_
