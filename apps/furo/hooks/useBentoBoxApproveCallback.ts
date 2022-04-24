@@ -16,6 +16,7 @@ export enum ApprovalState {
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback(
+  watch: boolean,
   masterContractAddress?: string,
 ): [ApprovalState, Signature, () => Promise<void>] {
   const [{ data: account }] = useAccount()
@@ -30,7 +31,7 @@ export function useBentoBoxApproveCallback(
     'masterContractApproved',
     {
       args: [masterContractAddress, account?.address],
-      watch: true,
+      watch,
     },
   )
   const [{data, error}, getNonces] = useContractRead(

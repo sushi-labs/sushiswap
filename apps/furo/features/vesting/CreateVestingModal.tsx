@@ -11,7 +11,6 @@ import { FC, useEffect, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
 
-
 type StepConfig = {
   label: string
   time: number
@@ -43,10 +42,10 @@ const CreateVestingModal: FC = () => {
   const tokens = useAllTokens()
   const contract = useFuroVestingContract()
   const [, sendTransaction] = useTransaction()
-  const [{ data: waitTxData }, wait] = useWaitForTransaction({
+  const [, wait] = useWaitForTransaction({
     skip: true,
   })
-  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(contract.address)
+  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
   const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
 
   function openModal() {
@@ -55,6 +54,8 @@ const CreateVestingModal: FC = () => {
   function closeModal() {
     setIsOpen(false)
   }
+
+  console.log({ tokenApprovalState, bentoBoxApprovalState })
 
   useEffect(() => {
     if (!cliffAmount && !stepAmount) return
@@ -73,15 +74,22 @@ const CreateVestingModal: FC = () => {
       console.log('missing required field', { token, recipient, startDate })
       return
     }
+
+    if (stepEndDate && !stepConfig) {
+      console.log('No payment frequency selected')
+      return
+    }
     const cliffDuration = cliffDate
       ? BigNumber.from((cliffDate.getTime() - startDate.getTime()) / 1000)
       : BigNumber.from(0)
-    const stepDuration = stepEndDate
-      ? cliffDuration
+    const totalStepDuration = stepEndDate
+      ? cliffDate
         ? BigNumber.from((stepEndDate.getTime() - cliffDate.getTime()) / 1000)
         : BigNumber.from((stepEndDate.getTime() - startDate.getTime()) / 1000)
       : BigNumber.from(0)
-    const steps = stepDuration ? stepDuration.div(stepConfig.time) : BigNumber.from(0)
+    const steps = totalStepDuration && stepConfig ? totalStepDuration.div(stepConfig?.time) : BigNumber.from(0)
+    const stepDuration = totalStepDuration && stepConfig ? totalStepDuration.div(steps) : BigNumber.from(0)
+
     const actions = [
       approveBentoBoxAction({ contract, user: account.address, signature }),
       vestingCreationAction({
@@ -92,8 +100,8 @@ const CreateVestingModal: FC = () => {
         cliffDuration,
         stepDuration,
         steps,
-        cliffAmount,
-        stepAmount,
+        cliffAmount: cliffAmount ? cliffAmount : BigNumber.from(0),
+        stepAmount: stepAmount ? stepAmount : BigNumber.from(0),
         fromBentoBox,
       }),
     ]
@@ -107,8 +115,8 @@ const CreateVestingModal: FC = () => {
     })
 
     if (tx.data && !tx.error) {
-      await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log('vesting created', waitTxData)
+      const data = await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
+      console.log('vesting created', data)
     }
   }
 

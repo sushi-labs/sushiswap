@@ -25,11 +25,11 @@ const CreateStreamModal: FC = () => {
   const tokens = useAllTokens()
   const contract = useFuroStreamContract()
   const [, sendTransaction] = useTransaction()
-  const [{ data: waitTxData }, wait] = useWaitForTransaction({
+  const [, wait] = useWaitForTransaction({
     skip: true,
   })
-  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(contract.address)
-  const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId]) // approve bentobox
+  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
+  const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
 
   function openModal() {
     setIsOpen(true)
@@ -60,8 +60,8 @@ const CreateStreamModal: FC = () => {
     })
 
     if (tx.data && !tx.error) {
-      await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log('stream created', waitTxData)
+      const data = await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
+      console.log('stream created', data)
     }
   }
 
@@ -101,7 +101,9 @@ const CreateStreamModal: FC = () => {
             Which asset do you want to stream?
             <div>
               <Listbox value={token} onChange={setToken}>
-                <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left rounded-lg shadow-md cursor-default bg-slate-400">{token?.symbol ?? 'Select token'}</Listbox.Button>
+                <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left rounded-lg shadow-md cursor-default bg-slate-400">
+                  {token?.symbol ?? 'Select token'}
+                </Listbox.Button>
                 <Listbox.Options>
                   {Object.values(tokens).map((token) => (
                     <Listbox.Option key={token.address} value={token}>
