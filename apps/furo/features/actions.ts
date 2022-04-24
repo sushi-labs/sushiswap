@@ -78,3 +78,42 @@ export const streamCreationAction = ({
     fromBentoBox,
   ])
 }
+
+export interface VestingCreationProps {
+  contract: Contract
+  recipient: string
+  token: Token
+  startDate: Date
+  cliffDuration: BigNumber
+  stepDuration: BigNumber
+  steps: BigNumber
+  cliffAmount: BigNumber
+  stepAmount: BigNumber
+  fromBentoBox: boolean
+}
+
+export const vestingCreationAction = ({
+  contract,
+  recipient,
+  token,
+  startDate,
+  cliffDuration,
+  stepDuration,
+  steps,
+  cliffAmount,
+  stepAmount,
+  fromBentoBox
+}: VestingCreationProps): string => {
+  return contract.interface.encodeFunctionData('createVesting', [
+    // TODO: check wnative address, pass in value
+    token.address,
+    recipient,
+    startDate.getTime() / 1000,
+    cliffDuration,
+    stepDuration,
+    steps,
+    cliffAmount,
+    stepAmount,
+    fromBentoBox
+  ])
+}

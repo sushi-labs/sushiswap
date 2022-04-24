@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'app/features/context/Stream'
 import { useToken } from 'app/hooks/Tokens'
-import { useFuroContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
 import { FC, useState } from 'react'
@@ -23,7 +23,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const chainId = network?.chain?.id
 
   const token = useToken(stream?.token.id)
-  const contract = useFuroContract()
+  const contract = useFuroStreamContract()
   const [, sendTransaction] = useTransaction()
   const [{ data: waitTxData }, wait] = useWaitForTransaction({
     skip: true,

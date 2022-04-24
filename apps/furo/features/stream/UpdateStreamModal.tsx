@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'app/features/context/Stream'
 import { useToken } from 'app/hooks/Tokens'
-import { useFuroContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from 'format'
@@ -20,7 +20,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
   const [newEndTime, setNewEndTime] = useState<Date>()
   const [{ data: account }] = useAccount()
   const token = useToken(stream?.token.id)
-  const contract = useFuroContract()
+  const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 
   function openModal() {

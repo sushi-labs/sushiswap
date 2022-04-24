@@ -3,12 +3,12 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { ApprovalState, useApproveCallback } from 'app/hooks'
 import { useAllTokens } from 'app/hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
-import { useFuroContract } from 'app/hooks/useFuroContract'
+import { useFuroStreamContract } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
-import { approveBentoBoxAction, batchAction, streamCreationAction } from './actions'
+import { approveBentoBoxAction, batchAction, streamCreationAction } from '../actions'
 // import {Dial} from '@headlessui/react'
 
 const CreateStreamModal: FC = () => {
@@ -23,7 +23,7 @@ const CreateStreamModal: FC = () => {
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
   const tokens = useAllTokens()
-  const contract = useFuroContract()
+  const contract = useFuroStreamContract()
   const [, sendTransaction] = useTransaction()
   const [{ data: waitTxData }, wait] = useWaitForTransaction({
     skip: true,
@@ -101,7 +101,7 @@ const CreateStreamModal: FC = () => {
             Which asset do you want to stream?
             <div>
               <Listbox value={token} onChange={setToken}>
-                <Listbox.Button>{token?.symbol ?? 'Select token'}</Listbox.Button>
+                <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left rounded-lg shadow-md cursor-default bg-slate-400">{token?.symbol ?? 'Select token'}</Listbox.Button>
                 <Listbox.Options>
                   {Object.values(tokens).map((token) => (
                     <Listbox.Option key={token.address} value={token}>

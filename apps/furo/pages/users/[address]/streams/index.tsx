@@ -2,6 +2,7 @@ import Layout from 'app/components/Layout'
 import { StreamRepresentation } from 'app/features/context/representations'
 import CreateStreamModal from 'app/features/stream/CreateStreamModal'
 import { StreamTable, StreamTableType } from 'app/features/stream/StreamTable'
+import CreateVestingModal from 'app/features/vesting/CreateVestingModal'
 import { FC } from 'react'
 import { Typography } from 'ui/typography'
 import { getBuiltGraphSDK } from '../../../../.graphclient'
@@ -26,6 +27,7 @@ const Streams: FC<StreamsProps> = ({ incomingStreams, outgoingStreams }) => {
             <StreamTable streams={incomingStreams} type={StreamTableType.INCOMING} />
           </div>
           <CreateStreamModal />
+          <CreateVestingModal />
           <div className="flex flex-col gap-5">
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Outgoing streams

@@ -1,6 +1,6 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'app/features/context/Stream'
-import { useFuroContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useEnsResolveName } from 'wagmi'
@@ -13,7 +13,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [toBentoBox, setToBentoBox] = useState<boolean>(true)
   const [{ data: account }] = useAccount()
-  const contract = useFuroContract()
+  const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 
   function openModal() {
