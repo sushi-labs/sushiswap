@@ -1,3 +1,5 @@
+import { FuroType } from "./enums"
+
 export interface FuroRepresentation {
   id: string
   __typename: FuroType
@@ -53,24 +55,4 @@ export interface PeriodRepresentation {
   type: string
   time: string
   amount: string
-}
-
-export enum FuroType {
-  STREAM = 'Stream',
-  VESTING = 'Vesting',
-}
-
-export enum Status {
-  ACTIVE = 'ACTIVE',
-  EXTENDED = 'EXTENDED',
-  CANCELLED = 'CANCELLED',
-  UPCOMING = 'UPCOMING',
-  COMPLETED = 'COMPLETED',
-}
-
-export enum TransactionType {
-  DEPOSIT = 'DEPOSIT',
-  EXTEND = 'EXTEND',
-  WITHDRAWAL = 'WITHDRAWAL',
-  DISBURSEMENT = 'DISBURSEMENT', // Payment to a sender and reciever when stream is cancelled
 }

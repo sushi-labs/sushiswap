@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
-import { Furo } from './Furo'
-import { StreamRepresentation, TokenRepresentation, TransactionRepresentation, TransactionType, UserRepresentation } from './representations'
+import { TransactionType } from './enums'
+import { TokenRepresentation, TransactionRepresentation, UserRepresentation } from './representations'
 
 export class Transaction {
   public readonly id: string

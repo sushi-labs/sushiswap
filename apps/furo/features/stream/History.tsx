@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import { FC } from 'react'
 import { HistoryIcon } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
-import { TransactionRepresentation, TransactionType } from '../context/representations'
+import { TransactionType } from '../context/enums'
+import { TransactionRepresentation } from '../context/representations'
 import { Transaction } from '../context/Transaction'
 
 interface Props {

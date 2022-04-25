@@ -4,7 +4,7 @@ import { shortenAddress } from 'format'
 import { FC, useState } from 'react'
 import { NotepadIcon } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
-import { Status } from '../context/representations'
+import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
@@ -70,7 +70,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   }
 
   const StreamDetails = () => {
-    return stream.status !== Status.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
+    return stream.status !== FuroStatus.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
   }
 
   return (

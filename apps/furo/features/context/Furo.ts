@@ -1,11 +1,12 @@
 import { BigNumber } from 'ethers'
 import { Decimal } from 'math'
-import { FuroRepresentation, FuroType, Status, TokenRepresentation, UserRepresentation } from './representations'
+import { FuroStatus, FuroType } from './enums'
+import { FuroRepresentation, TokenRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
   public readonly id: string
   public readonly type: FuroType
-  public readonly status: Status
+  public readonly status: FuroStatus
   public readonly amount: BigNumber
   public readonly withdrawnAmount: BigNumber
   public readonly startTime: Date
@@ -23,14 +24,14 @@ export abstract class Furo {
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
-    this.status = this.setStatus(Status[furo.status])
+    this.status = this.setStatus(FuroStatus[furo.status])
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.token = furo.token
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-    if (this.status !== Status.CANCELLED) {
+    if (this.status !== FuroStatus.CANCELLED) {
       const now = Date.now()
       const interval = this.endTime.getTime() - now
 
@@ -45,7 +46,7 @@ export abstract class Furo {
   }
 
   public get startingInTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-    if (this.status === Status.ACTIVE || this.status === Status.UPCOMING) {
+    if (this.status === FuroStatus.ACTIVE || this.status === FuroStatus.UPCOMING) {
       const now = Date.now()
       const interval = this.startTime.getTime() - now
 
@@ -60,7 +61,7 @@ export abstract class Furo {
   }
 
   public get activeTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-    const now = this.status !== Status.CANCELLED ? Date.now() : new Date(this.modifiedAtTimestamp).getTime()
+    const now = this.status !== FuroStatus.CANCELLED ? Date.now() : new Date(this.modifiedAtTimestamp).getTime()
 
     const interval = now - this.startTime.getTime()
 
@@ -77,7 +78,7 @@ export abstract class Furo {
    */
   public get streamedPercentage(): number {
     if (!this.isStarted) return 0
-    const now = this.status !== Status.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
+    const now = this.status !== FuroStatus.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
     const total = this.endTime.getTime() - this.startTime.getTime()
     const current = now - this.startTime.getTime()
     const streamed = current / total
@@ -93,14 +94,14 @@ export abstract class Furo {
   }
 
   public get isEnded(): boolean {
-    return this.status === Status.CANCELLED || this.endTime.getTime() <= Date.now()
+    return this.status === FuroStatus.CANCELLED || this.endTime.getTime() <= Date.now()
   }
 
-  private setStatus(status: Status): Status {
-    if (!this.isStarted) return Status.UPCOMING
-    if (status === Status.CANCELLED || status === Status.EXTENDED) return status
+  private setStatus(status: FuroStatus): FuroStatus {
+    if (!this.isStarted) return FuroStatus.UPCOMING
+    if (status === FuroStatus.CANCELLED || status === FuroStatus.EXTENDED) return status
     console.log(this.isEnded)
-    if (this.isEnded) return Status.COMPLETED
+    if (this.isEnded) return FuroStatus.COMPLETED
     return status
   }
 }

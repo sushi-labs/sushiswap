@@ -1,7 +1,7 @@
 import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
 import Typography from 'ui/typography/Typography'
-import { Status } from '../context/representations'
+import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
@@ -20,9 +20,9 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   const [remaining, setRemaining] = useState<StreamTimerState>()
 
   useInterval(() => {
-    if (stream?.status === Status.CANCELLED || stream?.status === Status.COMPLETED) return
+    if (stream?.status === FuroStatus.CANCELLED || stream?.status === FuroStatus.COMPLETED) return
     const { days, hours, minutes, seconds } =
-      stream?.status === Status.ACTIVE ? stream.remainingTime : stream.startingInTime
+      stream?.status === FuroStatus.ACTIVE ? stream.remainingTime : stream.startingInTime
 
     setRemaining({
       days: String(Math.max(days, 0)).padStart(2, '0'),

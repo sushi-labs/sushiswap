@@ -9,7 +9,8 @@ import { ProgressColor, Table } from 'ui'
 import { classNames } from 'ui/lib/classNames'
 import ProgressBar from 'ui/progressbar/ProgressBar'
 import Typography from 'ui/typography/Typography'
-import { Status, StreamRepresentation, VestingRepresentation } from '../context/representations'
+import { FuroStatus } from '../context/enums'
+import { StreamRepresentation, VestingRepresentation } from '../context/representations'
 import { Stream } from '../context/Stream'
 import { Vesting } from '../context/Vesting'
 
@@ -65,7 +66,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Header: 'VALUE',
         accessor: 'amount',
         Cell: (props) => {
-          if (props.row.original.status === Status.CANCELLED) {
+          if (props.row.original.status === FuroStatus.CANCELLED) {
             return `-`
           }
           const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
@@ -74,7 +75,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         },
       },
       {
-        Header: 'PROGRESS',
+        Header: 'STREAMED',
         accessor: 'streamedPercentage',
         width: 220,
         minWidth: 230,
