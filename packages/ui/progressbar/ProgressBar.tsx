@@ -27,7 +27,7 @@ const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel = true, 
     <div className="flex items-center gap-2">
       <div className={classNames('flex flex-grow h-2 rounded-full bg-dark-700 overflow-hidden', className)}>
         <div
-          className={`flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
+          className={`shadow-depth-1 flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
           style={{ width: `${Number(progress) * 100}%` }}
         />
       </div>
