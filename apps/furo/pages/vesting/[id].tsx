@@ -2,13 +2,14 @@ import { curveStep } from '@visx/curve'
 import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from '@visx/xychart'
 import Main from 'app/components/Main'
+import { Vesting } from 'app/features/context'
 import {
   ScheduleRepresentation,
   TransactionRepresentation,
   VestingRepresentation,
 } from 'app/features/context/representations'
 import { useRouter } from 'next/router'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 
 interface Props {
@@ -17,11 +18,14 @@ interface Props {
   schedule: ScheduleRepresentation
 }
 
-const Vesting: FC<Props> = (props) => {
+const VestingPage: FC<Props> = (props) => {
   const router = useRouter()
   const id = router.query.id as string
   let { vesting, transactions, schedule } = props
   const [chartData, setChartData] = useState<{ x; y }[]>()
+  // const vestTest = useMemo( () => new Vesting({vesting}), [vesting])
+  // console.log({vestTest})
+  // console.log(vestTest.nextPaymentTimeRemaining)
 
   useEffect(() => {
     const data = schedule.periods.map((period) => {
@@ -118,7 +122,7 @@ const Vesting: FC<Props> = (props) => {
   )
 }
 
-export default Vesting
+export default VestingPage
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()

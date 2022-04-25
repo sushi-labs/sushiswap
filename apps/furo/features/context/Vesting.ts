@@ -1,65 +1,65 @@
-import { BigNumber } from 'ethers'
+import { JSBI } from 'math'
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
 import { VestingRepresentation } from './representations'
 
 export class Vesting extends Furo {
-  public readonly steps: BigNumber
-  public readonly cliffAmount: BigNumber
-  public readonly stepAmount: BigNumber
-  public readonly cliffDuration: BigNumber
-  public readonly stepDuration: BigNumber
+  public readonly steps: number
+  public readonly cliffAmount: JSBI
+  public readonly stepAmount: JSBI
+  public readonly cliffDuration: number
+  public readonly stepDuration: number
   public readonly vestingType: VestingType
 
   public constructor({ vesting }: { vesting: VestingRepresentation }) {
     super({ furo: vesting })
-    this.steps = BigNumber.from(vesting.steps)
-    this.cliffAmount = BigNumber.from(vesting.cliffAmount)
-    this.stepAmount = BigNumber.from(vesting.stepAmount)
-    this.cliffDuration = BigNumber.from(vesting.cliffDuration)
-    this.stepDuration =  BigNumber.from(vesting.stepDuration)
-    this.stepDuration = BigNumber.from(vesting.stepDuration)
-    if (!this.stepDuration.isZero() && !this.cliffDuration.isZero()) {
+    this.steps = parseInt(vesting.steps)
+    this.cliffAmount = JSBI.BigInt(vesting.cliffAmount)
+    this.stepAmount = JSBI.BigInt(vesting.stepAmount)
+    this.cliffDuration = parseInt(vesting.cliffDuration)
+    this.stepDuration = parseInt(vesting.stepDuration)
+    if (this.stepDuration && this.cliffDuration) {
       this.vestingType = VestingType.HYBRID
-    } else if (!this.stepDuration.isZero()) {
+    } else if (this.stepDuration) {
       this.vestingType = VestingType.GRADED
-    } else if (!this.cliffDuration.isZero()) {
+    } else if (this.cliffDuration) {
       this.vestingType = VestingType.CLIFF
     } else {
       this.vestingType = VestingType.IMMEDIATE
     }
   }
 
-  // public get nextPaymentTimeRemaining(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
-  //   if (this.status === FuroStatus.ACTIVE || this.status === FuroStatus.UPCOMING) {
-  //     const now = Date.now()
-  //     let nextPayoutTime
-  //     if (this.vestingType === VestingType.HYBRID) {
-  //       // check if cliff has passed
-  //       // TODO: refactor everything to support bignumber?
-  //       const cliffTime = this.startTime.getTime() + (this.cliffDuration.toNumber() * 1000)
-  //       if (now < cliffTime) {
-  //         nextPayoutTime = new Date(cliffTime)
-  //       } else {
-  //         const passedSinceCliff = now - cliffTime
-  //         const ddd = passedSinceCliff / this.stepDuration.mul(1000).toNumber()
-  //         const stepPassed = this.steps.lt(ddd) ? this.steps : ddd
-  //       }
+  public get nextPaymentTimeRemaining(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
+    if (this.status === FuroStatus.ACTIVE || this.status === FuroStatus.UPCOMING) {
+      const now = Date.now()
+      let interval: number
 
-  //     }
-  //     const interval = this.endTime.getTime() - now
+      if (this.vestingType === VestingType.GRADED) {
+        if (this.status === FuroStatus.UPCOMING) {
+          interval = this.startTime.getTime() - now + this.stepDuration * 1000
+        } else {
+          const totalDuration = this.endTime.getTime() - now
+          interval = totalDuration % (this.stepDuration * 1000)
+        }
+      } else if (this.vestingType === VestingType.CLIFF) {
+        if (this.status === FuroStatus.UPCOMING) {
+          interval = now + this.cliffDuration * 1000
+        } else {
+          interval = this.startTime.getTime() + this.cliffDuration * 1000 - now
+        }
+        // TODO: add hybrid
+      } else {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+      }
 
-  //     let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-  //     let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  //     let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-  //     let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
-  //     return { days, hours, minutes, seconds }
-  //   }
-  //   return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-  // }
+      return { days, hours, minutes, seconds }
+    }
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
 
-  // public get claimableAmount(): BigNumber {
-  //   return
-  // }
 }
