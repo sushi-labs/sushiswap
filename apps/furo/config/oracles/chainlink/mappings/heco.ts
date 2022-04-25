@@ -1,0 +1,88 @@
+const HECO_CHAINLINK_MAPPING = {
+  '0x8a054991B803F6a6958Ba9695Cc8D366C8a30a69': {
+    from: '0x202b4936fE1a82A4965220860aE46d7d3939Bb25',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x98b666722D9Def641D8D4836c7cA3c38317B6B98': {
+    from: '0xeF3CEBD77E0C52cb6f60875d9306397B5Caca375',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0xD5c40f5144848Bd4EF08a9605d860e727b991513': {
+    from: '0x66a79D23E58475D2738179Ca52cd0b41d73f0BEa',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x0A7b23E981F16a429C8710C82f5fa5d01453A259': {
+    from: '0xA2c49cEe16a5E5bDEFDe931107dc1fae9f7773E3',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x5Fa530068e0F5046479c588775c157930EF0Dff0': {
+    from: '0x64FF637fB478863B7468bc97D30a5bF3A428a1fD',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x8EC213E7191488C7873cEC6daC8e97cdbAdb7B35': {
+    from: '0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x45f86CA2A8BC9EBD757225B19a1A0D7051bE46Db': {
+    from: '0x0298c2b32eaE4da002a15f36fdf7615BEa3DA047',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x87Ea38c9F24264Ec1Fff41B04ec94a97Caf99941': {
+    from: '0xecb56cf772B5c9A6907FB7d32387Da2fCbfB63b4',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0xaC4600b8F42317eAF056Cceb06cFf987c294840B': {
+    from: '0x25D2e80cB6B86881Fd7e07dd263Fb79f4AbE033c',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x1797a410485FeD6B05d5b39A475ddB9C33898ee8': {
+    from: '0x777850281719d5a96C29812ab72f822E0e09F3Da',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0x1E22E1eD4a96B4529D78cd4Bac55313809deF016': {
+    from: '0x22C54cE8321A4015740eE1109D9cBc25815C46E6',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+  '0xF0D3585D8dC9f1D1D1a7dd02b48C2630d9DD78eD': {
+    from: '0xa71EdC38d189767582C38A3145b5873052c3e47a',
+    to: '0x0000000000000000000000000000000000000001',
+    decimals: 8,
+    fromDecimals: 18,
+    toDecimals: 8,
+  },
+}
+
+export default HECO_CHAINLINK_MAPPING

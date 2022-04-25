@@ -1,7 +1,8 @@
+import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
 import Typography from 'ui/typography/Typography'
-import useInterval from '../../hooks/useInterval'
-import { Stream } from './context/Stream'
+import { Status } from '../context/representations'
+import { Stream } from '../context/Stream'
 
 interface StreamTimerState {
   days: string
@@ -19,9 +20,10 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   const [remaining, setRemaining] = useState<StreamTimerState>()
 
   useInterval(() => {
-    if (!stream?.remainingTime) return
+    if (stream?.status === Status.CANCELLED || stream?.status === Status.COMPLETED) return
+    const { days, hours, minutes, seconds } =
+      stream?.status === Status.ACTIVE ? stream.remainingTime : stream.startingInTime
 
-    const { days, hours, minutes, seconds } = stream.remainingTime
     setRemaining({
       days: String(Math.max(days, 0)).padStart(2, '0'),
       hours: String(Math.max(hours, 0)).padStart(2, '0'),
@@ -37,7 +39,7 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   if (remaining) {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex gap-6 text-high-emphesis justify-center">
+        <div className="flex justify-center gap-6 text-high-emphesis">
           <div className="flex flex-col text-center">
             <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
               {remaining.days}
@@ -72,7 +74,7 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
           </div>
         </div>
         <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
-          REMAINING
+          {stream?.isStarted ? `REMAINING` : `STARTS IN`}
         </Typography>
       </div>
     )

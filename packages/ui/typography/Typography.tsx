@@ -30,7 +30,7 @@ export interface TypographyProps extends React.AllHTMLAttributes<React.ReactHTML
   clickable?: boolean
 }
 
-const Typography: FC<TypographyProps> = forwardRef(
+export const Typography: FC<TypographyProps> = forwardRef(
   (
     {
       variant = 'base',

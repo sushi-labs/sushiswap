@@ -1,5 +1,8 @@
 {
   "pipeline": {
+    "validate": {
+      "cache": false
+    },
     "generate": {
       "cache": false
     },

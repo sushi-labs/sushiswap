@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers'
 import { FC, useEffect, useState } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
-import { Stream } from './context/Stream'
+import { Stream } from '../context/Stream'
 
 interface Props {
   stream: Stream

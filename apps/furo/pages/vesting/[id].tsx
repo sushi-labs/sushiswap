@@ -1,65 +1,20 @@
 import { curveStep } from '@visx/curve'
+import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from '@visx/xychart'
+import Main from 'app/components/Main'
+import {
+  ScheduleRepresentation,
+  TransactionRepresentation,
+  VestingRepresentation,
+} from 'app/features/context/representations'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import Main from '../../components/Main'
 
 interface Props {
-  vesting: Vesting
-  transactions: Transaction[]
-  schedule: Schedule
-}
-
-interface Vesting {
-  id: string
-  status: string
-  steps: string
-  startedAt: string
-  expiresAt: string
-  cliffDuration: string
-  stepDuration: string
-  stepAmount: string
-  cliffAmount: string
-  totalAmount: string
-  withdrawnAmount: string
-  fromBentoBox: boolean
-  token: Token
-  recipient: User
-  createdBy: User
-}
-
-interface Transaction {
-  id: string
-  type: string
-  amount: string
-  toBentoBox: false
-  withdrawnAmount: string
-  createdAtBlock: string
-  createdAtTimestamp: string
-  token: Token
-}
-
-interface Token {
-  id: string
-  symbol: string
-  name: string
-  decimals: string
-}
-
-interface User {
-  id: string
-}
-
-interface Schedule {
-  periods: Period[]
-}
-
-interface Period {
-  id: string
-  type: string
-  time: string
-  amount: string
+  vesting: VestingRepresentation
+  transactions: TransactionRepresentation[]
+  schedule: ScheduleRepresentation
 }
 
 const Vesting: FC<Props> = (props) => {
@@ -129,7 +84,7 @@ const Vesting: FC<Props> = (props) => {
           <AnimatedAxis orientation="bottom" />
           <AnimatedGrid columns={false} numTicks={4} />
           <AnimatedLineSeries dataKey={''} data={chartData ?? []} {...accessors} curve={curveStep} />
-          <Tooltip
+          <TooltipWithBounds
             snapTooltipToDatumX
             snapTooltipToDatumY
             showSeriesGlyphs
@@ -167,9 +122,9 @@ export default Vesting
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const vesting = (await sdk.Vesting({ id: query.id })).vesting
-  const transactions = (await sdk.VestingTransactions({ id: query.id })).vestingTransactions
-  const schedule = (await sdk.VestingSchedule({ id: query.id })).vesting.schedule
+  const vesting = (await sdk.Vesting({ id: query.id })).VESTING_vesting
+  const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions
+  const schedule = (await sdk.VestingSchedule({ id: query.id })).VESTING_vesting.schedule
   return {
     props: {
       vesting,
