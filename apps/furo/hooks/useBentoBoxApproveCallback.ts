@@ -2,17 +2,10 @@ import { splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import BENTOBOX_ABI from 'app/abis/bentobox.json'
+import { ApprovalState } from 'app/types/approval-state'
 import { Signature } from 'ethers'
-import { useState } from 'react'
-import { useCallback, useMemo } from 'react'
-import { useAccount, useContract, useContractRead, useNetwork, useSigner, useSignTypedData } from 'wagmi'
-
-export enum ApprovalState {
-  UNKNOWN = 'UNKNOWN',
-  NOT_APPROVED = 'NOT_APPROVED',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-}
+import { useCallback, useMemo, useState } from 'react'
+import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback(
@@ -20,7 +13,6 @@ export function useBentoBoxApproveCallback(
   masterContractAddress?: string,
 ): [ApprovalState, Signature, () => Promise<void>] {
   const [{ data: account }] = useAccount()
-  // const [{ data: signer }, getSigner] = useSigner()
   const [{ data: network }, switchNetwork] = useNetwork()
   const chainId = network?.chain?.id
   const [{ data: isBentoBoxApproved, loading }] = useContractRead(
@@ -34,7 +26,7 @@ export function useBentoBoxApproveCallback(
       watch,
     },
   )
-  const [{data, error}, getNonces] = useContractRead(
+  const [{ data, error }, getNonces] = useContractRead(
     {
       addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,
       contractInterface: BENTOBOX_ABI,
@@ -42,7 +34,7 @@ export function useBentoBoxApproveCallback(
     'nonces',
     {
       args: [account?.address],
-      skip: true
+      skip: true,
     },
   )
 
@@ -66,10 +58,8 @@ export function useBentoBoxApproveCallback(
       console.error('no address')
       return
     }
-    // console.log(bentoBoxContract)
-    // const nonce = await bentoBoxContract?.nonces(account.address)
 
-    const {data: nonces} = await getNonces()
+    const { data: nonces } = await getNonces()
     const { data, error } = await signTypedData({
       domain: {
         name: 'BentoBox V1',
@@ -93,7 +83,7 @@ export function useBentoBoxApproveCallback(
         nonce: nonces,
       },
     })
-    console.log('signed ', { data, error})
+    console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
   }, [account?.address, approvalState, getNonces, chainId, masterContractAddress, signTypedData])

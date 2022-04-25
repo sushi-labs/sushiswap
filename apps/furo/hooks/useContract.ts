@@ -46,7 +46,7 @@ export function useContract<T extends Contract = Contract>(
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
   const provider = useProvider()
-  // const [{ data: signer, error, loading } ] = useSigner()
+
 
   return useMemo(() => {
     if (!addressOrAddressMap || !ABI || !provider || !chainId) return null

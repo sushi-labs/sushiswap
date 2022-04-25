@@ -1,20 +1,13 @@
 import { AddressZero } from '@ethersproject/constants'
 import { calculateGasMargin } from 'app/functions/trade'
+import { ApprovalState } from 'app/types/approval-state'
 import { Amount, Token } from 'currency'
 import { Contract } from 'ethers'
 import { MAX_UINT256 } from 'math'
-import { useState } from 'react'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContract, useSigner, useWaitForTransaction } from 'wagmi'
 import { useTokenAllowance } from './useTokenAllowance'
 
-
-export enum ApprovalState {
-  UNKNOWN = 'UNKNOWN',
-  NOT_APPROVED = 'NOT_APPROVED',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-}
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(

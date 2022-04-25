@@ -1,9 +1,10 @@
 import { Dialog, Listbox } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
-import { ApprovalState, useApproveCallback } from 'app/hooks'
+import { useApproveCallback } from 'app/hooks'
 import { useAllTokens } from 'app/hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
 import { useFuroStreamContract } from 'app/hooks/useFuroContract'
+import { ApprovalState } from 'app/types/approval-state'
 import { Amount, Token } from 'currency'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'

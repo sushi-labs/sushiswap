@@ -80,7 +80,3 @@ export function sortByListPriority(urlA: string, urlB: string) {
   else if (first > second) return -1
   return 0
 }
-
-export function listVersionLabel(version: Version): string {
-  return `v${version.major}.${version.minor}.${version.patch}`
-}
