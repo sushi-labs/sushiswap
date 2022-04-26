@@ -4,7 +4,7 @@ import { StreamRepresentation, TransactionRepresentation } from 'app/features/co
 import { Stream } from 'app/features/context/Stream'
 import BalanceChart from 'app/features/stream/BalanceChart'
 import CancelStreamModal from 'app/features/stream/CancelStreamModal'
-import HistoryPopover from 'app/features/stream/History'
+import HistoryPopover from 'app/features/stream/HistoryPopover'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import StreamTimer from 'app/features/stream/StreamTimer'
 import TransferStreamModal from 'app/features/stream/TransferStreamModal'
@@ -14,6 +14,7 @@ import { FC, useMemo } from 'react'
 import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
 import { Typography } from 'ui/typography'
 import { getBuiltGraphSDK } from '../../.graphclient'
+import LinkPopover from 'app/features/stream/LinkPopover'
 
 interface Props {
   stream: StreamRepresentation
@@ -30,14 +31,9 @@ const Streams: FC<Props> = (props) => {
         <div className="w-[430px]">
           <BalanceChart stream={stream} />
           <div className="flex justify-center gap-2">
-            <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
-              <LinkIcon width={18} height={18} />
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
-                Links
-              </Typography>
-            </div>
-            <StreamDetailsPopover stream={stream}/>
-            <HistoryPopover transactionRepresentations={transactions}/>
+            <LinkPopover stream={stream} />
+            <StreamDetailsPopover stream={stream} />
+            <HistoryPopover transactionRepresentations={transactions} />
           </div>
         </div>
         <div className="w-[280px] flex flex-col col-span-2 justify-between">
@@ -69,10 +65,10 @@ const Streams: FC<Props> = (props) => {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <WithdrawModal stream={stream}/>
-            <TransferStreamModal stream={stream}/>
-            <UpdateStreamModal stream={stream}/>
-            <CancelStreamModal stream={stream}/>
+            <WithdrawModal stream={stream} />
+            <TransferStreamModal stream={stream} />
+            <UpdateStreamModal stream={stream} />
+            <CancelStreamModal stream={stream} />
           </div>
         </div>
       </div>

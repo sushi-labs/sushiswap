@@ -63,7 +63,8 @@ const BalanceChart: FC<Props> = (props) => {
             const size = 10
             return half - size
           }}
-          padAngle={0.01}
+          cornerRadius={3}
+          padAngle={0.005}
         >
           {(pie) => {
             return pie.arcs.map((arc) => {

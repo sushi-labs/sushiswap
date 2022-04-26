@@ -6,6 +6,7 @@ import { NotepadIcon } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
 import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
+import { usePopover } from 'app/hooks/usePopover'
 
 interface StreamTimerState {
   days: string
@@ -20,6 +21,7 @@ interface Props {
 
 const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   const [remaining, setRemaining] = useState<StreamTimerState>()
+  const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
 
   useInterval(() => {
     if (!stream?.remainingTime) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
@@ -75,7 +77,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
 
   return (
     <Popover>
-      <Popover.Button>
+      <Popover.Button ref={setReferenceElement}>
         <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
           <NotepadIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-high-emphesis">
@@ -83,7 +85,13 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           </Typography>
         </div>
       </Popover.Button>
-      <Popover.Panel className="absolute z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]">
+
+      <Popover.Panel
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+        className="z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
+      >
         <div className="flex justify-between gap-4">
           <Typography variant="lg" weight={700} className="text-high-emphesis">
             Details

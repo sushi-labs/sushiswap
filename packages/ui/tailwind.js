@@ -14,7 +14,7 @@ module.exports = {
         'gradient-radial': 'radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops))',
       }),
       boxShadow: {
-        'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.25)',
+        'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
       },
       colors: {
         purple: {
