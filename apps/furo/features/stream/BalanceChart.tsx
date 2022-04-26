@@ -16,7 +16,7 @@ const BalanceChart: FC<Props> = (props) => {
   const [{ data, error, loading }, getSigner] = useSigner()
   const [streamed, setStreamed] = useState([])
   const contract = useContract({
-    addressOrName: '0x511D5aef6eb2eFDf71b98B4261Bbe68CC0A94Cd4',
+    addressOrName: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
     contractInterface: FuroStreamABI,
     signerOrProvider: data,
   })
@@ -34,16 +34,16 @@ const BalanceChart: FC<Props> = (props) => {
   }, [contract, stream.id, data])
 
   useEffect(() => {
-    if (!stream.amount && !balance) {
+    if (stream.amount && balance) {
       setStreamed([
         { type: 'Streamed', amount: balance, color: '#0033ad' },
         { type: 'Withdrawn', amount: stream.withdrawnAmount.toNumber(), color: 'red' },
-        { type: 'Total', amount: stream.amount.sub(balance).toNumber(), color: 'grey' },
+        { type: 'Total', amount: stream.amount.sub(balance).toNumber(), color: 'gray' },
       ])
     }
   }, [balance, stream.amount, stream.withdrawnAmount])
 
-  const width = 550
+  const width = 420
   const half = width / 2
   const [active, setActive] = useState(null)
 
