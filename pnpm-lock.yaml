@@ -232,7 +232,7 @@ importers:
       cids: ^1.0.0
       config: workspace:*
       currency: workspace:*
-      date-fns: link:date-fns
+      date-fns: ^2.28.0
       eslint: 8.10.0
       ethers: ^5.6.1
       format: workspace:*
@@ -290,7 +290,7 @@ importers:
       chain: link:../../packages/chain
       cids: 1.1.9
       currency: link:../../packages/currency
-      date-fns: link:date-fns
+      date-fns: 2.28.0
       ethers: 5.6.1
       format: link:../../packages/format
       furo: github.com/sushiswap/furo/d7989e3ac7558d9bd82f4094ab370b24630f69a4

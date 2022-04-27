@@ -45,7 +45,7 @@
     "chain": "workspace:*",
     "cids": "^1.0.0",
     "currency": "workspace:*",
-    "date-fns": "link:date-fns",
+    "date-fns": "^2.28.0",
     "ethers": "^5.6.1",
     "format": "workspace:*",
     "furo": "github:sushiswap/furo#feature/furo-deploy",
