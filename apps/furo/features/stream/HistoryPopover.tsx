@@ -9,6 +9,7 @@ import { Transaction } from 'app/features/context'
 import { XIcon } from '@heroicons/react/outline'
 import { format } from 'date-fns'
 import { usePopover } from 'app/hooks/usePopover'
+import { useAccount } from 'wagmi'
 
 interface Props {
   transactionRepresentations: TransactionRepresentation[]
@@ -16,9 +17,13 @@ interface Props {
 
 const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
+  const [{ data: account }] = useAccount()
   let transactions = useMemo(
-    () => transactionRepresentations.map((transaction) => new Transaction(transaction)),
-    [transactionRepresentations],
+    () =>
+      transactionRepresentations
+        .filter((transaction) => transaction.to.id === account?.address.toLocaleLowerCase())
+        .map((transaction) => new Transaction(transaction)),
+    [transactionRepresentations, account],
   )
 
   return (
@@ -54,15 +59,6 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
               <i>No transactions found..</i>
             </div>
           )}
-          {transactions.length ? (
-            Object.values(transactions).map((transaction) => (
-              <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
-            ))
-          ) : (
-            <div>
-              <i>No transactions found..</i>
-            </div>
-          )}
         </div>
         <div className="w-full h-[60px] bottom-0 left-0 absolute bg-gradient-to-b from-[rgba(22,_21,_34,_0)] to-[#161522]" />
       </Popover.Panel>
@@ -72,13 +68,12 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
 
 const HistoryPopoverTransaction: FC<{ transaction: Transaction }> = memo(({ transaction }) => {
   return (
-    <div key={transaction.id} className="flex justify-between gap-3 items-center py-3">
+    <div key={transaction.id} className="flex items-center justify-between gap-3 py-3">
       <div className="grid grid-cols-[20px_80px_140px] gap-2 items-center">
-        {/* TODO: Replace the icons depending on the status? DEPOSIT, WITHDRAWAL, EXTEND, DISBURSEMENT */}
         {transaction.status === TransactionType.DEPOSIT ? (
           <ArrowFlatLinesUp width={18} height={18} className="text-blue" />
         ) : TransactionType.WITHDRAWAL ? (
-          <ArrowFlatLinesUp width={18} height={18} className="text-pink transform rotate-180" />
+          <ArrowFlatLinesUp width={18} height={18} className="transform rotate-180 text-pink" />
         ) : TransactionType.EXTEND ? (
           <HistoryIcon width={18} height={18} />
         ) : (
