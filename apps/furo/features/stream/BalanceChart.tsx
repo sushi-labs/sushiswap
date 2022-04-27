@@ -3,7 +3,7 @@ import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
-import { JSBI } from 'math'
+import { Decimal, JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
@@ -17,6 +17,7 @@ const BalanceChart: FC<Props> = (props) => {
   const [balance, setBalance] = useState<Amount<Token>>(null)
   const [{ data, error, loading }, getSigner] = useSigner()
   const [streamed, setStreamed] = useState([])
+  const [withdrawn, setWithdrawn] = useState([])
   const contract = useContract({
     addressOrName: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
     contractInterface: FuroStreamABI,
@@ -29,21 +30,29 @@ const BalanceChart: FC<Props> = (props) => {
     }
     const fetchBalance = async () => {
       const result = await contract.streamBalanceOf(stream.id)
-
-      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(result.recipientBalance ?? 0)))
+      console.log(result)
+      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(result.recipientBalance.toString() ?? 0)))
     }
     fetchBalance()
   }, [contract, data, stream])
 
   useEffect(() => {
-    if (stream && balance) {
+    if (stream) {
+      const leftToStream = 1 - stream.streamedPercentage
       setStreamed([
-        { type: 'Streamed', amount: balance, color: '#0033ad' },
-        { type: 'Withdrawn', amount: stream.withdrawnAmount.toExact(), color: '#F43FC5', opacity: '100%' },
-        { type: 'Total', amount: stream.amount.subtract(balance).toExact(), color: '#1398ED', opacity: '100%' }, // TODO: this should have opacity 0%, then add another circle?
+        {
+          type: 'Total',
+          amount: Decimal(stream?.amount.toExact()).mul(stream.streamedPercentage).toString(),
+          color: '#1398ED',
+        },
+        { type: 'Total', amount: Decimal(stream?.amount.toExact()).mul(leftToStream).toString(), color: '#f43fc5', opacity: '0%' },
+      ])
+      setWithdrawn([
+        { type: 'Withdrawn', amount: stream.withdrawnAmount.toExact(), color: '#f43fc5', opacity: '100%' },
+        { type: 'Total', amount: stream.amount.subtract(stream.withdrawnAmount).toExact(), color: '#f43fc5', opacity: '0%' },
       ])
     }
-  }, [balance, stream])
+  }, [stream])
 
   const width = 420
   const half = width / 2
@@ -60,6 +69,7 @@ const BalanceChart: FC<Props> = (props) => {
           data={streamed}
           pieSort={null}
           pieValue={(data) => data.amount}
+          startOffset={0}
           outerRadius={half}
           innerRadius={() => {
             const size = 10
@@ -72,7 +82,30 @@ const BalanceChart: FC<Props> = (props) => {
             return pie.arcs.map((arc) => {
               return (
                 <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity}/>
+                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity} />
+                </g>
+              )
+            })
+          }}
+        </Pie>
+        <Pie
+          data={withdrawn}
+          pieSort={null}
+          startOffset={0}
+          pieValue={(data) => data.amount}
+          outerRadius={half * 0.88}
+          innerRadius={() => {
+            const size = 15
+            return half - size
+          }}
+          cornerRadius={3}
+          padAngle={0.05}
+        >
+          {(pie) => {
+            return pie.arcs.map((arc) => {
+              return (
+                <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
+                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity} />
                 </g>
               )
             })
@@ -91,10 +124,10 @@ const BalanceChart: FC<Props> = (props) => {
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {`${balance?.toExact() ?? 0} ${stream.token.symbol}`}
+              {`${balance?.toSignificant()} ${stream.token.symbol}`}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-              {`/ ${stream?.amount.toExact()  ?? 0} ${stream.token.symbol} Total`}
+              {`/ ${stream?.amount.toExact() ?? 0} ${stream.token.symbol} Total`}
             </Text>
           </>
         )}
