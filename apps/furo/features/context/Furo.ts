@@ -90,9 +90,21 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
-    if (this.status === FuroStatus.CANCELLED) return this.streamedPercentage
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
+
+
+  public get streamedAmount(): string {
+    if (!this.isStarted) return "0"
+    return Decimal(this.amount.toExact()).mul(this.streamedPercentage).toString()
+  }
+
+  public get unclaimableAmount(): string {
+    if (!this.isStarted) return "0"
+    const leftToStreamPercentage = 1 - this.streamedPercentage
+    return Decimal(this.amount.toExact()).mul(leftToStreamPercentage).toString()
+  }
+
 
   public get isStarted(): boolean {
     return this.startTime.getTime() <= Date.now()

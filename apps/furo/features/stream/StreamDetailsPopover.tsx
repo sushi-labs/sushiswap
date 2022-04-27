@@ -7,7 +7,7 @@ import Typography from 'ui/typography/Typography'
 import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
 import { usePopover } from 'app/hooks/usePopover'
-import Copy from 'ui/copy/Copy'
+// import Copy from 'ui/copy/Copy'
 
 interface StreamTimerState {
   days: string
@@ -107,9 +107,9 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 variant="xs"
                 className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
-              <Copy toCopy={stream.createdBy.id}>
+              {/* <Copy toCopy={stream.createdBy.id ? stream.createdBy.id : ""}> */}
                 {shortenAddress(stream.createdBy.id)}
-              </Copy>
+              {/* </Copy> */}
               </Typography>
               
             </div>
@@ -122,9 +122,9 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 variant="xs"
                 className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
               >
-              <Copy toCopy={stream.recipient.id}>
+              {/* <Copy toCopy={stream.recipient.id ? stream.recipient.id : ""}> */}
                 {shortenAddress(stream.recipient.id)}
-              </Copy>
+              {/* </Copy> */}
               </Typography>
             </div>
           </div>

@@ -2,12 +2,10 @@ import { Group } from '@visx/group'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
 import { Amount, Token } from 'currency'
-import { BigNumber } from 'ethers'
 import { Decimal, JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
-import { useContract, useSigner } from 'wagmi'
+import { useContract, useContractRead, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
-import { FuroStatus } from '../context'
 import { Stream } from '../context/Stream'
 
 interface Props {
@@ -16,52 +14,49 @@ interface Props {
 const BalanceChart: FC<Props> = (props) => {
   const stream = props.stream
   const [balance, setBalance] = useState<Amount<Token>>(null)
-  const [{ data, error, loading }, getSigner] = useSigner()
   const [streamed, setStreamed] = useState([])
   const [withdrawn, setWithdrawn] = useState([])
-  const contract = useContract({
-    addressOrName: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
-    contractInterface: FuroStreamABI,
-    signerOrProvider: data,
-  })
+  const [{ data: streamBalanceOf }] = useContractRead(
+    {
+      addressOrName: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
+      contractInterface: FuroStreamABI,
+    },
+    'streamBalanceOf',
+    {
+      args: [stream?.id],
+      watch: true,
+    },
+  )
 
   useEffect(() => {
-    if (!data || !contract || !stream || !stream.withdrawnAmount || !stream.amount) {
+    if (!streamBalanceOf || !stream) {
       return
     }
     const fetchBalance = async () => {
-      const result = await contract.streamBalanceOf(stream.id)
-      console.log(result)
-      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(result.recipientBalance.toString() ?? 0)))
+      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(streamBalanceOf.recipientBalance.toString() ?? 0)))
     }
     fetchBalance()
-  }, [contract, data, stream])
+  }, [streamBalanceOf, stream])
 
   useEffect(() => {
     if (stream) {
-      const leftToStream = 1 - stream.streamedPercentage
-
-      // TODO: move all this logic to the Furo class instead? .streamedAmount .withdrawnAmount etc
       setStreamed([
         {
           type: 'Streamed',
-          amount: Decimal(stream?.amount.toExact()).mul(stream.streamedPercentage).toString(),
+          amount: stream?.streamedAmount,
           color: '#1398ED',
         },
         {
           type: 'Not streamed',
-          amount: Decimal(stream?.amount.toExact()).mul(leftToStream).toString(),
-          color: '#f43fc5',
+          amount: stream?.unclaimableAmount,
+          color: '#1398ED',
           opacity: '0%',
         },
       ])
       setWithdrawn([
         {
           type: 'Withdrawn',
-          amount:
-            stream.status !== FuroStatus.CANCELLED
-              ? stream.withdrawnAmount.toExact()
-              : Decimal(stream?.amount.toExact()).mul(stream.streamedPercentage).toString(),
+          amount: stream.withdrawnAmount.toExact(),
           color: '#f43fc5',
           opacity: '100%',
         },
@@ -114,7 +109,7 @@ const BalanceChart: FC<Props> = (props) => {
           pieSort={null}
           startOffset={0}
           pieValue={(data) => data.amount}
-          outerRadius={half * 0.88}
+          outerRadius={half * 0.87}
           innerRadius={() => {
             const size = 15
             return half - size
@@ -136,19 +131,21 @@ const BalanceChart: FC<Props> = (props) => {
         {active ? (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {Math.floor(active.amount)}
+              {active.type == 'Withdrawn'
+                ? `${stream?.withdrawnAmount.toExact()} ${stream?.token.symbol}`
+                : `${stream?.amount.toExact()} ${stream?.token.symbol}`}
             </Text>
             <Text textAnchor="middle" fill={active.color} fontSize={20} dy={20}>
-              {active.type}
+              {active?.type}
             </Text>
           </>
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {`${balance?.toSignificant()} ${stream.token.symbol}`}
+              {`${balance ? balance.toSignificant() : '0'} ${stream?.token.symbol}`}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-              {`/ ${stream?.amount.toExact() ?? 0} ${stream.token.symbol} Total`}
+              {`/ ${balance ? stream.amount.toExact() : '0'} ${stream?.token.symbol} Total`}
             </Text>
           </>
         )}
