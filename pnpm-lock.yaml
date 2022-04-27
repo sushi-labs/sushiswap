@@ -499,11 +499,13 @@ importers:
     specifiers:
       '@types/jest': ^27.4.1
       config: workspace:*
+      copy-to-clipboard: ^3.3.1
       jest: ^27.5.1
       typescript: ^4.6.2
     devDependencies:
       '@types/jest': 27.4.1
       config: link:../config
+      copy-to-clipboard: 3.3.1
       jest: 27.5.1
       typescript: 4.6.2
 
@@ -545,6 +547,7 @@ importers:
       '@types/react-dom': ^17.0.11
       clsx: ^1.1.1
       config: workspace:*
+      hooks: workspace:*
       next-transpile-modules: ^9.0.0
       typescript: ^4.6.2
     dependencies:
@@ -556,6 +559,7 @@ importers:
       '@tailwindcss/line-clamp': 0.3.1
       '@tailwindcss/typography': 0.5.2
       clsx: 1.1.1
+      hooks: link:../hooks
       next-transpile-modules: 9.0.0
     devDependencies:
       '@types/react': 17.0.41
@@ -6128,7 +6132,6 @@ packages:
     resolution: {integrity: sha512-i13qo6kIHTTpCm8/Wup+0b1mVWETvu2kIMzKoK8FpkLkFxlt0znUAHcMzox+T8sPlqtZXq3CulEjQHsYiGFJUw==}
     dependencies:
       toggle-selection: 1.0.6
-    dev: false
 
   /core-js-compat/3.21.1:
     resolution: {integrity: sha512-gbgX5AUvMb8gwxC7FLVWYT7Kkgu/y7+h/h1X43yJkNqhlK2fuYyQimqvKGNZFAY6CKii/GFKJ2cp/1/42TN36g==}
@@ -11033,7 +11036,6 @@ packages:
 
   /toggle-selection/1.0.6:
     resolution: {integrity: sha1-bkWxJj8gF/oKzH2J14sVuL932jI=}
-    dev: false
 
   /toidentifier/1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
