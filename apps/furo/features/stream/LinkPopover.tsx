@@ -2,10 +2,12 @@ import { Popover } from '@headlessui/react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { LinkIcon } from '@heroicons/react/solid'
 import { Stream } from 'app/features/context'
+import { getExplorerLink } from 'app/functions/explorer'
 import { usePopover } from 'app/hooks/usePopover'
 import { FC } from 'react'
 import { ArrowFlatLinesUp } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
+import { useNetwork } from 'wagmi'
 
 interface Props {
   stream: Stream
@@ -13,6 +15,8 @@ interface Props {
 
 const LinkPopover: FC<Props> = ({ stream }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
+  const [{ data: network }] = useNetwork()
+  const chainId = network?.chain?.id
 
   return (
     <Popover>
@@ -53,14 +57,19 @@ const LinkPopover: FC<Props> = ({ stream }) => {
             Copy Recipient Link
           </Typography>
         </div>
-        <div className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600">
+        <a
+          className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
+          href={getExplorerLink(chainId, stream.txHash, 'transaction')}
+          target="_blank"
+          rel="noreferrer"
+        >
           <div className="p-4 border rounded-full border-dark-700 bg-dark-800">
             <ExternalLinkIcon width={48} height={48} className="text-primary" />
           </div>
           <Typography variant="xs" className="text-high-emphesis whitespace-nowrap" weight={700}>
             View on Etherscan
           </Typography>
-        </div>
+        </a>
       </Popover.Panel>
     </Popover>
   )

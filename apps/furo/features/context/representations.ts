@@ -12,6 +12,7 @@ export interface FuroRepresentation {
   recipient: UserRepresentation
   createdBy: UserRepresentation
   token: TokenRepresentation
+  txHash: string
 }
 
 export interface StreamRepresentation extends FuroRepresentation {}

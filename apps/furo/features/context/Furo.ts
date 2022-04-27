@@ -15,6 +15,7 @@ export abstract class Furo {
   public readonly recipient: UserRepresentation
   public readonly createdBy: UserRepresentation
   public readonly token: TokenRepresentation
+  public readonly txHash: string
 
   public constructor({ furo }: { furo: FuroRepresentation }) {
     this.id = furo.id
@@ -28,6 +29,7 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.token = furo.token
+    this.txHash = furo.txHash
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {

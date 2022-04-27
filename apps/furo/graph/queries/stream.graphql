@@ -50,13 +50,14 @@ query UserStreams($id: ID!) {
 query Stream($id: ID!) {
   STREAM_stream(id: $id) {
     id
-      __typename
+    __typename
     status
     startedAt
     expiresAt
     modifiedAtTimestamp
     totalAmount
     withdrawnAmount
+    txHash
     recipient {
       id
     }
