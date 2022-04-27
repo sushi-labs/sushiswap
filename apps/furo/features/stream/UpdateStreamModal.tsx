@@ -5,6 +5,7 @@ import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContra
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from 'format'
+import { JSBI } from 'math'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount } from 'wagmi'
@@ -19,7 +20,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
   const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const [newEndTime, setNewEndTime] = useState<Date>()
   const [{ data: account }] = useAccount()
-  const token = useToken(stream?.token.id)
+  const token = useToken(stream?.token.address)
   const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 
@@ -64,7 +65,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <DialogContent>
             <div>Recipient: {shortenAddress(stream?.recipient.id)}</div>
             <div>
-              Amount left: {stream?.amount.sub(balance ?? 0).toString()} {stream?.token.symbol}
+              Amount left: {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()} {stream?.token.symbol}
             </div>
             <div>Start date: {stream?.startTime.toLocaleString()}</div>
             <div>End date: {stream?.endTime.toLocaleString()}</div>

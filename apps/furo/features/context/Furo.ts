@@ -1,34 +1,36 @@
+import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
-import { Decimal } from 'math'
+import { Decimal, JSBI } from 'math'
 import { FuroStatus, FuroType } from './enums'
-import { FuroRepresentation, TokenRepresentation, UserRepresentation } from './representations'
+import { toToken } from './mapper'
+import { FuroRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
   public readonly id: string
   public readonly type: FuroType
   public readonly status: FuroStatus
-  public readonly amount: BigNumber
-  public readonly withdrawnAmount: BigNumber
+  public readonly amount: Amount<Token>
+  public readonly withdrawnAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
   public readonly recipient: UserRepresentation
   public readonly createdBy: UserRepresentation
-  public readonly token: TokenRepresentation
+  public readonly token: Token
   public readonly txHash: string
 
   public constructor({ furo }: { furo: FuroRepresentation }) {
     this.id = furo.id
     this.type = furo.__typename
-    this.amount = BigNumber.from(furo.totalAmount)
-    this.withdrawnAmount = BigNumber.from(furo.withdrawnAmount)
+    this.token = toToken(furo.token)
+    this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.totalAmount))
+    this.withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
     this.status = this.setStatus(FuroStatus[furo.status])
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
-    this.token = furo.token
     this.txHash = furo.txHash
   }
 
@@ -88,7 +90,7 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
-    return Decimal(this.withdrawnAmount.toString()) / Decimal(this.amount.toString())
+    return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 
   public get isStarted(): boolean {

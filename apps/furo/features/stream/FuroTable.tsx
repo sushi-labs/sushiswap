@@ -69,8 +69,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
           if (props.row.original.status === FuroStatus.CANCELLED) {
             return `-`
           }
-          const amount = formatUnits(BigNumber.from(props.value), BigNumber.from(props.row.original.token.decimals))
-          const formattedAmount = formatNumber(amount)
+          const formattedAmount = formatNumber(props.value.toExact())
           return `${formattedAmount} ${props.row.original.token.symbol}`
         },
       },

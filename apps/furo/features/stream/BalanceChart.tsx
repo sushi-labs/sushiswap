@@ -1,7 +1,9 @@
 import { Group } from '@visx/group'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
+import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
+import { JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
@@ -12,7 +14,7 @@ interface Props {
 }
 const BalanceChart: FC<Props> = (props) => {
   const stream = props.stream
-  const [balance, setBalance] = useState(null)
+  const [balance, setBalance] = useState<Amount<Token>>(null)
   const [{ data, error, loading }, getSigner] = useSigner()
   const [streamed, setStreamed] = useState([])
   const contract = useContract({
@@ -22,26 +24,26 @@ const BalanceChart: FC<Props> = (props) => {
   })
 
   useEffect(() => {
-    if (!data || !contract || !stream.id) {
+    if (!data || !contract || !stream || !stream.withdrawnAmount || !stream.amount) {
       return
     }
     const fetchBalance = async () => {
       const result = await contract.streamBalanceOf(stream.id)
-      const balance = result.recipientBalance as BigNumber
-      setBalance(balance.toNumber())
+
+      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(result.recipientBalance ?? 0)))
     }
     fetchBalance()
-  }, [contract, stream.id, data])
+  }, [contract, data, stream])
 
   useEffect(() => {
-    if (stream.amount && balance) {
+    if (stream && balance) {
       setStreamed([
         { type: 'Streamed', amount: balance, color: '#0033ad' },
-        { type: 'Withdrawn', amount: stream.withdrawnAmount.toNumber(), color: 'red' },
-        { type: 'Total', amount: stream.amount.sub(balance).toNumber(), color: 'gray' },
+        { type: 'Withdrawn', amount: stream.withdrawnAmount.toExact(), color: '#F43FC5', opacity: '100%' },
+        { type: 'Total', amount: stream.amount.subtract(balance).toExact(), color: '#1398ED', opacity: '100%' }, // TODO: this should have opacity 0%, then add another circle?
       ])
     }
-  }, [balance, stream.amount, stream.withdrawnAmount])
+  }, [balance, stream])
 
   const width = 420
   const half = width / 2
@@ -70,7 +72,7 @@ const BalanceChart: FC<Props> = (props) => {
             return pie.arcs.map((arc) => {
               return (
                 <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-                  <path d={pie.path(arc)} fill={arc.data.color} />
+                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity}/>
                 </g>
               )
             })
@@ -89,10 +91,10 @@ const BalanceChart: FC<Props> = (props) => {
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {balance}
+              {`${balance?.toExact() ?? 0} ${stream.token.symbol}`}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-              {balance}
+              {`/ ${stream?.amount.toExact()  ?? 0} ${stream.token.symbol} Total`}
             </Text>
           </>
         )}

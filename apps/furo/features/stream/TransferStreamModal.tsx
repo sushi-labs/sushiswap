@@ -1,6 +1,8 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'app/features/context/Stream'
 import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { Amount } from 'currency'
+import { JSBI } from 'math'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useEnsResolveName } from 'wagmi'
@@ -53,7 +55,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
         <div className="text-blue-600">
           <DialogContent>
             <div>
-              Amount left: {stream?.amount.sub(balance ?? 0).toString()} {stream?.token.symbol}
+              Amount left: {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact().toString()} {stream?.token.symbol}
             </div>
             Recipient ETH address or ENS name:
             <div>

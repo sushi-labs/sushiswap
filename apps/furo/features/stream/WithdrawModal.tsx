@@ -4,6 +4,7 @@ import { useToken } from 'app/hooks/Tokens'
 import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
 import { Amount, Token } from 'currency'
 import { BigNumber } from 'ethers'
+import { JSBI } from 'math'
 import { FC, useState } from 'react'
 import DialogContent from 'ui/dialog/DialogContent'
 import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
@@ -22,7 +23,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
 
-  const token = useToken(stream?.token.id)
+  const token = useToken(stream?.token.address)
   const contract = useFuroStreamContract()
   const [, sendTransaction] = useTransaction()
   const [{ data: waitTxData }, wait] = useWaitForTransaction({
@@ -69,13 +70,13 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         <div className="text-blue-600">
           <DialogContent>
             <div>
-              Withdrawn: {stream?.withdrawnAmount.toString()} {stream?.token.symbol}
+              Withdrawn: {stream?.withdrawnAmount.toExact()} {stream?.token.symbol}
             </div>
             <div>
-              Not yet streamed: {stream?.amount.sub(balance ?? 0).toString()} {stream?.token.symbol}
+              Not yet streamed: {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()} {stream?.token.symbol}
             </div>
             <div>
-              Available: {balance ? balance.toString() : ''} {stream?.token.symbol}
+              Available: {balance ? Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0)).toExact() : ''} {stream?.token.symbol}
             </div>
             <div>
               Amount:

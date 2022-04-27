@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from 'ethers'
+import { BigNumber } from 'ethers'
 import { ScheduleRepresentation } from './representations'
 import { SchedulePeriod } from './SchedulePeriod'
 
