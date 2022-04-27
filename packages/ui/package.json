@@ -17,7 +17,8 @@
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/line-clamp": "^0.3.1",
-    "@tailwindcss/typography":"^0.5.2"
+    "@tailwindcss/typography":"^0.5.2",
+    "hooks": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^17.0.37",
