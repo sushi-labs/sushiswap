@@ -7,6 +7,7 @@ import { Decimal, JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
 import { useContract, useSigner } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
+import { FuroStatus } from '../context'
 import { Stream } from '../context/Stream'
 
 interface Props {
@@ -39,17 +40,37 @@ const BalanceChart: FC<Props> = (props) => {
   useEffect(() => {
     if (stream) {
       const leftToStream = 1 - stream.streamedPercentage
+
+      // TODO: move all this logic to the Furo class instead? .streamedAmount .withdrawnAmount etc
       setStreamed([
         {
-          type: 'Total',
+          type: 'Streamed',
           amount: Decimal(stream?.amount.toExact()).mul(stream.streamedPercentage).toString(),
           color: '#1398ED',
         },
-        { type: 'Total', amount: Decimal(stream?.amount.toExact()).mul(leftToStream).toString(), color: '#f43fc5', opacity: '0%' },
+        {
+          type: 'Not streamed',
+          amount: Decimal(stream?.amount.toExact()).mul(leftToStream).toString(),
+          color: '#f43fc5',
+          opacity: '0%',
+        },
       ])
       setWithdrawn([
-        { type: 'Withdrawn', amount: stream.withdrawnAmount.toExact(), color: '#f43fc5', opacity: '100%' },
-        { type: 'Total', amount: stream.amount.subtract(stream.withdrawnAmount).toExact(), color: '#f43fc5', opacity: '0%' },
+        {
+          type: 'Withdrawn',
+          amount:
+            stream.status !== FuroStatus.CANCELLED
+              ? stream.withdrawnAmount.toExact()
+              : Decimal(stream?.amount.toExact()).mul(stream.streamedPercentage).toString(),
+          color: '#f43fc5',
+          opacity: '100%',
+        },
+        {
+          type: 'Not available',
+          amount: stream.amount.subtract(stream.withdrawnAmount).toExact(),
+          color: '#f43fc5',
+          opacity: '0%',
+        },
       ])
     }
   }, [stream])

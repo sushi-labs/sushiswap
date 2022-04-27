@@ -90,6 +90,7 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
+    if (this.status === FuroStatus.CANCELLED) return this.streamedPercentage
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 
