@@ -7,7 +7,7 @@ import Typography from 'ui/typography/Typography'
 import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
 import { usePopover } from 'app/hooks/usePopover'
-// import Copy from 'ui/copy/Copy'
+// import Copy from 'ui'
 
 interface StreamTimerState {
   days: string
@@ -135,6 +135,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
         <div className="grid grid-cols-3 gap-4">
           <div className="flex flex-col gap-4 p-4 border border-dark-800 rounded-xl shadow-depth-1">
             <div className="flex flex-col">
+                {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
               <Typography variant="lg" className="text-high-emphesis" weight={700}>
                 Total
               </Typography>
@@ -142,9 +143,11 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 Value of Stream
               </Typography>
               <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                119
+                {
+                 stream.amount.toFixed(4)
+                }
                 <Typography variant="lg" component="span" weight={700}>
-                  .994k
+                  {/* .994k */}
                 </Typography>
               </Typography>
             </div>
@@ -152,15 +155,15 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="flex flex-col gap-4 p-4 bg-blue/60 rounded-xl shadow-depth-1">
             <div className="flex flex-col">
               <Typography variant="lg" className="text-high-emphesis" weight={700}>
-                Total
+                Streamed
               </Typography>
               <Typography variant="xs" weight={500}>
-                42.67% of total
+                {(stream.streamedPercentage * 100).toFixed(2)}% of total
               </Typography>
               <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                51
+                {stream.streamedAmount.substring(0, 7)}
                 <Typography variant="lg" component="span" weight={700}>
-                  .329k
+                  {/* .329k */}
                 </Typography>
               </Typography>
             </div>
@@ -168,15 +171,15 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="flex flex-col gap-4 p-4 bg-pink/60 rounded-xl shadow-depth-1">
             <div className="flex flex-col">
               <Typography variant="lg" className="text-high-emphesis" weight={700}>
-                Total
+                Withdrawn
               </Typography>
               <Typography variant="xs" weight={500}>
-                38.67% of total
+              {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
               </Typography>
               <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                49
+                {stream.withdrawnAmount.toFixed(4)}
                 <Typography variant="lg" component="span" weight={700}>
-                  .105k
+                  {/* .105k */}
                 </Typography>
               </Typography>
             </div>

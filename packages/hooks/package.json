@@ -6,9 +6,6 @@
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
   "license": "MIT",
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
     "test": "jest --passWithNoTests",
     "dev": "tsc -w",
