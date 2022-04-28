@@ -7,7 +7,6 @@ import Typography from 'ui/typography/Typography'
 import { FuroStatus } from '../context/enums'
 import { Stream } from '../context/Stream'
 import { usePopover } from 'app/hooks/usePopover'
-// import Copy from 'ui'
 
 interface StreamTimerState {
   days: string
@@ -105,13 +104,11 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
               <Typography
                 weight={700}
                 variant="xs"
-                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
+                onClick={() => navigator.clipboard.writeText(stream.createdBy.id)}
+                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
               >
-              {/* <Copy toCopy={stream.createdBy.id ? stream.createdBy.id : ""}> */}
                 {shortenAddress(stream.createdBy.id)}
-              {/* </Copy> */}
               </Typography>
-              
             </div>
             <div className="flex items-center justify-end gap-2">
               <Typography variant="xs" weight={700}>
@@ -120,11 +117,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
               <Typography
                 weight={700}
                 variant="xs"
-                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1"
+                onClick={() => navigator.clipboard.writeText(stream.recipient.id)}
+                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
               >
-              {/* <Copy toCopy={stream.recipient.id ? stream.recipient.id : ""}> */}
                 {shortenAddress(stream.recipient.id)}
-              {/* </Copy> */}
               </Typography>
             </div>
           </div>
@@ -135,7 +131,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
         <div className="grid grid-cols-3 gap-4">
           <div className="flex flex-col gap-4 p-4 border border-dark-800 rounded-xl shadow-depth-1">
             <div className="flex flex-col">
-                {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
+              {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
               <Typography variant="lg" className="text-high-emphesis" weight={700}>
                 Total
               </Typography>
@@ -143,9 +139,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 Value of Stream
               </Typography>
               <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                {
-                 stream.amount.toFixed(4)
-                }
+                {stream.amount.toFixed(4)}
                 <Typography variant="lg" component="span" weight={700}>
                   {/* .994k */}
                 </Typography>
@@ -174,7 +168,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 Withdrawn
               </Typography>
               <Typography variant="xs" weight={500}>
-              {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
+                {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
               </Typography>
               <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
                 {stream.withdrawnAmount.toFixed(4)}

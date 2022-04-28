@@ -1,10 +1,12 @@
+import { LinearGradient } from '@visx/gradient'
 import { Group } from '@visx/group'
+import { scaleOrdinal } from '@visx/scale'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
 import { Amount, Token } from 'currency'
-import { Decimal, JSBI } from 'math'
+import { JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
-import { useContract, useContractRead, useSigner } from 'wagmi'
+import { useContractRead } from 'wagmi'
 import FuroStreamABI from '../../abis/FuroStream.json'
 import { Stream } from '../context/Stream'
 
@@ -74,12 +76,19 @@ const BalanceChart: FC<Props> = (props) => {
   const half = width / 2
   const [active, setActive] = useState(null)
 
+  const color = scaleOrdinal<number, string>({
+    domain: [0, 1, 2, 3],
+    range: ['url(#gblue)', 'url(#gpink)', 'url(#gpurplegreen)', 'url(#gbluelime)'],
+  })
+
   if (!streamed) {
     return
   }
 
   return (
     <svg width={width} height={width}>
+      <LinearGradient id="gblue" from={'#1398ED'} to={'#5CB0E4'} vertical={false} />
+      <LinearGradient id="gpink" from={'#FFA6E7'} to={'#f43fc5'} vertical={false} />
       <Group top={half} left={half}>
         <Pie
           data={streamed}
@@ -98,7 +107,7 @@ const BalanceChart: FC<Props> = (props) => {
             return pie.arcs.map((arc) => {
               return (
                 <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity} />
+                  <path d={pie.path(arc)} fill={color(0)} opacity={arc.data.opacity} />
                 </g>
               )
             })
@@ -121,7 +130,7 @@ const BalanceChart: FC<Props> = (props) => {
             return pie.arcs.map((arc) => {
               return (
                 <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-                  <path d={pie.path(arc)} fill={arc.data.color} opacity={arc.data.opacity} />
+                  <path d={pie.path(arc)} fill={color(1)} opacity={arc.data.opacity} />
                 </g>
               )
             })
