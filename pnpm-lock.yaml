@@ -539,6 +539,7 @@ importers:
       '@fontsource/dm-sans': ^4.5.0
       '@headlessui/react': ^1.5.0
       '@heroicons/react': ^1.0.5
+      '@sushiswap/hooks': workspace:*
       '@tailwindcss/aspect-ratio': ^0.4.0
       '@tailwindcss/forms': ^0.4.0
       '@tailwindcss/line-clamp': ^0.3.1
@@ -547,19 +548,18 @@ importers:
       '@types/react-dom': ^17.0.11
       clsx: ^1.1.1
       config: workspace:*
-      hooks: workspace:*
       next-transpile-modules: ^9.0.0
       typescript: ^4.6.2
     dependencies:
       '@fontsource/dm-sans': 4.5.6
       '@headlessui/react': 1.5.0
       '@heroicons/react': 1.0.6
+      '@sushiswap/hooks': link:../hooks
       '@tailwindcss/aspect-ratio': 0.4.0
       '@tailwindcss/forms': 0.4.1
       '@tailwindcss/line-clamp': 0.3.1
       '@tailwindcss/typography': 0.5.2
       clsx: 1.1.1
-      hooks: link:../hooks
       next-transpile-modules: 9.0.0
     devDependencies:
       '@types/react': 17.0.41
