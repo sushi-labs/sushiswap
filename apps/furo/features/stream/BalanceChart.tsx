@@ -3,11 +3,9 @@ import { Group } from '@visx/group'
 import { scaleOrdinal } from '@visx/scale'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
+import { useStreamBalance } from 'app/hooks'
 import { Amount, Token } from 'currency'
-import { JSBI } from 'math'
 import { FC, useEffect, useState } from 'react'
-import { useContractRead } from 'wagmi'
-import FuroStreamABI from '../../abis/FuroStream.json'
 import { Stream } from '../context/Stream'
 
 interface Props {
@@ -15,30 +13,17 @@ interface Props {
 }
 const BalanceChart: FC<Props> = (props) => {
   const stream = props.stream
-  const [balance, setBalance] = useState<Amount<Token>>(null)
+  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>(null)
   const [streamed, setStreamed] = useState([])
   const [withdrawn, setWithdrawn] = useState([])
-  const [{ data: streamBalanceOf }] = useContractRead(
-    {
-      addressOrName: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
-      contractInterface: FuroStreamABI,
-    },
-    'streamBalanceOf',
-    {
-      args: [stream?.id],
-      watch: true,
-    },
-  )
+  const balance = useStreamBalance(stream.id)
 
   useEffect(() => {
-    if (!streamBalanceOf || !stream) {
+    if (!balance || !stream) {
       return
     }
-    const fetchBalance = async () => {
-      setBalance(Amount.fromRawAmount(stream.token, JSBI.BigInt(streamBalanceOf.recipientBalance.toString() ?? 0)))
-    }
-    fetchBalance()
-  }, [streamBalanceOf, stream])
+      setFormattedBalance(Amount.fromRawAmount(stream.token, balance.toString()))
+  }, [balance, stream])
 
   useEffect(() => {
     if (stream) {
@@ -77,8 +62,8 @@ const BalanceChart: FC<Props> = (props) => {
   const [active, setActive] = useState(null)
 
   const color = scaleOrdinal<number, string>({
-    domain: [0, 1, 2, 3],
-    range: ['url(#gblue)', 'url(#gpink)', 'url(#gpurplegreen)', 'url(#gbluelime)'],
+    domain: [0, 1],
+    range: ['url(#gblue)', 'url(#gpink)'],
   })
 
   if (!streamed) {
@@ -151,10 +136,10 @@ const BalanceChart: FC<Props> = (props) => {
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-              {`${balance ? balance.toSignificant() : '0'} ${stream?.token.symbol}`}
+              {`${formattedBalance ? formattedBalance.toSignificant(6) : '0'} ${stream?.token.symbol}`}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-              {`/ ${balance ? stream.amount.toExact() : '0'} ${stream?.token.symbol} Total`}
+              {`/ ${formattedBalance ? stream.amount.toExact() : '0'} ${stream?.token.symbol} Total`}
             </Text>
           </>
         )}

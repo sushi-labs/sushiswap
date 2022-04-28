@@ -74,7 +74,10 @@ query Vesting($id: ID!) {
     fromBentoBox
     txHash
     token {
-      symbol
+        id
+        name
+        symbol
+        decimals
     }
     status
     schedule {
@@ -102,6 +105,9 @@ query VestingTransactions($id: String) {
       name
       symbol
       decimals
+    }
+    to {
+      id
     }
   }
 }

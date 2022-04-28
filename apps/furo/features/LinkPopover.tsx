@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { LinkIcon } from '@heroicons/react/solid'
-import { Stream } from 'app/features/context'
+import { Stream, Vesting } from 'app/features/context'
 import { getExplorerLink } from 'app/functions/explorer'
 import { usePopover } from 'app/hooks/usePopover'
 import { FC } from 'react'
@@ -10,10 +10,10 @@ import Typography from 'ui/typography/Typography'
 import { useNetwork } from 'wagmi'
 
 interface Props {
-  stream: Stream
+  furo: Stream | Vesting
 }
 
-const LinkPopover: FC<Props> = ({ stream }) => {
+const LinkPopover: FC<Props> = ({ furo }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
@@ -36,7 +36,7 @@ const LinkPopover: FC<Props> = ({ stream }) => {
         className="overflow-hidden z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex gap-4 max-w-[530px]"
       >
         <div
-          onClick={() => navigator.clipboard.writeText(stream.createdBy.id)}
+          onClick={() => navigator.clipboard.writeText(furo.createdBy.id)}
           className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
         >
           <div className="p-4 border rounded-full border-dark-700 bg-dark-800">
@@ -47,7 +47,7 @@ const LinkPopover: FC<Props> = ({ stream }) => {
           </Typography>
         </div>
         <div
-          onClick={() => navigator.clipboard.writeText(stream.recipient.id)}
+          onClick={() => navigator.clipboard.writeText(furo.recipient.id)}
           className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
         >
           <div className="p-4 border rounded-full border-dark-700 bg-dark-800">
@@ -59,7 +59,7 @@ const LinkPopover: FC<Props> = ({ stream }) => {
         </div>
         <a
           className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
-          href={getExplorerLink(chainId, stream.txHash, 'transaction')}
+          href={getExplorerLink(chainId, furo.txHash, 'transaction')}
           target="_blank"
           rel="noreferrer"
         >

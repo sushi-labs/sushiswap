@@ -4,9 +4,9 @@ import { StreamRepresentation, TransactionRepresentation } from 'app/features/co
 import { Stream } from 'app/features/context/Stream'
 import BalanceChart from 'app/features/stream/BalanceChart'
 import CancelStreamModal from 'app/features/stream/CancelStreamModal'
-import HistoryPopover from 'app/features/stream/HistoryPopover'
+import HistoryPopover from 'app/features/HistoryPopover'
 import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
-import StreamTimer from 'app/features/stream/StreamTimer'
+import FuroTimer from 'app/features/FuroTimer'
 import TransferStreamModal from 'app/features/stream/TransferStreamModal'
 import UpdateStreamModal from 'app/features/stream/UpdateStreamModal'
 import WithdrawModal from 'app/features/stream/WithdrawModal'
@@ -14,7 +14,7 @@ import { FC, useMemo } from 'react'
 import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
 import { Typography } from 'ui/typography'
 import { getBuiltGraphSDK } from '../../.graphclient'
-import LinkPopover from 'app/features/stream/LinkPopover'
+import LinkPopover from 'app/features/LinkPopover'
 
 interface Props {
   stream: StreamRepresentation
@@ -31,7 +31,7 @@ const Streams: FC<Props> = (props) => {
         <div className="w-[430px]">
           <BalanceChart stream={stream} />
           <div className="flex justify-center gap-2">
-            <LinkPopover stream={stream} />
+            <LinkPopover furo={stream} />
             <StreamDetailsPopover stream={stream} />
             <HistoryPopover transactionRepresentations={transactions} />
           </div>
@@ -61,7 +61,7 @@ const Streams: FC<Props> = (props) => {
               <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
             </div>
             <div className="mt-3">
-              <StreamTimer stream={stream} />
+              <FuroTimer furo={stream} />
             </div>
           </div>
           <div className="flex flex-col gap-1">

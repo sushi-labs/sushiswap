@@ -1,7 +1,7 @@
 import Layout from 'app/components/Layout'
 import { StreamRepresentation, VestingRepresentation } from 'app/features/context/representations'
 import CreateStreamModal from 'app/features/stream/CreateStreamModal'
-import { FuroTable, FuroTableType } from 'app/features/stream/FuroTable'
+import { FuroTable, FuroTableType } from 'app/features/FuroTable'
 import CreateVestingModal from 'app/features/vesting/CreateVestingModal'
 import { FC } from 'react'
 import { Typography } from 'ui/typography'

@@ -9,10 +9,10 @@ import { ProgressColor, Table } from 'ui'
 import { classNames } from 'ui/lib/classNames'
 import ProgressBar from 'ui/progressbar/ProgressBar'
 import Typography from 'ui/typography/Typography'
-import { FuroStatus } from '../context/enums'
-import { StreamRepresentation, VestingRepresentation } from '../context/representations'
-import { Stream } from '../context/Stream'
-import { Vesting } from '../context/Vesting'
+import { FuroStatus } from './context/enums'
+import { StreamRepresentation, VestingRepresentation } from './context/representations'
+import { Stream } from './context/Stream'
+import { Vesting } from './context/Vesting'
 
 export enum FuroTableType {
   INCOMING,

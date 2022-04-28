@@ -1,124 +1,81 @@
-import { curveStep } from '@visx/curve'
-import { TooltipWithBounds } from '@visx/tooltip'
-import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip, XYChart } from '@visx/xychart'
-import Main from 'app/components/Main'
+import Layout from 'app/components/Layout'
 import { Vesting } from 'app/features/context'
 import {
   ScheduleRepresentation,
   TransactionRepresentation,
-  VestingRepresentation,
+  VestingRepresentation
 } from 'app/features/context/representations'
-import { useRouter } from 'next/router'
-import { FC, useEffect, useMemo, useState } from 'react'
+import FuroTimer from 'app/features/FuroTimer'
+import HistoryPopover from 'app/features/HistoryPopover'
+import LinkPopover from 'app/features/LinkPopover'
+import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
+import NextPaymentTimer from 'app/features/vesting/NextPaymentTimer'
+import { VestingChart } from 'app/features/vesting/VestingChart'
+import { FC, useMemo } from 'react'
+import { ProgressColor, Typography } from 'ui'
+import ProgressBar from 'ui/progressbar/ProgressBar'
 import { getBuiltGraphSDK } from '../../.graphclient'
 
 interface Props {
-  vesting: VestingRepresentation
+  vestingRepresentation: VestingRepresentation
   transactions: TransactionRepresentation[]
   schedule: ScheduleRepresentation
 }
 
 const VestingPage: FC<Props> = (props) => {
-  const router = useRouter()
-  const id = router.query.id as string
-  let { vesting, transactions, schedule } = props
-  const [chartData, setChartData] = useState<{ x; y }[]>()
-  // const vestTest = useMemo( () => new Vesting({vesting}), [vesting])
-  // console.log({vestTest})
-  // console.log(vestTest.nextPaymentTimeRemaining)
-
-  useEffect(() => {
-    const data = schedule.periods.map((period) => {
-      const date = new Date(parseInt(period.time) * 1000)
-      return {
-        x: date.toISOString().slice(0, 10),
-        y: period.amount,
-      }
-    })
-    setChartData(data)
-  }, [schedule])
-
-  const accessors = {
-    xAccessor: (d) => d.x,
-    yAccessor: (d) => d.y,
-  }
+    let { vestingRepresentation, transactions, schedule } = props
+    const vesting = useMemo(() => new Vesting({ vesting: vestingRepresentation }), [vestingRepresentation])
 
   return (
-    <Main>
-      <div className="px-2 pt-16">
-        <h1 className="py-4 text-2xl font-bold">Vesting</h1>
-        <div className="grid gap-2">
-          {vesting ? (
-            <div key={vesting.id}>
-              {vesting.status} {``}
-              {vesting.totalAmount} {``} {vesting.token.symbol} {``}
-              {new Date(parseInt(vesting.startedAt) * 1000).toLocaleString()} {``}
-              {new Date(parseInt(vesting.expiresAt) * 1000).toLocaleString()}
-            </div>
-          ) : (
-            <div>
-              <i>No Vesting found..</i>
-            </div>
-          )}
+    <Layout>
+      <div className="flex gap-16">
+        <div className="w-[630px]">
+          <VestingChart vesting={vesting} schedule={schedule} />
+          <div className="flex justify-center gap-2">
+            <LinkPopover furo={vesting} />
+            {/* Create a DetailsPoperover for vesting */}
+            {/* <StreamDetailsPopover stream={vesting} /> */}
+            <HistoryPopover transactionRepresentations={transactions} />
+          </div>
         </div>
-        <h2 className="py-4 text-2xl font-bold">Transactions</h2>
-        <div className="grid gap-2">
-          {transactions.length ? (
-            Object.values(transactions).map((transaction) => (
-              <div key={transaction.id}>
-                {transaction.type} {``}
-                {transaction.amount} {``} {transaction.token.symbol} {``}
-                {new Date(parseInt(transaction.createdAtTimestamp) * 1000).toLocaleDateString()} {``}
-              </div>
-            ))
-          ) : (
-            <div>
-              <i>No transactions found..</i>
-            </div>
-          )}
-        </div>
+        <div className="w-[280px] flex flex-col col-span-2 justify-between">
+          <div className="flex flex-col justify-center gap-5">
 
-        <XYChart
-          height={350}
-          width={900}
-          xScale={{ type: 'band' }}
-          yScale={{ type: 'linear', domain: [0, parseInt(vesting.totalAmount) * 1.33] }}
-        >
-          <AnimatedAxis orientation="left" numTicks={4} />
-          <AnimatedAxis orientation="bottom" />
-          <AnimatedGrid columns={false} numTicks={4} />
-          <AnimatedLineSeries dataKey={''} data={chartData ?? []} {...accessors} curve={curveStep} />
-          <TooltipWithBounds
-            snapTooltipToDatumX
-            snapTooltipToDatumY
-            showSeriesGlyphs
-            renderTooltip={({ tooltipData, colorScale }) => (
-              <div>
-                <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>{tooltipData.nearestDatum.key}</div>
-                {accessors.xAccessor(tooltipData.nearestDatum.datum)}
-                {', '}
-                {accessors.yAccessor(tooltipData.nearestDatum.datum)}
+            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+              <div className="flex items-center justify-between gap-2">
+                <Typography variant="sm" weight={400}>
+                  Progress:
+                </Typography>
+                <Typography variant="lg" weight={700}>
+                  {(vesting.streamedPercentage * 100).toFixed(2)}%
+                </Typography>
               </div>
-            )}
-          />
-        </XYChart>
-
-        <h2 className="py-4 text-2xl font-bold">Schedule periods</h2>
-        <div className="grid gap-2">
-          {schedule.periods.length ? (
-            Object.values(schedule.periods).map((period) => (
-              <div key={period.id}>
-                {period.type} {``} {new Date(parseInt(period.time) * 1000).toLocaleString()} {``} {period.amount}
-              </div>
-            ))
-          ) : (
-            <div>
-              <i>No schedule data found..</i>
+              <ProgressBar progress={vesting.streamedPercentage} color={ProgressColor.BLUE} showLabel={false} />
             </div>
-          )}
+            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+              <div className="flex items-center justify-between gap-2">
+                <Typography variant="sm" weight={400}>
+                  Withdrawn:
+                </Typography>
+                <Typography variant="lg" weight={700}>
+                  {(vesting.withdrawnPercentage * 100).toFixed(2)}%
+                </Typography>
+              </div>
+              <ProgressBar progress={vesting.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
+            </div>
+          <div className="mt-3">
+              <NextPaymentTimer vesting={vesting} />
+            </div>
+            {/* <div className="mt-3">
+              <FuroTimer furo={vesting} />
+            </div> */}
+          </div>
+          <div className="flex flex-col gap-1">
+
+          </div>
         </div>
       </div>
-    </Main>
+    </Layout>
   )
 }
 
@@ -126,12 +83,12 @@ export default VestingPage
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const vesting = (await sdk.Vesting({ id: query.id })).VESTING_vesting
+  const vestingRepresentation = (await sdk.Vesting({ id: query.id })).VESTING_vesting
   const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions
   const schedule = (await sdk.VestingSchedule({ id: query.id })).VESTING_vesting.schedule
   return {
     props: {
-      vesting,
+      vestingRepresentation,
       transactions,
       schedule,
     },

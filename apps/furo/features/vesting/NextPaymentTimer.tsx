@@ -1,28 +1,26 @@
 import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
 import Typography from 'ui/typography/Typography'
+import { Vesting } from '../context'
 import { FuroStatus } from '../context/enums'
-import { Stream } from '../context/Stream'
-
-interface StreamTimerState {
+interface NextPaymentTimerState {
   days: string
   hours: string
   minutes: string
   seconds: string
 }
 
-interface StreamTimerProps {
-  stream?: Stream
-  children?: ((state: StreamTimerState) => ReactNode) | ReactNode
+interface NextPaymentTimerProps {
+  vesting?: Vesting
+  children?: ((state: NextPaymentTimerState) => ReactNode) | ReactNode
 }
 
-const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
-  const [remaining, setRemaining] = useState<StreamTimerState>()
+const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
+  const [remaining, setRemaining] = useState<NextPaymentTimerState>()
 
   useInterval(() => {
-    if (stream?.status === FuroStatus.CANCELLED || stream?.status === FuroStatus.COMPLETED) return
-    const { days, hours, minutes, seconds } =
-      stream?.status === FuroStatus.ACTIVE ? stream.remainingTime : stream.startingInTime
+    if (vesting?.status === FuroStatus.CANCELLED || vesting?.status === FuroStatus.COMPLETED) return
+    const { days, hours, minutes, seconds } = vesting.nextPaymentTimeRemaining
 
     setRemaining({
       days: String(Math.max(days, 0)).padStart(2, '0'),
@@ -74,7 +72,7 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
           </div>
         </div>
         <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
-          {stream?.isStarted ? `REMAINING` : `STARTS IN`}
+          NEXT PAYMENT
         </Typography>
       </div>
     )
@@ -84,4 +82,4 @@ const StreamTimer: FC<StreamTimerProps> = ({ stream, children }) => {
   return <></>
 }
 
-export default StreamTimer
+export default NextPaymentTimer
