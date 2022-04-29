@@ -15,7 +15,7 @@ export interface LogsOptions {
 }
 
 // Inspired by RTK Query's createApi
-export function createMulticall(options?: LogsOptions) {
+export function createLogs(options?: LogsOptions) {
   const reducerPath = options?.reducerPath ?? 'logs'
   const slice = createLogsSlice(reducerPath)
   const { actions, reducer } = slice
