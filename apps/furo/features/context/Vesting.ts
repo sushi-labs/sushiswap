@@ -33,7 +33,6 @@ export class Vesting extends Furo {
     if (this.status === FuroStatus.ACTIVE || this.status === FuroStatus.UPCOMING) {
       const now = Date.now()
       let interval: number
-
       if (this.vestingType === VestingType.GRADED) {
         if (this.status === FuroStatus.UPCOMING) {
           interval = this.startTime.getTime() - now + this.stepDuration * 1000
@@ -47,7 +46,18 @@ export class Vesting extends Furo {
         } else {
           interval = this.startTime.getTime() + this.cliffDuration * 1000 - now
         }
-        // TODO: add hybrid
+      } else if (this.vestingType === VestingType.HYBRID) {
+        if (this.status === FuroStatus.UPCOMING) {
+          interval = this.startTime.getTime() - now + this.cliffDuration * 1000
+        } else {
+          const cliffTime = this.startTime.getTime() + this.cliffDuration * 1000
+          if (now <= cliffTime) {
+            interval = this.startTime.getTime() + this.cliffDuration * 1000 - now
+          } else {
+            const totalDuration = this.endTime.getTime() - this.cliffDuration * 1000 - now
+            interval = totalDuration % (this.stepDuration * 1000)
+          }
+        }
       } else {
         return { days: 0, hours: 0, minutes: 0, seconds: 0 }
       }
@@ -61,5 +71,4 @@ export class Vesting extends Furo {
     }
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
-
 }

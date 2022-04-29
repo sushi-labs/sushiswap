@@ -72,7 +72,7 @@ const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
           </div>
         </div>
         <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
-          NEXT PAYMENT
+          NEXT PAYMENT IN
         </Typography>
       </div>
     )

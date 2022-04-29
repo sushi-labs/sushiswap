@@ -3,14 +3,12 @@ import { Vesting } from 'app/features/context'
 import {
   ScheduleRepresentation,
   TransactionRepresentation,
-  VestingRepresentation,
+  VestingRepresentation
 } from 'app/features/context/representations'
-import FuroTimer from 'app/features/FuroTimer'
 import HistoryPopover from 'app/features/HistoryPopover'
 import LinkPopover from 'app/features/LinkPopover'
-import SchedulePopover from 'app/features/SchedulePopover'
-import StreamDetailsPopover from 'app/features/stream/StreamDetailsPopover'
 import NextPaymentTimer from 'app/features/vesting/NextPaymentTimer'
+import SchedulePopover from 'app/features/vesting/SchedulePopover'
 import { VestingChart } from 'app/features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
 import { ProgressColor, Typography } from 'ui'

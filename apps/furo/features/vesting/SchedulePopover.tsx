@@ -1,15 +1,11 @@
 import { Popover } from '@headlessui/react'
-import { memo, useMemo } from 'react'
-import { FC } from 'react'
+import { XIcon } from '@heroicons/react/outline'
+import { SchedulePeriod, ScheduleRepresentation, Vesting } from 'app/features/context'
+import { usePopover } from 'app/hooks/usePopover'
+import { format } from 'date-fns'
+import { FC, memo, useMemo } from 'react'
 import { CalendarIcon } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
-import { TransactionType } from './context/enums'
-import { ScheduleRepresentation } from 'app/features/context'
-import { SchedulePeriod, Vesting } from 'app/features/context'
-import { XIcon } from '@heroicons/react/outline'
-import { format } from 'date-fns'
-import { usePopover } from 'app/hooks/usePopover'
-import { useAccount } from 'wagmi'
 
 interface Props {
   vesting: Vesting,
