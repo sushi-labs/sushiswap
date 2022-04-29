@@ -1,5 +1,5 @@
 {
-  "name": "wallet-example",
+  "name": "wallet-connector",
   "version": "0.0.0",
   "private": true,
   "scripts": {
