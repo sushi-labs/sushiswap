@@ -1,3 +1,4 @@
+import { Amount, Token } from 'currency'
 import { JSBI } from 'math'
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
@@ -5,8 +6,8 @@ import { VestingRepresentation } from './representations'
 
 export class Vesting extends Furo {
   public readonly steps: number
-  public readonly cliffAmount: JSBI
-  public readonly stepAmount: JSBI
+  public readonly cliffAmount: Amount<Token>
+  public readonly stepAmount: Amount<Token>
   public readonly cliffDuration: number
   public readonly stepDuration: number
   public readonly vestingType: VestingType
@@ -14,8 +15,8 @@ export class Vesting extends Furo {
   public constructor({ vesting }: { vesting: VestingRepresentation }) {
     super({ furo: vesting })
     this.steps = parseInt(vesting.steps)
-    this.cliffAmount = JSBI.BigInt(vesting.cliffAmount)
-    this.stepAmount = JSBI.BigInt(vesting.stepAmount)
+    this.cliffAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffAmount))
+    this.stepAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.stepAmount))
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
     if (this.stepDuration && this.cliffDuration) {
