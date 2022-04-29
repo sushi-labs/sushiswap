@@ -28,8 +28,8 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
               Incoming
             </Typography>
             <FuroTable
-              streams={streams.incomingStreams}
-              vestings={vestings.incomingVestings}
+              streams={streams.incomingStreams ?? []}
+              vestings={vestings.incomingVestings ?? []}
               type={FuroTableType.INCOMING}
             />
           </div>
@@ -38,8 +38,8 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
               Outgoing
             </Typography>
             <FuroTable
-              streams={streams.outgoingStreams}
-              vestings={vestings.outgoingVestings}
+              streams={streams.outgoingStreams ?? []}
+              vestings={vestings.outgoingVestings ?? []}
               type={FuroTableType.OUTGOING}
             />
           </div>
@@ -53,8 +53,8 @@ export default Dashboard
 
 export async function getServerSideProps({ query }) {
   const sdk = await getBuiltGraphSDK()
-  const streams = (await sdk.UserStreams({ id: query.address })).STREAM_user
-  const vestings = (await sdk.UserVestings({ id: query.address })).VESTING_user
+  const streams = (await sdk.UserStreams({ id: query.address.toLowerCase() })).STREAM_user
+  const vestings = (await sdk.UserVestings({ id: query.address.toLowerCase() })).VESTING_user
   return {
     props: {
       streams: streams || {},
