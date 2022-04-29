@@ -11,7 +11,7 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "bin/index.js",
   "bin": {
-    "sushi-cli": "./bin/index.js"
+    "scli": "./bin/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
