@@ -1,0 +1,22 @@
+{
+  "name": "@sushiswap/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi CLI",
+  "keywords": [
+    "sushi",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "bin/index.js",
+  "bin": {
+    "sushi-cli": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "commander": "^9.2.0"
+  }
+}
