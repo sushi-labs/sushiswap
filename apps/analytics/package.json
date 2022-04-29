@@ -21,7 +21,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "uglify-es": "^3.3.9",
-    "ui": "workspace:*"
+    "@sushiswap/ui": "workspace:*"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.2",

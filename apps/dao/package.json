@@ -28,7 +28,7 @@
     "react-redux": "^7.2.6",
     "swr": "^1.2.2",
     "typechain": "^5.2.0",
-    "ui": "workspace:*"
+    "@sushiswap/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "17.0.21",

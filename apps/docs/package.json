@@ -12,7 +12,7 @@
     "next": "12.0.10",
     "react": "^18.0.0-rc.1",
     "react-dom": "^18.0.0-rc.1",
-    "ui": "workspace:*"
+    "@sushiswap/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "17.0.21",
