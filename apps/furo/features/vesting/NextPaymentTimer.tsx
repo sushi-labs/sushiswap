@@ -1,6 +1,6 @@
 import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
-import Typography from 'ui/typography/Typography'
+import { Typography } from '@sushiswap/ui'
 import { Vesting } from '../context'
 import { FuroStatus } from '../context/enums'
 interface NextPaymentTimerState {
@@ -12,10 +12,9 @@ interface NextPaymentTimerState {
 
 interface NextPaymentTimerProps {
   vesting?: Vesting
-  children?: ((state: NextPaymentTimerState) => ReactNode) | ReactNode
 }
 
-const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
+const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
   const [remaining, setRemaining] = useState<NextPaymentTimerState>()
 
   useInterval(() => {
@@ -30,10 +29,6 @@ const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
     })
   }, 1000)
 
-  // Render props
-  if (remaining && typeof children === 'function') return children(remaining)
-
-  // Render normally
   if (remaining) {
     return (
       <div className="flex flex-col gap-2">

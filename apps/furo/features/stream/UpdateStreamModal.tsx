@@ -2,12 +2,12 @@ import { Dialog } from '@headlessui/react' // TODO: should be imported from the 
 import { Stream } from 'app/features/context/Stream'
 import { useToken } from 'app/hooks/Tokens'
 import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
-import { Amount, Token } from 'currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from 'format'
-import { JSBI } from 'math'
+import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
-import DialogContent from 'ui/dialog/DialogContent'
+import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount } from 'wagmi'
 
 interface UpdateStreamModalProps {
@@ -65,7 +65,9 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <DialogContent>
             <div>Recipient: {shortenAddress(stream?.recipient.id)}</div>
             <div>
-              Amount left: {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()} {stream?.token.symbol}
+              Amount left:{' '}
+              {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
+              {stream?.token.symbol}
             </div>
             <div>Start date: {stream?.startTime.toLocaleString()}</div>
             <div>End date: {stream?.endTime.toLocaleString()}</div>

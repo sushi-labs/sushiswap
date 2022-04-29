@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import type { AppProps } from 'next/app'
-import { App } from 'ui'
+import { App } from '@sushiswap/ui'
 
-import 'ui/index.css'
+import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (

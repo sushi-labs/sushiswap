@@ -4,7 +4,7 @@ import { scaleOrdinal } from '@visx/scale'
 import { Pie } from '@visx/shape'
 import { Text } from '@visx/text'
 import { useStreamBalance } from 'app/hooks'
-import { Amount, Token } from 'currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { FC, useEffect, useState } from 'react'
 import { Stream } from '../context/Stream'
 
@@ -22,7 +22,7 @@ const BalanceChart: FC<Props> = (props) => {
     if (!balance || !stream) {
       return
     }
-      setFormattedBalance(Amount.fromRawAmount(stream.token, balance.toString()))
+    setFormattedBalance(Amount.fromRawAmount(stream.token, balance.toString()))
   }, [balance, stream])
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export enum ProgressColor {
   PINK,
@@ -13,7 +13,7 @@ interface ProgressBarProps {
   showLabel?: boolean
 }
 
-const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel = true, className }) => {
+export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel = true, className }) => {
   let fromColor
   let toColor
   if (color === ProgressColor.BLUE) {

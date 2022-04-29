@@ -1,0 +1,11 @@
+{
+  "name": "price",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@vercel/node": "^1.14.1"
+  },
+  "devDependencies": {
+    "config": "workspace:*"
+  }
+}

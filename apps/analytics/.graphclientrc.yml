@@ -191,4 +191,4 @@ sources:
               keyField: id
               keyArg: id
 documents:
-  - ./factory-query.graphql
+  - ./factory.graphql

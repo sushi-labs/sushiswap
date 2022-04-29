@@ -1,11 +1,16 @@
-import React, { FC } from 'react'
-import { classNames } from '../lib/classNames'
+import React from 'react'
+import classNames from 'classnames'
 
-const Glow: FC<{ className?: string }> = ({ children, className }) => {
+type Props = {
+  children?: React.ReactNode
+  className?: string
+}
+
+export function Glow({ children, className }: Props): JSX.Element {
   return (
     <div className={classNames(className, 'relative w-full')}>
       <div className={classNames('from-pink/5 to-blue/5 fixed inset-0 bg-gradient-radial z-0 pointer-events-none')} />
-      <div className="relative filter z-10">{children}</div>
+      <div className="relative z-10 filter">{children}</div>
     </div>
   )
 }

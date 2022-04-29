@@ -1,10 +1,12 @@
-import { FC } from 'react'
-import Container from 'ui/container/Container'
-import Glow from 'ui/glow/Glow'
+import { Glow, Container } from '@sushiswap/ui'
 
-const Layout: FC = ({ children }) => {
+type Props = {
+  children?: React.ReactNode
+}
+
+function Layout({ children }: Props) {
   return (
-    <Container maxWidth="5xl" className="lg:mx-auto px-2">
+    <Container maxWidth="5xl" className="px-2 lg:mx-auto">
       <Glow>{children}</Glow>
     </Container>
   )

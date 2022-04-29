@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 const Container: FC = ({ children }) => (
-  <div className="overflow-x-auto bg-dark-900 border border-dark-800 rounded-2xl overflow-hidden shadow-md shadow-dark-1000">
+  <div className="overflow-hidden overflow-x-auto border shadow-md bg-dark-900 border-dark-800 rounded-2xl shadow-dark-1000">
     {children}
   </div>
 )

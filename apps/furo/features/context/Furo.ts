@@ -1,6 +1,5 @@
-import { Amount, Token } from 'currency'
-import { BigNumber } from 'ethers'
-import { Decimal, JSBI } from 'math'
+import { Amount, Token } from '@sushiswap/currency'
+import { Decimal, JSBI } from '@sushiswap/math'
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
@@ -93,18 +92,16 @@ export abstract class Furo {
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 
-
   public get streamedAmount(): string {
-    if (!this.isStarted) return "0"
+    if (!this.isStarted) return '0'
     return Decimal(this.amount.toExact()).mul(this.streamedPercentage).toString()
   }
 
   public get unclaimableAmount(): string {
-    if (!this.isStarted) return "0"
+    if (!this.isStarted) return '0'
     const leftToStreamPercentage = 1 - this.streamedPercentage
     return Decimal(this.amount.toExact()).mul(leftToStreamPercentage).toString()
   }
-
 
   public get isStarted(): boolean {
     return this.startTime.getTime() <= Date.now()

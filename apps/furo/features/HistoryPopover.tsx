@@ -1,14 +1,13 @@
 import { Popover } from '@headlessui/react'
 import { memo, useMemo } from 'react'
 import { FC } from 'react'
-import { ArrowFlatLinesUp, HistoryIcon } from 'ui/icons'
-import Typography from 'ui/typography/Typography'
+import { Typography, ArrowFlatLinesUp, HistoryIcon } from '@sushiswap/ui'
 import { TransactionType } from './context/enums'
 import { TransactionRepresentation } from 'app/features/context'
 import { Transaction } from 'app/features/context'
 import { XIcon } from '@heroicons/react/outline'
 import { format } from 'date-fns'
-import { usePopover } from 'app/hooks/usePopover'
+import { usePopover } from 'app/hooks'
 import { useAccount } from 'wagmi'
 
 interface Props {

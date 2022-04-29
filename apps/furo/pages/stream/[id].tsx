@@ -1,4 +1,3 @@
-import { LinkIcon } from '@heroicons/react/solid'
 import Layout from 'app/components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'app/features/context/representations'
 import { Stream } from 'app/features/context/Stream'
@@ -11,10 +10,9 @@ import TransferStreamModal from 'app/features/stream/TransferStreamModal'
 import UpdateStreamModal from 'app/features/stream/UpdateStreamModal'
 import WithdrawModal from 'app/features/stream/WithdrawModal'
 import { FC, useMemo } from 'react'
-import ProgressBar, { ProgressColor } from 'ui/progressbar/ProgressBar'
-import { Typography } from 'ui/typography'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'app/features/LinkPopover'
+import { getBuiltGraphSDK } from '../../.graphclient'
 
 interface Props {
   stream: StreamRepresentation

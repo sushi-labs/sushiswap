@@ -1,14 +1,9 @@
-import { formatUnits } from '@ethersproject/units'
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { BigNumber } from 'ethers'
 import { formatNumber, shortenAddress } from 'format'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
 import { useFlexLayout, useTable } from 'react-table'
-import { ProgressColor, Table } from 'ui'
-import { classNames } from 'ui/lib/classNames'
-import ProgressBar from 'ui/progressbar/ProgressBar'
-import Typography from 'ui/typography/Typography'
+import { classNames, ProgressColor, Table, ProgressBar, Typography } from '@sushiswap/ui'
 import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
@@ -33,7 +28,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
       [],
     [streams, vestings],
   )
-  console.log({data})
+  console.log({ data })
   const columns = useMemo(
     () => [
       {
@@ -156,7 +151,11 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
           {rows.map((row, i) => {
             prepareRow(row)
             return (
-              <Table.tr {...row.getRowProps()} onClick={() => router.push(`/${row.original.type.toLowerCase()}/${row.original.id}`)} key={i}>
+              <Table.tr
+                {...row.getRowProps()}
+                onClick={() => router.push(`/${row.original.type.toLowerCase()}/${row.original.id}`)}
+                key={i}
+              >
                 {row.cells.map((cell, i) => {
                   return (
                     <Table.td {...cell.getCellProps()} key={i}>

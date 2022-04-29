@@ -2,7 +2,7 @@ import { Native } from '../Native'
 import { Token } from '../Token'
 import { Amount } from '../Amount'
 
-import { Percent, JSBI, MAX_UINT256 } from 'math'
+import { Percent, JSBI, MAX_UINT256 } from '@sushiswap/math'
 
 describe('Amount', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'

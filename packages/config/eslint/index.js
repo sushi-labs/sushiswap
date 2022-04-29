@@ -1,5 +1,6 @@
 module.exports = {
-  extends: ['next', 'prettier'],
+  extends: ['next', 'prettier', 'plugin:jsx-a11y/strict'],
+  plugins: ['jsx-a11y'],
   settings: {
     next: {
       rootDir: ['apps/*/', 'packages/*/'],

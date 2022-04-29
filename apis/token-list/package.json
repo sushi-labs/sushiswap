@@ -1,0 +1,13 @@
+{
+  "name": "token-list",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@sushiswap/default-token-list": "^27.4.0",
+    "@sushiswap/chainlink-token-list": "^0.1.0",
+    "@vercel/node": "^1.14.1"
+  },
+  "devDependencies": {
+    "config": "workspace:*"
+  }
+}

@@ -1,29 +1,35 @@
 {
-  "name": "ui",
+  "name": "@sushiswap/ui",
   "version": "0.0.0",
   "private": true,
   "main": "./index.tsx",
   "source": "./index.tsx",
   "license": "MIT",
   "scripts": {
-    "lint": "TIMING=1 eslint src --fix"
+    "lint": "TIMING=1 eslint . --fix"
   },
   "dependencies": {
-    "clsx": "^1.1.1",
+    "classnames": "^2.3.1",
     "next-transpile-modules": "^9.0.0",
     "@fontsource/dm-sans": "^4.5.0",
-    "@headlessui/react": "^1.5.0",
-    "@heroicons/react": "^1.0.5",
+    "@headlessui/react": "^1.6.0",
+    "@heroicons/react": "^1.0.6",
     "@tailwindcss/aspect-ratio": "^0.4.0",
-    "@tailwindcss/forms": "^0.4.0",
-    "@tailwindcss/line-clamp": "^0.3.1",
+    "@tailwindcss/forms": "^0.5.0",
+    "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography":"^0.5.2",
     "@sushiswap/hooks": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
     "config": "workspace:*",
-    "typescript": "^4.6.2"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "typescript": "^4.6.4"
+  },
+  "peerDependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   }
 }

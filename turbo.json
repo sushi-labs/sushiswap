@@ -53,6 +53,12 @@
     },
     "furo#generate": {
       "outputs": [".graphclient/**"]
+    },
+    "multicall#generate": {
+      "outputs": ["abi/**"]
+    },
+    "multicall#build": {
+      "outputs": ["abi/**"]
     }
   }
 }

@@ -1,6 +1,6 @@
-import useInterval from 'app/hooks/useInterval'
+import { useInterval } from '@sushiswap/hooks'
 import { FC, ReactNode, useState } from 'react'
-import Typography from 'ui/typography/Typography'
+import { Typography } from '@sushiswap/ui'
 import { Vesting } from './context'
 import { FuroStatus } from './context/enums'
 import { Stream } from './context/Stream'
@@ -14,10 +14,9 @@ interface FuroTimerState {
 
 interface FuroTimerProps {
   furo?: Stream | Vesting
-  children?: ((state: FuroTimerState) => ReactNode) | ReactNode
 }
 
-const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
+const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
   const [remaining, setRemaining] = useState<FuroTimerState>()
 
   useInterval(() => {
@@ -32,10 +31,7 @@ const FuroTimer: FC<FuroTimerProps> = ({ furo, children }) => {
       seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
     })
   }, 1000)
-
-  // Render props
-  if (remaining && typeof children === 'function') return children(remaining)
-
+  
   // Render normally
   if (remaining) {
     return (
