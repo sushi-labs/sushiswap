@@ -40,7 +40,6 @@ export function createTokenLists(options?: TokenListsOptions) {
   const useUnsupportedTokenList = (...args: ParamsWithoutContext<typeof _useUnsupportedTokenList>) =>
     _useUnsupportedTokenList(context, ...args)
   const useIsListActive = (...args: ParamsWithoutContext<typeof _useIsListActive>) => _useIsListActive(context, ...args)
-
   const useFetchListCallback = (...args: ParamsWithoutContext<typeof _useFetchListCallback>) => _useFetchListCallback(context, ...args)
 
   const hooks = {

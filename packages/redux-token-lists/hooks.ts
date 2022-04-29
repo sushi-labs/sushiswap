@@ -1,10 +1,8 @@
 import { TokenList } from '@uniswap/token-lists'
-
 import { tokensToChainTokenMap, sortByListPriority, resolveENSContentHash, getTokenList } from './utils'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { TokenListsContext } from './context'
-
 import { WrappedTokenInfo } from './token'
 import { WithTokenListsState, ChainTokenMap } from './types'
 import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'

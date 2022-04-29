@@ -1,4 +1,3 @@
-import chain from '@sushiswap/chain'
 import { useAllLists } from '../token-lists'
 
 export default function TokenLists() {

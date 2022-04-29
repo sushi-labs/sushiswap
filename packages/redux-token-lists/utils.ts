@@ -2,6 +2,17 @@ import { TokenInfo, TokenList } from '@uniswap/token-lists'
 import { DEFAULT_LIST_OF_LISTS } from './constants'
 import { WrappedTokenInfo } from './token'
 import { ChainTokenMap } from './types'
+import CID from 'cids'
+import { Contract } from '@ethersproject/contracts'
+import { namehash } from '@ethersproject/hash'
+import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
+import Ajv from 'ajv'
+import { providers } from 'ethers'
+
+// @ts-ignore TYPE NEEDS FIXING
+import { getCodec, rmPrefix } from 'multicodec'
+// @ts-ignore TYPE NEEDS FIXING
+import { decode, toB58String } from 'multihashes'
 
 type Mutable<T> = {
   -readonly [P in keyof T]: Mutable<T[P]>
@@ -63,15 +74,7 @@ export function uriToHttp(uri: string): string[] {
   }
 }
 
-import CID from 'cids'
-import { Provider } from '@ethersproject/abstract-provider'
-import { Contract } from '@ethersproject/contracts'
-import { namehash } from '@ethersproject/hash'
 
-// @ts-ignore TYPE NEEDS FIXING
-import { getCodec, rmPrefix } from 'multicodec'
-// @ts-ignore TYPE NEEDS FIXING
-import { decode, toB58String } from 'multihashes'
 
 export function hexToUint8Array(hex: string): Uint8Array {
   hex = hex.startsWith('0x') ? hex.substr(2) : hex
@@ -185,9 +188,7 @@ export function parseENSAddress(ensAddress: string): { ensName: string; ensPath:
   return { ensName: `${match[1].toLowerCase()}eth`, ensPath: match[4] }
 }
 
-import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
-import Ajv from 'ajv'
-import { providers } from 'ethers'
+
 
 const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
 
