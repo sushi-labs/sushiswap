@@ -27,6 +27,15 @@ importers:
     devDependencies:
       config: link:../../packages/config
 
+  apis/price:
+    specifiers:
+      '@vercel/node': ^1.14.1
+      config: workspace:*
+    dependencies:
+      '@vercel/node': 1.14.1
+    devDependencies:
+      config: link:../../packages/config
+
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
@@ -42,10 +51,10 @@ importers:
 
   apps/_root:
     specifiers:
+      '@sushiswap/chain': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      chain: workspace:*
       config: workspace:*
       eslint: 8.10.0
       next: 12.0.10
@@ -54,8 +63,8 @@ importers:
       react-dom: ^18.0.0-rc.1
       typescript: ^4.6.2
     dependencies:
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/ui': link:../../packages/ui
-      chain: link:../../packages/chain
       next: 12.0.10_react-dom@18.0.0+react@18.0.0
       react: 18.0.0
       react-dom: 18.0.0_react@18.0.0
@@ -225,6 +234,7 @@ importers:
       '@ethersproject/experimental': ^5.6.0
       '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
       '@sushiswap/ui': workspace:*
       '@typechain/ethers-v5': ^7.2.0
       '@types/node': ^17.0.30
@@ -232,7 +242,6 @@ importers:
       '@types/react-dom': ^18.0.3
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v3-periphery': ^1.4.1
-      chain: workspace:*
       config: workspace:*
       eslint: 8.14.0
       ethers: ^5.6.4
@@ -249,11 +258,62 @@ importers:
       '@ethersproject/experimental': 5.6.0
       '@ethersproject/providers': 5.6.4
       '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/ui': link:../../packages/ui
       '@typechain/ethers-v5': 7.2.0_f8096d788b70f79738e411e7991e02ef
       '@uniswap/redux-multicall': 1.1.1_7614751a32cfcedc087d0caca41c3c8d
       '@uniswap/v3-periphery': 1.4.1
-      chain: link:../../packages/chain
+      ethers: 5.6.4
+      next: 12.1.5_react-dom@18.1.0+react@18.1.0
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
+      swr: 1.3.0_react@18.1.0
+      typechain: 5.2.0_typescript@4.6.4
+    devDependencies:
+      '@types/node': 17.0.30
+      '@types/react': 18.0.8
+      '@types/react-dom': 18.0.3
+      config: link:../../packages/config
+      eslint: 8.14.0
+      next-transpile-modules: 9.0.0
+      typescript: 4.6.4
+
+  examples/token-lists:
+    specifiers:
+      '@ethersproject/bignumber': ^5.6.0
+      '@ethersproject/experimental': ^5.6.0
+      '@ethersproject/providers': ^5.6.4
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@typechain/ethers-v5': ^7.2.0
+      '@types/node': ^17.0.30
+      '@types/react': ^18.0.8
+      '@types/react-dom': ^18.0.3
+      '@uniswap/v3-periphery': ^1.4.1
+      config: workspace:*
+      eslint: 8.14.0
+      ethers: ^5.6.4
+      next: ^12.1.5
+      next-transpile-modules: 9.0.0
+      react: ^18.1.0
+      react-dom: ^18.1.0
+      react-redux: ^8.0.1
+      swr: ^1.2.2
+      typechain: ^5.2.0
+      typescript: ^4.6.4
+    dependencies:
+      '@ethersproject/bignumber': 5.6.0
+      '@ethersproject/experimental': 5.6.0
+      '@ethersproject/providers': 5.6.4
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/redux-token-lists': link:../../packages/redux-token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@typechain/ethers-v5': 7.2.0_f8096d788b70f79738e411e7991e02ef
+      '@uniswap/v3-periphery': 1.4.1
       ethers: 5.6.4
       next: 12.1.5_react-dom@18.1.0+react@18.1.0
       react: 18.1.0
@@ -347,17 +407,17 @@ importers:
   packages/currency:
     specifiers:
       '@ethersproject/address': ^5.5.0
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/math': workspace:*
       '@types/jest': ^27.4.1
-      chain: workspace:*
       config: workspace:*
       jest: ^27.5.1
-      math: workspace:*
       tiny-invariant: ^1.2.0
       typescript: ^4.6.2
     dependencies:
       '@ethersproject/address': 5.6.0
-      chain: link:../chain
-      math: link:../math
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/math': link:../math
       tiny-invariant: 1.2.0
     devDependencies:
       '@types/jest': 27.4.1
@@ -436,6 +496,55 @@ importers:
       config: link:../config
       jest: 27.5.1
       typescript: 4.6.3
+
+  packages/redux-token-lists:
+    specifiers:
+      '@ethersproject/abstract-provider': ^5.6.0
+      '@ethersproject/contracts': ^5.6.0
+      '@ethersproject/hash': ^5.6.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@types/jest': ^27.4.1
+      '@types/node': ^17.0.30
+      '@types/react': ^18.0.8
+      '@types/react-dom': ^18.0.3
+      '@uniswap/token-lists': ^1.0.0-beta.28
+      ajv: ^6.12.3
+      cids: ^1.1.9
+      config: workspace:*
+      ethers: ^5.6.4
+      multicodec: ^3.2.1
+      multihashes: ^4.0.3
+      react: ^18.1.0
+      react-dom: ^18.1.0
+      react-redux: ^8.0.1
+      typescript: ^4.6.4
+    dependencies:
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/hooks': link:../hooks
+      ajv: 6.12.6
+      cids: 1.1.9
+      multicodec: 3.2.1
+      multihashes: 4.0.3
+    devDependencies:
+      '@ethersproject/abstract-provider': 5.6.0
+      '@ethersproject/contracts': 5.6.0
+      '@ethersproject/hash': 5.6.0
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/chain': link:../chain
+      '@types/jest': 27.4.1
+      '@types/node': 17.0.30
+      '@types/react': 18.0.8
+      '@types/react-dom': 18.0.3
+      '@uniswap/token-lists': 1.0.0-beta.28
+      config: link:../config
+      ethers: 5.6.4
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
+      typescript: 4.6.4
 
   packages/ui:
     specifiers:
@@ -3250,6 +3359,10 @@ packages:
   /@metamask/safe-event-emitter/2.0.0:
     resolution: {integrity: sha512-/kSXhY692qiV1MXu6EeOZvg5nECLclxNXcKCxJ3cXQgYuRymRHpdx/t7JXfsK+JLjwA1e1c1/SBrlQYpusC29Q==}
 
+  /@multiformats/base-x/4.0.1:
+    resolution: {integrity: sha512-eMk0b9ReBbV23xXU693TAIrLyeO5iTgBZGSJfpqriG8UkYvr/hC9u9pyMlAakDNHWmbhMZCDs6KQO0jzKD8OTw==}
+    dev: false
+
   /@n1ru4l/graphql-live-query/0.9.0_graphql@16.3.0:
     resolution: {integrity: sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==}
     peerDependencies:
@@ -3634,7 +3747,6 @@ packages:
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.5
-    dev: false
 
   /@repeaterjs/repeater/3.0.4:
     resolution: {integrity: sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==}
@@ -3861,7 +3973,6 @@ packages:
     dependencies:
       '@types/react': 18.0.8
       hoist-non-react-statics: 3.3.2
-    dev: false
 
   /@types/istanbul-lib-coverage/2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
@@ -4127,6 +4238,11 @@ packages:
       react: 18.1.0
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
     dev: false
+
+  /@uniswap/token-lists/1.0.0-beta.28:
+    resolution: {integrity: sha512-MmVeoOd/HlZYOn5NT2mlDoOUYjnZb+3V7aCD5/YwSgsqeDRXZmKfKHafEEhiZoMvXuZdqSBg4L/ythvzAf9cwA==}
+    engines: {node: '>=10'}
+    dev: true
 
   /@uniswap/v2-core/1.0.1:
     resolution: {integrity: sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==}
@@ -5293,6 +5409,17 @@ packages:
 
   /ci-info/3.3.0:
     resolution: {integrity: sha512-riT/3vI5YpVH6/qomlDnJow6TBee2PBKSEpx3O32EGPYbWGIRsIlGRms3Sm74wYE1JMo8RnO04Hb12+v1J5ICw==}
+
+  /cids/1.1.9:
+    resolution: {integrity: sha512-l11hWRfugIcbGuTZwAM5PwpjPPjyb6UZOGwlHSnOBV5o07XhQ4gNpBN67FbODvpjyHtd+0Xs6KNvUcGBiDRsdg==}
+    engines: {node: '>=4.0.0', npm: '>=3.0.0'}
+    deprecated: This module has been superseded by the multiformats module
+    dependencies:
+      multibase: 4.0.6
+      multicodec: 3.2.1
+      multihashes: 4.0.3
+      uint8arrays: 3.0.0
+    dev: false
 
   /cipher-base/1.0.4:
     resolution: {integrity: sha512-Kkht5ye6ZGmwv40uUDZztayT2ThLQGfnj/T71N/XzeZeo3nf8foyW7zGTsPYkEya3m5f3cAypH+qe7YOrM1U2Q==}
@@ -7393,7 +7520,6 @@ packages:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
     dependencies:
       react-is: 16.13.1
-    dev: false
 
   /hosted-git-info/2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -7476,7 +7602,6 @@ packages:
 
   /immer/9.0.12:
     resolution: {integrity: sha512-lk7UNmSbAukB5B6dh9fnh5D0bJTOFKxVg2cyJWTYrWRfhLrLMBquONcUs3aFq507hNoIZEDDh8lb8UtOizSMhA==}
-    dev: false
 
   /immutable/3.7.6:
     resolution: {integrity: sha1-E7TTyxK++hVIKib+Gy665kAHHks=}
@@ -9739,6 +9864,35 @@ packages:
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  /multibase/4.0.6:
+    resolution: {integrity: sha512-x23pDe5+svdLz/k5JPGCVdfn7Q5mZVMBETiC+ORfO+sor9Sgs0smJzAjfTbM5tckeCqnaUuMYoz+k3RXMmJClQ==}
+    engines: {node: '>=12.0.0', npm: '>=6.0.0'}
+    deprecated: This module has been superseded by the multiformats module
+    dependencies:
+      '@multiformats/base-x': 4.0.1
+    dev: false
+
+  /multicodec/3.2.1:
+    resolution: {integrity: sha512-+expTPftro8VAW8kfvcuNNNBgb9gPeNYV9dn+z1kJRWF2vih+/S79f2RVeIwmrJBUJ6NT9IUPWnZDQvegEh5pw==}
+    deprecated: This module has been superseded by the multiformats module
+    dependencies:
+      uint8arrays: 3.0.0
+      varint: 6.0.0
+    dev: false
+
+  /multiformats/9.6.4:
+    resolution: {integrity: sha512-fCCB6XMrr6CqJiHNjfFNGT0v//dxOBMrOMqUIzpPc/mmITweLEyhvMpY9bF+jZ9z3vaMAau5E8B68DW77QMXkg==}
+    dev: false
+
+  /multihashes/4.0.3:
+    resolution: {integrity: sha512-0AhMH7Iu95XjDLxIeuCOOE4t9+vQZsACyKZ9Fxw2pcsRmlX4iCn1mby0hS0bb+nQOVpdQYWPpnyusw4da5RPhA==}
+    engines: {node: '>=12.0.0', npm: '>=6.0.0'}
+    dependencies:
+      multibase: 4.0.6
+      uint8arrays: 3.0.0
+      varint: 5.0.2
+    dev: false
+
   /nano-time/1.0.0:
     resolution: {integrity: sha1-sFVPaa2J4i0JB/ehKwmTpdlhN+8=}
     dependencies:
@@ -10739,7 +10893,6 @@ packages:
       react-dom: 18.1.0_react@18.1.0
       react-is: 18.0.0
       use-sync-external-store: 1.0.0_react@18.1.0
-    dev: false
 
   /react-ticker/1.3.2_react-dom@18.1.0+react@18.1.0:
     resolution: {integrity: sha512-9sLgc9gFx/EMNxn2QcwUJAOf3jdEROKRyXZGbWrEbfJG/MTkHwR+WRrVtypv3iFXPpcrKmPD91+vatHq0BgR0Q==}
@@ -10832,13 +10985,11 @@ packages:
       redux: ^4
     dependencies:
       redux: 4.2.0
-    dev: false
 
   /redux/4.2.0:
     resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.17.9
-    dev: false
 
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
@@ -10934,7 +11085,6 @@ packages:
 
   /reselect/4.1.5:
     resolution: {integrity: sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==}
-    dev: false
 
   /resolve-cwd/3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
@@ -12278,6 +12428,12 @@ packages:
       source-map: 0.6.1
     dev: false
 
+  /uint8arrays/3.0.0:
+    resolution: {integrity: sha512-HRCx0q6O9Bfbp+HHSfQQKD7wU70+lydKVt4EghkdOvlK/NlrF90z+eXV34mUd48rNvVJXwkrMSPpCATkct8fJA==}
+    dependencies:
+      multiformats: 9.6.4
+    dev: false
+
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
     dependencies:
@@ -12468,6 +12624,14 @@ packages:
   /value-or-promise/1.0.11:
     resolution: {integrity: sha512-41BrgH+dIbCFXClcSapVs5M6GkENd3gQOJpEfPDNa71LsUGMXDL0jMWpI/Rh7WhX+Aalfz2TTS3Zt5pUsbnhLg==}
     engines: {node: '>=12'}
+
+  /varint/5.0.2:
+    resolution: {integrity: sha512-lKxKYG6H03yCZUpAGOPOsMcGxd1RHCu1iKvEHYDPmTyq2HueGhD73ssNBqqQWfvYs04G9iUFRvmAVLW20Jw6ow==}
+    dev: false
+
+  /varint/6.0.0:
+    resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
+    dev: false
 
   /vary/1.1.2:
     resolution: {integrity: sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=}

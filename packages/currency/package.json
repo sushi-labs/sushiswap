@@ -1,5 +1,5 @@
 {
-  "name": "currency",
+  "name": "@sushiswap/currency",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -19,8 +19,8 @@
   "dependencies": {
     "@ethersproject/address": "^5.5.0",
     "tiny-invariant": "^1.2.0",
-    "chain": "workspace:*",
-    "math": "workspace:*"
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/math": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
