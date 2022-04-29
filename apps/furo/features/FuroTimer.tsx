@@ -1,6 +1,6 @@
-import useInterval from 'app/hooks/useInterval'
+import { useInterval } from '@sushiswap/hooks'
 import { FC, ReactNode, useState } from 'react'
-import Typography from 'ui/typography/Typography'
+import { Typography } from '@sushiswap/ui'
 import { Vesting } from './context'
 import { FuroStatus } from './context/enums'
 import { Stream } from './context/Stream'

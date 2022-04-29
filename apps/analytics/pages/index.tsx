@@ -1,8 +1,8 @@
-import { FactoriesQueryQuery } from '../.graphclient'
+import { FactoryQuery } from '../.graphclient'
 
 import { KPI } from '../components'
 
-export default function Analytics(props: FactoriesQueryQuery) {
+export default function Analytics(props: FactoryQuery) {
   const { liquidityUSD, volumeUSD, txCount, pairCount, userCount, tokenCount } = Object.values(props).reduce(
     (previousValue, currentValue) => ({
       liquidityUSD: previousValue.liquidityUSD + Number(currentValue.liquidityUSD),
@@ -14,8 +14,6 @@ export default function Analytics(props: FactoriesQueryQuery) {
     }),
     { liquidityUSD: 0, volumeUSD: 0, txCount: 0, pairCount: 0, userCount: 0, tokenCount: 0 },
   )
-
-  console.log({ props })
 
   return (
     <div className="px-2 pt-16">
@@ -32,12 +30,13 @@ export default function Analytics(props: FactoriesQueryQuery) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = await getBuiltGraphSDK()
-  const props = await sdk.FactoriesQuery()
   return {
-    props,
+    props: {
+      ...(await sdk.Factory()),
+    },
     revalidate: 60,
   }
 }

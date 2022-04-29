@@ -1,5 +1,5 @@
-import { Amount, Token } from 'currency'
-import { JSBI } from 'math'
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
 import { TransactionType } from './enums'
 import { toToken } from './mapper'
 import { TransactionRepresentation, UserRepresentation } from './representations'

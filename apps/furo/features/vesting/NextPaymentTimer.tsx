@@ -1,6 +1,6 @@
 import useInterval from 'app/hooks/useInterval'
 import { FC, ReactNode, useState } from 'react'
-import Typography from 'ui/typography/Typography'
+import { Typography } from '@sushiswap/ui'
 import { Vesting } from '../context'
 import { FuroStatus } from '../context/enums'
 interface NextPaymentTimerState {

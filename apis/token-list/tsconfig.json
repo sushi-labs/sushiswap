@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+  },
+  "exclude": ["node_modules"],
+  "extends": "config/typescript/base.json",
+  "include": ["."]
+}

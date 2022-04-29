@@ -11,8 +11,7 @@ import {
 import { usePopover } from 'app/hooks/usePopover'
 import { format } from 'date-fns'
 import { FC, memo, useMemo } from 'react'
-import { CalendarIcon } from 'ui/icons'
-import Typography from 'ui/typography/Typography'
+import { CalendarIcon, Typography } from '@sushiswap/ui'
 
 interface Props {
   vesting: Vesting

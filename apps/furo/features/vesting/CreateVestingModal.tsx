@@ -6,10 +6,10 @@ import { useAllTokens } from 'app/hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'app/hooks/useBentoBoxApproveCallback'
 import { useFuroVestingContract } from 'app/hooks/useFuroContract'
 import { ApprovalState } from 'app/types/approval-state'
-import { Amount, Token } from 'currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { FC, useEffect, useState } from 'react'
-import DialogContent from 'ui/dialog/DialogContent'
+import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
 
 type StepConfig = {

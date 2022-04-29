@@ -1,10 +1,11 @@
 import React, { FC, forwardRef } from 'react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export type TypographyWeight = 400 | 500 | 700
 
 const WEIGHTS = {
-  400: 'font-medium',
+  400: 'font-normal',
+  500: 'font-medium',
   700: 'font-bold',
 }
 
@@ -49,7 +50,6 @@ export const Typography: FC<TypographyProps> = forwardRef(
       {
         className: classNames(
           VARIANTS[variant],
-          // @ts-ignore TYPE NEEDS FIXING
           WEIGHTS[weight],
           onClick ? 'cursor-pointer select-none' : '',
           className,

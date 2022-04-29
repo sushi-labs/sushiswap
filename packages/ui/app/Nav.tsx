@@ -1,5 +1,9 @@
-import { FC } from 'react'
+type Props = {
+  children?: React.ReactNode
+}
 
-const Nav: FC = ({ children }) => <nav>{children}</nav>
+function Nav({ children }: Props): JSX.Element {
+  return <nav>{children}</nav>
+}
 
 export default Nav

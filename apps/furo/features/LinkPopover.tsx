@@ -5,8 +5,7 @@ import { Stream, Vesting } from 'app/features/context'
 import { getExplorerLink } from 'app/functions/explorer'
 import { usePopover } from 'app/hooks/usePopover'
 import { FC } from 'react'
-import { ArrowFlatLinesUp } from 'ui/icons'
-import Typography from 'ui/typography/Typography'
+import { ArrowFlatLinesUp, Typography } from '@sushiswap/ui'
 import { useNetwork } from 'wagmi'
 
 interface Props {

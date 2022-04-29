@@ -1,13 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
 import { calculateGasMargin } from 'app/functions/trade'
 import { ApprovalState } from 'app/types/approval-state'
-import { Amount, Token } from 'currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { Contract } from 'ethers'
-import { MAX_UINT256 } from 'math'
+import { MAX_UINT256 } from '@sushiswap/math'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContract, useSigner, useWaitForTransaction } from 'wagmi'
 import { useTokenAllowance } from './useTokenAllowance'
-
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(
@@ -20,7 +19,7 @@ export function useApproveCallback(
   const currentAllowance = useTokenAllowance(token, account?.address ?? undefined, spender)
   const [_, wait] = useWaitForTransaction({
     skip: true,
-  });
+  })
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -36,9 +35,8 @@ export function useApproveCallback(
   const tokenContract = useContract<Contract>({
     addressOrName: token?.address ?? AddressZero,
     contractInterface: erc20ABI,
-    signerOrProvider: signer
+    signerOrProvider: signer,
   })
-
 
   const approve = useCallback(async (): Promise<void> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
@@ -75,15 +73,13 @@ export function useApproveCallback(
     const tx = await tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MAX_UINT256, {
       gasLimit: calculateGasMargin(estimatedGas),
     })
-    
-    const waitForApproval = await wait({ confirmations: 1, hash: tx.hash });
+
+    const waitForApproval = await wait({ confirmations: 1, hash: tx.hash })
     if (waitForApproval.data && !waitForApproval.error) {
-      console.log("Successfully approved token") // TODO: should probably refactor and update the state to PENDING?
+      console.log('Successfully approved token') // TODO: should probably refactor and update the state to PENDING?
     } else {
       console.log(waitForApproval)
     }
-
-
   }, [approvalState, token, tokenContract, amountToApprove, spender, wait])
 
   return [approvalState, approve]

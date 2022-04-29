@@ -1,4 +1,4 @@
-import { JSBI } from 'math'
+import { JSBI } from '@sushiswap/math'
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
 import { VestingRepresentation } from './representations'

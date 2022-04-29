@@ -1,10 +1,10 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'app/features/context/Stream'
 import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
-import { Amount } from 'currency'
-import { JSBI } from 'math'
+import { Amount } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
-import DialogContent from 'ui/dialog/DialogContent'
+import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount, useEnsResolveName } from 'wagmi'
 
 interface CancelStreamModalProps {
@@ -51,7 +51,9 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
         <div className="text-blue-600">
           <DialogContent>
             <div>
-              Amount left: {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()} {stream?.token.symbol}
+              Amount left:{' '}
+              {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
+              {stream?.token.symbol}
             </div>
             <div>
               from BentoBox: <input type="checkbox" defaultChecked={toBentoBox} onChange={handleBentoBoxCheck} />

@@ -8,7 +8,7 @@ import DialogActions, { DialogActionProps } from './DialogActions'
 interface DialogProps {
   open: boolean
   onClose(): void
-  children: DialogContentProps
+  children?: React.ReactNode
 }
 
 const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {

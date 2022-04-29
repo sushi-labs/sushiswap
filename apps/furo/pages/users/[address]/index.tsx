@@ -4,7 +4,7 @@ import CreateStreamModal from 'app/features/stream/CreateStreamModal'
 import { FuroTable, FuroTableType } from 'app/features/FuroTable'
 import CreateVestingModal from 'app/features/vesting/CreateVestingModal'
 import { FC } from 'react'
-import { Typography } from 'ui/typography'
+import { Typography } from '@sushiswap/ui'
 import { getBuiltGraphSDK } from '../../../.graphclient'
 
 interface DashboardProps {

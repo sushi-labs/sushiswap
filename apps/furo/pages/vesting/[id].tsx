@@ -3,7 +3,7 @@ import { Vesting } from 'app/features/context'
 import {
   ScheduleRepresentation,
   TransactionRepresentation,
-  VestingRepresentation
+  VestingRepresentation,
 } from 'app/features/context/representations'
 import HistoryPopover from 'app/features/HistoryPopover'
 import LinkPopover from 'app/features/LinkPopover'
@@ -11,10 +11,8 @@ import NextPaymentTimer from 'app/features/vesting/NextPaymentTimer'
 import SchedulePopover from 'app/features/vesting/SchedulePopover'
 import { VestingChart } from 'app/features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
-import { ProgressColor, Typography } from 'ui'
-import ProgressBar from 'ui/progressbar/ProgressBar'
+import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getBuiltGraphSDK } from '../../.graphclient'
-
 interface Props {
   vestingRepresentation: VestingRepresentation
   transactions: TransactionRepresentation[]
@@ -79,6 +77,7 @@ const VestingPage: FC<Props> = (props) => {
 export default VestingPage
 
 export async function getServerSideProps({ query }) {
+  // const { getBuiltGraphSDK } = await import('../../.graphclient')
   const sdk = await getBuiltGraphSDK()
   const vestingRepresentation = (await sdk.Vesting({ id: query.id })).VESTING_vesting
   const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions

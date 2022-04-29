@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export type MaxWidth = 'full' | '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs'
 
@@ -25,7 +25,7 @@ interface ContainerProps {
   id?: string
 }
 
-const Container = ({ children, maxWidth = '2xl', className = '', id }: ContainerProps) => (
+export const Container = ({ children, maxWidth = '2xl', className = '', id }: ContainerProps) => (
   <div className={classNames(className, TailwindMapper[maxWidth], 'w-full')} id={id}>
     {children}
   </div>

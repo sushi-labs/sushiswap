@@ -9,14 +9,30 @@ import { default as thr } from './HeadRow'
 import { FC } from 'react'
 
 export type TableProps = {
-  container: FC<{}>
-  thead: FC<{}>
-  table: FC<{}>
-  tr: FC<{}>
-  thr: FC<{}>
-  th: FC<{}>
-  td: FC<{}>
-  tbody: FC<{}>
+  container: FC<{
+    children?: React.ReactNode
+  }>
+  thead: FC<{
+    children?: React.ReactNode
+  }>
+  table: FC<{
+    children?: React.ReactNode
+  }>
+  tr: FC<{
+    children?: React.ReactNode
+  }>
+  thr: FC<{
+    children?: React.ReactNode
+  }>
+  th: FC<{
+    children?: React.ReactNode
+  }>
+  td: FC<{
+    children?: React.ReactNode
+  }>
+  tbody: FC<{
+    children?: React.ReactNode
+  }>
 }
 
 export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody }
