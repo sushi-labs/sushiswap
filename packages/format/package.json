@@ -18,18 +18,15 @@
   },
   "dependencies": {
     "numeral": "^2.0.6",
-    "millify": "^4.0.0"
+    "millify": "^4.0.0",
+    "@ethersproject/address": "^5.6.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/numeral": "^2.0.2",
     "config": "workspace:*",
-    "ethers": "^5.6.4",
     "jest": "^27.5.1",    
     "typescript": "^4.6.4"
-  },
-  "peerDependencies": {
-    "ethers": "^5.6.4"
   },
   "jest": {
     "preset": "config/jest/node"
