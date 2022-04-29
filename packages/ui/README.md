@@ -41,3 +41,7 @@ type Props = {
 function Component({ children }: Props): JSX.Element {
   return <>I'm a typed component</>
 }
+
+## Resources
+
+https://react-typescript-cheatsheet.netlify.app/docs/advanced/patterns_by_usecase/#props-extracting-prop-types-of-a-component
