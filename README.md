@@ -48,6 +48,8 @@ pnpn run build
 
 `git checkout -b feature/example-app`
 
+`pnpm exec @sushiswap/cli create-app example-app`
+
 ## Packages
 
 - `chain`
