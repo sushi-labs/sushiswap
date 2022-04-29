@@ -1,8 +1,8 @@
-import React, { FC, useState, FunctionComponent } from 'react'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { useIsMounted } from '../hooks'
+import React from 'react'
+import { useConnect } from 'wagmi'
+import { useIsMounted } from '../../hooks'
 
-const List = () => {
+function List(): JSX.Element {
   const isMounted = useIsMounted()
   const { activeConnector, connect, connectors, error, isConnecting, isConnected, isDisconnected, pendingConnector } =
     useConnect()
@@ -20,9 +20,4 @@ const List = () => {
   )
 }
 
-const Disconnect = () => {
-  const { disconnect } = useDisconnect()
-  return <button onClick={() => disconnect()}>Disconnect</button>
-}
-
-export default { List, Disconnect }
+export default List

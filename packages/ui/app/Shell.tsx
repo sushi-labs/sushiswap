@@ -1,5 +1,9 @@
-import { FC } from 'react'
+type Props = {
+  children?: React.ReactNode
+}
 
-const Shell: FC = ({ children }) => <div>{children}</div>
+function Shell({ children }: Props): JSX.Element {
+  return <div>{children}</div>
+}
 
 export default Shell

@@ -29,3 +29,15 @@ UI library
 ## Lint 
 
 pnpm exec turbo run lint --scope=ui
+
+## Component convention
+
+FC is redudant, let's avoid unessasary inports and just use regular functions
+
+type Props = {
+  children?: React.ReactNode
+}
+
+function Component({ children }: Props): JSX.Element {
+  return <>I'm a typed component</>
+}

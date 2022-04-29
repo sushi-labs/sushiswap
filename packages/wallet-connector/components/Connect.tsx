@@ -4,7 +4,7 @@ import { useAccount, useConnect } from 'wagmi'
 import Account from './Account'
 import Wallet from './Wallet'
 
-const Connect = () => {
+function Connect(): JSX.Element | null {
   const { data, isError, isLoading } = useAccount()
   const { isConnected, isReconnecting } = useConnect()
 
@@ -17,13 +17,12 @@ const Connect = () => {
   }
 
   if (isConnected || isReconnecting) {
+    if (!data?.address) return null
     return (
-      data?.address && (
-        <>
-          <Account.Name address={data.address} />
-          <Account.Balance address={data.address} />
-        </>
-      )
+      <>
+        <Account.Name address={data.address} />
+        <Account.Balance address={data.address} />
+      </>
     )
   }
 

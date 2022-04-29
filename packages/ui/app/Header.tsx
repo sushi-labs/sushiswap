@@ -1,5 +1,9 @@
-import { FC } from 'react'
+type Props = {
+  children?: React.ReactNode
+}
 
-const Header: FC = ({ children }) => <header className="fixed z-20 hidden w-full h-16 lg:block">{children}</header>
+function Header({ children }: Props): JSX.Element {
+  return <header className="fixed z-20 hidden w-full h-16 lg:block">{children}</header>
+}
 
 export default Header
