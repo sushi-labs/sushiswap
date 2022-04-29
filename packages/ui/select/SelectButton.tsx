@@ -2,7 +2,7 @@ import { Listbox } from '@headlessui/react'
 import { FC, forwardRef, MutableRefObject } from 'react'
 import { ExtractProps } from '../types'
 import { SelectorIcon } from '@heroicons/react/solid'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export type SelectButtonProps = ExtractProps<typeof Listbox.Label> & {}
 

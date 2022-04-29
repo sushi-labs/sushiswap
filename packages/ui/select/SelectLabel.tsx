@@ -1,7 +1,7 @@
 import { Listbox } from '@headlessui/react'
 import { FC } from 'react'
 import { ExtractProps } from '../types'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export type SelectLabelProps = ExtractProps<typeof Listbox.Label> & {}
 const SelectLabel: FC<SelectLabelProps> = ({ className, ...props }) => {

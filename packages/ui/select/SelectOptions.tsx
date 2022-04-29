@@ -1,7 +1,7 @@
 import { Listbox } from '@headlessui/react'
 import { FC, forwardRef, MutableRefObject } from 'react'
 import { ExtractProps } from '../types'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 
 export type SelectOptionsProps = ExtractProps<typeof Listbox.Options> & {}
 

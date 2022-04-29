@@ -1,7 +1,7 @@
 import { ExtractProps } from '../types'
 import { Menu as HeadlessMenu } from '@headlessui/react'
 import { FC, forwardRef } from 'react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 
 export type MenuButton = ExtractProps<typeof HeadlessMenu.Button> & {

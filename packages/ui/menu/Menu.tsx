@@ -1,6 +1,6 @@
 import { FC, Fragment, FunctionComponent, ReactElement, ReactNode } from 'react'
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
 import { MenuItems } from './MenuItems'
 import { MenuButton } from './MenuButton'
 import { MenuItem } from './MenuItem'
