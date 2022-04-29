@@ -1,6 +1,10 @@
-# Interface Monorepo
+# Sushi Monorepo
 
 Sushi 2.0 🍣
+
+## Notice
+
+SOON TO BE MOVED TO sushiswap/sushiswap
 
 ## Getting Started
 
