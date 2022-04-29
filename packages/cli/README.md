@@ -4,8 +4,8 @@ Sushi CLI
 
 ## Install
 
-`pnpm i -g $PWD`
+```pnpm i -g $PWD```
 
 ## Run
 
-```sushi-cli```
+```scli```
