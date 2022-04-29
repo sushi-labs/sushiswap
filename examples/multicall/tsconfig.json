@@ -1,0 +1,9 @@
+{
+  "extends": "config/typescript/nextjs.json",
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "preserveSymlinks": true,
+    "resolveJsonModule": true
+  }
+}
