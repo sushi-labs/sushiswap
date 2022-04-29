@@ -1,4 +1,3 @@
-## Sushi 2.0
+## Wallet Connector
 
-- Links to docs
-- Philosophy
+...
