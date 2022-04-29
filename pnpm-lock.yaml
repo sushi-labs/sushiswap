@@ -27,6 +27,15 @@ importers:
     devDependencies:
       config: link:../../packages/config
 
+  apis/price:
+    specifiers:
+      '@vercel/node': ^1.14.1
+      config: workspace:*
+    dependencies:
+      '@vercel/node': 1.14.1
+    devDependencies:
+      config: link:../../packages/config
+
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
@@ -436,6 +445,32 @@ importers:
       config: link:../config
       jest: 27.5.1
       typescript: 4.6.3
+
+  packages/redux-logs:
+    specifiers:
+      '@reduxjs/toolkit': ^1.8.1
+      '@types/jest': ^27.4.1
+      '@types/node': ^17.0.30
+      '@types/react': ^18.0.8
+      '@types/react-dom': ^18.0.3
+      config: workspace:*
+      ethers: ^5.6.4
+      react: ^18.1.0
+      react-dom: ^18.1.0
+      react-redux: ^8.0.1
+      typescript: ^4.6.4
+    devDependencies:
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@types/jest': 27.4.1
+      '@types/node': 17.0.30
+      '@types/react': 18.0.8
+      '@types/react-dom': 18.0.3
+      config: link:../config
+      ethers: 5.6.4
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
+      typescript: 4.6.4
 
   packages/ui:
     specifiers:
@@ -3634,7 +3669,6 @@ packages:
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.5
-    dev: false
 
   /@repeaterjs/repeater/3.0.4:
     resolution: {integrity: sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==}
@@ -3861,7 +3895,6 @@ packages:
     dependencies:
       '@types/react': 18.0.8
       hoist-non-react-statics: 3.3.2
-    dev: false
 
   /@types/istanbul-lib-coverage/2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
@@ -7393,7 +7426,6 @@ packages:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
     dependencies:
       react-is: 16.13.1
-    dev: false
 
   /hosted-git-info/2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -7476,7 +7508,6 @@ packages:
 
   /immer/9.0.12:
     resolution: {integrity: sha512-lk7UNmSbAukB5B6dh9fnh5D0bJTOFKxVg2cyJWTYrWRfhLrLMBquONcUs3aFq507hNoIZEDDh8lb8UtOizSMhA==}
-    dev: false
 
   /immutable/3.7.6:
     resolution: {integrity: sha1-E7TTyxK++hVIKib+Gy665kAHHks=}
@@ -10739,7 +10770,6 @@ packages:
       react-dom: 18.1.0_react@18.1.0
       react-is: 18.0.0
       use-sync-external-store: 1.0.0_react@18.1.0
-    dev: false
 
   /react-ticker/1.3.2_react-dom@18.1.0+react@18.1.0:
     resolution: {integrity: sha512-9sLgc9gFx/EMNxn2QcwUJAOf3jdEROKRyXZGbWrEbfJG/MTkHwR+WRrVtypv3iFXPpcrKmPD91+vatHq0BgR0Q==}
@@ -10832,13 +10862,11 @@ packages:
       redux: ^4
     dependencies:
       redux: 4.2.0
-    dev: false
 
   /redux/4.2.0:
     resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.17.9
-    dev: false
 
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
@@ -10934,7 +10962,6 @@ packages:
 
   /reselect/4.1.5:
     resolution: {integrity: sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==}
-    dev: false
 
   /resolve-cwd/3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
