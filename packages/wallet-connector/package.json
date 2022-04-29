@@ -1,23 +1,27 @@
 {
-  "name": "wallet-connector",
-  "version": "0.1.0",
+  "name": "@sushiswap/wallet-connector",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "source": "./index.ts",
   "license": "MIT",
-  "dependencies": {
-    "@web3-react/core": "8.0.10-beta.0",
-    "@web3-react/metamask": "8.0.6-beta.0",
-    "@web3-react/network": "8.0.5-beta.0",
-    "immer": "^9.0.12",
-    "react": "^18.0.0-rc.1",
-    "react-dom": "^18.0.0-rc.1",
-    "zustand": "^3.7.0",
-    "chain": "workspace:*"
-  },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
-    "@types/node": "^17.0.19",
-    "@types/react": "^17.0.39",
-    "@web3-react/types": "8.0.3-beta.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.30",
+    "@types/react": "18.0.8",
+    "@types/react-dom": "18.0.3",
     "config": "workspace:*",
-    "typescript": "^4.5.5"
+    "ethers": "^5.6.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "typescript": "^4.6.4",
+    "@sushiswap/ui": "workspace:*",
+    "wagmi": "^0.3.1"
+  },
+  "peerDependencies": {
+    "ethers": "^5.6.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "wagmi": "^0.3.1"
   }
 }

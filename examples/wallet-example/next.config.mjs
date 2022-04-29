@@ -1,6 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['chain', 'wallet-connector'])
+const withTranspileModules = transpileModules(['@sushiswap/wallet-connector', '@sushiswap/ui'])
 
 export default withTranspileModules({
   reactStrictMode: true,
