@@ -1,6 +1,13 @@
 import { Popover } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import { SchedulePeriod, ScheduleRepresentation, Vesting } from 'app/features/context'
+import {
+  SchedulePeriod,
+  ScheduleRepresentation,
+  Vesting,
+  PeriodType,
+  VestingType,
+  Schedule,
+} from 'app/features/context'
 import { usePopover } from 'app/hooks/usePopover'
 import { format } from 'date-fns'
 import { FC, memo, useMemo } from 'react'
@@ -8,15 +15,14 @@ import { CalendarIcon } from 'ui/icons'
 import Typography from 'ui/typography/Typography'
 
 interface Props {
-  vesting: Vesting,
+  vesting: Vesting
   scheduleRepresentation: ScheduleRepresentation
 }
 
 const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
-  let periods = useMemo(
-    () =>
-      scheduleRepresentation.periods.map((period) => new SchedulePeriod({token: vesting.token, period})),
+  let schedule = useMemo(
+    () => new Schedule({ token: vesting.token, schedule: scheduleRepresentation }),
     [vesting, scheduleRepresentation],
   )
 
@@ -44,9 +50,9 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
           <XIcon width={24} height={24} className="text-secondary" />
         </div>
         <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-dark-800 border-t border-dark-800">
-          {periods.length ? (
-            Object.values(periods).map((period) => (
-              <SchedulePopoverItem period={period} key={period.id} />
+          {schedule?.periods.length ? (
+            Object.values(schedule.periods).map((period) => (
+              <SchedulePopoverItem vesting={vesting} period={period} key={period.id} />
             ))
           ) : (
             <div>
@@ -60,7 +66,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   )
 }
 
-const SchedulePopoverItem: FC<{ period: SchedulePeriod }> = memo(({ period }) => {
+const SchedulePopoverItem: FC<{ vesting: Vesting; period: SchedulePeriod }> = memo(({ vesting, period }) => {
   return (
     <div key={period.id} className="flex items-center justify-between gap-3 py-3">
       <div className="grid grid-cols-[30px_80px_140px] gap-2 items-center">
@@ -73,7 +79,17 @@ const SchedulePopoverItem: FC<{ period: SchedulePeriod }> = memo(({ period }) =>
       </div>
       <div className="rounded-[10px] border border-dark-700 px-3 py-1 bg-dark-800">
         <Typography variant="xs" weight={500} className="text-high-emphesis">
-          {period.amount.toSignificant() } {period?.amount.currency?.symbol}
+          {period.type === PeriodType.START
+            ? `-`
+            : period.type === PeriodType.CLIFF
+            ? `${vesting.cliffAmount} ${period?.amount.currency?.symbol}`
+            : period.type === PeriodType.STEP
+            ? `${vesting.stepAmount} ${period?.amount.currency?.symbol}`
+            : period.type === PeriodType.END &&
+              (vesting.vestingType === VestingType.GRADED || vesting.vestingType === VestingType.HYBRID)
+            ? `${vesting.stepAmount} ${period?.amount.currency?.symbol}`
+            : `${vesting.amount.toExact()} ${period?.amount.currency?.symbol}`}
+          {/* TODO: refactor stepAmount and vestingAmount to token? */}
         </Typography>
       </div>
     </div>
