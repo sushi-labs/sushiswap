@@ -31,6 +31,9 @@
       ]  
     },
     "dev": {
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "clean": {
@@ -46,6 +49,9 @@
       "outputs": [".next/**"]
     },
     "analytics#generate": {
+      "outputs": [".graphclient/**"]
+    },
+    "furo#generate": {
       "outputs": [".graphclient/**"]
     }
   }
