@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react'
 import { useInterval } from '@sushiswap/hooks'
-import { shortenAddress } from 'format'
+import { shortenAddress } from '@sushiswap/format'
 import { FC, useState } from 'react'
 import { Typography, NotepadIcon } from '@sushiswap/ui'
 import { FuroStatus } from '../context/enums'

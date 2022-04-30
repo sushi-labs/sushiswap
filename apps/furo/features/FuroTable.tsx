@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { formatNumber, shortenAddress } from 'format'
+import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
 import { useFlexLayout, useTable } from 'react-table'
