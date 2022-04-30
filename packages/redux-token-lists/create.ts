@@ -20,7 +20,6 @@ type ParamsWithoutContext<T extends (...args: any) => any> = RemoveFirstFromTupl
 
 export interface TokenListsOptions {
   reducerPath?: string
-  // More options can be added here as multicall's capabilities are extended
 }
 
 // Inspired by RTK Query's createApi

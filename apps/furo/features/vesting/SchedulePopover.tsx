@@ -1,14 +1,7 @@
 import { Popover } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import {
-  SchedulePeriod,
-  ScheduleRepresentation,
-  Vesting,
-  PeriodType,
-  VestingType,
-  Schedule,
-} from 'app/features/context'
-import { usePopover } from 'app/hooks/usePopover'
+import { SchedulePeriod, ScheduleRepresentation, Vesting, PeriodType, VestingType, Schedule } from 'features/context'
+import { usePopover } from 'hooks/usePopover'
 import { format } from 'date-fns'
 import { FC, memo, useMemo } from 'react'
 import { CalendarIcon, Typography } from '@sushiswap/ui'

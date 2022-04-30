@@ -1,13 +1,13 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui'])
+const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/redux-token-lists', '@sushiswap/chain'])
 
 export default withTranspileModules({
   basePath: '/furo',
   reactStrictMode: true,
-  // swcMinify: true,
+  swcMinify: true,
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
 })

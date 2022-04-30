@@ -14,7 +14,7 @@ importers:
       jest: 28.0.3
       prettier: 2.6.2
       ts-jest: 27.1.4_jest@28.0.3
-      turbo: 1.2.5
+      turbo: 1.2.6
 
   apis/path-finder:
     specifiers:
@@ -194,19 +194,21 @@ importers:
       '@headlessui/react': ^1.6.0
       '@heroicons/react': ^1.0.0
       '@popperjs/core': ^2.11.5
-      '@reduxjs/toolkit': ^1.8.0
+      '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
-      '@sushiswap/default-token-list': ^27.1.0
       '@sushiswap/hooks': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wallet-connector': workspace:*
       '@types/node': 17.0.30
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
-      '@uniswap/redux-multicall': ^1.1.0
+      '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/token-lists': ^1.0.0-beta.28
+      '@uniswap/v3-periphery': ^1.4.1
       '@visx/curve': ^2.1.0
       '@visx/gradient': ^2.1.0
       '@visx/group': ^2.1.0
@@ -221,12 +223,11 @@ importers:
       cids: ^1.0.0
       config: workspace:*
       date-fns: ^2.28.0
-      eslint: 8.14.0
+      eslint: ^8.14.0
       ethers: ^5.6.4
       format: workspace:*
       furo: github:sushiswap/furo#feature/furo-deploy
       graphql: 16.3.0
-      jotai: ^1.6.1
       next: ^12.1.5
       next-transpile-modules: 9.0.0
       postcss: ^8.4.12
@@ -236,11 +237,10 @@ importers:
       react-redux: ^8.0.1
       react-spring: ^9.4.4
       react-table: ^7.7.0
-      redux: ^4.1.0
       redux-devtools-extension: ^2.13.9
       redux-persist: ^6.0.0
       tailwindcss: ^3.0.24
-      typescript: 4.6.4
+      typescript: ^4.6.4
       wagmi: ^0.2.24
     dependencies:
       '@ethersproject/abi': 5.6.1
@@ -265,10 +265,11 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core-sdk': 1.0.0-canary.94
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/default-token-list': 27.4.0
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-token-lists': link:../../packages/redux-token-lists
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wallet-connector': link:../../packages/wallet-connector
       '@uniswap/redux-multicall': 1.1.1_09be2b0cb1c5d831510788853b72fb45
       '@uniswap/token-lists': 1.0.0-beta.28
       '@visx/curve': 2.1.0
@@ -287,23 +288,22 @@ importers:
       format: link:../../packages/format
       furo: github.com/sushiswap/furo/d7989e3ac7558d9bd82f4094ab370b24630f69a4
       graphql: 16.3.0
-      jotai: 1.6.5_react@18.1.0
       next: 12.1.5_react-dom@18.1.0+react@18.1.0
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-popper: 2.3.0_e6b0874f4dd5920661b62e72c1fe6ada
-      react-redux: 8.0.1_c5320d4185973b8c680d26ae2a4ac43a
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
       react-spring: 9.4.4_react-dom@18.1.0+react@18.1.0
       react-table: 7.7.0_react@18.1.0
-      redux: 4.2.0
-      redux-devtools-extension: 2.13.9_redux@4.2.0
-      redux-persist: 6.0.0_redux@4.2.0
+      redux-devtools-extension: 2.13.9
+      redux-persist: 6.0.0
       wagmi: 0.2.28_ethers@5.6.4+react@18.1.0
     devDependencies:
       '@graphprotocol/client-cli': 0.0.2_0154597af699e051ed7d7d919d503469
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
+      '@uniswap/v3-periphery': 1.4.1
       autoprefixer: 10.4.5_postcss@8.4.12
       config: link:../../packages/config
       eslint: 8.14.0
@@ -629,6 +629,8 @@ importers:
 
   packages/redux-token-lists:
     specifiers:
+      '@ethersproject/address': ^5.6.0
+      '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -641,7 +643,6 @@ importers:
       ajv: ^6.12.3
       cids: ^1.1.9
       config: workspace:*
-      ethers: ^5.6.4
       multicodec: ^3.2.1
       multihashes: ^4.0.3
       react: ^18.1.0
@@ -649,6 +650,8 @@ importers:
       react-redux: ^8.0.1
       typescript: ^4.6.4
     dependencies:
+      '@ethersproject/address': 5.6.0
+      '@ethersproject/providers': 5.6.4
       ajv: 6.12.6
       cids: 1.1.9
       multicodec: 3.2.1
@@ -664,7 +667,6 @@ importers:
       '@types/react-dom': 18.0.3
       '@uniswap/token-lists': 1.0.0-beta.28
       config: link:../config
-      ethers: 5.6.4
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
@@ -3940,7 +3942,6 @@ packages:
 
   /@openzeppelin/contracts/3.4.2-solc-0.7:
     resolution: {integrity: sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==}
-    dev: false
 
   /@openzeppelin/contracts/4.6.0:
     resolution: {integrity: sha512-8vi4d50NNya/bQqCmaVzvHNmwHvS0OBKb7HNtuNwEE3scXWrP31fKQoGxNMT+KbzmrNZzatE3QK5p2gFONI/hg==}
@@ -4081,7 +4082,7 @@ packages:
     dependencies:
       immer: 9.0.12
       react: 18.1.0
-      react-redux: 8.0.1_c5320d4185973b8c680d26ae2a4ac43a
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.5
@@ -4559,7 +4560,6 @@ packages:
   /@uniswap/lib/4.0.1-alpha:
     resolution: {integrity: sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==}
     engines: {node: '>=10'}
-    dev: false
 
   /@uniswap/redux-multicall/1.1.1_09be2b0cb1c5d831510788853b72fb45:
     resolution: {integrity: sha512-sXX2pAbxJj1OrErSc7zMEFo7j1EXqTBbllYuUDEWCZ/A12sK/4RXgXW2+zSoXOHCN6djyVUc3FmEt0v3x2jLSw==}
@@ -4577,7 +4577,7 @@ packages:
       '@ethersproject/contracts': 5.6.0
       '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
       react: 18.1.0
-      react-redux: 8.0.1_c5320d4185973b8c680d26ae2a4ac43a
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
     dev: false
 
   /@uniswap/redux-multicall/1.1.1_7614751a32cfcedc087d0caca41c3c8d:
@@ -4604,12 +4604,10 @@ packages:
   /@uniswap/v2-core/1.0.1:
     resolution: {integrity: sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==}
     engines: {node: '>=10'}
-    dev: false
 
   /@uniswap/v3-core/1.0.0:
     resolution: {integrity: sha512-kSC4djMGKMHj7sLMYVnn61k9nu+lHjMIxgg9CDQT+s2QYLoA56GbSK9Oxr+qJXzzygbkrmuY6cwgP6cW2JXPFA==}
     engines: {node: '>=10'}
-    dev: false
 
   /@uniswap/v3-periphery/1.4.1:
     resolution: {integrity: sha512-Ab0ZCKOQrQMKIcpBTezTsEhWfQjItd0TtkCG8mPhoQu+wC67nPaf4hYUhM6wGHeFUmDiYY5MpEQuokB0ENvoTg==}
@@ -4623,7 +4621,6 @@ packages:
       hardhat-watcher: 2.1.1
     transitivePeerDependencies:
       - hardhat
-    dev: false
 
   /@vercel/node-bridge/2.2.0:
     resolution: {integrity: sha512-ydYlZyIQfsuriF6qTt/F4vaAt+nb4ZKhLEl2o5AQFa5ED7LoPS5w01Xbujy+25pqS1ODu8/bsqOCUSX8y/+tSQ==}
@@ -5711,7 +5708,6 @@ packages:
 
   /base64-sol/1.0.1:
     resolution: {integrity: sha512-ld3cCNMeXt4uJXmLZBHFGMvVpK9KsLVEhPpFRXnvSVAqABKbuNZg/+dsq3NuM+wxFLb/UrVkz7m1ciWmkMfTbg==}
-    dev: false
 
   /bech32/1.1.4:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
@@ -8143,7 +8139,6 @@ packages:
       hardhat: ^2.0.0
     dependencies:
       chokidar: 3.5.3
-    dev: false
 
   /has-bigints/1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
@@ -10097,43 +10092,6 @@ packages:
       - ts-node
     dev: true
 
-  /jotai/1.6.5_react@18.1.0:
-    resolution: {integrity: sha512-B+DGV5ALIkIeyA1Bi9yBpdGmcWkmDS/p8C1XFYx9jFBs+lkeOdu0WAozAPCG4Qq1EcQ68vF+07HmPYFN5kf9OQ==}
-    engines: {node: '>=12.7.0'}
-    peerDependencies:
-      '@babel/core': '*'
-      '@babel/template': '*'
-      '@urql/core': '*'
-      immer: '*'
-      optics-ts: '*'
-      react: '>=16.8'
-      react-query: '*'
-      valtio: '*'
-      wonka: '*'
-      xstate: '*'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@babel/template':
-        optional: true
-      '@urql/core':
-        optional: true
-      immer:
-        optional: true
-      optics-ts:
-        optional: true
-      react-query:
-        optional: true
-      valtio:
-        optional: true
-      wonka:
-        optional: true
-      xstate:
-        optional: true
-    dependencies:
-      react: 18.1.0
-    dev: false
-
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -11639,40 +11597,6 @@ packages:
       react-dom: 18.1.0_react@18.1.0
       use-sync-external-store: 1.1.0_react@18.1.0
 
-  /react-redux/8.0.1_c5320d4185973b8c680d26ae2a4ac43a:
-    resolution: {integrity: sha512-LMZMsPY4DYdZfLJgd7i79n5Kps5N9XVLCJJeWAaPYTV+Eah2zTuBjTxKtNEbjiyitbq80/eIkm55CYSLqAub3w==}
-    peerDependencies:
-      '@types/react': ^16.8 || ^17.0 || ^18.0
-      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
-      react: ^16.8 || ^17.0 || ^18.0
-      react-dom: ^16.8 || ^17.0 || ^18.0
-      react-native: '>=0.59'
-      redux: ^4
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-      redux:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.17.9
-      '@types/hoist-non-react-statics': 3.3.1
-      '@types/react': 18.0.8
-      '@types/react-dom': 18.0.3
-      '@types/use-sync-external-store': 0.0.3
-      hoist-non-react-statics: 3.3.2
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-      react-is: 18.1.0
-      redux: 4.2.0
-      use-sync-external-store: 1.1.0_react@18.1.0
-    dev: false
-
   /react-redux/8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193:
     resolution: {integrity: sha512-LMZMsPY4DYdZfLJgd7i79n5Kps5N9XVLCJJeWAaPYTV+Eah2zTuBjTxKtNEbjiyitbq80/eIkm55CYSLqAub3w==}
     peerDependencies:
@@ -11837,21 +11761,17 @@ packages:
       balanced-match: 1.0.2
     dev: false
 
-  /redux-devtools-extension/2.13.9_redux@4.2.0:
+  /redux-devtools-extension/2.13.9:
     resolution: {integrity: sha512-cNJ8Q/EtjhQaZ71c8I9+BPySIBVEKssbPpskBfsXqb8HJ002A3KRVHfeRzwRo6mGPqsm7XuHTqNSNeS1Khig0A==}
     deprecated: Package moved to @redux-devtools/extension.
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0
-    dependencies:
-      redux: 4.2.0
     dev: false
 
-  /redux-persist/6.0.0_redux@4.2.0:
+  /redux-persist/6.0.0:
     resolution: {integrity: sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==}
     peerDependencies:
       redux: '>4.0.0'
-    dependencies:
-      redux: 4.2.0
     dev: false
 
   /redux-thunk/2.4.1_redux@4.2.0:
@@ -13056,119 +12976,128 @@ packages:
       tslib: 1.14.1
       typescript: 4.6.4
 
-  /turbo-darwin-64/1.2.5:
-    resolution: {integrity: sha512-AjMEF8hlA9vy1gXLHBruqgO42s0M0rKKZLQPM239wli5lKEprmxd8WMSjd9YmxRflS+/fwrXfjVl0QRhHjDIww==}
+  /turbo-darwin-64/1.2.6:
+    resolution: {integrity: sha512-YNH49cZKw6rrq6ef/PMuryk3lKzE9QI0R72Yj3lcA4C5FIekUA7RZY8xZK7152r6YNgZ6aPWOQN9lauSN58gPQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.2.5:
-    resolution: {integrity: sha512-2kj4+X9XMGF9o398qVo4HDsaoPy2kcl77X+EYlq2bROoQlGXRrR7R+i/qMvLh4tLsSQAm5eOqEbFyvtMkxT/xg==}
+  /turbo-darwin-arm64/1.2.6:
+    resolution: {integrity: sha512-1yk0UK59qGQjFkhmSnrNrGMIVxTeMZSaJ9YhJquyQG7PPHxIpCnz4uQQkZFRb0HQDGMEmsPC49Sx4h6UBQ/3aA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.2.5:
-    resolution: {integrity: sha512-29eQUiS/Fky7O8E0YzGh3EETPvMKmMDkFjJn4XtRGO+iZfkIxlqKnAUpT+8kx3nQ/5dAAoTGHflyf4FNEZaCKA==}
+  /turbo-freebsd-64/1.2.6:
+    resolution: {integrity: sha512-m5G86zILy0Qc/fy/2Auu74c5St/yS+SQi8ka2Wb/uVMPQjh7VpM3mB/z7U5pZTv92w2HJ8q5krC0uLT+pH4n8Q==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.2.5:
-    resolution: {integrity: sha512-WRFmzgXqXurdRntPrEb7hcOM1Zfjse8OC/sH3V8R9QspYE+upZ42m9ePLt2n5N2shc4XLced/9VFdczx9549Tw==}
+  /turbo-freebsd-arm64/1.2.6:
+    resolution: {integrity: sha512-tjbrRoN8fMuyfyKJ/Dw97cNy9CVlzoT8zZbpo1rVZkMRYpnizIDECdecoiMttBZIP9/ktNcj6nJVHh40+a0EMw==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.2.5:
-    resolution: {integrity: sha512-YBzKqXJEoORpPq7vwpNf9ovbVru9aQi7HD88fxYW1wvvuPdNx2ZAmjn8sEMZZPkndfOlf9fXgO3aXr0fjqUWMw==}
+  /turbo-linux-32/1.2.6:
+    resolution: {integrity: sha512-NBCeqsNbTQKuP+5rTwfd4dyd/LTdfUuX+4B6FxXswz6IuCHymUaCRwmRfN6TdeGRFnSP4y2tAymU5zqrI4/Leg==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.2.5:
-    resolution: {integrity: sha512-a85WEfOj4Cw0zd/wo1xoRmqW4kZHAz63nf+vWINyxZOK2H899TCUs+KJpgsacafU0fO36l1rsx2fdUDce/3Dww==}
+  /turbo-linux-64/1.2.6:
+    resolution: {integrity: sha512-27NGdEaAOkM/2Bj/QwSNI0b8VxWj9TrfqIE7ATENaMV4B+ukFgFvUkXQuJhnmb4InMxZSc8q01KaSou5P034Sw==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.2.5:
-    resolution: {integrity: sha512-JlLk5cGmj5yRwBQuPMH36w5ZJg0sBfi+dxBZTkJUV9XM9MRgNUs0MkNnjh9ogGvB4R08HY4ud6XcyRdoKLs9pA==}
+  /turbo-linux-arm/1.2.6:
+    resolution: {integrity: sha512-a0aw0kUfvUVLRV7K+5CjscJKDCLwLtb8p28KLHpjvy8EP7Us+n9DH0tZ2M/CAy02cZI7yOzbWEx0L4Q3a1Dajw==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.2.5:
-    resolution: {integrity: sha512-ZtPQx9yw+iMT+sYPYcrtbCye7a/aj93gA2krir4MI+CDp69LuHLuZOOfc8u4JCxSJTbRLoYcwJrdfB9uBSddIQ==}
+  /turbo-linux-arm64/1.2.6:
+    resolution: {integrity: sha512-zvk7vQ3N3QU2kKKJQ/qalAen3wkPhcoBD3NIlEwKVL2OYaSCa4UDgOSjpwLw+FAmbWh0zB5Jm8mcLXcok9xyUQ==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.2.5:
-    resolution: {integrity: sha512-3LLnEwKc5pf7MlUhwvq/ND2cx0f7v3LHK5587CVTQI9nnwgie42n5U168J7BPPPkIE0k0j4S1jeXU18DV3vWbA==}
+  /turbo-linux-mips64le/1.2.6:
+    resolution: {integrity: sha512-5sLTNpXedD4aPCtKzbGOo3THImQVgywivFzbLgD5apkF5eYImG/1oRPH0tjdIN/uEqKFJdxniN5EnLE3uUA76g==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.2.5:
-    resolution: {integrity: sha512-1k4lBCu2jdQNF3KXjPAbOER5/j37AdBqHnuHB6JuiOocm+v3WgEfkctkqLrgow3q1HLeb4me3wGXstV//6dzSg==}
+  /turbo-linux-ppc64le/1.2.6:
+    resolution: {integrity: sha512-dNIDtCXZolAdm84tCWynntcTbaOErCEbT0onuWwwhJ3CZfC68vqghkYJu7o4T8rMek0RLLcIh/Y4dNM3bp1Mvg==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.2.5:
-    resolution: {integrity: sha512-XT2g/kZopqARjs39MNVP5XysrK2R0P9QVnrRdVY72zgswLvvcvDI6SM5SPX/SWF4iLU5OEUlpCaUz5dJLGMGUw==}
+  /turbo-windows-32/1.2.6:
+    resolution: {integrity: sha512-1rzktj68Ohqi+OPeSvWqbb6Er0yS7FidRku8IQIZJ0bmwP/a5OMqIHXHoIEbn5/ceXry6vJm8aYDgm1FAKkbZw==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.2.5:
-    resolution: {integrity: sha512-Ut097JJv9qy/8cpHANB7/BH0uh2IZbUeSSRudTl8tfMX8ZEdla/NpJd+omMV4CwPRrZAO6SyKiTfeHFOt/6NgQ==}
+  /turbo-windows-64/1.2.6:
+    resolution: {integrity: sha512-91m+np5oxTRVORjkFVf2BypYjrhB+Q7ZaKqti5q4A0qLIvYs0dqGitT45j547XKWtlk2dP2ziXhYs2btDOCr4w==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.2.5:
-    resolution: {integrity: sha512-KXk5BGCaiSSXhtorrLUILB3OTqZ/uruIi0ggb0jSp55ZDSS+G/4OANw7y5QuRjizCpjwunb47AAOox/2Zn2nbA==}
+  /turbo-windows-arm64/1.2.6:
+    resolution: {integrity: sha512-92vhzWNu+ZrjMK1D6y1bjHTQjIVx0YViYCHDSQNY56STQgUleRW+aColVGs2MnZ4lv7vHhA9FIDJ19CRYpTiNA==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo/1.2.6:
+    resolution: {integrity: sha512-7zh48qI2dTb1ktVhTyVLvleRWYVIDNlYnZt9rb8nA/evwZJC5x7ETK4a86f0f4WBAzp3A/TRbE8HNF4cGSkWvw==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.2.5
-      turbo-darwin-arm64: 1.2.5
-      turbo-freebsd-64: 1.2.5
-      turbo-freebsd-arm64: 1.2.5
-      turbo-linux-32: 1.2.5
-      turbo-linux-64: 1.2.5
-      turbo-linux-arm: 1.2.5
-      turbo-linux-arm64: 1.2.5
-      turbo-linux-mips64le: 1.2.5
-      turbo-linux-ppc64le: 1.2.5
-      turbo-windows-32: 1.2.5
-      turbo-windows-64: 1.2.5
+      turbo-darwin-64: 1.2.6
+      turbo-darwin-arm64: 1.2.6
+      turbo-freebsd-64: 1.2.6
+      turbo-freebsd-arm64: 1.2.6
+      turbo-linux-32: 1.2.6
+      turbo-linux-64: 1.2.6
+      turbo-linux-arm: 1.2.6
+      turbo-linux-arm64: 1.2.6
+      turbo-linux-mips64le: 1.2.6
+      turbo-linux-ppc64le: 1.2.6
+      turbo-windows-32: 1.2.6
+      turbo-windows-64: 1.2.6
+      turbo-windows-arm64: 1.2.6
     dev: true
 
   /type-check/0.3.2:

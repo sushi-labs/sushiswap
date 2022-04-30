@@ -22,7 +22,6 @@
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "config": "workspace:*",
-    "ethers": "^5.6.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",
@@ -34,12 +33,13 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@reduxjs/toolkit": "^1.8.1",
-    "ethers": "^5.6.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1"
   },
   "dependencies": {
+    "@ethersproject/address": "^5.6.0",
+    "@ethersproject/providers": "^5.6.4",
     "ajv": "^6.12.3",
     "cids": "^1.1.9",
     "multicodec": "^3.2.1",

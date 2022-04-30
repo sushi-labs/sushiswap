@@ -1,11 +1,11 @@
 import { TokenList } from '@uniswap/token-lists'
-import { Version } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
 
-import { DEFAULT_LIST_OF_LISTS } from '../config/token-lists'
-import { contenthashToUri, uriToHttp } from './convert'
-import { parseENSAddress } from './ens'
+import { DEFAULT_LIST_OF_LISTS } from '@sushiswap/redux-token-lists'
+import { contenthashToUri } from './contenthashToUri'
+import { uriToHttp } from './uriToHttp'
+import { parseENSAddress } from './parseENSAddress'
 
 const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
 
@@ -16,7 +16,9 @@ const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
  */
 export async function getTokenList(
   listUrl: string,
-  resolveENSContentHash: (ensName: string) => Promise<{ data: string; error: undefined; } | { data: undefined; error: Error; }>
+  resolveENSContentHash: (
+    ensName: string,
+  ) => Promise<{ data: string; error: undefined } | { data: undefined; error: Error }>,
 ): Promise<TokenList> {
   const parsedENS = parseENSAddress(listUrl)
   let urls: string[]

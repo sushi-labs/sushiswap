@@ -1,18 +1,15 @@
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
-import { Token } from '@sushiswap/core-sdk'
-import { isAddress } from 'app/functions/validate'
-import { NEVER_RELOAD, useSingleCallResult } from 'app/hooks/multicall'
-import { TokenAddressMap, useCombinedActiveList } from 'app/state/lists/hooks'
+import { ChainTokenMap, Token } from '@sushiswap/core-sdk'
+import { isAddress, getAddress } from '@ethersproject/address'
+import { NEVER_RELOAD, useSingleCallResult } from '../lib/hooks/multicall'
+import { useCombinedActiveList } from '../lib/state/token-lists'
 import { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
-
-
 // reduce token map into standard address <-> Token mapping
-function useTokensFromMap(tokenMap: TokenAddressMap): { [address: string]: Token } {
-  
+function useTokensFromMap(tokenMap: ChainTokenMap): { [address: string]: Token } {
   const [{ data: network }] = useNetwork()
   const chainId = network?.chain?.id
 
@@ -20,12 +17,13 @@ function useTokensFromMap(tokenMap: TokenAddressMap): { [address: string]: Token
     if (!chainId) return {}
 
     // reduce to just tokens
-    const mapWithoutUrls = Object.keys(tokenMap[chainId]).reduce<{
-      [address: string]: Token
-    }>((newMap, address) => {
-      newMap[address] = tokenMap[chainId][address].token
-      return newMap
-    }, {})
+    const mapWithoutUrls = Object.keys(tokenMap[chainId] ?? {}).reduce<{ [address: string]: Token }>(
+      (newMap, address) => {
+        newMap[address] = tokenMap[chainId][address].token
+        return newMap
+      },
+      {},
+    )
 
     return mapWithoutUrls
   }, [chainId, tokenMap])
@@ -35,7 +33,6 @@ export function useAllTokens(): { [address: string]: Token } {
   const allTokens = useCombinedActiveList()
   return useTokensFromMap(allTokens)
 }
-
 
 // parse a name or symbol from a token response
 const BYTES32_REGEX = /^0x[a-fA-F0-9]{64}$/
@@ -57,10 +54,10 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
   const chainId = network?.chain?.id
   const tokens = useAllTokens()
 
-  const address = isAddress(tokenAddress)
+  const address = isAddress(tokenAddress) ? getAddress(tokenAddress) : undefined
 
-  const tokenContract = useTokenContract(address ? address : undefined, false)
-  const tokenContractBytes32 = useBytes32TokenContract(address ? address : undefined, false)
+  const tokenContract = useTokenContract(address, false)
+  const tokenContractBytes32 = useBytes32TokenContract(address, false)
   const token: Token | undefined = address ? tokens[address] : undefined
 
   const tokenName = useSingleCallResult(token ? undefined : tokenContract, 'name', undefined, NEVER_RELOAD)
@@ -68,7 +65,7 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
     token ? undefined : tokenContractBytes32,
     'name',
     undefined,
-    NEVER_RELOAD
+    NEVER_RELOAD,
   )
   const symbol = useSingleCallResult(token ? undefined : tokenContract, 'symbol', undefined, NEVER_RELOAD)
   const symbolBytes32 = useSingleCallResult(token ? undefined : tokenContractBytes32, 'symbol', undefined, NEVER_RELOAD)
@@ -85,7 +82,7 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
         address,
         decimals.result[0],
         parseStringOrBytes32(symbol.result?.[0], symbolBytes32.result?.[0], 'UNKNOWN'),
-        parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token')
+        parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token'),
       )
     }
     return undefined

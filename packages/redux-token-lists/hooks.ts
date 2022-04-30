@@ -8,6 +8,49 @@ import { WithTokenListsState, ChainTokenMap } from './types'
 import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import UNSUPPORTED_TOKEN_LIST from './unsupported.tokenlist.json'
 
+import { nanoid } from '@reduxjs/toolkit'
+import { ChainId } from '@sushiswap/chain'
+import { useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { JsonRpcProvider } from '@ethersproject/providers'
+
+export function useFetchListCallback(
+  context: TokenListsContext,
+  chainId: ChainId,
+  library: JsonRpcProvider,
+): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
+  const { actions } = context
+  const dispatch = useDispatch()
+
+  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, library), [chainId, library])
+
+  // note: prevent dispatch if using for list search or unsupported list
+  return useCallback(
+    async (listUrl: string, sendDispatch = true) => {
+      const requestId = nanoid()
+      sendDispatch && dispatch(actions.pending({ requestId, url: listUrl }))
+      return getTokenList(listUrl, ensResolver)
+        .then((tokenList) => {
+          sendDispatch && dispatch(actions.fulfilled({ url: listUrl, tokenList, requestId }))
+          return tokenList
+        })
+        .catch((error) => {
+          console.debug(`Failed to get list at url ${listUrl}`, error)
+          sendDispatch &&
+            dispatch(
+              actions.rejected({
+                url: listUrl,
+                requestId,
+                errorMessage: error.message,
+              }),
+            )
+          throw error
+        })
+    },
+    [dispatch, ensResolver],
+  )
+}
+
 export type TokenAddressMap = ChainTokenMap
 
 type Mutable<T> = {
@@ -118,7 +161,9 @@ export function useInactiveListUrls(context: TokenListsContext): string[] {
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(context: TokenListsContext): TokenAddressMap {
   const activeListUrls = useActiveListUrls(context)
+
   const activeTokens = useCombinedTokenMapFromUrls(context, activeListUrls)
+
   return activeTokens
 }
 
@@ -140,47 +185,4 @@ export function useUnsupportedTokenList(context: TokenListsContext): TokenAddres
 export function useIsListActive(context: TokenListsContext, url: string): boolean {
   const activeListUrls = useActiveListUrls(context)
   return Boolean(activeListUrls?.includes(url))
-}
-
-import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@sushiswap/chain'
-import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { providers } from 'ethers'
-
-export function useFetchListCallback(
-  context: TokenListsContext,
-  chainId: ChainId,
-  library: providers.JsonRpcProvider,
-): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
-  const { actions } = context
-  const dispatch = useDispatch()
-
-  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, library), [chainId, library])
-
-  // note: prevent dispatch if using for list search or unsupported list
-  return useCallback(
-    async (listUrl: string, sendDispatch = true) => {
-      const requestId = nanoid()
-      sendDispatch && dispatch(actions.pending({ requestId, url: listUrl }))
-      return getTokenList(listUrl, ensResolver)
-        .then((tokenList) => {
-          sendDispatch && dispatch(actions.fulfilled({ url: listUrl, tokenList, requestId }))
-          return tokenList
-        })
-        .catch((error) => {
-          console.debug(`Failed to get list at url ${listUrl}`, error)
-          sendDispatch &&
-            dispatch(
-              actions.rejected({
-                url: listUrl,
-                requestId,
-                errorMessage: error.message,
-              }),
-            )
-          throw error
-        })
-    },
-    [dispatch, ensResolver],
-  )
 }

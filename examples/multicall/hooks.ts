@@ -1,7 +1,7 @@
 import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { Contract, providers, utils } from 'ethers'
 import { useEffect, useMemo, useState } from 'react'
-import { UniswapInterfaceMulticall } from './abi/types'
+import { UniswapInterfaceMulticall } from './typechain'
 import { ChainId, MULTICALL_ADDRESS } from './constants'
 import { useMultiChainSingleContractSingleData, useSingleCallResult } from './multicall'
 

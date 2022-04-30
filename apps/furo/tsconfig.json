@@ -6,21 +6,19 @@
     "baseUrl": ".",
     "preserveSymlinks": true,
     "paths": {
-      "app/abis/*": ["./abis/*"],
-      "app/config": ["./config/index.ts"],
-      "app/config/*": ["./config/*"],
-      "app/components": ["./components/index.ts"],
-      "app/components/*": ["./components/*"],
-      "app/state": ["./state/index.ts"],
-      "app/state/*": ["./state/*"],
-      "app/features": ["./features/index.ts"],
-      "app/features/*": ["./features/*"],
-      "app/functions": ["./functions/index.ts"],
-      "app/functions/*": ["./functions/*"],
-      "app/hooks": ["./hooks/index.ts"],
-      "app/hooks/*": ["./hooks/*"],
-      "app/types": ["./types/index.ts"],
-      "app/types/*": ["./types/*"]
+      "abis/*": ["./abis/*"],
+      "config": ["./config/index.ts"],
+      "config/*": ["./config/*"],
+      "components": ["./components/index.ts"],
+      "components/*": ["./components/*"],
+      "features": ["./features/index.ts"],
+      "features/*": ["./features/*"],
+      "functions": ["./functions/index.ts"],
+      "functions/*": ["./functions/*"],
+      "hooks": ["./hooks/index.ts"],
+      "hooks/*": ["./hooks/*"],
+      "types": ["./types/index.ts"],
+      "types/*": ["./types/*"]
     }
   }
 }

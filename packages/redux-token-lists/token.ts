@@ -1,6 +1,6 @@
 import { Type, Token } from '@sushiswap/currency'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
-import ethers from 'ethers'
+import { isAddress, getAddress } from '@ethersproject/address'
 
 type TagDetails = Tags[keyof Tags]
 interface TagInfo extends TagDetails {
@@ -25,9 +25,9 @@ export class WrappedTokenInfo implements Token {
 
   public get address(): string {
     if (this._checksummedAddress) return this._checksummedAddress
-    if (!ethers.utils.isAddress(this.tokenInfo.address))
+    if (!isAddress(this.tokenInfo.address))
       throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
-    const checksummedAddress = ethers.utils.getAddress(this.tokenInfo.address)
+    const checksummedAddress = getAddress(this.tokenInfo.address)
     return (this._checksummedAddress = checksummedAddress)
   }
 

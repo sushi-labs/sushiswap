@@ -7,6 +7,6 @@ export default withTranspileModules({
   swcMinify: true,
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
 })

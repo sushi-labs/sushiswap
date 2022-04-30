@@ -1,4 +1,4 @@
-import useInterval from 'app/hooks/useInterval'
+import { useInterval } from '@sushiswap/hooks'
 import { FC, ReactNode, useState } from 'react'
 import { Typography } from '@sushiswap/ui'
 import { Vesting } from '../context'

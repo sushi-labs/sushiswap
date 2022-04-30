@@ -1,12 +1,15 @@
 import { AddressZero } from '@ethersproject/constants'
-import { calculateGasMargin } from 'app/functions/trade'
-import { ApprovalState } from 'app/types/approval-state'
+import { ApprovalState } from 'types/approval-state'
 import { Amount, Token } from '@sushiswap/currency'
-import { Contract } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 import { MAX_UINT256 } from '@sushiswap/math'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContract, useSigner, useWaitForTransaction } from 'wagmi'
 import { useTokenAllowance } from './useTokenAllowance'
+
+export function calculateGasMargin(value: BigNumber): BigNumber {
+  return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
+}
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(

@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
-import { Stream } from 'app/features/context/Stream'
-import { useToken } from 'app/hooks/Tokens'
-import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { Stream } from 'features/context/Stream'
+import { useToken } from 'hooks/Tokens'
+import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { JSBI } from '@sushiswap/math'
@@ -40,7 +40,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
   async function withdraw() {
     if (!stream || !amount || !recipient) {
-      console.log({ stream, amount, recipient })
+      // console.log({ stream, amount, recipient })
       return
     }
     const tx = contract.withdrawFromStream(

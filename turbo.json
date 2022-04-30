@@ -49,16 +49,13 @@
       "outputs": [".next/**"]
     },
     "analytics#generate": {
-      "outputs": [".graphclient/**"]
+      "outputs": [".graphclient/**", "typechain"]
     },
     "furo#generate": {
-      "outputs": [".graphclient/**"]
+      "outputs": [".graphclient/**", "typechain"]
     },
     "multicall#generate": {
-      "outputs": ["abi/**"]
-    },
-    "multicall#build": {
-      "outputs": ["abi/**"]
+      "outputs": ["typechain"]
     }
   }
 }

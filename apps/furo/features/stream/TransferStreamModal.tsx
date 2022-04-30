@@ -1,6 +1,6 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
-import { Stream } from 'app/features/context/Stream'
-import { useFuroStreamContract, useStreamBalance } from 'app/hooks/useFuroContract'
+import { Stream } from 'features/context/Stream'
+import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'

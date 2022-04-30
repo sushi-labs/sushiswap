@@ -7,7 +7,7 @@
     "build": "next build --profile",
     "start": "next start",
     "lint": "next lint",
-    "generate": "typechain --target ethers-v5 --out-dir abi/types './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'"
+    "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.6.0",

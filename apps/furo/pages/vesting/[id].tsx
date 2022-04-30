@@ -1,18 +1,19 @@
-import Layout from 'app/components/Layout'
-import { Vesting } from 'app/features/context'
+import Layout from 'components/Layout'
+import { Vesting } from 'features/context'
 import {
   ScheduleRepresentation,
   TransactionRepresentation,
   VestingRepresentation,
-} from 'app/features/context/representations'
-import HistoryPopover from 'app/features/HistoryPopover'
-import LinkPopover from 'app/features/LinkPopover'
-import NextPaymentTimer from 'app/features/vesting/NextPaymentTimer'
-import SchedulePopover from 'app/features/vesting/SchedulePopover'
-import { VestingChart } from 'app/features/vesting/VestingChart'
+} from 'features/context/representations'
+import HistoryPopover from 'features/HistoryPopover'
+import LinkPopover from 'features/LinkPopover'
+import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
+import SchedulePopover from 'features/vesting/SchedulePopover'
+import { VestingChart } from 'features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getBuiltGraphSDK } from '../../.graphclient'
+
 interface Props {
   vestingRepresentation: VestingRepresentation
   transactions: TransactionRepresentation[]

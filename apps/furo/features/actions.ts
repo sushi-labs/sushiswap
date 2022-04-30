@@ -1,6 +1,6 @@
-import { Amount, Token } from 'currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber, Contract, Signature } from 'ethers'
-import { useSignMessage } from 'wagmi'
+import { useSignTypedData } from 'wagmi'
 
 interface Batch {
   contract: Contract
@@ -32,21 +32,15 @@ export const batchAction = <T = any>({ contract, actions = [] }: Batch): string 
 
 export interface ApproveBentoBoxActionProps {
   contract: Contract
-  user: string,
+  user: string
   signature?: Signature
 }
 
-export const approveBentoBoxAction = ({ contract, user, signature}: ApproveBentoBoxActionProps) => {
+export const approveBentoBoxAction = ({ contract, user, signature }: ApproveBentoBoxActionProps) => {
   if (!signature) return undefined
 
   const { v, r, s } = signature
-  return contract.interface.encodeFunctionData('setBentoBoxApproval', [
-    user,
-    true,
-    v,
-    r,
-    s,
-  ])
+  return contract.interface.encodeFunctionData('setBentoBoxApproval', [user, true, v, r, s])
 }
 
 export interface StreamCreationActionProps {
@@ -102,7 +96,7 @@ export const vestingCreationAction = ({
   steps,
   cliffAmount,
   stepAmount,
-  fromBentoBox
+  fromBentoBox,
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
     // TODO: check wnative address, pass in value
@@ -114,6 +108,6 @@ export const vestingCreationAction = ({
     steps,
     cliffAmount,
     stepAmount,
-    fromBentoBox
+    fromBentoBox,
   ])
 }

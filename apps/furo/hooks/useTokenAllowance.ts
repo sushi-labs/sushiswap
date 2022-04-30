@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
-// import { useSingleCallResult } from 'app/state/multicall/hooks'
 import { useMemo } from 'react'
 import { erc20ABI, useContractRead } from 'wagmi'
 

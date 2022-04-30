@@ -28,7 +28,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
       [],
     [streams, vestings],
   )
-  console.log({ data })
+  // console.log({ data })
   const columns = useMemo(
     () => [
       {
@@ -95,8 +95,8 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Cell: (props) => {
           return (
             <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">{props.value.toLocaleDateString()}</Typography>
-              <Typography variant="xs">{props.value.toLocaleTimeString()}</Typography>
+              <Typography variant="xs">{props.value.toDateString()}</Typography>
+              <Typography variant="xs">{props.value.toTimeString()}</Typography>
             </div>
           )
         },
@@ -108,8 +108,8 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Cell: (props) => {
           return (
             <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">{props.value.toLocaleDateString()}</Typography>
-              <Typography variant="xs">{props.value.toLocaleTimeString()}</Typography>
+              <Typography variant="xs">{props.value.toDateString()}</Typography>
+              <Typography variant="xs">{props.value.toTimeString()}</Typography>
             </div>
           )
         },
