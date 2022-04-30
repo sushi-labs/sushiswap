@@ -726,6 +726,7 @@ importers:
   packages/wallet-connector:
     specifiers:
       '@sushiswap/config': workspace:*
+      '@sushiswap/hooks': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/jest': ^27.4.1
       '@types/node': ^17.0.30
@@ -738,6 +739,7 @@ importers:
       wagmi: ^0.3.1
     devDependencies:
       '@sushiswap/config': link:../config
+      '@sushiswap/hooks': link:../hooks
       '@sushiswap/ui': link:../ui
       '@types/jest': 27.4.1
       '@types/node': 17.0.30
