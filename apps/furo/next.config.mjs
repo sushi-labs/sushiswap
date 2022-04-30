@@ -11,6 +11,8 @@ export default withTranspileModules({
   basePath: '/furo',
   reactStrictMode: true,
   swcMinify: true,
+  runtime: 'edge',
+  serverComponents: true,
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,
