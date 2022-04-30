@@ -2,9 +2,18 @@
   "name": "path-finder",
   "version": "0.0.0",
   "private": true,
+  "description": "Sushi Path Finder API",
+  "keywords": [
+    "sushi",
+    "path finder",
+    "api"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
   "dependencies": {
     "@sushiswap/tines": "^1.0.0-canary.76",
-    "@vercel/node": "^1.14.1"
+    "@vercel/node": "^1.14.1",
+    "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
     "config": "workspace:*"

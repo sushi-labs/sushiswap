@@ -51,7 +51,7 @@
     "cids": "^1.0.0",
     "date-fns": "^2.28.0",
     "ethers": "^5.6.4",
-    "format": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "furo": "github:sushiswap/furo#feature/furo-deploy",
     "graphql": "16.3.0",
     "next": "^12.1.5",

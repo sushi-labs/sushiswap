@@ -20,10 +20,12 @@ importers:
 
   apis/path-finder:
     specifiers:
+      '@sushiswap/currency': workspace:*
       '@sushiswap/tines': ^1.0.0-canary.76
       '@vercel/node': ^1.14.1
       config: workspace:*
     dependencies:
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/tines': 1.0.0-canary.76
       '@vercel/node': 1.14.1
     devDependencies:
@@ -200,6 +202,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -227,7 +230,6 @@ importers:
       date-fns: ^2.28.0
       eslint: ^8.14.0
       ethers: ^5.6.4
-      format: workspace:*
       furo: github:sushiswap/furo#feature/furo-deploy
       graphql: 16.3.0
       next: ^12.1.5
@@ -267,6 +269,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core-sdk': 1.0.0-canary.94
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-token-lists': link:../../packages/redux-token-lists
@@ -287,7 +290,6 @@ importers:
       cids: 1.1.9
       date-fns: 2.28.0
       ethers: 5.6.4
-      format: link:../../packages/format
       furo: github.com/sushiswap/furo/ae827057d94cfe4cb1a2e43b8f180a10a6b3115a
       graphql: 16.3.0
       next: 12.1.5_react-dom@18.1.0+react@18.1.0
