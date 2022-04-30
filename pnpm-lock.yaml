@@ -633,6 +633,35 @@ importers:
       jest: 27.5.1
       typescript: 4.6.4
 
+  packages/redux-logs:
+    specifiers:
+      '@ethersproject/providers': ^5.6.4
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/config': workspace:*
+      '@types/jest': ^27.4.1
+      '@types/node': ^17.0.30
+      '@types/react': ^18.0.8
+      '@types/react-dom': ^18.0.3
+      ethers: ^5.6.4
+      react: ^18.1.0
+      react-dom: ^18.1.0
+      react-redux: ^8.0.1
+      typescript: ^4.6.4
+    dependencies:
+      '@ethersproject/providers': 5.6.4
+    devDependencies:
+      '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/config': link:../config
+      '@types/jest': 27.4.1
+      '@types/node': 17.0.30
+      '@types/react': 18.0.8
+      '@types/react-dom': 18.0.3
+      ethers: 5.6.4
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
+      typescript: 4.6.4
+
   packages/redux-token-lists:
     specifiers:
       '@ethersproject/address': ^5.6.0
