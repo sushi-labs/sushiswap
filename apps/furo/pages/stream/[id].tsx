@@ -62,11 +62,13 @@ const Streams: FC<Props> = (props) => {
               <FuroTimer furo={stream} />
             </div>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <WithdrawModal stream={stream} />
-            <TransferStreamModal stream={stream} />
-            <UpdateStreamModal stream={stream} />
-            <CancelStreamModal stream={stream} />
+            <div className="flex gap-2">
+              <TransferStreamModal stream={stream} />
+              <UpdateStreamModal stream={stream} />
+            </div>
+            {/*<CancelStreamModal stream={stream} />*/}
           </div>
         </div>
       </div>

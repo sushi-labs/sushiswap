@@ -1,6 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber, Contract, Signature } from 'ethers'
-import { useSignTypedData } from 'wagmi'
 
 interface Batch {
   contract: Contract

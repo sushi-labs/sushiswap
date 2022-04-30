@@ -1,4 +1,4 @@
-import { FC, forwardRef } from 'react'
+import React, { FC, forwardRef } from 'react'
 import classNames from 'classnames'
 
 export interface DialogContentProps {

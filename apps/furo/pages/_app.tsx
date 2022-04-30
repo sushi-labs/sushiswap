@@ -19,9 +19,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <WagmiProvider client={client}>
       <App.Shell>
-        <App.Header>
-          <App.Nav />
-        </App.Header>
         <Provider store={store}>
           <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
           <TokenListUpdater chainId={ChainId.KOVAN} />

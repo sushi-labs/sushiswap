@@ -1,4 +1,5 @@
 import { Glow, Container } from '@sushiswap/ui'
+import React from 'react'
 
 type Props = {
   children?: React.ReactNode
@@ -6,7 +7,7 @@ type Props = {
 
 function Layout({ children }: Props) {
   return (
-    <Container maxWidth="5xl" className="grid items-center justify-center w-screen h-screen mx-auto">
+    <Container maxWidth="5xl" className="lg:mx-auto px-2 h-full mt-40">
       <Glow>{children}</Glow>
     </Container>
   )

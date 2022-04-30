@@ -9,6 +9,8 @@ import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount } from 'wagmi'
+import Button from '../../../../packages/ui/button/Button'
+import { UserIcon } from '@heroicons/react/outline'
 
 interface UpdateStreamModalProps {
   stream?: Stream
@@ -53,13 +55,16 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        startIcon={<UserIcon width={18} height={18} />}
+        fullWidth
+        variant="outlined"
+        color="gray"
         disabled={stream?.createdBy.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
         onClick={openModal}
       >
         Edit
-      </button>
+      </Button>
       <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
         <div className="text-blue-600">
           <DialogContent>

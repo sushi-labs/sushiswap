@@ -9,7 +9,6 @@ import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from 'wagmi'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../actions'
-// import {Dial} from '@headlessui/react'
 
 const CreateStreamModal: FC = () => {
   let [isOpen, setIsOpen] = useState(false)

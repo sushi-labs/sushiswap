@@ -2,10 +2,10 @@ import { Popover } from '@headlessui/react'
 import { useInterval } from '@sushiswap/hooks'
 import { shortenAddress } from '@sushiswap/format'
 import { FC, useState } from 'react'
-import { Typography, NotepadIcon } from '@sushiswap/ui'
-import { FuroStatus } from '../context/enums'
-import { Stream } from '../context/Stream'
+import { NotepadIcon, Typography } from '@sushiswap/ui'
+import { FuroStatus, Stream } from 'features/context'
 import { usePopover } from 'hooks/usePopover'
+import { classNames } from '@sushiswap/ui'
 
 interface StreamTimerState {
   days: string
@@ -76,109 +76,118 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
 
   return (
     <Popover>
-      <Popover.Button ref={setReferenceElement}>
-        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
-          <NotepadIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-high-emphesis">
-            Details
-          </Typography>
-        </div>
-      </Popover.Button>
+      {({ open }) => (
+        <>
+          <Popover.Button ref={setReferenceElement}>
+            <div
+              className={classNames(
+                open ? 'border-dark-700 bg-dark-800' : 'border-dark-800',
+                'flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 hover:border-dark-700 active:border-dark-600 bg-dark-900 hover:bg-dark-800 active:bg-dark-700 rounded-xl h-11',
+              )}
+            >
+              <NotepadIcon width={18} height={18} />
+              <Typography variant="sm" weight={700} className="text-high-emphesis">
+                Details
+              </Typography>
+            </div>
+          </Popover.Button>
 
-      <Popover.Panel
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-        className="z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
-      >
-        <div className="flex justify-between gap-4">
-          <Typography variant="lg" weight={700} className="text-high-emphesis">
-            Details
-          </Typography>
-          <div className="flex gap-6">
-            <div className="flex items-center justify-end gap-2">
-              <Typography variant="xs" weight={700}>
-                From:
+          <Popover.Panel
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+            className="z-10 bg-dark-900 shadow-depth-1 p-4 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
+          >
+            <div className="flex justify-between gap-4">
+              <Typography variant="lg" weight={700} className="text-high-emphesis">
+                Details
               </Typography>
-              <Typography
-                weight={700}
-                variant="xs"
-                onClick={() => navigator.clipboard.writeText(stream.createdBy.id)}
-                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
-              >
-                {shortenAddress(stream.createdBy.id)}
-              </Typography>
+              <div className="flex gap-6">
+                <div className="flex items-center justify-end gap-2">
+                  <Typography variant="xs" weight={700}>
+                    From:
+                  </Typography>
+                  <Typography
+                    weight={700}
+                    variant="xs"
+                    onClick={() => navigator.clipboard.writeText(stream.createdBy.id)}
+                    className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
+                  >
+                    {shortenAddress(stream.createdBy.id)}
+                  </Typography>
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <Typography variant="xs" weight={700}>
+                    To:
+                  </Typography>
+                  <Typography
+                    weight={700}
+                    variant="xs"
+                    onClick={() => navigator.clipboard.writeText(stream.recipient.id)}
+                    className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
+                  >
+                    {shortenAddress(stream.recipient.id)}
+                  </Typography>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center justify-end gap-2">
-              <Typography variant="xs" weight={700}>
-                To:
-              </Typography>
-              <Typography
-                weight={700}
-                variant="xs"
-                onClick={() => navigator.clipboard.writeText(stream.recipient.id)}
-                className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
-              >
-                {shortenAddress(stream.recipient.id)}
-              </Typography>
+            <div className="flex flex-col p-4 border rounded-xl shadow-depth-1 border-dark-800">
+              <StreamDetails />
             </div>
-          </div>
-        </div>
-        <div className="flex flex-col p-4 border rounded-xl shadow-depth-1 border-dark-800">
-          <StreamDetails />
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col gap-4 p-4 border border-dark-800 rounded-xl shadow-depth-1">
-            <div className="flex flex-col">
-              {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
-              <Typography variant="lg" className="text-high-emphesis" weight={700}>
-                Total
-              </Typography>
-              <Typography variant="xs" className="text-secondary" weight={500}>
-                Value of Stream
-              </Typography>
-              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                {stream.amount.toFixed(4)}
-                <Typography variant="lg" component="span" weight={700}>
-                  {/* .994k */}
-                </Typography>
-              </Typography>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col gap-4 p-4 border border-dark-800 rounded-xl shadow-depth-1">
+                <div className="flex flex-col">
+                  {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
+                  <Typography variant="lg" className="text-high-emphesis" weight={700}>
+                    Total
+                  </Typography>
+                  <Typography variant="xs" className="text-secondary" weight={500}>
+                    Value of Stream
+                  </Typography>
+                  <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
+                    {stream.amount.toFixed(4)}
+                    <Typography variant="lg" component="span" weight={700}>
+                      {/* .994k */}
+                    </Typography>
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 p-4 bg-blue/60 rounded-xl shadow-depth-1">
+                <div className="flex flex-col">
+                  <Typography variant="lg" className="text-high-emphesis" weight={700}>
+                    Streamed
+                  </Typography>
+                  <Typography variant="xs" weight={500}>
+                    {(stream.streamedPercentage * 100).toFixed(2)}% of total
+                  </Typography>
+                  <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
+                    {stream.streamedAmount.substring(0, 7)}
+                    <Typography variant="lg" component="span" weight={700}>
+                      {/* .329k */}
+                    </Typography>
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 p-4 bg-pink/60 rounded-xl shadow-depth-1">
+                <div className="flex flex-col">
+                  <Typography variant="lg" className="text-high-emphesis" weight={700}>
+                    Withdrawn
+                  </Typography>
+                  <Typography variant="xs" weight={500}>
+                    {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
+                  </Typography>
+                  <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
+                    {stream.withdrawnAmount.toFixed(4)}
+                    <Typography variant="lg" component="span" weight={700}>
+                      {/* .105k */}
+                    </Typography>
+                  </Typography>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-4 p-4 bg-blue/60 rounded-xl shadow-depth-1">
-            <div className="flex flex-col">
-              <Typography variant="lg" className="text-high-emphesis" weight={700}>
-                Streamed
-              </Typography>
-              <Typography variant="xs" weight={500}>
-                {(stream.streamedPercentage * 100).toFixed(2)}% of total
-              </Typography>
-              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                {stream.streamedAmount.substring(0, 7)}
-                <Typography variant="lg" component="span" weight={700}>
-                  {/* .329k */}
-                </Typography>
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 p-4 bg-pink/60 rounded-xl shadow-depth-1">
-            <div className="flex flex-col">
-              <Typography variant="lg" className="text-high-emphesis" weight={700}>
-                Withdrawn
-              </Typography>
-              <Typography variant="xs" weight={500}>
-                {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
-              </Typography>
-              <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                {stream.withdrawnAmount.toFixed(4)}
-                <Typography variant="lg" component="span" weight={700}>
-                  {/* .105k */}
-                </Typography>
-              </Typography>
-            </div>
-          </div>
-        </div>
-      </Popover.Panel>
+          </Popover.Panel>
+        </>
+      )}
     </Popover>
   )
 }
