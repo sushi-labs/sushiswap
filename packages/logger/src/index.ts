@@ -1,3 +1,5 @@
-export const log = (str: any) => {
-  console.log('logger: ' + str)
-}
+import chalk from 'chalk'
+
+const log = (message: any, ...optionalParams: any[]) => console.log(chalk.blue(message), chalk.green(optionalParams))
+
+export default log

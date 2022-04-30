@@ -17,7 +17,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "commander": "^9.2.0",
-    "chalk": "^4.1.2"
+    "@sushiswap/logger": "workspace:*",
+    "commander": "^9.2.0"
   }
 }

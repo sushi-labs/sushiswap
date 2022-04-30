@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk')
-
-const log = (message, ...optionalParams) => console.log(chalk.blue(message), chalk.green(optionalParams))
+const { default: log } = require('@sushiswap/logger')
 
 const { program } = require('commander')
 
