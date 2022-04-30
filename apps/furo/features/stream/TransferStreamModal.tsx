@@ -5,9 +5,10 @@ import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { FC, useCallback, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useEnsName } from 'wagmi'
+import { useAccount, useEnsAddress, useEnsName, useEnsResolver } from 'wagmi'
 import Button from '../../../../packages/ui/button/Button'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import { ChainId } from '@sushiswap/chain'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -19,8 +20,9 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
 
   const { data: account } = useAccount()
 
-  const { data, refetch } = useEnsName({
-    address: recipient,
+  const {data: resolvedAddress} = useEnsAddress({
+    name: recipient,
+    chainId: ChainId.ETHEREUM,
   })
 
   const contract = useFuroStreamContract()
@@ -39,15 +41,14 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
       console.log(stream, account.address, recipient)
       return
     }
-    const { data: resolvedAddress, error } = await refetch()
-    if (!resolvedAddress || error) {
+    if (!resolvedAddress) {
       console.log('error resolving ens')
       return
     }
     console.log(account.address, resolvedAddress, stream?.id)
     const tx = await contract.transferFrom(account?.address, resolvedAddress, stream?.id)
     console.log({ tx })
-  }, [account, contract, recipient, refetch, stream])
+  }, [account, contract, recipient, resolvedAddress, stream])
 
   return (
     <>
