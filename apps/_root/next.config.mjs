@@ -2,7 +2,7 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
 
-const { BLOG_URL, ANALYTICS_URL, DOCS_URL, STORE_URL, LEGACY_URL } = process.env
+const { BLOG_URL, ANALYTICS_URL, DOCS_URL, FURO_URL, LEGACY_URL } = process.env
 
 export default withTranspileModules({
   reactStrictMode: true,
@@ -46,6 +46,14 @@ export default withTranspileModules({
         source: '/docs/:path*',
         destination: `${DOCS_URL}/docs/:path*`,
       },
+      {
+        source: '/furo',
+        destination: `${FURO_URL}/furo`,
+      },
+      {
+        source: '/furo/:path*',
+        destination: `${FURO_URL}/furo/:path*`,
+      },
       // {
       //   source: '/store',
       //   destination: `${STORE_URL}/store`,
@@ -54,15 +62,14 @@ export default withTranspileModules({
       //   source: '/store/:path*',
       //   destination: `${STORE_URL}/store/:path*`,
       // },
-
-      // {
-      //   source: '/legacy',
-      //   destination: `${LEGACY_URL}/legacy`,
-      // },
-      // {
-      //   source: '/legacy/:path*',
-      //   destination: `${LEGACY_URL}/legacy/:path*`,
-      // },
+      {
+        source: '/legacy',
+        destination: `${LEGACY_URL}/legacy`,
+      },
+      {
+        source: '/legacy/:path*',
+        destination: `${LEGACY_URL}/legacy/:path*`,
+      },
     ]
   },
 })
