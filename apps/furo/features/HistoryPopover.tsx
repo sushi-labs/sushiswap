@@ -16,7 +16,7 @@ interface Props {
 
 const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
-  const [{ data: account }] = useAccount()
+  const { data: account } = useAccount()
   let transactions = useMemo(
     () =>
       transactionRepresentations

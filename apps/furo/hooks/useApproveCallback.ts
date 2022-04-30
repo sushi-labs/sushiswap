@@ -16,13 +16,14 @@ export function useApproveCallback(
   amountToApprove?: Amount<Token>,
   spender?: string,
 ): [ApprovalState, () => Promise<void>] {
-  const [{ data: account }] = useAccount()
-  const [{ data: signer }, getSigner] = useSigner()
+  const { data: account } = useAccount()
+  const { data: signer, refetch: getSigner } = useSigner()
+
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(token, account?.address ?? undefined, spender)
-  const [_, wait] = useWaitForTransaction({
-    skip: true,
-  })
+  // const { refetch: wait } = useWaitForTransaction({
+  //   enabled: false,
+  // })
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -77,13 +78,13 @@ export function useApproveCallback(
       gasLimit: calculateGasMargin(estimatedGas),
     })
 
-    const waitForApproval = await wait({ confirmations: 1, hash: tx.hash })
-    if (waitForApproval.data && !waitForApproval.error) {
-      console.log('Successfully approved token') // TODO: should probably refactor and update the state to PENDING?
-    } else {
-      console.log(waitForApproval)
-    }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, wait])
+    // const waitForApproval = await wait({ confirmations: 1, hash: tx.hash })
+    // if (waitForApproval.data && !waitForApproval.error) {
+    //   console.log('Successfully approved token') // TODO: should probably refactor and update the state to PENDING?
+    // } else {
+    //   console.log(waitForApproval)
+    // }
+  }, [approvalState, token, tokenContract, amountToApprove, spender])
 
   return [approvalState, approve]
 }

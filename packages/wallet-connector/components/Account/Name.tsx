@@ -5,11 +5,9 @@ type Props = {
 }
 
 function Name({ address }: Props): JSX.Element {
-  const { data, isError, isLoading } = useEnsName({
+  const { data } = useEnsName({
     address,
   })
-  if (isLoading) return <>Fetching name…</>
-  if (isError) return <>Error fetching name</>
   return <>{data || address?.slice(0, 6) + '...'}</>
 }
 

@@ -12,10 +12,10 @@ export function useBentoBoxApproveCallback(
   watch: boolean,
   masterContractAddress?: string,
 ): [ApprovalState, Signature, () => Promise<void>] {
-  const [{ data: account }] = useAccount()
-  const [{ data: network }, switchNetwork] = useNetwork()
-  const chainId = network?.chain?.id
-  const [{ data: isBentoBoxApproved, loading }] = useContractRead(
+  const { data: account } = useAccount()
+  const { data: network, switchNetwork } = useNetwork()
+  const chainId = network?.id
+  const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
       addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,
       contractInterface: BENTOBOX_ABI,
@@ -26,7 +26,11 @@ export function useBentoBoxApproveCallback(
       watch,
     },
   )
-  const [{ data, error }, getNonces] = useContractRead(
+  const {
+    data,
+    error,
+    refetch: getNonces,
+  } = useContractRead(
     {
       addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,
       contractInterface: BENTOBOX_ABI,
@@ -34,20 +38,20 @@ export function useBentoBoxApproveCallback(
     'nonces',
     {
       args: [account?.address],
-      skip: true,
+      enabled: false,
     },
   )
 
   const [signature, setSignature] = useState<Signature>()
 
-  const [, signTypedData] = useSignTypedData()
+  const { signTypedDataAsync } = useSignTypedData()
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
-    if (loading || isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
+    if (isLoading || isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
     if (signature && !isBentoBoxApproved) return ApprovalState.PENDING
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
-  }, [isBentoBoxApproved, signature, loading])
+  }, [isBentoBoxApproved, signature, isLoading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
@@ -60,7 +64,7 @@ export function useBentoBoxApproveCallback(
     }
 
     const { data: nonces } = await getNonces()
-    const { data, error } = await signTypedData({
+    const data = await signTypedDataAsync({
       domain: {
         name: 'BentoBox V1',
         chainId: chainId,
@@ -86,7 +90,7 @@ export function useBentoBoxApproveCallback(
     console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
-  }, [account?.address, approvalState, getNonces, chainId, masterContractAddress, signTypedData])
+  }, [approvalState, masterContractAddress, getNonces, signTypedDataAsync, chainId, account, error])
 
   return [approvalState, signature, approveBentoBox]
 }

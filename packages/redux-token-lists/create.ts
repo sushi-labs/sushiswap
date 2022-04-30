@@ -6,7 +6,7 @@ import {
   useCombinedActiveList as _useCombinedActiveList,
   useUnsupportedTokenList as _useUnsupportedTokenList,
   useIsListActive as _useIsListActive,
-  useFetchListCallback as _useFetchListCallback
+  useFetchListCallback as _useFetchListCallback,
 } from './hooks'
 import { createTokenListsSlice } from './slice'
 import { createUpdater } from './updater'
@@ -39,7 +39,8 @@ export function createTokenLists(options?: TokenListsOptions) {
   const useUnsupportedTokenList = (...args: ParamsWithoutContext<typeof _useUnsupportedTokenList>) =>
     _useUnsupportedTokenList(context, ...args)
   const useIsListActive = (...args: ParamsWithoutContext<typeof _useIsListActive>) => _useIsListActive(context, ...args)
-  const useFetchListCallback = (...args: ParamsWithoutContext<typeof _useFetchListCallback>) => _useFetchListCallback(context, ...args)
+  const useFetchListCallback = (...args: ParamsWithoutContext<typeof _useFetchListCallback>) =>
+    _useFetchListCallback(context, ...args)
 
   const hooks = {
     useAllLists,
@@ -48,7 +49,7 @@ export function createTokenLists(options?: TokenListsOptions) {
     useCombinedActiveList,
     useUnsupportedTokenList,
     useIsListActive,
-    useFetchListCallback
+    useFetchListCallback,
   }
 
   const Updater = createUpdater(context)

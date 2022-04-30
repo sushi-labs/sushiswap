@@ -5,7 +5,7 @@ import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useEnsResolveName } from 'wagmi'
+import { useAccount, useEnsName } from 'wagmi'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -14,8 +14,13 @@ interface TransferStreamModalProps {
 const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
-  const [, resolveName] = useEnsResolveName({ skip: true })
-  const [{ data: account }] = useAccount()
+
+  const { data: account } = useAccount()
+
+  const { data, refetch } = useEnsName({
+    address: recipient,
+  })
+
   const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 
@@ -31,7 +36,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
       console.log(stream, account.address, recipient)
       return
     }
-    const { data: resolvedAddress, error } = await resolveName({ name: recipient })
+    const { data: resolvedAddress, error } = await refetch()
     if (!resolvedAddress || error) {
       console.log('error resolving ens')
       return

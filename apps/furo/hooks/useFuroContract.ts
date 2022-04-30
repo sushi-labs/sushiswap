@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useContract, useContractRead, useSigner } from 'wagmi'
 
 export function useFuroStreamContract(): FuroStream | null {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   return useContract<FuroStream>({
     addressOrName: FuroExport[42].kovan.contracts.FuroStream.address,
     contractInterface: FuroExport[42].kovan.contracts.FuroStream.abi,
@@ -16,7 +16,7 @@ export function useFuroStreamContract(): FuroStream | null {
 }
 
 export function useFuroVestingContract(): FuroVesting | null {
-  const [{ data: signer }] = useSigner()
+  const { data: signer } = useSigner()
   return useContract<FuroVesting>({
     addressOrName: FuroExport[42].kovan.contracts.FuroVesting.address,
     contractInterface: FuroExport[42].kovan.contracts.FuroVesting.abi,
@@ -26,7 +26,7 @@ export function useFuroVestingContract(): FuroVesting | null {
 
 export function useStreamBalance(streamId: string): BigNumber {
   const [balance, setBalance] = useState<BigNumber>()
-  const [{ data, error, loading }] = useContractRead<FuroStream>(
+  const { data, error, isLoading } = useContractRead(
     {
       addressOrName: FuroExport[42].kovan.contracts.FuroStream.address,
       contractInterface: FuroExport[42].kovan.contracts.FuroStream.abi,
@@ -34,11 +34,12 @@ export function useStreamBalance(streamId: string): BigNumber {
     'streamBalanceOf',
     { args: [streamId], watch: true },
   )
+  console.log({ data, error, isLoading })
   useMemo(() => {
-    if (!error && !loading && data !== undefined && streamId) {
+    if (!error && !isLoading && data !== undefined && streamId) {
       setBalance(BigNumber.from(data.recipientBalance))
     }
-  }, [error, loading, data, streamId])
+  }, [error, isLoading, data, streamId])
 
   return balance
 }

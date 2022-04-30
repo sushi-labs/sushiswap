@@ -7,7 +7,7 @@ import { BigNumber } from 'ethers'
 import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -19,16 +19,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [toBentoBox, setToBentoBox] = useState<boolean>(true)
   const [recipient, setRecipient] = useState<string>('0xC39C2d6Eb8adef85f9caa141Ec95e7c0B34D8Dec')
 
-  const [{ data: account }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
+  const { data: account } = useAccount()
 
   const token = useToken(stream?.token.address)
   const contract = useFuroStreamContract()
-  const [, sendTransaction] = useTransaction()
-  const [{ data: waitTxData }, wait] = useWaitForTransaction({
-    skip: true,
-  })
+
   const balance = useStreamBalance(stream.id)
 
   function openModal() {

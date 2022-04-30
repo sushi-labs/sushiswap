@@ -40,6 +40,7 @@ export const VestingChart: FC<Props> = (props) => {
       <AnimatedGrid columns={false} numTicks={4} />
       <AnimatedLineSeries dataKey={''} data={chartData ?? []} {...accessors} curve={curveStep} />
       <TooltipWithBounds
+        // @ts-ignore
         snapTooltipToDatumX
         snapTooltipToDatumY
         showSeriesGlyphs

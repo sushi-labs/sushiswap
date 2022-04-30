@@ -1,4 +1,4 @@
-import { TokenList } from '@uniswap/token-lists'
+import type { TokenList } from '@uniswap/token-lists'
 import { WrappedTokenInfo } from './token'
 
 export interface TokenListsState {

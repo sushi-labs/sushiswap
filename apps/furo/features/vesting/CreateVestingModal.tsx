@@ -10,7 +10,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { FC, useEffect, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
+import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 type StepConfig = {
   label: string
@@ -37,15 +37,13 @@ const CreateVestingModal: FC = () => {
   const [cliffAmount, setCliffAmount] = useState<BigNumber>()
   const [stepAmount, setStepAmount] = useState<BigNumber>()
   const [stepEndDate, setStepEndDate] = useState<Date>()
-  const [{ data: account }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
+  const { data: account } = useAccount()
+  const { data: network } = useNetwork()
+  const chainId = network?.id
   const tokens = useAllTokens()
   const contract = useFuroVestingContract()
-  const [, sendTransaction] = useTransaction()
-  const [, wait] = useWaitForTransaction({
-    skip: true,
-  })
+  const { data: tx, sendTransactionAsync } = useSendTransaction()
+  const { refetch: wait } = useWaitForTransaction({ confirmations: 1, hash: tx?.hash, timeout: 60000 })
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
   const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
 
@@ -107,7 +105,7 @@ const CreateVestingModal: FC = () => {
       }),
     ]
 
-    const tx = await sendTransaction({
+    const tx = await sendTransactionAsync({
       request: {
         from: account.address,
         to: contract.address,
@@ -115,10 +113,8 @@ const CreateVestingModal: FC = () => {
       },
     })
 
-    if (tx.data && !tx.error) {
-      const data = await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log('vesting created', data)
-    }
+    const data = await wait()
+    console.log('vesting created', data)
   }
 
   const handleBentoBoxCheck = () => {

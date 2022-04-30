@@ -241,7 +241,7 @@ importers:
       redux-persist: ^6.0.0
       tailwindcss: ^3.0.24
       typescript: ^4.6.4
-      wagmi: ^0.2.24
+      wagmi: ^0.3.1
     dependencies:
       '@ethersproject/abi': 5.6.1
       '@ethersproject/abstract-provider': 5.6.0
@@ -297,7 +297,7 @@ importers:
       react-table: 7.7.0_react@18.1.0
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
-      wagmi: 0.2.28_ethers@5.6.4+react@18.1.0
+      wagmi: 0.3.1_57e2f9bb67ec482a9f8645efcfc6b117
     devDependencies:
       '@graphprotocol/client-cli': 0.0.2_0154597af699e051ed7d7d919d503469
       '@types/node': 17.0.30
@@ -630,9 +630,10 @@ importers:
   packages/redux-token-lists:
     specifiers:
       '@ethersproject/address': ^5.6.0
+      '@ethersproject/contracts': ^5.6.0
+      '@ethersproject/hash': ^5.6.0
       '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
-      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/hooks': workspace:*
       '@types/jest': ^27.4.1
@@ -651,6 +652,8 @@ importers:
       typescript: ^4.6.4
     dependencies:
       '@ethersproject/address': 5.6.0
+      '@ethersproject/contracts': 5.6.0
+      '@ethersproject/hash': 5.6.0
       '@ethersproject/providers': 5.6.4
       ajv: 6.12.6
       cids: 1.1.9
@@ -658,7 +661,6 @@ importers:
       multihashes: 4.0.3
     devDependencies:
       '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
-      '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/hooks': link:../hooks
       '@types/jest': 27.4.1
@@ -13439,54 +13441,6 @@ packages:
       xml-name-validator: 3.0.0
     dev: true
 
-  /wagmi-core/0.1.22_9a65800651275545c543e6c2402355bd:
-    resolution: {integrity: sha512-Q/MjVVC31SOks6ynTxp+RQFgA1pMWUAz8g3XBZzFSMB59UUpwCpC3mjVTM5bix63HZ1CNIngo+MT2ax7HItZow==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': ^3.0.8
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: ^5.5.1
-      walletlink: ^2.5.0
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-      walletlink:
-        optional: true
-    dependencies:
-      '@coinbase/wallet-sdk': 3.0.11
-      '@ethersproject/providers': 5.6.4
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: 5.6.4
-      eventemitter3: 4.0.7
-      walletlink: 2.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /wagmi/0.2.28_ethers@5.6.4+react@18.1.0:
-    resolution: {integrity: sha512-ovB/3ULocxt4IojC7t2aqb1tPNk3Or9+hrUiLkf15yDLeUdn4murot1lpunKZHrlaIsCGwNknW8hsGY+47btCw==}
-    peerDependencies:
-      ethers: ^5.5.1
-      react: ^17.0.0
-    dependencies:
-      '@coinbase/wallet-sdk': 3.0.11
-      '@ethersproject/providers': 5.6.4
-      '@walletconnect/ethereum-provider': 1.7.5
-      ethers: 5.6.4
-      react: 18.1.0
-      wagmi-core: 0.1.22_9a65800651275545c543e6c2402355bd
-      walletlink: 2.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - debug
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /wagmi/0.3.1_57e2f9bb67ec482a9f8645efcfc6b117:
     resolution: {integrity: sha512-BCX5sXCYves95+bB2qekjo2T0VIOZRxp3BWYnK+OBT/YvFvAZhxT48rHZ49PxB2BjZ/SEp688uk/P6uJsYP9Ig==}
     peerDependencies:
@@ -13516,30 +13470,6 @@ packages:
     dependencies:
       makeerror: 1.0.12
     dev: true
-
-  /walletlink/2.5.0:
-    resolution: {integrity: sha512-PBJmK5tZmonwKPABBI2/optaZ11O4kKmkmnU5eLKhk4XRlal5qJ1igZ4U5j3w6w8wxxdhCWpLMHzGWt3n/p7mw==}
-    engines: {node: '>= 10.0.0'}
-    deprecated: 'WARNING: This project has been renamed to @coinbase/wallet-sdk. Install using @coinbase/wallet-sdk instead.'
-    dependencies:
-      '@metamask/safe-event-emitter': 2.0.0
-      bind-decorator: 1.0.11
-      bn.js: 5.2.0
-      clsx: 1.1.1
-      eth-block-tracker: 4.4.3
-      eth-json-rpc-filters: 4.2.2
-      eth-rpc-errors: 4.0.2
-      js-sha256: 0.9.0
-      json-rpc-engine: 6.1.0
-      keccak: 3.0.2
-      preact: 10.7.1
-      rxjs: 6.6.7
-      stream-browserify: 3.0.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - encoding
-      - supports-color
-    dev: false
 
   /warning/4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}

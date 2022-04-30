@@ -8,7 +8,7 @@ import { ApprovalState } from 'types/approval-state'
 import { Amount, Token } from '@sushiswap/currency'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useNetwork, useTransaction, useWaitForTransaction } from 'wagmi'
+import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from 'wagmi'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../actions'
 // import {Dial} from '@headlessui/react'
 
@@ -20,15 +20,15 @@ const CreateStreamModal: FC = () => {
   const [recipient, setRecipient] = useState<string>('0xC39C2d6Eb8adef85f9caa141Ec95e7c0B34D8Dec')
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
-  const [{ data: account }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
+  const { data: account } = useAccount()
+  const { data: network } = useNetwork()
+  const chainId = network?.id
   const tokens = useAllTokens()
   const contract = useFuroStreamContract()
-  const [, sendTransaction] = useTransaction()
-  const [, wait] = useWaitForTransaction({
-    skip: true,
-  })
+  const { data: tx, sendTransactionAsync } = useSendTransaction()
+
+  const { refetch: wait } = useWaitForTransaction({ confirmations: 1, hash: tx?.hash, timeout: 60000 })
+
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
   const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
 
@@ -52,7 +52,7 @@ const CreateStreamModal: FC = () => {
       streamCreationAction({ contract, recipient, token, startDate, endDate, amount, fromBentoBox }),
     ]
 
-    const tx = await sendTransaction({
+    const tx = await sendTransactionAsync({
       request: {
         from: account.address,
         to: contract.address,
@@ -60,10 +60,8 @@ const CreateStreamModal: FC = () => {
       },
     })
 
-    if (tx.data && !tx.error) {
-      const data = await wait({ confirmations: 1, hash: tx.data.hash, timeout: 60000 })
-      console.log('stream created', data)
-    }
+    const data = await wait()
+    console.log('stream created', data)
   }
 
   const handleBentoBoxCheck = () => {
@@ -95,7 +93,7 @@ const CreateStreamModal: FC = () => {
       <button type="button" onClick={openModal} className="font-medium text-white">
         Create stream
       </button>
-      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
+      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 z-50 overflow-y-auto">
         <DialogContent>
           {/* TODO: replace with Select component from ui package? */}
           <div className="text-blue-600">

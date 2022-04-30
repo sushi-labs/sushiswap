@@ -6,7 +6,7 @@ type Props = {
 
 function Layout({ children }: Props) {
   return (
-    <Container maxWidth="5xl" className="px-2 lg:mx-auto">
+    <Container maxWidth="5xl" className="grid items-center justify-center w-screen h-screen mx-auto">
       <Glow>{children}</Glow>
     </Container>
   )

@@ -12,9 +12,9 @@ export function useContract<T extends Contract = Contract>(
   ABI: any,
   withSignerIfPossible = true,
 ): T | null {
-  const [{ data: account }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
+  const { data: account } = useAccount()
+  const { data: network } = useNetwork()
+  const chainId = network?.id
   const provider = useProvider()
 
   return useMemo(() => {

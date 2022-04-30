@@ -1,4 +1,4 @@
-import { TokenList } from '@uniswap/token-lists'
+import type { TokenList } from '@uniswap/token-lists'
 import { tokensToChainTokenMap, sortByListPriority, resolveENSContentHash, getTokenList } from './utils'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -9,14 +9,13 @@ import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import UNSUPPORTED_TOKEN_LIST from './unsupported.tokenlist.json'
 
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@sushiswap/chain'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 export function useFetchListCallback(
   context: TokenListsContext,
-  chainId: ChainId,
+  chainId: number,
   library: JsonRpcProvider,
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { actions } = context

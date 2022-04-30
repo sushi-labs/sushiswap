@@ -14,9 +14,8 @@ interface Props {
 
 const LinkPopover: FC<Props> = ({ furo }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
-
+  const { data: network } = useNetwork()
+  const chainId = network?.id
   return (
     <Popover>
       <Popover.Button ref={setReferenceElement}>

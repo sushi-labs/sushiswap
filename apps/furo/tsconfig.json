@@ -4,7 +4,6 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "preserveSymlinks": true,
     "paths": {
       "abis/*": ["./abis/*"],
       "config": ["./config/index.ts"],

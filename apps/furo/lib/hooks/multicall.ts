@@ -1,5 +1,5 @@
-import { multicall } from 'lib/state/multicall'
-import { SkipFirst } from 'types/tuple'
+import { multicall } from '../state/multicall'
+import { SkipFirst } from '../../types/tuple'
 import { useBlockNumber, useNetwork } from 'wagmi'
 
 export type { CallStateResult } from '@uniswap/redux-multicall' // re-export for convenience
@@ -36,8 +36,7 @@ export function useSingleContractWithCallData(
 }
 
 function useCallContext() {
-  const [{ data: network }] = useNetwork()
-  const chainId = network?.chain?.id
-  const [{ data: latestBlock }] = useBlockNumber()
-  return { chainId, latestBlock }
+  const { data: network } = useNetwork()
+  const { data: latestBlock } = useBlockNumber()
+  return { chainId: network?.id, latestBlock }
 }

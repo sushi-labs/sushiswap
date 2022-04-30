@@ -1,6 +1,7 @@
 import Header from './Header'
 import Shell from './Shell'
 import Nav from './Nav'
+import Footer from './Footer'
 import { FC } from 'react'
 
 export type AppProps = {
@@ -13,6 +14,9 @@ export type AppProps = {
   Nav: FC<{
     children?: React.ReactNode
   }>
+  Footer: FC<{
+    children?: React.ReactNode
+  }>
 }
 
-export const App: AppProps = { Header, Shell, Nav }
+export const App: AppProps = { Header, Shell, Nav, Footer }

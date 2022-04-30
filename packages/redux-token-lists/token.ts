@@ -1,5 +1,5 @@
 import { Type, Token } from '@sushiswap/currency'
-import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
+import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { isAddress, getAddress } from '@ethersproject/address'
 
 type TagDetails = Tags[keyof Tags]
@@ -25,8 +25,7 @@ export class WrappedTokenInfo implements Token {
 
   public get address(): string {
     if (this._checksummedAddress) return this._checksummedAddress
-    if (!isAddress(this.tokenInfo.address))
-      throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
+    if (!isAddress(this.tokenInfo.address)) throw new Error(`Invalid token address: ${this.tokenInfo.address}`)
     const checksummedAddress = getAddress(this.tokenInfo.address)
     return (this._checksummedAddress = checksummedAddress)
   }

@@ -5,7 +5,7 @@ import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useEnsResolveName } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 interface CancelStreamModalProps {
   stream?: Stream
@@ -14,7 +14,7 @@ interface CancelStreamModalProps {
 const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [toBentoBox, setToBentoBox] = useState<boolean>(true)
-  const [{ data: account }] = useAccount()
+  const { data: account } = useAccount()
   const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 

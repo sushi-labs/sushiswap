@@ -19,7 +19,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
   const [amount, setAmount] = useState<Amount<Token>>()
   const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const [newEndTime, setNewEndTime] = useState<Date>()
-  const [{ data: account }] = useAccount()
+  const { data: account } = useAccount()
   const token = useToken(stream?.token.address)
   const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)

@@ -1,45 +1,31 @@
 import Link from 'next/link'
 import { useAccount, useConnect } from 'wagmi'
 
+import { Wallet, Account } from '@sushiswap/wallet-connector'
+
 export default function Furo() {
-  const [{ data: connection, error: connectError}, connect] = useConnect()
-  const [{ data: accountData }, disconnect] = useAccount({
-    fetchEns: true,
-  })
-  // how do I get the chainId?
-  const Wallet = () => {
-    if (accountData) {
-      return (
-        <>
-          <div>{accountData.ens?.name ? `${accountData.ens?.name} (${accountData.address})` : accountData.address}</div>
-          <div>Connected to {accountData.connector.name}</div>
-          <button onClick={disconnect}>Disconnect</button>
-        </>
-      )
-    } else {
-      return (
-        <button
-          onClick={() => {
-            connect(connection.connectors[0])
-          }}
-        >
-          Connect Wallet
-        </button>
-      )
-    }
-  }
+  const { data } = useAccount()
+  const { isConnected, isReconnecting, isConnecting } = useConnect()
+
+  console.log({ data })
   return (
     <div className="h-full">
       <h1 className="py-4 text-2xl font-bold">Overview</h1>
-      <Wallet />
-      {!connectError && accountData?.address ? (
-        <>
+      {!isConnected && (!isReconnecting || !isConnecting) && (
+        <div className="flex space-x-4">
+          <Wallet.List />
+        </div>
+      )}
+      {(isConnected || isReconnecting) && data?.address && (
+        <div>
           <div>
-            <Link href={`/users/${accountData.address.toLowerCase()}/`}>[Dashboard]</Link>
+            <Account.Name address={data.address} />
+            <Account.Disconnect className="ml-4" />
           </div>
-        </>
-      ) : (
-        <div>{connectError?.message ?? 'Failed to connect'}</div>
+          <div>
+            <Link href={`/users/${data.address.toLowerCase()}`}>[Dashboard]</Link>
+          </div>
+        </div>
       )}
     </div>
   )

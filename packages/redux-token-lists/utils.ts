@@ -1,4 +1,4 @@
-import { TokenInfo, TokenList } from '@uniswap/token-lists'
+import type { TokenInfo, TokenList } from '@uniswap/token-lists'
 import { DEFAULT_LIST_OF_LISTS } from './constants'
 import { WrappedTokenInfo } from './token'
 import { ChainTokenMap } from './types'
@@ -7,7 +7,7 @@ import { Contract } from '@ethersproject/contracts'
 import { namehash } from '@ethersproject/hash'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
-import { providers } from 'ethers'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
 // @ts-ignore TYPE NEEDS FIXING
 import { getCodec, rmPrefix } from 'multicodec'
@@ -73,8 +73,6 @@ export function uriToHttp(uri: string): string[] {
       return []
   }
 }
-
-
 
 export function hexToUint8Array(hex: string): Uint8Array {
   hex = hex.startsWith('0x') ? hex.substr(2) : hex
@@ -164,7 +162,7 @@ const RESOLVER_ABI = [
 ]
 
 // cache the resolver contracts since most of them are the public resolver
-function resolverContract(resolverAddress: string, provider: providers.JsonRpcProvider): Contract {
+function resolverContract(resolverAddress: string, provider: JsonRpcProvider): Contract {
   return new Contract(resolverAddress, RESOLVER_ABI, provider)
 }
 
@@ -173,7 +171,7 @@ function resolverContract(resolverAddress: string, provider: providers.JsonRpcPr
  * @param ensName to resolve
  * @param provider provider to use to fetch the data
  */
-export async function resolveENSContentHash(ensName: string, provider: providers.JsonRpcProvider): Promise<string> {
+export async function resolveENSContentHash(ensName: string, provider: JsonRpcProvider): Promise<string> {
   const ensRegistrarContract = new Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider)
   const hash = namehash(ensName)
   const resolverAddress = await ensRegistrarContract.resolver(hash)
@@ -187,8 +185,6 @@ export function parseENSAddress(ensAddress: string): { ensName: string; ensPath:
   if (!match) return undefined
   return { ensName: `${match[1].toLowerCase()}eth`, ensPath: match[4] }
 }
-
-
 
 const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
 

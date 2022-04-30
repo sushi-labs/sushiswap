@@ -1,17 +1,16 @@
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
-import { providers } from 'ethers'
+import { JsonRpcProvider } from '@ethersproject/providers'
 import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { ARBITRUM_TOKEN_LIST, UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
+import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import { TokenListsContext } from './context'
 import { useIsWindowVisible, useInterval } from '@sushiswap/hooks'
-import { ChainId } from '@sushiswap/chain'
 import { useActiveListUrls, useAllLists, useFetchListCallback } from './hooks'
 
 export interface UpdaterProps {
   context: TokenListsContext
   chainId: number | undefined // For now, one updater is required for each chainId to be watched
-  library: providers.JsonRpcProvider
+  library: JsonRpcProvider
   isDebug?: boolean
 }
 
@@ -35,11 +34,6 @@ function Updater(props: UpdaterProps): null {
     )
   }, [fetchList, isWindowVisible, lists])
 
-  useEffect(() => {
-    if (chainId && chainId === ChainId.ARBITRUM) {
-      dispatch(actions.enable(ARBITRUM_TOKEN_LIST))
-    }
-  }, [chainId, dispatch])
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
 
