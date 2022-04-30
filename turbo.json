@@ -19,7 +19,8 @@
       ],
       "dependsOn": [
         "^build",
-        "^generate"
+        "^generate",
+        "generate"
       ]
     },
     "test": {
