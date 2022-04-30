@@ -1,5 +1,4 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ApprovalState } from 'types/approval-state'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber, Contract } from 'ethers'
 import { MAX_UINT256 } from '@sushiswap/math'
@@ -9,6 +8,13 @@ import { useTokenAllowance } from './useTokenAllowance'
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
   return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
+}
+
+export enum ApprovalState {
+  UNKNOWN = 'UNKNOWN',
+  NOT_APPROVED = 'NOT_APPROVED',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
 }
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
