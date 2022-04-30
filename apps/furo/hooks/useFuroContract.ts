@@ -26,7 +26,7 @@ export function useFuroVestingContract(): FuroVesting | null {
 
 export function useStreamBalance(streamId: string): BigNumber {
   const [balance, setBalance] = useState<BigNumber>()
-  const { data, error, isLoading } = useContractRead(
+  const { data, error, isLoading, isError } = useContractRead(
     {
       addressOrName: FuroExport[42].kovan.contracts.FuroStream.address,
       contractInterface: FuroExport[42].kovan.contracts.FuroStream.abi,
@@ -34,12 +34,12 @@ export function useStreamBalance(streamId: string): BigNumber {
     'streamBalanceOf',
     { args: [streamId], watch: true },
   )
-  console.log({ data, error, isLoading })
   useMemo(() => {
-    if (!error && !isLoading && data !== undefined && streamId) {
-      setBalance(BigNumber.from(data.recipientBalance))
+    if (!isError && !isLoading && data) {
+      const [, recipientBalance] = data
+      setBalance(BigNumber.from(recipientBalance))
     }
-  }, [error, isLoading, data, streamId])
+  }, [isError, isLoading, data])
 
   return balance
 }
