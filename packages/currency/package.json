@@ -2,33 +2,40 @@
   "name": "@sushiswap/currency",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
+  "description": "Sushi Currency",
+  "keywords": [
+    "sushi",
+    "currency",
+    "token"
+  ],
   "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "test": "jest",
-    "dev": "tsc -w",
     "build": "tsc",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "config/jest/node"
   },
   "dependencies": {
     "@ethersproject/address": "^5.5.0",
-    "tiny-invariant": "^1.2.0",
     "@sushiswap/chain": "workspace:*",
-    "@sushiswap/math": "workspace:*"
+    "@sushiswap/math": "workspace:*",
+    "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "config": "workspace:*",
-    "jest": "^27.5.1",    
+    "jest": "^27.5.1",
     "typescript": "^4.6.2"
-  },
-  "jest": {
-    "preset": "config/jest/node"
   }
 }

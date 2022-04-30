@@ -2,30 +2,36 @@
   "name": "@sushiswap/chain",
   "version": "0.0.0",
   "private": true,
+  "description": "Sushi Chain",
+  "keywords": [
+    "sushi",
+    "chain"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",  
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
-  "license": "MIT",
   "scripts": {
-    "preinstall": "pnpm run generate",
-    "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
-    "test": "jest --passWithNoTests",
-    "dev": "tsc -w",
     "build": "tsc",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
+    "preinstall": "pnpm run generate",
     "lint": "TIMING=1 eslint src --fix",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "test": "jest --passWithNoTests"
+  },
+  "jest": {
+    "preset": "config/jest/node"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "config": "workspace:*",
-    "jest": "^27.5.1",
     "eslint": "^8.10.0",
+    "jest": "^27.5.1",
     "typescript": "^4.6.2"
-  },
-  "jest": {
-    "preset": "config/jest/node"
   }
 }

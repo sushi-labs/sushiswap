@@ -2,7 +2,18 @@
   "name": "config",
   "version": "0.0.0",
   "private": true,
+  "description": "Sushi Config",
+  "keywords": [
+    "sushi",
+    "config",
+    "eslint",
+    "prettier",
+    "hardhat",
+    "typescript",
+    "jest"
+  ],
   "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
   "files": [
     "eslint",
     "jest",
