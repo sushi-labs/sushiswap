@@ -1,4 +1,3 @@
-import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'features/context/Stream'
 import { useToken } from 'hooks/Tokens'
 import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
@@ -6,8 +5,9 @@ import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { JSBI } from '@sushiswap/math'
 import { FC, useState } from 'react'
-import DialogContent from '@sushiswap/ui/dialog/DialogContent'
+import { Dialog } from '@sushiswap/ui/dialog'
 import { useAccount } from 'wagmi'
+import Button from '../../../../packages/ui/button/Button'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -54,16 +54,16 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        variant="filled"
+        color="gradient"
         disabled={stream.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
         onClick={openModal}
       >
         Withdraw
-      </button>
-      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
-        <div className="text-blue-600">
-          <DialogContent>
+      </Button>
+      <Dialog open={isOpen} onClose={closeModal}>
+        <Dialog.Content>
             <div>
               Withdrawn: {stream?.withdrawnAmount.toExact()} {stream?.token.symbol}
             </div>
@@ -75,28 +75,20 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             <div>
               Available: {balance ? Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0)).toExact() : ''}{' '}
               {stream?.token.symbol}
-            </div>
-            <div>
-              Amount:
-              <input
-                type={'number'}
-                onChange={(e) => setAmount(Amount.fromRawAmount(token, parseInt(e.target.value)))}
-              ></input>
-            </div>
-            <div>
-              from BentoBox: <input type="checkbox" defaultChecked={toBentoBox} onChange={handleBentoBoxCheck} />
-            </div>
-            Who is the recipient?
-            <div>
-              <input
-                type={'text'}
-                defaultValue={account?.address}
-                onChange={(e) => setRecipient(e.target.value)}
-              ></input>
-            </div>
-            <button onClick={withdraw}>{`Withdraw`}</button>
-          </DialogContent>
-        </div>
+          </div>
+          <div>
+            Amount:
+            <input type={'number'} onChange={(e) => setAmount(Amount.fromRawAmount(token, parseInt(e.target.value)))} />
+          </div>
+          <div>
+            from BentoBox: <input type="checkbox" defaultChecked={toBentoBox} onChange={handleBentoBoxCheck} />
+          </div>
+          Who is the recipient?
+          <div>
+            <input type={'text'} defaultValue={account?.address} onChange={(e) => setRecipient(e.target.value)} />
+          </div>
+          <button onClick={withdraw}>{`Withdraw`}</button>
+        </Dialog.Content>
       </Dialog>
     </>
   )

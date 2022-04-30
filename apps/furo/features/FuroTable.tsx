@@ -7,7 +7,7 @@ import { classNames, ProgressColor, Table, ProgressBar, Typography } from '@sush
 import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
-import { Vesting } from './context/Vesting'
+import { Vesting } from 'features/context'
 
 export enum FuroTableType {
   INCOMING,

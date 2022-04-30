@@ -6,7 +6,7 @@ import { Text } from '@visx/text'
 import { useStreamBalance } from 'hooks'
 import { Amount, Token } from '@sushiswap/currency'
 import { FC, useEffect, useState } from 'react'
-import { Stream } from '../context/Stream'
+import { Stream } from 'features/context'
 
 interface Props {
   stream: Stream

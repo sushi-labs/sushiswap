@@ -3,9 +3,11 @@ import { Stream } from 'features/context/Stream'
 import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
 import { useAccount, useEnsName } from 'wagmi'
+import Button from '../../../../packages/ui/button/Button'
+import { PaperAirplaneIcon } from '@heroicons/react/outline'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -24,14 +26,15 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
   const contract = useFuroStreamContract()
   const balance = useStreamBalance(stream?.id)
 
-  function openModal() {
+  const openModal = useCallback(() => {
     setIsOpen(true)
-  }
-  function closeModal() {
-    setIsOpen(false)
-  }
+  }, [])
 
-  async function transferStream() {
+  const closeModal = useCallback(() => {
+    setIsOpen(false)
+  }, [])
+
+  const transferStream = useCallback(async () => {
     if (!stream || !account || !recipient) {
       console.log(stream, account.address, recipient)
       return
@@ -44,17 +47,20 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
     console.log(account.address, resolvedAddress, stream?.id)
     const tx = await contract.transferFrom(account?.address, resolvedAddress, stream?.id)
     console.log({ tx })
-  }
+  }, [account, contract, recipient, refetch, stream])
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px]" />}
+        fullWidth
+        variant="outlined"
+        color="gray"
         disabled={stream?.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
         onClick={openModal}
       >
         Transfer
-      </button>
+      </Button>
       <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
         <div className="text-blue-600">
           <DialogContent>
@@ -68,7 +74,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
             </div>
             Recipient ETH address or ENS name:
             <div>
-              <input type={'text'} defaultValue={recipient} onChange={(e) => setRecipient(e.target.value)}></input>
+              <input type="text" defaultValue={recipient} onChange={(e) => setRecipient(e.target.value)} />
             </div>
             <button onClick={transferStream}>{`Transfer Ownership`}</button>
           </DialogContent>
