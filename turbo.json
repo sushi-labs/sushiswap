@@ -39,7 +39,9 @@
     },
     "dev": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "^generate",
+        "generate"
       ],
       "cache": false
     },
