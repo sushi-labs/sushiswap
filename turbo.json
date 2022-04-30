@@ -4,12 +4,18 @@
       "cache": false
     },
     "generate": {
+      "outputs": [
+        ".next/**",
+        ".graphclient/**", 
+        "dist/**",
+        "typechain"
+      ],
       "cache": false
     },
     "build": {
       "outputs": [
-        "dist/**",
-        ".next/**"
+        ".next/**",
+        "dist/**"
       ],
       "dependsOn": [
         "^build",
@@ -44,18 +50,11 @@
         "^build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
-        "$DOCS_URL"
+        "$DOCS_URL",
+        "$FURO_URL",
+        "$LANDING_URL"
       ],
       "outputs": [".next/**"]
-    },
-    "analytics#generate": {
-      "outputs": [".graphclient/**", "typechain"]
-    },
-    "furo#generate": {
-      "outputs": [".graphclient/**", "typechain"]
-    },
-    "multicall#generate": {
-      "outputs": ["typechain"]
     }
   }
 }
