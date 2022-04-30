@@ -1,12 +1,23 @@
 {
-  "name": "config",
+  "name": "@sushiswap/config",
   "version": "0.0.0",
   "private": true,
-  "license": "MIT",
-  "files": [
+  "description": "Sushi Config",
+  "keywords": [
+    "sushi",
+    "config",
     "eslint",
-    "jest",
-    "typescript"
+    "prettier",
+    "hardhat",
+    "typescript",
+    "jest"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "files": [
+    "eslint/**",
+    "jest/**",
+    "typescript/**"
   ],
   "dependencies": {
     "eslint-config-next": "^12.1.5",
@@ -14,6 +25,6 @@
     "ts-jest": "^27.1.4"
   },
   "devDependencies": {
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.4"
   }
 }

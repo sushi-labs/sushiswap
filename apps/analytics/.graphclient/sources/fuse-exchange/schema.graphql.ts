@@ -19,19 +19,13 @@ scalar BigDecimal
 
 scalar BigInt
 
-"""The block at which the query should be executed."""
+input BlockChangedFilter {
+  number_gte: Int!
+}
+
 input Block_height {
-  """Value containing a block hash"""
   hash: Bytes
-  """Value containing a block number"""
   number: Int
-  """
-  Value containing the minimum block number. 
-  In the case of \`number_gte\`, the query will be executed on the latest block only if
-  the subgraph has progressed to or past the minimum block number.
-  Defaults to the latest block when omitted.
-  
-  """
   number_gte: Int
 }
 
@@ -57,6 +51,8 @@ input Bundle_filter {
   ethPrice_lte: BigDecimal
   ethPrice_in: [BigDecimal!]
   ethPrice_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Bundle_orderBy {
@@ -208,6 +204,8 @@ input Burn_filter {
   feeLiquidity_lte: BigDecimal
   feeLiquidity_in: [BigDecimal!]
   feeLiquidity_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Burn_orderBy {
@@ -326,6 +324,8 @@ input DayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum DayData_orderBy {
@@ -438,6 +438,8 @@ input Factory_filter {
   userCount_lte: BigInt
   userCount_in: [BigInt!]
   userCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Factory_orderBy {
@@ -554,6 +556,8 @@ input HourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum HourData_orderBy {
@@ -735,6 +739,8 @@ input LiquidityPositionSnapshot_filter {
   liquidityTokenBalance_lte: BigDecimal
   liquidityTokenBalance_in: [BigDecimal!]
   liquidityTokenBalance_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum LiquidityPositionSnapshot_orderBy {
@@ -826,6 +832,8 @@ input LiquidityPosition_filter {
   timestamp_lte: Int
   timestamp_in: [Int!]
   timestamp_not_in: [Int!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum LiquidityPosition_orderBy {
@@ -977,6 +985,8 @@ input Mint_filter {
   feeLiquidity_lte: BigDecimal
   feeLiquidity_in: [BigDecimal!]
   feeLiquidity_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Mint_orderBy {
@@ -1189,6 +1199,8 @@ input PairDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum PairDayData_orderBy {
@@ -1313,6 +1325,8 @@ input PairHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum PairHourData_orderBy {
@@ -1545,6 +1559,8 @@ input Pair_filter {
   block_lte: BigInt
   block_in: [BigInt!]
   block_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Pair_orderBy {
@@ -2604,6 +2620,8 @@ input Swap_filter {
   amountUSD_lte: BigDecimal
   amountUSD_in: [BigDecimal!]
   amountUSD_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Swap_orderBy {
@@ -2758,6 +2776,8 @@ input TokenDayData_filter {
   priceUSD_lte: BigDecimal
   priceUSD_in: [BigDecimal!]
   priceUSD_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum TokenDayData_orderBy {
@@ -2889,6 +2909,8 @@ input TokenHourData_filter {
   priceUSD_lte: BigDecimal
   priceUSD_in: [BigDecimal!]
   priceUSD_not_in: [BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum TokenHourData_orderBy {
@@ -3044,6 +3066,8 @@ input Token_filter {
   whitelistPairs_contains_nocase: [String!]
   whitelistPairs_not_contains: [String!]
   whitelistPairs_not_contains_nocase: [String!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Token_orderBy {
@@ -3120,6 +3144,8 @@ input Transaction_filter {
   swaps_contains_nocase: [String!]
   swaps_not_contains: [String!]
   swaps_not_contains_nocase: [String!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum Transaction_orderBy {
@@ -3145,6 +3171,8 @@ input User_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
 }
 
 enum User_orderBy {

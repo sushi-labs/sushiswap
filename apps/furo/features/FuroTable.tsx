@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { formatNumber, shortenAddress } from 'format'
+import { formatNumber, shortenAddress } from '@sushiswap/format'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
 import { useFlexLayout, useTable } from 'react-table'
@@ -7,7 +7,7 @@ import { classNames, ProgressColor, Table, ProgressBar, Typography } from '@sush
 import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
-import { Vesting } from './context/Vesting'
+import { Vesting } from 'features/context'
 import { useNetwork } from 'wagmi'
 
 export enum FuroTableType {

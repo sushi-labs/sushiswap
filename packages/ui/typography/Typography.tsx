@@ -29,7 +29,10 @@ export interface TypographyProps extends React.AllHTMLAttributes<React.ReactHTML
   component?: keyof React.ReactHTML
   className?: string
   clickable?: boolean
+  select?: TypographySelect
 }
+
+export type TypographySelect = 'none' | 'text' | 'all' | 'auto'
 
 export const Typography: FC<TypographyProps> = forwardRef(
   (
@@ -41,6 +44,7 @@ export const Typography: FC<TypographyProps> = forwardRef(
       clickable = false,
       children = [],
       onClick = undefined,
+      select = 'auto',
       ...rest
     },
     ref,
@@ -51,6 +55,7 @@ export const Typography: FC<TypographyProps> = forwardRef(
         className: classNames(
           VARIANTS[variant],
           WEIGHTS[weight],
+          select,
           onClick ? 'cursor-pointer select-none' : '',
           className,
         ),

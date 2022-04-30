@@ -8,22 +8,25 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --no-cache --parallel --continue",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\""
+    "dev": "turbo run dev --no-cache --parallel --continue",
+    "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
+    "lint": "turbo run lint",
+    "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/*/package.json' 'protocols/*/package.json'",
+    "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/*/package.json' 'protocols/*/package.json' --check",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "eslint": "8.14.0",
-    "prettier": "^2.6.2",
-    "turbo": "latest",
     "jest": "^28.0.0",
-    "ts-jest": "^27.1.4"
+    "prettier": "^2.6.2",
+    "sort-package-json": "^1.55.0",
+    "ts-jest": "^27.1.4",
+    "turbo": "latest"
   },
+  "packageManager": "pnpm@6.32.9",
   "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
-  },
-  "packageManager": "pnpm@6.32.9"
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  }
 }

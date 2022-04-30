@@ -1,5 +1,5 @@
 import { useInterval } from '@sushiswap/hooks'
-import { FC, ReactNode, useState } from 'react'
+import { FC, useState } from 'react'
 import { Typography } from '@sushiswap/ui'
 import { Vesting } from './context'
 import { FuroStatus } from './context/enums'
@@ -31,7 +31,7 @@ const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
       seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
     })
   }, 1000)
-  
+
   // Render normally
   if (remaining) {
     return (

@@ -9,6 +9,7 @@ import { XIcon } from '@heroicons/react/outline'
 import { format } from 'date-fns'
 import { usePopover } from 'hooks'
 import { useAccount } from 'wagmi'
+import { classNames } from '@sushiswap/ui'
 
 interface Props {
   transactionRepresentations: TransactionRepresentation[]
@@ -27,40 +28,49 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
 
   return (
     <Popover>
-      <Popover.Button ref={setReferenceElement}>
-        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
-          <HistoryIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-high-emphesis">
-            History
-          </Typography>
-        </div>
-      </Popover.Button>
-
-      <Popover.Panel
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-        className="overflow-hidden z-10 bg-dark-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
-      >
-        <div className="flex justify-between gap-4">
-          <Typography variant="lg" weight={700} className="text-high-emphesis">
-            History
-          </Typography>
-          <XIcon width={24} height={24} className="text-secondary" />
-        </div>
-        <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-dark-800 border-t border-dark-800">
-          {transactions.length ? (
-            Object.values(transactions).map((transaction) => (
-              <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
-            ))
-          ) : (
-            <div>
-              <i>No transactions found..</i>
+      {({ open }) => (
+        <>
+          <Popover.Button ref={setReferenceElement}>
+            <div
+              className={classNames(
+                open ? 'border-dark-700 bg-dark-800' : 'border-dark-800',
+                'flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 hover:border-dark-700 active:border-dark-600 bg-dark-900 hover:bg-dark-800 active:bg-dark-700 rounded-xl h-11',
+              )}
+            >
+              <HistoryIcon width={18} height={18} />
+              <Typography variant="sm" weight={700} className="text-high-emphesis">
+                History
+              </Typography>
             </div>
-          )}
-        </div>
-        <div className="w-full h-[60px] bottom-0 left-0 absolute bg-gradient-to-b from-[rgba(22,_21,_34,_0)] to-[#161522]" />
-      </Popover.Panel>
+          </Popover.Button>
+
+          <Popover.Panel
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+            className="overflow-hidden z-10 bg-dark-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
+          >
+            <div className="flex justify-between gap-4">
+              <Typography variant="lg" weight={700} className="text-high-emphesis">
+                History
+              </Typography>
+              <XIcon width={24} height={24} className="text-secondary" />
+            </div>
+            <div className="h-[200px] max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-dark-800 border-t border-dark-800">
+              {transactions.length ? (
+                Object.values(transactions).map((transaction) => (
+                  <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
+                ))
+              ) : (
+                <Typography variant="xs" className="italic text-secondary flex justify-center items-center h-full pb-4">
+                  No transactions found
+                </Typography>
+              )}
+            </div>
+            <div className="w-full h-[60px] bottom-0 left-0 absolute bg-gradient-to-b from-[rgba(22,_21,_34,_0)] to-[#161522]" />
+          </Popover.Panel>
+        </>
+      )}
     </Popover>
   )
 }

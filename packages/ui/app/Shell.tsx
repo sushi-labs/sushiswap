@@ -3,7 +3,7 @@ type Props = {
 }
 
 function Shell({ children }: Props): JSX.Element {
-  return <div>{children}</div>
+  return <>{children}</>
 }
 
 export default Shell

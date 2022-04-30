@@ -16,19 +16,13 @@ scalar CELO_BigDecimal
 
 scalar BigInt
 
-"""The block at which the query should be executed."""
+input CELO_BlockChangedFilter {
+  number_gte: Int!
+}
+
 input CELO_Block_height {
-  """Value containing a block hash"""
   hash: CELO_Bytes
-  """Value containing a block number"""
   number: Int
-  """
-  Value containing the minimum block number. 
-  In the case of `number_gte`, the query will be executed on the latest block only if
-  the subgraph has progressed to or past the minimum block number.
-  Defaults to the latest block when omitted.
-  
-  """
   number_gte: Int
 }
 
@@ -54,6 +48,8 @@ input CELO_Bundle_filter {
   ethPrice_lte: CELO_BigDecimal
   ethPrice_in: [CELO_BigDecimal!]
   ethPrice_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Bundle_orderBy {
@@ -205,6 +201,8 @@ input CELO_Burn_filter {
   feeLiquidity_lte: CELO_BigDecimal
   feeLiquidity_in: [CELO_BigDecimal!]
   feeLiquidity_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Burn_orderBy {
@@ -323,6 +321,8 @@ input CELO_DayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_DayData_orderBy {
@@ -435,6 +435,8 @@ input CELO_Factory_filter {
   userCount_lte: BigInt
   userCount_in: [BigInt!]
   userCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Factory_orderBy {
@@ -551,6 +553,8 @@ input CELO_HourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_HourData_orderBy {
@@ -732,6 +736,8 @@ input CELO_LiquidityPositionSnapshot_filter {
   liquidityTokenBalance_lte: CELO_BigDecimal
   liquidityTokenBalance_in: [CELO_BigDecimal!]
   liquidityTokenBalance_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_LiquidityPositionSnapshot_orderBy {
@@ -823,6 +829,8 @@ input CELO_LiquidityPosition_filter {
   timestamp_lte: Int
   timestamp_in: [Int!]
   timestamp_not_in: [Int!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_LiquidityPosition_orderBy {
@@ -974,6 +982,8 @@ input CELO_Mint_filter {
   feeLiquidity_lte: CELO_BigDecimal
   feeLiquidity_in: [CELO_BigDecimal!]
   feeLiquidity_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Mint_orderBy {
@@ -1186,6 +1196,8 @@ input CELO_PairDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_PairDayData_orderBy {
@@ -1310,6 +1322,8 @@ input CELO_PairHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_PairHourData_orderBy {
@@ -1542,6 +1556,8 @@ input CELO_Pair_filter {
   block_lte: BigInt
   block_in: [BigInt!]
   block_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Pair_orderBy {
@@ -2601,6 +2617,8 @@ input CELO_Swap_filter {
   amountUSD_lte: CELO_BigDecimal
   amountUSD_in: [CELO_BigDecimal!]
   amountUSD_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Swap_orderBy {
@@ -2755,6 +2773,8 @@ input CELO_TokenDayData_filter {
   priceUSD_lte: CELO_BigDecimal
   priceUSD_in: [CELO_BigDecimal!]
   priceUSD_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_TokenDayData_orderBy {
@@ -2886,6 +2906,8 @@ input CELO_TokenHourData_filter {
   priceUSD_lte: CELO_BigDecimal
   priceUSD_in: [CELO_BigDecimal!]
   priceUSD_not_in: [CELO_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_TokenHourData_orderBy {
@@ -3041,6 +3063,8 @@ input CELO_Token_filter {
   whitelistPairs_contains_nocase: [String!]
   whitelistPairs_not_contains: [String!]
   whitelistPairs_not_contains_nocase: [String!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Token_orderBy {
@@ -3117,6 +3141,8 @@ input CELO_Transaction_filter {
   swaps_contains_nocase: [String!]
   swaps_not_contains: [String!]
   swaps_not_contains_nocase: [String!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_Transaction_orderBy {
@@ -3142,6 +3168,8 @@ input CELO_User_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
+  """Filter for the block changed event."""
+  _change_block: CELO_BlockChangedFilter
 }
 
 enum CELO_User_orderBy {
