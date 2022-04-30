@@ -520,8 +520,10 @@ importers:
 
   packages/cli:
     specifiers:
+      chalk: ^4.1.2
       commander: ^9.2.0
     dependencies:
+      chalk: 4.1.2
       commander: 9.2.0
 
   packages/config:
