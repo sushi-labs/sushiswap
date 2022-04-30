@@ -230,7 +230,7 @@ importers:
       date-fns: ^2.28.0
       eslint: ^8.14.0
       ethers: ^5.6.4
-      furo: github:sushiswap/furo#feature/furo-deploy
+      furo: github:sushiswap/furo#ae827057d94cfe4cb1a2e43b8f180a10a6b3115a
       graphql: 16.4.0
       next: ^12.1.5
       next-transpile-modules: 9.0.0

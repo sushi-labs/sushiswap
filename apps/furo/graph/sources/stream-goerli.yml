@@ -1,10 +1,10 @@
-name: furostream_kovan
+name: furostream_goerli
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-goerli
 transforms:
   - prefix:
-      value: KOVAN_STREAM_
+      value: GOERLI_STREAM_
       includeRootOperations: true
       includeTypes: false
       ignore: 

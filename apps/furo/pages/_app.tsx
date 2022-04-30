@@ -19,10 +19,11 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <WagmiProvider client={client}>
       <ReduxProvider store={store}>
-        <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
-        <TokenListUpdater chainId={ChainId.KOVAN} />
         <App.Shell>
-          <App.Header />
+          <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
+          <TokenListUpdater chainId={ChainId.KOVAN} />
+          <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumber} />
+          <TokenListUpdater chainId={ChainId.GÖRLI} />
           <Component {...pageProps} />
           <App.Footer />
         </App.Shell>

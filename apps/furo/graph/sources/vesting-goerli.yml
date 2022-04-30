@@ -1,10 +1,10 @@
-name: furovesting_kovan
+name: furovesting_goerli
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-kovan
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-goerli
 transforms:
   - prefix:
-      value: KOVAN_VESTING_
+      value: GOERLI_VESTING_
       includeRootOperations: true
       includeTypes: false
       ignore:

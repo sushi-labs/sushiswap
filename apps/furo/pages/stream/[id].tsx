@@ -13,6 +13,7 @@ import { FC, useMemo } from 'react'
 import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
 import { getBuiltGraphSDK } from '../../.graphclient'
+import { getStream, getStreamTransactions } from 'graph/graph-client'
 
 interface Props {
   stream: StreamRepresentation
@@ -79,13 +80,10 @@ const Streams: FC<Props> = (props) => {
 export default Streams
 
 export async function getServerSideProps({ query }) {
-  const sdk = await getBuiltGraphSDK()
-  const stream = (await sdk.Stream({ id: query.id })).STREAM_stream
-  const transactions = (await sdk.StreamTransactions({ id: query.id })).STREAM_transactions
   return {
     props: {
-      stream,
-      transactions,
+      stream: await getStream(query.chainId, query.id),
+      transactions: await getStreamTransactions(query.chainId, query.id),
     },
   }
 }
