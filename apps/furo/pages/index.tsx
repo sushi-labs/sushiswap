@@ -7,7 +7,6 @@ export default function Furo() {
   const { data } = useAccount()
   const { isConnected, isReconnecting, isConnecting } = useConnect()
 
-  console.log({ data })
   return (
     <div className="h-full">
       <h1 className="py-4 text-2xl font-bold">Overview</h1>
