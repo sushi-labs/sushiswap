@@ -74,14 +74,13 @@ const SchedulePopoverItem: FC<{ vesting: Vesting; period: SchedulePeriod }> = me
           {period.type === PeriodType.START
             ? `-`
             : period.type === PeriodType.CLIFF
-            ? `${vesting.cliffAmount} ${period?.amount.currency?.symbol}`
+            ? `${vesting.cliffAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
             : period.type === PeriodType.STEP
-            ? `${vesting.stepAmount} ${period?.amount.currency?.symbol}`
+            ? `${vesting.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
             : period.type === PeriodType.END &&
               (vesting.vestingType === VestingType.GRADED || vesting.vestingType === VestingType.HYBRID)
-            ? `${vesting.stepAmount} ${period?.amount.currency?.symbol}`
+            ? `${vesting.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
             : `${vesting.amount.toExact()} ${period?.amount.currency?.symbol}`}
-          {/* TODO: refactor stepAmount and vestingAmount to token? */}
         </Typography>
       </div>
     </div>

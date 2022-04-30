@@ -12,10 +12,9 @@ interface NextPaymentTimerState {
 
 interface NextPaymentTimerProps {
   vesting?: Vesting
-  children?: ((state: NextPaymentTimerState) => ReactNode) | ReactNode
 }
 
-const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
+const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
   const [remaining, setRemaining] = useState<NextPaymentTimerState>()
 
   useInterval(() => {
@@ -30,10 +29,6 @@ const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting, children }) => {
     })
   }, 1000)
 
-  // Render props
-  if (remaining && typeof children === 'function') return children(remaining)
-
-  // Render normally
   if (remaining) {
     return (
       <div className="flex flex-col gap-2">
