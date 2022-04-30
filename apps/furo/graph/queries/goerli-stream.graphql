@@ -1,5 +1,5 @@
-query UserStreams($id: ID!) {
-  STREAM_user(id: $id) {
+query GoerliUserStreams($id: ID!) {
+  GOERLI_STREAM_user(id: $id) {
     incomingStreams(orderBy: startedAt) {
       id
       __typename
@@ -47,8 +47,8 @@ query UserStreams($id: ID!) {
   }
 }
 
-query Stream($id: ID!) {
-  STREAM_stream(id: $id) {
+query GoerliStream($id: ID!) {
+  GOERLI_STREAM_stream(id: $id) {
     id
     __typename
     status
@@ -73,8 +73,8 @@ query Stream($id: ID!) {
   }
 }
 
-query StreamTransactions($id: String) {
-  STREAM_transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+query GoerliStreamTransactions($id: String) {
+  GOERLI_STREAM_transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
     id
     type
     amount

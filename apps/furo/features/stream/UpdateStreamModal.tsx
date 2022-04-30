@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'features/context/Stream'
 import { useToken } from 'hooks/Tokens'
-import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
+import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from 'format'

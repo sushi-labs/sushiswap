@@ -25,6 +25,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <Provider store={store}>
           <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
           <TokenListUpdater chainId={ChainId.KOVAN} />
+          <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumber} />
+          <TokenListUpdater chainId={ChainId.GÖRLI} />
           <Component {...pageProps} />
         </Provider>
         <App.Footer />

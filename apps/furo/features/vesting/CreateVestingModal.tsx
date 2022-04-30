@@ -4,7 +4,7 @@ import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'featu
 import { useApproveCallback } from 'hooks'
 import { useAllTokens } from 'hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
-import { useFuroVestingContract } from 'hooks/useFuroContract'
+import { useFuroVestingContract } from 'hooks/useFuroVestingContract'
 import { ApprovalState } from 'types/approval-state'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
@@ -38,8 +38,8 @@ const CreateVestingModal: FC = () => {
   const [stepAmount, setStepAmount] = useState<BigNumber>()
   const [stepEndDate, setStepEndDate] = useState<Date>()
   const { data: account } = useAccount()
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
   const tokens = useAllTokens()
   const contract = useFuroVestingContract()
   const { data: tx, sendTransactionAsync } = useSendTransaction()

@@ -226,7 +226,7 @@ importers:
       eslint: ^8.14.0
       ethers: ^5.6.4
       format: workspace:*
-      furo: github:sushiswap/furo#feature/furo-deploy
+      furo: github:sushiswap/furo#ae827057d94cfe4cb1a2e43b8f180a10a6b3115a
       graphql: 16.3.0
       next: ^12.1.5
       next-transpile-modules: 9.0.0
@@ -286,7 +286,7 @@ importers:
       date-fns: 2.28.0
       ethers: 5.6.4
       format: link:../../packages/format
-      furo: github.com/sushiswap/furo/d7989e3ac7558d9bd82f4094ab370b24630f69a4
+      furo: github.com/sushiswap/furo/ae827057d94cfe4cb1a2e43b8f180a10a6b3115a
       graphql: 16.3.0
       next: 12.1.5_react-dom@18.1.0+react@18.1.0
       react: 18.1.0
@@ -13823,8 +13823,8 @@ packages:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
 
-  github.com/sushiswap/furo/d7989e3ac7558d9bd82f4094ab370b24630f69a4:
-    resolution: {tarball: https://codeload.github.com/sushiswap/furo/tar.gz/d7989e3ac7558d9bd82f4094ab370b24630f69a4}
+  github.com/sushiswap/furo/ae827057d94cfe4cb1a2e43b8f180a10a6b3115a:
+    resolution: {tarball: https://codeload.github.com/sushiswap/furo/tar.gz/ae827057d94cfe4cb1a2e43b8f180a10a6b3115a}
     name: furo
     version: 0.0.0
     dependencies:

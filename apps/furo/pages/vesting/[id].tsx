@@ -12,7 +12,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 
 interface Props {
   vestingRepresentation: VestingRepresentation
@@ -78,16 +78,11 @@ const VestingPage: FC<Props> = (props) => {
 export default VestingPage
 
 export async function getServerSideProps({ query }) {
-  // const { getBuiltGraphSDK } = await import('../../.graphclient')
-  const sdk = await getBuiltGraphSDK()
-  const vestingRepresentation = (await sdk.Vesting({ id: query.id })).VESTING_vesting
-  const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions
-  const schedule = (await sdk.VestingSchedule({ id: query.id })).VESTING_vesting.schedule
   return {
     props: {
-      vestingRepresentation,
-      transactions,
-      schedule,
+      vestingRepresentation: await getVesting(query.chainId, query.id),
+      transactions: await getVestingTransactions(query.chainId, query.id),
+      schedule: await getVestingSchedule(query.chainId, query.id),
     },
   }
 }

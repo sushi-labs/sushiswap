@@ -13,8 +13,8 @@ export function useContract<T extends Contract = Contract>(
   withSignerIfPossible = true,
 ): T | null {
   const { data: account } = useAccount()
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
   const provider = useProvider()
 
   return useMemo(() => {

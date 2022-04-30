@@ -3,7 +3,7 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { useApproveCallback } from 'hooks'
 import { useAllTokens } from 'hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
-import { useFuroStreamContract } from 'hooks/useFuroContract'
+import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { ApprovalState } from 'types/approval-state'
 import { Amount, Token } from '@sushiswap/currency'
 import { FC, useState } from 'react'
@@ -21,8 +21,8 @@ const CreateStreamModal: FC = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
   const { data: account } = useAccount()
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
   const tokens = useAllTokens()
   const contract = useFuroStreamContract()
   const { data: tx, sendTransactionAsync } = useSendTransaction()

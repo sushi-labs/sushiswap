@@ -1,13 +1,13 @@
+import { Account, Wallet } from '@sushiswap/wallet-connector'
 import Link from 'next/link'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { Wallet, Account } from '@sushiswap/wallet-connector'
 
 export default function Furo() {
   const { data } = useAccount()
   const { isConnected, isReconnecting, isConnecting } = useConnect()
+  const { activeChain } = useNetwork()
 
-  console.log({ data })
   return (
     <div className="h-full">
       <h1 className="py-4 text-2xl font-bold">Overview</h1>
@@ -23,7 +23,7 @@ export default function Furo() {
             <Account.Disconnect className="ml-4" />
           </div>
           <div>
-            <Link href={`/users/${data.address.toLowerCase()}`}>[Dashboard]</Link>
+            <Link href={`/users/${data.address.toLowerCase()}?chainId=${activeChain?.id}`}>[Dashboard]</Link>
           </div>
         </div>
       )}

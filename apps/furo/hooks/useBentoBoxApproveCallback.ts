@@ -13,8 +13,8 @@ export function useBentoBoxApproveCallback(
   masterContractAddress?: string,
 ): [ApprovalState, Signature, () => Promise<void>] {
   const { data: account } = useAccount()
-  const { data: network, switchNetwork } = useNetwork()
-  const chainId = network?.id
+  const { activeChain} = useNetwork()
+  const chainId = activeChain?.id
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
       addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,

@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "graphclient build --tsOnly && typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'"
+    "generate": "graphclient build --tsOnly"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.4.0",
@@ -52,7 +52,7 @@
     "date-fns": "^2.28.0",
     "ethers": "^5.6.4",
     "format": "workspace:*",
-    "furo": "github:sushiswap/furo#feature/furo-deploy",
+    "furo": "github:sushiswap/furo#ae827057d94cfe4cb1a2e43b8f180a10a6b3115a",
     "graphql": "16.3.0",
     "next": "^12.1.5",
     "react": "^18.1.0",

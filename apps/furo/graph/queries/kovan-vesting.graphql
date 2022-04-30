@@ -1,5 +1,5 @@
-query UserVestings($id: ID!) {
-  VESTING_user(id: $id) {
+query KovanUserVestings($id: ID!) {
+  KOVAN_VESTING_user(id: $id) {
     incomingVestings {
       id
       __typename
@@ -57,10 +57,10 @@ query UserVestings($id: ID!) {
   }
 }
 
-query Vesting($id: ID!) {
-  VESTING_vesting(id: $id) {
+query KovanVesting($id: ID!) {
+  KOVAN_VESTING_vesting(id: $id) {
     id
-      __typename
+    __typename
     status
     steps
     startedAt
@@ -74,10 +74,10 @@ query Vesting($id: ID!) {
     fromBentoBox
     txHash
     token {
-        id
-        name
-        symbol
-        decimals
+      id
+      name
+      symbol
+      decimals
     }
     status
     schedule {
@@ -92,8 +92,8 @@ query Vesting($id: ID!) {
   }
 }
 
-query VestingTransactions($id: String) {
-  VESTING_transactions(where: { vesting: $id }) {
+query KovanVestingTransactions($id: String) {
+  KOVAN_VESTING_transactions(where: { vesting: $id }) {
     id
     type
     amount
@@ -112,8 +112,8 @@ query VestingTransactions($id: String) {
   }
 }
 
-query VestingSchedule($id: ID!) {
-    VESTING_vesting(id: $id) {
+query KovanVestingSchedule($id: ID!) {
+  KOVAN_VESTING_vesting(id: $id) {
     schedule {
       periods(orderBy: time, first: 170) {
         id
