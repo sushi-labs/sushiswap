@@ -3,21 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3004",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "next dev --port 3004",
+    "lint": "next lint",
+    "start": "next start"
   },
   "dependencies": {
+    "@sushiswap/ui": "workspace:*",
     "next": "12.0.10",
     "react": "^18.0.0-rc.1",
-    "react-dom": "^18.0.0-rc.1",
-    "@sushiswap/ui": "workspace:*"
+    "react-dom": "^18.0.0-rc.1"
   },
   "devDependencies": {
+    "@sushiswap/config": "workspace:*",
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
-    "@sushiswap/config": "workspace:*",
     "eslint": "8.10.0",
     "next-transpile-modules": "9.0.0",
     "typescript": "^4.6.2"

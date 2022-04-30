@@ -16,19 +16,13 @@ scalar ETHEREUM_BigDecimal
 
 scalar BigInt
 
-"""The block at which the query should be executed."""
+input ETHEREUM_BlockChangedFilter {
+  number_gte: Int!
+}
+
 input ETHEREUM_Block_height {
-  """Value containing a block hash"""
   hash: ETHEREUM_Bytes
-  """Value containing a block number"""
   number: Int
-  """
-  Value containing the minimum block number. 
-  In the case of `number_gte`, the query will be executed on the latest block only if
-  the subgraph has progressed to or past the minimum block number.
-  Defaults to the latest block when omitted.
-  
-  """
   number_gte: Int
 }
 
@@ -54,6 +48,8 @@ input ETHEREUM_Bundle_filter {
   ethPrice_lte: ETHEREUM_BigDecimal
   ethPrice_in: [ETHEREUM_BigDecimal!]
   ethPrice_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Bundle_orderBy {
@@ -205,6 +201,8 @@ input ETHEREUM_Burn_filter {
   feeLiquidity_lte: ETHEREUM_BigDecimal
   feeLiquidity_in: [ETHEREUM_BigDecimal!]
   feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Burn_orderBy {
@@ -323,6 +321,8 @@ input ETHEREUM_DayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_DayData_orderBy {
@@ -435,6 +435,8 @@ input ETHEREUM_Factory_filter {
   userCount_lte: BigInt
   userCount_in: [BigInt!]
   userCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Factory_orderBy {
@@ -551,6 +553,8 @@ input ETHEREUM_HourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_HourData_orderBy {
@@ -732,6 +736,8 @@ input ETHEREUM_LiquidityPositionSnapshot_filter {
   liquidityTokenBalance_lte: ETHEREUM_BigDecimal
   liquidityTokenBalance_in: [ETHEREUM_BigDecimal!]
   liquidityTokenBalance_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_LiquidityPositionSnapshot_orderBy {
@@ -823,6 +829,8 @@ input ETHEREUM_LiquidityPosition_filter {
   timestamp_lte: Int
   timestamp_in: [Int!]
   timestamp_not_in: [Int!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_LiquidityPosition_orderBy {
@@ -974,6 +982,8 @@ input ETHEREUM_Mint_filter {
   feeLiquidity_lte: ETHEREUM_BigDecimal
   feeLiquidity_in: [ETHEREUM_BigDecimal!]
   feeLiquidity_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Mint_orderBy {
@@ -1186,6 +1196,8 @@ input ETHEREUM_PairDayData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_PairDayData_orderBy {
@@ -1310,6 +1322,8 @@ input ETHEREUM_PairHourData_filter {
   txCount_lte: BigInt
   txCount_in: [BigInt!]
   txCount_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_PairHourData_orderBy {
@@ -1542,6 +1556,8 @@ input ETHEREUM_Pair_filter {
   block_lte: BigInt
   block_in: [BigInt!]
   block_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Pair_orderBy {
@@ -2640,6 +2656,8 @@ input ETHEREUM_Swap_filter {
   amountUSD_lte: ETHEREUM_BigDecimal
   amountUSD_in: [ETHEREUM_BigDecimal!]
   amountUSD_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Swap_orderBy {
@@ -2793,6 +2811,8 @@ input ETHEREUM_TokenDayData_filter {
   priceUSD_lte: ETHEREUM_BigDecimal
   priceUSD_in: [ETHEREUM_BigDecimal!]
   priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_TokenDayData_orderBy {
@@ -2924,6 +2944,8 @@ input ETHEREUM_TokenHourData_filter {
   priceUSD_lte: ETHEREUM_BigDecimal
   priceUSD_in: [ETHEREUM_BigDecimal!]
   priceUSD_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_TokenHourData_orderBy {
@@ -3073,6 +3095,8 @@ input ETHEREUM_Token_filter {
   derivedETH_lte: ETHEREUM_BigDecimal
   derivedETH_in: [ETHEREUM_BigDecimal!]
   derivedETH_not_in: [ETHEREUM_BigDecimal!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Token_orderBy {
@@ -3148,6 +3172,8 @@ input ETHEREUM_Transaction_filter {
   swaps_contains_nocase: [String!]
   swaps_not_contains: [String!]
   swaps_not_contains_nocase: [String!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_Transaction_orderBy {
@@ -3173,6 +3199,8 @@ input ETHEREUM_User_filter {
   id_lte: ID
   id_in: [ID!]
   id_not_in: [ID!]
+  """Filter for the block changed event."""
+  _change_block: ETHEREUM_BlockChangedFilter
 }
 
 enum ETHEREUM_User_orderBy {
