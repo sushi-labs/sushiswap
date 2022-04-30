@@ -14,8 +14,8 @@
   "source": "./index.ts",
   "devDependencies": {
     "@sushiswap/config": "workspace:*",
-    "@sushiswap/ui": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/ui": "workspace:*",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.30",
     "@types/react": "^18.0.8",
