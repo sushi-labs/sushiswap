@@ -527,7 +527,7 @@ importers:
       eslint-config-next: ^12.1.5
       eslint-config-prettier: ^8.5.0
       ts-jest: ^27.1.4
-      typescript: ^4.6.3
+      typescript: ^4.6.4
     dependencies:
       eslint-config-next: 12.1.5_eslint@8.14.0+typescript@4.6.4
       eslint-config-prettier: 8.5.0_eslint@8.14.0
