@@ -16,6 +16,6 @@
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
-    "config": "workspace:*"
+    "@sushiswap/config": "workspace:*"
   }
 }

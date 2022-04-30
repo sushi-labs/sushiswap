@@ -31,7 +31,7 @@
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "@uniswap/token-lists": "^1.0.0-beta.28",
-    "config": "workspace:*",
+    "@sushiswap/config": "workspace:*",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",

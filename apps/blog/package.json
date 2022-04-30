@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
-    "config": "workspace:*",
+    "@sushiswap/config": "workspace:*",
     "eslint": "8.10.0",
     "next-transpile-modules": "9.0.0",
     "typescript": "^4.6.2"

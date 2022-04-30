@@ -8,6 +8,6 @@
     "@vercel/node": "^1.14.1"
   },
   "devDependencies": {
-    "config": "workspace:*"
+    "@sushiswap/config": "workspace:*"
   }
 }

@@ -24,7 +24,7 @@
     "eslint": "^8.14.0",
     "eslint-config-next": "12.1.5",
     "autoprefixer": "^10.4.5",
-    "config": "workspace:*",
+    "@sushiswap/config": "workspace:*",
     "next-transpile-modules": "^9.0.0",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.24",

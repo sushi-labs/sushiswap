@@ -25,11 +25,11 @@
     "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "config/jest/node"
+    "preset": "@sushiswap/config/jest/node"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "config": "workspace:*",
+    "@sushiswap/config": "workspace:*",
     "eslint": "^8.10.0",
     "jest": "^27.5.1",
     "typescript": "^4.6.2"

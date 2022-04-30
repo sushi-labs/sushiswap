@@ -20,46 +20,46 @@ importers:
 
   apis/path-finder:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/tines': ^1.0.0-canary.76
       '@vercel/node': ^1.14.1
-      config: workspace:*
     dependencies:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/tines': 1.0.0-canary.76
       '@vercel/node': 1.14.1
     devDependencies:
-      config: link:../../packages/config
+      '@sushiswap/config': link:../../packages/config
 
   apis/price:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@vercel/node': ^1.14.1
-      config: workspace:*
     dependencies:
       '@vercel/node': 1.14.1
     devDependencies:
-      config: link:../../packages/config
+      '@sushiswap/config': link:../../packages/config
 
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
+      '@sushiswap/config': workspace:*
       '@sushiswap/default-token-list': ^27.4.0
       '@vercel/node': ^1.14.1
-      config: workspace:*
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/default-token-list': 27.4.0
       '@vercel/node': 1.14.1
     devDependencies:
-      config: link:../../packages/config
+      '@sushiswap/config': link:../../packages/config
 
   apps/_root:
     specifiers:
       '@sushiswap/chain': workspace:*
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: workspace:*
       eslint: 8.10.0
       next: 12.0.10
       next-transpile-modules: 9.0.0
@@ -73,9 +73,9 @@ importers:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: link:../../packages/config
       eslint: 8.10.0
       next-transpile-modules: 9.0.0
       typescript: 4.6.4
@@ -86,11 +86,11 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.12
       '@graphql-mesh/transform-rename': 0.12.12
       '@graphql-mesh/transform-type-merging': 0.3.22
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.30
       '@types/react': 17.0.41
       autoprefixer: ^10.4.5
-      config: workspace:*
       eslint: 8.14.0
       graphql: 16.3.0
       isomorphic-fetch: ^3.0.0
@@ -117,10 +117,10 @@ importers:
       uglify-es: 3.3.9
     devDependencies:
       '@graphprotocol/client-cli': 0.0.2_0154597af699e051ed7d7d919d503469
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 17.0.41
       autoprefixer: 10.4.5_postcss@8.4.12
-      config: link:../../packages/config
       eslint: 8.14.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
@@ -129,10 +129,10 @@ importers:
 
   apps/blog:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: workspace:*
       eslint: 8.10.0
       next: 12.0.10
       next-transpile-modules: 9.0.0
@@ -145,19 +145,19 @@ importers:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: link:../../packages/config
       eslint: 8.10.0
       next-transpile-modules: 9.0.0
       typescript: 4.6.4
 
   apps/docs:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: workspace:*
       eslint: 8.10.0
       next: 12.0.10
       next-transpile-modules: 9.0.0
@@ -170,9 +170,9 @@ importers:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.21
       '@types/react': 17.0.39
-      config: link:../../packages/config
       eslint: 8.10.0
       next-transpile-modules: 9.0.0
       typescript: 4.6.4
@@ -200,6 +200,7 @@ importers:
       '@popperjs/core': ^2.11.5
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/config': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
       '@sushiswap/format': workspace:*
@@ -226,7 +227,6 @@ importers:
       ajv: ^6.12.6
       autoprefixer: ^10.4.5
       cids: ^1.0.0
-      config: workspace:*
       date-fns: ^2.28.0
       eslint: ^8.14.0
       ethers: ^5.6.4
@@ -304,12 +304,12 @@ importers:
       wagmi: 0.3.1_57e2f9bb67ec482a9f8645efcfc6b117
     devDependencies:
       '@graphprotocol/client-cli': 0.0.2_0154597af699e051ed7d7d919d503469
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
       '@uniswap/v3-periphery': 1.4.1
       autoprefixer: 10.4.5_postcss@8.4.12
-      config: link:../../packages/config
       eslint: 8.14.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
@@ -319,6 +319,7 @@ importers:
   apps/landing:
     specifiers:
       '@headlessui/react': ^1.6.0
+      '@sushiswap/config': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/ui': workspace:*
@@ -326,7 +327,6 @@ importers:
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
       autoprefixer: ^10.4.5
-      config: workspace:*
       eslint: ^8.14.0
       graphql: 16.3.0
       graphql-request: ^4.2.0
@@ -360,11 +360,11 @@ importers:
       styled-components: 5.3.5_react-dom@18.1.0+react@18.1.0
       use-count-up: 3.0.1_react@18.1.0
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
       autoprefixer: 10.4.5_postcss@8.4.12
-      config: link:../../packages/config
       eslint: 8.14.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
@@ -378,6 +378,7 @@ importers:
       '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@typechain/ethers-v5': ^7.2.0
       '@types/node': ^17.0.30
@@ -385,7 +386,6 @@ importers:
       '@types/react-dom': ^18.0.3
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v3-periphery': ^1.4.1
-      config: workspace:*
       eslint: 8.14.0
       ethers: ^5.6.4
       next: ^12.1.5
@@ -414,10 +414,10 @@ importers:
       swr: 1.3.0_react@18.1.0
       typechain: 5.2.0_typescript@4.6.4
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
-      config: link:../../packages/config
       eslint: 8.14.0
       next-transpile-modules: 9.0.0
       typescript: 4.6.4
@@ -426,13 +426,13 @@ importers:
     specifiers:
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/config': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': ^17.0.30
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
       '@uniswap/token-lists': ^1.0.0-beta.28
-      config: workspace:*
       eslint: 8.14.0
       ethers: ^5.6.4
       next: ^12.1.5
@@ -453,23 +453,23 @@ importers:
       react-dom: 18.1.0_react@18.1.0
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
-      config: link:../../packages/config
       eslint: 8.14.0
       next-transpile-modules: 9.0.0
       typescript: 4.6.4
 
   examples/wallet-connector:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wallet-connector': workspace:*
       '@types/node': 17.0.25
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
       autoprefixer: ^10.4.5
-      config: workspace:*
       eslint: ^8.14.0
       eslint-config-next: 12.1.5
       ethers: ^5.6.4
@@ -490,11 +490,11 @@ importers:
       react-dom: 18.1.0_react@18.1.0
       wagmi: 0.3.1_57e2f9bb67ec482a9f8645efcfc6b117
     devDependencies:
+      '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.25
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
       autoprefixer: 10.4.5_postcss@8.4.12
-      config: link:../../packages/config
       eslint: 8.14.0
       eslint-config-next: 12.1.5_58df5dd09292b00352ef003be3866f25
       next-transpile-modules: 9.0.0
@@ -504,14 +504,14 @@ importers:
 
   packages/chain:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@types/jest': ^27.4.1
-      config: workspace:*
       eslint: ^8.10.0
       jest: ^27.5.1
       typescript: ^4.6.2
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/jest': 27.4.1
-      config: link:../config
       eslint: 8.14.0
       jest: 27.5.1
       typescript: 4.6.4
@@ -539,9 +539,9 @@ importers:
     specifiers:
       '@ethersproject/address': ^5.5.0
       '@sushiswap/chain': workspace:*
+      '@sushiswap/config': workspace:*
       '@sushiswap/math': workspace:*
       '@types/jest': ^27.4.1
-      config: workspace:*
       jest: ^27.5.1
       tiny-invariant: ^1.2.0
       typescript: ^4.6.2
@@ -551,17 +551,17 @@ importers:
       '@sushiswap/math': link:../math
       tiny-invariant: 1.2.0
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/jest': 27.4.1
-      config: link:../config
       jest: 27.5.1
       typescript: 4.6.4
 
   packages/format:
     specifiers:
       '@ethersproject/address': ^5.6.0
+      '@sushiswap/config': workspace:*
       '@types/jest': ^27.4.1
       '@types/numeral': ^2.0.2
-      config: workspace:*
       jest: ^27.5.1
       millify: ^4.0.0
       numeral: ^2.0.6
@@ -571,47 +571,47 @@ importers:
       millify: 4.0.0
       numeral: 2.0.6
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/jest': 27.4.1
       '@types/numeral': 2.0.2
-      config: link:../config
       jest: 27.5.1
       typescript: 4.6.4
 
   packages/hooks:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@types/jest': ^27.4.1
-      config: workspace:*
       copy-to-clipboard: ^3.3.1
       jest: ^27.5.1
       typescript: ^4.6.4
     dependencies:
       copy-to-clipboard: 3.3.1
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/jest': 27.4.1
-      config: link:../config
       jest: 27.5.1
       typescript: 4.6.4
 
   packages/logger:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@types/jest': ^26.0.22
-      config: workspace:*
       eslint: ^7.32.0
       jest: ^26.6.3
       typescript: ^4.5.3
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/jest': 26.0.24
-      config: link:../config
       eslint: 7.32.0
       jest: 26.6.3
       typescript: 4.6.4
 
   packages/math:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@types/big.js': ^6.1.3
       '@types/jest': ^27.4.1
       big.js: ^6.1.1
-      config: workspace:*
       decimal.js-light: ^2.5.1
       jest: ^27.5.1
       jsbi: ^4.1.0
@@ -625,9 +625,9 @@ importers:
       tiny-invariant: 1.2.0
       toformat: 2.0.0
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/big.js': 6.1.3
       '@types/jest': 27.4.1
-      config: link:../config
       jest: 27.5.1
       typescript: 4.6.4
 
@@ -638,6 +638,7 @@ importers:
       '@ethersproject/hash': ^5.6.0
       '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/config': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/hooks': workspace:*
       '@types/jest': ^27.4.1
@@ -647,7 +648,6 @@ importers:
       '@uniswap/token-lists': ^1.0.0-beta.28
       ajv: ^6.12.3
       cids: ^1.1.9
-      config: workspace:*
       multicodec: ^3.2.1
       multihashes: ^4.0.3
       react: ^18.1.0
@@ -665,6 +665,7 @@ importers:
       multihashes: 4.0.3
     devDependencies:
       '@reduxjs/toolkit': 1.8.1_react-redux@8.0.1+react@18.1.0
+      '@sushiswap/config': link:../config
       '@sushiswap/currency': link:../currency
       '@sushiswap/hooks': link:../hooks
       '@types/jest': 27.4.1
@@ -672,7 +673,6 @@ importers:
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
       '@uniswap/token-lists': 1.0.0-beta.28
-      config: link:../config
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
@@ -689,6 +689,7 @@ importers:
       '@fontsource/dm-sans': ^4.5.0
       '@headlessui/react': ^1.6.0
       '@heroicons/react': ^1.0.6
+      '@sushiswap/config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@tailwindcss/aspect-ratio': ^0.4.0
       '@tailwindcss/forms': ^0.5.0
@@ -697,7 +698,6 @@ importers:
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
       classnames: ^2.3.1
-      config: workspace:*
       next-transpile-modules: ^9.0.0
       react: ^18.1.0
       react-dom: ^18.1.0
@@ -714,33 +714,33 @@ importers:
       classnames: 2.3.1
       next-transpile-modules: 9.0.0
     devDependencies:
+      '@sushiswap/config': link:../config
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
-      config: link:../config
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       typescript: 4.6.4
 
   packages/wallet-connector:
     specifiers:
+      '@sushiswap/config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/jest': ^27.4.1
       '@types/node': ^17.0.30
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
-      config: workspace:*
       ethers: ^5.6.4
       react: ^18.1.0
       react-dom: ^18.1.0
       typescript: ^4.6.4
       wagmi: ^0.3.1
     devDependencies:
+      '@sushiswap/config': link:../config
       '@sushiswap/ui': link:../ui
       '@types/jest': 27.4.1
       '@types/node': 17.0.30
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
-      config: link:../config
       ethers: 5.6.4
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0

@@ -1,5 +1,5 @@
 {
-  "name": "config",
+  "name": "@sushiswap/config",
   "version": "0.0.0",
   "private": true,
   "description": "Sushi Config",
@@ -15,9 +15,9 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "files": [
-    "eslint",
-    "jest",
-    "typescript"
+    "eslint/**",
+    "jest/**",
+    "typescript/**"
   ],
   "dependencies": {
     "eslint-config-next": "^12.1.5",
