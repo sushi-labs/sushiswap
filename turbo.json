@@ -48,15 +48,6 @@
     "clean": {
       "cache": false
     },
-    "dao#build": {
-      "dependsOn": [
-        "^build",
-        "^generate",
-        "generate",
-        "$REDIS_PATH"
-      ],
-      "outputs": [".next/**"]
-    },
     "root#build": {
       "dependsOn": [
         "^build",
