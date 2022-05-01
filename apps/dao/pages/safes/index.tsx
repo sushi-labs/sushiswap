@@ -56,7 +56,6 @@ const SafeTable = () => {
         Cell: (props) => {
           const threshold = Number(props.value)
           const ownerCount = Number(props.row.cells[4].value.length)
-          console.log(props.row.cells[1].value)
           return (
             <>
               {

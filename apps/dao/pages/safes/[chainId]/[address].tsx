@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { useTable } from 'react-table'
 import useSWR, { SWRConfig } from 'swr'
-import { EXPECTED_OWNER_COUNT, EXPECTED_THRESHOLD, SAFES, USERS } from 'config'
+import { EXPECTED_OPS_OWNER_COUNT, EXPECTED_OPS_THRESHOLD, SAFES, USERS } from 'config'
 import { SafeBalance, SafeInfo } from 'types'
 import { getBalance, getSafe } from 'api'
 
 const isValidThreshold = (threshold: number, ownerCount: number): boolean => {
-  return threshold === EXPECTED_THRESHOLD && ownerCount === EXPECTED_OWNER_COUNT
+  return threshold === EXPECTED_OPS_THRESHOLD && ownerCount === EXPECTED_OPS_OWNER_COUNT
 }
 
 const SafeTable = () => {
@@ -20,8 +20,6 @@ const SafeTable = () => {
   const { data: safe } = useSWR(`/api/safes/${chainId}/${address}`)
 
   const { data: balance } = useSWR(`/api/balances/${chainId}/${address}`)
-
-  // console.log('SafeTable', { chainId, address, safe, balance })
 
   const [formattedBalance, setFormattedBalance] = useState([])
 
@@ -161,7 +159,6 @@ export async function getStaticPaths() {
   const paths = Object.values(SAFES).map(({ chainId, address }) => ({
     params: { chainId: String(chainId), address },
   }))
-  console.log({ paths: JSON.stringify(paths) })
   return { paths, fallback: 'blocking' }
 }
 
