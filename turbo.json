@@ -39,18 +39,23 @@
     },
     "dev": {
       "dependsOn": [
-        "^build",
-        "^generate",
-        "generate"
+        "build"
       ],
       "cache": false
     },
     "clean": {
       "cache": false
     },
+    "dao#build": {
+      "dependsOn": [
+        "build",
+        "$REDIS_PATH"
+      ],
+      "outputs": [".next/**"]
+    },
     "root#build": {
       "dependsOn": [
-        "^build",
+        "build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
         "$DOCS_URL",
