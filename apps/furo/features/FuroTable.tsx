@@ -30,7 +30,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
       [],
     [streams, vestings],
   )
-  // console.log({ data })
+
   const columns = useMemo(
     () => [
       {
@@ -63,10 +63,9 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Header: 'VALUE',
         accessor: 'amount',
         Cell: (props) => {
-          if (props.row.original.status === FuroStatus.CANCELLED) {
-            return `-`
-          }
-          const formattedAmount = formatNumber(props.value.toExact())
+          if (props.row.original.status === FuroStatus.CANCELLED) return `-`
+          let formattedAmount = formatNumber(props.value.toExact(10))
+          formattedAmount = formattedAmount !== "0.00" ?  formattedAmount : "< 0.01"
           return `${formattedAmount} ${props.row.original.token.symbol}`
         },
       },
