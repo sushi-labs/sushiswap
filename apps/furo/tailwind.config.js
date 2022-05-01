@@ -11,6 +11,13 @@ module.exports = {
       backgroundImage: () => ({
         circuit: "url('/furo/images/circuit.png')",
       }),
+      keyframes: {
+        dash: {
+          to: {
+            'stroke-dashoffset': '0',
+          },
+        },
+      },
     },
   },
 }

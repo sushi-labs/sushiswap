@@ -57,24 +57,24 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={stream.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
+        // disabled={stream.recipient.id.toLowerCase() !== account?.address.toLowerCase()}
         onClick={openModal}
       >
         Withdraw
       </Button>
       <Dialog open={isOpen} onClose={closeModal}>
         <Dialog.Content>
-            <div>
-              Withdrawn: {stream?.withdrawnAmount.toExact()} {stream?.token.symbol}
-            </div>
-            <div>
-              Not yet streamed:{' '}
-              {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
-              {stream?.token.symbol}
-            </div>
-            <div>
-              Available: {balance ? Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0)).toExact() : ''}{' '}
-              {stream?.token.symbol}
+          <div>
+            Withdrawn: {stream?.withdrawnAmount.toExact()} {stream?.token.symbol}
+          </div>
+          <div>
+            Not yet streamed:{' '}
+            {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
+            {stream?.token.symbol}
+          </div>
+          <div>
+            Available: {balance ? Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0)).toExact() : ''}{' '}
+            {stream?.token.symbol}
           </div>
           <div>
             Amount:
