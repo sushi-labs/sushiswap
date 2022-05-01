@@ -113,7 +113,7 @@ const BalanceChart: FC<Props> = (props) => {
         strokeDasharray={`${dashArray({
           radius: outerRadius,
           streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
-        })}, ${Math.PI * outerRadius}`}
+        })}, ${Math.PI * outerRadius * 2}`}
         fill="none"
         strokeWidth={16}
         strokeLinecap="round"
@@ -134,7 +134,7 @@ const BalanceChart: FC<Props> = (props) => {
         strokeDasharray={`${dashArray({
           radius: innerRadius,
           streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
-        })}, ${Math.PI * innerRadius}`}
+        })}, ${Math.PI * innerRadius * 2}`}
         strokeDashoffset={
           dashArray({
             radius: innerRadius,
