@@ -48,14 +48,14 @@
     },
     "dao#build": {
       "dependsOn": [
-        "build",
+        "^build",
         "$REDIS_PATH"
       ],
       "outputs": [".next/**"]
     },
     "root#build": {
       "dependsOn": [
-        "build",
+        "^build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
         "$DOCS_URL",
