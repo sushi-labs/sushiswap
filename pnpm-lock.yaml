@@ -172,15 +172,15 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/ioredis': ^4.28.10
-      '@types/node': 17.0.30
+      '@types/node': ^17.0.30
       '@types/react': ^18.0.8
       autoprefixer: ^10.4.5
-      eslint: 8.14.0
+      eslint: ^8.14.0
       ioredis: ^5.0.4
       isomorphic-unfetch: ^3.1.0
       lodash: ^4.17.21
       next: ^12.1.5
-      next-transpile-modules: 9.0.0
+      next-transpile-modules: ^9.0.0
       postcss: ^8.4.12
       react: ^18.1.0
       react-dom: ^18.1.0
