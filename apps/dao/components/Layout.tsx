@@ -8,7 +8,7 @@ export type LayoutProps = {
 function Layout({ children }: LayoutProps) {
   return (
     <Container maxWidth="7xl" className="h-full mt-40 lg:mx-auto">
-      <Glow>{children}</Glow>
+      {children}
     </Container>
   )
 }

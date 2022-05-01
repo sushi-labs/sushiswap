@@ -1,16 +1,24 @@
 import { FC, useMemo } from 'react'
-import { useFlexLayout, useTable } from 'react-table'
+import { useFilters, useFlexLayout, usePagination, useSortBy, useTable } from 'react-table'
 import useSWR, { SWRConfig } from 'swr'
-import { EXPECTED_OWNER_COUNT, EXPECTED_THRESHOLD, USERS } from 'config'
+import {
+  EXPECTED_OPS_OWNER_COUNT,
+  EXPECTED_OPS_THRESHOLD,
+  EXPECTED_OWNER_COUNT,
+  EXPECTED_THRESHOLD,
+  EXPECTED_TREASURY_OWNER_COUNT,
+  EXPECTED_TREASURY_THRESHOLD,
+  USERS,
+} from 'config'
 import { formatUSD, shortenAddress } from '@sushiswap/format'
 import Link from 'next/link'
 import { JSBI } from '@sushiswap/math'
 import { ChainId } from '@sushiswap/chain'
 import { SafeInfo } from 'types'
-import { Table, Typography } from '@sushiswap/ui'
+import { classNames, Table, Typography } from '@sushiswap/ui'
 import { Layout } from 'components'
 import { getSafes } from 'api'
-
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 const SafeTable = () => {
   const { data } = useSWR('/api/safes')
 
@@ -46,27 +54,58 @@ const SafeTable = () => {
         accessor: 'threshold',
         width: 100,
         Cell: (props) => {
-          const threshold = props.value
-          if (threshold === -1) {
-            return 'NA'
-          }
-          const ownerCount = props.row.cells[4].value.length
-          const formattedOwnerCount =
-            ownerCount === EXPECTED_OWNER_COUNT ? ownerCount : <p style={{ color: 'red' }}>{ownerCount}</p>
-          const formattedThreshold =
-            props.value === EXPECTED_THRESHOLD ? threshold : <p style={{ color: 'red' }}>{threshold}</p>
-          return formattedThreshold + ' / ' + formattedOwnerCount
+          const threshold = Number(props.value)
+          const ownerCount = Number(props.row.cells[4].value.length)
+          console.log(props.row.cells[1].value)
+          return (
+            <>
+              {
+                <p
+                  className={classNames(
+                    (props.row.cells[1].value !== 'Treasury' && threshold === EXPECTED_OPS_THRESHOLD) ||
+                      (props.row.cells[1].value === 'Treasury' && threshold === EXPECTED_TREASURY_THRESHOLD)
+                      ? 'text-green-300'
+                      : 'text-red-300',
+                  )}
+                >
+                  {threshold}
+                </p>
+              }
+              /
+              {
+                <p
+                  className={classNames(
+                    (props.row.cells[1].value !== 'Treasury' && ownerCount === EXPECTED_OPS_OWNER_COUNT) ||
+                      (props.row.cells[1].value === 'Treasury' && ownerCount === EXPECTED_TREASURY_OWNER_COUNT)
+                      ? 'text-green-300'
+                      : 'text-red-300',
+                  )}
+                >
+                  {ownerCount}
+                </p>
+              }
+            </>
+          )
         },
+        align: 'right',
       },
       {
         Header: 'Owners',
         accessor: 'owners',
         width: 250,
         Cell: (props) => {
-          return props.cell.value
-            .map((owner) => USERS.get(owner.value) ?? <p style={{ color: 'red' }}>{owner.value}</p>)
-            .sort()
-            .join(' ')
+          return (
+            <div className="flex space-x-2">
+              {props.cell.value
+                .map((owner) => [owner.value, USERS.get(owner.value)])
+                .sort()
+                .map(([address, name], i) => (
+                  <div key={i} className={classNames(USERS.has(address) ? 'text-green-300' : 'text-red-300')}>
+                    {name ?? '???'}
+                  </div>
+                ))}
+            </div>
+          )
         },
       },
       {
@@ -79,6 +118,7 @@ const SafeTable = () => {
 
           return formatUSD(props.cell.value)
         },
+        align: 'right',
       },
       {
         Header: 'Actions',
@@ -88,16 +128,32 @@ const SafeTable = () => {
           const url = '/safes/' + chainId + '/' + address
           return <Link href={url}>View</Link>
         },
+        align: 'right',
       },
     ],
     [],
   )
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    { columns, data },
-    useFlexLayout,
+  const config = useMemo(
+    () => ({
+      columns,
+      data,
+      initialState: {
+        sortBy: [{ id: 'balance', desc: true }],
+      },
+      autoResetFilters: false,
+    }),
+    [columns, data],
   )
 
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+    config,
+    useFlexLayout,
+    useFilters,
+    useSortBy,
+    useFlexLayout,
+    usePagination,
+  )
   return (
     <Layout>
       <Typography variant="h1" className="mb-4">
@@ -110,8 +166,25 @@ const SafeTable = () => {
             {headerGroups.map((headerGroup, i) => (
               <Table.thr {...headerGroup.getHeaderGroupProps()} key={`thr-${i}`}>
                 {headerGroup.headers.map((column, i) => (
-                  <Table.th {...column.getHeaderProps()} key={`th-${i}`}>
+                  <Table.th
+                    // @ts-ignore TYPE NEEDS FIXING
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    key={`th-${i}`}
+                  >
                     {column.render('Header')}
+                    <span className="inline-block ml-1 align-middle">
+                      {/*@ts-ignore TYPE NEEDS FIXING*/}
+                      {column.isSorted ? (
+                        // @ts-ignore TYPE NEEDS FIXING
+                        column.isSortedDesc ? (
+                          <ArrowDownIcon width={12} />
+                        ) : (
+                          <ArrowUpIcon width={12} />
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </span>
                   </Table.th>
                 ))}
               </Table.thr>

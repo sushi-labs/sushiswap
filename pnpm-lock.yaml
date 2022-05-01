@@ -161,6 +161,7 @@ importers:
       '@ethersproject/units': ^5.6.0
       '@fontsource/dm-sans': ^4.5.0
       '@gnosis.pm/safe-react-gateway-sdk': 2.8.6
+      '@heroicons/react': ^1.0.6
       '@mdx-js/loader': ^2.1.1
       '@mdx-js/react': ^2.1.1
       '@next/mdx': ^12.1.5
@@ -196,6 +197,7 @@ importers:
       '@ethersproject/units': 5.6.0
       '@fontsource/dm-sans': 4.5.7
       '@gnosis.pm/safe-react-gateway-sdk': 2.8.6
+      '@heroicons/react': 1.0.6_react@18.1.0
       '@mdx-js/loader': 2.1.1
       '@mdx-js/react': 2.1.1_react@18.1.0
       '@next/mdx': 12.1.5_9548f622ac026268a1157fce0ec38610

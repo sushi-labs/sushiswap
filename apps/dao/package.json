@@ -16,6 +16,7 @@
     "@ethersproject/units": "^5.6.0",
     "@fontsource/dm-sans": "^4.5.0",
     "@gnosis.pm/safe-react-gateway-sdk": "2.8.6",
+    "@heroicons/react": "^1.0.6",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/math": "workspace:*",

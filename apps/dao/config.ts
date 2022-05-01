@@ -11,12 +11,21 @@ export const MULTICALL_ADDRESS = '0x1F98415757620B543A52E61c46B32eB19261F984' //
 export const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 export const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
 
-export const EXPECTED_THRESHOLD = 3
-export const EXPECTED_OWNER_COUNT = 6
+export const EXPECTED_TREASURY_THRESHOLD = 5
+export const EXPECTED_TREASURY_OWNER_COUNT = 8
+
+export const EXPECTED_OPS_THRESHOLD = 3
+export const EXPECTED_OPS_OWNER_COUNT = 6
 
 export const GNOSIS_URL = 'https://safe-client.gnosis.io/v1'
 
 export const SAFES: Record<string, Safe> = {
+  '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3': {
+    baseUrl: GNOSIS_URL,
+    name: 'Treasury',
+    chainId: ChainId.ETHEREUM,
+    address: '0xe94B5EEC1fA96CEecbD33EF5Baa8d00E4493F4f3',
+  },
   '0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7': {
     baseUrl: GNOSIS_URL,
     name: 'Ops',
