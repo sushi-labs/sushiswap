@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import type { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 import { App } from '@sushiswap/ui'
 import { ChainId } from '@sushiswap/chain'
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
@@ -14,18 +14,22 @@ import store from '../store'
 import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const provider = getProvider(ChainId.KOVAN)
-  const blockNumber = useLatestBlock(provider)
+  const kovanProvider = getProvider(ChainId.KOVAN)
+  const kovanBlockNumber = useLatestBlock(kovanProvider)
+  const goerliProvider = getProvider(ChainId.GÖRLI)
+  const goerliBlockNumber = useLatestBlock(goerliProvider)
   return (
     <WagmiProvider client={client}>
-      <App.Shell>
-        <Provider store={store}>
-          <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
+      <ReduxProvider store={store}>
+        <App.Shell>
+          <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
           <TokenListUpdater chainId={ChainId.KOVAN} />
+          <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
+          <TokenListUpdater chainId={ChainId.GÖRLI} />
           <Component {...pageProps} />
-        </Provider>
-        <App.Footer />
-      </App.Shell>
+          <App.Footer />
+        </App.Shell>
+      </ReduxProvider>
     </WagmiProvider>
   )
 }

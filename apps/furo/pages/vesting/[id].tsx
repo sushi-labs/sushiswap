@@ -12,7 +12,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 
 interface Props {
   vestingRepresentation: VestingRepresentation
@@ -48,7 +48,7 @@ const VestingPage: FC<Props> = (props) => {
                   {(vesting.streamedPercentage * 100).toFixed(2)}%
                 </Typography>
               </div>
-              <ProgressBar progress={vesting.streamedPercentage} color={ProgressColor.BLUE} showLabel={false} />
+              <ProgressBar progress={vesting.streamedPercentage.toFixed(4)} color={ProgressColor.BLUE} showLabel={false} />
             </div>
             <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
@@ -78,16 +78,11 @@ const VestingPage: FC<Props> = (props) => {
 export default VestingPage
 
 export async function getServerSideProps({ query }) {
-  // const { getBuiltGraphSDK } = await import('../../.graphclient')
-  const sdk = await getBuiltGraphSDK()
-  const vestingRepresentation = (await sdk.Vesting({ id: query.id })).VESTING_vesting
-  const transactions = (await sdk.VestingTransactions({ id: query.id })).VESTING_transactions
-  const schedule = (await sdk.VestingSchedule({ id: query.id })).VESTING_vesting.schedule
   return {
     props: {
-      vestingRepresentation,
-      transactions,
-      schedule,
+      vestingRepresentation: await getVesting(query.chainId, query.id),
+      transactions: await getVestingTransactions(query.chainId, query.id),
+      schedule: await getVestingSchedule(query.chainId, query.id),
     },
   }
 }

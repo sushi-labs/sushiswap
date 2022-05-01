@@ -4,7 +4,7 @@ handler:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-kovan
 transforms:
   - prefix:
-      value: VESTING_
+      value: KOVAN_VESTING_
       includeRootOperations: true
       includeTypes: false
       ignore:

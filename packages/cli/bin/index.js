@@ -1,13 +1,31 @@
 #!/usr/bin/env node
 
+const { default: log } = require('@sushiswap/logger')
+
 const { program } = require('commander')
 
+program.version('0.0.0').description('Sushi CLI')
+
 program
-  .version('0.0.0')
-  .description('Sushi CLI')
-  .option('-f, --foo', 'enable some foo')
-  .option('-b, --bar', 'enable some bar')
-  .option('-B, --baz', 'enable some baz')
+  .command('bar')
+  .description('print bar data')
+  .action(() => {
+    log('Total SUSHI transfered to the bar:')
+    log('Total SUSHI entered the bar:')
+    log('Total SUSHI exited the bar:')
+    log('APY 24h:', '10%')
+    log('APY 1w:')
+    log('APY 1m:')
+    log('APY 1y:')
+  })
+
+program
+  .command('chef')
+  .description('print chef data')
+  .option('-v,--version <version', 'version', 1)
+  .action(({ version }) => {
+    log(`printing v${version} chef data`)
+  })
 
 program.parse(process.argv)
 

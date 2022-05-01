@@ -1,8 +1,9 @@
-type Props = {
+export type FooterProps = {
   children?: React.ReactNode
+  className?: string
 }
 
-function Footer({ children }: Props): JSX.Element {
+function Footer({ children }: FooterProps): JSX.Element {
   return <footer>{children}</footer>
 }
 

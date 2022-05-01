@@ -89,6 +89,7 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
+    if (this.withdrawnAmount.toExact() === "0") return 0
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 
@@ -114,7 +115,6 @@ export abstract class Furo {
   private setStatus(status: FuroStatus): FuroStatus {
     if (!this.isStarted) return FuroStatus.UPCOMING
     if (status === FuroStatus.CANCELLED || status === FuroStatus.EXTENDED) return status
-    console.log(this.isEnded)
     if (this.isEnded) return FuroStatus.COMPLETED
     return status
   }

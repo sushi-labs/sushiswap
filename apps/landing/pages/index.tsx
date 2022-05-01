@@ -7,7 +7,7 @@ import Footer from '../components/Footer'
 import ProductCard from '../components/ProductCard'
 import FeatureCard from '../components/FeatureCard'
 import PartnerCard from '../components/PartnerCard'
-import millify from 'millify'
+import { formatUSD } from '@sushiswap/format'
 import Image from 'next/image'
 import background from '../public/neon-street.jpg'
 import thicker from '../public/thicker-neon.png'
@@ -251,25 +251,25 @@ export async function getStaticProps() {
     props: {
       stats: [
         {
-          formatted: `$${millify(sushiPrice)}`,
+          formatted: formatUSD(sushiPrice),
           number: Number(sushiPrice),
           title: '$SUSHI Price',
           decimalPlaces: 2,
         },
         {
-          formatted: `$${millify(totalTVL)}`,
+          formatted: formatUSD(totalTVL),
           number: totalTVL,
           title: 'Total Liquidity',
           decimalPlaces: 0,
         },
         {
-          formatted: `$${millify(totalVolume)}`,
+          formatted: formatUSD(totalVolume),
           number: totalVolume,
           title: 'Total Volume',
           decimalPlaces: 0,
         },
         {
-          formatted: `${millify(totalPoolCount)}`,
+          formatted: formatUSD(totalPoolCount),
           number: totalPoolCount,
           title: 'Total Pairs',
           decimalPlaces: 0,

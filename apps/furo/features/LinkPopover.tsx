@@ -16,8 +16,8 @@ const LinkPopover: FC<Props> = ({ furo }) => {
   const [senderCopied, setSenderCopied] = useState(false)
   const [recipentCopied, setRecipentCopied] = useState(false)
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+
   return (
     <Popover>
       {({ open }) => (
@@ -86,7 +86,7 @@ const LinkPopover: FC<Props> = ({ furo }) => {
             </button>
             <Link.External
               className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
-              href={getExplorerLink(chainId, furo.txHash, 'transaction')}
+              href={getExplorerLink(activeChain?.id, furo.txHash, 'transaction')}
               target="_blank"
               rel="noreferrer"
             >

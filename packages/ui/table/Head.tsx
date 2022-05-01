@@ -1,9 +1,13 @@
-import { FC, TableHTMLAttributes } from 'react'
+import { TableHTMLAttributes } from 'react'
 
-const Head: FC<TableHTMLAttributes<HTMLTableSectionElement>> = ({ children, ...props }) => (
-  <thead {...props} className="bg-dark-800/40">
-    {children}
-  </thead>
-)
+export type TableHeadProps = TableHTMLAttributes<HTMLTableSectionElement>
+
+function Head ({ children, ...props }: TableHeadProps) { 
+  return (
+    <thead {...props} className="bg-dark-800/40" >
+      {children}
+    </thead>
+  )
+}
 
 export default Head

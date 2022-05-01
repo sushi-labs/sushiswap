@@ -4,7 +4,7 @@ handler:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
 transforms:
   - prefix:
-      value: STREAM_
+      value: KOVAN_STREAM_
       includeRootOperations: true
       includeTypes: false
       ignore: 

@@ -10,8 +10,8 @@ import { useBytes32TokenContract, useTokenContract } from './useContract'
 
 // reduce token map into standard address <-> Token mapping
 function useTokensFromMap(tokenMap: ChainTokenMap): { [address: string]: Token } {
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
 
   return useMemo(() => {
     if (!chainId) return {}
@@ -50,8 +50,8 @@ function parseStringOrBytes32(str: string | undefined, bytes32: string | undefin
 // null if loading or null was passed
 // otherwise returns the token
 export function useToken(tokenAddress?: string | null): Token | undefined | null {
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
   const tokens = useAllTokens()
 
   const address = isAddress(tokenAddress) ? getAddress(tokenAddress) : undefined

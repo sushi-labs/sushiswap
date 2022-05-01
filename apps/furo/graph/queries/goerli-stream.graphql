@@ -1,0 +1,94 @@
+query GoerliUserStreams($id: ID!) {
+  GOERLI_STREAM_user(id: $id) {
+    incomingStreams(orderBy: startedAt) {
+      id
+      __typename
+      status
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      totalAmount
+      withdrawnAmount
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+      token {
+        id
+        symbol
+        name
+        decimals
+      }
+    }
+    outgoingStreams(orderBy: startedAt) {
+      id
+      __typename
+      status
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      totalAmount
+      withdrawnAmount
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+      token {
+        id
+        symbol
+        name
+        decimals
+      }
+    }
+  }
+}
+
+query GoerliStream($id: ID!) {
+  GOERLI_STREAM_stream(id: $id) {
+    id
+    __typename
+    status
+    startedAt
+    expiresAt
+    modifiedAtTimestamp
+    totalAmount
+    withdrawnAmount
+    txHash
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+    token {
+      id
+      symbol
+      name
+      decimals
+    }
+  }
+}
+
+query GoerliStreamTransactions($id: String) {
+  GOERLI_STREAM_transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    to {
+      id
+    }
+  }
+}

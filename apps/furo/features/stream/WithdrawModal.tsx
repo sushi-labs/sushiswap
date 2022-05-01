@@ -1,6 +1,6 @@
 import { Stream } from 'features/context/Stream'
 import { useToken } from 'hooks/Tokens'
-import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroContract'
+import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { JSBI } from '@sushiswap/math'

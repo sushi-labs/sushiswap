@@ -31,9 +31,9 @@
     "numeral": "^2.0.6"
   },
   "devDependencies": {
+    "@sushiswap/config": "workspace:*",
     "@types/jest": "^27.4.1",
     "@types/numeral": "^2.0.2",
-    "@sushiswap/config": "workspace:*",
     "jest": "^27.5.1",
     "typescript": "^4.6.4"
   }

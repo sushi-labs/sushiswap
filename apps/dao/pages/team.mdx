@@ -1,0 +1,27 @@
+import { Team } from 'components'
+import { Container } from '@sushiswap/ui'
+
+import { ENGINEERING_TEAM, DESIGN_TEAM, MARKETING_TEAM, BUSINESS_DEVELOPMENT_TEAM } from 'config'
+
+<Container maxWidth="7xl" className="pt-8 mx-auto">
+
+# Sushi DAO Team
+
+## Engineering
+
+<Team team={ENGINEERING_TEAM} />
+
+## Business Development
+
+<Team team={BUSINESS_DEVELOPMENT_TEAM} />
+
+## Design
+
+<Team team={DESIGN_TEAM} />
+
+## Marketing
+
+<Team team={MARKETING_TEAM} />
+
+</Container>
+

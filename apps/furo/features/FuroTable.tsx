@@ -8,6 +8,7 @@ import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
 import { Vesting } from 'features/context'
+import { useNetwork } from 'wagmi'
 
 export enum FuroTableType {
   INCOMING,
@@ -22,13 +23,14 @@ interface FuroTableProps {
 
 export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
   const router = useRouter()
+  const { activeChain } = useNetwork()
   const data = useMemo(
     () =>
       streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
       [],
     [streams, vestings],
   )
-  // console.log({ data })
+
   const columns = useMemo(
     () => [
       {
@@ -61,10 +63,9 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Header: 'VALUE',
         accessor: 'amount',
         Cell: (props) => {
-          if (props.row.original.status === FuroStatus.CANCELLED) {
-            return `-`
-          }
-          const formattedAmount = formatNumber(props.value.toExact())
+          if (props.row.original.status === FuroStatus.CANCELLED) return `-`
+          let formattedAmount = formatNumber(props.value.toExact(10))
+          formattedAmount = formattedAmount !== "0.00" ?  formattedAmount : "< 0.01"
           return `${formattedAmount} ${props.row.original.token.symbol}`
         },
       },
@@ -153,7 +154,12 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
             return (
               <Table.tr
                 {...row.getRowProps()}
-                onClick={() => router.push(`/${row.original.type.toLowerCase()}/${row.original.id}`)}
+                onClick={() =>
+                  router.push({
+                    pathname: `/${row.original.type.toLowerCase()}/${row.original.id}`,
+                    query: { chainId: activeChain?.id },
+                  })
+                }
                 key={i}
               >
                 {row.cells.map((cell, i) => {

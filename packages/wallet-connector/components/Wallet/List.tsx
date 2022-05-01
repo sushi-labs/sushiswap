@@ -1,6 +1,6 @@
 import React from 'react'
 import { useConnect } from 'wagmi'
-import { useIsMounted } from '../../hooks'
+import { useIsMounted } from '@sushiswap/hooks'
 
 function List(): JSX.Element {
   const isMounted = useIsMounted()

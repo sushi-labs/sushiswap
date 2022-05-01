@@ -3,7 +3,7 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { useApproveCallback, ApprovalState } from 'hooks'
 import { useAllTokens } from 'hooks/Tokens'
 import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
-import { useFuroStreamContract } from 'hooks/useFuroContract'
+import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { FC, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
@@ -19,8 +19,8 @@ const CreateStreamModal: FC = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
   const { data: account } = useAccount()
-  const { data: network } = useNetwork()
-  const chainId = network?.id
+  const { activeChain } = useNetwork()
+  const chainId = activeChain?.id
   const tokens = useAllTokens()
   const contract = useFuroStreamContract()
   const { data: tx, sendTransactionAsync } = useSendTransaction()
@@ -28,7 +28,7 @@ const CreateStreamModal: FC = () => {
   const { refetch: wait } = useWaitForTransaction({ confirmations: 1, hash: tx?.hash, timeout: 60000 })
 
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
-  const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
+  const [tokenApprovalState, approveToken] = useApproveCallback(isOpen, amount, BENTOBOX_ADDRESS[chainId])
 
   function openModal() {
     setIsOpen(true)
@@ -36,8 +36,6 @@ const CreateStreamModal: FC = () => {
   function closeModal() {
     setIsOpen(false)
   }
-
-  console.log({ tokenApprovalState, bentoBoxApprovalState })
 
   async function createStream() {
     if (!token || !amount || !recipient || !startDate || !endDate) {

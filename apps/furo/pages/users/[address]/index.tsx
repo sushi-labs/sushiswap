@@ -5,7 +5,7 @@ import { FuroTable, FuroTableType } from 'features/FuroTable'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
 import { FC } from 'react'
 import { Typography } from '@sushiswap/ui'
-import { getBuiltGraphSDK } from '../../../.graphclient'
+import { getStreams, getVestings } from 'graph/graph-client'
 
 interface DashboardProps {
   streams: { incomingStreams: StreamRepresentation[]; outgoingStreams: StreamRepresentation[] }
@@ -52,13 +52,10 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
 export default Dashboard
 
 export async function getServerSideProps({ query }) {
-  const sdk = await getBuiltGraphSDK()
-  const streams = (await sdk.UserStreams({ id: query.address.toLowerCase() })).STREAM_user
-  const vestings = (await sdk.UserVestings({ id: query.address.toLowerCase() })).VESTING_user
   return {
     props: {
-      streams: streams || {},
-      vestings: vestings || {},
+      streams: await getStreams(query.chainId, query.address),
+      vestings: await getVestings(query.chainId, query.address),
     },
   }
 }
