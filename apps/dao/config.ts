@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Safe } from 'types'
 
-export const ENGINEERING_TEAM = ['Matthew', 'Ramin', 'Sarang', 'Ilya', 'Ross', 'Ola', 'Salman', 'Dan', 'Ali']
+export const ENGINEERING_TEAM = ['Matthew', 'Ramin', 'Sarang', 'Ilya', 'Lufy', 'Ross', 'Ola', 'Salman', 'Dan', 'Ali']
 export const DESIGN_TEAM = ['Cabbage', 'Kastrye', 'Ryan']
 export const MARKETING_TEAM = ['Bella', 'Chris']
 export const BUSINESS_DEVELOPMENT_TEAM = ['Ape', 'Min']
@@ -121,8 +121,8 @@ export const SAFES: Record<string, Safe> = {
 export const USERS = new Map<string, string>([
   ['0x3027a0c4E35272c0707dE2651A0638c3dF1c37AC', 'Gasper'],
   ['0x4bb4c1B0745ef7B4642fEECcd0740deC417ca0a0', 'Jiro'],
-  ['0xFBb3a85603C398Ff22435DD40873EC190134e1f6', 'Matt'],
-  ['0xCc159BCb6a466DA442D254Ad934125f05DAB66b5', 'Matt (Ledger)'],
+  ['0xFBb3a85603C398Ff22435DD40873EC190134e1f6', 'Matthew'],
+  ['0xCc159BCb6a466DA442D254Ad934125f05DAB66b5', 'Deployer'],
   ['0xb2701351a2c1c6E30BFA2699d25f85a5100e39D3', 'Ramin'],
   ['0xb4A3f907ec1611F22543219AE9Bb33ec5E96e116', 'Omakase'],
   ['0x6b83270726342E02a11E755e8CC35275712122eC', 'Lufy'],
