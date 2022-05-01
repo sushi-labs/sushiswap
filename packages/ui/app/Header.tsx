@@ -1,4 +1,4 @@
-import classNames from "@sushiswap/ui/node_modules/classnames"
+import { classNames } from '@sushiswap/ui'
 
 export type HeaderProps = {
   children?: React.ReactNode
@@ -6,7 +6,7 @@ export type HeaderProps = {
 }
 
 function Header({ children, className }: HeaderProps): JSX.Element {
-  return <header className={classNames("fixed z-20 hidden w-full h-16 lg:block", className)}>{children}</header>
+  return <header className={classNames('fixed z-20 hidden w-full h-16 lg:block', className)}>{children}</header>
 }
 
 export default Header
