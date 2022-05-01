@@ -14,15 +14,17 @@ import store from '../store'
 import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const provider = getProvider(ChainId.KOVAN)
-  const blockNumber = useLatestBlock(provider)
+  const kovanProvider = getProvider(ChainId.KOVAN)
+  const kovanBlockNumber = useLatestBlock(kovanProvider)
+  const goerliProvider = getProvider(ChainId.GÖRLI)
+  const goerliBlockNumber = useLatestBlock(goerliProvider)
   return (
     <WagmiProvider client={client}>
       <ReduxProvider store={store}>
         <App.Shell>
-          <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumber} />
+          <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
           <TokenListUpdater chainId={ChainId.KOVAN} />
-          <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumber} />
+          <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
           <TokenListUpdater chainId={ChainId.GÖRLI} />
           <Component {...pageProps} />
           <App.Footer />

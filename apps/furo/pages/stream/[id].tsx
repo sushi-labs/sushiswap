@@ -12,7 +12,6 @@ import WithdrawModal from 'features/stream/WithdrawModal'
 import { FC, useMemo } from 'react'
 import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
-import { getBuiltGraphSDK } from '../../.graphclient'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 
 interface Props {
@@ -46,7 +45,7 @@ const Streams: FC<Props> = (props) => {
                   {(stream.streamedPercentage * 100).toFixed(2)}%
                 </Typography>
               </div>
-              <ProgressBar progress={stream.streamedPercentage} color={ProgressColor.BLUE} showLabel={false} />
+              <ProgressBar progress={stream.streamedPercentage.toFixed(4)} color={ProgressColor.BLUE} showLabel={false} />
             </div>
             <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
               <div className="flex items-center justify-between gap-2">

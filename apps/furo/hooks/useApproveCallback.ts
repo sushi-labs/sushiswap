@@ -19,6 +19,7 @@ export enum ApprovalState {
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(
+  watch: boolean,
   amountToApprove?: Amount<Token>,
   spender?: string,
 ): [ApprovalState, () => Promise<void>] {
@@ -26,10 +27,7 @@ export function useApproveCallback(
   const { data: signer, refetch: getSigner } = useSigner()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useTokenAllowance(token, account?.address ?? undefined, spender)
-  // const { refetch: wait } = useWaitForTransaction({
-  //   enabled: false,
-  // })
+  const currentAllowance = useTokenAllowance(watch, token, account?.address ?? undefined, spender)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {

@@ -28,7 +28,7 @@ const CreateStreamModal: FC = () => {
   const { refetch: wait } = useWaitForTransaction({ confirmations: 1, hash: tx?.hash, timeout: 60000 })
 
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
-  const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
+  const [tokenApprovalState, approveToken] = useApproveCallback(isOpen, amount, BENTOBOX_ADDRESS[chainId])
 
   function openModal() {
     setIsOpen(true)
@@ -36,8 +36,6 @@ const CreateStreamModal: FC = () => {
   function closeModal() {
     setIsOpen(false)
   }
-
-  console.log({ tokenApprovalState, bentoBoxApprovalState })
 
   async function createStream() {
     if (!token || !amount || !recipient || !startDate || !endDate) {

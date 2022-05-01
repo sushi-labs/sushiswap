@@ -44,7 +44,7 @@ const CreateVestingModal: FC = () => {
   const { data: tx, sendTransactionAsync } = useSendTransaction()
   const { refetch: wait } = useWaitForTransaction({ confirmations: 1, hash: tx?.hash, timeout: 60000 })
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(isOpen, contract.address)
-  const [tokenApprovalState, approveToken] = useApproveCallback(amount, BENTOBOX_ADDRESS[chainId])
+  const [tokenApprovalState, approveToken] = useApproveCallback(isOpen, amount, BENTOBOX_ADDRESS[chainId])
 
   function openModal() {
     setIsOpen(true)
@@ -52,8 +52,6 @@ const CreateVestingModal: FC = () => {
   function closeModal() {
     setIsOpen(false)
   }
-
-  console.log({ tokenApprovalState, bentoBoxApprovalState })
 
   useEffect(() => {
     if (!cliffAmount && !stepAmount) return

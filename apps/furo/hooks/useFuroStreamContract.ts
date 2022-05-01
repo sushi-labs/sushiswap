@@ -16,7 +16,6 @@ export function useFuroStreamContract(): FuroStream | null {
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
   const chainId = activeChain?.id
-  console.log({ chainId })
   return useContract({
     addressOrName: STREAM_ADDRESS[chainId] ?? AddressZero,
     contractInterface: FUROSTREAM_ABI,
@@ -37,8 +36,8 @@ export function useStreamBalance(streamId: string): BigNumber {
     { args: [streamId], watch: true },
   )
   useMemo(() => {
-    if (!error && !isLoading && data.recipientBalance !== undefined && streamId) {
-      setBalance(BigNumber.from(data.recipientBalance))
+    if (!error && !isLoading && data !== undefined && streamId) {
+      setBalance(BigNumber.from(data[1]))
     }
   }, [error, isLoading, data, streamId])
 
