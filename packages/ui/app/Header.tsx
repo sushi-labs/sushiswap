@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { classNames } from 'classnames'
 
 export type HeaderProps = {
   children?: React.ReactNode
