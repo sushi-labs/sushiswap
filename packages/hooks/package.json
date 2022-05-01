@@ -28,7 +28,11 @@
   },
   "devDependencies": {
     "@sushiswap/config": "workspace:*",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
     "@types/jest": "^27.4.1",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "jest": "^27.5.1",
     "typescript": "^4.6.4"
   },
