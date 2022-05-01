@@ -23,7 +23,7 @@ interface FuroTableProps {
 
 export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
   const router = useRouter()
-  const {activeChain} = useNetwork()
+  const { activeChain } = useNetwork()
   const data = useMemo(
     () =>
       streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
@@ -155,10 +155,12 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
             return (
               <Table.tr
                 {...row.getRowProps()}
-                onClick={() => router.push({
-                  pathname: `/${row.original.type.toLowerCase()}/${row.original.id}`,
-                  query: {chainId: activeChain?.id}
-              })}
+                onClick={() =>
+                  router.push({
+                    pathname: `/${row.original.type.toLowerCase()}/${row.original.id}`,
+                    query: { chainId: activeChain?.id },
+                  })
+                }
                 key={i}
               >
                 {row.cells.map((cell, i) => {

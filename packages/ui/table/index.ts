@@ -1,20 +1,17 @@
-import { default as container } from './Container'
-import { default as thead } from './Head'
+import { FC } from 'react'
+
+import { default as container, TableContainerProps } from './Container'
+import { default as thead, TableHeadProps } from './Head'
 import { default as table } from './Root'
 import { default as tr } from './Row'
 import { default as th } from './HeadCell'
 import { default as td } from './Cell'
 import { default as tbody } from './Body'
 import { default as thr } from './HeadRow'
-import { FC } from 'react'
 
 export type TableProps = {
-  container: FC<{
-    children?: React.ReactNode
-  }>
-  thead: FC<{
-    children?: React.ReactNode
-  }>
+  container: FC<TableContainerProps>
+  thead: FC<TableHeadProps>
   table: FC<{
     children?: React.ReactNode
   }>
