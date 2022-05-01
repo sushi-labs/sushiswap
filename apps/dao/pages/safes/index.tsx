@@ -4,8 +4,6 @@ import useSWR, { SWRConfig } from 'swr'
 import {
   EXPECTED_OPS_OWNER_COUNT,
   EXPECTED_OPS_THRESHOLD,
-  EXPECTED_OWNER_COUNT,
-  EXPECTED_THRESHOLD,
   EXPECTED_TREASURY_OWNER_COUNT,
   EXPECTED_TREASURY_THRESHOLD,
   USERS,
@@ -19,6 +17,8 @@ import { classNames, Table, Typography } from '@sushiswap/ui'
 import { Layout } from 'components'
 import { getSafes } from 'api'
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import ExternalLink from '@sushiswap/ui/link/External'
+
 const SafeTable = () => {
   const { data } = useSWR('/api/safes')
 
@@ -154,11 +154,27 @@ const SafeTable = () => {
     useFlexLayout,
     usePagination,
   )
+
+  const { data: sushiHOUSE } = useSWR(
+    'https://openapi.debank.com/v1/user/total_balance?id=0x7b18913d945242a9c313573e6c99064cd940c6af',
+    (url) => fetch(url).then((response) => response.json()),
+  )
+
   return (
-    <Layout>
-      <Typography variant="h1" className="mb-4">
-        Safes {balance}
-      </Typography>
+    <Layout className="space-y-4">
+      <div className="flex space-x-4">
+        <Typography variant="h3">SushiSAFES: {balance}, </Typography>
+        <Typography variant="h3">
+          SushiHOUSE: {formatUSD(sushiHOUSE.total_usd_value)}{' '}
+          <ExternalLink
+            href="https://etherscan.io/address/0x7b18913d945242a9c313573e6c99064cd940c6af"
+            className="text-xs"
+            color="blue"
+          >
+            {sushiHOUSE.address}
+          </ExternalLink>
+        </Typography>
+      </div>
 
       <Table.container>
         <Table.table {...getTableProps()}>
@@ -226,10 +242,17 @@ const Safes: FC<SafesProps> = ({ fallback }) => {
 
 export const getStaticProps = async () => {
   const safes = await getSafes()
+  const sushiHOUSE = await fetch(
+    'https://openapi.debank.com/v1/user/total_balance?id=0x7b18913d945242a9c313573e6c99064cd940c6af',
+    {
+      method: 'GET',
+    },
+  ).then((response) => response.json())
   return {
     props: {
       fallback: {
         '/api/safes': safes,
+        'https://openapi.debank.com/v1/user/total_balance?id=0x7b18913d945242a9c313573e6c99064cd940c6af': sushiHOUSE,
       },
     },
     revalidate: 90, // 90s

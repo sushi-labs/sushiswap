@@ -15,7 +15,7 @@ export interface ExternalLinkProps extends Omit<HTMLProps<HTMLAnchorElement>, 'a
   endIcon?: JSX.Element
 }
 
-const ExternalLink: FC<ExternalLinkProps> = ({
+export const ExternalLink: FC<ExternalLinkProps> = ({
   target = '_blank',
   href,
   children,
