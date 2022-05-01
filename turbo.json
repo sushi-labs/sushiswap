@@ -39,7 +39,8 @@
     },
     "dev": {
       "dependsOn": [
-        "build"
+        "^build",
+        "generate"
       ],
       "cache": false
     },
@@ -49,6 +50,7 @@
     "dao#build": {
       "dependsOn": [
         "^build",
+        "generate",
         "$REDIS_PATH"
       ],
       "outputs": [".next/**"]
