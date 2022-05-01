@@ -51,6 +51,8 @@
     "dao#build": {
       "dependsOn": [
         "^build",
+        "^generate",
+        "generate",
         "$REDIS_PATH"
       ],
       "outputs": [".next/**"]
