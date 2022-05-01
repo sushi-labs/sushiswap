@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build --profile",
+    "build": "next build",
+    "profile": "build --profile",
     "dev": "next dev --port 3003",
     "lint": "next lint",
     "start": "next start"
