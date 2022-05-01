@@ -17,6 +17,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <div className="flex space-x-4 ">
             {['/safes', '/team'].map((href, i) => (
               <Link key={i} href={href}>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a
                   className={classNames(
                     'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
