@@ -15,7 +15,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <Container maxWidth="7xl" className="flex justify-between pt-8 mx-auto">
           <div className="font-bold">Sushi DAO</div>
           <div className="flex space-x-4 ">
-            {['/safes', '/team', '/partners'].map((href, i) => (
+            {['/safes', '/team'].map((href, i) => (
               <Link key={i} href={href}>
                 <a
                   className={classNames(

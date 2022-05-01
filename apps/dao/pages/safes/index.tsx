@@ -92,7 +92,7 @@ const SafeTable = () => {
       {
         Header: 'Owners',
         accessor: 'owners',
-        width: 250,
+        minWidth: 250,
         Cell: (props) => {
           return (
             <div className="flex space-x-2">
