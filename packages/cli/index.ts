@@ -4,7 +4,7 @@ import { program } from 'commander'
 
 program.version('0.0.0').description('Sushi CLI')
 
-import { getBuiltGraphSDK } from '../.graphclient'
+import { getBuiltGraphSDK } from './.graphclient'
 
 program
   .command('bar')
