@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 export type AddressProps = {
   value: string
-} & HTMLProps<HTMLInputElement>
+} & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as'>
 
 const matchSpaces = /\s+/g
 
