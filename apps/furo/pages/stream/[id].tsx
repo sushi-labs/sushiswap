@@ -31,7 +31,7 @@ const Streams: FC<Props> = (props) => {
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 cursor-pointer rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Streamed:
@@ -47,7 +47,8 @@ const Streams: FC<Props> = (props) => {
               />
             </div>
             <div
-              className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 cursor-pointer rounded-2xl"
+              aria-hidden="true"
+              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl"
               onMouseEnter={() => setWithdrawHovered(true)}
               onMouseLeave={() => setWithdrawHovered(false)}
             >
@@ -66,7 +67,7 @@ const Streams: FC<Props> = (props) => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center items-end gap-2">
+        <div className="flex items-end justify-center gap-2">
           <LinkPopover furo={stream} />
           <StreamDetailsPopover stream={stream} />
           <HistoryPopover transactionRepresentations={transactions} />

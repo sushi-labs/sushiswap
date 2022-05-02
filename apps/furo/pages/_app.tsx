@@ -13,6 +13,7 @@ import store from '../store'
 
 import '@sushiswap/ui/index.css'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 
 declare global {
   interface Window {

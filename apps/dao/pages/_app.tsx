@@ -35,13 +35,7 @@ declare global {
   }
 }
 
-declare global {
-  interface Window {
-    dataLayer: Record<string, any>[]
-  }
-}
-
-const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
+const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => {
   const router = useRouter()
   console.log({ router })
   useEffect(() => {
@@ -84,7 +78,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               </div>
             }
           />
-          <App.Main className="flex flex-col h-full mx-auto mt-32 space-y-4 max-w-7xl lg:mx-auto">
+          <App.Main className={classNames('flex flex-col h-full mx-auto mt-32 space-y-8 lg:mx-auto max-w-7xl')}>
             <Component {...pageProps} />
           </App.Main>
           <App.Footer />

@@ -21,6 +21,7 @@ const client = createClient({
       }),
       new WalletConnectConnector({
         // TODO: Flesh out wallet connect options?
+        // bridge?
         options: {
           qrcode: true,
           rpc: {
