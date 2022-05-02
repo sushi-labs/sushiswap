@@ -25,7 +25,7 @@ const Streams: FC<Props> = (props) => {
 
   return (
     <Layout>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0">
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="flex justify-center relative">
           <div className="absolute right-0 w-[140px] h-[180px] bg-pink/20 blur-[100px] pointer-events-none" />
           <div className="absolute left-0 bottom-0 w-[140px] h-[180px] bg-blue/20 blur-[100px] pointer-events-none" />

@@ -14,7 +14,7 @@ interface DashboardProps {
 const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
   return (
     <Layout>
-      <div className="flex flex-col h-full gap-12 pt-40">
+      <div className="flex flex-col h-full gap-12 pt-10">
         <Typography variant="h2" weight={700} className="text-high-emphesis">
           Dashboard
         </Typography>
