@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { MDXProvider } from '@mdx-js/react'
 import { NextRouter, useRouter } from 'next/router'
 import { Layout } from 'components'
+import Script from 'next/script'
 
 const TITLE = {
   '/': 'Sushi DAO',
@@ -31,41 +32,55 @@ const components = {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-  console.log({ router })
   return (
-    <MDXProvider components={components}>
-      <App.Shell>
-        <App.Header
-          className="py-8 mx-auto max-w-7xl"
-          brand={<div className="font-bold">{getTitle(router)}</div>}
-          nav={
-            <div className="flex space-x-4 ">
-              {['/', '/safes', '/team', '/grants', '/sips'].map((href, i) => {
-                const children =
-                  href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
-                return (
-                  <Link key={i} href={href}>
-                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a
-                      className={classNames(
-                        'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
-                        router.asPath === href && '!text-white !underline',
-                      )}
-                    >
-                      {children}
-                    </a>
-                  </Link>
-                )
-              })}
-            </div>
-          }
-        />
-        <App.Main className="flex flex-col h-full mx-auto mt-32 space-y-4 max-w-7xl lg:mx-auto">
-          <Component {...pageProps} />
-        </App.Main>
-        <App.Footer />
-      </App.Shell>
-    </MDXProvider>
+    <>
+      <MDXProvider components={components}>
+        <App.Shell>
+          <App.Header
+            className="py-8 mx-auto max-w-7xl"
+            brand={<div className="font-bold">{getTitle(router)}</div>}
+            nav={
+              <div className="flex space-x-4 ">
+                {['/', '/safes', '/team', '/grants', '/sips'].map((href, i) => {
+                  const children =
+                    href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
+                  return (
+                    <Link key={i} href={href}>
+                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                      <a
+                        className={classNames(
+                          'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
+                          router.asPath === href && '!text-white !underline',
+                        )}
+                      >
+                        {children}
+                      </a>
+                    </Link>
+                  )
+                })}
+              </div>
+            }
+          />
+          <App.Main className="flex flex-col h-full mx-auto mt-32 space-y-4 max-w-7xl lg:mx-auto">
+            <Component {...pageProps} />
+          </App.Main>
+          <App.Footer />
+        </App.Shell>
+      </MDXProvider>
+      <Script
+        id="gtag"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer', 'UA-191094689-1');
+          `,
+        }}
+      />
+    </>
   )
 }
 
