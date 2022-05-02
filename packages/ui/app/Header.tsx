@@ -1,4 +1,4 @@
-import { classNames } from 'classnames'
+import classNames from 'classnames'
 
 export type HeaderProps = {
   children?: React.ReactNode
