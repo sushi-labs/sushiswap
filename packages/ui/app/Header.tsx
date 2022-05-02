@@ -5,13 +5,14 @@ export type HeaderProps = {
   className?: string
   title?: JSX.Element
   nav?: JSX.Element
-}
+} & React.HTMLProps<HTMLElement>
 
-function Header({ children, className, title, nav }: HeaderProps): React.ReactNode {
+function Header({ children, className, title, nav }: HeaderProps): JSX.Element {
   return (
     <header className={classNames('flex justify-between h-16', className)}>
       {title}
       {nav}
+      {children}
     </header>
   )
 }
