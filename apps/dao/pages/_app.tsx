@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 
 import { App, classNames, Container, Typography } from '@sushiswap/ui'
@@ -7,7 +7,6 @@ import '@sushiswap/ui/index.css'
 import Link from 'next/link'
 import { MDXProvider } from '@mdx-js/react'
 import { NextRouter, useRouter } from 'next/router'
-import { Layout } from 'components'
 import Script from 'next/script'
 
 const TITLE = {
@@ -30,8 +29,31 @@ const components = {
   p: ({ children }) => <Typography>{children}</Typography>,
 }
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[]
+  }
+}
+
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[]
+  }
+}
+
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+  useEffect(() => {
+    const handler = (page) =>
+      window.dataLayer.push({
+        event: 'pageview',
+        page,
+      })
+    router.events.on('routeChangeComplete', handler)
+    return () => {
+      router.events.off('routeChangeComplete', handler)
+    }
+  }, [router.events])
   return (
     <>
       <MDXProvider components={components}>
