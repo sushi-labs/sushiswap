@@ -2,14 +2,13 @@ import Layout from 'components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'features/context/representations'
 import { Stream } from 'features/context/Stream'
 import BalanceChart from 'features/stream/BalanceChart'
-import CancelStreamModal from 'features/stream/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
 import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
 import FuroTimer from 'features/FuroTimer'
 import TransferStreamModal from 'features/stream/TransferStreamModal'
 import UpdateStreamModal from 'features/stream/UpdateStreamModal'
 import WithdrawModal from 'features/stream/WithdrawModal'
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
@@ -22,16 +21,17 @@ interface Props {
 const Streams: FC<Props> = (props) => {
   let { stream: streamRepresentation, transactions } = props
   const stream = useMemo(() => new Stream({ stream: streamRepresentation }), [streamRepresentation])
+  const [withdrawHovered, setWithdrawHovered] = useState(false)
 
   return (
     <Layout>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0">
         <div className="flex justify-center">
-          <BalanceChart stream={stream} />
+          <BalanceChart stream={stream} withdrawHovered={withdrawHovered} setWithdrawHovered={setWithdrawHovered} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 cursor-pointer rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Streamed:
@@ -46,7 +46,11 @@ const Streams: FC<Props> = (props) => {
                 showLabel={false}
               />
             </div>
-            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+            <div
+              className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 cursor-pointer rounded-2xl"
+              onMouseEnter={() => setWithdrawHovered(true)}
+              onMouseLeave={() => setWithdrawHovered(false)}
+            >
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Withdrawn:

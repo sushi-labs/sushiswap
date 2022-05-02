@@ -5,10 +5,15 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Stream } from 'features/context'
 import { ZERO } from '@sushiswap/core-sdk'
 
-const BalanceChart: FC<{ stream: Stream }> = ({ stream }) => {
+interface Props {
+  stream: Stream
+  withdrawHovered: boolean
+  setWithdrawHovered(x: boolean): void
+}
+
+const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }) => {
   const balance = useStreamBalance(stream.id)
   const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>(null)
-  const [active, setActive] = useState(false)
 
   const dashArray = useCallback(({ radius, streamedPct }) => {
     return streamedPct * 2 * radius * Math.PI
@@ -51,8 +56,8 @@ const BalanceChart: FC<{ stream: Stream }> = ({ stream }) => {
           cx={width / 2}
           cy={width / 2}
           r={innerRadius}
-          onMouseEnter={() => setActive(true)}
-          onMouseLeave={() => setActive(false)}
+          onMouseEnter={() => setWithdrawHovered(true)}
+          onMouseLeave={() => setWithdrawHovered(false)}
           stroke="url('#unfilled')"
           fill="none"
           strokeWidth={16}
@@ -100,8 +105,8 @@ const BalanceChart: FC<{ stream: Stream }> = ({ stream }) => {
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
       </g>
       <g
-        onMouseEnter={() => setActive(true)}
-        onMouseLeave={() => setActive(false)}
+        onMouseEnter={() => setWithdrawHovered(true)}
+        onMouseLeave={() => setWithdrawHovered(false)}
         width={width}
         height={width}
         strokeDasharray={`${dashArray({
@@ -122,7 +127,7 @@ const BalanceChart: FC<{ stream: Stream }> = ({ stream }) => {
       >
         <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#gpink')" />
       </g>
-      {active ? (
+      {withdrawHovered ? (
         <>
           <text
             textAnchor="middle"
