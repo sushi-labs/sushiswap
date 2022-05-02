@@ -5,6 +5,7 @@
     },
     "generate": {
       "outputs": [
+        "^build",
         ".graphclient/**", 
         "typechain"
       ],
