@@ -1,3 +1,7 @@
-sources: !includes ./graph/sources
+sources:
+  - name: bar
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bar
 documents:
-  - './graph/queries/*.graphql'
+  - './bar.graphql'

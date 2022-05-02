@@ -1,18 +1,17 @@
-#!/usr/bin/env ts-node
-
-const { default: log } = require('@sushiswap/logger')
+import log from '@sushiswap/logger'
 
 import { program } from 'commander'
 
-import { fetchBar } from '../fetchers/bar'
-
 program.version('0.0.0').description('Sushi CLI')
+
+import { getBuiltGraphSDK } from '../.graphclient'
 
 program
   .command('bar')
   .description('print bar data')
   .action(async () => {
-    fetchBar()
+    const sdk = await getBuiltGraphSDK()
+    log(await sdk.Bar)
 
     log('Total SUSHI transfered to the bar:')
     log('Total SUSHI entered the bar:')
