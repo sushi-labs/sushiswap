@@ -32,7 +32,14 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
 
   return (
     <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`}>
-      <g stroke="currentColor" className="text-dark-700 hover:text-dark-600 cursor-pointer">
+      <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
+      <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
+      <LinearGradient id="gpink" to={'#FFA6E7'} from={'#f43fc5'} vertical={false} />
+
+      <g
+        stroke="currentColor"
+        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-dark-700 hover:text-dark-600 cursor-pointer"
+      >
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
           cx={width / 2}
@@ -50,18 +57,35 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           fill="none"
           strokeWidth={1}
         />
-      </g>
-      <g stroke="currentColor" className="text-dark-700 hover:text-dark-600 cursor-pointer">
-        <circle
-          cx={width / 2}
-          cy={width / 2}
-          r={innerRadius}
-          onMouseEnter={() => setWithdrawHovered(true)}
-          onMouseLeave={() => setWithdrawHovered(false)}
-          stroke="url('#unfilled')"
+        <g
+          width={width}
+          height={width}
+          strokeDasharray={`${dashArray({
+            radius: outerRadius,
+            streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
+          })}, ${Math.PI * outerRadius * 2}`}
           fill="none"
           strokeWidth={16}
-        />
+          strokeLinecap="round"
+          strokeDashoffset={
+            dashArray({
+              radius: outerRadius,
+              streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
+            }) / 1.5
+          }
+          transform="translate(0 420) rotate(-90)"
+          className="drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.67)] animate-[dash_1s_ease-in-out_forwards]"
+        >
+          <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
+        </g>
+      </g>
+      <g
+        stroke="currentColor"
+        className="text-dark-700 hover:text-dark-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
+        onMouseEnter={() => setWithdrawHovered(true)}
+        onMouseLeave={() => setWithdrawHovered(false)}
+      >
+        <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
           cx={width / 2}
           cy={width / 2}
@@ -78,55 +102,31 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           fill="none"
           strokeWidth={1}
         />
-      </g>
-
-      <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
-      <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
-      <LinearGradient id="gpink" to={'#FFA6E7'} from={'#f43fc5'} vertical={false} />
-      <g
-        width={width}
-        height={width}
-        strokeDasharray={`${dashArray({
-          radius: outerRadius,
-          streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
-        })}, ${Math.PI * outerRadius * 2}`}
-        fill="none"
-        strokeWidth={16}
-        strokeLinecap="round"
-        strokeDashoffset={
-          dashArray({
-            radius: outerRadius,
-            streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
-          }) / 1.5
-        }
-        transform="translate(0 420) rotate(-90)"
-        className="drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.67)] animate-[dash_1s_ease-in-out_forwards]"
-      >
-        <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
-      </g>
-      <g
-        onMouseEnter={() => setWithdrawHovered(true)}
-        onMouseLeave={() => setWithdrawHovered(false)}
-        width={width}
-        height={width}
-        strokeDasharray={`${dashArray({
-          radius: innerRadius,
-          streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
-        })}, ${Math.PI * innerRadius * 2}`}
-        strokeDashoffset={
-          dashArray({
+        <g
+          onMouseEnter={() => setWithdrawHovered(true)}
+          onMouseLeave={() => setWithdrawHovered(false)}
+          width={width}
+          height={width}
+          strokeDasharray={`${dashArray({
             radius: innerRadius,
             streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
-          }) / 1.5
-        }
-        fill="none"
-        strokeWidth={16}
-        strokeLinecap="round"
-        transform="translate(0 420) rotate(-90)"
-        className="drop-shadow-[0px_0px_8px_rgba(250,_82,_160,_0.6)] animate-[dash_1s_ease-in-out_forwards]"
-      >
-        <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#gpink')" />
+          })}, ${Math.PI * innerRadius * 2}`}
+          strokeDashoffset={
+            dashArray({
+              radius: innerRadius,
+              streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
+            }) / 1.5
+          }
+          fill="none"
+          strokeWidth={16}
+          strokeLinecap="round"
+          transform="translate(0 420) rotate(-90)"
+          className="drop-shadow-[0px_0px_8px_rgba(250,_82,_160,_0.6)] animate-[dash_1s_ease-in-out_forwards]"
+        >
+          <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#gpink')" />
+        </g>
       </g>
+
       {withdrawHovered ? (
         <>
           <text

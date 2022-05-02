@@ -150,9 +150,19 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       {/* .994k */}
                     </Typography>
                   </Typography>
+                  <div className="mt-2">
+                    <Typography
+                      variant="xs"
+                      weight={700}
+                      className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
+                      component="span"
+                    >
+                      {stream.withdrawnAmount.currency.symbol}
+                    </Typography>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-blue/60 rounded-xl shadow-depth-1">
+              <div className="flex flex-col gap-4 p-4 bg-blue/30 rounded-xl shadow-depth-1">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-high-emphesis" weight={700}>
                     Streamed
@@ -166,9 +176,19 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       {/* .329k */}
                     </Typography>
                   </Typography>
+                  <div className="mt-2">
+                    <Typography
+                      variant="xs"
+                      weight={700}
+                      className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
+                      component="span"
+                    >
+                      {stream.withdrawnAmount.currency.symbol}
+                    </Typography>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-pink/60 rounded-xl shadow-depth-1">
+              <div className="flex flex-col gap-4 p-4 bg-pink/30 rounded-xl shadow-depth-1">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-high-emphesis" weight={700}>
                     Withdrawn
@@ -182,6 +202,16 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       {/* .105k */}
                     </Typography>
                   </Typography>
+                  <div className="mt-2">
+                    <Typography
+                      variant="xs"
+                      weight={700}
+                      className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
+                      component="span"
+                    >
+                      {stream.withdrawnAmount.currency.symbol}
+                    </Typography>
+                  </div>
                 </div>
               </div>
             </div>
