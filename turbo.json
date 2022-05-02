@@ -5,9 +5,8 @@
     },
     "generate": {
       "outputs": [
-        ".next/**",
+        "^build",
         ".graphclient/**", 
-        "dist/**",
         "typechain"
       ],
       "cache": false

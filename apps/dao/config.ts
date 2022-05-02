@@ -1,10 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Safe } from 'types'
 
+export const OPERATIONS_TEAM = ['Jiro', 'Neil']
 export const ENGINEERING_TEAM = ['Matthew', 'Ramin', 'Sarang', 'Ilya', 'Lufy', 'Ross', 'Ola', 'Salman', 'Dan', 'Ali']
 export const DESIGN_TEAM = ['Cabbage', 'Kastrye', 'Ryan']
 export const MARKETING_TEAM = ['Bella', 'Chris']
 export const BUSINESS_DEVELOPMENT_TEAM = ['Ape', 'Min']
+export const SAMURAI_TEAM = ['Pegbit', 'Maka', 'Truda', 'HHK']
 
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const MULTICALL_ADDRESS = '0x1F98415757620B543A52E61c46B32eB19261F984' // Address on Mainnet
