@@ -1,7 +1,7 @@
 {
   "extends": "@sushiswap/config/typescript/react-library.json",
   "include": ["."],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["dom"],
   }
