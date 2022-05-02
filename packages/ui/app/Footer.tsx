@@ -1,9 +1,6 @@
-export type FooterProps = {
-  children?: React.ReactNode
-  className?: string
-}
+export interface FooterProps extends React.HTMLProps<HTMLElement> {}
 
-function Footer({ children }: FooterProps): JSX.Element {
+export function Footer({ children }: FooterProps): JSX.Element {
   return <footer>{children}</footer>
 }
 
