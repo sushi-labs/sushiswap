@@ -10,10 +10,10 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
-  "source": "./src/index.ts",
+  "source": "./index.ts",
   "types": "./dist/index.d.ts",
   "bin": {
-    "scli": "./bin/index.js"
+    "scli": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
