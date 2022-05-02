@@ -3,7 +3,7 @@ export type NavProps = {
   className?: string
 }
 
-function Nav({ children, className }: NavProps): JSX.Element {
+export function Nav({ children, className }: NavProps): JSX.Element {
   return <nav className={className}>{children}</nav>
 }
 

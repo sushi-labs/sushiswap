@@ -3,10 +3,17 @@ import classNames from 'classnames'
 export type HeaderProps = {
   children?: React.ReactNode
   className?: string
+  title?: JSX.Element
+  nav?: JSX.Element
 }
 
-function Header({ children, className }: HeaderProps): JSX.Element {
-  return <header className={classNames('fixed z-20 hidden w-full h-16 lg:block', className)}>{children}</header>
+function Header({ children, className, title, nav }: HeaderProps): React.ReactNode {
+  return (
+    <header className={classNames('flex justify-between h-16', className)}>
+      {title}
+      {nav}
+    </header>
+  )
 }
 
 export default Header
