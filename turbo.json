@@ -8,6 +8,7 @@
         "^build"
       ],
       "outputs": [
+        "^build",
         ".graphclient/**", 
         "typechain"
       ],
