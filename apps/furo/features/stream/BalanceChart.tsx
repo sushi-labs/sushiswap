@@ -1,18 +1,14 @@
 import { LinearGradient } from '@visx/gradient'
 import { useStreamBalance } from 'hooks'
 import { Amount, Token } from '@sushiswap/currency'
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { Stream } from 'features/context'
+import { ZERO } from '@sushiswap/core-sdk'
 
-interface Props {
-  stream: Stream
-}
-const BalanceChart: FC<Props> = (props) => {
-  const stream = props.stream
-  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>(null)
-  const [streamed, setStreamed] = useState([])
-  const [withdrawn, setWithdrawn] = useState([])
+const BalanceChart: FC<{ stream: Stream }> = ({ stream }) => {
   const balance = useStreamBalance(stream.id)
+  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>(null)
+  const [active, setActive] = useState(false)
 
   const dashArray = useCallback(({ radius, streamedPct }) => {
     return streamedPct * 2 * radius * Math.PI
@@ -24,85 +20,60 @@ const BalanceChart: FC<Props> = (props) => {
   const innerRadius = width / 2 - 3 * strokeWidth
 
   useEffect(() => {
-    if (!balance || !stream) {
-      return
-    }
+    if (!balance || !stream) return
+
     setFormattedBalance(Amount.fromRawAmount(stream.token, balance.toString()))
   }, [balance, stream])
 
-  useEffect(() => {
-    if (stream) {
-      setStreamed([
-        {
-          type: 'Streamed',
-          amount: stream?.streamedAmount,
-          color: '#1398ED',
-        },
-        {
-          type: 'Not streamed',
-          amount: stream?.unclaimableAmount,
-          color: '#1398ED',
-          opacity: '0%',
-        },
-      ])
-      setWithdrawn([
-        {
-          type: 'Withdrawn',
-          amount: stream.withdrawnAmount.toExact(),
-          color: '#f43fc5',
-          opacity: '100%',
-        },
-        {
-          type: 'Not available',
-          amount: stream.amount.subtract(stream.withdrawnAmount).toExact(),
-          color: '#f43fc5',
-          opacity: '0%',
-        },
-      ])
-    }
-  }, [stream])
-
-  if (!streamed) {
-    return
-  }
-
   return (
     <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`}>
-      <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
-      <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
-      <circle
-        cx={width / 2}
-        cy={width / 2}
-        r={innerRadius + strokeWidth / 2}
-        stroke="#2E3348"
-        fill="none"
-        strokeWidth={1}
-      />
-      <circle
-        cx={width / 2}
-        cy={width / 2}
-        r={innerRadius - strokeWidth / 2}
-        stroke="#2E3348"
-        fill="none"
-        strokeWidth={1}
-      />
-
-      <circle
-        cx={width / 2}
-        cy={width / 2}
-        r={outerRadius + strokeWidth / 2}
-        stroke="#2E3348"
-        fill="none"
-        strokeWidth={1}
-      />
-      <circle
-        cx={width / 2}
-        cy={width / 2}
-        r={outerRadius - strokeWidth / 2}
-        stroke="#2E3348"
-        fill="none"
-        strokeWidth={1}
-      />
+      <g stroke="currentColor" className="text-dark-700 hover:text-dark-600 cursor-pointer">
+        <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
+        <circle
+          cx={width / 2}
+          cy={width / 2}
+          r={outerRadius + strokeWidth / 2}
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={1}
+        />
+        <circle
+          cx={width / 2}
+          cy={width / 2}
+          r={outerRadius - strokeWidth / 2}
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={1}
+        />
+      </g>
+      <g stroke="currentColor" className="text-dark-700 hover:text-dark-600 cursor-pointer">
+        <circle
+          cx={width / 2}
+          cy={width / 2}
+          r={innerRadius}
+          onMouseEnter={() => setActive(true)}
+          onMouseLeave={() => setActive(false)}
+          stroke="url('#unfilled')"
+          fill="none"
+          strokeWidth={16}
+        />
+        <circle
+          cx={width / 2}
+          cy={width / 2}
+          r={innerRadius + strokeWidth / 2}
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={1}
+        />
+        <circle
+          cx={width / 2}
+          cy={width / 2}
+          r={innerRadius - strokeWidth / 2}
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={1}
+        />
+      </g>
 
       <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
       <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
@@ -129,6 +100,8 @@ const BalanceChart: FC<Props> = (props) => {
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
       </g>
       <g
+        onMouseEnter={() => setActive(true)}
+        onMouseLeave={() => setActive(false)}
         width={width}
         height={width}
         strokeDasharray={`${dashArray({
@@ -149,84 +122,113 @@ const BalanceChart: FC<Props> = (props) => {
       >
         <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#gpink')" />
       </g>
+      {active ? (
+        <>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontFamily="DM Sans"
+            fontSize={12}
+            x={width / 2}
+            y={width / 2}
+            letterSpacing="3"
+            dy={-50}
+            className="uppercase text-primary"
+          >
+            Withdrawn
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontWeight={700}
+            fontFamily="DM Sans"
+            fontSize={40}
+            x={width / 2}
+            y={width / 2}
+            dy={10}
+            className="text-high-emphesis"
+          >
+            {stream?.withdrawnAmount?.toSignificant(6).split('.')[0]}
+            <tspan
+              textAnchor="middle"
+              fill="currentColor"
+              fontWeight={700}
+              fontSize={24}
+              dx={2}
+              className="text-primary"
+            >
+              .
+              {stream?.withdrawnAmount.greaterThan(ZERO)
+                ? stream?.withdrawnAmount.toSignificant(6).split('.')[1]
+                : '000000'}
+            </tspan>
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontSize={14}
+            dy={40}
+            x={width / 2}
+            y={width / 2}
+            className="text-primary"
+            fontWeight={700}
+          >
+            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+          </text>
+        </>
+      ) : (
+        <>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontFamily="DM Sans"
+            fontSize={12}
+            x={width / 2}
+            y={width / 2}
+            letterSpacing="3"
+            dy={-50}
+            className="uppercase text-primary"
+          >
+            Streamed
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontWeight={700}
+            fontFamily="DM Sans"
+            fontSize={40}
+            x={width / 2}
+            y={width / 2}
+            dy={10}
+            className="text-high-emphesis"
+          >
+            {formattedBalance?.toSignificant(6).split('.')[0]}
+            <tspan
+              textAnchor="middle"
+              fill="currentColor"
+              fontWeight={700}
+              fontSize={24}
+              dx={2}
+              className="text-primary"
+            >
+              .{formattedBalance?.greaterThan(ZERO) ? formattedBalance?.toSignificant(6).split('.')[1] : '000000'}
+            </tspan>
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontSize={14}
+            dy={40}
+            x={width / 2}
+            y={width / 2}
+            className="text-primary"
+            fontWeight={700}
+          >
+            / {formattedBalance ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+          </text>
+        </>
+      )}
     </svg>
   )
-
-  // return (
-  //   <svg width={width} height={width}>
-  //     <LinearGradient id="gblue" from={'#1398ED'} to={'#5CB0E4'} vertical={false} />
-  //     <LinearGradient id="gpink" from={'#FFA6E7'} to={'#f43fc5'} vertical={false} />
-  //     <Group top={half} left={half}>
-  //       <Pie
-  //         data={streamed}
-  //         pieSort={null}
-  //         pieValue={(data) => data.amount}
-  //         startOffset={0}
-  //         outerRadius={half}
-  //         innerRadius={() => {
-  //           const size = 10
-  //           return half - size
-  //         }}
-  //         cornerRadius={3}
-  //         padAngle={0.005}
-  //       >
-  //         {(pie) => {
-  //           return pie.arcs.map((arc) => {
-  //             return (
-  //               <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-  //                 <path d={pie.path(arc)} fill={color(0)} opacity={arc.data.opacity} />
-  //               </g>
-  //             )
-  //           })
-  //         }}
-  //       </Pie>
-  //       <Pie
-  //         data={withdrawn}
-  //         pieSort={null}
-  //         startOffset={0}
-  //         pieValue={(data) => data.amount}
-  //         outerRadius={half * 0.87}
-  //         innerRadius={() => {
-  //           const size = 15
-  //           return half - size
-  //         }}
-  //         cornerRadius={3}
-  //         padAngle={0.05}
-  //       >
-  //         {(pie) => {
-  //           return pie.arcs.map((arc) => {
-  //             return (
-  //               <g key={arc.data.type} onMouseEnter={() => setActive(arc.data)} onMouseLeave={() => setActive(null)}>
-  //                 <path d={pie.path(arc)} fill={color(1)} opacity={arc.data.opacity} />
-  //               </g>
-  //             )
-  //           })
-  //         }}
-  //       </Pie>
-  //
-  //       {active ? (
-  //         <>
-  //           <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-  //             {active.type == 'Withdrawn'
-  //               ? `${stream?.withdrawnAmount.toExact()} ${stream?.token.symbol}`
-  //               : `${stream?.amount.toExact()} ${stream?.token.symbol}`}
-  //           </Text>
-  //           <Text textAnchor="middle" fill={active.color} fontSize={20} dy={20}>
-  //             {active?.type}
-  //           </Text>
-  //         </>
-  //       ) : (
-  //         <>
-  //           <Text textAnchor="middle" fill="#fff" fontSize={40} dy={-20}>
-  //             {`${formattedBalance ? formattedBalance.toSignificant(6) : '0'} ${stream?.token.symbol}`}
-  //           </Text>
-  //           <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={20}>
-  //             {`/ ${formattedBalance ? stream.amount.toExact() : '0'} ${stream?.token.symbol} Total`}
-  //           </Text>
-  //         </>
-  //       )}
-  //     </Group>
-  //   </svg>
-  // )
 }
 export default BalanceChart

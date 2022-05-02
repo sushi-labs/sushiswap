@@ -12,7 +12,7 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose }) => {
   return (
     <div className="flex items-start justify-between">
       <div className="flex flex-col gap-1 justify-center">
-        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-slate-900 dark:text-white">
+        <Dialog.Title as="h3" className="dialog-title">
           {onBack && (
             <ArrowLeftIcon onClick={onBack} width={24} height={24} className="cursor-pointer text-high-emphesis" />
           )}

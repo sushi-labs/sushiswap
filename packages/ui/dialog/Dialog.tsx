@@ -14,7 +14,7 @@ interface DialogProps {
 const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
   return (
     <Transition appear show={open} as={Fragment}>
-      <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
+      <HeadlessDialog as="div" className="dialog-root" onClose={onClose}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -25,7 +25,7 @@ const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <HeadlessDialog.Overlay className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75" />
+            <HeadlessDialog.Overlay className="dialog-overlay" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
