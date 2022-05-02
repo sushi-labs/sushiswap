@@ -9,15 +9,23 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "bin/index.js",
+  "main": "bin/index.ts",
   "bin": {
-    "scli": "./bin/index.js"
+    "scli": "./bin/index.ts"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "graphclient build --tsOnly"
   },
   "dependencies": {
     "@sushiswap/logger": "workspace:*",
-    "commander": "^9.2.0"
+    "commander": "^9.2.0",
+    "graphql": "^16.4.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/client-cli": "0.0.7",
+    "@sushiswap/config": "workspace:*",
+    "@types/node": "^17.0.31",
+    "typescript": "^4.6.4"
   }
 }

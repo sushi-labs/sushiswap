@@ -1,15 +1,19 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 const { default: log } = require('@sushiswap/logger')
 
-const { program } = require('commander')
+import { program } from 'commander'
+
+import { fetchBar } from '../fetchers/bar'
 
 program.version('0.0.0').description('Sushi CLI')
 
 program
   .command('bar')
   .description('print bar data')
-  .action(() => {
+  .action(async () => {
+    fetchBar()
+
     log('Total SUSHI transfered to the bar:')
     log('Total SUSHI entered the bar:')
     log('Total SUSHI exited the bar:')
@@ -22,7 +26,7 @@ program
 program
   .command('chef')
   .description('print chef data')
-  .option('-v,--version <version', 'version', 1)
+  .option('-v,--version <version', 'version')
   .action(({ version }) => {
     log(`printing v${version} chef data`)
   })

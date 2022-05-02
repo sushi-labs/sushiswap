@@ -1,0 +1,13 @@
+query Bar($id: String = "0x8798249c2e607446efb7ad49ec89dd1865ff4272",$where: Bar_filter, $block: Block_height) {
+  bar(id: $id, where: $where, block: $block) {
+    id
+    decimals
+    sushi
+    totalSupply
+    ratio
+    xSushiMinted
+    xSushiBurned
+    sushiStaked
+    sushiHarvested
+  }
+}

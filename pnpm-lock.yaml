@@ -603,11 +603,22 @@ importers:
 
   packages/cli:
     specifiers:
+      '@graphprotocol/client-cli': 0.0.7
+      '@sushiswap/config': workspace:*
       '@sushiswap/logger': workspace:*
+      '@types/node': ^17.0.31
       commander: ^9.2.0
+      graphql: ^16.4.0
+      typescript: ^4.6.4
     dependencies:
       '@sushiswap/logger': link:../logger
       commander: 9.2.0
+      graphql: 16.4.0
+    devDependencies:
+      '@graphprotocol/client-cli': 0.0.7_kuhjjei3i3edr5vithdldm6azm
+      '@sushiswap/config': link:../config
+      '@types/node': 17.0.31
+      typescript: 4.6.4
 
   packages/config:
     specifiers:
@@ -2079,6 +2090,32 @@ packages:
       tslib: 2.4.0
     dev: true
 
+  /@graphprotocol/client-cli/0.0.7_kuhjjei3i3edr5vithdldm6azm:
+    resolution: {integrity: sha512-tF4bMSkjf3F5dZ0mVVA81KysuDg6eoNc9qyIJN+deNd95wjleRRDeT+dmjGzfA7kWNNpl+oT4MoiLdn+125eyg==}
+    hasBin: true
+    peerDependencies:
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphprotocol/client-auto-pagination': 0.0.2_graphql@16.4.0
+      '@graphprotocol/client-block-tracking': 0.0.2_graphql@16.4.0
+      '@graphql-mesh/cli': 0.69.2_kuhjjei3i3edr5vithdldm6azm
+      '@graphql-mesh/graphql': 0.25.2_kuhjjei3i3edr5vithdldm6azm
+      graphql: 16.4.0
+      tslib: 2.4.0
+    transitivePeerDependencies:
+      - '@graphql-mesh/types'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - graphql-tag
+      - react-native
+      - react-native-windows
+      - supports-color
+      - utf-8-validate
+    dev: true
+
   /@graphprotocol/client-cli/0.0.7_tz2twupmqsstrdeni3w2vje3h4:
     resolution: {integrity: sha512-tF4bMSkjf3F5dZ0mVVA81KysuDg6eoNc9qyIJN+deNd95wjleRRDeT+dmjGzfA7kWNNpl+oT4MoiLdn+125eyg==}
     hasBin: true
@@ -2271,6 +2308,66 @@ packages:
       - react-native-windows
     dev: true
 
+  /@graphql-mesh/cli/0.69.2_kuhjjei3i3edr5vithdldm6azm:
+    resolution: {integrity: sha512-+L3yxWjJ+pGdmqULxzezGlr+6u8lcfgF0DsThcEdSrtKYdcf8AweMy/xdUjCujEu9Qs4jH/ZfWjamW/y9AEF+A==}
+    hasBin: true
+    peerDependencies:
+      graphql: '*'
+    dependencies:
+      '@graphql-codegen/core': 2.5.1_graphql@16.4.0
+      '@graphql-codegen/typed-document-node': 2.2.8_graphql@16.4.0
+      '@graphql-codegen/typescript': 2.4.8_graphql@16.4.0
+      '@graphql-codegen/typescript-generic-sdk': 2.3.7_graphql@16.4.0
+      '@graphql-codegen/typescript-operations': 2.3.5_graphql@16.4.0
+      '@graphql-codegen/typescript-resolvers': 2.6.1_graphql@16.4.0
+      '@graphql-mesh/config': 0.36.1_graphql@16.4.0
+      '@graphql-mesh/cross-helpers': 0.1.2
+      '@graphql-mesh/runtime': 0.34.6_graphql@16.4.0
+      '@graphql-mesh/store': 0.8.4_graphql@16.4.0
+      '@graphql-mesh/types': 0.72.1_graphql@16.4.0
+      '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
+      '@graphql-tools/code-file-loader': 7.2.14_graphql@16.4.0
+      '@graphql-tools/graphql-file-loader': 7.3.11_graphql@16.4.0
+      '@graphql-tools/load': 7.5.10_graphql@16.4.0
+      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
+      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
+      '@graphql-yoga/node': 2.4.0_graphql@16.4.0
+      ajv: 8.11.0
+      change-case: 4.1.2
+      cookie-parser: 1.4.6
+      cors: 2.8.5
+      cosmiconfig: 7.0.1
+      dnscache: 1.0.2
+      dotenv: 16.0.0
+      express: 4.18.1
+      graphql: 16.4.0
+      graphql-import-node: 0.0.5_graphql@16.4.0
+      graphql-ws: 5.8.1_graphql@16.4.0
+      json-bigint-patch: 0.0.8
+      lodash: 4.17.21
+      mkdirp: 1.0.4
+      open: 7.4.2
+      pascal-case: 3.1.2
+      rimraf: 3.0.2
+      ts-node: 10.7.0_l47be6km5p57gglrggidw5gsgm
+      tsconfig-paths: 3.14.1
+      tslib: 2.4.0
+      typescript: 4.6.4
+      ws: 8.6.0
+      yargs: 17.4.1
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - graphql-tag
+      - react-native
+      - react-native-windows
+      - supports-color
+      - utf-8-validate
+    dev: true
+
   /@graphql-mesh/cli/0.69.2_tz2twupmqsstrdeni3w2vje3h4:
     resolution: {integrity: sha512-+L3yxWjJ+pGdmqULxzezGlr+6u8lcfgF0DsThcEdSrtKYdcf8AweMy/xdUjCujEu9Qs4jH/ZfWjamW/y9AEF+A==}
     hasBin: true
@@ -2372,6 +2469,30 @@ packages:
     transitivePeerDependencies:
       - react-native
       - react-native-windows
+    dev: true
+
+  /@graphql-mesh/graphql/0.25.2_kuhjjei3i3edr5vithdldm6azm:
+    resolution: {integrity: sha512-z4YeYfB10VH8bCyKJp3gdtIT1WcXxTRruPXN6+ItQ0ZxF2uAFb6Cps5xDEHmo5ZEawiY6byF/16u7seoalH0dg==}
+    peerDependencies:
+      graphql: '*'
+    dependencies:
+      '@graphql-mesh/store': 0.8.4_graphql@16.4.0
+      '@graphql-mesh/types': 0.72.1_graphql@16.4.0
+      '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
+      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
+      '@graphql-tools/url-loader': 7.9.19_kuhjjei3i3edr5vithdldm6azm
+      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
+      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
+      graphql: 16.4.0
+      lodash: 4.17.21
+      tslib: 2.4.0
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - react-native
+      - react-native-windows
+      - utf-8-validate
     dev: true
 
   /@graphql-mesh/graphql/0.25.2_tz2twupmqsstrdeni3w2vje3h4:
@@ -2851,6 +2972,34 @@ packages:
       '@graphql-tools/utils': 8.6.9_graphql@16.4.0
       graphql: 16.4.0
       tslib: 2.3.1
+    dev: true
+
+  /@graphql-tools/url-loader/7.9.19_kuhjjei3i3edr5vithdldm6azm:
+    resolution: {integrity: sha512-2jLr3gx2VvUjZGnHqfeDk8tp4mJ5/df9pMHj7NTRMh8Hp9WpIpTdxWSYg8SyJZIMbY8IlpPn5EFwZAz5okkrEw==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
+      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
+      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
+      '@n1ru4l/graphql-live-query': 0.9.0_graphql@16.4.0
+      '@types/ws': 8.5.3
+      cross-undici-fetch: 0.3.6
+      dset: 3.1.1
+      extract-files: 11.0.0
+      graphql: 16.4.0
+      graphql-ws: 5.8.1_graphql@16.4.0
+      isomorphic-ws: 4.0.1_ws@8.6.0
+      meros: 1.2.0_@types+node@17.0.31
+      sync-fetch: 0.3.1
+      tslib: 2.4.0
+      value-or-promise: 1.0.11
+      ws: 8.6.0
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - utf-8-validate
     dev: true
 
   /@graphql-tools/url-loader/7.9.19_tz2twupmqsstrdeni3w2vje3h4:
@@ -10995,6 +11144,18 @@ packages:
       '@types/node': 17.0.30
     dev: true
 
+  /meros/1.2.0_@types+node@17.0.31:
+    resolution: {integrity: sha512-3QRZIS707pZQnijHdhbttXRWwrHhZJ/gzolneoxKVz9N/xmsvY/7Ls8lpnI9gxbgxjcHsAVEW3mgwiZCo6kkJQ==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@types/node': '>=12'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+    dependencies:
+      '@types/node': 17.0.31
+    dev: true
+
   /methods/1.1.2:
     resolution: {integrity: sha1-VSmk1nZUE07cxSZmVoNbD4Ua/O4=}
     engines: {node: '>= 0.6'}
@@ -13673,6 +13834,37 @@ packages:
       typescript: 4.6.4
       yargs-parser: 20.2.9
     dev: false
+
+  /ts-node/10.7.0_l47be6km5p57gglrggidw5gsgm:
+    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.7.0
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 17.0.31
+      acorn: 8.7.1
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.6.4
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
 
   /ts-node/10.7.0_obw5lm6bnftkuhtgsmfxzsamfm:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
