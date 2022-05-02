@@ -3,61 +3,30 @@ import classNames from 'classnames'
 import Loader from '../loader/Loader'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
-export type ButtonSize = 'xs' | 'sm' | 'lg' | 'default' | 'none'
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
 
-const DIMENSIONS = {
-  xs: 'px-2 h-[28px] !border',
-  sm: 'px-3 h-[36px]',
-  md: 'px-4 h-[52px]',
-  lg: 'px-6 h-[60px]',
+const VARIANT: Record<ButtonVariant, string> = {
+  filled: 'btn-filled',
+  outlined: 'btn-outlined',
+  empty: 'btn-empty',
 }
 
-const SIZE = {
-  xs: 'text-xs rounded-full',
-  sm: 'text-sm rounded-full',
-  md: 'rounded-xl',
-  lg: 'text-lg rounded',
+const COLOR: Record<ButtonColor, string> = {
+  blue: 'btn-blue',
+  red: 'btn-red',
+  pink: 'btn-pink',
+  purple: 'btn-purple',
+  gradient: 'btn-gradient',
+  gray: 'btn-gray',
 }
 
-const FILLED = {
-  default:
-    'text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40',
-  blue: 'bg-blue border-blue',
-  red: 'bg-red',
-  pink: 'bg-pink',
-  purple: 'bg-purple',
-  gradient:
-    '!bg-gradient-to-r from-blue to-pink-600 hover:from-blue/80 hover:to-pink-600/80 focus:from-blue/80 focus:to-pink-600/80 active:from-blue/70 active:to-pink-600/70 focus:border-blue-700',
-  gray: 'bg-dark-700',
-}
-
-const OUTLINED = {
-  default: 'border disabled:pointer-events-none disabled:opacity-40',
-  blue: 'border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40',
-  red: 'border-none bg-red/20 hover:bg-red/40 active:bg-red/60 text-red focus:bg-red/40',
-  pink: 'border-none bg-pink/20 hover:bg-pink/40 active:bg-pink/60 text-pink focus:bg-pink/40',
-  purple: 'border-none bg-purple/20 hover:bg-purple/40 active:bg-purple/60 text-purple focus:bg-purple/40',
-  gradient: 'border-none bg-purple/20 hover:bg-purple/40 active:bg-purple/60 text-purple focus:bg-purple/40',
-  gray: 'border-dark-700 hover:bg-dark-700/30 active:bg-dark-700/50 focus:bg-dark-700/30',
-}
-
-const EMPTY = {
-  default:
-    'bg-transparent hover:brightness-[90%] focus:brightness-[90%] active:brightness-[80%] disabled:pointer-events-none disabled:opacity-40',
-  blue: 'text-blue',
-  red: 'text-red',
-  pink: 'text-pink',
-  purple: 'text-purple',
-  gray: 'text-higher-emphesis',
-  gradient:
-    '!bg-gradient-to-r from-blue to-pink-600 hover:from-blue/80 hover:to-pink-600/80 focus:from-blue/80 focus:to-pink-600/80 active:from-blue/70 active:to-pink-600/70',
-}
-
-const VARIANT = {
-  outlined: OUTLINED,
-  filled: FILLED,
-  empty: EMPTY,
+const SIZE: Record<ButtonSize, string> = {
+  default: 'btn-default',
+  xs: 'btn-xs',
+  sm: 'btn-sm',
+  md: 'btn-md',
+  lg: 'btn-lg',
 }
 
 type Button = React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>
@@ -78,7 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       className = '',
       color = 'blue',
-      size = 'md',
+      size = 'default',
       variant = 'filled',
       startIcon = undefined,
       endIcon = undefined,
@@ -94,18 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...rest}
         ref={ref}
         disabled={disabled || loading}
-        className={classNames(
-          VARIANT[variant]['default'],
-          // @ts-ignore TYPE NEEDS FIXING
-          VARIANT[variant][color],
-          // @ts-ignore TYPE NEEDS FIXING
-          SIZE[size],
-          // @ts-ignore TYPE NEEDS FIXING
-          variant !== 'empty' ? DIMENSIONS[size] : '',
-          fullWidth ? 'w-full' : '',
-          'font-bold flex items-center justify-center gap-2',
-          className,
-        )}
+        className={classNames('btn', fullWidth ? 'w-full' : '', VARIANT[variant], COLOR[color], SIZE[size], className)}
       >
         {loading ? (
           <Loader stroke="currentColor" />

@@ -6,6 +6,8 @@
 @tailwind utilities;
 
 @import "./variables.css";
+@import "./dialog/Dialog.css";
+@import "./button/Button.css";
 
 *,
 *:before,
