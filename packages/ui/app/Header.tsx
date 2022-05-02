@@ -7,7 +7,7 @@ export type HeaderProps = {
 
 function Header({ children, className, brand, nav, ...props }: HeaderProps): JSX.Element {
   return (
-    <header className={classNames('flex justify-between h-16', className)} {...props}>
+    <header className={classNames('flex justify-between', className)} {...props}>
       {brand}
       {nav}
       {children}
