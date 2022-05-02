@@ -14,6 +14,7 @@ const TITLE = {
   team: 'Sushi Team',
   house: 'Sushi House',
   grants: 'Sushi Grants',
+  sips: 'Sushi Improvement Proposals',
 }
 
 const getTitle = (router: NextRouter) => {
@@ -30,7 +31,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         brand={<div className="font-bold">{getTitle(router)}</div>}
         nav={
           <div className="flex space-x-4 ">
-            {['/', '/safes', '/team', '/grants'].map((href, i) => {
+            {['/', '/safes', '/team', '/grants', '/sips'].map((href, i) => {
               const children =
                 href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
               return (
