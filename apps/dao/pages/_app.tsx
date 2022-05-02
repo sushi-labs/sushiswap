@@ -19,7 +19,7 @@ const TITLE = {
 }
 
 const getTitle = (router: NextRouter) => {
-  return TITLE[router.asPath !== '/' ? router.asPath.slice(1, router.asPath.length) : '/']
+  return TITLE[router.asPath !== '/' ? router.asPath.split('/')[1] : '/']
 }
 
 const components = {
@@ -43,6 +43,7 @@ declare global {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+  console.log({ router })
   useEffect(() => {
     const handler = (page) =>
       window.dataLayer.push({
@@ -72,7 +73,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                       <a
                         className={classNames(
                           'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
-                          router.asPath === href && '!text-white !underline',
+                          href === '/' || (href !== '/' && router.asPath.includes(href) && '!text-white !underline'),
                         )}
                       >
                         {children}
