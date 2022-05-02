@@ -5,34 +5,55 @@ import { App, classNames, Container } from '@sushiswap/ui'
 
 import '@sushiswap/ui/index.css'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
+import { Layout } from 'components'
+
+const TITLE = {
+  '/': 'Sushi DAO',
+  safes: 'Sushi Safes',
+  team: 'Sushi Team',
+  house: 'Sushi House',
+}
+
+const getTitle = (router: NextRouter) => {
+  return TITLE[router.asPath !== '/' ? router.asPath.slice(1, router.asPath.length) : '/']
+}
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+  console.log({ router })
   return (
     <App.Shell>
-      <App.Nav>
-        <Container maxWidth="7xl" className="flex justify-between pt-8 mx-auto">
-          <div className="font-bold">Sushi DAO</div>
+      <App.Header
+        className="py-8 mx-auto max-w-7xl"
+        title={<div className="font-bold">{getTitle(router)}</div>}
+        nav={
           <div className="flex space-x-4 ">
-            {['/safes', '/team'].map((href, i) => (
-              <Link key={i} href={href}>
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a
-                  className={classNames(
-                    'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
-                    router.asPath === href && '!text-white !underline',
-                  )}
-                >
-                  {href.slice(1, href.length).charAt(0).toUpperCase()}
-                  {href.slice(2)}
-                </a>
-              </Link>
-            ))}
+            {['/', '/safes', '/team'].map((href, i) => {
+              const children =
+                href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
+              return (
+                <Link key={i} href={href}>
+                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                  <a
+                    className={classNames(
+                      'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
+                      router.asPath === href && '!text-white !underline',
+                    )}
+                  >
+                    {children}
+                  </a>
+                </Link>
+              )
+            })}
           </div>
-        </Container>
-      </App.Nav>
-      <Component {...pageProps} />
+        }
+      />
+      <App.Main className="mx-auto max-w-7xl">
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </App.Main>
       <App.Footer />
     </App.Shell>
   )

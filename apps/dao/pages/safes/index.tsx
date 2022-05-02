@@ -160,7 +160,7 @@ const SafeTable = () => {
   )
 
   return (
-    <Layout className="space-y-4">
+    <>
       <div className="flex space-x-4">
         <Typography variant="h3">SushiSAFES: {balance}, </Typography>
         <Typography variant="h3">
@@ -223,7 +223,7 @@ const SafeTable = () => {
           </Table.tbody>
         </Table.table>
       </Table.container>
-    </Layout>
+    </>
   )
 }
 
