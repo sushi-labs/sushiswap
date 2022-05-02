@@ -26,7 +26,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     <App.Shell>
       <App.Header
         className="py-8 mx-auto max-w-7xl"
-        title={<div className="font-bold">{getTitle(router)}</div>}
+        brand={<div className="font-bold">{getTitle(router)}</div>}
         nav={
           <div className="flex space-x-4 ">
             {['/', '/safes', '/team'].map((href, i) => {
