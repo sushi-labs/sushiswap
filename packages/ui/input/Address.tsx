@@ -3,32 +3,39 @@ import classNames from 'classnames'
 
 export type AddressProps = {
   value: string
-  onUserInput: (input: string) => void
-} & Omit<HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>
+} & HTMLProps<HTMLInputElement>
 
-export const Address = memo(({ value, onUserInput, placeholder, className, ...rest }: AddressProps) => {
-  return (
-    <>
-      <input
-        value={value}
-        onChange={(event) => {
-          onUserInput(event.target.value.replace(/\s+/g, ''))
-        }}
-        inputMode="text"
-        title="Address or ENS name"
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck="false"
-        placeholder="Address or ENS name"
-        pattern="^(0x[a-fA-F0-9]{40})$"
-        // text-specific options
-        type="text"
-        className={classNames('whitespace-nowrap overflow-ellipsis', className)}
-        {...rest}
-      />
-    </>
-  )
-})
+const matchSpaces = /\s+/g
+
+export const Address = memo(
+  ({
+    value,
+    onChange,
+    placeholder = 'Address or ENS name',
+    title = 'Address or ENS name',
+    className,
+    ...rest
+  }: AddressProps) => {
+    return (
+      <>
+        <input
+          title={title}
+          placeholder={placeholder}
+          value={value}
+          type="text"
+          className={classNames('whitespace-nowrap overflow-ellipsis', className)}
+          onChange={(event) => onChange && onChange(event.target.value.replace(matchSpaces, ''))}
+          inputMode="text"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          pattern="^(0x[a-fA-F0-9]{40})$"
+          {...rest}
+        />
+      </>
+    )
+  },
+)
 
 export default Address

@@ -1,3 +1,8 @@
-import { default as Address } from './Address'
+import { FC } from 'react'
+import Address, { AddressProps } from './Address'
 
-export { Address }
+export type InputProps = {
+  Address: FC<AddressProps>
+}
+
+export const Input: InputProps = { Address }
