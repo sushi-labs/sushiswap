@@ -1,16 +1,14 @@
 import classNames from 'classnames'
 
 export type HeaderProps = {
-  children?: React.ReactNode
-  className?: string
-  title?: JSX.Element
+  brand?: JSX.Element
   nav?: JSX.Element
 } & React.HTMLProps<HTMLElement>
 
-function Header({ children, className, title, nav }: HeaderProps): JSX.Element {
+function Header({ children, className, brand, nav, ...props }: HeaderProps): JSX.Element {
   return (
-    <header className={classNames('flex justify-between h-16', className)}>
-      {title}
+    <header className={classNames('flex justify-between h-16', className)} {...props}>
+      {brand}
       {nav}
       {children}
     </header>
