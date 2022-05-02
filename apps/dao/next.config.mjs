@@ -5,6 +5,12 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
 const withMDX = mdx({
   extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+    // If you use `MDXProvider`, uncomment the following line.
+    providerImportSource: '@mdx-js/react',
+  },
 })
 
 export default withTranspileModules(
@@ -16,6 +22,6 @@ export default withTranspileModules(
     typescript: {
       ignoreBuildErrors: true,
     },
-    pageExtensions: ['ts', 'tsx', 'mdx'],
+    pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   }),
 )

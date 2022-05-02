@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 
-export type HeaderProps = {
+export interface HeaderProps extends React.HTMLProps<HTMLElement> {
   brand?: JSX.Element
   nav?: JSX.Element
-} & React.HTMLProps<HTMLElement>
+}
 
-function Header({ children, className, brand, nav, ...props }: HeaderProps): JSX.Element {
+export function Header({ children, className, brand, nav, ...props }: HeaderProps): JSX.Element {
   return (
     <header className={classNames('flex justify-between', className)} {...props}>
       {brand}

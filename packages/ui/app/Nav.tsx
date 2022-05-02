@@ -1,7 +1,4 @@
-export type NavProps = {
-  children?: React.ReactNode
-  className?: string
-}
+export interface NavProps extends React.HTMLProps<HTMLElement> {}
 
 export function Nav({ children, className }: NavProps): JSX.Element {
   return <nav className={className}>{children}</nav>

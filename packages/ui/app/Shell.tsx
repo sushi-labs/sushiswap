@@ -1,9 +1,8 @@
-export type ShellProps = {
+export interface ShellProps {
   children?: React.ReactNode
-  className?: string
 }
 
-function Shell({ children }: ShellProps): JSX.Element {
+export function Shell({ children }: ShellProps): JSX.Element {
   return <>{children}</>
 }
 
