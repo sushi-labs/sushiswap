@@ -83,7 +83,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         Withdraw
       </Button>
       <Dialog open={isOpen} onClose={closeModal}>
-        <Dialog.Content className="space-y-4 max-w-sm">
+        <Dialog.Content className="space-y-4 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={closeModal} />
           <div className="flex justify-between gap-1 pt-3">
             <div className="flex flex-col">
