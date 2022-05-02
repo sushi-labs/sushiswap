@@ -21,7 +21,7 @@
     "uglify-es": "^3.3.9"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.7",
+    "@graphprotocol/client-cli": "0.0.2",
     "@graphql-mesh/transform-prefix": "0.11.39",
     "@graphql-mesh/transform-rename": "0.12.40",
     "@graphql-mesh/transform-type-merging": "0.3.49",
