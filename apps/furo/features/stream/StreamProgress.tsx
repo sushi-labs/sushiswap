@@ -19,7 +19,7 @@ const StreamProgress: FC<Props> = ({ stream }) => {
           <Typography variant="sm" weight={700}>
             {stream?.withdrawnAmount.toExact()} {stream?.token.symbol}
           </Typography>
-          <Typography variant="xs" weight={500} className="text-secondary">
+          <Typography variant="xs" weight={500} className="text-pink">
             Already withdrawn
           </Typography>
         </div>
@@ -27,7 +27,7 @@ const StreamProgress: FC<Props> = ({ stream }) => {
           <Typography variant="sm" weight={700}>
             {stream && balance ? stream.amount.subtract(balance).toExact() : ''} {stream?.token.symbol}
           </Typography>
-          <Typography variant="xs" weight={500} className="text-secondary">
+          <Typography variant="xs" weight={500} className="text-blue">
             Not yet streamed
           </Typography>
         </div>

@@ -13,6 +13,7 @@ import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import CancelStreamModal from 'features/stream/CancelStreamModal'
 
 interface Props {
   stream?: StreamRepresentation
@@ -99,8 +100,8 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
           <div className="flex gap-2">
             <TransferStreamModal stream={stream} />
             <UpdateStreamModal stream={stream} />
+            <CancelStreamModal stream={stream} />
           </div>
-          {/*<CancelStreamModal stream={stream} />*/}
         </div>
       </div>
     </Layout>

@@ -3,7 +3,7 @@ import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
 import { FC, useCallback, useRef, useState } from 'react'
 import { useAccount, useContractWrite, useEnsAddress, useNetwork, useWaitForTransaction } from 'wagmi'
 import Button from '../../../../packages/ui/button/Button'
-import { PaperAirplaneIcon } from '@heroicons/react/outline'
+import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import StreamProgress from 'features/stream/StreamProgress'
 import { Dialog } from '@sushiswap/ui/dialog'
@@ -55,16 +55,6 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
     setRecipient(undefined)
   }, [account, recipient, resolvedAddress, stream, writeAsync])
 
-  const buttonText = isWritePending ? (
-    <Dots>Confirm Transfer</Dots>
-  ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
-    'Invalid recipient'
-  ) : !resolvedAddress ? (
-    'Enter recipient'
-  ) : (
-    'Transfer'
-  )
-
   return (
     <>
       <Button
@@ -78,22 +68,26 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
         Transfer
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !max-w-sm">
+        <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
+          <div className="flex justify-center !-mb-10 !mt-3 relative">
+            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
+              <ArrowSmDownIcon width={24} height={24} className="text-blue" />
+            </div>
+          </div>
           <div
-            className="border border-blue/30 hover:border-blue/60 p-5 rounded-lg flex flex-col gap-3"
+            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-3"
             onClick={() => inputRef.current?.focus()}
           >
-            <div className="flex justify-between gap-3">
-              <Typography variant="sm" weight={400}>
-                Amount to transfer:
-              </Typography>
-              <Typography weight={700} className="text-high-emphesis">
+            <Typography variant="xs" weight={400} className="text-high-emphesis">
+              This will transfer a stream consisting of{' '}
+              <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
-              </Typography>
-            </div>
-            <div className="flex">
+              </span>{' '}
+              to the entered recipient
+            </Typography>
+            <div className="flex mb-2">
               <input
                 value={recipient}
                 ref={inputRef}
@@ -101,22 +95,32 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
                 type="text"
                 autoComplete="off"
                 autoCorrect="off"
-                placeholder="Address or ENS name"
-                className="placeholder:text-secondary bg-transparent p-0 text-sm !ring-0 !outline-none !border-none font-medium w-full"
+                placeholder="Recipient address or ENS name"
+                className="placeholder:text-sm pb-1 !border-b border-t-0 border-l-0 border-r-0 border-dark-700 bg-transparent placeholder:text-secondary p-0 !ring-0 !outline-none font-medium w-full"
               />
             </div>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={
+                isWritePending ||
+                !resolvedAddress ||
+                resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+              }
+              onClick={transferStream}
+            >
+              {isWritePending ? (
+                <Dots>Confirm Transfer</Dots>
+              ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+                'Invalid recipient'
+              ) : !resolvedAddress ? (
+                'Enter recipient'
+              ) : (
+                'Transfer'
+              )}
+            </Button>
           </div>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={
-              isWritePending || !resolvedAddress || resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
-            }
-            onClick={transferStream}
-          >
-            {buttonText}
-          </Button>
         </Dialog.Content>
       </Dialog>
     </>
