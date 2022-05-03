@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev --port 3008",
     "dev:gql": "graphclient serve-dev",
-    "generate": "graphclient build --tsOnly && typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
+    "generate": "DEBUG=1 graphclient build && typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
     "lint": "next lint",
     "start": "next start",
     "validate": "graphclient validate"
@@ -66,10 +66,10 @@
     "wagmi": "^0.3.1"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.2",
-    "@graphql-mesh/transform-prefix": "0.11.39",
-    "@graphql-mesh/transform-rename": "0.12.40",
-    "@graphql-mesh/transform-type-merging": "0.3.49",
+    "@graphprotocol/client-cli": "0.0.7",
+    "@graphql-mesh/transform-prefix": "0.11.40",
+    "@graphql-mesh/transform-rename": "0.12.41",
+    "@graphql-mesh/transform-type-merging": "0.3.50",
     "@sushiswap/config": "workspace:*",
     "@types/node": "17.0.30",
     "@types/react": "^18.0.8",
