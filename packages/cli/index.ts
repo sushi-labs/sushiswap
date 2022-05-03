@@ -14,35 +14,43 @@ program
   .command('bar')
   .description('print bar data')
   .action(async () => {
-    const sdk = await getBuiltGraphSDK()
+    const sdk = getBuiltGraphSDK()
 
     const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
     const threeMonthAgo = getUnixTime(subMonths(new Date(), 3))
     const sixMonthAgo = getUnixTime(subMonths(new Date(), 6))
     const oneYearAgo = getUnixTime(subYears(new Date(), 1))
 
-    const {
-      blocks: [oneYearBlock],
-    } = await sdk.Blocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } })
-    const {
-      blocks: [oneMonthBlock],
-    } = await sdk.Blocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
-    const {
-      blocks: [threeMonthBlock],
-    } = await sdk.Blocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } })
-    const {
-      blocks: [sixMonthBlock],
-    } = await sdk.Blocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } })
+    const [
+      {
+        blocks: [oneYearBlock],
+      },
+      {
+        blocks: [oneMonthBlock],
+      },
+      {
+        blocks: [threeMonthBlock],
+      },
+      {
+        blocks: [sixMonthBlock],
+      },
+    ] = await Promise.all([
+      sdk.Blocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } }),
+      sdk.Blocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } }),
+      sdk.Blocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } }),
+      sdk.Blocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
+    ])
 
     const { bar } = await sdk.Bar()
 
-    const { bar: oneYearBar } = await sdk.Bar({ block: { number: Number(oneYearBlock.number) } })
-
-    const { bar: oneMonthBar } = await sdk.Bar({ block: { number: Number(oneMonthBlock.number) } })
-
-    const { bar: threeMonthBar } = await sdk.Bar({ block: { number: Number(threeMonthBlock.number) } })
-
-    const { bar: sixMonthBar } = await sdk.Bar({ block: { number: Number(sixMonthBlock.number) } })
+    const [{ bar: oneYearBar }, { bar: oneMonthBar }, { bar: threeMonthBar }, { bar: sixMonthBar }] = await Promise.all(
+      [
+        sdk.Bar({ block: { number: Number(oneYearBlock.number) } }),
+        sdk.Bar({ block: { number: Number(oneMonthBlock.number) } }),
+        sdk.Bar({ block: { number: Number(threeMonthBlock.number) } }),
+        sdk.Bar({ block: { number: Number(sixMonthBlock.number) } }),
+      ],
+    )
 
     // Lukas Witpeerd, [02/05/2022 19:23] ((current ratio / ratio 365 days ago) - 1) * 100
     log('APR 1y:', numeral(bar?.ratio / oneYearBar?.ratio - 1).format('0.00%'))
