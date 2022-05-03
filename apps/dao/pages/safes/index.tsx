@@ -103,16 +103,19 @@ const SafeTable = () => {
                 .map((owner) => [owner.value, USERS.get(owner.value)])
                 .sort()
                 .map(([address, name], i) => (
-                  <ExternalLink
-                    href={`${explorers?.[0]?.url}/address/${props.value?.value}`}
-                    key={i}
-                    className={classNames(
-                      !USERS.has(address) &&
-                        'text-red-400 hover:text-red hover:underline focus:text-red active:text-red',
-                    )}
-                  >
-                    {name ?? '???'}
-                  </ExternalLink>
+                  <>
+                    <ExternalLink
+                      href={`${explorers?.[0]?.url}/address/${address}`}
+                      key={i}
+                      className={classNames(
+                        !USERS.has(address) &&
+                          'text-red-400 hover:text-red hover:underline focus:text-red active:text-red',
+                      )}
+                    >
+                      {name ?? '???'}
+                    </ExternalLink>
+                    {i !== props.cell.value.length - 1 && <>, </>}
+                  </>
                 ))}
             </div>
           )
