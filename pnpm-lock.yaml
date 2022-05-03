@@ -324,6 +324,7 @@ importers:
       react-redux: ^8.0.1
       react-spring: ^9.4.4
       react-table: ^7.7.0
+      react-toastify: ^8.2.0
       redux-devtools-extension: ^2.13.9
       redux-persist: ^6.0.0
       tailwindcss: ^3.0.24
@@ -380,6 +381,7 @@ importers:
       react-redux: 8.0.1_dd5346d96c16c0aadfa6cad1ff4d1193
       react-spring: 9.4.4_react-dom@18.1.0+react@18.1.0
       react-table: 7.7.0_react@18.1.0
+      react-toastify: 8.2.0_react-dom@18.1.0+react@18.1.0
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
       wagmi: 0.3.1_57e2f9bb67ec482a9f8645efcfc6b117
@@ -12320,6 +12322,17 @@ packages:
       react: ^17.0.2
       react-dom: ^17.0.2
     dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
+  /react-toastify/8.2.0_react-dom@18.1.0+react@18.1.0:
+    resolution: {integrity: sha512-Pg2Ju7NngAamarFvLwqrFomJ57u/Ay6i6zfLurt/qPynWkAkOthu6vxfqYpJCyNhHRhR4hu7+bySSeWWJu6PAg==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.1.1
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
     dev: false

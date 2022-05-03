@@ -1,10 +1,9 @@
 import { Stream } from 'features/context/Stream'
-import { useToken } from 'hooks/Tokens'
-import { STREAM_ADDRESS, useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { JSBI } from '@sushiswap/math'
-import { ChangeEvent, ChangeEventHandler, FC, useCallback, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dialog } from '@sushiswap/ui/dialog'
 import { Typography } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
@@ -15,6 +14,7 @@ import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from 
 import Dots from '@sushiswap/ui/dots/Dots'
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast } from 'components/Toast'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -28,31 +28,35 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
-  const {
-    data,
-    write,
-    isLoading: isWritePending,
-  } = useContractWrite(
+  const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
       addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
     'withdrawFromStream',
-  )
-
-  const { isLoading: isTxPending } = useWaitForTransaction({
-    hash: data?.hash,
-    onSuccess() {
-      setAmount(undefined)
+    {
+      onSuccess() {
+        setOpen(false)
+      },
     },
-  })
+  )
 
   const withdraw = useCallback(async () => {
     if (!stream || !amount) return
-    write({
+    const data = await writeAsync({
       args: [BigNumber.from(stream.id), BigNumber.from(amount.quotient.toString()), stream.recipient.id, false, '0x'],
     })
-  }, [amount, stream, write])
+
+    createToast({
+      title: 'Withdraw from stream',
+      description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
+        amount.currency.symbol
+      } from your stream`,
+      promise: data.wait(),
+    })
+
+    setAmount(undefined)
+  }, [amount, stream, writeAsync])
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,12 +75,10 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     'Enter an amount'
   ) : !stream?.token ? (
     'Invalid stream token'
-  ) : amount.greaterThan(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))) ? (
+  ) : balance && amount.greaterThan(balance) ? (
     'Not enough balance'
   ) : isWritePending ? (
     <Dots>Confirm Withdraw</Dots>
-  ) : isTxPending ? (
-    <Dots>Withdrawing</Dots>
   ) : (
     'Withdraw'
   )
@@ -87,7 +89,9 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         variant="filled"
         color="gradient"
         disabled={stream?.recipient.id.toLowerCase() !== account?.address?.toLowerCase()}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true)
+        }}
       >
         Withdraw
       </Button>
@@ -133,14 +137,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             variant="filled"
             color="gradient"
             fullWidth
-            disabled={
-              isWritePending ||
-              isTxPending ||
-              !amount ||
-              !balance ||
-              !amount.greaterThan(ZERO) ||
-              amount.greaterThan(balance)
-            }
+            disabled={isWritePending || !amount || !balance || !amount.greaterThan(ZERO) || amount.greaterThan(balance)}
             onClick={withdraw}
           >
             {buttonText}

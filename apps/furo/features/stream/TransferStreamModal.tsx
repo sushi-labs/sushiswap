@@ -11,6 +11,7 @@ import { Typography } from '@sushiswap/ui/typography/Typography'
 import Dots from '@sushiswap/ui/dots/Dots'
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast } from 'components/Toast'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -28,33 +29,33 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
     chainId: ChainId.ETHEREUM,
   })
 
-  const {
-    data,
-    write,
-    isLoading: isWritePending,
-  } = useContractWrite(
+  const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
       addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
     'transferFrom',
+    {
+      onSuccess() {
+        setOpen(false)
+      },
+    },
   )
 
-  const { isLoading: isTxPending } = useWaitForTransaction({
-    hash: data?.hash,
-    onSuccess() {
-      setRecipient(undefined)
-    },
-  })
-
-  const transferStream = useCallback(() => {
+  const transferStream = useCallback(async () => {
     if (!stream || !account || !recipient || !resolvedAddress) return
-    return write({ args: [account?.address, resolvedAddress, stream?.id] })
-  }, [account, recipient, resolvedAddress, stream, write])
+    const data = await writeAsync({ args: [account?.address, resolvedAddress, stream?.id] })
 
-  const buttonText = isTxPending ? (
-    <Dots>Transferring</Dots>
-  ) : isWritePending ? (
+    createToast({
+      title: 'Transfer stream',
+      description: `You have successfully transferred your stream to ${recipient}`,
+      promise: data.wait(),
+    })
+
+    setRecipient(undefined)
+  }, [account, recipient, resolvedAddress, stream, writeAsync])
+
+  const buttonText = isWritePending ? (
     <Dots>Confirm Transfer</Dots>
   ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
     'Invalid recipient'
@@ -110,10 +111,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
             color="gradient"
             fullWidth
             disabled={
-              isTxPending ||
-              isWritePending ||
-              !resolvedAddress ||
-              resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+              isWritePending || !resolvedAddress || resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
             }
             onClick={transferStream}
           >

@@ -7,6 +7,7 @@ import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from 
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import Dots from '@sushiswap/ui/dots/Dots'
+import { createToast } from 'components/Toast'
 
 interface CancelStreamModalProps {
   stream?: Stream
@@ -19,32 +20,35 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
   const { data: account } = useAccount()
   const balance = useStreamBalance(stream?.id, stream?.token)
 
-  const {
-    data,
-    write,
-    isLoading: isWritePending,
-  } = useContractWrite(
+  const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
       addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
     'cancelStream',
+    {
+      onSuccess() {
+        setOpen(false)
+      },
+    },
   )
 
-  const { isLoading: isTxPending } = useWaitForTransaction({
-    hash: data?.hash,
-  })
-
-  const cancelStream = useCallback(() => {
+  const cancelStream = useCallback(async () => {
     if (!stream || !account) return
-    return write({ args: [stream.id, toBentoBox] })
-  }, [account, stream, toBentoBox, write])
+    const data = await writeAsync({ args: [stream.id, toBentoBox] })
+
+    createToast({
+      title: 'Cancel stream',
+      description: `You have successfully cancelled your stream`,
+      promise: data.wait(),
+    })
+  }, [account, stream, toBentoBox, writeAsync])
 
   const handleBentoBoxCheck = () => {
     setToBentoBox(!toBentoBox)
   }
 
-  const buttonText = isTxPending ? <Dots>Cancelling</Dots> : isWritePending ? <Dots>Confirm Cancel</Dots> : 'Cancel'
+  const buttonText = isWritePending ? <Dots>Confirm Cancel</Dots> : 'Cancel'
 
   return (
     <>
