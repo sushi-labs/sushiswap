@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React, { FC, HTMLProps, useCallback } from 'react'
 
 const COLOR = {
-  primary: 'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
+  primary: 'hover:text-white hover:underline focus:text-white active:text-white',
   blue: 'text-blue',
 }
 
