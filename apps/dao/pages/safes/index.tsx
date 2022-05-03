@@ -60,33 +60,33 @@ const SafeTable = () => {
           const threshold = Number(props.value)
           const ownerCount = Number(props.row.cells[4].value.length)
           return (
-            <>
+            <div className="flex space-x-1">
               {
                 <p
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && threshold === EXPECTED_OPS_THRESHOLD) ||
                       (props.row.cells[1].value === 'Treasury' && threshold === EXPECTED_TREASURY_THRESHOLD)
-                      ? 'text-green-300'
-                      : 'text-red-300',
+                      ? 'text-green-400'
+                      : 'text-red-400',
                   )}
                 >
                   {threshold}
                 </p>
-              }
-              /
+              }{' '}
+              <span className="text-gray-400">of</span>
               {
                 <p
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && ownerCount === EXPECTED_OPS_OWNER_COUNT) ||
                       (props.row.cells[1].value === 'Treasury' && ownerCount === EXPECTED_TREASURY_OWNER_COUNT)
-                      ? 'text-green-300'
-                      : 'text-red-300',
+                      ? 'text-green-400'
+                      : 'text-red-400',
                   )}
                 >
                   {ownerCount}
                 </p>
               }
-            </>
+            </div>
           )
         },
         align: 'right',
@@ -96,15 +96,23 @@ const SafeTable = () => {
         accessor: 'owners',
         minWidth: 250,
         Cell: (props) => {
+          const { explorers } = chain?.[props.row.original.chainId]
           return (
             <div className="flex space-x-2">
               {props.cell.value
                 .map((owner) => [owner.value, USERS.get(owner.value)])
                 .sort()
                 .map(([address, name], i) => (
-                  <div key={i} className={classNames(USERS.has(address) ? 'text-green-300' : 'text-red-300')}>
+                  <ExternalLink
+                    href={`${explorers?.[0]?.url}/address/${props.value?.value}`}
+                    key={i}
+                    className={classNames(
+                      !USERS.has(address) &&
+                        'text-red-400 hover:text-red hover:underline focus:text-red active:text-red',
+                    )}
+                  >
                     {name ?? '???'}
-                  </div>
+                  </ExternalLink>
                 ))}
             </div>
           )
