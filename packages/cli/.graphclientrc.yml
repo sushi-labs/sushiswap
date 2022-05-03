@@ -3,5 +3,11 @@ sources:
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bar
+  - name: blocks
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks
+
 documents:
   - './bar.graphql'
+  - './blocks.graphql'
