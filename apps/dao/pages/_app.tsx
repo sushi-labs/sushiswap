@@ -37,7 +37,6 @@ declare global {
 
 const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => {
   const router = useRouter()
-  console.log({ router })
   useEffect(() => {
     const handler = (page) =>
       window.dataLayer.push({
