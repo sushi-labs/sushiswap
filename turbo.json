@@ -4,6 +4,9 @@
       "cache": false
     },
     "generate": {
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "^build",
         ".graphclient/**", 
