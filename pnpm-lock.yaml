@@ -44,11 +44,11 @@ importers:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
       '@sushiswap/config': workspace:*
-      '@sushiswap/default-token-list': ^27.4.0
+      '@sushiswap/default-token-list': ^27.5.0
       '@vercel/node': ^1.14.1
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 27.4.0
+      '@sushiswap/default-token-list': 27.5.0
       '@vercel/node': 1.15.0
     devDependencies:
       '@sushiswap/config': link:../../packages/config
@@ -4978,8 +4978,8 @@ packages:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: false
 
-  /@sushiswap/default-token-list/27.4.0:
-    resolution: {integrity: sha512-tMSVDVl3UI8C1bDqo/sd+ONhTf0myXz/iPDcXfoGlJyfDySZCKOnFSD+YuPlTxQyl629kdvWZz6cyk6zNdFRBA==}
+  /@sushiswap/default-token-list/27.5.0:
+    resolution: {integrity: sha512-HjT6GvdA4TjHfYSLyi1Gg9xkNbonBJGmzD7tzIJ6t2xMTssmTG0SWuZPjXrGCDqZJRoLBChjHqAxBjpU7jU3bw==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
