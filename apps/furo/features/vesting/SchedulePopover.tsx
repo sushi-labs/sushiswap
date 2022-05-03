@@ -8,13 +8,16 @@ import { CalendarIcon, Typography } from '@sushiswap/ui'
 
 interface Props {
   vesting?: Vesting
-  scheduleRepresentation: ScheduleRepresentation
+  scheduleRepresentation?: ScheduleRepresentation
 }
 
 const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
   const schedule = useMemo(
-    () => (vesting ? new Schedule({ token: vesting.token, schedule: scheduleRepresentation }) : undefined),
+    () =>
+      vesting && scheduleRepresentation
+        ? new Schedule({ token: vesting.token, schedule: scheduleRepresentation })
+        : undefined,
     [vesting, scheduleRepresentation],
   )
 

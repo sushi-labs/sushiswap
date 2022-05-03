@@ -12,13 +12,27 @@ import { FC, useMemo, useState } from 'react'
 import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 interface Props {
   stream?: StreamRepresentation
-  transactions: TransactionRepresentation[]
+  transactions?: TransactionRepresentation[]
 }
 
-const Streams: FC<Props> = ({ stream: streamRepresentation, transactions }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  return {
+    props: {
+      stream: (await getStream(query.chainId, query.id)) as StreamRepresentation,
+      transactions: (await getStreamTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+    },
+  }
+}
+
+const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  stream: streamRepresentation,
+  transactions,
+}) => {
   const [withdrawHovered, setWithdrawHovered] = useState(false)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
@@ -94,12 +108,3 @@ const Streams: FC<Props> = ({ stream: streamRepresentation, transactions }) => {
 }
 
 export default Streams
-
-export async function getServerSideProps({ query }: { query: { chainId: string; id: string } }) {
-  return {
-    props: {
-      stream: await getStream(query.chainId, query.id),
-      transactions: await getStreamTransactions(query.chainId, query.id),
-    },
-  }
-}

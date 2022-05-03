@@ -5,8 +5,8 @@ import { FC, useEffect, useState } from 'react'
 import { ScheduleRepresentation, Vesting } from '../context'
 
 interface Props {
-  vesting: Vesting
-  schedule: ScheduleRepresentation
+  vesting?: Vesting
+  schedule?: ScheduleRepresentation
 }
 
 interface ChartDataTuple {
@@ -20,7 +20,7 @@ export const VestingChart: FC<Props> = (props) => {
   let { vesting, schedule } = props
 
   useEffect(() => {
-    const data = schedule.periods.map((period) => {
+    const data = schedule?.periods.map((period) => {
       const date = new Date(parseInt(period.time) * 1000)
       return {
         x: date.toISOString().slice(0, 10),
@@ -40,7 +40,7 @@ export const VestingChart: FC<Props> = (props) => {
       height={350}
       width={700}
       xScale={{ type: 'band' }}
-      yScale={{ type: 'linear', domain: [0, Number(vesting.amount.numerator.toString())] }}
+      yScale={{ type: 'linear', domain: [0, Number(vesting?.amount.numerator.toString())] }}
     >
       <AnimatedAxis orientation="left" numTicks={4} />
       <AnimatedAxis orientation="bottom" />

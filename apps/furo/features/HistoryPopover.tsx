@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi'
 import { classNames } from '@sushiswap/ui'
 
 interface Props {
-  transactionRepresentations: TransactionRepresentation[]
+  transactionRepresentations?: TransactionRepresentation[]
 }
 
 const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
@@ -21,7 +21,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   let transactions = useMemo(
     () =>
       transactionRepresentations
-        .filter((transaction) => transaction.to.id === account?.address?.toLocaleLowerCase())
+        ?.filter((transaction) => transaction.to.id === account?.address?.toLocaleLowerCase())
         .map((transaction) => new Transaction(transaction)),
     [transactionRepresentations, account],
   )
@@ -57,7 +57,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
               <XIcon width={24} height={24} className="text-secondary" />
             </div>
             <div className="h-[200px] max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-dark-800 border-t border-dark-800">
-              {transactions.length ? (
+              {transactions?.length ? (
                 Object.values(transactions).map((transaction) => (
                   <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
                 ))
