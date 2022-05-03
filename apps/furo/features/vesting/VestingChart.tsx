@@ -3,12 +3,19 @@ import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, XYChart } from '@visx/xychart'
 import { FC, useEffect, useState } from 'react'
 import { ScheduleRepresentation, Vesting } from '../context'
+
 interface Props {
   vesting: Vesting
   schedule: ScheduleRepresentation
 }
+
+interface ChartDataTuple {
+  x: string
+  y: string
+}
+
 export const VestingChart: FC<Props> = (props) => {
-  const [chartData, setChartData] = useState<{ x; y }[]>()
+  const [chartData, setChartData] = useState<ChartDataTuple[]>()
 
   let { vesting, schedule } = props
 
@@ -24,8 +31,8 @@ export const VestingChart: FC<Props> = (props) => {
   }, [schedule])
 
   const accessors = {
-    xAccessor: (d) => d.x,
-    yAccessor: (d) => d.y,
+    xAccessor: (d: ChartDataTuple) => d.x,
+    yAccessor: (d: ChartDataTuple) => d.y,
   }
 
   return (
@@ -44,7 +51,7 @@ export const VestingChart: FC<Props> = (props) => {
         snapTooltipToDatumX
         snapTooltipToDatumY
         showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => (
+        renderTooltip={({ tooltipData, colorScale }: { tooltipData: any; colorScale: any }) => (
           <div>
             <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>{tooltipData.nearestDatum.key}</div>
             {accessors.xAccessor(tooltipData.nearestDatum.datum)}

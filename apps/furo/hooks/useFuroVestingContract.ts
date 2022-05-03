@@ -13,9 +13,8 @@ export const VESTING_ADDRESS: AddressMap = {
 export function useFuroVestingContract(): FuroVesting | null {
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
-  const chainId = activeChain?.id
   return useContract<FuroVesting>({
-    addressOrName: VESTING_ADDRESS[chainId] ?? AddressZero,
+    addressOrName: activeChain?.id ? VESTING_ADDRESS[activeChain?.id] : AddressZero,
     contractInterface: FUROVESTING_ABI,
     signerOrProvider: signer,
   })

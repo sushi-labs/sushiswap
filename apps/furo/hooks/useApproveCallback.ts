@@ -3,7 +3,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber, Contract } from 'ethers'
 import { MAX_UINT256 } from '@sushiswap/math'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContract, useSigner, useWaitForTransaction } from 'wagmi'
+import { erc20ABI, useAccount, useContract, useSigner } from 'wagmi'
 import { useTokenAllowance } from './useTokenAllowance'
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
@@ -24,7 +24,7 @@ export function useApproveCallback(
   spender?: string,
 ): [ApprovalState, () => Promise<void>] {
   const { data: account } = useAccount()
-  const { data: signer, refetch: getSigner } = useSigner()
+  const { data: signer } = useSigner()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useTokenAllowance(watch, token, account?.address ?? undefined, spender)

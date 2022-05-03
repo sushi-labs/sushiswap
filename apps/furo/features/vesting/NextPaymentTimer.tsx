@@ -18,7 +18,14 @@ const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
   const [remaining, setRemaining] = useState<NextPaymentTimerState>()
 
   useInterval(() => {
-    if (vesting?.status === FuroStatus.CANCELLED || vesting?.status === FuroStatus.COMPLETED) return
+    if (
+      !vesting ||
+      vesting.status === FuroStatus.CANCELLED ||
+      vesting.status === FuroStatus.COMPLETED ||
+      !vesting.nextPaymentTimeRemaining
+    )
+      return
+
     const { days, hours, minutes, seconds } = vesting.nextPaymentTimeRemaining
 
     setRemaining({

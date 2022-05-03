@@ -11,13 +11,13 @@ import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi
 export function useBentoBoxApproveCallback(
   watch: boolean,
   masterContractAddress?: string,
-): [ApprovalState, Signature, () => Promise<void>] {
+): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { data: account } = useAccount()
-  const { activeChain} = useNetwork()
+  const { activeChain } = useNetwork()
   const chainId = activeChain?.id
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
-      addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,
+      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
       contractInterface: BENTOBOX_ABI,
     },
     'masterContractApproved',
@@ -32,7 +32,7 @@ export function useBentoBoxApproveCallback(
     refetch: getNonces,
   } = useContractRead(
     {
-      addressOrName: BENTOBOX_ADDRESS[chainId] ?? AddressZero,
+      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
       contractInterface: BENTOBOX_ABI,
     },
     'nonces',
@@ -68,7 +68,7 @@ export function useBentoBoxApproveCallback(
       domain: {
         name: 'BentoBox V1',
         chainId: chainId,
-        verifyingContract: BENTOBOX_ADDRESS[chainId],
+        verifyingContract: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
       },
       types: {
         SetMasterContractApproval: [
@@ -81,7 +81,7 @@ export function useBentoBoxApproveCallback(
       },
       value: {
         warning: 'Give FULL access to funds in (and approved to) BentoBox?',
-        user: account.address,
+        user: account?.address,
         masterContract: masterContractAddress,
         approved: true,
         nonce: nonces,
