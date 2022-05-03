@@ -71,7 +71,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
-          <div className="flex justify-center !-mb-10 !mt-3 relative">
+          <div className="flex justify-center !-mb-8 !mt-3 relative">
             <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
@@ -120,6 +120,12 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
                 'Transfer'
               )}
             </Button>
+            <div className="pt-3 rounded-xl">
+              <Typography variant="xs" className="text-yellow-700 text-center">
+                Please note that this will transfer ownership of the entire stream to the recipient. You will not be
+                able to withdraw from this stream after transferring
+              </Typography>
+            </div>
           </div>
         </Dialog.Content>
       </Dialog>
