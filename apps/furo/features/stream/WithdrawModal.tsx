@@ -24,7 +24,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
   const inputRef = useRef<HTMLInputElement>(null)
-  const token = useToken(stream?.token.address)
   const balance = useStreamBalance(stream?.id, stream?.token)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
@@ -57,13 +56,15 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
   const onInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(+e.target.value) || +e.target.value <= 0 || !token) {
+      if (isNaN(+e.target.value) || +e.target.value <= 0 || !stream?.token) {
         setAmount(undefined)
       } else {
-        setAmount(Amount.fromRawAmount(token, JSBI.BigInt(parseUnits(e.target.value, token.decimals).toString())))
+        setAmount(
+          Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(e.target.value, stream.token.decimals).toString())),
+        )
       }
     },
-    [token],
+    [stream?.token],
   )
 
   const buttonText = !amount?.greaterThan(ZERO) ? (

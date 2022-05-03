@@ -20,16 +20,18 @@ const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
   const [remaining, setRemaining] = useState<FuroTimerState>()
 
   useInterval(() => {
-    if (furo?.status === FuroStatus.CANCELLED || furo?.status === FuroStatus.COMPLETED) return
-    const { days, hours, minutes, seconds } =
-      furo?.status === FuroStatus.ACTIVE ? furo.remainingTime : furo.startingInTime
+    if (!furo || furo.status === FuroStatus.CANCELLED || furo.status === FuroStatus.COMPLETED) return
+    const times = furo?.status === FuroStatus.ACTIVE ? furo.remainingTime : furo.startingInTime
 
-    setRemaining({
-      days: String(Math.max(days, 0)).padStart(2, '0'),
-      hours: String(Math.max(hours, 0)).padStart(2, '0'),
-      minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
-      seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
-    })
+    if (times) {
+      const { days, hours, minutes, seconds } = times
+      setRemaining({
+        days: String(Math.max(days, 0)).padStart(2, '0'),
+        hours: String(Math.max(hours, 0)).padStart(2, '0'),
+        minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
+        seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
+      })
+    }
   }, 1000)
 
   // Render normally

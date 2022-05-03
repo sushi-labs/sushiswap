@@ -7,14 +7,13 @@ import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
 import { useLatestBlock } from '../lib/hooks/useLatestBlock'
 import { getProvider } from 'functions'
-import { Account, client } from '@sushiswap/wallet-connector'
+import { client } from '@sushiswap/wallet-connector'
 import { WagmiProvider } from 'wagmi'
 import store from '../store'
 
 import '@sushiswap/ui/index.css'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { HomeIcon } from '@heroicons/react/outline'
 import Header from 'features/Header'
 
 declare global {
