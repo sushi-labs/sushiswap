@@ -1,7 +1,7 @@
 import { useCurrentBlockTimestampMultichain } from '../hooks'
 import chain from '@sushiswap/chain'
 
-export default function Multicall({ chainIds, blockNumbers }) {
+export default function Multicall({ chainIds, blockNumbers }: { chainIds: number[]; blockNumbers: number[] }) {
   const chainNames = Object.entries(chain)
     .filter(([chainId1]) => chainIds.find((chainId2) => Number(chainId1) === Number(chainId2)))
     .map(([, chain]) => {

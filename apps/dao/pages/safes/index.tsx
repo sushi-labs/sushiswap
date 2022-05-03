@@ -10,11 +10,9 @@ import {
 } from 'config'
 import { formatUSD, shortenAddress } from '@sushiswap/format'
 import Link from 'next/link'
-import { JSBI } from '@sushiswap/math'
 import { ChainId } from '@sushiswap/chain'
 import { SafeInfo } from 'types'
 import { classNames, Table, Typography } from '@sushiswap/ui'
-import { Layout } from 'components'
 import { getSafes } from 'api'
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import ExternalLink from '@sushiswap/ui/link/External'
@@ -114,10 +112,8 @@ const SafeTable = () => {
           if (props.cell.value === 'NA') {
             return 'NA'
           }
-
           return formatUSD(props.cell.value)
         },
-        align: 'right',
       },
       {
         Header: 'Actions',
@@ -125,9 +121,13 @@ const SafeTable = () => {
           const chainId = props.row.original.chainId
           const address = props.row.original.address.value
           const url = '/safes/' + chainId + '/' + address
-          return <Link href={url}>View</Link>
+          return (
+            <div className="flex space-x-4">
+              <ExternalLink href={`https://etherscan.com/address/${address}`}>Etherscan</ExternalLink>
+              <Link href={url}>Tokens</Link>
+            </div>
+          )
         },
-        align: 'right',
       },
     ],
     [],
@@ -209,10 +209,10 @@ const SafeTable = () => {
             {rows.map((row, i) => {
               prepareRow(row)
               return (
-                <Table.tr {...row.getRowProps()} key={`row-${i}`}>
+                <Table.tr key={`row-${i}`} {...row.getRowProps()}>
                   {row.cells.map((cell, i) => {
                     return (
-                      <Table.td {...cell.getCellProps()} key={`cell-${i}`}>
+                      <Table.td key={`cell-${i}`} {...cell.getCellProps()}>
                         {cell.render('Cell')}
                       </Table.td>
                     )
