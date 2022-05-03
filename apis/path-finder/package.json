@@ -13,9 +13,11 @@
   "dependencies": {
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/tines": "^1.0.0-canary.76",
-    "@vercel/node": "^1.14.1"
+    "@vercel/node": "^1.14.1",
+    "lodash.flatmap": "^4.5.0"
   },
   "devDependencies": {
+    "@types/lodash.flatmap": "^4.5.7",
     "@sushiswap/config": "workspace:*"
   }
 }

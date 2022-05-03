@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import flatMap from 'lodash/flatMap'
+import flatMap from 'lodash.flatmap'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[] } = {}
 

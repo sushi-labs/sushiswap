@@ -23,13 +23,17 @@ importers:
       '@sushiswap/config': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/tines': ^1.0.0-canary.76
+      '@types/lodash.flatmap': ^4.5.7
       '@vercel/node': ^1.14.1
+      lodash.flatmap: ^4.5.0
     dependencies:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/tines': 1.0.0-canary.78
       '@vercel/node': 1.15.0
+      lodash.flatmap: 4.5.0
     devDependencies:
       '@sushiswap/config': link:../../packages/config
+      '@types/lodash.flatmap': 4.5.7
 
   apis/price:
     specifiers:
@@ -5248,9 +5252,14 @@ packages:
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
 
+  /@types/lodash.flatmap/4.5.7:
+    resolution: {integrity: sha512-ZTfFXFpta2MU1SkoidRz4QMPpFJdFuZkDNffofj/b3XGT59vD0cpddO0agiwjp9l8KIjLNHRcaAUpi2/izUmFw==}
+    dependencies:
+      '@types/lodash': 4.14.182
+    dev: true
+
   /@types/lodash/4.14.182:
     resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==}
-    dev: false
 
   /@types/mdast/3.0.10:
     resolution: {integrity: sha512-W864tg/Osz1+9f4lrGTZpCSO5/z4608eUp19tbozkq2HJK6i3z1kT0H9tlADXuYIb1YYOBByU4Jsqkk75q48qA==}
@@ -11735,6 +11744,10 @@ packages:
 
   /lodash.defaults/4.2.0:
     resolution: {integrity: sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=}
+    dev: false
+
+  /lodash.flatmap/4.5.0:
+    resolution: {integrity: sha1-74y/QI9uSCaGYzRTBcaswLd4cC4=}
     dev: false
 
   /lodash.isarguments/3.1.0:
