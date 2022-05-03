@@ -1,54 +1,68 @@
-import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'features/context/Stream'
-import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
-import { Amount } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { FC, useCallback, useState } from 'react'
-import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useEnsAddress, useEnsName, useEnsResolver } from 'wagmi'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
+import { FC, useCallback, useRef, useState } from 'react'
+import { useAccount, useContractWrite, useEnsAddress, useNetwork, useWaitForTransaction } from 'wagmi'
 import Button from '../../../../packages/ui/button/Button'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
+import StreamProgress from 'features/stream/StreamProgress'
+import { Dialog } from '@sushiswap/ui/dialog'
+import { Typography } from '@sushiswap/ui/typography/Typography'
+import Dots from '@sushiswap/ui/dots/Dots'
+import { AddressZero } from '@ethersproject/constants'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
 
 interface TransferStreamModalProps {
   stream?: Stream
 }
 
 const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
-  let [isOpen, setIsOpen] = useState(false)
-  const [recipient, setRecipient] = useState<string>()
-
   const { data: account } = useAccount()
-
-  const {data: resolvedAddress} = useEnsAddress({
+  const { activeChain } = useNetwork()
+  const [open, setOpen] = useState(false)
+  const [recipient, setRecipient] = useState<string>()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const balance = useStreamBalance(stream?.id, stream?.token)
+  const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
   })
 
-  const contract = useFuroStreamContract()
-  const balance = useStreamBalance(stream?.id)
+  const {
+    data,
+    write,
+    isLoading: isWritePending,
+  } = useContractWrite(
+    {
+      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
+      contractInterface: FUROSTREAM_ABI,
+    },
+    'transferFrom',
+  )
 
-  const openModal = useCallback(() => {
-    setIsOpen(true)
-  }, [])
+  const { isLoading: isTxPending } = useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess() {
+      setRecipient(undefined)
+    },
+  })
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false)
-  }, [])
+  const transferStream = useCallback(() => {
+    if (!stream || !account || !recipient || !resolvedAddress) return
+    return write({ args: [account?.address, resolvedAddress, stream?.id] })
+  }, [account, recipient, resolvedAddress, stream, write])
 
-  const transferStream = useCallback(async () => {
-    if (!stream || !account || !recipient) {
-      console.log(stream, account.address, recipient)
-      return
-    }
-    if (!resolvedAddress) {
-      console.log('error resolving ens')
-      return
-    }
-    console.log(account.address, resolvedAddress, stream?.id)
-    const tx = await contract.transferFrom(account?.address, resolvedAddress, stream?.id)
-    console.log({ tx })
-  }, [account, contract, recipient, resolvedAddress, stream])
+  const buttonText = isTxPending ? (
+    <Dots>Transferring</Dots>
+  ) : isWritePending ? (
+    <Dots>Confirm Transfer</Dots>
+  ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+    'Invalid recipient'
+  ) : !resolvedAddress ? (
+    'Enter recipient'
+  ) : (
+    'Transfer'
+  )
 
   return (
     <>
@@ -57,29 +71,55 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream?.recipient.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
-        onClick={openModal}
+        disabled={stream?.recipient.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
+        onClick={() => setOpen(true)}
       >
         Transfer
       </Button>
-      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
-        <div className="text-blue-600">
-          <DialogContent>
-            <div>
-              Amount left:{' '}
-              {stream?.amount
-                .subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0)))
-                .toExact()
-                .toString()}{' '}
-              {stream?.token.symbol}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog.Content className="space-y-4 !max-w-sm">
+          <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
+          <StreamProgress stream={stream} />
+          <div
+            className="border border-blue/30 hover:border-blue/60 p-5 rounded-lg flex flex-col gap-3"
+            onClick={() => inputRef.current?.focus()}
+          >
+            <div className="flex justify-between gap-3">
+              <Typography variant="sm" weight={400}>
+                Amount to transfer:
+              </Typography>
+              <Typography weight={700} className="text-high-emphesis">
+                {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
+              </Typography>
             </div>
-            Recipient ETH address or ENS name:
-            <div>
-              <input type="text" defaultValue={recipient} onChange={(e) => setRecipient(e.target.value)} />
+            <div className="flex">
+              <input
+                value={recipient}
+                ref={inputRef}
+                onChange={(e) => setRecipient(e.target.value)}
+                type="text"
+                autoComplete="off"
+                autoCorrect="off"
+                placeholder="Address or ENS name"
+                className="placeholder:text-secondary bg-transparent p-0 text-sm !ring-0 !outline-none !border-none font-medium w-full"
+              />
             </div>
-            <button onClick={transferStream}>{`Transfer Ownership`}</button>
-          </DialogContent>
-        </div>
+          </div>
+          <Button
+            variant="filled"
+            color="gradient"
+            fullWidth
+            disabled={
+              isTxPending ||
+              isWritePending ||
+              !resolvedAddress ||
+              resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+            }
+            onClick={transferStream}
+          >
+            {buttonText}
+          </Button>
+        </Dialog.Content>
       </Dialog>
     </>
   )

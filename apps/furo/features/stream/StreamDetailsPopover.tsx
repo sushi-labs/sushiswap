@@ -15,7 +15,7 @@ interface StreamTimerState {
 }
 
 interface Props {
-  stream: Stream
+  stream?: Stream
 }
 
 const StreamDetailsPopover: FC<Props> = ({ stream }) => {
@@ -44,10 +44,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           {`${remaining?.days} days ${remaining?.hours} hours ${remaining?.minutes} min ${remaining?.seconds} sec`}
         </Typography>
         <Typography variant="xs" weight={400} className="mt-3">
-          {`The stream was started on ${stream.startTime.toLocaleDateString()} @ ${stream.startTime.toLocaleTimeString()} and has been active for 
-            ${stream.activeTime.days} days ${stream.activeTime.hours} hours ${stream.activeTime.minutes} minutes.
+          {`The stream was started on ${stream?.startTime.toLocaleDateString()} @ ${stream?.startTime.toLocaleTimeString()} and has been active for 
+            ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes.
               If the sender does not cancel the stream, the full amount will be disbursed to you on 
-              ${stream.endTime.toLocaleDateString()} @ ${stream.endTime.toLocaleTimeString()}.`}
+              ${stream?.endTime.toLocaleDateString()} @ ${stream?.endTime.toLocaleTimeString()}.`}
         </Typography>
       </>
     )
@@ -63,15 +63,15 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           -
         </Typography>
         <Typography variant="xs" weight={400} className="mt-3">
-          {`The stream was cancelled on ${stream.modifiedAtTimestamp.toLocaleDateString()} @ ${stream.modifiedAtTimestamp.toLocaleTimeString()} and was active for 
-          ${stream.activeTime.days} days ${stream.activeTime.hours} hours ${stream.activeTime.minutes} minutes. `}
+          {`The stream was cancelled on ${stream?.modifiedAtTimestamp.toLocaleDateString()} @ ${stream?.modifiedAtTimestamp.toLocaleTimeString()} and was active for 
+          ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes. `}
         </Typography>
       </>
     )
   }
 
   const StreamDetails = () => {
-    return stream.status !== FuroStatus.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
+    return stream?.status !== FuroStatus.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
   }
 
   return (
@@ -110,10 +110,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   <Typography
                     weight={700}
                     variant="xs"
-                    onClick={() => navigator.clipboard.writeText(stream.createdBy.id)}
+                    onClick={() => stream && navigator.clipboard.writeText(stream.createdBy.id)}
                     className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
                   >
-                    {shortenAddress(stream.createdBy.id)}
+                    {stream ? shortenAddress(stream.createdBy.id) : ''}
                   </Typography>
                 </div>
                 <div className="flex items-center justify-end gap-2">
@@ -123,10 +123,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   <Typography
                     weight={700}
                     variant="xs"
-                    onClick={() => navigator.clipboard.writeText(stream.recipient.id)}
+                    onClick={() => stream && navigator.clipboard.writeText(stream.recipient.id)}
                     className="px-4 py-2 border rounded-full border-dark-800 shadow-depth-1 hover:border-dark-700 active:border-dark-600"
                   >
-                    {shortenAddress(stream.recipient.id)}
+                    {stream ? shortenAddress(stream.recipient.id) : ''}
                   </Typography>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     Value of Stream
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                    {stream.amount.toFixed(4)}
+                    {stream?.amount.toFixed(4)}
                     <Typography variant="lg" component="span" weight={700}>
                       {/* .994k */}
                     </Typography>
@@ -157,7 +157,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
                       component="span"
                     >
-                      {stream.withdrawnAmount.currency.symbol}
+                      {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
                   </div>
                 </div>
@@ -168,10 +168,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     Streamed
                   </Typography>
                   <Typography variant="xs" weight={500}>
-                    {(stream.streamedPercentage * 100).toFixed(2)}% of total
+                    {(Number(stream?.streamedPercentage) * 100).toFixed(2)}% of total
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                    {stream.streamedAmount.substring(0, 7)}
+                    {stream?.streamedAmount.substring(0, 7)}
                     <Typography variant="lg" component="span" weight={700}>
                       {/* .329k */}
                     </Typography>
@@ -183,7 +183,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
                       component="span"
                     >
-                      {stream.withdrawnAmount.currency.symbol}
+                      {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
                   </div>
                 </div>
@@ -194,10 +194,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     Withdrawn
                   </Typography>
                   <Typography variant="xs" weight={500}>
-                    {(stream.withdrawnPercentage * 100).toFixed(2)}% of total
+                    {(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}% of total
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-high-emphesis" weight={700}>
-                    {stream.withdrawnAmount.toFixed(4)}
+                    {stream?.withdrawnAmount.toFixed(4)}
                     <Typography variant="lg" component="span" weight={700}>
                       {/* .105k */}
                     </Typography>
@@ -209,7 +209,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       className="text-high-emphesis border border-dark-700 bg-dark-800 rounded-xl px-3 py-1.5"
                       component="span"
                     >
-                      {stream.withdrawnAmount.currency.symbol}
+                      {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
                   </div>
                 </div>

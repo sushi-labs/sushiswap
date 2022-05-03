@@ -20,8 +20,8 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   const { data: account } = useAccount()
   let transactions = useMemo(
     () =>
-     transactionRepresentations
-        .filter((transaction) => transaction.to.id === account?.address.toLocaleLowerCase())
+      transactionRepresentations
+        .filter((transaction) => transaction.to.id === account?.address?.toLocaleLowerCase())
         .map((transaction) => new Transaction(transaction)),
     [transactionRepresentations, account],
   )

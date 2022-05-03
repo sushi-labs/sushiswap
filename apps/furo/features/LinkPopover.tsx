@@ -9,7 +9,7 @@ import { ArrowFlatLinesUp, CheckIcon, Typography, Link, classNames } from '@sush
 import { useNetwork } from 'wagmi'
 
 interface Props {
-  furo: Stream | Vesting
+  furo?: Stream | Vesting
 }
 
 const LinkPopover: FC<Props> = ({ furo }) => {

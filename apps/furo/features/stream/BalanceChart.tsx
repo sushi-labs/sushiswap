@@ -6,16 +6,16 @@ import { Stream } from 'features/context'
 import { ZERO } from '@sushiswap/core-sdk'
 
 interface Props {
-  stream: Stream
+  stream?: Stream
   withdrawHovered: boolean
   setWithdrawHovered(x: boolean): void
 }
 
 const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }) => {
-  const balance = useStreamBalance(stream.id)
-  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>(null)
+  const balance = useStreamBalance(stream?.id, stream?.token)
+  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>()
 
-  const dashArray = useCallback(({ radius, streamedPct }) => {
+  const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
     return streamedPct * 2 * radius * Math.PI
   }, [])
 
@@ -62,7 +62,8 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           height={width}
           strokeDasharray={`${dashArray({
             radius: outerRadius,
-            streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
+            streamedPct:
+              Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
           })}, ${Math.PI * outerRadius * 2}`}
           fill="none"
           strokeWidth={16}
@@ -70,7 +71,8 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           strokeDashoffset={
             dashArray({
               radius: outerRadius,
-              streamedPct: +stream?.streamedAmount / (+stream?.streamedAmount + +stream?.unclaimableAmount),
+              streamedPct:
+                Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
@@ -109,12 +111,12 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           height={width}
           strokeDasharray={`${dashArray({
             radius: innerRadius,
-            streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
+            streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
           })}, ${Math.PI * innerRadius * 2}`}
           strokeDashoffset={
             dashArray({
               radius: innerRadius,
-              streamedPct: +stream.withdrawnAmount.toExact() / +stream.amount.toExact(),
+              streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
             }) / 1.5
           }
           fill="none"
@@ -229,7 +231,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             className="text-primary"
             fontWeight={700}
           >
-            / {formattedBalance ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {formattedBalance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}

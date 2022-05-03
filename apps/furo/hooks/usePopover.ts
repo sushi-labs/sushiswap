@@ -21,7 +21,7 @@ export const usePopover = () => {
 
   return {
     ...popper,
-    setReferenceElement,
-    setPopperElement,
+    setReferenceElement: setReferenceElement as any,
+    setPopperElement: setPopperElement as any,
   }
 }
