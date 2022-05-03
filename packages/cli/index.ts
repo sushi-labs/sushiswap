@@ -51,12 +51,11 @@ program
     log('APR 1m:', numeral((bar?.ratio / oneMonthBar?.ratio - 1) * 12).format('0.00%'))
 
     // log('Total SUSHI transfered to the bar:')
-    log('Total SUSHI entered the bar:', numeral(bar?.sushiStaked).format('0,0'))
-    log('Total SUSHI exited the bar:', numeral(bar?.sushiHarvested).format('0,0'))
-
-    log('Total xSUSHI minted:', numeral(bar?.xSushiMinted).format('0,0'))
-    log('Total xSUSHI burned:', numeral(bar?.xSushiBurned).format('0,0'))
-    log('Total xSUSHI:', numeral(bar?.totalSupply).format('0,0'))
+    // log('Total SUSHI entered the bar:', numeral(bar?.sushiStaked).format('0.00 a'))
+    // log('Total SUSHI exited the bar:', numeral(bar?.sushiHarvested).format('0.00 a'))
+    // log('Total xSUSHI minted:', numeral(bar?.xSushiMinted).format('0.00 a'))
+    // log('Total xSUSHI burned:', numeral(bar?.xSushiBurned).format('0.00 a'))
+    // log('Total xSUSHI:', numeral(bar?.totalSupply).format('0.00 a'))
   })
 
 program
