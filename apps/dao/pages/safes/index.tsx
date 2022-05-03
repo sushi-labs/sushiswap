@@ -10,11 +10,11 @@ import {
 } from 'config'
 import { formatUSD, shortenAddress } from '@sushiswap/format'
 import Link from 'next/link'
-import { ChainId } from '@sushiswap/chain'
+import chain, { ChainId } from '@sushiswap/chain'
 import { SafeInfo } from 'types'
 import { classNames, Table, Typography } from '@sushiswap/ui'
 import { getSafes } from 'api'
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowUpIcon, ArrowRightIcon } from '@heroicons/react/solid'
 import ExternalLink from '@sushiswap/ui/link/External'
 
 const SafeTable = () => {
@@ -43,7 +43,12 @@ const SafeTable = () => {
         Header: 'Address',
         accessor: 'address',
         Cell: (props) => {
-          return shortenAddress(props.value?.value)
+          const { explorers } = chain?.[props.row.original.chainId]
+          return (
+            <ExternalLink href={`${explorers?.[0]?.url}/address/${props.value?.value}`}>
+              {shortenAddress(props.value?.value)}
+            </ExternalLink>
+          )
         },
         width: 150,
       },
@@ -117,15 +122,15 @@ const SafeTable = () => {
       },
       {
         Header: 'Actions',
+        width: 72,
         Cell: (props) => {
           const chainId = props.row.original.chainId
           const address = props.row.original.address.value
           const url = '/safes/' + chainId + '/' + address
           return (
-            <div className="flex space-x-4">
-              <ExternalLink href={`https://etherscan.com/address/${address}`}>Etherscan</ExternalLink>
-              <Link href={url}>Tokens</Link>
-            </div>
+            <Link href={url} passHref>
+              <ArrowRightIcon width={16} height={16} />
+            </Link>
           )
         },
       },

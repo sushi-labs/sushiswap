@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React, { FC, HTMLProps, useCallback } from 'react'
 
 const COLOR = {
-  primary: 'text-primary',
+  primary: 'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
   blue: 'text-blue',
 }
 
@@ -52,7 +52,6 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
     },
     [href, target],
   )
-
   return (
     <a
       target={target}
