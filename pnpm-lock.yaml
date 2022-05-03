@@ -275,9 +275,9 @@ importers:
       '@ethersproject/strings': ^5.4.0
       '@ethersproject/units': ^5.4.0
       '@graphprotocol/client-cli': 0.0.7
-      '@graphql-mesh/transform-prefix': 0.11.38
-      '@graphql-mesh/transform-rename': 0.12.39
-      '@graphql-mesh/transform-type-merging': 0.3.48
+      '@graphql-mesh/transform-prefix': 0.11.40
+      '@graphql-mesh/transform-rename': 0.12.41
+      '@graphql-mesh/transform-type-merging': 0.3.50
       '@headlessui/react': ^1.6.0
       '@heroicons/react': ^1.0.0
       '@popperjs/core': ^2.11.5
@@ -385,9 +385,9 @@ importers:
       wagmi: 0.3.1_k7rpto3h5recvh4gixx47rvrc4
     devDependencies:
       '@graphprotocol/client-cli': 0.0.7_tz2twupmqsstrdeni3w2vje3h4
-      '@graphql-mesh/transform-prefix': 0.11.38_graphql@16.4.0
-      '@graphql-mesh/transform-rename': 0.12.39_graphql@16.4.0
-      '@graphql-mesh/transform-type-merging': 0.3.48_graphql@16.4.0
+      '@graphql-mesh/transform-prefix': 0.11.40_graphql@16.4.0
+      '@graphql-mesh/transform-rename': 0.12.41_graphql@16.4.0
+      '@graphql-mesh/transform-type-merging': 0.3.50_graphql@16.4.0
       '@sushiswap/config': link:../../packages/config
       '@types/node': 17.0.30
       '@types/react': 18.0.8
@@ -2674,25 +2674,6 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /@graphql-mesh/transform-prefix/0.11.38_graphql@16.4.0:
-    resolution: {integrity: sha512-x6yB+GbktK2I8KugWW29oDi23QvvNtuchfKJhR0t1XZdwe3gLObydi2d6h5DfFq/vEzO8YMdH9ObO8lxeoDRHA==}
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-mesh/types': 0.71.4_graphql@16.4.0
-      '@graphql-mesh/utils': 0.34.4_graphql@16.4.0
-      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
-      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
-      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
-      graphql: 16.4.0
-      graphql-scalars: 1.17.0_graphql@16.4.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - encoding
-      - react-native
-      - react-native-windows
-    dev: true
-
   /@graphql-mesh/transform-prefix/0.11.40_graphql@16.4.0:
     resolution: {integrity: sha512-4qXgJ2/4lkpKfJCug0NDNNcwHFEMVtdMmnIkgA+/hVNbixA/C2aQaWzA2l0NOcHWFmVs7a3awdjbyyeQLw6nVA==}
     peerDependencies:
@@ -2700,25 +2681,6 @@ packages:
     dependencies:
       '@graphql-mesh/types': 0.72.1_graphql@16.4.0
       '@graphql-mesh/utils': 0.34.6_graphql@16.4.0
-      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
-      '@graphql-tools/utils': 8.6.9_graphql@16.4.0
-      '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
-      graphql: 16.4.0
-      graphql-scalars: 1.17.0_graphql@16.4.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - encoding
-      - react-native
-      - react-native-windows
-    dev: true
-
-  /@graphql-mesh/transform-rename/0.12.39_graphql@16.4.0:
-    resolution: {integrity: sha512-dEkgupaBChIAH2K/lyb+cvk49JzbCgzemXjpS+ZVLtS+hX3mKgro+6F3nNGESjL/+Lc+wH4qjuGeizQvk7jWhw==}
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-mesh/types': 0.71.4_graphql@16.4.0
-      '@graphql-mesh/utils': 0.34.4_graphql@16.4.0
       '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
       '@graphql-tools/utils': 8.6.9_graphql@16.4.0
       '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
@@ -2743,24 +2705,6 @@ packages:
       '@graphql-tools/wrap': 8.4.16_graphql@16.4.0
       graphql: 16.4.0
       graphql-scalars: 1.17.0_graphql@16.4.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - encoding
-      - react-native
-      - react-native-windows
-    dev: true
-
-  /@graphql-mesh/transform-type-merging/0.3.48_graphql@16.4.0:
-    resolution: {integrity: sha512-m5Mov1TD5c0XaiDBDh8P0xZFlDDbmOHQe2aW2k911a/WfeQI2sAz5giT2Q6LKst8wlYs+LBGq2ZJX0DZB2hDMg==}
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-mesh/types': 0.71.4_graphql@16.4.0
-      '@graphql-mesh/utils': 0.34.4_graphql@16.4.0
-      '@graphql-tools/delegate': 8.7.7_graphql@16.4.0
-      '@graphql-tools/stitching-directives': 2.2.14_graphql@16.4.0
-      graphql: 16.4.0
-      lodash: 4.17.21
       tslib: 2.4.0
     transitivePeerDependencies:
       - encoding
