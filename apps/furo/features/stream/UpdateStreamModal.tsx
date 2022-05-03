@@ -92,9 +92,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <DialogContent>
             {stream && <div>Recipient: {shortenAddress(stream.recipient.id)}</div>}
             <div>
-              Amount left:{' '}
-              {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
-              {stream?.token.symbol}
+              Amount left: {stream && balance ? stream.amount.subtract(balance).toExact() : ''} {stream?.token.symbol}
             </div>
             <div>Start date: {stream?.startTime.toLocaleString()}</div>
             <div>End date: {stream?.endTime.toLocaleString()}</div>

@@ -1,7 +1,6 @@
 import { LinearGradient } from '@visx/gradient'
 import { useStreamBalance } from 'hooks'
-import { Amount, Token } from '@sushiswap/currency'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback } from 'react'
 import { Stream } from 'features/context'
 import { ZERO } from '@sushiswap/core-sdk'
 
@@ -13,7 +12,6 @@ interface Props {
 
 const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }) => {
   const balance = useStreamBalance(stream?.id, stream?.token)
-  const [formattedBalance, setFormattedBalance] = useState<Amount<Token>>()
 
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
     return streamedPct * 2 * radius * Math.PI
@@ -23,12 +21,6 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
   const strokeWidth = 16
   const outerRadius = width / 2 - strokeWidth
   const innerRadius = width / 2 - 3 * strokeWidth
-
-  useEffect(() => {
-    if (!balance || !stream) return
-
-    setFormattedBalance(Amount.fromRawAmount(stream.token, balance.toString()))
-  }, [balance, stream])
 
   return (
     <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`}>
@@ -209,7 +201,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={10}
             className="text-high-emphesis"
           >
-            {formattedBalance?.toSignificant(6).split('.')[0]}
+            {balance?.toSignificant(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -218,7 +210,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               dx={2}
               className="text-primary"
             >
-              .{formattedBalance?.greaterThan(ZERO) ? formattedBalance?.toSignificant(6).split('.')[1] : '000000'}
+              .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -231,7 +223,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             className="text-primary"
             fontWeight={700}
           >
-            / {formattedBalance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
