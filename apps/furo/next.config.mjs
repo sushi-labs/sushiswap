@@ -5,6 +5,10 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
   '@sushiswap/wallet-connector',
+  '@sushiswap/hooks',
+  '@sushiswap/currency',
+  '@sushiswap/math',
+  '@sushiswap/format'
 ])
 
 export default withTranspileModules({
