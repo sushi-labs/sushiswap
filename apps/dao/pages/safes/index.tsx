@@ -40,6 +40,7 @@ const SafeTable = () => {
       {
         Header: 'Address',
         accessor: 'address',
+        width: 120,
         Cell: (props) => {
           const { explorers } = chain?.[props.row.original.chainId]
           return (
@@ -48,7 +49,6 @@ const SafeTable = () => {
             </ExternalLink>
           )
         },
-        width: 150,
       },
       {
         Header: 'Threshold',
@@ -64,8 +64,8 @@ const SafeTable = () => {
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && threshold === EXPECTED_OPS_THRESHOLD) ||
                       (props.row.cells[1].value === 'Treasury' && threshold === EXPECTED_TREASURY_THRESHOLD)
-                      ? 'text-green-400'
-                      : 'text-red-400',
+                      ? 'text-green'
+                      : 'text-red',
                   )}
                 >
                   {threshold}
@@ -77,8 +77,8 @@ const SafeTable = () => {
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && ownerCount === EXPECTED_OPS_OWNER_COUNT) ||
                       (props.row.cells[1].value === 'Treasury' && ownerCount === EXPECTED_TREASURY_OWNER_COUNT)
-                      ? 'text-green-400'
-                      : 'text-red-400',
+                      ? 'text-green'
+                      : 'text-red',
                   )}
                 >
                   {ownerCount}
@@ -92,7 +92,7 @@ const SafeTable = () => {
       {
         Header: 'Owners',
         accessor: 'owners',
-        minWidth: 250,
+        minWidth: 300,
         Cell: (props) => {
           const { explorers } = chain?.[props.row.original.chainId]
           return (
@@ -106,8 +106,7 @@ const SafeTable = () => {
                       href={`${explorers?.[0]?.url}/address/${address}`}
                       key={i}
                       className={classNames(
-                        !USERS.has(address) &&
-                          'text-red-400 hover:text-red hover:underline focus:text-red active:text-red',
+                        !USERS.has(address) && 'text-red hover:text-red hover:underline focus:text-red active:text-red',
                       )}
                     >
                       {name ?? '???'}
