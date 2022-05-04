@@ -26,11 +26,7 @@ export function useBentoBoxApproveCallback(
       watch,
     },
   )
-  const {
-    data,
-    error,
-    refetch: getNonces,
-  } = useContractRead(
+  const { error, refetch: getNonces } = useContractRead(
     {
       addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
       contractInterface: BENTOBOX_ABI,
@@ -90,7 +86,16 @@ export function useBentoBoxApproveCallback(
     console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
-  }, [approvalState, masterContractAddress, getNonces, signTypedDataAsync, chainId, account, error])
+  }, [
+    approvalState,
+    masterContractAddress,
+    getNonces,
+    signTypedDataAsync,
+    chainId,
+    activeChain?.id,
+    account?.address,
+    error,
+  ])
 
   return [approvalState, signature, approveBentoBox]
 }

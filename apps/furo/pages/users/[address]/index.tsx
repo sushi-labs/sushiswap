@@ -1,12 +1,12 @@
 import Layout from 'components/Layout'
 import { StreamRepresentation, VestingRepresentation } from 'features/context/representations'
-import CreateStreamModal from 'features/stream/CreateStreamModal'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
 import { FC } from 'react'
 import { Typography } from '@sushiswap/ui'
 import { getStreams, getVestings } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { CreateStreamModal } from 'features/stream'
 
 type Streams = { incomingStreams: StreamRepresentation[]; outgoingStreams: StreamRepresentation[] }
 type Vestings = { incomingVestings: VestingRepresentation[]; outgoingVestings: VestingRepresentation[] }

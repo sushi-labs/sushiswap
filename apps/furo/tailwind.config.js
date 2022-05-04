@@ -8,6 +8,8 @@ module.exports = {
   ],
   theme: {
     extend: {
+      display: ['group-hover'],
+      visibility: ['group-hover'],
       backgroundImage: () => ({
         circuit: "url('/furo/images/circuit.png')",
       }),

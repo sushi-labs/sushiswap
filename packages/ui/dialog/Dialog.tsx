@@ -1,20 +1,19 @@
-import { FC, Fragment, FunctionComponent } from 'react'
+import React, { FC, Fragment, FunctionComponent } from 'react'
 import { Transition, Dialog as HeadlessDialog } from '@headlessui/react'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogActions, { DialogActionProps } from './DialogActions'
+import { ExtractProps } from '../types'
 
-interface DialogProps {
-  open: boolean
-  onClose(): void
+type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   children?: React.ReactNode
 }
 
-const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
   return (
     <Transition appear show={open} as={Fragment}>
-      <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
+      <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose} {...rest}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -49,7 +48,7 @@ const DialogRoot: FC<DialogProps> = ({ open, onClose, children }) => {
   )
 }
 
-export const Dialog: FunctionComponent<DialogProps> & {
+export const Dialog: FunctionComponent<DialogRootProps> & {
   Description: FunctionComponent<DialogDescriptionProps>
   Header: FunctionComponent<DialogHeaderProps>
   Actions: FunctionComponent<DialogActionProps>
