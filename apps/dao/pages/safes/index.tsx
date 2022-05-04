@@ -30,9 +30,7 @@ const SafeTable = () => {
         Header: 'Network',
         accessor: 'chainId',
         width: 100,
-        Cell: (props) => {
-          return ChainId[props.cell.value]
-        },
+        Cell: (props) => ChainId[props.cell.value]
       },
       {
         Header: 'Type',
