@@ -15,22 +15,22 @@ export async function bar() {
 
   const [
     {
-      blocks: [oneYearBlock],
+      ETHEREUM_BLOCKS_blocks: [oneYearBlock],
     },
     {
-      blocks: [oneMonthBlock],
+      ETHEREUM_BLOCKS_blocks: [oneMonthBlock],
     },
     {
-      blocks: [threeMonthBlock],
+      ETHEREUM_BLOCKS_blocks: [threeMonthBlock],
     },
     {
-      blocks: [sixMonthBlock],
+      ETHEREUM_BLOCKS_blocks: [sixMonthBlock],
     },
   ] = await Promise.all([
-    sdk.Blocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } }),
-    sdk.Blocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } }),
-    sdk.Blocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } }),
-    sdk.Blocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
+    sdk.EthereumBlocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } }),
+    sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } }),
+    sdk.EthereumBlocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } }),
+    sdk.EthereumBlocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
   ])
 
   const { bar } = await sdk.Bar()

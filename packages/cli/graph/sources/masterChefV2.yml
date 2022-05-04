@@ -1,0 +1,11 @@
+name: masterChefV2
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
+transforms:
+  - prefix:
+      value: MASTERCHEF_V2_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_  
