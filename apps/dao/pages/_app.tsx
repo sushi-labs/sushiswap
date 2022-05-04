@@ -37,7 +37,6 @@ declare global {
 
 const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => {
   const router = useRouter()
-  console.log({ router })
   useEffect(() => {
     const handler = (page) =>
       window.dataLayer.push({
@@ -51,6 +50,19 @@ const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => 
   }, [router.events])
   return (
     <>
+      <Script
+        id="gtag"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer', 'UA-191094689-1');
+          `,
+        }}
+      />
       <MDXProvider components={components}>
         <App.Shell>
           <App.Header
@@ -78,25 +90,12 @@ const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => 
               </div>
             }
           />
-          <App.Main className={classNames('flex flex-col h-full mx-auto mt-32 space-y-8 lg:mx-auto max-w-7xl')}>
+          <App.Main className={classNames('flex flex-col h-full mx-auto my-24 space-y-8 lg:mx-auto max-w-7xl')}>
             <Component {...pageProps} />
           </App.Main>
           <App.Footer />
         </App.Shell>
       </MDXProvider>
-      <Script
-        id="gtag"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer', 'UA-191094689-1');
-          `,
-        }}
-      />
     </>
   )
 }

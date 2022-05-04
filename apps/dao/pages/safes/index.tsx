@@ -10,11 +10,11 @@ import {
 } from 'config'
 import { formatUSD, shortenAddress } from '@sushiswap/format'
 import Link from 'next/link'
-import { ChainId } from '@sushiswap/chain'
+import chain, { ChainId } from '@sushiswap/chain'
 import { SafeInfo } from 'types'
 import { classNames, Table, Typography } from '@sushiswap/ui'
 import { getSafes } from 'api'
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowUpIcon, ArrowRightIcon } from '@heroicons/react/solid'
 import ExternalLink from '@sushiswap/ui/link/External'
 
 const SafeTable = () => {
@@ -30,9 +30,7 @@ const SafeTable = () => {
         Header: 'Network',
         accessor: 'chainId',
         width: 100,
-        Cell: (props) => {
-          return ChainId[props.cell.value]
-        },
+        Cell: (props) => ChainId[props.cell.value]
       },
       {
         Header: 'Type',
@@ -42,10 +40,15 @@ const SafeTable = () => {
       {
         Header: 'Address',
         accessor: 'address',
+        width: 120,
         Cell: (props) => {
-          return shortenAddress(props.value?.value)
+          const { explorers } = chain?.[props.row.original.chainId]
+          return (
+            <ExternalLink href={`${explorers?.[0]?.url}/address/${props.value?.value}`}>
+              {shortenAddress(props.value?.value)}
+            </ExternalLink>
+          )
         },
-        width: 150,
       },
       {
         Header: 'Threshold',
@@ -55,33 +58,33 @@ const SafeTable = () => {
           const threshold = Number(props.value)
           const ownerCount = Number(props.row.cells[4].value.length)
           return (
-            <>
+            <div className="flex space-x-1">
               {
                 <p
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && threshold === EXPECTED_OPS_THRESHOLD) ||
                       (props.row.cells[1].value === 'Treasury' && threshold === EXPECTED_TREASURY_THRESHOLD)
-                      ? 'text-green-300'
-                      : 'text-red-300',
+                      ? 'text-green'
+                      : 'text-red',
                   )}
                 >
                   {threshold}
                 </p>
-              }
-              /
+              }{' '}
+              <span className="text-gray-400">of</span>
               {
                 <p
                   className={classNames(
                     (props.row.cells[1].value !== 'Treasury' && ownerCount === EXPECTED_OPS_OWNER_COUNT) ||
                       (props.row.cells[1].value === 'Treasury' && ownerCount === EXPECTED_TREASURY_OWNER_COUNT)
-                      ? 'text-green-300'
-                      : 'text-red-300',
+                      ? 'text-green'
+                      : 'text-red',
                   )}
                 >
                   {ownerCount}
                 </p>
               }
-            </>
+            </div>
           )
         },
         align: 'right',
@@ -89,17 +92,27 @@ const SafeTable = () => {
       {
         Header: 'Owners',
         accessor: 'owners',
-        minWidth: 250,
+        minWidth: 300,
         Cell: (props) => {
+          const { explorers } = chain?.[props.row.original.chainId]
           return (
             <div className="flex space-x-2">
               {props.cell.value
                 .map((owner) => [owner.value, USERS.get(owner.value)])
                 .sort()
                 .map(([address, name], i) => (
-                  <div key={i} className={classNames(USERS.has(address) ? 'text-green-300' : 'text-red-300')}>
-                    {name ?? '???'}
-                  </div>
+                  <>
+                    <ExternalLink
+                      href={`${explorers?.[0]?.url}/address/${address}`}
+                      key={i}
+                      className={classNames(
+                        !USERS.has(address) && 'text-red hover:text-red hover:underline focus:text-red active:text-red',
+                      )}
+                    >
+                      {name ?? '???'}
+                    </ExternalLink>
+                    {i !== props.cell.value.length - 1 && <>, </>}
+                  </>
                 ))}
             </div>
           )
@@ -117,15 +130,15 @@ const SafeTable = () => {
       },
       {
         Header: 'Actions',
+        width: 72,
         Cell: (props) => {
           const chainId = props.row.original.chainId
           const address = props.row.original.address.value
           const url = '/safes/' + chainId + '/' + address
           return (
-            <div className="flex space-x-4">
-              <ExternalLink href={`https://etherscan.com/address/${address}`}>Etherscan</ExternalLink>
-              <Link href={url}>Tokens</Link>
-            </div>
+            <Link href={url} passHref>
+              <ArrowRightIcon width={16} height={16} />
+            </Link>
           )
         },
       },
