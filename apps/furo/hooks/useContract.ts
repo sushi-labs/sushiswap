@@ -4,6 +4,7 @@ import { BaseProvider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { useMemo } from 'react'
 import { ERC20_BYTES32_ABI } from '../abis/erc20'
+import ERC20_ABI from '../abis/erc20.json'
 import { erc20ABI, useAccount, useNetwork, useProvider } from 'wagmi'
 
 // returns null on errors
@@ -16,16 +17,24 @@ export function useContract<T extends Contract = Contract>(
   const { activeChain } = useNetwork()
   const chainId = activeChain?.id
   const provider = useProvider()
+  console.log(addressOrAddressMap, ABI, provider, chainId)
 
   return useMemo(() => {
-    if (!addressOrAddressMap || !ABI || !provider || !chainId) return null
+    if (!addressOrAddressMap || !ABI || !provider || !chainId) {
+      console.log(1)
+      return null
+    }
     let address: string | undefined
     if (typeof addressOrAddressMap === 'string') address = addressOrAddressMap
     else address = addressOrAddressMap[chainId]
-    if (!address) return null
+    if (!address) {
+      console.log(2)
+      return null
+    }
     try {
       return getContract(address, ABI, provider, withSignerIfPossible && account ? account.address : undefined)
     } catch (error) {
+      console.log(3)
       console.error('Failed to get contract', error)
       return null
     }
@@ -37,7 +46,7 @@ export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossi
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(tokenAddress, erc20ABI, withSignerIfPossible)
+  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
 
 // account is optional
