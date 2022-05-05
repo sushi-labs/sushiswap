@@ -23,13 +23,6 @@
     "test": "jest",
     "generate": "graphclient build"
   },
-  "dependencies": {
-    "@sushiswap/logger": "workspace:*",
-    "chalk": "^4.1.2",
-    "cli-table3": "^0.6.2",
-    "commander": "^9.2.0",
-    "graphql": "^16.4.0"
-  },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.7",
     "@graphql-mesh/cache-inmemory-lru": "^0.6.18",
@@ -46,8 +39,13 @@
     "@graphql-mesh/utils": "^0.34.6",
     "@graphql-tools/utils": "^8.6.9",
     "@sushiswap/config": "workspace:*",
+    "@sushiswap/logger": "workspace:*",
     "@types/node": "^17.0.31",
     "@types/numeral": "^2.0.2",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.2",
+    "commander": "^9.2.0",
+    "graphql": "^16.4.0",
     "date-fns": "^2.28.0",
     "graphql-jit": "^0.7.3",
     "numeral": "^2.0.6",

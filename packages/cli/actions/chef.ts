@@ -10,10 +10,12 @@ const secondsPerBlock = 13.4
 export async function chef() {
   const sdk = getBuiltGraphSDK()
 
-  const { MASTERCHEF_V1_pools: poolsV1, MASTERCHEF_V2_pools: poolsV2 } = await sdk.MasterChefPools()
+  const { MASTERCHEF_V1_pools, MASTERCHEF_V2_pools } = await sdk.MasterChefPools()
 
   const { ETHEREUM_EXCHANGE_pairs: pairs } = await sdk.EthereumPairs({
-    where: { id_in: [...poolsV1, ...poolsV2].reduce((acc, cur) => [...acc, cur.pair], [] as string[]) },
+    where: {
+      id_in: [...MASTERCHEF_V1_pools, ...MASTERCHEF_V2_pools].reduce((acc, cur) => [...acc, cur.pair], [] as string[]),
+    },
   })
 
   const sushiPriceUSD = await (async function () {
@@ -26,7 +28,7 @@ export async function chef() {
     }
   })()
 
-  const digestPools = (pools: typeof poolsV1, sushiPerBlock: number) =>
+  const digestPools = (pools: typeof MASTERCHEF_V1_pools, sushiPerBlock: number) =>
     pools
       .map((pool) => {
         const pair = pairs.find((pair) => pair.id === pool.pair)
@@ -51,24 +53,24 @@ export async function chef() {
       .sort((a, b) => Number(a!.Index) - Number(b!.Index))
       .map((pair) => pair as NonNullable<typeof pair>)
 
-  const digestedV1 = digestPools(poolsV1, 100)
+  const digestedV1 = digestPools(MASTERCHEF_V1_pools, 100)
   if (digestedV1.length > 0) {
     const table = new Table({ head: Object.keys(digestedV1[0]) })
     digestedV1.forEach((pool) => table.push(Object.values(pool)))
     console.log(chalk.red('MasterChef V1'))
-    console.log(chalk.blue(`Total Alloc Points: ${poolsV1[0].masterChef.totalAllocPoint}`))
+    console.log(chalk.blue(`Total Alloc Points: ${MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint}`))
     console.log(table.toString())
   }
 
   const digestedV2 = digestPools(
-    poolsV2,
-    (poolsV2[0].masterChef.totalAllocPoint / poolsV1[0].masterChef.totalAllocPoint) * 100,
+    MASTERCHEF_V2_pools,
+    (MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint / MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint) * 100,
   )
   if (digestedV2.length > 0) {
     const table = new Table({ head: Object.keys(digestedV2[0]) })
     digestedV2.forEach((pool) => table.push(Object.values(pool)))
     console.log(chalk.red('MasterChef V2'))
-    console.log(chalk.blue(`Total Alloc Points: ${poolsV2[0].masterChef.totalAllocPoint}`))
+    console.log(chalk.blue(`Total Alloc Points: ${MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint}`))
     console.log(table.toString())
   }
 }

@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/config/typescript/base.json",
-  "include": ["**/*.ts", "graph/resolvers/resolver.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
