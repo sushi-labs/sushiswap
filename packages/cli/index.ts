@@ -6,7 +6,12 @@ program.version('0.0.0').description('Sushi CLI')
 
 program.command('bar').description('print bar data').action(bar)
 
-program.command('chef').description('print chef data').option('-v,--version <version', 'version').action(chef)
+program
+  .command('chef')
+  .description('print chef data')
+  .option('-v,--version <version>', 'version', '1')
+  .option('-a,--all', 'all', false)
+  .action(chef)
 
 program.parse(process.argv)
 
