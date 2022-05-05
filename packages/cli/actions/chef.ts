@@ -62,7 +62,7 @@ export async function chef(args: Arguments) {
 
   const digestedV1 = digestPools(MASTERCHEF_V1_pools, 100)
   if (digestedV1.length > 0) {
-    const table = new Table({ head: Object.keys(digestedV1[0]), style: { compact: false } })
+    const table = new Table({ head: Object.keys(digestedV1[0]), style: { compact: true } })
     digestedV1.forEach((pool) => table.push(Object.values(pool)))
     console.log(chalk.red('MasterChef V1'))
     console.log(chalk.blue(`Total Alloc Points: ${MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint}`))
@@ -74,7 +74,7 @@ export async function chef(args: Arguments) {
     (MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint / MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint) * 100,
   )
   if (digestedV2.length > 0) {
-    const table = new Table({ head: Object.keys(digestedV2[0]), style: { compact: false } })
+    const table = new Table({ head: Object.keys(digestedV2[0]), style: { compact: true } })
     digestedV2.forEach((pool) => table.push(Object.values(pool)))
     console.log(chalk.red('MasterChef V2'))
     console.log(chalk.blue(`Total Alloc Points: ${MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint}`))
