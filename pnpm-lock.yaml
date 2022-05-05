@@ -460,9 +460,11 @@ importers:
 
   examples/multicall:
     specifiers:
+      '@ethersproject/abi': ^5.6.1
       '@ethersproject/bignumber': ^5.6.0
+      '@ethersproject/contracts': ^5.6.0
       '@ethersproject/experimental': ^5.6.0
-      '@ethersproject/providers': ^5.6.4
+      '@ethersproject/providers': ^5.6.5
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/config': workspace:*
@@ -474,7 +476,6 @@ importers:
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v3-periphery': ^1.4.1
       eslint: 8.14.0
-      ethers: ^5.6.4
       next: ^12.1.5
       next-transpile-modules: 9.0.0
       react: ^18.1.0
@@ -484,16 +485,17 @@ importers:
       typechain: ^5.2.0
       typescript: ^4.6.4
     dependencies:
+      '@ethersproject/abi': 5.6.1
       '@ethersproject/bignumber': 5.6.0
+      '@ethersproject/contracts': 5.6.0
       '@ethersproject/experimental': 5.6.0
-      '@ethersproject/providers': 5.6.4
+      '@ethersproject/providers': 5.6.5
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/ui': link:../../packages/ui
-      '@typechain/ethers-v5': 7.2.0_7aew26elod3zoohechtzshqc54
-      '@uniswap/redux-multicall': 1.1.1_oykhkgrsz7hnycd5bswkihb4ru
+      '@typechain/ethers-v5': 7.2.0_32zynrxfz3l77xgryj73gzxc5y
+      '@uniswap/redux-multicall': 1.1.1_bg7cwdfryxmdcuihrcctw4x3iu
       '@uniswap/v3-periphery': 1.4.1
-      ethers: 5.6.4
       next: 12.1.5_ef5jwxihqo6n7gxfmzogljlgcm
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
@@ -665,7 +667,7 @@ importers:
 
   packages/currency:
     specifiers:
-      '@ethersproject/address': ^5.5.0
+      '@ethersproject/address': ^5.6.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/config': workspace:*
       '@sushiswap/math': workspace:*
@@ -1982,6 +1984,33 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  /@ethersproject/providers/5.6.5:
+    resolution: {integrity: sha512-TRS+c2Ud+cMpWodmGAc9xbnYRPWzRNYt2zkCSnj58nJoamBQ6x4cUbBeo0lTC3y+6RDVIBeJv18OqsDbSktLVg==}
+    dependencies:
+      '@ethersproject/abstract-provider': 5.6.0
+      '@ethersproject/abstract-signer': 5.6.0
+      '@ethersproject/address': 5.6.0
+      '@ethersproject/basex': 5.6.0
+      '@ethersproject/bignumber': 5.6.0
+      '@ethersproject/bytes': 5.6.1
+      '@ethersproject/constants': 5.6.0
+      '@ethersproject/hash': 5.6.0
+      '@ethersproject/logger': 5.6.0
+      '@ethersproject/networks': 5.6.2
+      '@ethersproject/properties': 5.6.0
+      '@ethersproject/random': 5.6.0
+      '@ethersproject/rlp': 5.6.0
+      '@ethersproject/sha2': 5.6.0
+      '@ethersproject/strings': 5.6.0
+      '@ethersproject/transactions': 5.6.0
+      '@ethersproject/web': 5.6.0
+      bech32: 1.1.4
+      ws: 7.4.6
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
 
   /@ethersproject/random/5.6.0:
     resolution: {integrity: sha512-si0PLcLjq+NG/XHSZz90asNf+YfKEqJGVdxoEkSukzbnBgC8rydbgbUgBbBGLeHN4kAJwUFEKsu3sCXT93YMsw==}
@@ -4381,7 +4410,7 @@ packages:
     resolution: {integrity: sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==}
     dev: true
 
-  /@typechain/ethers-v5/7.2.0_7aew26elod3zoohechtzshqc54:
+  /@typechain/ethers-v5/7.2.0_32zynrxfz3l77xgryj73gzxc5y:
     resolution: {integrity: sha512-jfcmlTvaaJjng63QsT49MT6R1HFhtO/TBMWbyzPFSzMmVIqb2tL6prnKBs4ZJrSvmgIXWy+ttSjpaxCTq8D/Tw==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
@@ -4391,8 +4420,8 @@ packages:
       typechain: ^5.0.0
       typescript: '>=4.0.0'
     dependencies:
-      '@ethersproject/providers': 5.6.4
-      ethers: 5.6.4
+      '@ethersproject/abi': 5.6.1
+      '@ethersproject/providers': 5.6.5
       lodash: 4.17.21
       ts-essentials: 7.0.3_typescript@4.6.4
       typechain: 5.2.0_typescript@4.6.4
@@ -4788,23 +4817,6 @@ packages:
       '@ethersproject/abi': 5.6.1
       '@ethersproject/bignumber': 5.6.0
       '@ethersproject/contracts': 5.6.0
-      '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
-      react: 18.1.0
-      react-redux: 8.0.1_3vjunwlmc3akvx5gzli76tirsm
-    dev: false
-
-  /@uniswap/redux-multicall/1.1.1_oykhkgrsz7hnycd5bswkihb4ru:
-    resolution: {integrity: sha512-sXX2pAbxJj1OrErSc7zMEFo7j1EXqTBbllYuUDEWCZ/A12sK/4RXgXW2+zSoXOHCN6djyVUc3FmEt0v3x2jLSw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@ethersproject/abi': '5'
-      '@ethersproject/bignumber': '5'
-      '@ethersproject/contracts': '5'
-      '@reduxjs/toolkit': '1'
-      react: '17'
-      react-redux: '7'
-    dependencies:
-      '@ethersproject/bignumber': 5.6.0
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       react: 18.1.0
       react-redux: 8.0.1_3vjunwlmc3akvx5gzli76tirsm

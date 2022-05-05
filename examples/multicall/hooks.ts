@@ -1,20 +1,22 @@
 import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
-import { Contract, providers, utils } from 'ethers'
+import { JsonRpcProvider, InfuraProvider } from '@ethersproject/providers'
+import { Contract } from '@ethersproject/contracts'
+import { Interface } from '@ethersproject/abi'
 import { useEffect, useMemo, useState } from 'react'
 import { UniswapInterfaceMulticall } from './typechain'
 import { ChainId, MULTICALL_ADDRESS } from './constants'
 import { useMultiChainSingleContractSingleData, useSingleCallResult } from './multicall'
 
-const providerCache: Partial<Record<ChainId, providers.JsonRpcProvider>> = {}
-const MulticallInterface = new utils.Interface(MulticallABI)
+const providerCache: Partial<Record<ChainId, JsonRpcProvider>> = {}
+const MulticallInterface = new Interface(MulticallABI)
 
 export function useContract(chainId: ChainId) {
   return useMemo(() => {
-    return new Contract(MULTICALL_ADDRESS, MulticallABI, getProvider(chainId)) as UniswapInterfaceMulticall
-  }, [chainId]) as UniswapInterfaceMulticall
+    return new Contract(MULTICALL_ADDRESS, MulticallABI, getProvider(chainId))
+  }, [chainId])
 }
 
-export function useLatestBlock(provider: providers.JsonRpcProvider) {
+export function useLatestBlock(provider: JsonRpcProvider) {
   const [blockNumber, setBlockNumber] = useState<number | undefined>(undefined)
   useEffect(() => {
     if (!provider) return
@@ -67,7 +69,7 @@ export function getProvider(chainId: ChainId) {
   const infuraKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
   if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
   const name = getInfuraChainName(chainId)
-  providerCache[chainId] = new providers.InfuraProvider(name, infuraKey)
+  providerCache[chainId] = new InfuraProvider(name, infuraKey)
   return providerCache[chainId]!
 }
 
