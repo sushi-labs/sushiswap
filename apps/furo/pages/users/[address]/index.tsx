@@ -35,7 +35,7 @@ const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
         </Typography>
         <div className="flex gap-5">
           <CreateStreamModal />
-          <CreateVestingModal />
+          {/*<CreateVestingModal />*/}
         </div>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-5">
