@@ -1,0 +1,7 @@
+query EthereumBlocks($where: Block_filter) {
+  ETHEREUM_BLOCKS_blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
+    id
+    number
+    timestamp
+  }
+}

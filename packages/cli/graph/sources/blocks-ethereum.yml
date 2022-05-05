@@ -1,0 +1,11 @@
+name: blocks-ethereum
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks
+transforms:
+  - prefix:
+      value: ETHEREUM_BLOCKS_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
