@@ -20,7 +20,7 @@ pnpn run dev
 
 #### Single
 
-pnpm exec turbo run dev --scope=<app>
+pnpm exec turbo run dev --scope=api/app/package/protocol
 
 ### Build
 
@@ -28,7 +28,7 @@ pnpn run build
 
 #### Single
 
-pnpm exec turbo run build --scope=<app>
+pnpm exec turbo run build --scope=api/app/package/protocol
 
 ## APIs
 
