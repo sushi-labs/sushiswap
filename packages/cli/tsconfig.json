@@ -1,7 +1,7 @@
 {
   "extends": "@sushiswap/config/typescript/base.json",
   "include": ["**/*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",

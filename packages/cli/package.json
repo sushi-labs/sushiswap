@@ -21,7 +21,8 @@
     "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest",
-    "generate": "graphclient build"
+    "generate": "graphclient build",
+    "postinstall": "cd ../.. && pnpm turbo run build --scope=cli && cd packages/cli && pnpm i -g $PWD"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.7",
