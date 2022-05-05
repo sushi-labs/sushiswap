@@ -18,7 +18,7 @@ pnp exec
 
 pnpn run dev
 
-#### Single
+#### Single Repository
 
 pnpm exec turbo run dev --scope=api/app/package/protocol
 
@@ -26,9 +26,25 @@ pnpm exec turbo run dev --scope=api/app/package/protocol
 
 pnpn run build
 
-#### Single
+#### Single Repository
 
 pnpm exec turbo run build --scope=api/app/package/protocol
+
+### Test
+
+pnpn run test
+
+#### Single Repository
+
+pnpm exec turbo run test --scope=api/app/package/protocol
+
+### Test
+
+pnpn run clean
+
+#### Single Repository
+
+pnpm exec turbo run clear --scope=api/app/package/protocol
 
 ## APIs
 
