@@ -16,15 +16,23 @@ pnpm install
 
 ### Execute
 
-pnpx
+pnp exec
 
 ### Dev
 
 pnpn run dev
 
+#### Single
+
+pnpm exec turbo run dev --scope=<app>
+
 ### Build
 
 pnpn run build
+
+#### Single
+
+pnpm exec turbo run build --scope=<app>
 
 ## APIs
 
