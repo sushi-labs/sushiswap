@@ -1,10 +1,13 @@
-import { FC, Fragment, useCallback, useState } from 'react'
+import { FC, Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import { classNames, Input, Select } from '@sushiswap/ui'
-import { useAllTokens } from 'hooks'
+import { useAllTokens, useToken } from 'hooks'
 import { Currency, Token } from '@sushiswap/currency'
 import { Transition } from '@headlessui/react'
 import { Dialog } from '@sushiswap/ui/dialog'
 import { CurrencyList } from '.'
+import { useDebounce } from '@sushiswap/hooks'
+import { filterTokens, useSortedTokensByQuery } from '@sushiswap/hooks/dist/useSortedTokensByQuery'
+import Loader from '@sushiswap/ui/loader/Loader'
 
 interface Props {
   currency?: Token
@@ -15,6 +18,9 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState<string>('')
   const tokens = useAllTokens()
+  const debouncedQuery = useDebounce(query, 400)
+  const searching = useRef<boolean>(false)
+  const searchToken = useToken(debouncedQuery)
 
   const handleSelect = useCallback(
     (currency: Currency) => {
@@ -23,6 +29,16 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
     },
     [onSelect],
   )
+
+  const filteredTokens: Token[] = useMemo(() => {
+    const filtered = filterTokens(Object.values(tokens), debouncedQuery)
+    searching.current = false
+
+    if (searchToken) return [searchToken, ...filtered]
+    return filtered
+  }, [searchToken, tokens, debouncedQuery])
+
+  const filteredSortedTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
 
   return (
     <>
@@ -48,8 +64,19 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
         >
           <Dialog.Content className="!space-y-5 !my-0 h-full">
             <Dialog.Header title="Select Token" onBack={() => setOpen(false)} onClose={() => setOpen(false)} />
-            <Input.Address value={query} onChange={setQuery} className="text-sm font-bold placeholder:font-medium" />
-            <CurrencyList currency={currency} onCurrency={handleSelect} currencies={Object.values(tokens)} />
+            <div className="flex relative justify-between gap-1 bg-dark-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue">
+              <Input.Address
+                placeholder="Search token by address"
+                value={query}
+                onChange={(val) => {
+                  searching.current = true
+                  setQuery(val)
+                }}
+                className="text-sm font-bold placeholder:font-medium !ring-0"
+              />
+              {searching.current && <Loader width={24} height={24} />}
+            </div>
+            <CurrencyList currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
           </Dialog.Content>
         </Transition>
       </div>
