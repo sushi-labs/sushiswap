@@ -1,9 +1,9 @@
-import { FuroType } from "./enums"
+import { FuroStatus, FuroType, PeriodType, TransactionType } from './enums'
 
 export interface FuroRepresentation {
   id: string
   __typename: FuroType
-  status: string
+  status: FuroStatus
   totalAmount: string
   withdrawnAmount: string
   expiresAt: string
@@ -38,7 +38,7 @@ export interface UserRepresentation {
 
 export interface TransactionRepresentation {
   id: string
-  type: string
+  type: TransactionType
   amount: string
   toBentoBox: boolean
   createdAtBlock: string
@@ -53,7 +53,7 @@ export interface ScheduleRepresentation {
 
 export interface PeriodRepresentation {
   id: string
-  type: string
+  type: PeriodType
   time: string
   amount: string
 }

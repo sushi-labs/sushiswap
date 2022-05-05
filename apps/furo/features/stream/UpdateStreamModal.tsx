@@ -1,57 +1,79 @@
 import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
 import { Stream } from 'features/context/Stream'
 import { useToken } from 'hooks/Tokens'
-import { useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
+import { STREAM_ADDRESS, useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
-import { FC, useState } from 'react'
+import { ChangeEvent, FC, useCallback, useState } from 'react'
 import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from 'wagmi'
 import Button from '../../../../packages/ui/button/Button'
 import { UserIcon } from '@heroicons/react/outline'
+import { AddressZero } from '@ethersproject/constants'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import Dots from '@sushiswap/ui/dots/Dots'
+import { parseUnits } from 'ethers/lib/utils'
 
 interface UpdateStreamModalProps {
   stream?: Stream
 }
 
 const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
-  let [isOpen, setIsOpen] = useState(false)
+  const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState<Amount<Token>>()
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const [newEndTime, setNewEndTime] = useState<Date>()
+  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
+  const { activeChain } = useNetwork()
   const { data: account } = useAccount()
-  const token = useToken(stream?.token.address)
-  const contract = useFuroStreamContract()
-  const balance = useStreamBalance(stream?.id)
+  const balance = useStreamBalance(stream?.id, stream?.token)
 
-  function openModal() {
-    setIsOpen(true)
-  }
-  function closeModal() {
-    setIsOpen(false)
-  }
+  const {
+    data,
+    write,
+    isLoading: isWritePending,
+  } = useContractWrite(
+    {
+      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
+      contractInterface: FUROSTREAM_ABI,
+    },
+    'cancelStream',
+  )
 
-  async function update() {
-    if (!stream || (!amount && !newEndTime)) {
-      // console.log({ stream, amount })
-      return
-    }
+  const { isLoading: isTxPending } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+
+  const updateStream = useCallback(() => {
+    if (!stream || !amount || !newEndTime) return
+
     const difference = (newEndTime?.getTime() - stream?.endTime.getTime()) / 1000
     const topUpAmount = amount?.greaterThan(0) ? amount.toSignificant() : '0'
-    const tx = await contract.updateStream(
-      BigNumber.from(stream.id),
-      BigNumber.from(topUpAmount),
-      difference > 0 ? difference : 0,
-      fromBentoBox,
-    )
-    console.log({ tx })
-  }
+
+    return write({
+      args: [BigNumber.from(stream.id), BigNumber.from(topUpAmount), difference > 0 ? difference : 0, fromBentoBox],
+    })
+  }, [amount, fromBentoBox, newEndTime, stream, write])
+
+  const onInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (isNaN(+e.target.value) || +e.target.value <= 0 || !stream?.token) {
+        setAmount(undefined)
+      } else {
+        setAmount(
+          Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(e.target.value, stream.token.decimals).toString())),
+        )
+      }
+    },
+    [stream?.token],
+  )
 
   const handleBentoBoxCheck = () => {
     setFromBentoBox(!fromBentoBox)
   }
+
+  const buttonText = isTxPending ? <Dots>Updating</Dots> : isWritePending ? <Dots>Confirm Update</Dots> : 'Update'
 
   return (
     <>
@@ -60,28 +82,23 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream?.createdBy.id.toLocaleLowerCase() !== account?.address.toLocaleLowerCase()}
-        onClick={openModal}
+        disabled={stream?.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
+        onClick={() => setOpen(true)}
       >
         Edit
       </Button>
-      <Dialog open={isOpen} onClose={closeModal} className="absolute inset-0 overflow-y-auto">
+      <Dialog open={open} onClose={() => setOpen(false)} className="absolute inset-0 overflow-y-auto">
         <div className="text-blue-600">
           <DialogContent>
-            <div>Recipient: {shortenAddress(stream?.recipient.id)}</div>
+            {stream && <div>Recipient: {shortenAddress(stream.recipient.id)}</div>}
             <div>
-              Amount left:{' '}
-              {stream?.amount.subtract(Amount.fromRawAmount(stream?.token, JSBI.BigInt(balance ?? 0))).toExact()}{' '}
-              {stream?.token.symbol}
+              Amount left: {stream && balance ? stream.amount.subtract(balance).toExact() : ''} {stream?.token.symbol}
             </div>
             <div>Start date: {stream?.startTime.toLocaleString()}</div>
             <div>End date: {stream?.endTime.toLocaleString()}</div>
             <div>
               Top up amount
-              <input
-                type={'number'}
-                onChange={(e) => setAmount(Amount.fromRawAmount(token, parseInt(e.target.value)))}
-              ></input>
+              <input type="number" onChange={onInput} />
             </div>
             <div>
               from BentoBox: <input type="checkbox" defaultChecked={fromBentoBox} onChange={handleBentoBoxCheck} />
@@ -93,9 +110,9 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
                 // value={stream?.endTime.toISOString().substring(0, 16)}
                 // min={minimumDate?.toISOString().substring(0, 16)}
                 onChange={(e) => setNewEndTime(new Date(e.target.value))}
-              ></input>
+              />
             </div>
-            <button onClick={update}>{`Update stream`}</button>
+            <button onClick={updateStream}>{buttonText}</button>
           </DialogContent>
         </div>
       </Dialog>

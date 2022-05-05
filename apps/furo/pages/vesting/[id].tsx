@@ -13,16 +13,34 @@ import { VestingChart } from 'features/vesting/VestingChart'
 import { FC, useMemo } from 'react'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 interface Props {
-  vestingRepresentation: VestingRepresentation
-  transactions: TransactionRepresentation[]
-  schedule: ScheduleRepresentation
+  vestingRepresentation?: VestingRepresentation
+  transactions?: TransactionRepresentation[]
+  schedule?: ScheduleRepresentation
 }
 
-const VestingPage: FC<Props> = (props) => {
-  let { vestingRepresentation, transactions, schedule } = props
-  const vesting = useMemo(() => new Vesting({ vesting: vestingRepresentation }), [vestingRepresentation])
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  return {
+    props: {
+      vestingRepresentation: (await getVesting(query.chainId, query.id)) as VestingRepresentation,
+      transactions: (await getVestingTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+      schedule: (await getVestingSchedule(query.chainId, query.id)) as ScheduleRepresentation,
+    },
+  }
+}
+
+const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  vestingRepresentation,
+  transactions,
+  schedule,
+}) => {
+  const vesting = useMemo(
+    () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation }) : undefined),
+    [vestingRepresentation],
+  )
 
   return (
     <Layout>
@@ -45,10 +63,14 @@ const VestingPage: FC<Props> = (props) => {
                   Progress:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {(vesting.streamedPercentage * 100).toFixed(2)}%
+                  {(Number(vesting?.streamedPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>
-              <ProgressBar progress={vesting.streamedPercentage.toFixed(4)} color={ProgressColor.BLUE} showLabel={false} />
+              <ProgressBar
+                progress={vesting ? vesting.streamedPercentage.toFixed(4) : 0}
+                color={ProgressColor.BLUE}
+                showLabel={false}
+              />
             </div>
             <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
@@ -56,10 +78,14 @@ const VestingPage: FC<Props> = (props) => {
                   Withdrawn:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {(vesting.withdrawnPercentage * 100).toFixed(2)}%
+                  {(Number(vesting?.withdrawnPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>
-              <ProgressBar progress={vesting.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
+              <ProgressBar
+                progress={vesting ? vesting?.withdrawnPercentage : 0}
+                color={ProgressColor.PINK}
+                showLabel={false}
+              />
             </div>
             <div className="mt-3">
               <NextPaymentTimer vesting={vesting} />
@@ -76,13 +102,3 @@ const VestingPage: FC<Props> = (props) => {
 }
 
 export default VestingPage
-
-export async function getServerSideProps({ query }) {
-  return {
-    props: {
-      vestingRepresentation: await getVesting(query.chainId, query.id),
-      transactions: await getVestingTransactions(query.chainId, query.id),
-      schedule: await getVestingSchedule(query.chainId, query.id),
-    },
-  }
-}

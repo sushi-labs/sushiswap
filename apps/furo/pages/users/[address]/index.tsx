@@ -1,17 +1,32 @@
 import Layout from 'components/Layout'
 import { StreamRepresentation, VestingRepresentation } from 'features/context/representations'
-import CreateStreamModal from 'features/stream/CreateStreamModal'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
 import { FC } from 'react'
 import { Typography } from '@sushiswap/ui'
 import { getStreams, getVestings } from 'graph/graph-client'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { CreateStreamModal } from 'features/stream'
 
-interface DashboardProps {
-  streams: { incomingStreams: StreamRepresentation[]; outgoingStreams: StreamRepresentation[] }
-  vestings: { incomingVestings: VestingRepresentation[]; outgoingVestings: VestingRepresentation[] }
+type Streams = { incomingStreams: StreamRepresentation[]; outgoingStreams: StreamRepresentation[] }
+type Vestings = { incomingVestings: VestingRepresentation[]; outgoingVestings: VestingRepresentation[] }
+interface Props {
+  streams?: Streams
+  vestings?: Vestings
 }
-const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
+
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.chainId !== 'string' || typeof query.address !== 'string') return { props: {} }
+
+  return {
+    props: {
+      streams: (await getStreams(query.chainId, query.address)) as Streams,
+      vestings: (await getVestings(query.chainId, query.address)) as Vestings,
+    },
+  }
+}
+
+const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ streams, vestings }) => {
   return (
     <Layout>
       <div className="flex flex-col h-full gap-12 pt-10">
@@ -28,8 +43,8 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
               Incoming
             </Typography>
             <FuroTable
-              streams={streams.incomingStreams ?? []}
-              vestings={vestings.incomingVestings ?? []}
+              streams={streams?.incomingStreams ?? []}
+              vestings={vestings?.incomingVestings ?? []}
               type={FuroTableType.INCOMING}
             />
           </div>
@@ -38,8 +53,8 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
               Outgoing
             </Typography>
             <FuroTable
-              streams={streams.outgoingStreams ?? []}
-              vestings={vestings.outgoingVestings ?? []}
+              streams={streams?.outgoingStreams ?? []}
+              vestings={vestings?.outgoingVestings ?? []}
               type={FuroTableType.OUTGOING}
             />
           </div>
@@ -50,12 +65,3 @@ const Dashboard: FC<DashboardProps> = ({ streams, vestings }) => {
 }
 
 export default Dashboard
-
-export async function getServerSideProps({ query }) {
-  return {
-    props: {
-      streams: await getStreams(query.chainId, query.address),
-      vestings: await getVestings(query.chainId, query.address),
-    },
-  }
-}

@@ -7,14 +7,17 @@ import { FC, memo, useMemo } from 'react'
 import { CalendarIcon, Typography } from '@sushiswap/ui'
 
 interface Props {
-  vesting: Vesting
-  scheduleRepresentation: ScheduleRepresentation
+  vesting?: Vesting
+  scheduleRepresentation?: ScheduleRepresentation
 }
 
 const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
-  let schedule = useMemo(
-    () => new Schedule({ token: vesting.token, schedule: scheduleRepresentation }),
+  const schedule = useMemo(
+    () =>
+      vesting && scheduleRepresentation
+        ? new Schedule({ token: vesting.token, schedule: scheduleRepresentation })
+        : undefined,
     [vesting, scheduleRepresentation],
   )
 
@@ -58,7 +61,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   )
 }
 
-const SchedulePopoverItem: FC<{ vesting: Vesting; period: SchedulePeriod }> = memo(({ vesting, period }) => {
+const SchedulePopoverItem: FC<{ vesting?: Vesting; period: SchedulePeriod }> = memo(({ vesting, period }) => {
   return (
     <div key={period.id} className="flex items-center justify-between gap-3 py-3">
       <div className="grid grid-cols-[30px_80px_140px] gap-2 items-center">
@@ -74,13 +77,13 @@ const SchedulePopoverItem: FC<{ vesting: Vesting; period: SchedulePeriod }> = me
           {period.type === PeriodType.START
             ? `-`
             : period.type === PeriodType.CLIFF
-            ? `${vesting.cliffAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
+            ? `${vesting?.cliffAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
             : period.type === PeriodType.STEP
-            ? `${vesting.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
+            ? `${vesting?.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
             : period.type === PeriodType.END &&
-              (vesting.vestingType === VestingType.GRADED || vesting.vestingType === VestingType.HYBRID)
-            ? `${vesting.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
-            : `${vesting.amount.toExact()} ${period?.amount.currency?.symbol}`}
+              (vesting?.vestingType === VestingType.GRADED || vesting?.vestingType === VestingType.HYBRID)
+            ? `${vesting?.stepAmount.toSignificant(4)} ${period?.amount.currency?.symbol}`
+            : `${vesting?.amount.toExact()} ${period?.amount.currency?.symbol}`}
         </Typography>
       </div>
     </div>

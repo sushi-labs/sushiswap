@@ -54,7 +54,7 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
   const chainId = activeChain?.id
   const tokens = useAllTokens()
 
-  const address = isAddress(tokenAddress) ? getAddress(tokenAddress) : undefined
+  const address = tokenAddress && isAddress(tokenAddress) ? getAddress(tokenAddress) : undefined
 
   const tokenContract = useTokenContract(address, false)
   const tokenContractBytes32 = useBytes32TokenContract(address, false)

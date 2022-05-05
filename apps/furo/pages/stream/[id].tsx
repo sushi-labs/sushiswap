@@ -7,21 +7,38 @@ import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
 import FuroTimer from 'features/FuroTimer'
 import TransferStreamModal from 'features/stream/TransferStreamModal'
 import UpdateStreamModal from 'features/stream/UpdateStreamModal'
-import { WithdrawModal } from 'features/stream/WithdrawModal'
+import WithdrawModal from 'features/stream/WithdrawModal'
 import { FC, useMemo, useState } from 'react'
 import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import CancelStreamModal from 'features/stream/CancelStreamModal'
 
 interface Props {
-  stream: StreamRepresentation
-  transactions: TransactionRepresentation[]
+  stream?: StreamRepresentation
+  transactions?: TransactionRepresentation[]
 }
 
-const Streams: FC<Props> = (props) => {
-  let { stream: streamRepresentation, transactions } = props
-  const stream = useMemo(() => new Stream({ stream: streamRepresentation }), [streamRepresentation])
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  return {
+    props: {
+      stream: (await getStream(query.chainId, query.id)) as StreamRepresentation,
+      transactions: (await getStreamTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+    },
+  }
+}
+
+const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  stream: streamRepresentation,
+  transactions,
+}) => {
   const [withdrawHovered, setWithdrawHovered] = useState(false)
+  const stream = useMemo(
+    () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
+    [streamRepresentation],
+  )
 
   return (
     <Layout>
@@ -39,11 +56,11 @@ const Streams: FC<Props> = (props) => {
                   Streamed:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {(stream.streamedPercentage * 100).toFixed(2)}%
+                  {(Number(stream?.streamedPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>
               <ProgressBar
-                progress={stream.streamedPercentage.toFixed(4)}
+                progress={stream ? stream.streamedPercentage.toFixed(4) : 0}
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />
@@ -59,10 +76,14 @@ const Streams: FC<Props> = (props) => {
                   Withdrawn:
                 </Typography>
                 <Typography variant="lg" weight={700}>
-                  {(stream.withdrawnPercentage * 100).toFixed(2)}%
+                  {(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>
-              <ProgressBar progress={stream.withdrawnPercentage} color={ProgressColor.PINK} showLabel={false} />
+              <ProgressBar
+                progress={stream ? stream.withdrawnPercentage : 0}
+                color={ProgressColor.PINK}
+                showLabel={false}
+              />
             </div>
             <div className="mt-3">
               <FuroTimer furo={stream} />
@@ -79,8 +100,8 @@ const Streams: FC<Props> = (props) => {
           <div className="flex gap-2">
             <TransferStreamModal stream={stream} />
             <UpdateStreamModal stream={stream} />
+            <CancelStreamModal stream={stream} />
           </div>
-          {/*<CancelStreamModal stream={stream} />*/}
         </div>
       </div>
     </Layout>
@@ -88,12 +109,3 @@ const Streams: FC<Props> = (props) => {
 }
 
 export default Streams
-
-export async function getServerSideProps({ query }) {
-  return {
-    props: {
-      stream: await getStream(query.chainId, query.id),
-      transactions: await getStreamTransactions(query.chainId, query.id),
-    },
-  }
-}

@@ -3,17 +3,24 @@ import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, XYChart } from '@visx/xychart'
 import { FC, useEffect, useState } from 'react'
 import { ScheduleRepresentation, Vesting } from '../context'
+
 interface Props {
-  vesting: Vesting
-  schedule: ScheduleRepresentation
+  vesting?: Vesting
+  schedule?: ScheduleRepresentation
 }
+
+interface ChartDataTuple {
+  x: string
+  y: string
+}
+
 export const VestingChart: FC<Props> = (props) => {
-  const [chartData, setChartData] = useState<{ x; y }[]>()
+  const [chartData, setChartData] = useState<ChartDataTuple[]>()
 
   let { vesting, schedule } = props
 
   useEffect(() => {
-    const data = schedule.periods.map((period) => {
+    const data = schedule?.periods.map((period) => {
       const date = new Date(parseInt(period.time) * 1000)
       return {
         x: date.toISOString().slice(0, 10),
@@ -24,8 +31,8 @@ export const VestingChart: FC<Props> = (props) => {
   }, [schedule])
 
   const accessors = {
-    xAccessor: (d) => d.x,
-    yAccessor: (d) => d.y,
+    xAccessor: (d: ChartDataTuple) => d.x,
+    yAccessor: (d: ChartDataTuple) => d.y,
   }
 
   return (
@@ -33,7 +40,7 @@ export const VestingChart: FC<Props> = (props) => {
       height={350}
       width={700}
       xScale={{ type: 'band' }}
-      yScale={{ type: 'linear', domain: [0, Number(vesting.amount.numerator.toString())] }}
+      yScale={{ type: 'linear', domain: [0, Number(vesting?.amount.numerator.toString())] }}
     >
       <AnimatedAxis orientation="left" numTicks={4} />
       <AnimatedAxis orientation="bottom" />
@@ -44,7 +51,7 @@ export const VestingChart: FC<Props> = (props) => {
         snapTooltipToDatumX
         snapTooltipToDatumY
         showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => (
+        renderTooltip={({ tooltipData, colorScale }: { tooltipData: any; colorScale: any }) => (
           <div>
             <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>{tooltipData.nearestDatum.key}</div>
             {accessors.xAccessor(tooltipData.nearestDatum.datum)}

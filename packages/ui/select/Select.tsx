@@ -3,6 +3,9 @@ import SelectLabel, { SelectLabelProps } from './SelectLabel'
 import SelectOption, { SelectOptionProps } from './SelectOption'
 import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
 import { ExtractProps } from '../types'
+import SelectOptions, { SelectOptionsProps } from './SelectOptions'
+import SelectButton, { SelectButtonProps } from './SelectButton'
+import classNames from 'classnames'
 
 type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
   button: ReactElement<ExtractProps<typeof Listbox.Button>>
@@ -10,13 +13,13 @@ type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
   children: ReactElement<ExtractProps<typeof Listbox.Options>>
 }
 
-const SelectRoot: FC<SelectProps> = ({ value, onChange, disabled, horizontal, button, children, label }) => {
+const SelectRoot: FC<SelectProps> = ({ className, value, onChange, disabled, horizontal, button, children, label }) => {
   return (
     <Listbox value={value} onChange={onChange} disabled={disabled} horizontal={horizontal}>
       {({ open }) => (
-        <>
+        <div className={classNames('space-y-2', className)}>
           {label}
-          <div className="relative mt-1">
+          <div className="relative mt-2">
             {button}
             <Transition
               as={Fragment}
@@ -28,16 +31,20 @@ const SelectRoot: FC<SelectProps> = ({ value, onChange, disabled, horizontal, bu
               {children}
             </Transition>
           </div>
-        </>
+        </div>
       )}
     </Listbox>
   )
 }
 
 export const Select: FunctionComponent<SelectProps> & {
+  Button: FC<SelectButtonProps>
   Label: FC<SelectLabelProps>
   Option: FC<SelectOptionProps>
+  Options: FC<SelectOptionsProps>
 } = Object.assign(SelectRoot, {
+  Button: SelectButton,
   Label: SelectLabel,
   Option: SelectOption,
+  Options: SelectOptions,
 })

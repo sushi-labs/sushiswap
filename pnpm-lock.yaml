@@ -48,11 +48,11 @@ importers:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
       '@sushiswap/config': workspace:*
-      '@sushiswap/default-token-list': ^27.5.0
+      '@sushiswap/default-token-list': ^27.6.0
       '@vercel/node': ^1.14.1
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 27.5.0
+      '@sushiswap/default-token-list': 27.6.0
       '@vercel/node': 1.15.0
     devDependencies:
       '@sushiswap/config': link:../../packages/config
@@ -324,6 +324,9 @@ importers:
       react-redux: ^8.0.1
       react-spring: ^9.4.4
       react-table: ^7.7.0
+      react-toastify: ^8.2.0
+      react-virtualized-auto-sizer: ^1.0.6
+      react-window: ^1.8.7
       redux-devtools-extension: ^2.13.9
       redux-persist: ^6.0.0
       tailwindcss: ^3.0.24
@@ -380,6 +383,9 @@ importers:
       react-redux: 8.0.1_3vjunwlmc3akvx5gzli76tirsm
       react-spring: 9.4.4_ef5jwxihqo6n7gxfmzogljlgcm
       react-table: 7.7.0_react@18.1.0
+      react-toastify: 8.2.0_ef5jwxihqo6n7gxfmzogljlgcm
+      react-virtualized-auto-sizer: 1.0.6_ef5jwxihqo6n7gxfmzogljlgcm
+      react-window: 1.8.7_ef5jwxihqo6n7gxfmzogljlgcm
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0
       wagmi: 0.3.1_k7rpto3h5recvh4gixx47rvrc4
@@ -4327,8 +4333,8 @@ packages:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: false
 
-  /@sushiswap/default-token-list/27.5.0:
-    resolution: {integrity: sha512-HjT6GvdA4TjHfYSLyi1Gg9xkNbonBJGmzD7tzIJ6t2xMTssmTG0SWuZPjXrGCDqZJRoLBChjHqAxBjpU7jU3bw==}
+  /@sushiswap/default-token-list/27.6.0:
+    resolution: {integrity: sha512-NN2HZtB1i4/5Yuxh0cLjLV0HlOh8SRCE+ZpMIXULymRDtHC0Jkr7upLSzUWo5rOIf0Kcm2sBDxuQd2fHOGL9Ng==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -11066,6 +11072,10 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
+  /memoize-one/5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
+    dev: false
+
   /merge-descriptors/1.0.1:
     resolution: {integrity: sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=}
     dev: true
@@ -12445,6 +12455,17 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
+  /react-toastify/8.2.0_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-Pg2Ju7NngAamarFvLwqrFomJ57u/Ay6i6zfLurt/qPynWkAkOthu6vxfqYpJCyNhHRhR4hu7+bySSeWWJu6PAg==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.1.1
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
   /react-transition-group/4.4.2_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==}
     peerDependencies:
@@ -12470,6 +12491,17 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
+  /react-virtualized-auto-sizer/1.0.6_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-7tQ0BmZqfVF6YYEWcIGuoR3OdYe8I/ZFbNclFlGOC3pMqunkYF/oL30NCjSGl9sMEb17AnzixDz98Kqc3N76HQ==}
+    engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
+      react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
+    dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
   /react-virtualized/9.22.3_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-MKovKMxWTcwPSxE1kK1HcheQTWfuCxAuBoSTf2gwyMM21NdX/PXUhnoP8Uc5dRKd+nKm8v41R36OellhdCpkrw==}
     peerDependencies:
@@ -12484,6 +12516,19 @@ packages:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-lifecycles-compat: 3.0.4
+    dev: false
+
+  /react-window/1.8.7_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-JHEZbPXBpKMmoNO1bNhoXOOLg/ujhL/BU4IqVU9r8eQPcy5KQnGHIHDRkJ0ns9IM5+Aq5LNwt3j8t3tIrePQzA==}
+    engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.17.9
+      memoize-one: 5.2.1
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react/18.1.0:

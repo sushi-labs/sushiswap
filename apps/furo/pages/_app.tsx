@@ -7,15 +7,16 @@ import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
 import { useLatestBlock } from '../lib/hooks/useLatestBlock'
 import { getProvider } from 'functions'
-import { Account, client } from '@sushiswap/wallet-connector'
+import { client } from '@sushiswap/wallet-connector'
 import { WagmiProvider } from 'wagmi'
 import store from '../store'
 
 import '@sushiswap/ui/index.css'
+import 'react-toastify/dist/ReactToastify.css'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { HomeIcon } from '@heroicons/react/outline'
 import Header from 'features/Header'
+import { ToastContainer } from 'react-toastify'
 
 declare global {
   interface Window {
@@ -54,6 +55,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
             <TokenListUpdater chainId={ChainId.GÖRLI} />
             <Component {...pageProps} />
+            <ToastContainer toastClassName={() => 'bg-dark-800 rounded-xl shadow-md shadow-dark-1000 p-3 mt-2'} />
             <App.Footer />
           </App.Shell>
         </ReduxProvider>

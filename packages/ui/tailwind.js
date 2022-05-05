@@ -142,6 +142,17 @@ module.exports = {
         'high-emphesis': '#E3E3E3',
         'higher-emphesis': '#FCFCFD',
       },
+      animation: {
+        ellipsis: 'ellipsis 1.25s infinite',
+        'spin-slow': 'spin 2s linear infinite',
+      },
+      keyframes: {
+        ellipsis: {
+          '0%': { content: '"."' },
+          '33%': { content: '".."' },
+          '66%': { content: '"..."' },
+        },
+      },
     },
     fontFamily: {
       sans: ['DM Sans', ...defaultTheme.fontFamily.sans],

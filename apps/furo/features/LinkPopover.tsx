@@ -9,7 +9,7 @@ import { ArrowFlatLinesUp, CheckIcon, Typography, Link, classNames } from '@sush
 import { useNetwork } from 'wagmi'
 
 interface Props {
-  furo: Stream | Vesting
+  furo?: Stream | Vesting
 }
 
 const LinkPopover: FC<Props> = ({ furo }) => {
@@ -44,7 +44,7 @@ const LinkPopover: FC<Props> = ({ furo }) => {
           >
             <button
               onClick={() => {
-                if (!senderCopied) {
+                if (!senderCopied && furo) {
                   navigator.clipboard.writeText(furo.createdBy.id)
                   setTimeout(() => setSenderCopied(false), 1000)
                   setSenderCopied((previous) => !previous)
@@ -65,7 +65,7 @@ const LinkPopover: FC<Props> = ({ furo }) => {
             </button>
             <button
               onClick={() => {
-                if (!recipentCopied) {
+                if (!recipentCopied && furo) {
                   navigator.clipboard.writeText(furo.recipient.id)
                   setTimeout(() => setRecipentCopied(false), 1000)
                   setRecipentCopied((previous) => !previous)
@@ -84,19 +84,21 @@ const LinkPopover: FC<Props> = ({ furo }) => {
                 Copy Recipient Link
               </Typography>
             </button>
-            <Link.External
-              className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
-              href={getExplorerLink(activeChain?.id, furo.txHash, 'transaction')}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="p-4 border rounded-full border-dark-700 bg-dark-800">
-                <ExternalLinkIcon width={48} height={48} className="text-primary" />
-              </div>
-              <Typography variant="xs" className="text-high-emphesis whitespace-nowrap" weight={700}>
-                View on Etherscan
-              </Typography>
-            </Link.External>
+            {furo && (
+              <Link.External
+                className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-depth-1 border-dark-800 hover:border-dark-700 active:border-dark-600"
+                href={getExplorerLink(activeChain?.id, furo.txHash, 'transaction')}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="p-4 border rounded-full border-dark-700 bg-dark-800">
+                  <ExternalLinkIcon width={48} height={48} className="text-primary" />
+                </div>
+                <Typography variant="xs" className="text-high-emphesis whitespace-nowrap" weight={700}>
+                  View on Etherscan
+                </Typography>
+              </Link.External>
+            )}
           </Popover.Panel>
         </>
       )}

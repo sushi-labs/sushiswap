@@ -39,6 +39,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: ButtonVariant
   fullWidth?: boolean
   loading?: boolean
+  href?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -54,27 +55,29 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       loading,
       disabled,
+      href,
       ...rest
     },
     ref,
   ) => {
-    return (
-      <button
-        {...rest}
-        ref={ref}
-        disabled={disabled || loading}
-        className={classNames('btn', fullWidth ? 'w-full' : '', VARIANT[variant], COLOR[color], SIZE[size], className)}
-      >
-        {loading ? (
-          <Loader stroke="currentColor" />
-        ) : (
-          <>
-            {startIcon && startIcon}
-            {children}
-            {endIcon && endIcon}
-          </>
-        )}
-      </button>
+    return React.createElement(
+      href ? 'a' : 'button',
+      {
+        ...rest,
+        ref,
+        disabled: disabled || loading,
+        className: classNames('btn', fullWidth ? 'w-full' : '', VARIANT[variant], COLOR[color], SIZE[size], className),
+        ...(href && { href }),
+      },
+      loading ? (
+        <Loader stroke="currentColor" />
+      ) : (
+        <>
+          {startIcon && startIcon}
+          {children}
+          {endIcon && endIcon}
+        </>
+      ),
     )
   },
 )
