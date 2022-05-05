@@ -85,6 +85,7 @@ export enum ChainId {
   TELOS = 40,
   HARDHAT = 31337,
   MOONBEAM = 1284,
+  OPTIMISM = 10,
 }
 
 export class Chain implements Chain {
