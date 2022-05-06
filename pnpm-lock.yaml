@@ -16,7 +16,7 @@ importers:
       prettier: 2.6.2
       sort-package-json: 1.55.0
       ts-jest: 27.1.4_jest@28.0.3
-      turbo: 1.2.7
+      turbo: 1.2.8
 
   apis/path-finder:
     specifiers:
@@ -717,6 +717,7 @@ importers:
     specifiers:
       '@ethersproject/address': ^5.6.0
       '@sushiswap/config': workspace:*
+      '@sushiswap/currency': workspace:*
       '@types/jest': ^27.4.1
       '@types/react': ^18.0.8
       '@types/react-dom': ^18.0.3
@@ -730,6 +731,7 @@ importers:
       copy-to-clipboard: 3.3.1
     devDependencies:
       '@sushiswap/config': link:../config
+      '@sushiswap/currency': link:../currency
       '@types/jest': 27.4.1
       '@types/react': 18.0.8
       '@types/react-dom': 18.0.3
@@ -13847,128 +13849,128 @@ packages:
       tslib: 1.14.1
       typescript: 4.6.4
 
-  /turbo-darwin-64/1.2.7:
-    resolution: {integrity: sha512-gRzlL4bjE8oMV+wufgRvuu18UVyQC2vKSPJ8CRuW7W7c3OWC2Z/ZaEDE4IjVfCrKp44ddKKq07jZtCAT9Elm4Q==}
+  /turbo-darwin-64/1.2.8:
+    resolution: {integrity: sha512-W46D05e1EUBE5TpRYjAHZXvR01EGhY8AcZUZa1mQCLmOb/W3knS1jHDAMEfXoPuDhdlolejEcbSHFCmqFRQ6OQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.2.7:
-    resolution: {integrity: sha512-WWxmED2FPbioxfBje89uXEAsyYJyjrVYJXvlgyb6JUIC8EiIA1KEwY8k/bUmlEoUnaCmOblNdePhMWdOL5n6lA==}
+  /turbo-darwin-arm64/1.2.8:
+    resolution: {integrity: sha512-hDcbQzUnKDa5j+MPnt8hbhcENeGD+dxee9O8LkRUGgHFQzqME0YVZsRDwwMCnpRSmr9ZlvZYQJPRELhBdary9Q==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.2.7:
-    resolution: {integrity: sha512-3vRaO7BJCBmrSmhvihXP8jwNytMvO6479KewIOoumLpE8CATqpRZW+SijGm9whwFHjIft0P17D4AWv5/i4O/kg==}
+  /turbo-freebsd-64/1.2.8:
+    resolution: {integrity: sha512-Bd91gNJ9QdsJOjGTpY0YYIa/BIS9BP21gKcpcjZHl4pRpPHraeT9M+RYtpv9bWH3BUWYf0HUzfagOHubrkKq+g==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.2.7:
-    resolution: {integrity: sha512-/2l3/yg8PHN2DxwbNynKUwFY8kTLEtUf6mu044luU9OG8M0lI4ruJ1PFwrKkDcJo3lpCTeI/2voHBMkpQv78cA==}
+  /turbo-freebsd-arm64/1.2.8:
+    resolution: {integrity: sha512-T+fVnbZNFfQ990F8xazsC16EkV98PkQy091NDKYqbYD6C+PtyV6VpAXX61XDzw01JVJ0GxH/8eiLNttP5lfmnA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.2.7:
-    resolution: {integrity: sha512-1IzQctNRQyUdqqemlpPq2JDsEayrZ2hdftF12PbvqLZZ2B8PuE2YFg9AZnnoXYpH6oaw4eM9zaKLBp8pBLtXIQ==}
+  /turbo-linux-32/1.2.8:
+    resolution: {integrity: sha512-wdhssIJQJfYPz9x4XTWZQSRI0mbzsU0Qf3+4kM2XeGsP9k4mi+1g+4PbGutOLBzIWd9OY619dXz/ut43RWqepA==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.2.7:
-    resolution: {integrity: sha512-bAajsTS6c6GE6VCCM/EcoJje4IvedVs1DnXEumftS5BQQaqrQv/+g1mOLkfLr5ApJUB6RnoJQLGXRkJW1uujIw==}
+  /turbo-linux-64/1.2.8:
+    resolution: {integrity: sha512-9OZhxejgl8qQptTUdGnvNXJeFD+I6xF5jkW/tzu5sY9XcdtVvGJ5S4nXYbzG9kPgg4sC6I2gajMCb1l3f5jxSA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.2.7:
-    resolution: {integrity: sha512-mPxwQHNBqIqe0ZBM/CvJzR4YkAuKsKTCqagowNZQbI2/Q4HfME5xHr/YCsf58c2vaxs1gzrVXVQth6P5vGU3lA==}
+  /turbo-linux-arm/1.2.8:
+    resolution: {integrity: sha512-RFLScvJPiuVoTDl83iCFNhXICi+F26A0dhBRaOdD9xP5CjcRTS7ITrPpfiELZ/oQzDdZpk3kD+6MxJPtWxoUkg==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.2.7:
-    resolution: {integrity: sha512-fngk9Hef+CgOY1K/Ckjgg0mxJhzJzN/Sy4fO4YVsLhyYuphjUdrTGCPeanirJAV0XC99X3zJmCIZ6f+m0ffCfg==}
+  /turbo-linux-arm64/1.2.8:
+    resolution: {integrity: sha512-S7Xu5mhEiTOQNVSaERdCEwWn3IdY0hBIBSoU6TNPD8uIR1jw8r2oV/v/hyuNRRbUfq7as+5tmVXW+RXY/dSkEA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.2.7:
-    resolution: {integrity: sha512-lNgj6BeYEkckC+ahSh20JJWQ5RqaO5hMGAzoK92VWQ6yue9lv+DiJTK1lrlzTuSzVlZ7oPGi3d8HNJUHfM8zMQ==}
+  /turbo-linux-mips64le/1.2.8:
+    resolution: {integrity: sha512-JXakBXqVhQrNwwe9t/qw1XowTxKuwv4zh3XVjIX4lKrIPjZZq4XRb3zjLRmtNK7MOV9VZ6Tg6JGc87CNYtp2eA==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.2.7:
-    resolution: {integrity: sha512-iZabL6KHESXXMmEFzEW+aCwZLP2RoyFas+bBsu9lUb1IujPYVGIiAsTgpudHFoAd63VgUegUQoJZI25OBr6twQ==}
+  /turbo-linux-ppc64le/1.2.8:
+    resolution: {integrity: sha512-GBFcyV6y+KHmBCylJmk9/b8YO7O5jknWf3Radva3YYcfihzn7gm6pCWd17ML28ZLMEvJfWEtbHrU4gDFk+k7Mw==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.2.7:
-    resolution: {integrity: sha512-5BzHJqGxWKil6vDjR812VIvPJ1HHTd0UnzNyWqoyvLu1G0EZKdlQAzTCZMrXU5SJ+4pXR6qp4mWv+nNEZe4Ncw==}
+  /turbo-windows-32/1.2.8:
+    resolution: {integrity: sha512-z6FSmbPDtDxz0vDbP5Odd1wJx7aACtxQ8XvIRB5sR+dvSCW40RZZLh9LTjWb49y3l7YsnqVdjEE0/bTu56M7hQ==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.2.7:
-    resolution: {integrity: sha512-osd1D5qnPGrp549IW5ruUzkw7q48Gb7Uidg2ZaSHoA8JAN9W8MUCnHQygKz6btepxrJARXZkqHoP7FY4kTjXLg==}
+  /turbo-windows-64/1.2.8:
+    resolution: {integrity: sha512-RiIy6ZfuEquje7k53DXNI9zR34AN5/8JJwZLnVhPzdqYdth9EXROS9pOKNNnYEvcWoG34xbgISezsxTXzcHVAA==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.2.7:
-    resolution: {integrity: sha512-5hJdUMTD/bLWX4dmQ/mbyUF71oaPgfveROPLn01p9c9r+6sB7tiqDTy06tGZAMjmjIQNm60rZPDJbiU/iRytrw==}
+  /turbo-windows-arm64/1.2.8:
+    resolution: {integrity: sha512-usARU7a51r8bY+Z6d7bO3N+97x2C4d2PftbDQaTTBuHQCdbYoZSKhiTPTJfrij8FaxVWjtfoTBxlTCh3mzuNOQ==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.2.7:
-    resolution: {integrity: sha512-2JyalV3pnkrrPBKj7bqUVIhAJfCVame8SjBrZDiNk4kkg3/qA8zFgj8jkBnPuwdscI7kfhaxkttva8Zdt2cRuQ==}
+  /turbo/1.2.8:
+    resolution: {integrity: sha512-Ms5ZvRlTjl3RF+ccWuGK2Gzgm4Zvr6mtaNwtBJR48u8gcDRjg1eSrpkwvCD+ENEVeQ39MxKjNS51ZYPIBnnhUw==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.2.7
-      turbo-darwin-arm64: 1.2.7
-      turbo-freebsd-64: 1.2.7
-      turbo-freebsd-arm64: 1.2.7
-      turbo-linux-32: 1.2.7
-      turbo-linux-64: 1.2.7
-      turbo-linux-arm: 1.2.7
-      turbo-linux-arm64: 1.2.7
-      turbo-linux-mips64le: 1.2.7
-      turbo-linux-ppc64le: 1.2.7
-      turbo-windows-32: 1.2.7
-      turbo-windows-64: 1.2.7
-      turbo-windows-arm64: 1.2.7
+      turbo-darwin-64: 1.2.8
+      turbo-darwin-arm64: 1.2.8
+      turbo-freebsd-64: 1.2.8
+      turbo-freebsd-arm64: 1.2.8
+      turbo-linux-32: 1.2.8
+      turbo-linux-64: 1.2.8
+      turbo-linux-arm: 1.2.8
+      turbo-linux-arm64: 1.2.8
+      turbo-linux-mips64le: 1.2.8
+      turbo-linux-ppc64le: 1.2.8
+      turbo-windows-32: 1.2.8
+      turbo-windows-64: 1.2.8
+      turbo-windows-arm64: 1.2.8
     dev: true
 
   /type-check/0.3.2:

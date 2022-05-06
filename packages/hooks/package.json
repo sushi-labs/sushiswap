@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@sushiswap/config": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "@types/jest": "^27.4.1",
