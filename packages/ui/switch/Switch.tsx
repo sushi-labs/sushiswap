@@ -25,7 +25,7 @@ const HEIGHT = {
 }
 
 const WIDTH = {
-  xs: 53,
+  xs: 49,
   sm: 57,
   md: 65,
 }

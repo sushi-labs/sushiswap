@@ -16,7 +16,7 @@ export function useTokenAllowance(
       contractInterface: erc20ABI,
     },
     'allowance',
-    { args, watch },
+    { args, watch, enabled: !!token },
   )
 
   return data && token ? Amount.fromRawAmount(token, data.toString()) : undefined
