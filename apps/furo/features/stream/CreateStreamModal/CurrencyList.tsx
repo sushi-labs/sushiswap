@@ -79,7 +79,7 @@ const _CurrencyList = () => {
   )
 
   return (
-    <div className="lg:max-h-[394px] rounded-xl overflow-hidden h-full bg-dark-800 shadow-md">
+    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-dark-800 shadow-md">
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <List

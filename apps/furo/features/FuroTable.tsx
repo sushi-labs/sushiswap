@@ -19,9 +19,10 @@ interface FuroTableProps {
   streams: StreamRepresentation[]
   vestings: VestingRepresentation[]
   type: FuroTableType
+  placeholder: string
 }
 
-export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
+export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type, placeholder }) => {
   const router = useRouter()
   const { activeChain } = useNetwork()
   const data = useMemo(
@@ -65,7 +66,7 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
         Cell: (props) => {
           if (props.row.original.status === FuroStatus.CANCELLED) return `-`
           let formattedAmount = formatNumber(props.value.toExact(10))
-          formattedAmount = formattedAmount !== "0.00" ?  formattedAmount : "< 0.01"
+          formattedAmount = formattedAmount !== '0.00' ? formattedAmount : '< 0.01'
           return `${formattedAmount} ${props.row.original.token.symbol}`
         },
       },
@@ -149,6 +150,16 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type }) => {
           ))}
         </Table.thead>
         <Table.tbody {...getTableBodyProps()}>
+          {rows.length === 0 && (
+            <Table.tr>
+              <Table.td
+                colSpan={columns.length}
+                className="h-12 italic text-center text-low-emphesis flex justify-center text-sm"
+              >
+                {placeholder}
+              </Table.td>
+            </Table.tr>
+          )}
           {rows.map((row, i) => {
             prepareRow(row)
             return (

@@ -30,15 +30,17 @@ const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   return (
     <Layout>
       <div className="flex flex-col h-full gap-12 pt-10">
-        <Typography variant="h2" weight={700} className="text-high-emphesis">
-          Dashboard
-        </Typography>
-        <div className="flex gap-5">
-          <CreateStreamModal />
-          {/*<CreateVestingModal />*/}
+        <div className="flex justify-between items-center">
+          <Typography variant="h2" weight={700} className="text-high-emphesis">
+            Dashboard
+          </Typography>
+          <div className="flex gap-3">
+            <CreateStreamModal />
+            <CreateVestingModal />
+          </div>
         </div>
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3">
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Incoming
             </Typography>
@@ -46,9 +48,10 @@ const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
               streams={streams?.incomingStreams ?? []}
               vestings={vestings?.incomingVestings ?? []}
               type={FuroTableType.INCOMING}
+              placeholder="No incoming streams found"
             />
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3">
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Outgoing
             </Typography>
@@ -56,6 +59,7 @@ const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
               streams={streams?.outgoingStreams ?? []}
               vestings={vestings?.outgoingVestings ?? []}
               type={FuroTableType.OUTGOING}
+              placeholder="No outgoing streams found"
             />
           </div>
         </div>

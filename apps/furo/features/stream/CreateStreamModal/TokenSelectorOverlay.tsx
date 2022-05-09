@@ -3,11 +3,11 @@ import { classNames, Input, Select } from '@sushiswap/ui'
 import { useAllTokens, useToken } from 'hooks'
 import { Currency, Token } from '@sushiswap/currency'
 import { Transition } from '@headlessui/react'
-import { Dialog } from '@sushiswap/ui/dialog'
 import { CurrencyList } from '.'
 import { useDebounce } from '@sushiswap/hooks'
 import { filterTokens, useSortedTokensByQuery } from '@sushiswap/hooks/dist/useSortedTokensByQuery'
 import Loader from '@sushiswap/ui/loader/Loader'
+import { Dialog } from '@sushiswap/ui/dialog'
 
 interface Props {
   currency?: Token
@@ -45,41 +45,57 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
       <div className="flex flex-col gap-2 flex-grow">
         <Select.Label standalone>Token</Select.Label>
         <Select.Button standalone className="!cursor-pointer" onClick={() => setOpen(true)}>
-          {currency?.symbol}
+          {currency?.symbol || <span className="text-secondary">Select a token</span>}
         </Select.Button>
       </div>
-      <div
-        className={classNames(open ? '' : 'hidden pointer-events-none', 'absolute inset-0 overflow-hidden h-full z-10')}
-      >
-        <Transition
-          show={open}
-          enter="transform transition ease-in-out duration-300"
-          enterFrom="translate-x-[-100%]"
-          enterTo="translate-x-0"
-          leave="transform transition ease-in-out duration-500"
-          leaveFrom="translate-x-0"
-          leaveTo="translate-x-[-100%]"
-          as={Fragment}
-          unmount={false}
-        >
-          <Dialog.Content className="!space-y-5 !my-0 h-full">
-            <Dialog.Header title="Select Token" onBack={() => setOpen(false)} onClose={() => setOpen(false)} />
-            <div className="flex relative justify-between gap-1 bg-dark-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue">
-              <Input.Address
-                placeholder="Search token by address"
-                value={query}
-                onChange={(val) => {
-                  searching.current = true
-                  setQuery(val)
-                }}
-                className="text-sm font-bold placeholder:font-medium !ring-0"
-              />
-              {searching.current && <Loader width={24} height={24} />}
-            </div>
-            <CurrencyList currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
-          </Dialog.Content>
-        </Transition>
-      </div>
+      <Transition.Root show={open} unmount={false} as={Fragment}>
+        <div className={classNames('!mt-0 absolute inset-0 overflow-hidden h-full z-10')}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-500"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in-out duration-500"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            unmount={false}
+          >
+            <div
+              aria-hidden="true"
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 bg-dark-700 bg-opacity-75 transition-opacity"
+            />
+          </Transition.Child>
+          <Transition
+            show={open}
+            enter="transform transition ease-in-out duration-300"
+            enterFrom="translate-x-[-100%]"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in-out duration-500"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-[-100%]"
+            as={Fragment}
+            unmount={false}
+          >
+            <Dialog.Content className="!space-y-5 fixed inset-0 !my-0 h-full !rounded-r-none">
+              <Dialog.Header title="Select Token" onBack={() => setOpen(false)} onClose={() => setOpen(false)} />
+              <div className="flex relative justify-between gap-1 bg-dark-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue">
+                <Input.Address
+                  placeholder="Search token by address"
+                  value={query}
+                  onChange={(val) => {
+                    searching.current = true
+                    setQuery(val)
+                  }}
+                  className="text-sm font-bold placeholder:font-medium !ring-0"
+                />
+                {searching.current && <Loader width={24} height={24} />}
+              </div>
+              <CurrencyList currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
+            </Dialog.Content>
+          </Transition>
+        </div>
+      </Transition.Root>
     </>
   )
 }

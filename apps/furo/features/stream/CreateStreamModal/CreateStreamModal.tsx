@@ -108,7 +108,7 @@ export const CreateStreamModal: FC = () => {
 
   return (
     <>
-      <Button variant="filled" color="blue" onClick={() => setOpen(true)}>
+      <Button variant="filled" color="blue" size="sm" onClick={() => setOpen(true)}>
         Create stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>

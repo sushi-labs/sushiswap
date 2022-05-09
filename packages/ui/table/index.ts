@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { default as container, TableContainerProps } from './Container'
-import { default as thead, TableHeadProps } from './Head'
+import { default as thead } from './Head'
 import { default as table } from './Root'
 import { default as tr } from './Row'
 import { default as th } from './HeadCell'
@@ -11,25 +11,13 @@ import { default as thr } from './HeadRow'
 
 export type TableProps = {
   container: FC<TableContainerProps>
-  thead: FC<TableHeadProps>
-  table: FC<{
-    children?: React.ReactNode
-  }>
-  tr: FC<{
-    children?: React.ReactNode
-  }>
-  thr: FC<{
-    children?: React.ReactNode
-  }>
-  th: FC<{
-    children?: React.ReactNode
-  }>
-  td: FC<{
-    children?: React.ReactNode
-  }>
-  tbody: FC<{
-    children?: React.ReactNode
-  }>
+  thead: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+  table: FC<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>>
+  tr: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>>
+  thr: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>>
+  th: FC<React.DetailedHTMLProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>>
+  td: FC<React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>>
+  tbody: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
 }
 
 export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody }
