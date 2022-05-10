@@ -7,10 +7,10 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
 
 export function Header({ children, className, brand, nav, ...props }: HeaderProps): JSX.Element {
   return (
-    <header className={classNames('flex items-center justify-between', className)} {...props}>
+    <header className={classNames('grid grid-cols-3 items-center', className)} {...props}>
       {brand}
-      {nav}
-      {children}
+      <div className="flex justify-center">{nav}</div>
+      <div className="flex justify-end">{children}</div>
     </header>
   )
 }

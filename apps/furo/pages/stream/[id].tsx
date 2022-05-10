@@ -14,31 +14,56 @@ import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import CancelStreamModal from 'features/stream/CancelStreamModal'
+import useSWR, { SWRConfig } from 'swr'
+import { useRouter } from 'next/router'
 
 interface Props {
-  stream?: StreamRepresentation
-  transactions?: TransactionRepresentation[]
+  fallback?: {
+    stream?: StreamRepresentation
+    transactions?: TransactionRepresentation[]
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      stream: (await getStream(query.chainId, query.id)) as StreamRepresentation,
-      transactions: (await getStreamTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+      fallback: {
+        [`/api/stream/${query.chainId}/${query.id}`]: (await getStream(
+          query.chainId,
+          query.id,
+        )) as StreamRepresentation,
+        [`/api/transactions/${query.chainId}/${query.id}`]: (await getStreamTransactions(
+          query.chainId,
+          query.id,
+        )) as TransactionRepresentation[],
+      },
     },
   }
 }
 
-const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  stream: streamRepresentation,
-  transactions,
-}) => {
+const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_Streams />
+    </SWRConfig>
+  )
+}
+
+const _Streams: FC = () => {
+  const router = useRouter()
+  const chainId = router.query.chainId as string
+  const id = router.query.id as string
+
+  const { data: transactions } = useSWR(`/api/transactions/${chainId}/${id}`)
+  const { data: streamRepresentation } = useSWR(`/api/stream/${chainId}/${id}`)
   const [withdrawHovered, setWithdrawHovered] = useState(false)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
     [streamRepresentation],
   )
+
+  console.log(streamRepresentation)
 
   return (
     <Layout>

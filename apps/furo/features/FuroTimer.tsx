@@ -21,7 +21,9 @@ const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
 
   useInterval(() => {
     if (!furo || furo.status === FuroStatus.CANCELLED || furo.status === FuroStatus.COMPLETED) return
-    const times = furo?.status === FuroStatus.ACTIVE ? furo.remainingTime : furo.startingInTime
+    const times = [FuroStatus.ACTIVE, FuroStatus.EXTENDED].includes(furo?.status)
+      ? furo.remainingTime
+      : furo.startingInTime
 
     if (times) {
       const { days, hours, minutes, seconds } = times

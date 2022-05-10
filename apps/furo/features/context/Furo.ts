@@ -89,7 +89,7 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
-    if (this.withdrawnAmount.toExact() === "0") return 0
+    if (this.withdrawnAmount.toExact() === '0') return 0
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 

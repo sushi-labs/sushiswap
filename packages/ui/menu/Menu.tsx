@@ -2,6 +2,8 @@ import { FC, Fragment, FunctionComponent, ReactElement, ReactNode } from 'react'
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react'
 import classNames from 'classnames'
 import { MenuItem } from './MenuItem'
+import { MenuItems } from './MenuItems'
+import { MenuButton } from './MenuButton'
 
 interface MenuProps {
   className?: string
@@ -30,6 +32,10 @@ const MenuRoot: FC<MenuProps> = ({ className, button, children }) => {
 
 export const Menu: FunctionComponent<MenuProps> & {
   Item: FC<MenuItem>
+  Items: FC<MenuItems>
+  Button: FC<MenuButton>
 } = Object.assign(MenuRoot, {
   Item: MenuItem,
+  Items: MenuItems,
+  Button: MenuButton,
 })

@@ -97,8 +97,16 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type, placeho
         Cell: (props) => {
           return (
             <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">{props.value.toDateString()}</Typography>
-              <Typography variant="xs">{props.value.toTimeString()}</Typography>
+              <Typography variant="xs">
+                {props.value.toLocaleString('en-uS', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  timeZone: 'UTC',
+                })}
+              </Typography>
             </div>
           )
         },
@@ -110,8 +118,16 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type, placeho
         Cell: (props) => {
           return (
             <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">{props.value.toDateString()}</Typography>
-              <Typography variant="xs">{props.value.toTimeString()}</Typography>
+              <Typography variant="xs">
+                {props.value.toLocaleString('en-uS', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  timeZone: 'UTC',
+                })}
+              </Typography>
             </div>
           )
         },
