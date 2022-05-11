@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react'
-import { CoinbaseWalletIcon, Menu, WalletConnectIcon } from '@sushiswap/ui'
+import { CoinbaseWalletIcon, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useDisconnect } from 'wagmi'
-import { MetamaskIcon } from '@sushiswap/ui'
 import { LogoutIcon } from '@heroicons/react/outline'
-import { Account, Wallet } from '..'
+import Account from '../Account'
+import List from './List'
 
 const Icons: Record<string, ReactNode> = {
   MetaMask: <MetamaskIcon width={16} height={16} />,
@@ -16,7 +16,7 @@ const Button: FC = () => {
   const { disconnect } = useDisconnect()
 
   return (
-    <Wallet.List>
+    <List>
       {({ connectors, isConnected, isReconnecting, isConnecting, connect, isMounted }) => {
         if (isMounted && !isConnected && !isReconnecting && !isConnecting) {
           return (
@@ -70,7 +70,7 @@ const Button: FC = () => {
           )
         }
       }}
-    </Wallet.List>
+    </List>
   )
 }
 

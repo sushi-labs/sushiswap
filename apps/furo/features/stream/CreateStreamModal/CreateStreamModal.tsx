@@ -12,11 +12,8 @@ import { Dialog } from '@sushiswap/ui/dialog'
 import { Typography } from '@sushiswap/ui'
 import Dots from '@sushiswap/ui/dots/Dots'
 import { TokenSelectorOverlay } from '.'
-import Switch from '../../../../../packages/ui/switch/Switch'
 import { JSBI } from '@sushiswap/math'
 import { parseUnits } from 'ethers/lib/utils'
-import { useTokenWalletBalance } from 'hooks/useTokenWalletBalance'
-import Loader from '@sushiswap/ui/loader/Loader'
 import { CurrencyInput } from 'components'
 
 export const CreateStreamModal: FC = () => {
