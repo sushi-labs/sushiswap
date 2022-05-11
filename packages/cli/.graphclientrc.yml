@@ -1,13 +1,3 @@
-sources:
-  - name: bar
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bar
-  - name: blocks
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks
-
+sources: !includes ./graph/sources
 documents:
-  - './bar.graphql'
-  - './blocks.graphql'
+  - './graph/queries/*.graphql'

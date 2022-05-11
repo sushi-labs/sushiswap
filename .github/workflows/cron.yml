@@ -11,6 +11,11 @@ jobs:
           curl --request POST \
           --url 'https://sushi.com/dao/api/safes/update' \
           --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'
+      - name: Call our API route
+        run: |
+          curl --request POST \
+          --url 'https://sushi.com/dao/api/balances/update' \
+          --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'
       # - name: Call our API route
       #   run: |
       #     curl --request POST \

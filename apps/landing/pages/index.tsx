@@ -7,7 +7,7 @@ import Footer from '../components/Footer'
 import ProductCard from '../components/ProductCard'
 import FeatureCard from '../components/FeatureCard'
 import PartnerCard from '../components/PartnerCard'
-import { formatUSD } from '@sushiswap/format'
+import { formatUSD, formatNumber } from '@sushiswap/format'
 import Image from 'next/image'
 import background from '../public/neon-street.jpg'
 import thicker from '../public/thicker-neon.png'
@@ -269,7 +269,7 @@ export async function getStaticProps() {
           decimalPlaces: 0,
         },
         {
-          formatted: formatUSD(totalPoolCount),
+          formatted: formatNumber(totalPoolCount),
           number: totalPoolCount,
           title: 'Total Pairs',
           decimalPlaces: 0,
