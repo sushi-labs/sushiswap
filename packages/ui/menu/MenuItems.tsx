@@ -13,7 +13,7 @@ export const MenuItems: FC<MenuItems> = forwardRef(({ className, ...props }, ref
       ref={ref}
       className={classNames(
         className,
-        'z-10 bg-dark-900 absolute right-0 mt-2 w-56 origin-top-right rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-dark-800 shadow-sm shadow-dark-1000',
+        'z-10 bg-dark-800 absolute right-0 mt-2 w-56 origin-top-right rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-dark-800 shadow-sm shadow-dark-1000',
       )}
       {...props}
     />

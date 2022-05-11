@@ -904,8 +904,13 @@ importers:
 
   packages/wallet-connector:
     specifiers:
+      '@heroicons/react': ^1.0.6
+      '@sushiswap/chain': workspace:*
       '@sushiswap/config': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/jest': ^27.4.1
       '@types/node': ^17.0.30
@@ -916,9 +921,15 @@ importers:
       react-dom: ^18.1.0
       typescript: ^4.6.4
       wagmi: ^0.3.1
+    dependencies:
+      '@heroicons/react': 1.0.6_react@18.1.0
     devDependencies:
+      '@sushiswap/chain': link:../chain
       '@sushiswap/config': link:../config
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/format': link:../format
       '@sushiswap/hooks': link:../hooks
+      '@sushiswap/math': link:../math
       '@sushiswap/ui': link:../ui
       '@types/jest': 27.4.1
       '@types/node': 17.0.30

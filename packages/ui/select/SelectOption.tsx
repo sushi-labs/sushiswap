@@ -13,17 +13,18 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
     <Listbox.Option
       ref={ref}
       {...props}
-      className={({ active }) =>
+      className={({ active, selected }: { active: boolean; selected: boolean }) =>
         classNames(
-          active ? 'text-blue-100 bg-blue-500 bg-opacity-50' : 'text-high-emphesis',
-          'font-bold text-sm cursor-default select-none relative py-2 pl-4 pr-9 rounded-xl border-[3px] border-dark-800',
+          active ? 'text-white bg-blue-500' : 'text-high-emphesis',
+          selected ? '' : 'pl-[34px]',
+          'flex gap-2 px-2 items-center font-bold text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-dark-800',
           className,
         )
       }
     >
-      {({ selected }) => (
+      {({ selected }: { active: boolean; selected: boolean }) => (
         <>
-          {selected && <CheckIcon width={24} height={24} />}
+          {selected && <CheckIcon width={18} height={18} />}
           {children}
         </>
       )}

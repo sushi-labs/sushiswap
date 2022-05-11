@@ -1,7 +1,6 @@
-import React, { FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 import { useConnect } from 'wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
-import { UseConnectArgs, UseConnectConfig } from 'wagmi/dist/declarations/src/hooks/accounts/useConnect'
 
 type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
 

@@ -142,7 +142,7 @@ export const CreateStreamModal: FC = () => {
             <input
               placeholder="0x..."
               type="text"
-              className="rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md border-none text-sm font-bold"
+              className="rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
               defaultValue={recipient}
               onChange={(e) => setRecipient(e.target.value)}
             />
@@ -154,7 +154,7 @@ export const CreateStreamModal: FC = () => {
               </Typography>
               <input
                 type="datetime-local"
-                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold"
+                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
               />
@@ -165,7 +165,7 @@ export const CreateStreamModal: FC = () => {
               </Typography>
               <input
                 type="datetime-local"
-                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold"
+                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
               />
