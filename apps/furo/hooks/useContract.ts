@@ -17,11 +17,9 @@ export function useContract<T extends Contract = Contract>(
   const { activeChain } = useNetwork()
   const chainId = activeChain?.id
   const provider = useProvider()
-  console.log(addressOrAddressMap, ABI, provider, chainId)
 
   return useMemo(() => {
     if (!addressOrAddressMap || !ABI || !provider || !chainId) {
-      console.log(1)
       return null
     }
     let address: string | undefined

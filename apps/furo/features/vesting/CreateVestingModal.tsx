@@ -5,18 +5,19 @@ import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
 import { useFuroVestingContract } from 'hooks/useFuroVestingContract'
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 import Button from '@sushiswap/ui/button/Button'
 import Dots from '@sushiswap/ui/dots/Dots'
 import { createToast } from 'components/Toast'
 import { Dialog } from '@sushiswap/ui/dialog'
-import { Select, Typography } from '@sushiswap/ui'
+import { Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelectorOverlay } from 'features/stream'
 import Switch from '@sushiswap/ui/switch/Switch'
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { CurrencyInput } from 'components'
 import { Disclosure, Transition } from '@headlessui/react'
+import { parseUnits } from 'ethers/lib/utils'
 
 type StepConfig = {
   label: string
@@ -39,8 +40,7 @@ const CreateVestingModal: FC = () => {
   const [gradedVesting, setGradedVesting] = useState(false)
   const [token, setToken] = useState<Token>()
   const [error, setError] = useState<string>()
-  const [stepConfig, setStepConfig] = useState<StepConfig>()
-  const [amount, setAmount] = useState<string>()
+  const [stepConfig, setStepConfig] = useState<StepConfig>(stepConfigurations[0])
   const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const [recipient, setRecipient] = useState<string>()
   const [startDate, setStartDate] = useState<string>()
@@ -51,23 +51,29 @@ const CreateVestingModal: FC = () => {
   const contract = useFuroVestingContract()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(open, contract?.address)
+
+  const [cliffAmountAsEntity, stepAmountAsEntity, totalAmountAsEntity] = useMemo(() => {
+    if (!token) {
+      return [undefined, undefined, undefined]
+    }
+
+    const cliffAmountAsEntity = Amount.fromRawAmount(
+      token,
+      BigNumber.from(parseUnits(cliffAmount && Number(cliffAmount) > 0 ? cliffAmount : '0', token.decimals)).toString(),
+    )
+    const stepAmountAsEntity = Amount.fromRawAmount(
+      token,
+      BigNumber.from(parseUnits(stepAmount && Number(stepAmount) > 0 ? stepAmount : '0', token.decimals)).toString(),
+    )
+
+    return [cliffAmountAsEntity, stepAmountAsEntity, cliffAmountAsEntity.add(stepAmountAsEntity)]
+  }, [cliffAmount, stepAmount, token])
+
   const [tokenApprovalState, approveToken] = useApproveCallback(
     open,
-    amount,
+    totalAmountAsEntity,
     activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
   )
-
-  useEffect(() => {
-    if (!cliffAmount && !stepAmount) return
-
-    if (cliffAmount && stepAmount) {
-      setAmount(Amount.fromRawAmount(token, BigNumber.from(cliffAmount).add(stepAmount).toString()))
-    } else if (!stepAmount) {
-      setAmount(Amount.fromRawAmount(token, BigNumber.from(cliffAmount).toString()))
-    } else {
-      setAmount(Amount.fromRawAmount(token, BigNumber.from(stepAmount).toString()))
-    }
-  }, [stepAmount, cliffAmount, token])
 
   const createVesting = useCallback(async () => {
     if (!contract || !account?.address) return
@@ -107,8 +113,8 @@ const CreateVestingModal: FC = () => {
         cliffDuration,
         stepDuration,
         steps,
-        cliffAmount: cliffAmount ? cliffAmount : BigNumber.from(0),
-        stepAmount: stepAmount ? stepAmount : BigNumber.from(0),
+        cliffAmount: cliffAmountAsEntity ? cliffAmountAsEntity.quotient.toString() : BigNumber.from(0),
+        stepAmount: stepAmountAsEntity ? stepAmountAsEntity.quotient.toString() : BigNumber.from(0),
         fromBentoBox,
       }),
     ]
@@ -121,6 +127,7 @@ const CreateVestingModal: FC = () => {
           data: batchAction({ contract, actions }),
         },
       })
+
       createToast({
         title: 'Create vesting',
         description: `You have successfully created a vested stream`,
@@ -134,7 +141,7 @@ const CreateVestingModal: FC = () => {
   }, [
     account?.address,
     cliff,
-    cliffAmount,
+    cliffAmountAsEntity,
     cliffDate,
     contract,
     fromBentoBox,
@@ -143,31 +150,11 @@ const CreateVestingModal: FC = () => {
     sendTransactionAsync,
     signature,
     startDate,
-    stepAmount,
+    stepAmountAsEntity,
     stepConfig,
     stepEndDate,
     token,
   ])
-
-  // const ApproveTokenButton: FC = () => {
-  //   return tokenApprovalState === ApprovalState.NOT_APPROVED ? (
-  //     <button onClick={approveToken}>{`Approve ${token.symbol}`}</button>
-  //   ) : tokenApprovalState === ApprovalState.PENDING ? (
-  //     <button disabled={true}>{`Approving Token`}</button>
-  //   ) : (
-  //     <></>
-  //   )
-  // }
-  //
-  // const SignBentoBox: FC = () => {
-  //   return bentoBoxApprovalState === ApprovalState.NOT_APPROVED ? (
-  //     <button onClick={approveBentoBox}>{`Approve BentoBox`}</button>
-  //   ) : tokenApprovalState === ApprovalState.PENDING ? (
-  //     <button disabled={true}>{`Approving BentoBox`}</button>
-  //   ) : (
-  //     <></>
-  //   )
-  // }
 
   return (
     <>
@@ -175,22 +162,22 @@ const CreateVestingModal: FC = () => {
         Create vesting
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden">
+        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-dark-900">
           <Dialog.Header title="Create Vesting" onClose={() => setOpen(false)} />
           <div className="grid grid-cols-2 divide-x divide-dark-800">
             <div className="space-y-6 pr-6">
               <TokenSelectorOverlay onSelect={setToken} currency={token} />
               <div className="flex flex-col gap-2">
                 <Typography variant="sm" weight={500} className="text-high-emphesis">
+                  Start date
+                </Typography>
+                <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Typography variant="sm" weight={500} className="text-high-emphesis">
                   Recipient (ENS name or Address)
                 </Typography>
-                <input
-                  placeholder="0x..."
-                  type="text"
-                  className="rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-                  defaultValue={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                />
+                <Input.Address placeholder="0x..." type="text" value={recipient} onChange={setRecipient} />
               </div>
               <div className="h-px bg-dark-800 my-2" />
               <div className="flex flex-col border border-dark-800 bg-dark-800/20 rounded-xl p-5">
@@ -222,12 +209,7 @@ const CreateVestingModal: FC = () => {
                         <Typography variant="sm" weight={500} className="text-high-emphesis">
                           Cliff end date
                         </Typography>
-                        <input
-                          type="datetime-local"
-                          className="rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-                          value={cliffDate}
-                          onChange={(e) => setCliffDate(e.target.value)}
-                        />
+                        <Input.DatetimeLocal value={cliffDate} onChange={setCliffDate} />
                       </div>
                       <div className="flex flex-col gap-2">
                         <Typography variant="sm" weight={500} className="text-high-emphesis">
@@ -273,12 +255,7 @@ const CreateVestingModal: FC = () => {
                         <Typography variant="sm" weight={500} className="text-high-emphesis">
                           Step end date
                         </Typography>
-                        <input
-                          type="datetime-local"
-                          className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-                          value={stepEndDate}
-                          onChange={(e) => setStepEndDate(e.target.value)}
-                        />
+                        <Input.DatetimeLocal value={stepEndDate} onChange={setStepEndDate} />
                       </div>
                       <div className="flex flex-col gap-2">
                         <Typography variant="sm" weight={500} className="text-high-emphesis">
@@ -293,7 +270,7 @@ const CreateVestingModal: FC = () => {
                       </div>
                       <div className="flex flex-col gap-2">
                         <Select
-                          button={<Select.Button>Quarterly</Select.Button>}
+                          button={<Select.Button>{stepConfig.label}</Select.Button>}
                           label={<Select.Label>Payment frequency</Select.Label>}
                           value={stepConfig}
                           onChange={setStepConfig}

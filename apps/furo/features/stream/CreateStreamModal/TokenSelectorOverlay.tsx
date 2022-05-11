@@ -21,6 +21,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
   const debouncedQuery = useDebounce(query, 400)
   const searching = useRef<boolean>(false)
   const searchToken = useToken(debouncedQuery)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSelect = useCallback(
     (currency: Currency) => {
@@ -63,7 +64,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
             <div
               aria-hidden="true"
               onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-dark-700 bg-opacity-75 transition-opacity"
+              className="fixed inset-0 bg-dark-700 backdrop-blur-[14px] bg-opacity-50 backdrop-saturate-[0.6] transition-opacity"
             />
           </Transition.Child>
           <Transition
@@ -76,18 +77,20 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
             leaveTo="translate-x-[-100%]"
             as={Fragment}
             unmount={false}
+            afterEnter={() => inputRef.current?.focus()}
           >
             <Dialog.Content className="!space-y-5 fixed inset-0 !my-0 h-full !rounded-r-none">
-              <Dialog.Header title="Select Token" onBack={() => setOpen(false)} onClose={() => setOpen(false)} />
+              <Dialog.Header title="Select Token" onBack={() => setOpen(false)} />
               <div className="flex relative justify-between gap-1 bg-dark-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue">
                 <Input.Address
+                  ref={inputRef}
                   placeholder="Search token by address"
                   value={query}
-                  onChange={(val) => {
+                  onChange={(val: string) => {
                     searching.current = true
                     setQuery(val)
                   }}
-                  className="text-sm font-bold placeholder:font-medium !ring-0"
+                  className="!border-none !ring-offset-0 !shadow-none text-sm font-bold placeholder:font-medium !ring-0 w-full"
                 />
                 {searching.current && <Loader width={24} height={24} />}
               </div>

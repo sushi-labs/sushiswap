@@ -9,7 +9,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../
 import Button from '@sushiswap/ui/button/Button'
 import { createToast } from 'components/Toast'
 import { Dialog } from '@sushiswap/ui/dialog'
-import { Typography } from '@sushiswap/ui'
+import { Input, Typography } from '@sushiswap/ui'
 import Dots from '@sushiswap/ui/dots/Dots'
 import { TokenSelectorOverlay } from '.'
 import { JSBI } from '@sushiswap/math'
@@ -109,7 +109,7 @@ export const CreateStreamModal: FC = () => {
         Create stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden">
+        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-dark-800">
           <Dialog.Header title="Create Stream" onClose={() => setOpen(false)} />
           <TokenSelectorOverlay currency={token} onSelect={setToken} />
           <div className="flex flex-col gap-2">
@@ -136,36 +136,20 @@ export const CreateStreamModal: FC = () => {
             <Typography variant="sm" weight={500} className="text-high-emphesis">
               Recipient (ENS name or Address)
             </Typography>
-            <input
-              placeholder="0x..."
-              type="text"
-              className="rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-              defaultValue={recipient}
-              onChange={(e) => setRecipient(e.target.value)}
-            />
+            <Input.Address placeholder="0x..." value={recipient} onChange={setRecipient} />
           </div>
           <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Typography variant="sm" weight={500} className="text-high-emphesis">
                 Start date
               </Typography>
-              <input
-                type="datetime-local"
-                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+              <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
             </div>
             <div className="flex flex-col gap-2">
               <Typography variant="sm" weight={500} className="text-high-emphesis">
                 End date
               </Typography>
-              <input
-                type="datetime-local"
-                className="rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold !focus:ring-1 !focus-within:ring-1 !ring-offset-2 !ring-offset-dark-900 ring-blue"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+              <Input.DatetimeLocal value={endDate} onChange={setEndDate} />
             </div>
           </div>
           <div className="h-px bg-dark-800 my-2" />
