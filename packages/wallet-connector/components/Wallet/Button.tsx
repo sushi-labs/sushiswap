@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react'
-import { Account, Wallet } from '../index'
 import { CoinbaseWalletIcon, Menu, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useDisconnect } from 'wagmi'
 import { MetamaskIcon } from '@sushiswap/ui'
 import { LogoutIcon } from '@heroicons/react/outline'
+import { Account, Wallet } from '..'
 
 const Icons: Record<string, ReactNode> = {
   MetaMask: <MetamaskIcon width={16} height={16} />,

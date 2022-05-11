@@ -5,6 +5,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './features/**/*.{js,ts,jsx,tsx}',
     'node_modules/@sushiswap/ui/**/*.{js,ts,jsx,tsx}',
+    'node_modules/@sushiswap/wallet-connector/*/.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
