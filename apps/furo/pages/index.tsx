@@ -25,17 +25,19 @@ export default function Index() {
     <Layout>
       <div className="flex flex-col h-full gap-8 pt-40">
         <div className="flex flex-col gap-1">
-          <Typography variant="hero" className="text-slate-50 font-stretch" weight={700}>
+          <Typography variant="hero" className="text-slate-100 font-stretch" weight={900}>
             Welcome to <span className="text-blue">Furo</span>
           </Typography>
-          <Typography variant="h3">Decentralized asset streaming on steroids.</Typography>
+          <Typography variant="h3" className="text-slate-500">
+            Decentralized asset streaming on steroids.
+          </Typography>
         </div>
         <div className="flex gap-4">
           <Wallet.Button
             hack={connect}
             button={
               <Menu.Button
-                className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-base px-10 !h-[56px] rounded-2xl"
+                className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
                 as="div"
               >
                 Connect Wallet
@@ -46,7 +48,7 @@ export default function Index() {
             hack={connect}
             button={
               <Menu.Button
-                className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-base px-10 !h-[56px] rounded-2xl"
+                className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
                 as="div"
               >
                 View Address

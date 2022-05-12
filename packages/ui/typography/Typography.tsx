@@ -1,12 +1,13 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import classNames from 'classnames'
 
-export type TypographyWeight = 400 | 500 | 700
+export type TypographyWeight = 400 | 500 | 700 | 900
 
 const WEIGHTS = {
   400: 'font-normal',
   500: 'font-medium',
   700: 'font-bold',
+  900: 'font-black',
 }
 
 export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'xl' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
