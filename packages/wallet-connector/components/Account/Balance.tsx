@@ -28,7 +28,7 @@ function Balance({ address }: Props): JSX.Element {
           data &&
           Amount.fromRawAmount(Native.onChain(activeChain.id), JSBI.BigInt(data.value)).toSignificant(4)}
       </>
-      <Typography weight={700} variant="sm" className="text-secondary" component="span">
+      <Typography weight={700} variant="sm" className="text-slate-500" component="span">
         ETH
       </Typography>
     </Typography>
