@@ -39,7 +39,6 @@ export function useCurrentBlockTimestampMultichain(
   blockNumbers: Array<number | undefined>,
 ): Array<string | undefined> {
   const chainToBlock = useMemo(() => {
-    console.log({ blockNumbers })
     return chainIds.reduce((result, chainId, i) => {
       result[chainId] = blockNumbers[i]
       return result
@@ -63,7 +62,14 @@ export function useCurrentBlockTimestampMultichain(
   return Object.values(chainToCallState).map((callState) => callState.result?.[0]?.toString())
 }
 
-const ALCHEMY_ENABLED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.OPTIMISM, ChainId.GÖRLI]
+const ALCHEMY_ENABLED_CHAINS = [
+  ChainId.ETHEREUM,
+  ChainId.POLYGON,
+  ChainId.POLYGON_TESTNET,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.GÖRLI,
+]
 
 const INFURA_ENABLED_CHAINS = [
   ChainId.ETHEREUM,
@@ -82,29 +88,29 @@ const ALCHEMY_API_KEY: Record<number, string> = {
   [ChainId.ARBITRUM]: 'eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV',
   [ChainId.OPTIMISM]: 'rtbMqQGp96fbuXxzUS2fct34eYzA7tY8',
   [ChainId.POLYGON]: 'vZft72lBzQ100fCIJTyohJR1tWrMsUei',
+  [ChainId.POLYGON_TESTNET]: 'JW13aE7MytaJNzSZ-BI4L-XfmaMqMip_',
   [ChainId.GÖRLI]: 'BXrZLhuc63Gn91NoLVVFDJ010M-AwOa2',
 }
 
 export function getProvider(chainId: ChainId) {
   if (providerCache[chainId]) return providerCache[chainId]!
-  const infuraKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-  if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
-
-  // const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_ID
-  // if (!alchemyKey) throw new Error('NEXT_PUBLIC_ALCHEMY_ID is required for provider')
-
-  // const ankrKey = process.env.NEXT_PUBLIC_ANKR_ID
-  // if (!ankrKey) throw new Error('NEXT_PUBLIC_ANKR_ID is required for provider')
 
   if (ALCHEMY_ENABLED_CHAINS.includes(chainId)) {
+    // const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_ID
+    // if (!alchemyKey) throw new Error('NEXT_PUBLIC_ALCHEMY_ID is required for provider')
+
     // console.log('ALCHEMY', chainId, ALCHEMY_ENABLED_CHAINS, getAlchemyChainName(chainId))
     const name = getAlchemyChainName(chainId)
     providerCache[chainId] = new providers.AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
+    const infuraKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+    if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
     // console.log('INFURA', chainId, INFURA_ENABLED_CHAINS, getInfuraChainName(chainId))
     const name = getInfuraChainName(chainId)
     providerCache[chainId] = new providers.InfuraProvider(name, infuraKey)
   } else if (ANKR_ENABLED_CHAINS.includes(chainId)) {
+    // const ankrKey = process.env.NEXT_PUBLIC_ANKR_ID
+    // if (!ankrKey) throw new Error('NEXT_PUBLIC_ANKR_ID is required for provider')
     // const name = getAnkrChainName(chainId)
     // providerCache[chainId] = new providers.AnkrProvider(name, ankrKey)
   }
@@ -122,6 +128,8 @@ export function getAlchemyChainName(chainId: ChainId) {
       return 'homestead'
     case ChainId.POLYGON:
       return 'matic'
+    case ChainId.POLYGON_TESTNET:
+      return 'maticmum'
     case ChainId.ARBITRUM:
       return 'arbitrum'
     case ChainId.OPTIMISM:

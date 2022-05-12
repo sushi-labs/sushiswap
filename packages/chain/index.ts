@@ -69,6 +69,7 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   POLYGON = 137,
+  POLYGON_TESTNET = 80001,
   FANTOM = 250,
   GNOSIS = 100,
   BSC = 56,
