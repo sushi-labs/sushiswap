@@ -51,6 +51,8 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
   }
 
   if (isMounted && (isConnected || isReconnecting)) {
+    if (!data?.address) return null
+
     return (
       <div className="z-10 flex items-center border-[3px] border-dark-900 bg-dark-800 rounded-[14px]">
         <div className="px-3">

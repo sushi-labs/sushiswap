@@ -2,7 +2,7 @@
 
 @layer components {
     .btn {
-        @apply font-bold flex items-center justify-center gap-2 rounded-xl cursor-pointer text-higher-emphesis hover:from-black/20 focus:to-black/20 focus:from-black/20 hover:to-black/20 active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40
+        @apply font-bold flex items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100 hover:from-black/20 focus:to-black/20 focus:from-black/20 hover:to-black/20 active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40
     }
 
     .btn-filled {

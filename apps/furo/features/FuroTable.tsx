@@ -62,6 +62,26 @@ const defaultColumns = (tableProps: FuroTableProps) => [
       />
     ),
   }),
+  table.createDataColumn('amount', {
+    header: () => <div className="text-right w-full">Amount</div>,
+    cell: (props) => {
+      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
+      return (
+        <div className="flex flex-col w-full">
+          <Typography variant="sm" weight={700} className="text-slate-200 text-right">
+            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
+          </Typography>
+          <Typography variant="xs" weight={500} className="text-right text-slate-500">
+            {props.row.original?.token.symbol}
+          </Typography>
+        </div>
+      )
+    },
+  }),
+  table.createDataColumn('type', {
+    header: () => <div className="text-left w-full">Type</div>,
+    cell: (props) => <div className="text-left w-full">{props.getValue()}</div>,
+  }),
   table.createDisplayColumn({
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
@@ -82,26 +102,6 @@ const defaultColumns = (tableProps: FuroTableProps) => [
         </Typography>
       </div>
     ),
-  }),
-  table.createDataColumn('type', {
-    header: () => <div className="text-left w-full">Type</div>,
-    cell: (props) => <div className="text-left w-full">{props.getValue()}</div>,
-  }),
-  table.createDataColumn('amount', {
-    header: () => <div className="text-right w-full">Amount</div>,
-    cell: (props) => {
-      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
-      return (
-        <div className="flex flex-col w-full">
-          <Typography variant="sm" weight={700} className="text-slate-200 text-right">
-            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
-          </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-slate-500">
-            {props.row.original?.token.symbol}
-          </Typography>
-        </div>
-      )
-    },
   }),
 ]
 

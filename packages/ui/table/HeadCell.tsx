@@ -5,7 +5,7 @@ const HeadCell: FC<
 > = ({ children, ...props }) => (
   <th
     {...props}
-    className="h-12 px-4 text-xs font-bold border-b border-slate-800 text-slate-300 hover:text-high-emphesis"
+    className="h-12 px-4 text-sm font-bold border-b border-slate-800 text-slate-400 hover:text-high-emphesis"
   >
     {children}
   </th>
