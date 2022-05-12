@@ -36,7 +36,7 @@ export function useSingleContractWithCallData(
 }
 
 function useCallContext() {
-  const { data: network } = useNetwork()
+  const { activeChain } = useNetwork()
   const { data: latestBlock } = useBlockNumber()
-  return { chainId: network?.id, latestBlock }
+  return { chainId: activeChain?.id, latestBlock }
 }

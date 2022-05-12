@@ -1,4 +1,3 @@
-import React from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
 import Account from './Account'

@@ -1,4 +1,4 @@
-import React, { FC, forwardRef } from 'react'
+import React, { FC, forwardRef, ReactNode } from 'react'
 import classNames from 'classnames'
 
 export type TypographyWeight = 400 | 500 | 700
@@ -24,6 +24,7 @@ const VARIANTS = {
 }
 
 export interface TypographyProps extends React.AllHTMLAttributes<React.ReactHTML> {
+  children: ReactNode | ReactNode[]
   variant?: TypographyVariant
   weight?: TypographyWeight
   component?: keyof React.ReactHTML

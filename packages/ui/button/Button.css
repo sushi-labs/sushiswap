@@ -38,11 +38,11 @@
     }
 
     .btn-xs {
-        @apply px-2 h-[28px]
+        @apply px-2 h-[28px] text-xs
     }
 
     .btn-sm {
-        @apply px-3 h-[36px]
+        @apply px-3 h-[36px] text-sm rounded-lg
     }
 
     .btn-default {

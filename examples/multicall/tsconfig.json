@@ -1,7 +1,7 @@
 {
   "extends": "@sushiswap/config/typescript/nextjs.json",
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "typechain"],
   "compilerOptions": {
     "preserveSymlinks": true,
     "resolveJsonModule": true

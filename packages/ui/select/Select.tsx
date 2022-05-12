@@ -16,7 +16,7 @@ type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
 const SelectRoot: FC<SelectProps> = ({ className, value, onChange, disabled, horizontal, button, children, label }) => {
   return (
     <Listbox value={value} onChange={onChange} disabled={disabled} horizontal={horizontal}>
-      {({ open }) => (
+      {({ open }: { open: boolean }) => (
         <div className={classNames('space-y-2', className)}>
           {label}
           <div className="relative mt-2">

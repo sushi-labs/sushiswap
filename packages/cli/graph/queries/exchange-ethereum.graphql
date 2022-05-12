@@ -1,0 +1,32 @@
+query EthereumPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  ETHEREUM_EXCHANGE_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    name
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    totalSupply
+    reserveUSD
+    volumeUSD
+  }
+}
+
+query EthereumTokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  ETHEREUM_EXCHANGE_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    derivedETH
+  }
+
+  ETHEREUM_EXCHANGE_bundle(id: 1, block: $block) {
+    ethPrice
+  }
+}

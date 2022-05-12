@@ -2,10 +2,6 @@
 
 Sushi 2.0 🍣
 
-## Notice
-
-SOON TO BE MOVED TO sushiswap/sushiswap
-
 ## Getting Started
 
 https://pnpm.io/installation
@@ -16,15 +12,39 @@ pnpm install
 
 ### Execute
 
-pnpx
+pnp exec
 
 ### Dev
 
 pnpn run dev
 
+#### Single Repository
+
+pnpm exec turbo run dev --scope=api/app/package/protocol
+
 ### Build
 
 pnpn run build
+
+#### Single Repository
+
+pnpm exec turbo run build --scope=api/app/package/protocol
+
+### Test
+
+pnpn run test
+
+#### Single Repository
+
+pnpm exec turbo run test --scope=api/app/package/protocol
+
+### Test
+
+pnpn run clean
+
+#### Single Repository
+
+pnpm exec turbo run clear --scope=api/app/package/protocol
 
 ## APIs
 

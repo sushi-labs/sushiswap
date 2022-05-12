@@ -14,26 +14,54 @@ import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import CancelStreamModal from 'features/stream/CancelStreamModal'
+import useSWR, { SWRConfig } from 'swr'
+import { useRouter } from 'next/router'
+import getConfig from 'next/config'
 
 interface Props {
-  stream?: StreamRepresentation
-  transactions?: TransactionRepresentation[]
+  fallback?: {
+    stream?: StreamRepresentation
+    transactions?: TransactionRepresentation[]
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      stream: (await getStream(query.chainId, query.id)) as StreamRepresentation,
-      transactions: (await getStreamTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+      fallback: {
+        [`/furo/api/stream/${query.chainId}/${query.id}`]: (await getStream(
+          query.chainId,
+          query.id,
+        )) as StreamRepresentation,
+        [`/furo/api/transactions/${query.chainId}/${query.id}`]: (await getStreamTransactions(
+          query.chainId,
+          query.id,
+        )) as TransactionRepresentation[],
+      },
     },
   }
 }
 
-const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  stream: streamRepresentation,
-  transactions,
-}) => {
+const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_Streams />
+    </SWRConfig>
+  )
+}
+
+const _Streams: FC = () => {
+  const router = useRouter()
+  const chainId = router.query.chainId as string
+  const id = router.query.id as string
+
+  const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json()),
+  )
+  const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json()),
+  )
   const [withdrawHovered, setWithdrawHovered] = useState(false)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),

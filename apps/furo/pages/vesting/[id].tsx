@@ -14,29 +14,52 @@ import { FC, useMemo } from 'react'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import useSWR, { SWRConfig } from 'swr'
 
 interface Props {
-  vestingRepresentation?: VestingRepresentation
-  transactions?: TransactionRepresentation[]
-  schedule?: ScheduleRepresentation
+  fallback?: Record<string, any>
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      vestingRepresentation: (await getVesting(query.chainId, query.id)) as VestingRepresentation,
-      transactions: (await getVestingTransactions(query.chainId, query.id)) as TransactionRepresentation[],
-      schedule: (await getVestingSchedule(query.chainId, query.id)) as ScheduleRepresentation,
+      fallback: {
+        [`/api/vesting/${query.chainId}/${query.id}`]: (await getVesting(
+          query.chainId,
+          query.id,
+        )) as VestingRepresentation,
+        [`/api/transactions/${query.chainId}/${query.id}`]: (await getVestingTransactions(
+          query.chainId,
+          query.id,
+        )) as TransactionRepresentation[],
+        [`/api/schedule/${query.chainId}/${query.id}`]: (await getVestingSchedule(
+          query.chainId,
+          query.id,
+        )) as ScheduleRepresentation,
+      },
     },
   }
 }
 
-const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  vestingRepresentation,
-  transactions,
-  schedule,
-}) => {
+const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_VestingPage />
+    </SWRConfig>
+  )
+}
+
+const _VestingPage: FC = () => {
+  const router = useRouter()
+  const chainId = router.query.chainId as string
+  const id = router.query.id as string
+
+  const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
+  const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
+  const { data: schedule } = useSWR<ScheduleRepresentation>(`/api/schedule/${chainId}/${id}`)
+
   const vesting = useMemo(
     () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation }) : undefined),
     [vestingRepresentation],

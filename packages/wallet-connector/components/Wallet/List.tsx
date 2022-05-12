@@ -1,19 +1,27 @@
-import React from 'react'
+import { FC, ReactNode } from 'react'
 import { useConnect } from 'wagmi'
 import { useIsMounted } from '@sushiswap/hooks'
 
-function List(): JSX.Element {
+type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
+
+interface List {
+  children?: ReactNode | ReactNode[] | ((x: RenderProps) => ReactNode | ReactNode[])
+}
+
+const List: FC<List> = ({ children }) => {
   const isMounted = useIsMounted()
-  const { activeConnector, connect, connectors, error, isConnecting, isConnected, isDisconnected, pendingConnector } =
-    useConnect()
+  const connect = useConnect()
+
+  if (typeof children === 'function') return <>{children({ ...connect, isMounted })}</>
+
   return (
     <>
-      {connectors
-        .filter((x) => isMounted && x.ready && x.id !== activeConnector?.id)
+      {connect.connectors
+        .filter((x) => isMounted && x.ready && x.id !== connect.activeConnector?.id)
         .map((x) => (
-          <button key={x.id} onClick={() => connect(x)}>
+          <button key={x.id} onClick={() => connect.connect(x)}>
             {x.name}
-            {isConnecting && x.id === pendingConnector?.id && ' (connecting)'}
+            {connect.isConnecting && x.id === connect.pendingConnector?.id && ' (connecting)'}
           </button>
         ))}
     </>
