@@ -1,6 +1,6 @@
 import { program } from 'commander'
 
-import { bar, chef } from './actions'
+import { bar, chef, maker } from './actions'
 
 program.version('0.0.0').description('Sushi CLI')
 
@@ -12,6 +12,8 @@ program
   .option('-v,--version <version>', 'version', '1')
   .option('-a,--all', 'all', false)
   .action(chef)
+
+program.command('maker').description('print maker data').action(maker)
 
 program.parse(process.argv)
 
