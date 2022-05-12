@@ -1,10 +1,11 @@
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import Layout from 'components/Layout'
-import { Typography, Loader, Dots, Menu, WalletIcon } from '@sushiswap/ui'
+import { Typography, Loader, Dots, WalletIcon } from '@sushiswap/ui'
 import Link from 'next/link'
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Wallet } from '@sushiswap/wallet-connector'
 import { Dashboard } from './users/[address]'
+import { Menu as HeadlessMenu } from '@headlessui/react'
 
 export default function DashboardPage() {
   const { activeChain } = useNetwork()
@@ -49,9 +50,12 @@ export default function DashboardPage() {
                 <Wallet.Button
                   hack={connect}
                   button={
-                    <Menu.Button className="btn btn-blue btn-filled btn-default w-full" as="div">
+                    <HeadlessMenu.Button
+                      as="div"
+                      className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[44px] rounded-2xl"
+                    >
                       Connect Wallet
-                    </Menu.Button>
+                    </HeadlessMenu.Button>
                   }
                 />
               )}
