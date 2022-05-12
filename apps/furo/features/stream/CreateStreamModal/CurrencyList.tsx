@@ -50,7 +50,7 @@ function isBreakLine(x: unknown): x is BreakLine {
 
 const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
   return (
-    <div className="flex w-full px-4 border-t border-slate-800" style={style}>
+    <div className="flex w-full px-4 border-t border-slate-700" style={style}>
       <div className="flex flex-col gap-0.5 justify-center">
         <Typography variant="xs" weight={700}>
           Expanded results from inactive token lists

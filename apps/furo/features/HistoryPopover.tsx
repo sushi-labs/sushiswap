@@ -33,8 +33,8 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
           <Popover.Button ref={setReferenceElement}>
             <div
               className={classNames(
-                open ? 'border-slate-700 bg-slate-800' : 'border-slate-800',
-                'flex items-center gap-2 px-5 border shadow-md cursor-pointer hover:border-slate-700 active:border-slate-600 bg-slate-900 hover:bg-slate-800 active:bg-slate-700 rounded-xl h-11',
+                open ? 'border-slate-600 bg-slate-700' : 'border-slate-700',
+                'flex items-center gap-2 px-5 border shadow-md cursor-pointer hover:border-slate-600 active:border-slate-500 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-xl h-11',
               )}
             >
               <HistoryIcon width={18} height={18} />
@@ -48,7 +48,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="overflow-hidden z-10 bg-slate-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-slate-800 flex flex-col gap-4 max-w-[530px]"
+            className="overflow-hidden z-10 bg-slate-800 shadow-md p-4 pb-0 rounded-xl border border-slate-700 flex flex-col gap-4 max-w-[530px]"
           >
             <div className="flex justify-between gap-4">
               <Typography variant="lg" weight={700} className="text-slate-200">
@@ -56,7 +56,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
               </Typography>
               <XIcon width={24} height={24} className="text-slate-500" />
             </div>
-            <div className="h-[200px] max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-slate-800 border-t border-slate-800">
+            <div className="h-[200px] max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-slate-800 border-t border-slate-700">
               {transactions?.length ? (
                 Object.values(transactions).map((transaction) => (
                   <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />

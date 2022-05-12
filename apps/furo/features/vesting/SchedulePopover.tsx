@@ -24,7 +24,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   return (
     <Popover>
       <Popover.Button ref={setReferenceElement}>
-        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer border-slate-800 bg-slate-900 rounded-xl h-11">
+        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer border-slate-700 bg-slate-800 rounded-xl h-11">
           <CalendarIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Schedule
@@ -36,7 +36,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
-        className="overflow-hidden z-10 bg-slate-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-slate-800 flex flex-col gap-4 max-w-[530px]"
+        className="overflow-hidden z-10 bg-slate-800 shadow-md p-4 pb-0 rounded-xl border border-slate-700 flex flex-col gap-4 max-w-[530px]"
       >
         <div className="flex justify-between gap-4">
           <Typography variant="lg" weight={700} className="text-slate-200">
@@ -44,7 +44,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
           </Typography>
           <XIcon width={24} height={24} className="text-slate-500" />
         </div>
-        <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-slate-800 border-t border-slate-800">
+        <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-slate-800 border-t border-slate-700">
           {schedule?.periods.length ? (
             Object.values(schedule.periods).map((period) => (
               <SchedulePopoverItem vesting={vesting} period={period} key={period.id} />

@@ -109,7 +109,7 @@ export const CreateStreamModal: FC = () => {
         Create stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-800">
+        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-700">
           <Dialog.Header title="Create Stream" onClose={() => setOpen(false)} />
           <TokenSelectorOverlay currency={token} onSelect={setToken} />
           <div className="flex flex-col gap-2">

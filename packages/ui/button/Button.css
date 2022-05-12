@@ -2,7 +2,7 @@
 
 @layer components {
     .btn {
-        @apply font-bold flex items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100 hover:from-black/20 focus:to-black/20 focus:from-black/20 hover:to-black/20 active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40
+        @apply font-bold flex hover:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100 disabled:pointer-events-none disabled:opacity-40
     }
 
     .btn-filled {
@@ -10,31 +10,31 @@
     }
 
     .btn-outlined {
-        @apply border-none bg-opacity-20 hover:bg-opacity-40 active:bg-opacity-60 focus:bg-opacity-40
+        @apply border-none hover:ring-2
     }
 
     .btn-red {
-        @apply bg-red
+        @apply bg-red ring-red-700
     }
 
     .btn-pink {
-        @apply bg-pink
+        @apply bg-pink ring-blue-700
     }
 
     .btn-blue {
-        @apply bg-blue hover:ring-2 ring-blue-700
+        @apply bg-blue ring-blue-700
     }
 
     .btn-purple {
-        @apply bg-purple
+        @apply bg-purple ring-purple-700
     }
 
     .btn-gradient {
-        @apply bg-gradient-to-r from-blue to-pink-600 hover:from-blue/80 hover:to-pink-600/80 focus:from-blue/80 focus:to-pink-600/80 active:from-blue/70 active:to-pink-600/70 focus:border-blue-700
+        @apply bg-gradient-to-r hover:ring-4 ring-slate-600 ring-purple/30 from-blue to-pink focus:border-blue-700
     }
 
     .btn-gray {
-        @apply bg-slate-700
+        @apply bg-slate-700 ring-slate-600
     }
 
     .btn-xs {

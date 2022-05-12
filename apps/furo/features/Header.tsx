@@ -11,7 +11,7 @@ const Header: FC = () => {
   const { activeChain } = useNetwork()
 
   return (
-    <div className="border-b border-slate-800">
+    <div className="border-b border-slate-700">
       <Container maxWidth="5xl" className="mx-auto px-2">
         <App.Header
           className="h-[54px]"

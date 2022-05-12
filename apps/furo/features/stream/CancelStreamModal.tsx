@@ -61,11 +61,11 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-slate-800 border-[3px] border-slate-800 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
           </div>
-          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-slate-800 border-t rounded-2xl border-slate-800 flex flex-col gap-4">
+          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-4">
             <Typography variant="xs" weight={400} className="text-slate-200">
               This will send the remaining funds{' '}
               <span className="font-bold">

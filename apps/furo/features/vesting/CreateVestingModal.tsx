@@ -162,7 +162,7 @@ const CreateVestingModal: FC = () => {
         Create vesting
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-slate-800">
+        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-slate-700">
           <Dialog.Header title="Create Vesting" onClose={() => setOpen(false)} />
           <div className="grid grid-cols-2 divide-x divide-slate-800">
             <div className="space-y-6 pr-6">
@@ -180,7 +180,7 @@ const CreateVestingModal: FC = () => {
                 <Input.Address placeholder="0x..." type="text" value={recipient} onChange={setRecipient} />
               </div>
               <div className="h-px bg-slate-800 my-2" />
-              <div className="flex flex-col border border-slate-800 bg-slate-800/20 rounded-xl p-5">
+              <div className="flex flex-col border border-slate-700 bg-slate-800/20 rounded-xl p-5">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
@@ -226,7 +226,7 @@ const CreateVestingModal: FC = () => {
                   </Transition>
                 </Disclosure>
               </div>
-              <div className="flex flex-col border border-slate-800 bg-slate-800/20 rounded-xl p-5">
+              <div className="flex flex-col border border-slate-700 bg-slate-800/20 rounded-xl p-5">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">

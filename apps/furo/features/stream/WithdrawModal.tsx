@@ -89,12 +89,12 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-slate-800 border-[3px] border-slate-800 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-slate-200" />
             </div>
           </div>
           <div
-            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-800 flex flex-col gap-1"
+            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-1"
             onClick={() => inputRef.current?.focus()}
           >
             <div className="flex justify-between gap-3">

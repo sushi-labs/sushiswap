@@ -40,10 +40,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
         <Typography variant="xs" weight={400} className="text-slate-500">
           Time Remaining
         </Typography>
-        <Typography variant="lg" weight={700} className="mt-1 text-slate-200">
+        <Typography variant="lg" weight={700} className="mt-1 text-slate-300">
           {`${remaining?.days} days ${remaining?.hours} hours ${remaining?.minutes} min ${remaining?.seconds} sec`}
         </Typography>
-        <Typography variant="xs" weight={400} className="mt-3">
+        <Typography variant="xs" weight={400} className="mt-3 text-slate-400">
           {`The stream was started on ${stream?.startTime.toLocaleDateString()} @ ${stream?.startTime.toLocaleTimeString()} and has been active for 
             ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes.
               If the sender does not cancel the stream, the full amount will be disbursed to you on 
@@ -81,8 +81,8 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <Popover.Button ref={setReferenceElement}>
             <div
               className={classNames(
-                open ? 'border-slate-700 bg-slate-800' : 'border-slate-800',
-                'flex items-center gap-2 px-5 border shadow-md cursor-pointer hover:border-slate-700 active:border-slate-600 bg-slate-900 hover:bg-slate-800 active:bg-slate-700 rounded-xl h-11',
+                open ? 'border-slate-600 bg-slate-700' : 'border-slate-700',
+                'flex items-center gap-2 px-5 border shadow-md cursor-pointer hover:border-slate-600 active:border-slate-500 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-xl h-11',
               )}
             >
               <NotepadIcon width={18} height={18} />
@@ -96,7 +96,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="z-10 bg-slate-900 shadow-depth-1 p-4 rounded-xl border border-slate-800 flex flex-col gap-4 max-w-[530px]"
+            className="z-10 bg-slate-800 shadow-md p-4 rounded-xl border border-slate-700 flex flex-col gap-4 max-w-[530px]"
           >
             <div className="flex justify-between gap-4">
               <Typography variant="lg" weight={700} className="text-slate-200">
@@ -111,7 +111,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     weight={700}
                     variant="xs"
                     onClick={() => stream && navigator.clipboard.writeText(stream.createdBy.id)}
-                    className="px-4 py-2 border rounded-full border-slate-800 shadow-depth-1 hover:border-slate-700 active:border-slate-600"
+                    className="px-4 py-2 border rounded-full border-slate-700 shadow-md hover:border-slate-700 active:border-slate-600"
                   >
                     {stream ? shortenAddress(stream.createdBy.id) : ''}
                   </Typography>
@@ -124,18 +124,18 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     weight={700}
                     variant="xs"
                     onClick={() => stream && navigator.clipboard.writeText(stream.recipient.id)}
-                    className="px-4 py-2 border rounded-full border-slate-800 shadow-depth-1 hover:border-slate-700 active:border-slate-600"
+                    className="px-4 py-2 border rounded-full border-slate-700 shadow-md hover:border-slate-700 active:border-slate-600"
                   >
                     {stream ? shortenAddress(stream.recipient.id) : ''}
                   </Typography>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col p-4 border rounded-xl shadow-depth-1 border-slate-800">
+            <div className="flex flex-col p-4 border rounded-xl shadow-md border-slate-700">
               <StreamDetails />
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col gap-4 p-4 border border-slate-800 rounded-xl shadow-depth-1">
+              <div className="flex flex-col gap-4 p-4 border border-slate-700 rounded-xl shadow-md">
                 <div className="flex flex-col">
                   {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
                   <Typography variant="lg" className="text-slate-200" weight={700}>
@@ -162,7 +162,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-blue/30 rounded-xl shadow-depth-1">
+              <div className="flex flex-col gap-4 p-4 bg-blue/30 rounded-xl shadow-md">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-slate-200" weight={700}>
                     Streamed
@@ -188,7 +188,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-pink/30 rounded-xl shadow-depth-1">
+              <div className="flex flex-col gap-4 p-4 bg-pink/30 rounded-xl shadow-md">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-slate-200" weight={700}>
                     Withdrawn
