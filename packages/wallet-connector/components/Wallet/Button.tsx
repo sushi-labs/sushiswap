@@ -54,14 +54,14 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
     if (!data?.address) return null
 
     return (
-      <div className="z-10 flex items-center border-[3px] border-dark-900 bg-dark-800 rounded-[14px]">
+      <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
         <div className="px-3">
           <Account.Balance address={data?.address} />
         </div>
         <Menu
           button={
             button || (
-              <Menu.Button className="!rounded-xl !py-2 !bg-dark-700 p-px border-dark-1000 hover:ring-2 hover:ring-dark-600 flex gap-3">
+              <Menu.Button className="!rounded-xl !py-2 !bg-slate-700 p-px border-slate-1000 hover:ring-2 hover:ring-slate-600 flex gap-3">
                 <Account.Avatar address={data?.address} />
                 <Account.Name address={data?.address} />
               </Menu.Button>

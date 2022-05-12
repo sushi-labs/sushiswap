@@ -12,7 +12,7 @@ function Name({ address }: Props): JSX.Element {
   })
 
   return (
-    <Typography variant="sm" weight={700} className="text-white tracking-wide">
+    <Typography variant="sm" weight={700} className="text-slate-50 tracking-wide">
       {data || (address ? shortenAddress(address) : '')}
     </Typography>
   )
