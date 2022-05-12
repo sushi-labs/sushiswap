@@ -18,7 +18,7 @@
     "lint": "TIMING=1 eslint . --fix"
   },
   "dependencies": {
-    "@fontsource/dm-sans": "^4.5.0",
+    "@fontsource/inter": "^4.5.10",
     "@headlessui/react": "^1.6.0",
     "@heroicons/react": "^1.0.6",
     "@sushiswap/hooks": "workspace:*",

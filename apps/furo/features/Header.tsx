@@ -11,7 +11,7 @@ const Header: FC = () => {
   const { activeChain } = useNetwork()
 
   return (
-    <div className="border-b border-dark-900">
+    <div className="border-b border-slate-800">
       <Container maxWidth="5xl" className="mx-auto px-2">
         <App.Header
           className="h-[54px]"
@@ -23,7 +23,7 @@ const Header: FC = () => {
                   <Typography
                     variant="sm"
                     weight={700}
-                    className="text-white border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]"
+                    className="text-slate-50 border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]"
                     component="a"
                   >
                     Dashboard

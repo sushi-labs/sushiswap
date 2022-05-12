@@ -50,8 +50,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   return (
     <Layout>
       <div className="flex flex-col h-full gap-12 pt-10">
-        <div className="flex justify-between items-center border-b border-dark-900 pb-4">
-          <Typography variant="h3" weight={700} className="text-high-emphesis">
+        <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+          <Typography variant="h3" weight={700} className="text-slate-200">
             Dashboard
           </Typography>
           <div className="flex gap-3">
@@ -61,7 +61,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
         </div>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-3">
-            <Typography variant="lg" weight={700} className="text-high-emphesis">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               Incoming
             </Typography>
             <FuroTable
@@ -72,7 +72,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             />
           </div>
           <div className="flex flex-col gap-3">
-            <Typography variant="lg" weight={700} className="text-high-emphesis">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               Outgoing
             </Typography>
             <FuroTable

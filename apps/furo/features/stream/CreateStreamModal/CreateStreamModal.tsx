@@ -109,12 +109,12 @@ export const CreateStreamModal: FC = () => {
         Create stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-dark-800">
+        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-800">
           <Dialog.Header title="Create Stream" onClose={() => setOpen(false)} />
           <TokenSelectorOverlay currency={token} onSelect={setToken} />
           <div className="flex flex-col gap-2">
             <div className="flex justify-between gap-1">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Amount
               </Typography>
               {/* TODO: Enable when bentoBalance hook is dialed in*/}
@@ -131,28 +131,28 @@ export const CreateStreamModal: FC = () => {
             </div>
           </div>
           <CurrencyInput onChange={setAmount} account={account?.address} amount={amount} token={token} />
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px bg-slate-800 my-2" />
           <div className="flex flex-col gap-2">
-            <Typography variant="sm" weight={500} className="text-high-emphesis">
+            <Typography variant="sm" weight={500} className="text-slate-200">
               Recipient (ENS name or Address)
             </Typography>
             <Input.Address placeholder="0x..." value={recipient} onChange={setRecipient} />
           </div>
           <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Start date
               </Typography>
               <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
             </div>
             <div className="flex flex-col gap-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 End date
               </Typography>
               <Input.DatetimeLocal value={endDate} onChange={setEndDate} />
             </div>
           </div>
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px bg-slate-800 my-2" />
           <div className="flex flex-col gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
               (token && tokenApprovalState !== ApprovalState.APPROVED)) && (

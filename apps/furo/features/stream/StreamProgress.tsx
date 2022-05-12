@@ -35,7 +35,7 @@ const StreamProgress: FC<Props> = ({ stream }) => {
       <svg width={svgWidth} height={24}>
         <LinearGradient id="gblue" from="#1398ED" to="#5CB0E4" vertical={false} />
         <LinearGradient id="gpink" from="#FFA6E7" to="#f43fc5" vertical={false} />
-        <rect rx={12} x={0} width={svgWidth} y={0} height={24} fill="currentColor" className="text-dark-800" />
+        <rect rx={12} x={0} width={svgWidth} y={0} height={24} fill="currentColor" className="text-slate-800" />
         <rect
           rx={12}
           x={0}

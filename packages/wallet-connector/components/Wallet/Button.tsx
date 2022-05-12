@@ -1,5 +1,5 @@
 import { FC, ReactElement, ReactNode } from 'react'
-import { CoinbaseWalletIcon, Menu, MetamaskIcon, WalletConnectIcon, Loader } from '@sushiswap/ui'
+import { CoinbaseWalletIcon, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { LogoutIcon } from '@heroicons/react/outline'
 import Account from '../Account'
@@ -28,7 +28,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
       <Menu
         button={
           button || (
-            <Menu.Button className="w-full min-w-[158px] !py-2 btn btn !btn-default" as="div">
+            <Menu.Button className="w-full min-w-[158px] !h-[36px] btn !bg-blue btn-blue btn-default" as="div">
               {label || 'Connect Wallet'}
             </Menu.Button>
           )
@@ -52,14 +52,14 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
 
   if (isMounted && (isConnected || isReconnecting)) {
     return (
-      <div className="z-10 flex items-center border-[3px] border-dark-900 bg-dark-900 rounded-[14px]">
+      <div className="z-10 flex items-center border-[3px] border-dark-900 bg-dark-800 rounded-[14px]">
         <div className="px-3">
           <Account.Balance address={data?.address} />
         </div>
         <Menu
           button={
             button || (
-              <Menu.Button className="!rounded-xl !py-2 !bg-dark-800 p-px border-dark-1000 hover:ring-1 hover:ring-dark-700 flex gap-3">
+              <Menu.Button className="!rounded-xl !py-2 !bg-dark-700 p-px border-dark-1000 hover:ring-2 hover:ring-dark-600 flex gap-3">
                 <Account.Avatar address={data?.address} />
                 <Account.Name address={data?.address} />
               </Menu.Button>

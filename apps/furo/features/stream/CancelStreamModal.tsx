@@ -61,12 +61,12 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-800 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
           </div>
-          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-4">
-            <Typography variant="xs" weight={400} className="text-high-emphesis">
+          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-slate-800 border-t rounded-2xl border-slate-800 flex flex-col gap-4">
+            <Typography variant="xs" weight={400} className="text-slate-200">
               This will send the remaining funds{' '}
               <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
@@ -74,7 +74,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
               to your {toBentoBox ? 'BentoBox' : 'account'}
             </Typography>
             <div className="flex justify-between items-center">
-              <Typography variant="xs" weight={700} className="text-high-emphesis">
+              <Typography variant="xs" weight={700} className="text-slate-200">
                 Receive in BentoBox
               </Typography>
               <Switch
@@ -82,7 +82,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
                 id="toggle-expert-mode-button"
                 checked={toBentoBox}
                 onChange={() => setToBentoBox((prevState) => !prevState)}
-                checkedIcon={<CheckIcon className="text-dark-700" />}
+                checkedIcon={<CheckIcon className="text-slate-700" />}
                 uncheckedIcon={<XIcon />}
                 color="gradient"
               />

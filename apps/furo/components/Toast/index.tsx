@@ -21,7 +21,7 @@ type CreateToast = (x: CreateToastPayload) => void
 const content = (title: ReactNode, description: ReactNode) => {
   return (
     <div className="flex flex-col gap-2">
-      <Typography variant="sm" weight={700} className="text-high-emphesis">
+      <Typography variant="sm" weight={700} className="text-slate-200">
         {title}
       </Typography>
       <Typography variant="xs" weight={500}>

@@ -34,7 +34,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           progress={Math.min(Math.max(props.getValue(), 0), 1)}
           color={ProgressColor.GRADIENT}
         />
-        <Typography variant="sm" weight={700} className="text-high-emphesis">
+        <Typography variant="sm" weight={700} className="text-slate-200">
           {(Number(Math.min(Math.max(props.getValue(), 0), 1)) * 100).toFixed(1)}%
         </Typography>
       </div>
@@ -93,10 +93,10 @@ const defaultColumns = (tableProps: FuroTableProps) => [
       if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
       return (
         <div className="flex flex-col w-full">
-          <Typography variant="sm" weight={700} className="text-high-emphesis text-right">
+          <Typography variant="sm" weight={700} className="text-slate-200 text-right">
             {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
           </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-secondary">
+          <Typography variant="xs" weight={500} className="text-right text-slate-500">
             {props.row.original?.token.symbol}
           </Typography>
         </div>

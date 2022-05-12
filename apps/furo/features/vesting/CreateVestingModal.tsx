@@ -162,29 +162,29 @@ const CreateVestingModal: FC = () => {
         Create vesting
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-dark-900">
+        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-slate-800">
           <Dialog.Header title="Create Vesting" onClose={() => setOpen(false)} />
-          <div className="grid grid-cols-2 divide-x divide-dark-800">
+          <div className="grid grid-cols-2 divide-x divide-slate-800">
             <div className="space-y-6 pr-6">
               <TokenSelectorOverlay onSelect={setToken} currency={token} />
               <div className="flex flex-col gap-2">
-                <Typography variant="sm" weight={500} className="text-high-emphesis">
+                <Typography variant="sm" weight={500} className="text-slate-200">
                   Start date
                 </Typography>
                 <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
               </div>
               <div className="flex flex-col gap-2">
-                <Typography variant="sm" weight={500} className="text-high-emphesis">
+                <Typography variant="sm" weight={500} className="text-slate-200">
                   Recipient (ENS name or Address)
                 </Typography>
                 <Input.Address placeholder="0x..." type="text" value={recipient} onChange={setRecipient} />
               </div>
-              <div className="h-px bg-dark-800 my-2" />
-              <div className="flex flex-col border border-dark-800 bg-dark-800/20 rounded-xl p-5">
+              <div className="h-px bg-slate-800 my-2" />
+              <div className="flex flex-col border border-slate-800 bg-slate-800/20 rounded-xl p-5">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
-                      <Typography variant="sm" weight={700} className="text-high-emphesis">
+                      <Typography variant="sm" weight={700} className="text-slate-200">
                         Cliff
                       </Typography>
                       <Switch
@@ -206,13 +206,13 @@ const CreateVestingModal: FC = () => {
                   >
                     <div className="space-y-6 mt-4">
                       <div className="flex flex-col gap-2">
-                        <Typography variant="sm" weight={500} className="text-high-emphesis">
+                        <Typography variant="sm" weight={500} className="text-slate-200">
                           Cliff end date
                         </Typography>
                         <Input.DatetimeLocal value={cliffDate} onChange={setCliffDate} />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Typography variant="sm" weight={500} className="text-high-emphesis">
+                        <Typography variant="sm" weight={500} className="text-slate-200">
                           Cliff amount
                         </Typography>
                         <CurrencyInput
@@ -226,11 +226,11 @@ const CreateVestingModal: FC = () => {
                   </Transition>
                 </Disclosure>
               </div>
-              <div className="flex flex-col border border-dark-800 bg-dark-800/20 rounded-xl p-5">
+              <div className="flex flex-col border border-slate-800 bg-slate-800/20 rounded-xl p-5">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
-                      <Typography variant="sm" weight={700} className="text-high-emphesis">
+                      <Typography variant="sm" weight={700} className="text-slate-200">
                         Graded vesting
                       </Typography>
                       <Switch
@@ -252,13 +252,13 @@ const CreateVestingModal: FC = () => {
                   >
                     <div className="space-y-6 mt-4">
                       <div className="flex flex-col gap-2">
-                        <Typography variant="sm" weight={500} className="text-high-emphesis">
+                        <Typography variant="sm" weight={500} className="text-slate-200">
                           Step end date
                         </Typography>
                         <Input.DatetimeLocal value={stepEndDate} onChange={setStepEndDate} />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Typography variant="sm" weight={500} className="text-high-emphesis">
+                        <Typography variant="sm" weight={500} className="text-slate-200">
                           Total amount
                         </Typography>
                         <CurrencyInput
@@ -291,7 +291,7 @@ const CreateVestingModal: FC = () => {
             </div>
             <div className="space-y-6 pl-6">Vesting chart</div>
           </div>
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px bg-slate-800 my-2" />
           <div className="flex justify-end gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
               (token && tokenApprovalState !== ApprovalState.APPROVED)) && (

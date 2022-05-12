@@ -155,7 +155,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+      sans: ['Inter', ...defaultTheme.fontFamily.sans],
     },
   },
 }

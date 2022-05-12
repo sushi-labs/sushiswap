@@ -99,43 +99,43 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Recipient
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {shortenAddress(stream.recipient.id)}
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Stream Amount
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.amount.toSignificant(6)}{' '}
-                <span className="text-secondary font-medium">{stream.token.symbol}</span>
+                <span className="text-slate-500 font-medium">{stream.token.symbol}</span>
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Start date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.startTime.toLocaleString()}
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 End date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.endTime.toLocaleString()}
               </Typography>
             </div>
           </div>
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px bg-slate-800 my-2" />
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 pb-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Top up amount
               </Typography>
               <Switch
@@ -157,7 +157,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           </div>
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 py-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Change end date
               </Typography>
               <Switch
@@ -173,7 +173,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
               type="datetime-local"
               className={classNames(
                 changeEndDate ? '' : 'opacity-40 pointer-events-none',
-                'rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
               )}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}

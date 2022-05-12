@@ -78,7 +78,7 @@ const _Streams: FC = () => {
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-900 border-slate-800 hover:border-slate-700 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Streamed:
@@ -95,7 +95,7 @@ const _Streams: FC = () => {
             </div>
             <div
               aria-hidden="true"
-              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl"
+              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-900 border-slate-800 hover:border-slate-700 rounded-2xl"
               onMouseEnter={() => setWithdrawHovered(true)}
               onMouseLeave={() => setWithdrawHovered(false)}
             >

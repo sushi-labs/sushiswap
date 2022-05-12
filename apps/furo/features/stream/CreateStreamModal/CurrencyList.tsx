@@ -29,10 +29,10 @@ const CurrencyRow: FC<{
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
         <div className="flex flex-row items-center flex-grow gap-3">
           <div className="flex flex-col">
-            <Typography variant="xxs" className="text-secondary group-hover:text-blue-100">
+            <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
               {currency.name}
             </Typography>
-            <Typography variant="sm" weight={700} className="text-high-emphesis group-hover:text-white">
+            <Typography variant="sm" weight={700} className="text-slate-200 group-hover:text-slate-50">
               {currency.symbol}
             </Typography>
           </div>
@@ -50,7 +50,7 @@ function isBreakLine(x: unknown): x is BreakLine {
 
 const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
   return (
-    <div className="flex w-full px-4 border-t border-dark-800" style={style}>
+    <div className="flex w-full px-4 border-t border-slate-800" style={style}>
       <div className="flex flex-col gap-0.5 justify-center">
         <Typography variant="xs" weight={700}>
           Expanded results from inactive token lists
@@ -79,7 +79,7 @@ const _CurrencyList = () => {
   )
 
   return (
-    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-dark-800 shadow-md">
+    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800 shadow-md">
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <List
@@ -87,7 +87,7 @@ const _CurrencyList = () => {
             width={width}
             itemCount={currencies.length}
             itemSize={48}
-            className="hide-scrollbar h-full divide-y divide-dark-700"
+            className="hide-scrollbar h-full divide-y divide-slate-700"
           >
             {Row}
           </List>

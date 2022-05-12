@@ -24,9 +24,9 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   return (
     <Popover>
       <Popover.Button ref={setReferenceElement}>
-        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer shadow-dark-1000 border-dark-800 bg-dark-900 rounded-xl h-11">
+        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer border-slate-800 bg-slate-900 rounded-xl h-11">
           <CalendarIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-high-emphesis">
+          <Typography variant="sm" weight={700} className="text-slate-200">
             Schedule
           </Typography>
         </div>
@@ -36,15 +36,15 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
-        className="overflow-hidden z-10 bg-dark-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-dark-800 flex flex-col gap-4 max-w-[530px]"
+        className="overflow-hidden z-10 bg-slate-900 shadow-depth-1 p-4 pb-0 rounded-xl border border-slate-800 flex flex-col gap-4 max-w-[530px]"
       >
         <div className="flex justify-between gap-4">
-          <Typography variant="lg" weight={700} className="text-high-emphesis">
+          <Typography variant="lg" weight={700} className="text-slate-200">
             Schedule
           </Typography>
-          <XIcon width={24} height={24} className="text-secondary" />
+          <XIcon width={24} height={24} className="text-slate-500" />
         </div>
-        <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-dark-800 border-t border-dark-800">
+        <div className="max-h-[440px]  whitespace-nowrap overflow-auto hide-scrollbar flex flex-col divide-y divide-slate-800 border-t border-slate-800">
           {schedule?.periods.length ? (
             Object.values(schedule.periods).map((period) => (
               <SchedulePopoverItem vesting={vesting} period={period} key={period.id} />
@@ -68,12 +68,12 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: SchedulePeriod }> = m
         <Typography variant="sm" className="capitalize" weight={700}>
           {period.type.toLowerCase()}
         </Typography>
-        <Typography variant="xs" className="text-secondary" weight={500}>
+        <Typography variant="xs" className="text-slate-500" weight={500}>
           {format(period.date, 'dd MMM yyyy')} @ {format(period.date, 'h:maaa')}{' '}
         </Typography>
       </div>
-      <div className="rounded-[10px] border border-dark-700 px-3 py-1 bg-dark-800">
-        <Typography variant="xs" weight={500} className="text-high-emphesis">
+      <div className="rounded-[10px] border border-slate-700 px-3 py-1 bg-slate-800">
+        <Typography variant="xs" weight={500} className="text-slate-200">
           {period.type === PeriodType.START
             ? `-`
             : period.type === PeriodType.CLIFF

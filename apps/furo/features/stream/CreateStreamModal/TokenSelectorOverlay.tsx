@@ -46,7 +46,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
       <div className="flex flex-col gap-2 flex-grow">
         <Select.Label standalone>Token</Select.Label>
         <Select.Button standalone className="!cursor-pointer" onClick={() => setOpen(true)}>
-          {currency?.symbol || <span className="text-secondary">Select a token</span>}
+          {currency?.symbol || <span className="text-slate-500">Select a token</span>}
         </Select.Button>
       </div>
       <Transition.Root show={open} unmount={false} as={Fragment}>
@@ -64,7 +64,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
             <div
               aria-hidden="true"
               onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-dark-700 backdrop-blur-[14px] bg-opacity-50 backdrop-saturate-[0.6] transition-opacity"
+              className="fixed inset-0 bg-slate-700 backdrop-blur-[14px] bg-opacity-50 backdrop-saturate-[0.6] transition-opacity"
             />
           </Transition.Child>
           <Transition
@@ -81,7 +81,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
           >
             <Dialog.Content className="!space-y-5 fixed inset-0 !my-0 h-full !rounded-r-none">
               <Dialog.Header title="Select Token" onBack={() => setOpen(false)} />
-              <div className="flex relative justify-between gap-1 bg-dark-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue">
+              <div className="flex relative justify-between gap-1 bg-slate-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue">
                 <Input.Address
                   ref={inputRef}
                   placeholder="Search token by address"

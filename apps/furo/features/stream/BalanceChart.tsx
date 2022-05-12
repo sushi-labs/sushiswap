@@ -30,7 +30,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
 
       <g
         stroke="currentColor"
-        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-dark-700 hover:text-dark-600 cursor-pointer"
+        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-slate-700 hover:text-slate-600 cursor-pointer"
       >
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -75,7 +75,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
       </g>
       <g
         stroke="currentColor"
-        className="text-dark-700 hover:text-dark-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
+        className="text-slate-700 hover:text-slate-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
         onMouseEnter={() => setWithdrawHovered(true)}
         onMouseLeave={() => setWithdrawHovered(false)}
       >
@@ -126,7 +126,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -140,12 +140,12 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             textAnchor="middle"
             fill="currentColor"
             fontWeight={700}
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={40}
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-high-emphesis"
+            className="text-slate-200"
           >
             {stream?.withdrawnAmount?.toSignificant(6).split('.')[0]}
             <tspan
@@ -180,7 +180,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -194,12 +194,12 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             textAnchor="middle"
             fill="currentColor"
             fontWeight={700}
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={40}
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-high-emphesis"
+            className="text-slate-200"
           >
             {balance?.toSignificant(6).split('.')[0]}
             <tspan

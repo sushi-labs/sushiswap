@@ -25,7 +25,7 @@ export default function Index() {
     <Layout>
       <div className="flex flex-col h-full gap-8 pt-40">
         <div className="flex flex-col gap-1">
-          <Typography variant="hero" className="text-white font-stretch" weight={700}>
+          <Typography variant="hero" className="text-slate-50 font-stretch" weight={700}>
             Welcome to <span className="text-blue">Furo</span>
           </Typography>
           <Typography variant="h3">Decentralized asset streaming on steroids.</Typography>

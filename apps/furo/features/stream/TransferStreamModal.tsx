@@ -72,15 +72,15 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-800 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
           </div>
           <div
-            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-3"
+            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-800 flex flex-col gap-3"
             onClick={() => inputRef.current?.focus()}
           >
-            <Typography variant="xs" weight={400} className="text-high-emphesis">
+            <Typography variant="xs" weight={400} className="text-slate-200">
               This will transfer a stream consisting of{' '}
               <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
@@ -96,7 +96,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
                 autoComplete="off"
                 autoCorrect="off"
                 placeholder="Recipient address or ENS name"
-                className="placeholder:text-sm pb-1 !border-b border-t-0 border-l-0 border-r-0 border-dark-700 bg-transparent placeholder:text-secondary p-0 !ring-0 !outline-none font-medium w-full"
+                className="placeholder:text-sm pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 bg-transparent placeholder:text-slate-500 p-0 !ring-0 !outline-none font-medium w-full"
               />
             </div>
             <Button
