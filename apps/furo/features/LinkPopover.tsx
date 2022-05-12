@@ -92,7 +92,7 @@ const LinkPopover: FC<Props> = ({ furo }) => {
                 rel="noreferrer"
               >
                 <div className="p-4 border rounded-full border-slate-700 bg-slate-800">
-                  <ExternalLinkIcon width={48} height={48} className="text-primary" />
+                  <ExternalLinkIcon width={48} height={48} className="text-slate-300" />
                 </div>
                 <Typography variant="xs" className="text-slate-200 whitespace-nowrap" weight={700}>
                   View on Etherscan

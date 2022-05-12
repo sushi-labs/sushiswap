@@ -4,7 +4,7 @@ const Body: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElem
   children,
   ...props
 }) => (
-  <tbody {...props} className="divide-y divide-dark-800">
+  <tbody {...props} className="divide-y divide-slate-800">
     {children}
   </tbody>
 )

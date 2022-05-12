@@ -34,7 +34,7 @@
     }
 
     .btn-gray {
-        @apply bg-dark-700
+        @apply bg-slate-700
     }
 
     .btn-xs {

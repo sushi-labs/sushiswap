@@ -132,7 +132,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             y={width / 2}
             letterSpacing="3"
             dy={-50}
-            className="uppercase text-primary"
+            className="uppercase text-slate-300"
           >
             Withdrawn
           </text>
@@ -154,7 +154,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               fontWeight={700}
               fontSize={24}
               dx={2}
-              className="text-primary"
+              className="text-slate-300"
             >
               .
               {stream?.withdrawnAmount.greaterThan(ZERO)
@@ -169,7 +169,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-primary"
+            className="text-slate-300"
             fontWeight={700}
           >
             / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
@@ -186,7 +186,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             y={width / 2}
             letterSpacing="3"
             dy={-50}
-            className="uppercase text-primary"
+            className="uppercase text-slate-300"
           >
             Streamed
           </text>
@@ -208,7 +208,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               fontWeight={700}
               fontSize={24}
               dx={2}
-              className="text-primary"
+              className="text-slate-300"
             >
               .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
@@ -220,7 +220,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-primary"
+            className="text-slate-300"
             fontWeight={700}
           >
             / {balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
