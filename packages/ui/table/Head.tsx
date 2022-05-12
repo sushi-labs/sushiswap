@@ -5,7 +5,7 @@ const Head: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElem
   ...props
 }) => {
   return (
-    <thead {...props} className="bg-dark-800/40">
+    <thead {...props} className="bg-dark-800/30">
       {children}
     </thead>
   )

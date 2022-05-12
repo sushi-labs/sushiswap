@@ -3,10 +3,7 @@ import React, { FC } from 'react'
 const HeadCell: FC<
   React.DetailedHTMLProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>
 > = ({ children, ...props }) => (
-  <th
-    {...props}
-    className="flex items-center h-12 px-4 text-xs font-bold border-b text-secondary border-dark-800 hover:text-high-emphesis"
-  >
+  <th {...props} className="h-12 px-4 text-xs font-bold border-b border-dark-800 text-primary hover:text-high-emphesis">
     {children}
   </th>
 )

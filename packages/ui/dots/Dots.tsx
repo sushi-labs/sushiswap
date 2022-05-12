@@ -6,7 +6,7 @@ interface DotsProps {
   className?: string
 }
 
-const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
+export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
   return (
     <span
       className={classNames(

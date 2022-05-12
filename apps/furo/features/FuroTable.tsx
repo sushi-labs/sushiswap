@@ -1,9 +1,8 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
-import { formatNumber, shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from '@sushiswap/format'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
-import { useFlexLayout, useTable } from 'react-table'
-import { classNames, ProgressColor, Table, ProgressBar, Typography } from '@sushiswap/ui'
+import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
+import { ProgressColor, Table, ProgressBar, Typography, Chip } from '@sushiswap/ui'
 import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
@@ -22,7 +21,93 @@ interface FuroTableProps {
   placeholder: string
 }
 
-export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type, placeholder }) => {
+const table = createTable().setRowType<Stream>()
+
+const defaultColumns = (tableProps: FuroTableProps) => [
+  table.createDataColumn('streamedPercentage', {
+    header: () => <div className="text-left w-full">Streamed</div>,
+    cell: (props) => (
+      <div className="flex gap-3">
+        <ProgressBar
+          showLabel={false}
+          className="min-w-[100px] max-w-[100px] h-3"
+          progress={Math.min(Math.max(props.getValue(), 0), 1)}
+          color={ProgressColor.GRADIENT}
+        />
+        <Typography variant="sm" weight={700} className="text-high-emphesis">
+          {(Number(Math.min(Math.max(props.getValue(), 0), 1)) * 100).toFixed(1)}%
+        </Typography>
+      </div>
+    ),
+  }),
+  table.createDataColumn('status', {
+    header: () => <div className="text-left w-full">Status</div>,
+    cell: (props) => (
+      <Chip
+        className="capitalize"
+        label={props.getValue() === FuroStatus.EXTENDED ? 'Active' : props.getValue().toLowerCase()}
+        color={
+          props.getValue() === FuroStatus.CANCELLED
+            ? 'red'
+            : props.getValue() === FuroStatus.COMPLETED
+            ? 'default'
+            : props.getValue() === FuroStatus.ACTIVE
+            ? 'green'
+            : props.getValue() === FuroStatus.UPCOMING
+            ? 'yellow'
+            : props.getValue() === FuroStatus.EXTENDED
+            ? 'green'
+            : 'default'
+        }
+      />
+    ),
+  }),
+  table.createDisplayColumn({
+    id: 'from',
+    accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
+    header: () => <div className="text-left w-full">From</div>,
+    cell: (props) => <div className="text-left w-full text-blue">{shortenAddress(props.getValue() as string)}</div>,
+  }),
+  table.createDataColumn('startTime', {
+    header: () => <div className="text-left w-full">Start Date</div>,
+    cell: (props) => (
+      <div className="flex flex-col gap-0.5">
+        <Typography variant="sm">
+          {props.getValue().toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+          })}
+        </Typography>
+      </div>
+    ),
+  }),
+  table.createDataColumn('type', {
+    header: () => <div className="text-left w-full">Type</div>,
+    cell: (props) => <div className="text-left w-full">{props.getValue()}</div>,
+  }),
+  table.createDataColumn('amount', {
+    header: () => <div className="text-right w-full">Amount</div>,
+    cell: (props) => {
+      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
+      return (
+        <div className="flex flex-col w-full">
+          <Typography variant="sm" weight={700} className="text-high-emphesis text-right">
+            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
+          </Typography>
+          <Typography variant="xs" weight={500} className="text-right text-secondary">
+            {props.row.original?.token.symbol}
+          </Typography>
+        </div>
+      )
+    },
+  }),
+]
+
+export const FuroTable: FC<FuroTableProps> = (props) => {
+  const { streams, vestings, placeholder } = props
+
   const router = useRouter()
   const { activeChain } = useNetwork()
   const data = useMemo(
@@ -32,169 +117,47 @@ export const FuroTable: FC<FuroTableProps> = ({ streams, vestings, type, placeho
     [streams, vestings],
   )
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'TYPE',
-        accessor: 'type',
-        maxWidth: 80,
-        Cell: ({ value }) => value,
-      },
-      {
-        Header: 'STATUS',
-        accessor: 'status',
-        maxWidth: 120,
-        Cell: ({ value }) => (
-          <Typography
-            variant="xs"
-            weight={700}
-            className={classNames('uppercase', value !== 'CANCELLED' ? 'text-green' : 'text-red')}
-          >
-            {value}
-          </Typography>
-        ),
-      },
-      {
-        Header: type === FuroTableType.INCOMING ? 'FROM' : 'TO',
-        accessor: type === FuroTableType.INCOMING ? 'createdBy.id' : 'recipient.id',
-        maxWidth: 120,
-        Cell: (props) => shortenAddress(props.value),
-      },
-      {
-        Header: 'VALUE',
-        accessor: 'amount',
-        Cell: (props) => {
-          if (props.row.original.status === FuroStatus.CANCELLED) return `-`
-          let formattedAmount = formatNumber(props.value.toExact(10))
-          formattedAmount = formattedAmount !== '0.00' ? formattedAmount : '< 0.01'
-          return `${formattedAmount} ${props.row.original.token.symbol}`
-        },
-      },
-      {
-        Header: 'STREAMED',
-        accessor: 'streamedPercentage',
-        width: 220,
-        minWidth: 230,
-        maxWidth: 230,
-        Cell: (props) => (
-          <div className="flex flex-grow gap-2">
-            <ProgressBar
-              showLabel={false}
-              className="min-w-[160px] max-w-[160px]"
-              progress={Math.min(Math.max(props.value, 0), 1)}
-              color={ProgressColor.BLUE}
-            />
-            <Typography variant="sm" weight={400} className="text-high-emphesis">
-              {(Number(Math.min(Math.max(props.value, 0), 1)) * 100).toFixed(1)}%
-            </Typography>
-          </div>
-        ),
-      },
-      {
-        Header: 'START TIME',
-        accessor: 'startTime',
-        maxWidth: 120,
-        Cell: (props) => {
-          return (
-            <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">
-                {props.value.toLocaleString('en-uS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  timeZone: 'UTC',
-                })}
-              </Typography>
-            </div>
-          )
-        },
-      },
-      {
-        Header: 'END TIME',
-        accessor: 'endTime',
-        maxWidth: 120,
-        Cell: (props) => {
-          return (
-            <div className="flex flex-col gap-0.5">
-              <Typography variant="xs">
-                {props.value.toLocaleString('en-uS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  timeZone: 'UTC',
-                })}
-              </Typography>
-            </div>
-          )
-        },
-      },
-      {
-        Header: '',
-        maxWidth: 60,
-        accessor: 'view',
-        Cell: () => (
-          <div className="inline-flex justify-end w-full rounded-full cursor-pointer hover:text-white">
-            <ChevronRightIcon width={20} height={20} />
-          </div>
-        ),
-      },
-    ],
-    [type],
-  )
+  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns(props)])
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    { columns, data },
-    useFlexLayout,
-  )
+  const instance = useTableInstance(table, {
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
 
   return (
     <Table.container>
-      <Table.table {...getTableProps()}>
+      <Table.table>
         <Table.thead>
-          {headerGroups.map((headerGroup, i) => (
-            <Table.thr {...headerGroup.getHeaderGroupProps()} key={i}>
-              {headerGroup.headers.map((column, i) => (
-                <Table.th {...column.getHeaderProps()} key={i}>
-                  {column.render('Header')}
+          {instance.getHeaderGroups().map((headerGroup, i) => (
+            <Table.thr key={headerGroup.id}>
+              {headerGroup.headers.map((header, i) => (
+                <Table.th key={header.id} colSpan={header.colSpan}>
+                  {header.renderHeader()}
                 </Table.th>
               ))}
             </Table.thr>
           ))}
         </Table.thead>
-        <Table.tbody {...getTableBodyProps()}>
-          {rows.length === 0 && (
+        <Table.tbody>
+          {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              <Table.td
-                colSpan={columns.length}
-                className="h-12 italic text-center text-low-emphesis flex justify-center text-sm"
-              >
-                {placeholder}
-              </Table.td>
+              <Table.td colSpan={columns.length}>{placeholder}</Table.td>
             </Table.tr>
           )}
-          {rows.map((row, i) => {
-            prepareRow(row)
+          {instance.getRowModel().rows.map((row) => {
             return (
               <Table.tr
-                {...row.getRowProps()}
+                key={row.id}
                 onClick={() =>
                   router.push({
-                    pathname: `/${row.original.type.toLowerCase()}/${row.original.id}`,
+                    pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
                     query: { chainId: activeChain?.id },
                   })
                 }
-                key={i}
               >
-                {row.cells.map((cell, i) => {
-                  return (
-                    <Table.td {...cell.getCellProps()} key={i}>
-                      {cell.render('Cell')}
-                    </Table.td>
-                  )
+                {row.getVisibleCells().map((cell) => {
+                  return <Table.td key={cell.id}>{cell.renderCell()}</Table.td>
                 })}
               </Table.tr>
             )

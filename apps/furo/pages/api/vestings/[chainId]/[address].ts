@@ -6,6 +6,6 @@ export type Vestings = { incomingVestings: VestingRepresentation[]; outgoingVest
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, address } = req.query
-  const vestings = (await getVestings(chainId as string, address as string)) as Vestings
+  const vestings = (await getVestings(chainId as string, (address as string).toLowerCase())) as Vestings
   res.status(200).send(vestings)
 }

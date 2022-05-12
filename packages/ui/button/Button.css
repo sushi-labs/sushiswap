@@ -22,7 +22,7 @@
     }
 
     .btn-blue {
-        @apply bg-blue
+        @apply bg-blue hover:ring-2 ring-blue-700
     }
 
     .btn-purple {

@@ -6,7 +6,6 @@ import { Typography } from '@sushiswap/ui'
 import { getStreams, getVestings } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { CreateStreamModal } from 'features/stream'
-import { DoubleGlow } from 'components'
 import useSWR, { SWRConfig } from 'swr'
 import { useRouter } from 'next/router'
 import { Streams } from '../../api/streams/[chainId]/[address]'
@@ -32,27 +31,27 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   }
 }
 
-const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const _Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  const router = useRouter()
+  const chainId = Number(router.query.chainId)
+  const address = router.query.address as string
+
   return (
     <SWRConfig value={{ fallback }}>
-      <_Dashboard />
+      <Dashboard chainId={chainId} address={address} />
     </SWRConfig>
   )
 }
 
-const _Dashboard: FC = () => {
-  const router = useRouter()
-  const chainId = router.query.chainId as string
-  const address = router.query.address as string
-
+export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
   const { data: streams } = useSWR<Streams>(`/api/streams/${chainId}/${address}`)
   const { data: vestings } = useSWR<Vestings>(`/api/vestings/${chainId}/${address}`)
 
   return (
     <Layout>
       <div className="flex flex-col h-full gap-12 pt-10">
-        <div className="flex justify-between items-center">
-          <Typography variant="h2" weight={700} className="text-high-emphesis">
+        <div className="flex justify-between items-center border-b border-dark-900 pb-4">
+          <Typography variant="h3" weight={700} className="text-high-emphesis">
             Dashboard
           </Typography>
           <div className="flex gap-3">
@@ -65,27 +64,23 @@ const _Dashboard: FC = () => {
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Incoming
             </Typography>
-            <DoubleGlow>
-              <FuroTable
-                streams={streams?.incomingStreams ?? []}
-                vestings={vestings?.incomingVestings ?? []}
-                type={FuroTableType.INCOMING}
-                placeholder="No incoming streams found"
-              />
-            </DoubleGlow>
+            <FuroTable
+              streams={streams?.incomingStreams ?? []}
+              vestings={vestings?.incomingVestings ?? []}
+              type={FuroTableType.INCOMING}
+              placeholder="No incoming streams found"
+            />
           </div>
           <div className="flex flex-col gap-3">
             <Typography variant="lg" weight={700} className="text-high-emphesis">
               Outgoing
             </Typography>
-            <DoubleGlow>
-              <FuroTable
-                streams={streams?.outgoingStreams ?? []}
-                vestings={vestings?.outgoingVestings ?? []}
-                type={FuroTableType.OUTGOING}
-                placeholder="No outgoing streams found"
-              />
-            </DoubleGlow>
+            <FuroTable
+              streams={streams?.outgoingStreams ?? []}
+              vestings={vestings?.outgoingVestings ?? []}
+              type={FuroTableType.OUTGOING}
+              placeholder="No outgoing streams found"
+            />
           </div>
         </div>
       </div>
@@ -93,4 +88,4 @@ const _Dashboard: FC = () => {
   )
 }
 
-export default Dashboard
+export default _Dashboard
