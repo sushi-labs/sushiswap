@@ -9,7 +9,7 @@ import { createToast } from 'components/Toast'
 import Button from '../../../../packages/ui/button/Button'
 import { Dialog } from '@sushiswap/ui/dialog'
 import StreamProgress from 'features/stream/StreamProgress'
-import { ArrowSmDownIcon, CheckIcon, XIcon } from '@heroicons/react/outline'
+import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
 import { Typography } from '@sushiswap/ui/typography/Typography'
 import Switch from '../../../../packages/ui/switch/Switch'
 
@@ -53,9 +53,12 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
 
   return (
     <>
-      <Button variant="filled" color="red" onClick={() => setOpen(true)}>
-        Cancel
-      </Button>
+      <Button
+        variant="filled"
+        color="red"
+        startIcon={<TrashIcon className="text-red-900" width={24} height={24} />}
+        onClick={() => setOpen(true)}
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
