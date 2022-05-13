@@ -66,7 +66,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ...rest,
         ref,
         disabled: disabled || loading,
-        className: classNames('btn', fullWidth ? 'w-full' : '', VARIANT[variant], COLOR[color], SIZE[size], className),
+        className: classNames(
+          'btn',
+          fullWidth ? 'w-full' : '',
+          VARIANT[variant],
+          COLOR[color],
+          SIZE[size],
+          className,
+          disabled ? 'btn-disabled' : '',
+        ),
         ...(href && { href }),
       },
       loading ? (

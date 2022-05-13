@@ -142,7 +142,9 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              <Table.td colSpan={columns.length}>{placeholder}</Table.td>
+              <Table.td colSpan={columns.length} className="text-center text-slate-500">
+                {placeholder}
+              </Table.td>
             </Table.tr>
           )}
           {instance.getRowModel().rows.map((row) => {

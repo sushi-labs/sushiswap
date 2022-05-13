@@ -23,3 +23,6 @@ export const MULTICALL_ADDRESS = {
   [ChainId.OKEX_TESTNET]: undefined,
   [ChainId.HARDHAT]: undefined,
 }
+
+// TODO: change to ChainID.ETHEREUM once contracts are live
+export const DEFAULT_CHAIN_ID = ChainId.KOVAN

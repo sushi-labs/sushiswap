@@ -67,7 +67,7 @@ const _VestingPage: FC = () => {
 
   return (
     <Layout>
-      <div className="flex gap-16">
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="w-[630px]">
           <VestingChart vesting={vesting} schedule={schedule} />
           <div className="flex justify-center gap-2">
@@ -117,7 +117,7 @@ const _VestingPage: FC = () => {
               <FuroTimer furo={vesting} />
             </div> */}
           </div>
-          <div className="flex flex-col gap-1"></div>
+          <div className="flex flex-col gap-1" />
         </div>
       </div>
     </Layout>

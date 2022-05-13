@@ -50,7 +50,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
     )
   }
 
-  if (isMounted && (isConnected || isReconnecting)) {
+  if (isMounted && (isConnected || isReconnecting || isConnecting)) {
     if (!data?.address) return null
 
     return (

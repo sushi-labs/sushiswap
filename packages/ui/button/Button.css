@@ -2,7 +2,11 @@
 
 @layer components {
     .btn {
-        @apply font-bold flex hover:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100 disabled:pointer-events-none disabled:opacity-40
+        @apply font-bold flex hover:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100
+    }
+
+    .btn-disabled {
+        @apply disabled:cursor-not-allowed disabled:opacity-40 ring-0 !important
     }
 
     .btn-filled {

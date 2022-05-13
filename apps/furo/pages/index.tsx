@@ -1,24 +1,28 @@
 import { Wallet } from '@sushiswap/wallet-connector'
 import { useIsMounted } from '@sushiswap/hooks'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import Layout from 'components/Layout'
 import { Typography } from '@sushiswap/ui'
 import { Menu } from '@headlessui/react'
 import { useRouter } from 'next/router'
+import ViewAddressModal from 'features/ViewAddressModal'
+import Button from '@sushiswap/ui/button/Button'
+import Account from '../../../packages/wallet-connector/components/Account'
+import Link from 'next/link'
 
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
+  const { data: account } = useAccount()
   const connect = useConnect({
     onConnect: () => {
       void router.push('/dashboard')
     },
   })
 
-  const { isConnecting, isConnected, pendingConnector, isReconnecting } = connect
-  const loading = !!pendingConnector && isConnecting
-  if ((!isMounted || isConnected) && !loading && !isReconnecting) {
-    return <></>
+  const { isConnected, isReconnecting, isConnecting } = connect
+  if (isConnected || isReconnecting || isConnecting) {
+    if (!account?.address) return <></>
   }
 
   return (
@@ -32,29 +36,37 @@ export default function Index() {
             Decentralized asset streaming on steroids.
           </Typography>
         </div>
-        <div className="flex gap-4">
-          <Wallet.Button
-            hack={connect}
-            button={
-              <Menu.Button
-                className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
-                as="div"
-              >
-                Connect Wallet
-              </Menu.Button>
-            }
-          />
-          <Wallet.Button
-            hack={connect}
-            button={
-              <Menu.Button
-                className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
-                as="div"
-              >
-                View Address
-              </Menu.Button>
-            }
-          />
+        <div className="flex flex-col sm:flex-row gap-4">
+          {account?.address ? (
+            <>
+              <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-2xl">
+                <div className="px-6">
+                  <Account.Name address={account.address} className="text-base" />
+                </div>
+                <Link passHref={true} href="/dashboard">
+                  <Button className="w-full transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-base text-slate-50 px-10 !h-[56px] rounded-2xl">
+                    Go to Dashboard
+                  </Button>
+                </Link>
+              </div>
+              <ViewAddressModal />
+            </>
+          ) : (
+            <>
+              <Wallet.Button
+                hack={connect}
+                button={
+                  <Menu.Button
+                    className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
+                    as="div"
+                  >
+                    Connect Wallet
+                  </Menu.Button>
+                }
+              />
+              <ViewAddressModal />
+            </>
+          )}
         </div>
       </div>
     </Layout>
