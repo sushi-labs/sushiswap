@@ -4,28 +4,51 @@ import Table from 'cli-table3'
 
 import { getBuiltGraphSDK } from '../.graphclient'
 import chalk from 'chalk'
+import { el } from 'date-fns/locale'
+import { getMakerLPs } from '../graph/graph-client'
+import { ChainId, ChainKey } from '@sushiswap/chain'
 
 type Arguments = {
-  all: boolean
+  network?: string
+}
+
+interface row {
+  pair: string
+  pairId: string
+  lpUsdValue: number
 }
 
 export async function maker(args: Arguments) {
   const sdk = getBuiltGraphSDK()
 
-  const liquidityPositions = await (await sdk.LiquidityPositions()).ETHEREUM_EXCHANGE_user?.liquidityPositions
-  const columns = ['Pair Name', 'Pair Address', 'LP USD Value']
+  if (args.network) {
+    const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
+    console.log('network selected: ', network)
+    const liquidityPositions = await getMakerLPs(network)
+    const columns = ['Pair Name', 'Pair Address', 'LP USD Value']
 
-  const rows =
-    liquidityPositions?.map((lp) => {
-      const pair = lp.pair
-      const lpValue = (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
-      return [`${pair?.token0.symbol}-${pair?.token1.symbol}`, pair?.id, lpValue]
-    }).filter(row => row[2] > 20000) ?? []
-  const table = new Table({ head: columns, style: { compact: true } })
+    const rows =
+      liquidityPositions
+        ?.map((lp) => {
+          const pair = lp.pair
+          const lpUsdValue =
+            (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+          return {
+            pair: `${pair?.token0.symbol}-${pair?.token1.symbol}`,
+            pairId: pair?.id,
+            lpUsdValue,
+          } as row
+        })
+        .sort((a, b) => (a.lpUsdValue > b.lpUsdValue ? -1 : 1)) ?? []
 
-  rows.forEach((row) => table.push(Object.values(row)))
+    const table = new Table({ head: columns, style: { compact: true } })
 
-  console.log(chalk.red('Maker'))
-  // console.log(chalk.blue(`Total LP USD Value: $`))
-  console.log(table.toString())
+    rows.forEach((row) => table.push(Object.values(row)))
+
+    console.log(chalk.red('Maker'))
+    // console.log(chalk.blue(`Total LP USD Value: $`))
+    console.log(table.toString())
+  } else {
+    console.log('fetch sum up lp value across all networks')
+  }
 }

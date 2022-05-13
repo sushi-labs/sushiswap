@@ -13,7 +13,9 @@ program
   .option('-a,--all', 'all', false)
   .action(chef)
 
-program.command('maker').description('print maker data').action(maker)
+program.command('maker').description('get LPs in USD across all networks, or specify network to get more detail information')
+.option('-n,--network <NETWORK>', 'network')
+.action(maker)
 
 program.parse(process.argv)
 
