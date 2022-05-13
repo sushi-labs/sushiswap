@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 const Header: FC = () => {
   const router = useRouter()
-  console.log(router.pathname)
+
   return (
     <div className="border-b border-slate-700">
       <Container maxWidth="5xl" className="mx-auto px-2">

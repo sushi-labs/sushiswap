@@ -1,6 +1,6 @@
 import { shortenAddress } from '@sushiswap/format'
 import { useRouter } from 'next/router'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
 import { Loader, ProgressColor, Table, ProgressBar, Typography, Chip } from '@sushiswap/ui'
 import { FuroStatus } from './context/enums'
@@ -108,6 +108,11 @@ const defaultColumns = (tableProps: FuroTableProps) => [
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
   const { streams, vestings, placeholder, loading } = props
+  const [initialized, setInitialized] = useState(loading)
+
+  useEffect(() => {
+    if (!loading) setInitialized(true)
+  }, [loading])
 
   const router = useRouter()
   const { activeChain } = useNetwork()
@@ -132,7 +137,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {loading && streams.length === 0 && vestings.length == 0 ? (
+              {initialized && streams.length === 0 && vestings.length == 0 ? (
                 <th colSpan={headerGroup.headers.length} className="border-b border-slate-800">
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </th>
@@ -149,7 +154,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {loading && streams.length === 0 && vestings.length == 0 ? (
+              {initialized && streams.length === 0 && vestings.length == 0 ? (
                 <td colSpan={columns.length}>
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </td>
