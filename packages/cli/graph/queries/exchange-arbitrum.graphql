@@ -1,6 +1,6 @@
-query ArbitrumUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
+query ArbitrumUserLPs($id: ID!) {
   ARBITRUM_EXCHANGE_user(id: $id) {
-    liquidityPositions(first: $first, skip: $skip, where: $where) {
+    liquidityPositions(first: 1000) {
       liquidityTokenBalance
       pair {
         id

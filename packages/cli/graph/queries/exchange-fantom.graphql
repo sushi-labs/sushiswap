@@ -1,6 +1,6 @@
 query FantomUserLPs($id: ID!) {
   FANTOM_EXCHANGE_user(id: $id) {
-    liquidityPositions {
+    liquidityPositions(first: 1000) {
       liquidityTokenBalance
       pair {
         id

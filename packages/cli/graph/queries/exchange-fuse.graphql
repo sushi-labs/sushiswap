@@ -1,6 +1,6 @@
 query FuseUserLPs($id: ID!) {
   FUSE_EXCHANGE_user(id: $id) {
-    liquidityPositions {
+    liquidityPositions(first: 1000) {
       liquidityTokenBalance
       pair {
         id
