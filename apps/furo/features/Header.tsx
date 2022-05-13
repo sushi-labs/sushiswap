@@ -1,13 +1,12 @@
 import { FC } from 'react'
-import { App, Container, SushiIcon, Typography } from '@sushiswap/ui'
+import { App, classNames, Container, SushiIcon, Typography } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
-import { useAccount, useNetwork } from 'wagmi'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 const Header: FC = () => {
   const router = useRouter()
-
+  console.log(router.pathname)
   return (
     <div className="border-b border-slate-700">
       <Container maxWidth="5xl" className="mx-auto px-2">
@@ -19,7 +18,10 @@ const Header: FC = () => {
               <Typography
                 variant="sm"
                 weight={700}
-                className="text-slate-50 border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]"
+                className={classNames(
+                  router.pathname === '/dashboard' ? 'border-blue' : '',
+                  'text-slate-50 border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]',
+                )}
                 component="a"
               >
                 Dashboard
