@@ -21,8 +21,8 @@ query EthereumPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $bl
 }
 
 query EthereumUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
- ETHEREUM_EXCHANGE_user(id: $id) {
-  liquidityPositions(first: $first, skip: $skip, where: $where) {
+  ETHEREUM_EXCHANGE_user(id: $id) {
+    liquidityPositions(first: $first, skip: $skip, where: $where) {
       liquidityTokenBalance
       pair {
         id
@@ -42,7 +42,7 @@ query EthereumUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: Liqu
         }
       }
     }
-	}
+  }
 }
 
 query EthereumTokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {

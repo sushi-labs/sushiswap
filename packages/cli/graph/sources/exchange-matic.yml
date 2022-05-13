@@ -1,0 +1,11 @@
+name: exchange-matic
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange
+transforms:
+  - prefix:
+      value: MATIC_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_

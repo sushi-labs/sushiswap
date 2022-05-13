@@ -1,0 +1,24 @@
+query MaticUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
+  MATIC_EXCHANGE_user(id: $id) {
+    liquidityPositions(first: $first, skip: $skip, where: $where) {
+      liquidityTokenBalance
+      pair {
+        id
+        totalSupply
+        reserveUSD
+        token0 {
+          id
+          symbol
+          name
+          decimals
+        }
+        token1 {
+          id
+          symbol
+          name
+          decimals
+        }
+      }
+    }
+  }
+}

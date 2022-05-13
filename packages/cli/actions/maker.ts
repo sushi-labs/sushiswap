@@ -1,12 +1,9 @@
-import { addYears, getUnixTime } from 'date-fns'
-import numeral from 'numeral'
-import Table from 'cli-table3'
-
-import { getBuiltGraphSDK } from '../.graphclient'
+import { ChainKey } from '@sushiswap/chain'
 import chalk from 'chalk'
-import { el } from 'date-fns/locale'
+import Table from 'cli-table3'
+import numeral from 'numeral'
+import { getBuiltGraphSDK } from '../.graphclient'
 import { getAllMakers, getMakerLPs } from '../graph/graph-client'
-import { ChainId, ChainKey } from '@sushiswap/chain'
 
 type Arguments = {
   network?: string
@@ -19,8 +16,6 @@ interface row {
 }
 
 export async function maker(args: Arguments) {
-  const sdk = getBuiltGraphSDK()
-
   if (args.network) {
     const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
     console.log('network selected: ', network)
@@ -31,12 +26,13 @@ export async function maker(args: Arguments) {
       liquidityPositions
         ?.map((lp) => {
           const pair = lp.pair
-          const lpUsdValue =
-            (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+          const lpUsdValue = Number(lp.pair.totalSupply)
+            ? (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+            : 0
           return {
             pair: `${pair?.token0.symbol}-${pair?.token1.symbol}`,
             pairId: pair?.id,
-            lpUsdValue: lpUsdValue,
+            lpUsdValue,
           } as row
         })
         .sort((a, b) => (a.lpUsdValue > b.lpUsdValue ? -1 : 1))
@@ -47,22 +43,24 @@ export async function maker(args: Arguments) {
 
     rows.forEach((row) => table.push(Object.values(row)))
 
-    console.log(chalk.red('Maker'))
+    console.log(chalk.red(`Maker, network: ${network}`))
     console.log(table.toString())
   } else {
-    console.log('fetch sum up lp value across all networks')
     const liquidityPositions = await getAllMakers()
     const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
-
+    let totalValue = 0
     const rows =
       liquidityPositions?.map((lp) => {
         const network = lp.network.toString()
         const makerAddress = lp.address
         const type = lp.type
-        const lpValues = lp.liquidityPositions?.map(
-          (lp) => (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply),
+        const lpValues = lp.liquidityPositions?.map((lp) =>
+          Number(lp.pair.totalSupply)
+            ? (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+            : 0,
         )
         const summedLp = lpValues?.reduce((acc, curr) => acc + curr)
+        totalValue += summedLp ?? 0
         return {
           network,
           makerAddress,
@@ -75,7 +73,8 @@ export async function maker(args: Arguments) {
 
     rows.forEach((row) => table.push(Object.values(row)))
 
-    console.log(chalk.red('Maker'))
+    console.log(chalk.red('Maker, summary'))
     console.log(table.toString())
+    console.log(`Total value: ` + chalk.green(`${numeral(totalValue).format('$0.00a')}`))
   }
 }

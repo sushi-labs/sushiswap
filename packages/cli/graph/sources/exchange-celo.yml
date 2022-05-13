@@ -1,0 +1,11 @@
+name: exchange-celo
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/sushitestsubgraph
+transforms:
+  - prefix:
+      value: CELO_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_

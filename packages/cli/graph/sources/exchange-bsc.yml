@@ -1,0 +1,11 @@
+name: exchange-bsc
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange
+transforms:
+  - prefix:
+      value: BSC_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
