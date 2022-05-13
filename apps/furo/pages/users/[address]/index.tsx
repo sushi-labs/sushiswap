@@ -11,7 +11,10 @@ import { useRouter } from 'next/router'
 import { Streams } from '../../api/streams/[chainId]/[address]'
 import { Vestings } from '../../api/vestings/[chainId]/[address]'
 
-const fetcher = (params: any) => fetch(params).then((res) => res.json())
+const fetcher = (params: any) =>
+  fetch(params)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
 
 interface Props {
   fallback?: Record<string, any>
@@ -46,9 +49,9 @@ const _Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 }
 
 export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
-  const { data: streams, isValidating } = useSWR<Streams>(`/api/streams/${chainId}/${address}`, fetcher)
+  const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
   const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
-    `/api/vestings/${chainId}/${address}`,
+    `/furo/api/vestings/${chainId}/${address}`,
     fetcher,
   )
 
