@@ -3,7 +3,7 @@ import { ApprovalState, useApproveCallback } from 'hooks'
 import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
 import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
 import Button from '@sushiswap/ui/button/Button'
@@ -15,6 +15,7 @@ import { TokenSelectorOverlay } from '.'
 import { JSBI } from '@sushiswap/math'
 import { parseUnits } from 'ethers/lib/utils'
 import { CurrencyInput } from 'components'
+import { PlusIcon } from '@heroicons/react/solid'
 
 export const CreateStreamModal: FC = () => {
   const { data: account } = useAccount()
@@ -105,8 +106,14 @@ export const CreateStreamModal: FC = () => {
 
   return (
     <>
-      <Button variant="filled" color="blue" size="sm" onClick={() => setOpen(true)}>
-        Create stream
+      <Button
+        startIcon={<PlusIcon width={18} height={18} />}
+        variant="filled"
+        color="blue"
+        size="sm"
+        onClick={() => setOpen(true)}
+      >
+        New stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-700">

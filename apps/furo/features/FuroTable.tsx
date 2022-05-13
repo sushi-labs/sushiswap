@@ -2,7 +2,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo } from 'react'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { ProgressColor, Table, ProgressBar, Typography, Chip } from '@sushiswap/ui'
+import { Loader, ProgressColor, Table, ProgressBar, Typography, Chip } from '@sushiswap/ui'
 import { FuroStatus } from './context/enums'
 import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
@@ -19,6 +19,7 @@ interface FuroTableProps {
   vestings: VestingRepresentation[]
   type: FuroTableType
   placeholder: string
+  loading: boolean
 }
 
 const table = createTable().setRowType<Stream>()
@@ -106,7 +107,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
 ]
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
-  const { streams, vestings, placeholder } = props
+  const { streams, vestings, placeholder, loading } = props
 
   const router = useRouter()
   const { activeChain } = useNetwork()
@@ -131,20 +132,32 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <Table.th key={header.id} colSpan={header.colSpan}>
-                  {header.renderHeader()}
-                </Table.th>
-              ))}
+              {loading && streams.length === 0 && vestings.length == 0 ? (
+                <th colSpan={headerGroup.headers.length} className="border-b border-slate-800">
+                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
+                </th>
+              ) : (
+                headerGroup.headers.map((header, i) => (
+                  <Table.th key={header.id} colSpan={header.colSpan}>
+                    {header.renderHeader()}
+                  </Table.th>
+                ))
+              )}
             </Table.thr>
           ))}
         </Table.thead>
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              <Table.td colSpan={columns.length} className="text-center text-slate-500">
-                {placeholder}
-              </Table.td>
+              {loading && streams.length === 0 && vestings.length == 0 ? (
+                <td colSpan={columns.length}>
+                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
+                </td>
+              ) : (
+                <Table.td colSpan={columns.length} className="text-center text-slate-500">
+                  {placeholder}
+                </Table.td>
+              )}
             </Table.tr>
           )}
           {instance.getRowModel().rows.map((row) => {

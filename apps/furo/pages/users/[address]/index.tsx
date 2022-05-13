@@ -11,6 +11,8 @@ import { useRouter } from 'next/router'
 import { Streams } from '../../api/streams/[chainId]/[address]'
 import { Vestings } from '../../api/vestings/[chainId]/[address]'
 
+const fetcher = (params: any) => fetch(params).then((res) => res.json())
+
 interface Props {
   fallback?: Record<string, any>
 }
@@ -44,8 +46,11 @@ const _Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 }
 
 export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
-  const { data: streams } = useSWR<Streams>(`/api/streams/${chainId}/${address}`)
-  const { data: vestings } = useSWR<Vestings>(`/api/vestings/${chainId}/${address}`)
+  const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
+  const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
+    `/furo/api/vestings/${chainId}/${address}`,
+    fetcher,
+  )
 
   return (
     <Layout>
@@ -65,6 +70,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               Incoming
             </Typography>
             <FuroTable
+              loading={isValidating}
               streams={streams?.incomingStreams ?? []}
               vestings={vestings?.incomingVestings ?? []}
               type={FuroTableType.INCOMING}
@@ -76,6 +82,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               Outgoing
             </Typography>
             <FuroTable
+              loading={isValidating2}
               streams={streams?.outgoingStreams ?? []}
               vestings={vestings?.outgoingVestings ?? []}
               type={FuroTableType.OUTGOING}

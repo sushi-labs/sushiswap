@@ -1,5 +1,13 @@
 import { FC, ReactElement, ReactNode } from 'react'
-import { CoinbaseWalletIcon, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
+import {
+  CoinbaseWalletIcon,
+  Menu,
+  MetamaskIcon,
+  WalletConnectIcon,
+  Button as UIButton,
+  Dots,
+  Loader,
+} from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { LogoutIcon } from '@heroicons/react/outline'
 import Account from '../Account'
@@ -21,7 +29,21 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
   const { data } = useAccount()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
-  const { isConnected, isReconnecting, isConnecting, connectors, connect } = hack || useConnect()
+  const { isConnected, isReconnecting, isConnecting, connectors, connect, pendingConnector } = hack || useConnect()
+
+  if (!!pendingConnector && isConnecting) {
+    return (
+      <UIButton
+        endIcon={<Loader />}
+        variant="filled"
+        color="blue"
+        disabled
+        className="!h-[36px] w-[158px] flex justify-between"
+      >
+        Authorize Wallet
+      </UIButton>
+    )
+  }
 
   if (isMounted && !isConnected && !isReconnecting && !isConnecting) {
     return (

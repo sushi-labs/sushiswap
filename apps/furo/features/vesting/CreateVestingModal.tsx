@@ -14,7 +14,7 @@ import { Dialog } from '@sushiswap/ui/dialog'
 import { Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelectorOverlay } from 'features/stream'
 import Switch from '@sushiswap/ui/switch/Switch'
-import { CheckIcon, XIcon } from '@heroicons/react/outline'
+import { CheckIcon, PlusIcon, XIcon } from '@heroicons/react/solid'
 import { CurrencyInput } from 'components'
 import { Disclosure, Transition } from '@headlessui/react'
 import { parseUnits } from 'ethers/lib/utils'
@@ -158,8 +158,14 @@ const CreateVestingModal: FC = () => {
 
   return (
     <>
-      <Button variant="filled" color="blue" size="sm" onClick={() => setOpen(true)}>
-        Create vesting
+      <Button
+        startIcon={<PlusIcon width={18} height={18} />}
+        variant="filled"
+        color="blue"
+        size="sm"
+        onClick={() => setOpen(true)}
+      >
+        New vesting
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-slate-700">
