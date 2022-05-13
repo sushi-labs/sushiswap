@@ -20,7 +20,7 @@ query EthereumPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $bl
   }
 }
 
-query LiquidityPositions($id: ID = "0x5ad6211cd3fde39a9cecb5df6f380b8263d1e277", $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
+query EthereumUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
  ETHEREUM_EXCHANGE_user(id: $id) {
   liquidityPositions(first: $first, skip: $skip, where: $where) {
       liquidityTokenBalance
