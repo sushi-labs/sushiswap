@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
   const { isConnecting, isConnected, pendingConnector, isReconnecting } = connect
 
-  if (isMounted && !!pendingConnector && isConnecting) {
+  if (isMounted && !!pendingConnector && isConnecting && !isReconnecting) {
     return (
       <Layout>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
