@@ -25,7 +25,8 @@
     "postinstall": "cd ../.. && pnpm turbo run build --scope=cli && cd packages/cli && pnpm i -g $PWD"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.7",
+    "@graphprotocol/client-cli": "0.0.10",
+    "@graphprotocol/client-auto-pagination": "0.0.5",
     "@graphql-mesh/cache-inmemory-lru": "^0.6.18",
     "@graphql-mesh/cache-localforage": "^0.6.1",
     "@graphql-mesh/cross-helpers": "^0.1.2",

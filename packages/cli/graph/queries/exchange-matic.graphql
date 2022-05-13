@@ -1,6 +1,6 @@
-query MaticUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
+query MaticUserLPs($id: ID!) {
   MATIC_EXCHANGE_user(id: $id) {
-    liquidityPositions(first: $first, skip: $skip, where: $where) {
+    liquidityPositions {
       liquidityTokenBalance
       pair {
         id

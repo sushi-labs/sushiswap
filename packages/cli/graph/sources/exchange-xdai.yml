@@ -9,3 +9,5 @@ transforms:
       includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_
+  - autoPagination:
+      validateSchema: true

@@ -2,7 +2,6 @@ import { ChainKey } from '@sushiswap/chain'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
-import { getBuiltGraphSDK } from '../.graphclient'
 import { getAllMakers, getMakerLPs } from '../graph/graph-client'
 
 type Arguments = {
@@ -27,7 +26,7 @@ export async function maker(args: Arguments) {
         ?.map((lp) => {
           const pair = lp.pair
           const lpUsdValue = Number(lp.pair.totalSupply)
-            ? (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+            ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
             : 0
           return {
             pair: `${pair?.token0.symbol}-${pair?.token1.symbol}`,
@@ -56,7 +55,7 @@ export async function maker(args: Arguments) {
         const type = lp.type
         const lpValues = lp.liquidityPositions?.map((lp) =>
           Number(lp.pair.totalSupply)
-            ? (Number(lp.liquidityTokenBalance) * Number(lp.pair.reserveUSD)) / Number(lp.pair.totalSupply)
+            ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
             : 0,
         )
         const summedLp = lpValues?.reduce((acc, curr) => acc + curr)

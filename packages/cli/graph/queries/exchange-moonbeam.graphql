@@ -1,6 +1,6 @@
-query MoonbeamUserLPs($id: ID!, $first: Int = 1000, $skip: Int = 0, $where: LiquidityPosition_filter) {
+query MoonbeamUserLPs($id: ID!) {
   MOONBEAM_EXCHANGE_user(id: $id) {
-    liquidityPositions(first: $first, skip: $skip, where: $where) {
+    liquidityPositions {
       liquidityTokenBalance
       pair {
         id
