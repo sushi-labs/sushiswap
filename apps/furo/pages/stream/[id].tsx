@@ -1,4 +1,4 @@
-import { ProgressBar, ProgressColor,Typography } from '@sushiswap/ui'
+import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'features/context/representations'
 import { Stream } from 'features/context/Stream'
