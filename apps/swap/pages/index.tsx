@@ -18,7 +18,7 @@ export default function Bridge({ chainIds, blockNumbers }: { chainIds: number[];
       <h2>Block Timestamps:</h2>
       {isReady && <p data-testid="blockTimestamps">{blockTimestamps.join(',')}</p>}
 
-      <div className="bg-slate-400">
+      <div className="flex flex-col gap-3 p-2 md:p-4 pt-4 rounded-[24px] bg-dark-800 shadow-md shadow-dark-1000">
         <div className="flex justify-between">Swap Settings</div>
         <div className="flex justify-between">From Ethereum BentoBox ✅</div>
 

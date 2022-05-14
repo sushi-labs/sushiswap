@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
-import { Token } from '@sushiswap/currency'
 import { isAddress } from '@ethersproject/address'
+import { Token } from '@sushiswap/currency'
+import { useMemo } from 'react'
 
 const alwaysTrue = () => true
 

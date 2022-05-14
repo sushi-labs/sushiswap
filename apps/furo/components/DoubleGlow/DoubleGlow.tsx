@@ -1,5 +1,4 @@
 import { FC, ReactNode } from 'react'
-import BalanceChart from 'features/stream/BalanceChart'
 
 interface DoubleGlow {
   children?: ReactNode | ReactNode[]

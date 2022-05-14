@@ -1,10 +1,11 @@
+import { Dialog as HeadlessDialog,Transition } from '@headlessui/react'
 import React, { FC, Fragment, FunctionComponent } from 'react'
-import { Transition, Dialog as HeadlessDialog } from '@headlessui/react'
-import DialogContent, { DialogContentProps } from './DialogContent'
-import DialogHeader, { DialogHeaderProps } from './DialogHeader'
-import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
-import DialogActions, { DialogActionProps } from './DialogActions'
+
 import { ExtractProps } from '../types'
+import DialogActions, { DialogActionProps } from './DialogActions'
+import DialogContent, { DialogContentProps } from './DialogContent'
+import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
+import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
 type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   children?: React.ReactNode
@@ -24,7 +25,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) =
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <HeadlessDialog.Overlay className="fixed inset-0 transition-opacity bg-dark-700 bg-opacity-75" />
+            <HeadlessDialog.Overlay className="fixed inset-0 transition-opacity bg-slate-700 bg-opacity-75" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}

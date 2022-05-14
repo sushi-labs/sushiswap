@@ -1,22 +1,17 @@
-import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS } from 'hooks/useFuroStreamContract'
+import { AddressZero } from '@ethersproject/constants'
+import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
+import { Button, classNames, Dialog,Dots, Switch, Typography } from '@sushiswap/ui'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast, CurrencyInput } from 'components'
+import { BigNumber } from 'ethers'
+import { parseUnits } from 'ethers/lib/utils'
+import { Stream } from 'features/context/Stream'
+import { STREAM_ADDRESS } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import Button from '../../../../packages/ui/button/Button'
-import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { AddressZero } from '@ethersproject/constants'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import Dots from '@sushiswap/ui/dots/Dots'
-import { parseUnits } from 'ethers/lib/utils'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { classNames, Typography } from '@sushiswap/ui'
-import { CurrencyInput } from 'components'
-import Switch from '../../../../packages/ui/switch/Switch'
-import { createToast } from 'components/Toast'
 
 interface UpdateStreamModalProps {
   stream?: Stream
@@ -99,43 +94,43 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Recipient
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {shortenAddress(stream.recipient.id)}
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Stream Amount
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.amount.toSignificant(6)}{' '}
-                <span className="text-secondary font-medium">{stream.token.symbol}</span>
+                <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 Start date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.startTime.toLocaleString()}
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography variant="xs" weight={500} className="text-secondary">
+              <Typography variant="xs" weight={500} className="text-slate-500">
                 End date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-high-emphesis">
+              <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.endTime.toLocaleString()}
               </Typography>
             </div>
           </div>
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 pb-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Top up amount
               </Typography>
               <Switch
@@ -157,7 +152,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           </div>
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 py-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Change end date
               </Typography>
               <Switch
@@ -173,7 +168,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
               type="datetime-local"
               className={classNames(
                 changeEndDate ? '' : 'opacity-40 pointer-events-none',
-                'rounded-xl bg-dark-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
               )}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}

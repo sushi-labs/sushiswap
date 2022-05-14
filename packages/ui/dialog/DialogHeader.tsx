@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react'
 import { ChevronLeftIcon, XIcon } from '@heroicons/react/outline'
-import React, { FC, ReactNode } from 'react'
 import classNames from 'classnames'
+import React, { FC, ReactNode } from 'react'
 
 export interface DialogHeaderProps {
   title: string | ReactNode

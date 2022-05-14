@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 
+import { default as tbody } from './Body'
+import { default as td } from './Cell'
 import { default as container, TableContainerProps } from './Container'
 import { default as thead } from './Head'
+import { default as th } from './HeadCell'
+import { default as thr } from './HeadRow'
 import { default as table } from './Root'
 import { default as tr } from './Row'
-import { default as th } from './HeadCell'
-import { default as td } from './Cell'
-import { default as tbody } from './Body'
-import { default as thr } from './HeadRow'
 
 export type TableProps = {
   container: FC<TableContainerProps>

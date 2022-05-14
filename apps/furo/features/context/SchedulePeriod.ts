@@ -1,5 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+
 import { PeriodType } from './enums'
 import { PeriodRepresentation } from './representations'
 

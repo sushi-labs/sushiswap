@@ -1,9 +1,10 @@
-import { FC, Fragment, FunctionComponent, ReactElement, ReactNode } from 'react'
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react'
 import classNames from 'classnames'
+import { FC, Fragment, FunctionComponent, ReactElement, ReactNode } from 'react'
+
+import { MenuButton } from './MenuButton'
 import { MenuItem } from './MenuItem'
 import { MenuItems } from './MenuItems'
-import { MenuButton } from './MenuButton'
 
 interface MenuProps {
   className?: string

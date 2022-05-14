@@ -1,21 +1,23 @@
-import React, { FC, forwardRef, ReactNode } from 'react'
 import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
 
-export type TypographyWeight = 400 | 500 | 700
+export type TypographyWeight = 400 | 500 | 700 | 900
 
 const WEIGHTS = {
   400: 'font-normal',
   500: 'font-medium',
   700: 'font-bold',
+  900: 'font-black',
 }
 
-export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
+export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'xl' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
 
 const VARIANTS = {
-  hero: 'text-hero leading-[4rem]',
+  hero: 'text-5xl leading-[4rem]',
   h1: 'text-4xl leading-[28px]',
   h2: 'text-3xl tracking-[-0.02em]',
   h3: 'text-2xl leading-7 tracking-[-0.01em]',
+  xl: 'text-xl leading-7 tracking-[-0.01em]',
   lg: 'text-lg leading-6',
   base: 'text-base leading-5',
   sm: 'text-sm leading-5',
@@ -41,7 +43,7 @@ export const Typography: FC<TypographyProps> = forwardRef(
       variant = 'base',
       weight = 400,
       component = 'div',
-      className = 'text-primary',
+      className = 'text-slate-400',
       clickable = false,
       children = [],
       onClick = undefined,

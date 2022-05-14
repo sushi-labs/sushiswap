@@ -1,6 +1,6 @@
-import { JsonRpcProvider, InfuraProvider } from '@ethersproject/providers'
-
+import { InfuraProvider,JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
+
 import { getInfuraChainName } from './getInfuraChainName'
 
 const providerCache: Partial<Record<ChainId, JsonRpcProvider>> = {}

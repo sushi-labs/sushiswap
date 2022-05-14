@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react'
 import classNames from 'classnames'
+import React, { ReactNode } from 'react'
+
 import Loader from '../loader/Loader'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
@@ -32,6 +33,7 @@ const SIZE: Record<ButtonSize, string> = {
 type Button = React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: ReactNode
   startIcon?: ReactNode
   endIcon?: ReactNode
   color?: ButtonColor
@@ -42,7 +44,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   href?: string
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
@@ -66,7 +68,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ...rest,
         ref,
         disabled: disabled || loading,
-        className: classNames('btn', fullWidth ? 'w-full' : '', VARIANT[variant], COLOR[color], SIZE[size], className),
+        className: classNames(
+          'btn',
+          fullWidth ? 'w-full' : '',
+          VARIANT[variant],
+          COLOR[color],
+          SIZE[size],
+          className,
+          disabled ? 'btn-disabled' : '',
+        ),
         ...(href && { href }),
       },
       loading ? (

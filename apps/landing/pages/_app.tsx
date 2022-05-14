@@ -1,9 +1,9 @@
-import { FC, useEffect } from 'react'
-import type { AppProps } from 'next/app'
-
 import '../styles/index.css'
-import Script from 'next/script'
+
+import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
+import { FC, useEffect } from 'react'
 
 declare global {
   interface Window {

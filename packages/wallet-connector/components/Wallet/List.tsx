@@ -8,11 +8,9 @@ interface List {
   children?: ReactNode | ReactNode[] | ((x: RenderProps) => ReactNode | ReactNode[])
 }
 
-const List: FC<List> = ({ children }) => {
+const List: FC = () => {
   const isMounted = useIsMounted()
   const connect = useConnect()
-
-  if (typeof children === 'function') return <>{children({ ...connect, isMounted })}</>
 
   return (
     <>

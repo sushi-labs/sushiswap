@@ -1,16 +1,21 @@
+import { Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
+import { CreateStreamModal } from 'features/stream'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
-import { FC } from 'react'
-import { Typography } from '@sushiswap/ui'
 import { getStreams, getVestings } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { CreateStreamModal } from 'features/stream'
-import { DoubleGlow } from 'components'
-import useSWR, { SWRConfig } from 'swr'
 import { useRouter } from 'next/router'
+import { FC } from 'react'
+import useSWR, { SWRConfig } from 'swr'
+
 import { Streams } from '../../api/streams/[chainId]/[address]'
 import { Vestings } from '../../api/vestings/[chainId]/[address]'
+
+const fetcher = (params: any) =>
+  fetch(params)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
 
 interface Props {
   fallback?: Record<string, any>
@@ -32,27 +37,30 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   }
 }
 
-const Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const _Dashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  const router = useRouter()
+  const chainId = Number(router.query.chainId)
+  const address = router.query.address as string
+
   return (
     <SWRConfig value={{ fallback }}>
-      <_Dashboard />
+      <Dashboard chainId={chainId} address={address} />
     </SWRConfig>
   )
 }
 
-const _Dashboard: FC = () => {
-  const router = useRouter()
-  const chainId = router.query.chainId as string
-  const address = router.query.address as string
-
-  const { data: streams } = useSWR<Streams>(`/api/streams/${chainId}/${address}`)
-  const { data: vestings } = useSWR<Vestings>(`/api/vestings/${chainId}/${address}`)
+export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+  const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
+  const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
+    `/furo/api/vestings/${chainId}/${address}`,
+    fetcher,
+  )
 
   return (
     <Layout>
       <div className="flex flex-col h-full gap-12 pt-10">
-        <div className="flex justify-between items-center">
-          <Typography variant="h2" weight={700} className="text-high-emphesis">
+        <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+          <Typography variant="h3" weight={700} className="text-slate-200">
             Dashboard
           </Typography>
           <div className="flex gap-3">
@@ -62,30 +70,28 @@ const _Dashboard: FC = () => {
         </div>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-3">
-            <Typography variant="lg" weight={700} className="text-high-emphesis">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               Incoming
             </Typography>
-            <DoubleGlow>
-              <FuroTable
-                streams={streams?.incomingStreams ?? []}
-                vestings={vestings?.incomingVestings ?? []}
-                type={FuroTableType.INCOMING}
-                placeholder="No incoming streams found"
-              />
-            </DoubleGlow>
+            <FuroTable
+              loading={isValidating}
+              streams={streams?.incomingStreams ?? []}
+              vestings={vestings?.incomingVestings ?? []}
+              type={FuroTableType.INCOMING}
+              placeholder="No incoming streams found"
+            />
           </div>
           <div className="flex flex-col gap-3">
-            <Typography variant="lg" weight={700} className="text-high-emphesis">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               Outgoing
             </Typography>
-            <DoubleGlow>
-              <FuroTable
-                streams={streams?.outgoingStreams ?? []}
-                vestings={vestings?.outgoingVestings ?? []}
-                type={FuroTableType.OUTGOING}
-                placeholder="No outgoing streams found"
-              />
-            </DoubleGlow>
+            <FuroTable
+              loading={isValidating2}
+              streams={streams?.outgoingStreams ?? []}
+              vestings={vestings?.outgoingVestings ?? []}
+              type={FuroTableType.OUTGOING}
+              placeholder="No outgoing streams found"
+            />
           </div>
         </div>
       </div>
@@ -93,4 +99,4 @@ const _Dashboard: FC = () => {
   )
 }
 
-export default Dashboard
+export default _Dashboard

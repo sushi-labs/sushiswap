@@ -1,13 +1,12 @@
-import { FC, useEffect } from 'react'
-import type { AppProps } from 'next/app'
-
-import { App, classNames, Container, Typography } from '@sushiswap/ui'
-
 import '@sushiswap/ui/index.css'
-import Link from 'next/link'
+
 import { MDXProvider } from '@mdx-js/react'
+import { App, classNames, Typography } from '@sushiswap/ui'
+import type { AppProps } from 'next/app'
+import Link from 'next/link'
 import { NextRouter, useRouter } from 'next/router'
 import Script from 'next/script'
+import { FC, useEffect } from 'react'
 
 const TITLE = {
   '/': 'Sushi DAO',

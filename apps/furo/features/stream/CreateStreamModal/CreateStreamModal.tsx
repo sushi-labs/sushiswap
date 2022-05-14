@@ -1,20 +1,16 @@
+import { PlusIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
-import { ApprovalState, useApproveCallback } from 'hooks'
-import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
-import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { Amount, Token } from '@sushiswap/currency'
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
-import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
-import Button from '@sushiswap/ui/button/Button'
-import { createToast } from 'components/Toast'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { Input, Typography } from '@sushiswap/ui'
-import Dots from '@sushiswap/ui/dots/Dots'
-import { TokenSelectorOverlay } from '.'
 import { JSBI } from '@sushiswap/math'
+import { Button,Dialog, Dots, Input, Typography } from '@sushiswap/ui'
+import { createToast,CurrencyInput } from 'components'
 import { parseUnits } from 'ethers/lib/utils'
-import { CurrencyInput } from 'components'
+import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+
+import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
+import { TokenSelectorOverlay } from './TokenSelectorOverlay'
 
 export const CreateStreamModal: FC = () => {
   const { data: account } = useAccount()
@@ -105,20 +101,26 @@ export const CreateStreamModal: FC = () => {
 
   return (
     <>
-      <Button variant="filled" color="blue" size="sm" onClick={() => setOpen(true)}>
-        Create stream
+      <Button
+        startIcon={<PlusIcon width={18} height={18} />}
+        variant="filled"
+        color="blue"
+        size="sm"
+        onClick={() => setOpen(true)}
+      >
+        New stream
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-dark-800">
+        <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-700">
           <Dialog.Header title="Create Stream" onClose={() => setOpen(false)} />
           <TokenSelectorOverlay currency={token} onSelect={setToken} />
           <div className="flex flex-col gap-2">
             <div className="flex justify-between gap-1">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Amount
               </Typography>
               {/* TODO: Enable when bentoBalance hook is dialed in*/}
-              {/*<div className="flex gap-2 items-center">*/}
+              {/*<div className="flex items-center gap-2">*/}
               {/*  <Typography variant="xs">Use {fromBentoBox ? 'BentoBox' : 'Wallet'}</Typography>*/}
               {/*  <Switch*/}
               {/*    size="xs"*/}
@@ -131,28 +133,28 @@ export const CreateStreamModal: FC = () => {
             </div>
           </div>
           <CurrencyInput onChange={setAmount} account={account?.address} amount={amount} token={token} />
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col gap-2">
-            <Typography variant="sm" weight={500} className="text-high-emphesis">
+            <Typography variant="sm" weight={500} className="text-slate-200">
               Recipient (ENS name or Address)
             </Typography>
             <Input.Address placeholder="0x..." value={recipient} onChange={setRecipient} />
           </div>
           <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 Start date
               </Typography>
               <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
             </div>
             <div className="flex flex-col gap-2">
-              <Typography variant="sm" weight={500} className="text-high-emphesis">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 End date
               </Typography>
               <Input.DatetimeLocal value={endDate} onChange={setEndDate} />
             </div>
           </div>
-          <div className="h-px bg-dark-800 my-2" />
+          <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
               (token && tokenApprovalState !== ApprovalState.APPROVED)) && (
@@ -193,7 +195,7 @@ export const CreateStreamModal: FC = () => {
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create stream'}
             </Button>
             {error && (
-              <Typography variant="xs" className="text-red text-center" weight={700}>
+              <Typography variant="xs" className="text-center text-red" weight={700}>
                 {error}
               </Typography>
             )}

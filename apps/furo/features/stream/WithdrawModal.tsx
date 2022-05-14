@@ -1,21 +1,18 @@
-import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
-import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
-import { JSBI } from '@sushiswap/math'
-import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { Typography } from '@sushiswap/ui'
-import Button from '@sushiswap/ui/button/Button'
-import { ZERO } from '@sushiswap/core-sdk'
-import { parseUnits } from 'ethers/lib/utils'
-import StreamProgress from 'features/stream/StreamProgress'
-import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from 'wagmi'
-import Dots from '@sushiswap/ui/dots/Dots'
 import { AddressZero } from '@ethersproject/constants'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import { createToast } from 'components/Toast'
 import { ArrowSmDownIcon } from '@heroicons/react/outline'
+import { ZERO } from '@sushiswap/core-sdk'
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
+import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast } from 'components'
+import { BigNumber } from 'ethers'
+import { parseUnits } from 'ethers/lib/utils'
+import { Stream } from 'features/context/Stream'
+import StreamProgress from 'features/stream/StreamProgress'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -89,12 +86,12 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
-              <ArrowSmDownIcon width={24} height={24} className="text-high-emphesis" />
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
+              <ArrowSmDownIcon width={24} height={24} className="text-slate-200" />
             </div>
           </div>
           <div
-            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-1"
+            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-1"
             onClick={() => inputRef.current?.focus()}
           >
             <div className="flex justify-between gap-3">
@@ -104,7 +101,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               <Typography
                 weight={700}
                 variant="sm"
-                className="text-high-emphesis"
+                className="text-slate-200"
                 onClick={() => {
                   if (stream?.token) setAmount(balance)
                 }}
@@ -124,7 +121,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                 autoCorrect="off"
                 placeholder="0.00"
                 pattern="^[0-9]*[.,]?[0-9]*$"
-                className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-dark-700 placeholder:text-secondary bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
+                className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 placeholder:text-slate-500 bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
               />
             </div>
             <Button

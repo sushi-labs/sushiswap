@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getBalance } from 'gnosis'
-import { SAFES } from 'config'
-import redis from 'redis'
 import { ChainId } from '@sushiswap/chain'
 import log from '@sushiswap/logger'
+import { SAFES } from 'config'
+import { getBalance } from 'gnosis'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import redis from 'redis'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const filteredSafes = Object.entries(SAFES).filter(([, safe]) => safe.chainId !== ChainId.HARMONY)

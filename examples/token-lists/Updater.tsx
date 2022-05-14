@@ -1,7 +1,8 @@
-import React from 'react'
 import { ChainId } from '@sushiswap/chain'
-import { tokenLists } from './token-lists'
+import React from 'react'
+
 import { getProvider } from './hooks'
+import { tokenLists } from './token-lists'
 
 interface Props {
   chainId: ChainId

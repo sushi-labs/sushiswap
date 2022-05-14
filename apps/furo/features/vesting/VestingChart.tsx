@@ -2,6 +2,7 @@ import { curveStep } from '@visx/curve'
 import { TooltipWithBounds } from '@visx/tooltip'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, XYChart } from '@visx/xychart'
 import { FC, useEffect, useState } from 'react'
+
 import { ScheduleRepresentation, Vesting } from '../context'
 
 interface Props {

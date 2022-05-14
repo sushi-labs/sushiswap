@@ -1,5 +1,6 @@
-import React, { FC, forwardRef } from 'react'
 import classNames from 'classnames'
+import React, { FC, forwardRef } from 'react'
+
 import { DEFAULT_INPUT_CLASSNAME } from './index'
 
 export type AddressProps = Omit<React.HTMLProps<HTMLInputElement> | 'ref' | 'as' | 'onChange'> & {

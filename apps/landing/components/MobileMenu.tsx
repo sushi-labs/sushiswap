@@ -1,7 +1,8 @@
-import React from 'react'
 import { Transition } from '@headlessui/react'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+import React from 'react'
+
 import logo from '../public/logo.png'
 
 const MobileMenu = ({ setIsOpen, isOpen }) => {

@@ -7,7 +7,7 @@
     "dev": "next dev --port 3001",
     "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build",
-    "lint": "next lint",
+    "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
   "dependencies": {

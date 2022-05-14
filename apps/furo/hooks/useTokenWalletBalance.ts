@@ -1,10 +1,11 @@
-import { useMultipleContractSingleData } from '../lib/hooks/multicall'
+import { Interface } from '@ethersproject/abi'
 import { isAddress } from '@ethersproject/address'
-import { useMemo } from 'react'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { useMemo } from 'react'
 import { erc20ABI } from 'wagmi'
-import { Interface } from '@ethersproject/abi'
+
+import { useMultipleContractSingleData } from '../lib/hooks/multicall'
 
 const tokenBalancesGasRequirement = { gasRequired: 125_000 }
 const ERC20Interface = new Interface(erc20ABI)

@@ -1,17 +1,13 @@
+import { AddressZero } from '@ethersproject/constants'
+import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
+import { Button, Dialog, Dots, Switch,Typography } from '@sushiswap/ui'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
+import StreamProgress from 'features/stream/StreamProgress'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { AddressZero } from '@ethersproject/constants'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import Dots from '@sushiswap/ui/dots/Dots'
-import { createToast } from 'components/Toast'
-import Button from '../../../../packages/ui/button/Button'
-import { Dialog } from '@sushiswap/ui/dialog'
-import StreamProgress from 'features/stream/StreamProgress'
-import { ArrowSmDownIcon, CheckIcon, XIcon } from '@heroicons/react/outline'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Switch from '../../../../packages/ui/switch/Switch'
 
 interface CancelStreamModalProps {
   stream?: Stream
@@ -53,28 +49,31 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
 
   return (
     <>
-      <Button variant="filled" color="red" onClick={() => setOpen(true)}>
-        Cancel
-      </Button>
+      <Button
+        variant="filled"
+        color="red"
+        startIcon={<TrashIcon className="text-red-900" width={24} height={24} />}
+        onClick={() => setOpen(true)}
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
           </div>
-          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-4">
-            <Typography variant="xs" weight={400} className="text-high-emphesis">
+          <div className="-ml-6 !-mb-6 -mr-6 p-6 pt-9 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-4">
+            <Typography variant="xs" weight={400} className="text-slate-200">
               This will send the remaining funds{' '}
               <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
               </span>{' '}
               to your {toBentoBox ? 'BentoBox' : 'account'}
             </Typography>
-            <div className="flex justify-between items-center">
-              <Typography variant="xs" weight={700} className="text-high-emphesis">
+            <div className="flex items-center justify-between">
+              <Typography variant="xs" weight={700} className="text-slate-200">
                 Receive in BentoBox
               </Typography>
               <Switch
@@ -82,7 +81,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
                 id="toggle-expert-mode-button"
                 checked={toBentoBox}
                 onChange={() => setToBentoBox((prevState) => !prevState)}
-                checkedIcon={<CheckIcon className="text-dark-700" />}
+                checkedIcon={<CheckIcon className="text-slate-700" />}
                 uncheckedIcon={<XIcon />}
                 color="gradient"
               />

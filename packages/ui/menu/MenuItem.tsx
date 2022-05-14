@@ -1,7 +1,8 @@
-import { ExtractProps } from '../types'
 import { Menu as HeadlessMenu } from '@headlessui/react'
-import { FC, forwardRef } from 'react'
 import classNames from 'classnames'
+import { FC, forwardRef } from 'react'
+
+import { ExtractProps } from '../types'
 
 export type MenuItem = ExtractProps<typeof HeadlessMenu.Item> & {
   className?: string

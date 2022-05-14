@@ -1,5 +1,6 @@
+import { BigintIsh,Fraction, JSBI, Rounding } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
-import { JSBI, Rounding, Fraction, BigintIsh } from '@sushiswap/math'
+
 import { Amount } from './Amount'
 import { Type } from './Type'
 

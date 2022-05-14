@@ -1,9 +1,7 @@
-import { FC, useRef } from 'react'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Loader from '@sushiswap/ui/loader/Loader'
-import { useTokenWalletBalance } from 'hooks/useTokenWalletBalance'
 import { Token } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { classNames, Loader,Typography } from '@sushiswap/ui'
+import { useTokenWalletBalance } from 'hooks'
+import { FC, useRef } from 'react'
 
 interface CurrencyInput {
   account?: string
@@ -23,10 +21,10 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
       onClick={() => amountInputRef.current?.focus()}
       className={classNames(
         className,
-        'flex flex-col rounded-xl bg-dark-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-dark-900 ring-blue shadow-md',
+        'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue shadow-md',
       )}
     >
-      <div className="flex justify-between items-center gap-1">
+      <div className="flex items-center justify-between gap-1">
         <input
           ref={amountInputRef}
           value={amount}
@@ -35,12 +33,12 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
           className="px-4 text-left shadow-md border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
           onChange={(e) => onChange(e.target.value)}
         />
-        <Typography variant="sm" weight={700} className="pr-4 text-secondary">
+        <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
           {token?.symbol}
         </Typography>
       </div>
       <div className="flex justify-between px-4 pb-3">
-        <Typography variant="xs" weight={500} className="text-secondary">
+        <Typography variant="xs" weight={500} className="text-slate-500">
           Balance
         </Typography>
         {loadingBalance ? (
@@ -49,7 +47,7 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
           <Typography
             variant="xs"
             weight={500}
-            className="text-secondary"
+            className="text-slate-500"
             onClick={() => (tokenBalance ? onChange(tokenBalance?.toExact()) : undefined)}
           >
             {tokenBalance?.toSignificant(6)} {tokenBalance?.currency.symbol}

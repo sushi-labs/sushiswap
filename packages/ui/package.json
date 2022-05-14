@@ -20,17 +20,22 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@fontsource/dm-sans": "^4.5.0",
+    "@fontsource/inter": "^4.5.10",
     "@headlessui/react": "^1.6.0",
     "@heroicons/react": "^1.0.6",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.5.0",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",
-    "classnames": "^2.3.1"
+    "classnames": "^2.3.1",
+    "react-window": "^1.8.7",
+    "react-virtualized-auto-sizer": "^1.0.6"
   },
   "devDependencies": {
+    "@types/react-window": "^1.8.5",
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@sushiswap/config": "workspace:*",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",

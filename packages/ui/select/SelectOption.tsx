@@ -1,8 +1,9 @@
 import { Listbox } from '@headlessui/react'
-import { FC, forwardRef } from 'react'
-import { ExtractProps } from '../types'
-import classNames from 'classnames'
 import { CheckIcon } from '@heroicons/react/outline'
+import classNames from 'classnames'
+import { FC, forwardRef } from 'react'
+
+import { ExtractProps } from '../types'
 
 export type SelectOptionProps = ExtractProps<typeof Listbox.Option> & {
   children?: string
@@ -17,7 +18,7 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
         classNames(
           active ? 'text-white bg-blue-500' : 'text-high-emphesis',
           selected ? '' : 'pl-[34px]',
-          'flex gap-2 px-2 items-center font-bold text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-dark-800',
+          'flex gap-2 px-2 items-center font-bold text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-slate-800',
           className,
         )
       }

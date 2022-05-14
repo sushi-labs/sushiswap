@@ -1,9 +1,10 @@
 import { Listbox } from '@headlessui/react'
-import React, { FC, forwardRef, ReactNode } from 'react'
-import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
 import { SelectorIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type SelectButtonProps = ExtractProps<typeof Listbox.Button> & {
   children?: ReactNode
@@ -17,7 +18,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       ...props,
       ref,
       className: classNames(
-        'relative w-full cursor-default rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md',
+        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
         className,
       ),
     },
@@ -25,7 +26,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       <Typography
         variant="sm"
         weight={children ? 700 : 400}
-        className={classNames(children ? '' : 'text-low-emphesis', 'block truncate')}
+        className={classNames(children ? '' : 'text-slate-600', 'block truncate')}
       >
         {children}
       </Typography>

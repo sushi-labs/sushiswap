@@ -1,6 +1,7 @@
 import { useInterval } from '@sushiswap/hooks'
-import { FC, useState } from 'react'
 import { Typography } from '@sushiswap/ui'
+import { FC, useState } from 'react'
+
 import { Vesting } from './context'
 import { FuroStatus } from './context/enums'
 import { Stream } from './context/Stream'
@@ -40,41 +41,41 @@ const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
   if (remaining) {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex justify-center gap-6 text-high-emphesis">
+        <div className="flex justify-center gap-6 text-slate-200">
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               {remaining.days}
             </Typography>
-            <Typography variant="sm" className="text-secondary">
+            <Typography variant="sm" className="text-slate-500">
               days
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               {remaining.hours}
             </Typography>
-            <Typography variant="sm" className="text-secondary">
+            <Typography variant="sm" className="text-slate-500">
               hours
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               {remaining.minutes}
             </Typography>
-            <Typography variant="sm" className="text-secondary">
+            <Typography variant="sm" className="text-slate-500">
               min
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-high-emphesis text-mono">
+            <Typography variant="lg" weight={700} className="text-slate-200">
               {remaining.seconds}
             </Typography>
-            <Typography variant="sm" className="text-secondary">
+            <Typography variant="sm" className="text-slate-500">
               sec
             </Typography>
           </div>
         </div>
-        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-high-emphesis text-center">
+        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
           {furo?.isStarted ? `REMAINING` : `STARTS IN`}
         </Typography>
       </div>

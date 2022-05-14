@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant'
+
 import { Native } from './Native'
 import { Token } from './Token'
 

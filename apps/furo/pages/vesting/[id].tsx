@@ -1,3 +1,4 @@
+import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { Vesting } from 'features/context'
 import {
@@ -10,11 +11,10 @@ import LinkPopover from 'features/LinkPopover'
 import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
-import { FC, useMemo } from 'react'
-import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 interface Props {
@@ -67,7 +67,7 @@ const _VestingPage: FC = () => {
 
   return (
     <Layout>
-      <div className="flex gap-16">
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="w-[630px]">
           <VestingChart vesting={vesting} schedule={schedule} />
           <div className="flex justify-center gap-2">
@@ -80,7 +80,7 @@ const _VestingPage: FC = () => {
         </div>
         <div className="w-[280px] flex flex-col col-span-2 justify-between">
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md bg-slate-900 border-slate-800 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Progress:
@@ -95,7 +95,7 @@ const _VestingPage: FC = () => {
                 showLabel={false}
               />
             </div>
-            <div className="flex flex-col gap-2 p-5 border shadow-md shadow-dark-1000 bg-dark-900 border-dark-800 rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md bg-slate-900 border-slate-800 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Withdrawn:
@@ -117,7 +117,7 @@ const _VestingPage: FC = () => {
               <FuroTimer furo={vesting} />
             </div> */}
           </div>
-          <div className="flex flex-col gap-1"></div>
+          <div className="flex flex-col gap-1" />
         </div>
       </div>
     </Layout>

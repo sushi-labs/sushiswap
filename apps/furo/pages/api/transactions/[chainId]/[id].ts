@@ -1,6 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getStreamTransactions } from '../../../../graph/graph-client'
 import { TransactionRepresentation } from 'features/context'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { getStreamTransactions } from '../../../../graph/graph-client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query

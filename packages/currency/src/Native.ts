@@ -1,5 +1,6 @@
-import invariant from 'tiny-invariant'
 import CHAIN from '@sushiswap/chain'
+import invariant from 'tiny-invariant'
+
 import { Currency } from './Currency'
 import { Token } from './Token'
 import { Type } from './Type'

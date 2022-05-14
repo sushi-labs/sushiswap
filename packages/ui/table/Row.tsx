@@ -1,10 +1,10 @@
-import React, { FC, TableHTMLAttributes } from 'react'
+import React, { FC } from 'react'
 
 const Row: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>> = ({
   children,
   ...props
 }) => (
-  <tr {...props} className="w-full h-12 cursor-pointer hover:bg-dark-800/30">
+  <tr {...props} className="w-full cursor-pointer hover:bg-slate-800/30">
     {children}
   </tr>
 )

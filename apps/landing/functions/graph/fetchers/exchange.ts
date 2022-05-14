@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/core-sdk'
 import request from 'graphql-request'
+
 import { GRAPH_HOST } from '../constants'
 import { pager } from '../pager'
 import { bundleQuery, factoryQuery, tokenPricesQuery } from '../queries/exchange'

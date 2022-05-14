@@ -1,10 +1,10 @@
-import { FC } from 'react'
+import '@sushiswap/ui/index.css'
+
+import { client } from '@sushiswap/wallet-connector'
 import type { AppProps } from 'next/app'
 import NextHead from 'next/head'
-
+import { FC } from 'react'
 import { Provider } from 'wagmi'
-import { client } from '@sushiswap/wallet-connector'
-import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (

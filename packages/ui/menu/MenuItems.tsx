@@ -1,7 +1,8 @@
-import { FC, forwardRef } from 'react'
-import { ExtractProps } from '../types'
-import { classNames } from '../index'
 import { Menu as HeadlessMenu } from '@headlessui/react'
+import { FC, forwardRef } from 'react'
+
+import { classNames } from '../index'
+import { ExtractProps } from '../types'
 
 export type MenuItems = ExtractProps<typeof HeadlessMenu.Items> & {
   className?: string
@@ -13,7 +14,7 @@ export const MenuItems: FC<MenuItems> = forwardRef(({ className, ...props }, ref
       ref={ref}
       className={classNames(
         className,
-        'z-10 bg-dark-800 absolute right-0 mt-2 w-56 origin-top-right rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-dark-800 shadow-sm shadow-dark-1000',
+        'z-10 bg-slate-800 absolute right-0 mt-2 min-w-[224px] w-full origin-top-right rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-slate-800 shadow-sm shadow-slate-1000',
       )}
       {...props}
     />

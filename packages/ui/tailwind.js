@@ -128,19 +128,6 @@ module.exports = {
         },
         'dark-pink': '#221825',
         'dark-blue': '#0F182A',
-        'dark-1000': '#0D0415',
-        'dark-900': '#161522',
-        'dark-850': '#1d1e2c',
-        'dark-800': '#202231',
-        'dark-700': '#2E3348',
-        'dark-600': '#414A6C',
-        'dark-500': '#223D5E',
-        'dark-400': '#545f7b',
-        'low-emphesis': '#575757',
-        primary: '#BFBFBF',
-        secondary: '#7F7F7F',
-        'high-emphesis': '#E3E3E3',
-        'higher-emphesis': '#FCFCFD',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
@@ -155,7 +142,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+      sans: ['Inter', ...defaultTheme.fontFamily.sans],
     },
   },
 }

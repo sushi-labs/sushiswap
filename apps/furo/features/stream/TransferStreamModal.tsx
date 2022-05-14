@@ -1,17 +1,14 @@
-import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
-import { FC, useCallback, useRef, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress, useNetwork, useWaitForTransaction } from 'wagmi'
-import Button from '../../../../packages/ui/button/Button'
+import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import StreamProgress from 'features/stream/StreamProgress'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Dots from '@sushiswap/ui/dots/Dots'
-import { AddressZero } from '@ethersproject/constants'
+import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import { createToast } from 'components/Toast'
+import { createToast } from 'components'
+import { Stream } from 'features/context/Stream'
+import StreamProgress from 'features/stream/StreamProgress'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { FC, useCallback, useRef, useState } from 'react'
+import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -72,15 +69,15 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
           <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-dark-800 border-[3px] border-dark-900 rounded-2xl">
+            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
               <ArrowSmDownIcon width={24} height={24} className="text-blue" />
             </div>
           </div>
           <div
-            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-dark-800 border-t rounded-2xl border-dark-800 flex flex-col gap-3"
+            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-3"
             onClick={() => inputRef.current?.focus()}
           >
-            <Typography variant="xs" weight={400} className="text-high-emphesis">
+            <Typography variant="xs" weight={400} className="text-slate-200">
               This will transfer a stream consisting of{' '}
               <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
@@ -96,7 +93,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
                 autoComplete="off"
                 autoCorrect="off"
                 placeholder="Recipient address or ENS name"
-                className="placeholder:text-sm pb-1 !border-b border-t-0 border-l-0 border-r-0 border-dark-700 bg-transparent placeholder:text-secondary p-0 !ring-0 !outline-none font-medium w-full"
+                className="placeholder:text-sm pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 bg-transparent placeholder:text-slate-500 p-0 !ring-0 !outline-none font-medium w-full"
               />
             </div>
             <Button
@@ -121,7 +118,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
               )}
             </Button>
             <div className="pt-3 rounded-xl">
-              <Typography variant="xs" className="text-yellow-700 text-center">
+              <Typography variant="xs" className="text-center text-yellow-700">
                 Please note that this will transfer ownership of the entire stream to the recipient. You will not be
                 able to withdraw from this stream after transferring
               </Typography>
