@@ -1,14 +1,15 @@
-import { Type as Currency } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
+import classNames from 'classnames'
 import React, { createContext, CSSProperties, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
+
 import { Typography } from '../typography'
-import classNames from 'classnames'
 
 interface WithCurrencyList {
-  currencies: Currency[]
-  currency?: Currency
-  onCurrency(x: Currency): void
+  currencies: Type[]
+  currency?: Type
+  onCurrency(x: Type): void
   children?: ReactNode
 }
 
@@ -24,7 +25,7 @@ const useCurrencyListContext = () => {
 }
 
 const CurrencyRow: FC<{
-  currency: Currency
+  currency: Type
   style: CSSProperties
 }> = ({ currency, style }) => {
   const { onCurrency } = useCurrencyListContext()
@@ -117,5 +118,3 @@ export const List = withContext(() => {
     </div>
   )
 })
-
-export default List

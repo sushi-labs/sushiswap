@@ -1,6 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getVestings } from '../../../../graph/graph-client'
 import { VestingRepresentation } from 'features/context'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { getVestings } from '../../../../graph/graph-client'
 
 export type Vestings = { incomingVestings: VestingRepresentation[]; outgoingVestings: VestingRepresentation[] }
 

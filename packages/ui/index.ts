@@ -1,6 +1,3 @@
-// Re-export classnames for conviniance
-export { default as classNames } from 'classnames'
-
 export * from './app'
 export * from './button'
 export * from './checkbox'
@@ -21,6 +18,7 @@ export * from './progressbar'
 export * from './select'
 export * from './switch'
 export * from './table'
-export * from './typography'
-
 export * from './types'
+export * from './typography'
+// Re-export classnames for conviniance
+export { default as classNames } from 'classnames'

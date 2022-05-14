@@ -1,6 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getStreams } from '../../../../graph/graph-client'
 import { StreamRepresentation } from 'features/context'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { getStreams } from '../../../../graph/graph-client'
 
 export type Streams = { incomingStreams: StreamRepresentation[]; outgoingStreams: StreamRepresentation[] }
 

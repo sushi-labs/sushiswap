@@ -1,7 +1,7 @@
-import { FC, useRef } from 'react'
-import { useTokenWalletBalance } from 'hooks'
 import { Token } from '@sushiswap/currency'
-import { classNames, Typography, Loader } from '@sushiswap/ui'
+import { classNames, Loader,Typography } from '@sushiswap/ui'
+import { useTokenWalletBalance } from 'hooks'
+import { FC, useRef } from 'react'
 
 interface CurrencyInput {
   account?: string

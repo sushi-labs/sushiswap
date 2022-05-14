@@ -1,5 +1,5 @@
-import React, { FC, forwardRef, ReactNode } from 'react'
 import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
 
 export type TypographyWeight = 400 | 500 | 700 | 900
 

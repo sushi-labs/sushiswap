@@ -1,6 +1,7 @@
-import { multicall } from '../state/multicall'
-import { SkipFirst } from '../../types'
 import { useBlockNumber, useNetwork } from 'wagmi'
+
+import { SkipFirst } from '../../types'
+import { multicall } from '../state/multicall'
 
 export type { CallStateResult } from '@uniswap/redux-multicall' // re-export for convenience
 export { NEVER_RELOAD } from '@uniswap/redux-multicall' // re-export for convenience

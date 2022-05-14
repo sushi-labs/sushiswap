@@ -1,11 +1,12 @@
 import { Combobox as HeadlessCombobox, Menu as HeadlessMenu, Transition } from '@headlessui/react'
+import classNames from 'classnames'
+import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
+
+import { ExtractProps } from '../types'
+import ComboboxInput, { ComboboxInputProps } from './ComboboxInput'
 import ComboboxLabel, { ComboboxLabelProps } from './ComboboxLabel'
 import ComboboxOption, { ComboboxOptionProps } from './ComboboxOption'
-import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
-import { ExtractProps } from '../types'
 import ComboboxOptions, { ComboboxOptionsProps } from './ComboboxOptions'
-import ComboboxInput, { ComboboxInputProps } from './ComboboxInput'
-import classNames from 'classnames'
 
 type ComboboxProps = ExtractProps<typeof HeadlessMenu.Button> & {
   input: ReactElement<ExtractProps<typeof HeadlessCombobox.Input>>

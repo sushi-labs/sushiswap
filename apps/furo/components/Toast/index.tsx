@@ -1,7 +1,7 @@
-import { toast, ToastOptions } from 'react-toastify'
+import Loader from '@sushiswap/ui/loader/Loader'
 import { Typography } from '@sushiswap/ui/typography/Typography'
 import React, { ReactNode } from 'react'
-import Loader from '@sushiswap/ui/loader/Loader'
+import { toast, ToastOptions } from 'react-toastify'
 
 const options: ToastOptions = {
   position: 'top-right',

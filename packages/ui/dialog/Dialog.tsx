@@ -1,10 +1,11 @@
+import { Dialog as HeadlessDialog,Transition } from '@headlessui/react'
 import React, { FC, Fragment, FunctionComponent } from 'react'
-import { Transition, Dialog as HeadlessDialog } from '@headlessui/react'
-import DialogContent, { DialogContentProps } from './DialogContent'
-import DialogHeader, { DialogHeaderProps } from './DialogHeader'
-import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
-import DialogActions, { DialogActionProps } from './DialogActions'
+
 import { ExtractProps } from '../types'
+import DialogActions, { DialogActionProps } from './DialogActions'
+import DialogContent, { DialogContentProps } from './DialogContent'
+import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
+import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
 type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   children?: React.ReactNode

@@ -1,8 +1,9 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
+import classNames from 'classnames'
 import { FC, Fragment } from 'react'
+
 import { ExtractProps } from '../types'
 import { Typography } from '../typography'
-import classNames from 'classnames'
 
 export type ComboboxLabelProps = ExtractProps<typeof HeadlessCombobox.Label> & {
   children: string

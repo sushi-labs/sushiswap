@@ -1,5 +1,5 @@
-import React, { FC, forwardRef } from 'react'
 import classNames from 'classnames'
+import React, { FC, forwardRef } from 'react'
 
 export interface DialogContentProps {
   className?: string

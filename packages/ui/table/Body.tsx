@@ -1,4 +1,4 @@
-import React, { FC, TableHTMLAttributes } from 'react'
+import React, { FC } from 'react'
 
 const Body: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>> = ({
   children,

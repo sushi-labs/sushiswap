@@ -1,4 +1,4 @@
-import { Glow, Container, MaxWidth } from '@sushiswap/ui'
+import { Container, MaxWidth } from '@sushiswap/ui'
 import React from 'react'
 
 type Props = {

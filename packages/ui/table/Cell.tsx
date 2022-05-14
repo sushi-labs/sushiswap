@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC, TableHTMLAttributes } from 'react'
+import React, { FC } from 'react'
 
 const HeadCell: FC<
   React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>

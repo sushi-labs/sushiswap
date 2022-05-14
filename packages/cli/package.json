@@ -19,7 +19,7 @@
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint . --fix",
     "test": "jest",
     "generate": "graphclient build",
     "postinstall": "node -e \"process.env.VERCEL != 1 && process.exit(1)\" || (cd ../.. && pnpm turbo run build --scope=cli && cd packages/cli && pnpm i -g $PWD);"

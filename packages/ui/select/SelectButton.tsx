@@ -1,9 +1,10 @@
 import { Listbox } from '@headlessui/react'
-import React, { FC, forwardRef, ReactNode } from 'react'
-import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
 import { SelectorIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type SelectButtonProps = ExtractProps<typeof Listbox.Button> & {
   children?: ReactNode

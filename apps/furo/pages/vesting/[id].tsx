@@ -1,3 +1,4 @@
+import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { Vesting } from 'features/context'
 import {
@@ -10,11 +11,10 @@ import LinkPopover from 'features/LinkPopover'
 import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
-import { FC, useMemo } from 'react'
-import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 interface Props {

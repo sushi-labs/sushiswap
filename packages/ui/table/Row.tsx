@@ -1,4 +1,4 @@
-import React, { FC, TableHTMLAttributes } from 'react'
+import React, { FC } from 'react'
 
 const Row: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>> = ({
   children,

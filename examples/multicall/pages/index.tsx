@@ -1,5 +1,6 @@
-import { useCurrentBlockTimestampMultichain } from '../hooks'
 import chain from '@sushiswap/chain'
+
+import { useCurrentBlockTimestampMultichain } from '../hooks'
 
 export default function Multicall({ chainIds, blockNumbers }: { chainIds: number[]; blockNumbers: number[] }) {
   const chainNames = Object.entries(chain)

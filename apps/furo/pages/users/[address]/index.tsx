@@ -1,13 +1,14 @@
+import { Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
+import { CreateStreamModal } from 'features/stream'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
-import { FC } from 'react'
-import { Typography } from '@sushiswap/ui'
 import { getStreams, getVestings } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { CreateStreamModal } from 'features/stream'
-import useSWR, { SWRConfig } from 'swr'
 import { useRouter } from 'next/router'
+import { FC } from 'react'
+import useSWR, { SWRConfig } from 'swr'
+
 import { Streams } from '../../api/streams/[chainId]/[address]'
 import { Vestings } from '../../api/vestings/[chainId]/[address]'
 

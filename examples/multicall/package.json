@@ -6,7 +6,7 @@
     "build": "next build --profile",
     "dev": "next dev",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
-    "lint": "next lint",
+    "lint": "next lint --fix",
     "start": "next start"
   },
   "dependencies": {

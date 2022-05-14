@@ -1,8 +1,9 @@
 import { Listbox } from '@headlessui/react'
-import { FC, forwardRef } from 'react'
-import { ExtractProps } from '../types'
-import classNames from 'classnames'
 import { CheckIcon } from '@heroicons/react/outline'
+import classNames from 'classnames'
+import { FC, forwardRef } from 'react'
+
+import { ExtractProps } from '../types'
 
 export type SelectOptionProps = ExtractProps<typeof Listbox.Option> & {
   children?: string

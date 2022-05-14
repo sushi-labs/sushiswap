@@ -1,13 +1,13 @@
-import { Account, Wallet } from '@sushiswap/wallet-connector'
-import { useAccount, useConnect } from 'wagmi'
-import Layout from 'components/Layout'
-import { Typography } from '@sushiswap/ui'
 import { Menu } from '@headlessui/react'
-import { useRouter } from 'next/router'
-import ViewAddressModal from 'features/ViewAddressModal'
-import Button from '@sushiswap/ui/button/Button'
-import Link from 'next/link'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
+import Button from '@sushiswap/ui/button/Button'
+import { Account, Wallet } from '@sushiswap/wallet-connector'
+import Layout from 'components/Layout'
+import ViewAddressModal from 'features/ViewAddressModal'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useAccount, useConnect } from 'wagmi'
 
 export default function Index() {
   const router = useRouter()

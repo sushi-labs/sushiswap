@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from 'react'
 import classNames from 'classnames'
+import React, { FC, ReactNode } from 'react'
 
 export interface DialogActionProps {
   className?: string

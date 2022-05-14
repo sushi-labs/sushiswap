@@ -1,9 +1,7 @@
-import React, { FC } from 'react'
-
 // import dynamic from 'next/dynamic'
 // const Connect = dynamic(() => import('@sushiswap/wallet-connector/components/Connect'), { ssr: false })
-
 import { Connect } from '@sushiswap/wallet-connector'
+import React, { FC } from 'react'
 
 const Index: FC = () => {
   return (

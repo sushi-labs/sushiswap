@@ -1,5 +1,6 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
 import { FC, forwardRef } from 'react'
+
 import { ExtractProps } from '../types'
 
 export type ComboboxOptionsProps = ExtractProps<typeof HeadlessCombobox.Options> & {}

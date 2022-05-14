@@ -1,12 +1,13 @@
-import { useAccount, useConnect, useNetwork } from 'wagmi'
-import Layout from 'components/Layout'
-import { Typography, Loader, Dots, WalletIcon } from '@sushiswap/ui'
-import Link from 'next/link'
-import { XCircleIcon } from '@heroicons/react/outline'
-import { Wallet } from '@sushiswap/wallet-connector'
-import { Dashboard } from './users/[address]'
 import { Menu as HeadlessMenu } from '@headlessui/react'
+import { XCircleIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
+import { Wallet } from '@sushiswap/wallet-connector'
+import Layout from 'components/Layout'
+import Link from 'next/link'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
+
+import { Dashboard } from './users/[address]'
 
 export default function DashboardPage() {
   const isMounted = useIsMounted()

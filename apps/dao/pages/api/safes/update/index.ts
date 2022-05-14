@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSafe } from 'gnosis'
-import { SAFES } from 'config'
-import redis from 'redis'
 import log from '@sushiswap/logger'
+import { SAFES } from 'config'
+import { getSafe } from 'gnosis'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import redis from 'redis'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   let successfulUpdates = 0

@@ -1,6 +1,6 @@
-import { FC, ReactNode } from 'react'
 import { XIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import { FC, ReactNode } from 'react'
 
 const SIZE = {
   default: 'h-[24px]',

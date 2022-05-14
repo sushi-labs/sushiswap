@@ -1,9 +1,10 @@
 import { Menu as HeadlessMenu } from '@headlessui/react'
-import React, { FC, forwardRef, ReactNode } from 'react'
-import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type MenuButton = ExtractProps<typeof HeadlessMenu.Button> & {
   children?: ReactNode

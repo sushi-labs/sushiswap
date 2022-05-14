@@ -1,9 +1,10 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
-import React, { FC, forwardRef } from 'react'
-import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
 import { SelectorIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import React, { FC, forwardRef } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type ComboboxInputProps = ExtractProps<typeof HeadlessCombobox.Input> & {
   children?: string
