@@ -1,5 +1,6 @@
 import { useCurrentBlockTimestampMultichain } from '../hooks'
 import chain from '@sushiswap/chain'
+import { SushiIcon } from '@sushiswap/ui'
 
 export default function Bridge({ chainIds, blockNumbers }: { chainIds: number[]; blockNumbers: number[] }) {
   const chainNames = Object.entries(chain)
@@ -16,6 +17,15 @@ export default function Bridge({ chainIds, blockNumbers }: { chainIds: number[];
       {chainNames.join(',')}
       <h2>Block Timestamps:</h2>
       {isReady && <p data-testid="blockTimestamps">{blockTimestamps.join(',')}</p>}
+
+      <div className="bg-slate-400">
+        <div className="flex justify-between">Swap Settings</div>
+        <div className="flex justify-between">From Ethereum BentoBox ✅</div>
+
+        <div>
+          <SushiIcon width="1em" height="1em" /> Powered by the SushiSwap protocol
+        </div>
+      </div>
     </>
   )
 }

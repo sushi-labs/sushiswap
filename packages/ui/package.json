@@ -15,7 +15,9 @@
   "source": "./index.tsx",
   "types": "./index.d.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint . --fix"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint src --fix",
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^4.5.0",

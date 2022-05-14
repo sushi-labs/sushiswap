@@ -12,6 +12,11 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./index.ts",
   "source": "./index.ts",
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint src --fix",
+    "test": "jest --passWithNoTests"
+  },
   "devDependencies": {
     "@sushiswap/config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
