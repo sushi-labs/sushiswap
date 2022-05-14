@@ -1,22 +1,17 @@
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS } from 'hooks/useFuroStreamContract'
+import { STREAM_ADDRESS } from 'hooks'
 import { Amount } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import Button from '../../../../packages/ui/button/Button'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import Dots from '@sushiswap/ui/dots/Dots'
 import { parseUnits } from 'ethers/lib/utils'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { classNames, Typography } from '@sushiswap/ui'
-import { CurrencyInput } from 'components'
-import Switch from '../../../../packages/ui/switch/Switch'
-import { createToast } from 'components/Toast'
+import { classNames, Typography, Dots, Button, Switch, Dialog } from '@sushiswap/ui'
+import { createToast, CurrencyInput } from 'components'
 
 interface UpdateStreamModalProps {
   stream?: Stream
@@ -112,7 +107,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
               </Typography>
               <Typography variant="sm" weight={700} className="text-slate-200">
                 {stream.amount.toSignificant(6)}{' '}
-                <span className="text-slate-500 font-medium">{stream.token.symbol}</span>
+                <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
             </div>
             <div className="flex flex-col">
@@ -132,7 +127,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
               </Typography>
             </div>
           </div>
-          <div className="h-px bg-slate-800 my-2" />
+          <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 pb-2">
               <Typography variant="sm" weight={500} className="text-slate-200">

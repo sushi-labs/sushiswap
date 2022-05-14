@@ -1,17 +1,13 @@
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import Dots from '@sushiswap/ui/dots/Dots'
-import { createToast } from 'components/Toast'
-import Button from '../../../../packages/ui/button/Button'
-import { Dialog } from '@sushiswap/ui/dialog'
+import { createToast } from 'components'
 import StreamProgress from 'features/stream/StreamProgress'
 import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Switch from '../../../../packages/ui/switch/Switch'
+import { Typography, Dialog, Button, Dots, Switch } from '@sushiswap/ui'
 
 interface CancelStreamModalProps {
   stream?: Stream
@@ -76,7 +72,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
               </span>{' '}
               to your {toBentoBox ? 'BentoBox' : 'account'}
             </Typography>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Typography variant="xs" weight={700} className="text-slate-200">
                 Receive in BentoBox
               </Typography>

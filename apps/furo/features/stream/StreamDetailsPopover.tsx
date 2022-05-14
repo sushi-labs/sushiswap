@@ -2,10 +2,9 @@ import { Popover } from '@headlessui/react'
 import { useInterval } from '@sushiswap/hooks'
 import { shortenAddress } from '@sushiswap/format'
 import { FC, useState } from 'react'
-import { NotepadIcon, Typography } from '@sushiswap/ui'
+import { classNames, NotepadIcon, Typography } from '@sushiswap/ui'
 import { FuroStatus, Stream } from 'features/context'
-import { usePopover } from 'hooks/usePopover'
-import { classNames } from '@sushiswap/ui'
+import { usePopover } from 'hooks'
 
 interface StreamTimerState {
   days: string
@@ -111,7 +110,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     weight={700}
                     variant="xs"
                     onClick={() => stream && navigator.clipboard.writeText(stream.createdBy.id)}
-                    className="px-4 py-2 border rounded-full border-slate-700 shadow-md hover:border-slate-700 active:border-slate-600"
+                    className="px-4 py-2 border rounded-full shadow-md border-slate-700 hover:border-slate-700 active:border-slate-600"
                   >
                     {stream ? shortenAddress(stream.createdBy.id) : ''}
                   </Typography>
@@ -124,18 +123,18 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                     weight={700}
                     variant="xs"
                     onClick={() => stream && navigator.clipboard.writeText(stream.recipient.id)}
-                    className="px-4 py-2 border rounded-full border-slate-700 shadow-md hover:border-slate-700 active:border-slate-600"
+                    className="px-4 py-2 border rounded-full shadow-md border-slate-700 hover:border-slate-700 active:border-slate-600"
                   >
                     {stream ? shortenAddress(stream.recipient.id) : ''}
                   </Typography>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col p-4 border rounded-xl shadow-md border-slate-700">
+            <div className="flex flex-col p-4 border shadow-md rounded-xl border-slate-700">
               <StreamDetails />
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col gap-4 p-4 border border-slate-700 rounded-xl shadow-md">
+              <div className="flex flex-col gap-4 p-4 border shadow-md border-slate-700 rounded-xl">
                 <div className="flex flex-col">
                   {/* TODO: Unit type for all of these values? Icon? Should it show USD value? */}
                   <Typography variant="lg" className="text-slate-200" weight={700}>
@@ -162,7 +161,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-blue/30 rounded-xl shadow-md">
+              <div className="flex flex-col gap-4 p-4 shadow-md bg-blue/30 rounded-xl">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-slate-200" weight={700}>
                     Streamed
@@ -188,7 +187,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 p-4 bg-pink/30 rounded-xl shadow-md">
+              <div className="flex flex-col gap-4 p-4 shadow-md bg-pink/30 rounded-xl">
                 <div className="flex flex-col">
                   <Typography variant="lg" className="text-slate-200" weight={700}>
                     Withdrawn

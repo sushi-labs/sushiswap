@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'features/context'
-import { Typography } from '@sushiswap/ui/typography/Typography'
+import { Typography } from '@sushiswap/ui'
 import { useStreamBalance } from 'hooks'
 
 interface Props {

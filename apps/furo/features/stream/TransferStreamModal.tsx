@@ -1,17 +1,14 @@
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks/useFuroStreamContract'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { FC, useCallback, useRef, useState } from 'react'
 import { useAccount, useContractWrite, useEnsAddress, useNetwork, useWaitForTransaction } from 'wagmi'
-import Button from '../../../../packages/ui/button/Button'
 import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import StreamProgress from 'features/stream/StreamProgress'
-import { Dialog } from '@sushiswap/ui/dialog'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Dots from '@sushiswap/ui/dots/Dots'
+import { Typography, Dots, Button, Dialog } from '@sushiswap/ui'
 import { AddressZero } from '@ethersproject/constants'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import { createToast } from 'components/Toast'
+import { createToast } from 'components'
 
 interface TransferStreamModalProps {
   stream?: Stream
@@ -121,7 +118,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
               )}
             </Button>
             <div className="pt-3 rounded-xl">
-              <Typography variant="xs" className="text-yellow-700 text-center">
+              <Typography variant="xs" className="text-center text-yellow-700">
                 Please note that this will transfer ownership of the entire stream to the recipient. You will not be
                 able to withdraw from this stream after transferring
               </Typography>

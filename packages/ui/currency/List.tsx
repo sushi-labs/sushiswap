@@ -1,8 +1,9 @@
-import { Currency } from '@sushiswap/core-sdk'
-import { classNames, Typography } from '@sushiswap/ui'
+import { Type as Currency } from '@sushiswap/currency'
 import React, { createContext, CSSProperties, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList as List } from 'react-window'
+import { FixedSizeList } from 'react-window'
+import { Typography } from '../typography'
+import classNames from 'classnames'
 
 interface WithCurrencyList {
   currencies: Currency[]
@@ -12,6 +13,15 @@ interface WithCurrencyList {
 }
 
 const CurrencyListContext = createContext<WithCurrencyList | undefined>(undefined)
+
+const useCurrencyListContext = () => {
+  const context = useContext(CurrencyListContext)
+  if (!context) {
+    throw new Error('Hook can only be used within CurrencyList context')
+  }
+
+  return context
+}
 
 const CurrencyRow: FC<{
   currency: Currency
@@ -63,7 +73,18 @@ const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
   )
 }
 
-const _CurrencyList = () => {
+const withContext =
+  (Component: React.ComponentType<{ children?: ReactNode }>): React.FC<WithCurrencyList> =>
+  ({ currencies, currency, onCurrency, children }) =>
+    (
+      <CurrencyListContext.Provider
+        value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
+      >
+        <Component>{children}</Component>
+      </CurrencyListContext.Provider>
+    )
+
+export const List = withContext(() => {
   const { currencies } = useCurrencyListContext()
 
   const Row = useCallback(
@@ -82,39 +103,19 @@ const _CurrencyList = () => {
     <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800 shadow-md">
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
-          <List
+          <FixedSizeList
             height={height}
             width={width}
             itemCount={currencies.length}
             itemSize={48}
-            className="hide-scrollbar h-full divide-y divide-slate-700"
+            className="h-full divide-y hide-scrollbar divide-slate-700"
           >
             {Row}
-          </List>
+          </FixedSizeList>
         )}
       </AutoSizer>
     </div>
   )
-}
+})
 
-const useCurrencyListContext = () => {
-  const context = useContext(CurrencyListContext)
-  if (!context) {
-    throw new Error('Hook can only be used within CurrencyList context')
-  }
-
-  return context
-}
-
-const withCurrencyListContext =
-  (Component: React.ComponentType<{ children?: ReactNode }>): React.FC<WithCurrencyList> =>
-  ({ currencies, currency, onCurrency, children }) =>
-    (
-      <CurrencyListContext.Provider
-        value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
-      >
-        <Component>{children}</Component>
-      </CurrencyListContext.Provider>
-    )
-
-export const CurrencyList = withCurrencyListContext(_CurrencyList)
+export default List

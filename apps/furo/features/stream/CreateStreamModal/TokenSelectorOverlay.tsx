@@ -1,13 +1,11 @@
 import { FC, Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import { classNames, Input, Select } from '@sushiswap/ui'
 import { useAllTokens, useToken } from 'hooks'
-import { Currency, Token } from '@sushiswap/currency'
+import { Type, Token } from '@sushiswap/currency'
 import { Transition } from '@headlessui/react'
-import { CurrencyList } from '.'
 import { useDebounce } from '@sushiswap/hooks'
 import { filterTokens, useSortedTokensByQuery } from '@sushiswap/hooks/dist/useSortedTokensByQuery'
-import Loader from '@sushiswap/ui/loader/Loader'
-import { Dialog } from '@sushiswap/ui/dialog'
+import { Currency, Dialog, Loader } from '@sushiswap/ui'
 
 interface Props {
   currency?: Token
@@ -24,7 +22,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSelect = useCallback(
-    (currency: Currency) => {
+    (currency: Type) => {
       onSelect(currency.wrapped)
       setOpen(false)
     },
@@ -43,7 +41,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-2 flex-grow">
+      <div className="flex flex-col flex-grow gap-2">
         <Select.Label standalone>Token</Select.Label>
         <Select.Button standalone className="!cursor-pointer" onClick={() => setOpen(true)}>
           {currency?.symbol || <span className="text-slate-500">Select a token</span>}
@@ -81,7 +79,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
           >
             <Dialog.Content className="!space-y-5 fixed inset-0 !my-0 h-full !rounded-r-none">
               <Dialog.Header title="Select Token" onBack={() => setOpen(false)} />
-              <div className="flex relative justify-between gap-1 bg-slate-800 rounded-xl items-center pr-4 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue">
+              <div className="relative flex items-center justify-between gap-1 pr-4 bg-slate-800 rounded-xl focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue">
                 <Input.Address
                   ref={inputRef}
                   placeholder="Search token by address"
@@ -94,7 +92,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
                 />
                 {searching.current && <Loader width={24} height={24} />}
               </div>
-              <CurrencyList currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
+              <Currency.List currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
             </Dialog.Content>
           </Transition>
         </div>

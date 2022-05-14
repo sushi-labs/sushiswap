@@ -1,9 +1,7 @@
 import { FC, useRef } from 'react'
-import { Typography } from '@sushiswap/ui/typography/Typography'
-import Loader from '@sushiswap/ui/loader/Loader'
-import { useTokenWalletBalance } from 'hooks/useTokenWalletBalance'
+import { useTokenWalletBalance } from 'hooks'
 import { Token } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui'
+import { classNames, Typography, Loader } from '@sushiswap/ui'
 
 interface CurrencyInput {
   account?: string
@@ -26,7 +24,7 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
         'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue shadow-md',
       )}
     >
-      <div className="flex justify-between items-center gap-1">
+      <div className="flex items-center justify-between gap-1">
         <input
           ref={amountInputRef}
           value={amount}
