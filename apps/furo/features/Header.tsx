@@ -1,61 +1,35 @@
-import { FC } from 'react'
-import { App, Container, SushiIcon, Typography } from '@sushiswap/ui'
-import { Account } from '../../../packages/wallet-connector'
-import { useAccount, useDisconnect, useNetwork } from 'wagmi'
-import { LogoutIcon, LoginIcon } from '@heroicons/react/outline'
+import { App, classNames, Container, SushiIcon, Typography } from '@sushiswap/ui'
+import { Wallet } from '@sushiswap/wallet-connector'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC } from 'react'
 
 const Header: FC = () => {
-  const { data } = useAccount()
-  const { disconnect } = useDisconnect()
-  const { activeChain } = useNetwork()
+  const router = useRouter()
 
   return (
-    <div className="border-b border-dark-900">
+    <div className="border-b border-slate-700">
       <Container maxWidth="5xl" className="mx-auto px-2">
         <App.Header
-          brand={<SushiIcon width={32} height={32} />}
+          className="h-[54px]"
+          brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
           nav={
-            <div className="flex gap-2 items-center">
-              {data?.address && activeChain && (
-                <Link passHref={true} href={`/users/${data.address.toLowerCase()}?chainId=${activeChain.id}`}>
-                  <Typography
-                    variant="sm"
-                    weight={700}
-                    className="text-white border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]"
-                    component="a"
-                  >
-                    Dashboard
-                  </Typography>
-                </Link>
-              )}
-            </div>
+            <Link passHref={true} href="/dashboard">
+              <Typography
+                variant="sm"
+                weight={700}
+                className={classNames(
+                  router.pathname === '/dashboard' ? 'border-blue' : '',
+                  'text-slate-50 border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]',
+                )}
+                component="a"
+              >
+                Dashboard
+              </Typography>
+            </Link>
           }
         >
-          <div className="py-2">
-            <Typography
-              variant="sm"
-              weight={700}
-              className="flex items-center gap-2 text-high-emphesis border border-dark-800 cursor-pointer pl-4 bg-dark-900 rounded-full"
-            >
-              {data ? <Account.Name address={data?.address} /> : 'Connect'}
-              {data ? (
-                <div
-                  className="p-2 rounded-full bg-dark-1000 flex items-center justify-center border border-dark-800 hover:border-dark-700"
-                  onClick={() => disconnect()}
-                >
-                  <LogoutIcon width={20} height={20} />
-                </div>
-              ) : (
-                <div
-                  className="p-2 rounded-full bg-dark-1000 flex items-center justify-center border border-dark-800 hover:border-dark-700"
-                  onClick={() => disconnect()}
-                >
-                  <LoginIcon width={20} height={20} />
-                </div>
-              )}
-            </Typography>
-          </div>
+          <Wallet.Button />
         </App.Header>
       </Container>
     </div>

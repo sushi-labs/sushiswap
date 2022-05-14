@@ -1,20 +1,31 @@
-import { Currency } from '@sushiswap/core-sdk'
-import { classNames, Typography } from '@sushiswap/ui'
+import { Type } from '@sushiswap/currency'
+import classNames from 'classnames'
 import React, { createContext, CSSProperties, FC, ReactNode, useCallback, useContext, useMemo } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList as List } from 'react-window'
+import { FixedSizeList } from 'react-window'
+
+import { Typography } from '../typography'
 
 interface WithCurrencyList {
-  currencies: Currency[]
-  currency?: Currency
-  onCurrency(x: Currency): void
+  currencies: Type[]
+  currency?: Type
+  onCurrency(x: Type): void
   children?: ReactNode
 }
 
 const CurrencyListContext = createContext<WithCurrencyList | undefined>(undefined)
 
+const useCurrencyListContext = () => {
+  const context = useContext(CurrencyListContext)
+  if (!context) {
+    throw new Error('Hook can only be used within CurrencyList context')
+  }
+
+  return context
+}
+
 const CurrencyRow: FC<{
-  currency: Currency
+  currency: Type
   style: CSSProperties
 }> = ({ currency, style }) => {
   const { onCurrency } = useCurrencyListContext()
@@ -29,10 +40,10 @@ const CurrencyRow: FC<{
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
         <div className="flex flex-row items-center flex-grow gap-3">
           <div className="flex flex-col">
-            <Typography variant="xxs" className="text-secondary group-hover:text-blue-100">
+            <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
               {currency.name}
             </Typography>
-            <Typography variant="sm" weight={700} className="text-high-emphesis group-hover:text-white">
+            <Typography variant="sm" weight={700} className="text-slate-200 group-hover:text-slate-50">
               {currency.symbol}
             </Typography>
           </div>
@@ -50,7 +61,7 @@ function isBreakLine(x: unknown): x is BreakLine {
 
 const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
   return (
-    <div className="flex w-full px-4 border-t border-dark-800" style={style}>
+    <div className="flex w-full px-4 border-t border-slate-700" style={style}>
       <div className="flex flex-col gap-0.5 justify-center">
         <Typography variant="xs" weight={700}>
           Expanded results from inactive token lists
@@ -63,7 +74,18 @@ const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
   )
 }
 
-const _CurrencyList = () => {
+const withContext =
+  (Component: React.ComponentType<{ children?: ReactNode }>): React.FC<WithCurrencyList> =>
+  ({ currencies, currency, onCurrency, children }) =>
+    (
+      <CurrencyListContext.Provider
+        value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
+      >
+        <Component>{children}</Component>
+      </CurrencyListContext.Provider>
+    )
+
+export const List = withContext(() => {
   const { currencies } = useCurrencyListContext()
 
   const Row = useCallback(
@@ -79,42 +101,20 @@ const _CurrencyList = () => {
   )
 
   return (
-    <div className="lg:max-h-[394px] rounded-xl overflow-hidden h-full bg-dark-800 shadow-md">
+    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800 shadow-md">
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
-          <List
+          <FixedSizeList
             height={height}
             width={width}
             itemCount={currencies.length}
             itemSize={48}
-            className="hide-scrollbar h-full divide-y divide-dark-700"
+            className="h-full divide-y hide-scrollbar divide-slate-700"
           >
             {Row}
-          </List>
+          </FixedSizeList>
         )}
       </AutoSizer>
     </div>
   )
-}
-
-const useCurrencyListContext = () => {
-  const context = useContext(CurrencyListContext)
-  if (!context) {
-    throw new Error('Hook can only be used within CurrencyList context')
-  }
-
-  return context
-}
-
-const withCurrencyListContext =
-  (Component: React.ComponentType<{ children?: ReactNode }>): React.FC<WithCurrencyList> =>
-  ({ currencies, currency, onCurrency, children }) =>
-    (
-      <CurrencyListContext.Provider
-        value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
-      >
-        <Component>{children}</Component>
-      </CurrencyListContext.Provider>
-    )
-
-export const CurrencyList = withCurrencyListContext(_CurrencyList)
+})

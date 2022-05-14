@@ -1,4 +1,5 @@
 import { FC } from 'react'
+
 import External, { ExternalLinkProps } from './External'
 
 export type LinkProps = {

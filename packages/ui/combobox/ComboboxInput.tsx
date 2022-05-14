@@ -1,9 +1,10 @@
 import { Combobox as HeadlessCombobox } from '@headlessui/react'
-import React, { FC, forwardRef } from 'react'
-import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
 import { SelectorIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
+import React, { FC, forwardRef } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type ComboboxInputProps = ExtractProps<typeof HeadlessCombobox.Input> & {
   children?: string
@@ -18,14 +19,14 @@ const ComboboxInput: FC<ComboboxInputProps> = forwardRef(({ className, standalon
       ref,
       className: classNames(
         className,
-        'relative w-full cursor-default rounded-xl bg-dark-800 py-3 pl-4 pr-10 text-left shadow-md',
+        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
       ),
     },
     <>
       <Typography
         variant="sm"
         weight={children ? 700 : 400}
-        className={classNames(children ? '' : 'text-low-emphesis', 'block truncate')}
+        className={classNames(children ? '' : 'text-slate-600', 'block truncate')}
       >
         {children || 'Combobox a token'}
       </Typography>

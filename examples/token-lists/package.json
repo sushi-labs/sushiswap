@@ -8,7 +8,7 @@
   "scripts": {
     "build": "next build --profile",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
   "dependencies": {

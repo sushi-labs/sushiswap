@@ -1,11 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { AddressMap, JSBI, Token } from '@sushiswap/core-sdk'
+import { Amount } from '@sushiswap/currency'
 import { FuroStream } from 'furo/typechain/FuroStream'
 import { useMemo } from 'react'
 import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
+
 import FUROSTREAM_ABI from '../abis/FuroStream.json'
-import { Amount } from '@sushiswap/currency'
 
 export const STREAM_ADDRESS: AddressMap = {
   [ChainId.KOVAN]: '0x2a214DF929fba60509Dc2a236376ac53453cf443',

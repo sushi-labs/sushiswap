@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import { formatNumber,formatUSD } from '@sushiswap/format'
 import sushiData from '@sushiswap/sushi-data'
-
-import MobileMenu from '../components/MobileMenu'
-import Menu from '../components/Menu'
-import Footer from '../components/Footer'
-import ProductCard from '../components/ProductCard'
-import FeatureCard from '../components/FeatureCard'
-import PartnerCard from '../components/PartnerCard'
-import { formatUSD, formatNumber } from '@sushiswap/format'
+import Head from 'next/head'
 import Image from 'next/image'
-import background from '../public/neon-street.jpg'
-import thicker from '../public/thicker-neon.png'
+import React, { useState } from 'react'
+
+import FeatureCard from '../components/FeatureCard'
+import Footer from '../components/Footer'
+import Menu from '../components/Menu'
+import MobileMenu from '../components/MobileMenu'
+import PartnerCard from '../components/PartnerCard'
+import ProductCard from '../components/ProductCard'
 import getBentoTVL from '../functions/graph/fetchers/bentobox'
 import { getLegacyExchangeData } from '../functions/graph/fetchers/exchange'
 import { getTridentExchangeData } from '../functions/graph/queries/trident'
-import Head from 'next/head'
+import background from '../public/neon-street.jpg'
 
 interface StateEntry {
   formatted: string

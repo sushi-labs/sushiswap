@@ -1,39 +1,66 @@
+import { ProgressBar, ProgressColor,Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'features/context/representations'
 import { Stream } from 'features/context/Stream'
-import BalanceChart from 'features/stream/BalanceChart'
-import HistoryPopover from 'features/HistoryPopover'
-import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
 import FuroTimer from 'features/FuroTimer'
+import HistoryPopover from 'features/HistoryPopover'
+import LinkPopover from 'features/LinkPopover'
+import BalanceChart from 'features/stream/BalanceChart'
+import CancelStreamModal from 'features/stream/CancelStreamModal'
+import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
 import TransferStreamModal from 'features/stream/TransferStreamModal'
 import UpdateStreamModal from 'features/stream/UpdateStreamModal'
 import WithdrawModal from 'features/stream/WithdrawModal'
-import { FC, useMemo, useState } from 'react'
-import { Typography, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import LinkPopover from 'features/LinkPopover'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import CancelStreamModal from 'features/stream/CancelStreamModal'
+import { useRouter } from 'next/router'
+import { FC, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
 interface Props {
-  stream?: StreamRepresentation
-  transactions?: TransactionRepresentation[]
+  fallback?: {
+    stream?: StreamRepresentation
+    transactions?: TransactionRepresentation[]
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
   return {
     props: {
-      stream: (await getStream(query.chainId, query.id)) as StreamRepresentation,
-      transactions: (await getStreamTransactions(query.chainId, query.id)) as TransactionRepresentation[],
+      fallback: {
+        [`/furo/api/stream/${query.chainId}/${query.id}`]: (await getStream(
+          query.chainId,
+          query.id,
+        )) as StreamRepresentation,
+        [`/furo/api/transactions/${query.chainId}/${query.id}`]: (await getStreamTransactions(
+          query.chainId,
+          query.id,
+        )) as TransactionRepresentation[],
+      },
     },
   }
 }
 
-const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  stream: streamRepresentation,
-  transactions,
-}) => {
+const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_Streams />
+    </SWRConfig>
+  )
+}
+
+const _Streams: FC = () => {
+  const router = useRouter()
+  const chainId = router.query.chainId as string
+  const id = router.query.id as string
+
+  const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json()),
+  )
+  const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json()),
+  )
   const [withdrawHovered, setWithdrawHovered] = useState(false)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
@@ -50,12 +77,12 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl">
+            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl">
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Streamed:
                 </Typography>
-                <Typography variant="lg" weight={700}>
+                <Typography variant="lg" weight={700} className="text-slate-200">
                   {(Number(stream?.streamedPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>
@@ -67,7 +94,7 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
             </div>
             <div
               aria-hidden="true"
-              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer shadow-dark-1000 bg-dark-900 border-dark-800 hover:border-dark-700 rounded-2xl"
+              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl"
               onMouseEnter={() => setWithdrawHovered(true)}
               onMouseLeave={() => setWithdrawHovered(false)}
             >
@@ -75,7 +102,7 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
                 <Typography variant="sm" weight={400}>
                   Withdrawn:
                 </Typography>
-                <Typography variant="lg" weight={700}>
+                <Typography variant="lg" weight={700} className="text-slate-200">
                   {(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}%
                 </Typography>
               </div>

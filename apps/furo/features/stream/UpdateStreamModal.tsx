@@ -1,120 +1,183 @@
-import { Dialog } from '@headlessui/react' // TODO: should be imported from the ui, but that lib throws null
-import { Stream } from 'features/context/Stream'
-import { useToken } from 'hooks/Tokens'
-import { STREAM_ADDRESS, useFuroStreamContract, useStreamBalance } from 'hooks/useFuroStreamContract'
-import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
+import { AddressZero } from '@ethersproject/constants'
+import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
-import { ChangeEvent, FC, useCallback, useState } from 'react'
-import DialogContent from '@sushiswap/ui/dialog/DialogContent'
-import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from 'wagmi'
-import Button from '../../../../packages/ui/button/Button'
-import { UserIcon } from '@heroicons/react/outline'
-import { AddressZero } from '@ethersproject/constants'
+import { Button, classNames, Dialog,Dots, Switch, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import Dots from '@sushiswap/ui/dots/Dots'
+import { createToast, CurrencyInput } from 'components'
+import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import { Stream } from 'features/context/Stream'
+import { STREAM_ADDRESS } from 'hooks'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
 }
 
 const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
-  const [open, setOpen] = useState(false)
-  const [amount, setAmount] = useState<Amount<Token>>()
-  const [newEndTime, setNewEndTime] = useState<Date>()
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
-  const balance = useStreamBalance(stream?.id, stream?.token)
+  const [open, setOpen] = useState(false)
+  const [topUp, setTopUp] = useState(false)
+  const [changeEndDate, setChangeEndDate] = useState(false)
+  const [amount, setAmount] = useState<string>()
+  const [endDate, setEndDate] = useState<string>()
+  const [fromBentoBox, setFromBentoBox] = useState(false)
 
-  const {
-    data,
-    write,
-    isLoading: isWritePending,
-  } = useContractWrite(
+  const amountAsEntity = useMemo(() => {
+    if (!stream || !amount) return undefined
+
+    let value = undefined
+    try {
+      value = Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(amount, stream.token.decimals).toString()))
+    } catch (e) {}
+
+    return value
+  }, [amount, stream])
+
+  const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
       addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
-    'cancelStream',
-  )
-
-  const { isLoading: isTxPending } = useWaitForTransaction({
-    hash: data?.hash,
-  })
-
-  const updateStream = useCallback(() => {
-    if (!stream || !amount || !newEndTime) return
-
-    const difference = (newEndTime?.getTime() - stream?.endTime.getTime()) / 1000
-    const topUpAmount = amount?.greaterThan(0) ? amount.toSignificant() : '0'
-
-    return write({
-      args: [BigNumber.from(stream.id), BigNumber.from(topUpAmount), difference > 0 ? difference : 0, fromBentoBox],
-    })
-  }, [amount, fromBentoBox, newEndTime, stream, write])
-
-  const onInput = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(+e.target.value) || +e.target.value <= 0 || !stream?.token) {
-        setAmount(undefined)
-      } else {
-        setAmount(
-          Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(e.target.value, stream.token.decimals).toString())),
-        )
-      }
+    'updateStream',
+    {
+      onSuccess() {
+        setOpen(false)
+      },
     },
-    [stream?.token],
   )
 
-  const handleBentoBoxCheck = () => {
-    setFromBentoBox(!fromBentoBox)
-  }
+  const updateStream = useCallback(async () => {
+    if (!stream) return
+    if (topUp && !amount) return
+    if (changeEndDate && !endDate) return
 
-  const buttonText = isTxPending ? <Dots>Updating</Dots> : isWritePending ? <Dots>Confirm Update</Dots> : 'Update'
+    const difference = (new Date(endDate as string)?.getTime() - stream?.endTime.getTime()) / 1000
+    const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
+
+    const data = await writeAsync({
+      args: [
+        BigNumber.from(stream.id),
+        BigNumber.from(topUp ? topUpAmount : '0'),
+        changeEndDate ? difference : 0,
+        fromBentoBox,
+      ],
+    })
+
+    createToast({
+      title: 'Update stream',
+      description: `You have successfully updated your stream`,
+      promise: data.wait(),
+    })
+  }, [amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
+
+  if (!stream) return <></>
 
   return (
     <>
       <Button
-        startIcon={<UserIcon width={18} height={18} />}
+        startIcon={<PencilIcon width={18} height={18} />}
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream?.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
+        disabled={stream.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
         onClick={() => setOpen(true)}
       >
-        Edit
+        Update
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} className="absolute inset-0 overflow-y-auto">
-        <div className="text-blue-600">
-          <DialogContent>
-            {stream && <div>Recipient: {shortenAddress(stream.recipient.id)}</div>}
-            <div>
-              Amount left: {stream && balance ? stream.amount.subtract(balance).toExact() : ''} {stream?.token.symbol}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog.Content className="!space-y-6 !max-w-sm">
+          <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col">
+              <Typography variant="xs" weight={500} className="text-slate-500">
+                Recipient
+              </Typography>
+              <Typography variant="sm" weight={700} className="text-slate-200">
+                {shortenAddress(stream.recipient.id)}
+              </Typography>
             </div>
-            <div>Start date: {stream?.startTime.toLocaleString()}</div>
-            <div>End date: {stream?.endTime.toLocaleString()}</div>
-            <div>
-              Top up amount
-              <input type="number" onChange={onInput} />
+            <div className="flex flex-col">
+              <Typography variant="xs" weight={500} className="text-slate-500">
+                Stream Amount
+              </Typography>
+              <Typography variant="sm" weight={700} className="text-slate-200">
+                {stream.amount.toSignificant(6)}{' '}
+                <span className="font-medium text-slate-500">{stream.token.symbol}</span>
+              </Typography>
             </div>
-            <div>
-              from BentoBox: <input type="checkbox" defaultChecked={fromBentoBox} onChange={handleBentoBoxCheck} />
+            <div className="flex flex-col">
+              <Typography variant="xs" weight={500} className="text-slate-500">
+                Start date
+              </Typography>
+              <Typography variant="sm" weight={700} className="text-slate-200">
+                {stream.startTime.toLocaleString()}
+              </Typography>
             </div>
-            <div>
-              Change end date
-              <input
-                type="datetime-local"
-                // value={stream?.endTime.toISOString().substring(0, 16)}
-                // min={minimumDate?.toISOString().substring(0, 16)}
-                onChange={(e) => setNewEndTime(new Date(e.target.value))}
+            <div className="flex flex-col">
+              <Typography variant="xs" weight={500} className="text-slate-500">
+                End date
+              </Typography>
+              <Typography variant="sm" weight={700} className="text-slate-200">
+                {stream.endTime.toLocaleString()}
+              </Typography>
+            </div>
+          </div>
+          <div className="h-px my-2 bg-slate-800" />
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between gap-3 pb-2">
+              <Typography variant="sm" weight={500} className="text-slate-200">
+                Top up amount
+              </Typography>
+              <Switch
+                checked={topUp}
+                onChange={() => setTopUp((prevState) => !prevState)}
+                size="sm"
+                color="gradient"
+                uncheckedIcon={<XIcon />}
+                checkedIcon={<CheckIcon />}
               />
             </div>
-            <button onClick={updateStream}>{buttonText}</button>
-          </DialogContent>
-        </div>
+            <CurrencyInput
+              className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
+              onChange={setAmount}
+              token={stream.token}
+              amount={amount}
+              account={account?.address}
+            />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between gap-3 py-2">
+              <Typography variant="sm" weight={500} className="text-slate-200">
+                Change end date
+              </Typography>
+              <Switch
+                checked={changeEndDate}
+                onChange={() => setChangeEndDate((prevState) => !prevState)}
+                size="sm"
+                color="gradient"
+                uncheckedIcon={<XIcon />}
+                checkedIcon={<CheckIcon />}
+              />
+            </div>
+            <input
+              type="datetime-local"
+              className={classNames(
+                changeEndDate ? '' : 'opacity-40 pointer-events-none',
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
+              )}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+          <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
+            {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+          </Button>
+        </Dialog.Content>
       </Dialog>
     </>
   )

@@ -1,5 +1,6 @@
-import invariant from 'tiny-invariant'
 import { getAddress } from '@ethersproject/address'
+import invariant from 'tiny-invariant'
+
 import { Currency } from './Currency'
 import { Type } from './Type'
 

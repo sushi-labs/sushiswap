@@ -1,5 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { Decimal, JSBI } from '@sushiswap/math'
+
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
@@ -89,7 +90,7 @@ export abstract class Furo {
   }
 
   public get withdrawnPercentage(): number {
-    if (this.withdrawnAmount.toExact() === "0") return 0
+    if (this.withdrawnAmount.toExact() === '0') return 0
     return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
   }
 

@@ -1,8 +1,8 @@
+import { ZERO } from '@sushiswap/core-sdk'
 import { LinearGradient } from '@visx/gradient'
+import { Stream } from 'features/context'
 import { useStreamBalance } from 'hooks'
 import { FC, useCallback } from 'react'
-import { Stream } from 'features/context'
-import { ZERO } from '@sushiswap/core-sdk'
 
 interface Props {
   stream?: Stream
@@ -30,7 +30,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
 
       <g
         stroke="currentColor"
-        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-dark-700 hover:text-dark-600 cursor-pointer"
+        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-slate-700 hover:text-slate-600 cursor-pointer"
       >
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -75,7 +75,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
       </g>
       <g
         stroke="currentColor"
-        className="text-dark-700 hover:text-dark-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
+        className="text-slate-700 hover:text-slate-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
         onMouseEnter={() => setWithdrawHovered(true)}
         onMouseLeave={() => setWithdrawHovered(false)}
       >
@@ -126,13 +126,13 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={12}
             x={width / 2}
             y={width / 2}
             letterSpacing="3"
             dy={-50}
-            className="uppercase text-primary"
+            className="uppercase text-slate-300"
           >
             Withdrawn
           </text>
@@ -140,12 +140,12 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             textAnchor="middle"
             fill="currentColor"
             fontWeight={700}
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={40}
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-high-emphesis"
+            className="text-slate-200"
           >
             {stream?.withdrawnAmount?.toSignificant(6).split('.')[0]}
             <tspan
@@ -154,7 +154,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               fontWeight={700}
               fontSize={24}
               dx={2}
-              className="text-primary"
+              className="text-slate-300"
             >
               .
               {stream?.withdrawnAmount.greaterThan(ZERO)
@@ -169,7 +169,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-primary"
+            className="text-slate-300"
             fontWeight={700}
           >
             / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
@@ -180,13 +180,13 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={12}
             x={width / 2}
             y={width / 2}
             letterSpacing="3"
             dy={-50}
-            className="uppercase text-primary"
+            className="uppercase text-slate-300"
           >
             Streamed
           </text>
@@ -194,12 +194,12 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             textAnchor="middle"
             fill="currentColor"
             fontWeight={700}
-            fontFamily="DM Sans"
+            fontFamily="Inter"
             fontSize={40}
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-high-emphesis"
+            className="text-slate-200"
           >
             {balance?.toSignificant(6).split('.')[0]}
             <tspan
@@ -208,7 +208,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               fontWeight={700}
               fontSize={24}
               dx={2}
-              className="text-primary"
+              className="text-slate-300"
             >
               .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
@@ -220,7 +220,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-primary"
+            className="text-slate-300"
             fontWeight={700}
           >
             / {balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total

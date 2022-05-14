@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { AddressMap } from '@sushiswap/core-sdk'
 import { FuroVesting } from 'furo/typechain/FuroVesting'
 import { useContract, useNetwork, useSigner } from 'wagmi'
+
 import FUROVESTING_ABI from '../abis/FuroVesting.json'
 
 export const VESTING_ADDRESS: AddressMap = {

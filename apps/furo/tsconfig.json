@@ -3,6 +3,7 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".graphclient"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "preserveSymlinks": true,
     "baseUrl": ".",
     "paths": {
       "abis/*": ["./abis/*"],

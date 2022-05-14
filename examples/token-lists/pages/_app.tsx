@@ -1,10 +1,12 @@
-import { FC } from 'react'
-import type { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
+import '@sushiswap/ui/index.css'
+
 import { ChainId } from '@sushiswap/chain'
+import type { AppProps } from 'next/app'
+import { FC } from 'react'
+import { Provider } from 'react-redux'
+
 import { store } from '../store'
 import { Updater } from '../Updater'
-import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (

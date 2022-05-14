@@ -1,4 +1,5 @@
 import { Token } from '@sushiswap/currency'
+
 import { ScheduleRepresentation } from './representations'
 import { SchedulePeriod } from './SchedulePeriod'
 

@@ -1,5 +1,6 @@
+import { Big, BigintIsh, Fraction, JSBI, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
-import { JSBI, Fraction, Big, BigintIsh, Rounding, MAX_UINT256, ONE, ZERO } from '@sushiswap/math'
+
 import { Token } from './Token'
 import { Type } from './Type'
 

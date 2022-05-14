@@ -1,5 +1,6 @@
-import { getBuiltGraphSDK } from '.graphclient'
 import { ChainId } from '@sushiswap/chain'
+
+import { getBuiltGraphSDK } from '.graphclient'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN, ChainId.GÖRLI]
 

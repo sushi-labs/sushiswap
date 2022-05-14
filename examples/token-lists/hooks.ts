@@ -1,6 +1,6 @@
+import { ChainId } from '@sushiswap/chain'
 import { providers } from 'ethers'
 import { useMemo } from 'react'
-import { ChainId } from '@sushiswap/chain'
 
 const providerCache: Partial<Record<ChainId, providers.JsonRpcProvider>> = {}
 

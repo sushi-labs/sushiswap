@@ -1,12 +1,14 @@
-import { FC } from 'react'
+import '@sushiswap/ui/index.css'
+
 import type { AppProps } from 'next/app'
+import { FC } from 'react'
 import { useMemo } from 'react'
 import { Provider } from 'react-redux'
+
 import { ChainId } from '../constants'
 import { getProvider, useLatestBlock } from '../hooks'
 import { store } from '../store'
 import { Updater } from '../Updater'
-import '@sushiswap/ui/index.css'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const providerEthereum = getProvider(ChainId.ETHEREUM)

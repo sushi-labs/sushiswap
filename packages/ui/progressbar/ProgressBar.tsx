@@ -1,9 +1,10 @@
-import { FC } from 'react'
 import classNames from 'classnames'
+import { FC } from 'react'
 
 export enum ProgressColor {
   PINK,
   BLUE,
+  GRADIENT,
 }
 
 interface ProgressBarProps {
@@ -22,10 +23,14 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
   } else if (color === ProgressColor.PINK) {
     fromColor = 'from-pink-200'
     toColor = 'to-pink'
+  } else if (color === ProgressColor.GRADIENT) {
+    fromColor = 'from-blue'
+    toColor = 'to-pink'
   }
+
   return (
     <div className="flex items-center gap-2">
-      <div className={classNames('flex flex-grow h-2 rounded-full bg-dark-700 overflow-hidden', className)}>
+      <div className={classNames('flex flex-grow h-2 rounded-full bg-slate-700 overflow-hidden', className)}>
         <div
           className={`shadow-depth-1 flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
           style={{ width: `${Number(progress) * 100}%` }}

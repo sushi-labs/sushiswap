@@ -1,5 +1,4 @@
 import { FactoryQuery } from '../.graphclient'
-
 import { KPI } from '../components'
 
 export default function Analytics(props: FactoryQuery) {

@@ -1,6 +1,9 @@
-import { FC, useMemo } from 'react'
-import { useFilters, useFlexLayout, usePagination, useSortBy, useTable } from 'react-table'
-import useSWR, { SWRConfig } from 'swr'
+import { ArrowDownIcon, ArrowRightIcon,ArrowUpIcon } from '@heroicons/react/solid'
+import chain, { ChainId } from '@sushiswap/chain'
+import { formatUSD, shortenAddress } from '@sushiswap/format'
+import { classNames, Table, Typography } from '@sushiswap/ui'
+import ExternalLink from '@sushiswap/ui/link/External'
+import { getSafes } from 'api'
 import {
   EXPECTED_OPS_OWNER_COUNT,
   EXPECTED_OPS_THRESHOLD,
@@ -8,14 +11,11 @@ import {
   EXPECTED_TREASURY_THRESHOLD,
   USERS,
 } from 'config'
-import { formatUSD, shortenAddress } from '@sushiswap/format'
 import Link from 'next/link'
-import chain, { ChainId } from '@sushiswap/chain'
+import { FC, useMemo } from 'react'
+import { useFilters, useFlexLayout, usePagination, useSortBy, useTable } from 'react-table'
+import useSWR, { SWRConfig } from 'swr'
 import { SafeInfo } from 'types'
-import { classNames, Table, Typography } from '@sushiswap/ui'
-import { getSafes } from 'api'
-import { ArrowDownIcon, ArrowUpIcon, ArrowRightIcon } from '@heroicons/react/solid'
-import ExternalLink from '@sushiswap/ui/link/External'
 
 const SafeTable = () => {
   const { data } = useSWR('/api/safes')

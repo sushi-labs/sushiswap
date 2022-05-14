@@ -80,8 +80,8 @@ export interface VestingCreationProps {
   cliffDuration: BigNumber
   stepDuration: BigNumber
   steps: BigNumber
-  cliffAmount: BigNumber
-  stepAmount: BigNumber
+  cliffAmount: BigNumber | string
+  stepAmount: BigNumber | string
   fromBentoBox: boolean
 }
 

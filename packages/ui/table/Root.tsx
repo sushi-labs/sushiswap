@@ -1,6 +1,9 @@
-import { FC, TableHTMLAttributes } from 'react'
+import React, { FC } from 'react'
 
-const Root: FC<TableHTMLAttributes<HTMLTableElement>> = ({ children, ...props }) => (
+const Root: FC<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>> = ({
+  children,
+  ...props
+}) => (
   <table {...props} className="w-full border-collapse">
     {children}
   </table>

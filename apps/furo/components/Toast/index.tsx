@@ -1,7 +1,7 @@
-import { toast, ToastOptions } from 'react-toastify'
+import Loader from '@sushiswap/ui/loader/Loader'
 import { Typography } from '@sushiswap/ui/typography/Typography'
 import React, { ReactNode } from 'react'
-import Loader from '@sushiswap/ui/loader/Loader'
+import { toast, ToastOptions } from 'react-toastify'
 
 const options: ToastOptions = {
   position: 'top-right',
@@ -21,7 +21,7 @@ type CreateToast = (x: CreateToastPayload) => void
 const content = (title: ReactNode, description: ReactNode) => {
   return (
     <div className="flex flex-col gap-2">
-      <Typography variant="sm" weight={700} className="text-high-emphesis">
+      <Typography variant="sm" weight={700} className="text-slate-200">
         {title}
       </Typography>
       <Typography variant="xs" weight={500}>

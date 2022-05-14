@@ -1,9 +1,9 @@
+import chalk from 'chalk'
+import Table from 'cli-table3'
 import { addYears, getUnixTime } from 'date-fns'
 import numeral from 'numeral'
-import Table from 'cli-table3'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import chalk from 'chalk'
 
 const secondsPerBlock = 13.4
 

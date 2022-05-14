@@ -21,7 +21,7 @@
     "dev": "tsc -w",
     "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
     "preinstall": "pnpm run generate",
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {

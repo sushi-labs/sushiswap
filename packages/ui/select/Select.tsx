@@ -1,11 +1,12 @@
 import { Listbox, Menu as HeadlessMenu, Transition } from '@headlessui/react'
+import classNames from 'classnames'
+import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
+
+import { ExtractProps } from '../types'
+import SelectButton, { SelectButtonProps } from './SelectButton'
 import SelectLabel, { SelectLabelProps } from './SelectLabel'
 import SelectOption, { SelectOptionProps } from './SelectOption'
-import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
-import { ExtractProps } from '../types'
 import SelectOptions, { SelectOptionsProps } from './SelectOptions'
-import SelectButton, { SelectButtonProps } from './SelectButton'
-import classNames from 'classnames'
 
 type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
   button: ReactElement<ExtractProps<typeof Listbox.Button>>
@@ -16,7 +17,7 @@ type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
 const SelectRoot: FC<SelectProps> = ({ className, value, onChange, disabled, horizontal, button, children, label }) => {
   return (
     <Listbox value={value} onChange={onChange} disabled={disabled} horizontal={horizontal}>
-      {({ open }) => (
+      {({ open }: { open: boolean }) => (
         <div className={classNames('space-y-2', className)}>
           {label}
           <div className="relative mt-2">

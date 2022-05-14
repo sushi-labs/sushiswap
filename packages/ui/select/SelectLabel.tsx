@@ -1,8 +1,9 @@
 import { Listbox } from '@headlessui/react'
+import classNames from 'classnames'
 import React, { FC, Fragment } from 'react'
+
 import { ExtractProps } from '../types'
 import { Typography } from '../typography'
-import classNames from 'classnames'
 
 export type SelectLabelProps = ExtractProps<typeof Listbox.Label> & {
   children: string
