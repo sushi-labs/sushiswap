@@ -1,9 +1,10 @@
-import { LiquidityPosition, Pair, Token } from '.graphclient'
 import { ChainKey } from '@sushiswap/chain'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
+
 import { getAllMakers, getMakerLPs } from '../graph/graph-client'
+import { LiquidityPosition, Pair, Token } from '.graphclient'
 
 interface LiquidityPositons
   extends Array<

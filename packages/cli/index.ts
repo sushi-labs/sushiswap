@@ -1,7 +1,7 @@
 import { program } from 'commander'
-import { MAKER_CONFIG } from './config'
 
 import { bar, chef, maker } from './actions'
+import { MAKER_CONFIG } from './config'
 
 program.version('0.0.0').description('Sushi CLI')
 
