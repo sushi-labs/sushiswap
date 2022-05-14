@@ -325,8 +325,6 @@ importers:
       react-redux: ^8.0.1
       react-spring: ^9.4.4
       react-toastify: ^8.2.0
-      react-virtualized-auto-sizer: ^1.0.6
-      react-window: ^1.8.7
       redux-devtools-extension: ^2.13.9
       redux-persist: ^6.0.0
       swr: ^1.3.0
@@ -385,8 +383,6 @@ importers:
       react-redux: 8.0.1_3vjunwlmc3akvx5gzli76tirsm
       react-spring: 9.4.5_ef5jwxihqo6n7gxfmzogljlgcm
       react-toastify: 8.2.0_ef5jwxihqo6n7gxfmzogljlgcm
-      react-virtualized-auto-sizer: 1.0.6_ef5jwxihqo6n7gxfmzogljlgcm
-      react-window: 1.8.7_ef5jwxihqo6n7gxfmzogljlgcm
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0_react@18.1.0
       swr: 1.3.0_react@18.1.0
