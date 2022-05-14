@@ -1,6 +1,7 @@
 import { ChainKey } from '@sushiswap/chain'
 import chalk from 'chalk'
 import Table from 'cli-table3'
+import { MAKER_CONFIG } from 'config'
 import numeral from 'numeral'
 import { getAllMakers, getMakerLPs } from '../graph/graph-client'
 
@@ -50,15 +51,19 @@ export async function maker(args: Arguments) {
     let totalValue = 0
     const rows =
       liquidityPositions?.map((lp) => {
+        
         const network = lp.network.toString()
         const makerAddress = lp.address
         const type = lp.type
-        const lpValues = lp.liquidityPositions?.map((lp) =>
+        const lpValues = Object.values(lp.liquidityPositions)[0]?.liquidityPositions?.map((lp) =>
+        
           Number(lp.pair.totalSupply)
             ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
             : 0,
         )
         const summedLp = lpValues?.reduce((acc, curr) => acc + curr)
+
+      
         totalValue += summedLp ?? 0
         return {
           network,

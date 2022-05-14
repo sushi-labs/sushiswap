@@ -1,4 +1,5 @@
 import { program } from 'commander'
+import { MAKER_CONFIG } from './config'
 
 import { bar, chef, maker } from './actions'
 
@@ -13,8 +14,9 @@ program
   .option('-a,--all', 'all', false)
   .action(chef)
 
-program.command('maker').description('get LPs in USD across all networks, or specify network to get more detail information')
-.option('-n,--network <NETWORK>', 'network')
+program.command('maker').description('get maker LPs for all available networks or a specific network')
+.option('-n,--network <NETWORK>', 'network available: '.concat(Object.keys(MAKER_CONFIG).join(', ')))
+.option('-v,--verbose', 'includes table data')
 .action(maker)
 
 program.parse(process.argv)
