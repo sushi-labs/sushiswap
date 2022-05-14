@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/core-sdk'
 import { Token } from '@sushiswap/currency'
+
 import { TokenRepresentation } from './representations'
 
 export function toToken(token: TokenRepresentation): Token {

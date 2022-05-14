@@ -1,13 +1,13 @@
+import { AddressZero } from '@ethersproject/constants'
+import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
+import { Button, Dialog, Dots, Switch,Typography } from '@sushiswap/ui'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
+import StreamProgress from 'features/stream/StreamProgress'
 import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { AddressZero } from '@ethersproject/constants'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import { createToast } from 'components'
-import StreamProgress from 'features/stream/StreamProgress'
-import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
-import { Typography, Dialog, Button, Dots, Switch } from '@sushiswap/ui'
 
 interface CancelStreamModalProps {
   stream?: Stream

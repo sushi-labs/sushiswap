@@ -1,5 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { Decimal, JSBI } from '@sushiswap/math'
+
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'

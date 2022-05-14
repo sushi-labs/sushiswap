@@ -1,10 +1,10 @@
 import { Popover } from '@headlessui/react'
-import { useInterval } from '@sushiswap/hooks'
 import { shortenAddress } from '@sushiswap/format'
-import { FC, useState } from 'react'
+import { useInterval } from '@sushiswap/hooks'
 import { classNames, NotepadIcon, Typography } from '@sushiswap/ui'
 import { FuroStatus, Stream } from 'features/context'
 import { usePopover } from 'hooks'
+import { FC, useState } from 'react'
 
 interface StreamTimerState {
   days: string

@@ -1,10 +1,10 @@
-import { FC, memo, useMemo } from 'react'
 import { Popover } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import { SchedulePeriod, ScheduleRepresentation, Vesting, PeriodType, VestingType, Schedule } from 'features/context'
-import { usePopover } from 'hooks'
-import { format } from 'date-fns'
 import { CalendarIcon, Typography } from '@sushiswap/ui'
+import { format } from 'date-fns'
+import { PeriodType, Schedule,SchedulePeriod, ScheduleRepresentation, Vesting, VestingType } from 'features/context'
+import { usePopover } from 'hooks'
+import { FC, memo, useMemo } from 'react'
 
 interface Props {
   vesting?: Vesting

@@ -1,11 +1,12 @@
+import { getAddress,isAddress } from '@ethersproject/address'
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { ChainTokenMap, Token } from '@sushiswap/core-sdk'
-import { isAddress, getAddress } from '@ethersproject/address'
-import { NEVER_RELOAD, useSingleCallResult } from '../lib/hooks/multicall'
-import { useCombinedActiveList } from '../lib/state/token-lists'
 import { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
+
+import { NEVER_RELOAD, useSingleCallResult } from '../lib/hooks/multicall'
+import { useCombinedActiveList } from '../lib/state/token-lists'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
 // reduce token map into standard address <-> Token mapping

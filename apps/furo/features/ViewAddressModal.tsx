@@ -1,11 +1,12 @@
-import { FC, useState } from 'react'
+import { isAddress } from '@ethersproject/address'
+import { Input } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { Dialog } from '@sushiswap/ui/dialog'
 import { Typography } from '@sushiswap/ui/typography/Typography'
-import { Input } from '@sushiswap/ui'
-import { isAddress } from '@ethersproject/address'
 import Link from 'next/link'
+import { FC, useState } from 'react'
 import { useNetwork } from 'wagmi'
+
 import { DEFAULT_CHAIN_ID } from '../lib/constants'
 
 const ViewAddressModal: FC = () => {

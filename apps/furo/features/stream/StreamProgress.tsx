@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import { Typography } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'features/context'
-import { Typography } from '@sushiswap/ui'
 import { useStreamBalance } from 'hooks'
+import { FC } from 'react'
 
 interface Props {
   stream?: Stream

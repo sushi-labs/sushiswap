@@ -1,6 +1,7 @@
-import fetch from 'isomorphic-unfetch'
 import { ChainId } from '@sushiswap/chain'
-import { SAFES, USERS } from './config'
+import fetch from 'isomorphic-unfetch'
+
+import { SAFES } from './config'
 import { Safe, SafeBalance, SafeInfo } from './types'
 
 const getSafeUrl = (safe: Safe): string => {

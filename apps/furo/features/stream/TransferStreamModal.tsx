@@ -1,14 +1,14 @@
-import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
-import { FC, useCallback, useRef, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress, useNetwork, useWaitForTransaction } from 'wagmi'
+import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import StreamProgress from 'features/stream/StreamProgress'
-import { Typography, Dots, Button, Dialog } from '@sushiswap/ui'
-import { AddressZero } from '@ethersproject/constants'
+import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
+import { Stream } from 'features/context/Stream'
+import StreamProgress from 'features/stream/StreamProgress'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { FC, useCallback, useRef, useState } from 'react'
+import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
 
 interface TransferStreamModalProps {
   stream?: Stream

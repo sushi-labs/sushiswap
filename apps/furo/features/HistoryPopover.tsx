@@ -1,15 +1,16 @@
 import { Popover } from '@headlessui/react'
-import { memo, useMemo } from 'react'
-import { FC } from 'react'
-import { Typography, ArrowFlatLinesUp, HistoryIcon } from '@sushiswap/ui'
-import { TransactionType } from './context/enums'
+import { XIcon } from '@heroicons/react/outline'
+import { ArrowFlatLinesUp, HistoryIcon,Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { format } from 'date-fns'
 import { TransactionRepresentation } from 'features/context'
 import { Transaction } from 'features/context'
-import { XIcon } from '@heroicons/react/outline'
-import { format } from 'date-fns'
 import { usePopover } from 'hooks'
+import { memo, useMemo } from 'react'
+import { FC } from 'react'
 import { useAccount } from 'wagmi'
-import { classNames } from '@sushiswap/ui'
+
+import { TransactionType } from './context/enums'
 
 interface Props {
   transactionRepresentations?: TransactionRepresentation[]

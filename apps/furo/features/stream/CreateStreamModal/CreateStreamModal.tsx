@@ -1,15 +1,16 @@
+import { PlusIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
-import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
 import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
+import { Button,Dialog, Dots, Input, Typography } from '@sushiswap/ui'
+import { createToast,CurrencyInput } from 'components'
+import { parseUnits } from 'ethers/lib/utils'
+import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
-import { Input, Typography, Dots, Dialog, Button } from '@sushiswap/ui'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
-import { JSBI } from '@sushiswap/math'
-import { parseUnits } from 'ethers/lib/utils'
-import { CurrencyInput, createToast } from 'components'
-import { PlusIcon } from '@heroicons/react/solid'
 
 export const CreateStreamModal: FC = () => {
   const { data: account } = useAccount()

@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+
 import { multicall } from './multicall'
 
 export const store = configureStore({

@@ -1,8 +1,8 @@
+import { ZERO } from '@sushiswap/core-sdk'
 import { LinearGradient } from '@visx/gradient'
+import { Stream } from 'features/context'
 import { useStreamBalance } from 'hooks'
 import { FC, useCallback } from 'react'
-import { Stream } from 'features/context'
-import { ZERO } from '@sushiswap/core-sdk'
 
 interface Props {
   stream?: Stream

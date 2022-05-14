@@ -1,8 +1,8 @@
-import { FC } from 'react'
 import { App, classNames, Container, SushiIcon, Typography } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { FC } from 'react'
 
 const Header: FC = () => {
   const router = useRouter()

@@ -7,7 +7,7 @@
     "dev": "next dev --port 3008",
     "dev:gql": "graphclient serve-dev",
     "generate": "DEBUG=1 graphclient build && typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
-    "lint": "next lint --fix",
+    "lint": "eslint --fix . && next lint",
     "start": "next start",
     "validate": "graphclient validate"
   },

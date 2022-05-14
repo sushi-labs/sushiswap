@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build --profile",
     "dev": "next dev --port 3003",
-    "lint": "next lint --fix",
+    "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
   "dependencies": {
