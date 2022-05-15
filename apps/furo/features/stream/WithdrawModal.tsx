@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon } from '@heroicons/react/outline'
-import { ZERO } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
@@ -129,11 +128,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               color="gradient"
               fullWidth
               disabled={
-                isWritePending || !amount || !balance || !amount.greaterThan(ZERO) || amount.greaterThan(balance)
+                isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)
               }
               onClick={withdraw}
             >
-              {!amount?.greaterThan(ZERO) ? (
+              {!amount?.greaterThan(0) ? (
                 'Enter an amount'
               ) : !stream?.token ? (
                 'Invalid stream token'

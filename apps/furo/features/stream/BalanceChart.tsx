@@ -1,4 +1,3 @@
-import { ZERO } from '@sushiswap/core-sdk'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'features/context'
 import { useStreamBalance } from 'hooks'
@@ -157,7 +156,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               className="text-slate-300"
             >
               .
-              {stream?.withdrawnAmount.greaterThan(ZERO)
+              {stream?.withdrawnAmount.greaterThan(0)
                 ? stream?.withdrawnAmount.toSignificant(6).split('.')[1]
                 : '000000'}
             </tspan>
@@ -210,7 +209,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               dx={2}
               className="text-slate-300"
             >
-              .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
+              .{balance?.greaterThan(0) ? balance?.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text

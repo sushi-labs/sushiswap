@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from '@sushiswap/chain'
 
 const explorers = {
   etherscan: (link: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
@@ -113,11 +113,11 @@ const chains: ChainObject = {
     link: 'https://kovan.etherscan.io',
     builder: explorers.etherscan,
   },
-  [ChainId.MATIC]: {
+  [ChainId.POLYGON]: {
     link: 'https://polygonscan.com',
     builder: explorers.etherscan,
   },
-  [ChainId.MATIC_TESTNET]: {
+  [ChainId.POLYGON_TESTNET]: {
     link: 'https://mumbai.polygonscan.com',
     builder: explorers.etherscan,
   },
@@ -129,7 +129,7 @@ const chains: ChainObject = {
     link: 'https://testnet.ftmscan.com',
     builder: explorers.etherscan,
   },
-  [ChainId.XDAI]: {
+  [ChainId.GNOSIS]: {
     link: 'https://blockscout.com/xdai/mainnet',
     builder: explorers.blockscout,
   },

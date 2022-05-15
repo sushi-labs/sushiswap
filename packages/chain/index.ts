@@ -69,13 +69,19 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   POLYGON = 137,
+  POLYGON_TESTNET = 80001,
   FANTOM = 250,
+  FANTOM_TESTNET = 4002,
   GNOSIS = 100,
   BSC = 56,
+  BSC_TESTNET = 97,
   ARBITRUM = 42161,
   AVALANCHE = 43114,
+  AVALANCHE_TESTNET = 43113,
   HECO = 128,
+  HECO_TESTNET = 256,
   HARMONY = 1666600000,
+  HARMONY_TESTNET = 1666700000,
   OKEX = 66,
   OKEX_TESTNET = 65,
   CELO = 42220,
@@ -85,7 +91,10 @@ export enum ChainId {
   TELOS = 40,
   HARDHAT = 31337,
   MOONBEAM = 1284,
+  MOONBEAM_TESTNET = 1287,
 }
+
+export type AddressMap = { [chainId: number]: string }
 
 export class Chain implements Chain {
   //

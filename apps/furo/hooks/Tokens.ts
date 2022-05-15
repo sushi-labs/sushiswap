@@ -1,7 +1,8 @@
 import { getAddress,isAddress } from '@ethersproject/address'
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
-import { ChainTokenMap, Token } from '@sushiswap/core-sdk'
+import { Token } from '@sushiswap/currency'
+import { ChainTokenMap } from '@sushiswap/redux-token-lists'
 import { useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
@@ -78,12 +79,13 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
     if (!chainId || !address) return undefined
     if (decimals.loading || symbol.loading || tokenName.loading) return null
     if (decimals.result) {
-      return new Token(
+      return new Token({
         chainId,
         address,
-        decimals.result[0],
-        parseStringOrBytes32(symbol.result?.[0], symbolBytes32.result?.[0], 'UNKNOWN'),
-        parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token'),
+        decimals: decimals.result[0],
+        symbol: parseStringOrBytes32(symbol.result?.[0], symbolBytes32.result?.[0], 'UNKNOWN'),
+        name: parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token'),
+      }
       )
     }
     return undefined
