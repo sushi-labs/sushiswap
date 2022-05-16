@@ -53,6 +53,12 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
+export enum BalanceChartHoverEnum {
+  NONE,
+  WITHDRAW,
+  STREAMED,
+}
+
 const _Streams: FC = () => {
   const isMounted = useIsMounted()
   const router = useRouter()
@@ -65,7 +71,7 @@ const _Streams: FC = () => {
   const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json()),
   )
-  const [withdrawHovered, setWithdrawHovered] = useState(false)
+  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
     [streamRepresentation],
@@ -93,11 +99,16 @@ const _Streams: FC = () => {
         <div className="relative flex justify-center">
           <div className="absolute right-0 w-[140px] h-[180px] bg-pink/20 blur-[100px] pointer-events-none" />
           <div className="absolute left-0 bottom-0 w-[140px] h-[180px] bg-blue/20 blur-[100px] pointer-events-none" />
-          <BalanceChart stream={stream} withdrawHovered={withdrawHovered} setWithdrawHovered={setWithdrawHovered} />
+          <BalanceChart stream={stream} hover={hover} setHover={setHover} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl">
+            <div
+              aria-hidden="true"
+              onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
+              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl"
+            >
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
                   Streamed:
@@ -115,8 +126,8 @@ const _Streams: FC = () => {
             <div
               aria-hidden="true"
               className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl"
-              onMouseEnter={() => setWithdrawHovered(true)}
-              onMouseLeave={() => setWithdrawHovered(false)}
+              onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
+              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
             >
               <div className="flex items-center justify-between gap-2">
                 <Typography variant="sm" weight={400}>
