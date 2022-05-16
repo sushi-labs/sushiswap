@@ -1,6 +1,6 @@
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
-import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
+import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { Vesting } from 'features/context'
 import { getExplorerLink } from 'functions'
 import Link from 'next/link'
@@ -18,6 +18,8 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
+  globalFilter: any
+  setGlobalFilter: any
   streams: StreamRepresentation[]
   vestings: VestingRepresentation[]
   type: FuroTableType
@@ -25,7 +27,17 @@ interface FuroTableProps {
   loading: boolean
 }
 
-const table = createTable().setRowType<Stream>()
+const showActiveOnly: FilterFn<Stream> = (row, columnId) => {
+  return row.getValue(columnId) === FuroStatus.ACTIVE
+}
+
+const table = createTable()
+  .setOptions({
+    filterFns: {
+      showActiveOnly: showActiveOnly,
+    },
+  })
+  .setRowType<Stream>()
 
 const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
@@ -46,6 +58,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   }),
   table.createDataColumn('status', {
     header: () => <div className="w-full text-left">Status</div>,
+    filterFn: 'showActiveOnly',
     cell: (props) => (
       <Chip
         className="capitalize"
@@ -54,7 +67,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
           props.getValue() === FuroStatus.CANCELLED
             ? 'red'
             : props.getValue() === FuroStatus.COMPLETED
-            ? 'default'
+            ? 'blue'
             : props.getValue() === FuroStatus.ACTIVE
             ? 'green'
             : props.getValue() === FuroStatus.UPCOMING
@@ -138,7 +151,13 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   const instance = useTableInstance(table, {
     data,
     columns,
+    state: {
+      globalFilter: props.globalFilter,
+    },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: 'showActiveOnly',
+    onGlobalFilterChange: props.setGlobalFilter,
   })
 
   return (
