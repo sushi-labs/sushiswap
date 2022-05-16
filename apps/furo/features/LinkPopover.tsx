@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { LinkIcon } from '@heroicons/react/solid'
-import { ArrowFlatLinesUp, CheckIcon, classNames,Link, Typography } from '@sushiswap/ui'
+import { ArrowFlatLinesUp, CheckIcon, classNames, Link, Typography } from '@sushiswap/ui'
 import { Stream, Vesting } from 'features/context'
 import { getExplorerLink } from 'functions/explorer'
 import { usePopover } from 'hooks/usePopover'

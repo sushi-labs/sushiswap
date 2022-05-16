@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowRightIcon,ArrowUpIcon } from '@heroicons/react/solid'
+import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import chain, { ChainId } from '@sushiswap/chain'
 import { formatUSD, shortenAddress } from '@sushiswap/format'
 import { classNames, Table, Typography } from '@sushiswap/ui'
@@ -30,7 +30,7 @@ const SafeTable = () => {
         Header: 'Network',
         accessor: 'chainId',
         width: 100,
-        Cell: (props) => ChainId[props.cell.value]
+        Cell: (props) => ChainId[props.cell.value],
       },
       {
         Header: 'Type',

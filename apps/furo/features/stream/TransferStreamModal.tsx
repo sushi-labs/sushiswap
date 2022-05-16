@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
+import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'

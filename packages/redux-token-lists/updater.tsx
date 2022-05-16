@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import { TokenListsContext } from './context'
-import { useIsWindowVisible, useInterval } from '@sushiswap/hooks'
+import { useInterval, useIsWindowVisible } from '@sushiswap/hooks'
 import { useActiveListUrls, useAllLists, useFetchListCallback } from './hooks'
 
 export interface UpdaterProps {

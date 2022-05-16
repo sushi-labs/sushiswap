@@ -1,4 +1,4 @@
-import { getAddress,isAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address'
 import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { Token } from '@sushiswap/currency'

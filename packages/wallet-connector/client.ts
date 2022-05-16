@@ -1,4 +1,4 @@
-import { createClient, chain, defaultChains } from 'wagmi'
+import { chain, createClient, defaultChains } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'

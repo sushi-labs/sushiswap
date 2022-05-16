@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { classNames, Loader,Typography } from '@sushiswap/ui'
+import { classNames, Loader, Typography } from '@sushiswap/ui'
 import { useTokenWalletBalance } from 'hooks'
 import { FC, useRef } from 'react'
 

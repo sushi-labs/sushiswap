@@ -1,13 +1,5 @@
 import { FC, ReactElement, ReactNode } from 'react'
-import {
-  CoinbaseWalletIcon,
-  Menu,
-  MetamaskIcon,
-  WalletConnectIcon,
-  Button as UIButton,
-  Dots,
-  Loader,
-} from '@sushiswap/ui'
+import { Button as UIButton, CoinbaseWalletIcon, Loader, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { LogoutIcon } from '@heroicons/react/outline'
 import Account from '../Account'

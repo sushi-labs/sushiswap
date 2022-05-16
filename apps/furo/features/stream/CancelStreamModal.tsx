@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
-import { Button, Dialog, Dots, Switch,Typography } from '@sushiswap/ui'
+import { Button, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'

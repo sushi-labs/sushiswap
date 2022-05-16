@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { LogsContext } from './context'
 import { EventFilter, WithLogsState } from './types'
 import { keyToFilter } from './utils'

@@ -1,9 +1,8 @@
 import { Transition } from '@headlessui/react'
-import { Token,Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { useDebounce } from '@sushiswap/hooks'
 import { filterTokens, useSortedTokensByQuery } from '@sushiswap/hooks/dist/useSortedTokensByQuery'
-import { classNames, Input, Select } from '@sushiswap/ui'
-import { Currency, Dialog, Loader } from '@sushiswap/ui'
+import { classNames, Currency, Dialog, Input, Loader, Select } from '@sushiswap/ui'
 import { useAllTokens, useToken } from 'hooks'
 import { FC, Fragment, useCallback, useMemo, useRef, useState } from 'react'
 

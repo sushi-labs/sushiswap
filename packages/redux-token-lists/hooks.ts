@@ -1,16 +1,14 @@
 import type { TokenList } from '@uniswap/token-lists'
-import { tokensToChainTokenMap, sortByListPriority, resolveENSContentHash, getTokenList } from './utils'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { getTokenList, resolveENSContentHash, sortByListPriority, tokensToChainTokenMap } from './utils'
+import { useCallback, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { TokenListsContext } from './context'
 import { WrappedTokenInfo } from './token'
-import { WithTokenListsState, ChainTokenMap } from './types'
+import { ChainTokenMap, WithTokenListsState } from './types'
 import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import UNSUPPORTED_TOKEN_LIST from './unsupported.tokenlist.json'
 
 import { nanoid } from '@reduxjs/toolkit'
-import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
 export function useFetchListCallback(
