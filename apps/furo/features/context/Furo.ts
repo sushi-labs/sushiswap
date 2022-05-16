@@ -119,4 +119,23 @@ export abstract class Furo {
     if (this.isEnded) return FuroStatus.COMPLETED
     return status
   }
+
+  public canCancel(account: string): boolean {
+    return (
+      [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase()) &&
+      !this.isEnded
+    )
+  }
+
+  public canTransfer(account: string): boolean {
+    return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
+  }
+
+  public canWithdraw(account: string): boolean {
+    return this.recipient.id.toLowerCase() === account.toLowerCase() && this.isStarted
+  }
+
+  public canUpdate(account: string): boolean {
+    return this.createdBy.id.toLowerCase() === account.toLowerCase()
+  }
 }

@@ -59,7 +59,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream?.recipient.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
+        disabled={account?.address && !stream?.canTransfer(account.address)}
         onClick={() => setOpen(true)}
       >
         Transfer

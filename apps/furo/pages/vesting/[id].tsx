@@ -1,3 +1,4 @@
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { Vesting } from 'features/context'
@@ -13,6 +14,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -67,6 +69,20 @@ const _VestingPage: FC = () => {
 
   return (
     <Layout>
+      <div className="flex gap-3 items-center mt-4">
+        <Link href="/dashboard" passHref={true}>
+          <a className="group flex items-center gap-2">
+            <HomeIcon width={16} className="group-hover:text-slate-50 text-slate-400 cursor-pointer" />
+            <Typography variant="sm" weight={700} className="group-hover:text-slate-50 text-slate-400 cursor-pointer">
+              Dashboard
+            </Typography>
+          </a>
+        </Link>
+        <ChevronRightIcon width={24} className="text-slate-400" />
+        <Typography variant="sm" weight={700} className="text-slate-600">
+          Vesting
+        </Typography>
+      </div>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="w-[630px]">
           <VestingChart vesting={vesting} schedule={schedule} />

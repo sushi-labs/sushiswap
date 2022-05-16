@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ArrowSmDownIcon, CheckIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
+import { ArrowSmDownIcon, TrashIcon } from '@heroicons/react/outline'
 import { Button, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
@@ -44,8 +44,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
     })
   }, [account, stream, toBentoBox, writeAsync])
 
-  // Hide if not stream owner
-  if (stream?.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()) return <></>
+  if (account?.address && !stream?.canCancel(account.address)) return <></>
 
   return (
     <>
@@ -70,20 +69,18 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
               <span className="font-bold">
                 {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
               </span>{' '}
-              to your {toBentoBox ? 'BentoBox' : 'account'}
+              to your {toBentoBox ? 'Bentobox' : 'wallet'}
             </Typography>
             <div className="flex items-center justify-between">
               <Typography variant="xs" weight={700} className="text-slate-200">
-                Receive in BentoBox
+                Receive in {toBentoBox ? 'Bentobox' : 'wallet'}
               </Typography>
               <Switch
                 size="sm"
                 id="toggle-expert-mode-button"
                 checked={toBentoBox}
                 onChange={() => setToBentoBox((prevState) => !prevState)}
-                checkedIcon={<CheckIcon className="text-slate-700" />}
-                uncheckedIcon={<XIcon />}
-                color="gradient"
+                color="default"
               />
             </div>
             <Button
@@ -93,7 +90,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
               disabled={isWritePending || stream?.isEnded}
               onClick={cancelStream}
             >
-              {isWritePending ? <Dots>Confirm Cancel</Dots> : 'Cancel'}
+              {isWritePending ? <Dots>Confirm Cancel</Dots> : 'Cancel Stream'}
             </Button>
           </div>
         </Dialog.Content>

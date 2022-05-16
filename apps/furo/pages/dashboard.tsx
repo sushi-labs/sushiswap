@@ -3,6 +3,7 @@ import { XCircleIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
+import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import Link from 'next/link'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
@@ -19,7 +20,7 @@ export default function DashboardPage() {
 
   if (isMounted && !!pendingConnector && isConnecting && !isReconnecting) {
     return (
-      <Layout>
+      <Layout gradient>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="h-[78px] flex justify-center items-center">
@@ -56,7 +57,7 @@ export default function DashboardPage() {
   // Return skeleton
   if (isMounted && (!activeChain?.id || !account?.address || !isConnected)) {
     return (
-      <Layout>
+      <Layout gradient>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
           {!account?.address && (
             <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
@@ -106,7 +107,14 @@ export default function DashboardPage() {
 
   if (isMounted) {
     return (
-      <Layout>
+      <Layout
+        gradient
+        backdrop={
+          <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+            <BackgroundVector width="100%" preserveAspectRatio="none" />
+          </div>
+        }
+      >
         <Dashboard chainId={activeChain.id} address={account.address} />
       </Layout>
     )

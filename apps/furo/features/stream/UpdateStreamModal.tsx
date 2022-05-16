@@ -75,7 +75,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
     })
   }, [amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream) return <></>
+  if (!stream) return null
 
   return (
     <>
@@ -84,8 +84,8 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
         onClick={() => setOpen(true)}
+        disabled={account?.address && !stream?.canUpdate(account.address)}
       >
         Update
       </Button>

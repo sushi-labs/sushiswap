@@ -73,7 +73,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={stream?.recipient.id.toLowerCase() !== account?.address?.toLowerCase()}
+        disabled={account?.address && !stream?.canWithdraw(account.address)}
         onClick={() => {
           setOpen(true)
         }}
@@ -127,9 +127,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               variant="filled"
               color="gradient"
               fullWidth
-              disabled={
-                isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)
-              }
+              disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
               onClick={withdraw}
             >
               {!amount?.greaterThan(0) ? (

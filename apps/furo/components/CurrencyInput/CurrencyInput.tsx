@@ -1,6 +1,7 @@
 import { Token } from '@sushiswap/currency'
 import { classNames, Loader, Typography } from '@sushiswap/ui'
-import { useTokenWalletBalance } from 'hooks'
+import { FundSource } from 'hooks/useFundSourceToggler'
+import { useTokenBalance } from 'hooks/useTokenBalance'
 import { FC, useRef } from 'react'
 
 interface CurrencyInput {
@@ -9,11 +10,19 @@ interface CurrencyInput {
   amount?: string
   onChange(x: string): void
   className?: string
+  fundSource?: FundSource
 }
 
-const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, className = '' }) => {
+const CurrencyInput: FC<CurrencyInput> = ({
+  amount,
+  onChange,
+  account,
+  token,
+  className = '',
+  fundSource = FundSource.WALLET,
+}) => {
   const amountInputRef = useRef<HTMLInputElement | null>(null)
-  const { isLoading: loadingBalance, data: tokenBalance } = useTokenWalletBalance(account, token)
+  const { isLoading: loadingBalance, data: balance } = useTokenBalance(account, token, fundSource)
 
   return (
     <div
@@ -48,9 +57,9 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
             variant="xs"
             weight={500}
             className="text-slate-500"
-            onClick={() => (tokenBalance ? onChange(tokenBalance?.toExact()) : undefined)}
+            onClick={() => (balance ? onChange(balance?.toExact()) : undefined)}
           >
-            {tokenBalance?.toSignificant(6)} {tokenBalance?.currency.symbol}
+            {balance?.toSignificant(6)} {balance?.currency.symbol}
           </Typography>
         )}
       </div>

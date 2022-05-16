@@ -1,3 +1,5 @@
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import { useIsMounted } from '@sushiswap/hooks'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import { StreamRepresentation, TransactionRepresentation } from 'features/context/representations'
@@ -13,6 +15,7 @@ import UpdateStreamModal from 'features/stream/UpdateStreamModal'
 import WithdrawModal from 'features/stream/WithdrawModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -51,6 +54,7 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
 }
 
 const _Streams: FC = () => {
+  const isMounted = useIsMounted()
   const router = useRouter()
   const chainId = router.query.chainId as string
   const id = router.query.id as string
@@ -67,9 +71,25 @@ const _Streams: FC = () => {
     [streamRepresentation],
   )
 
+  if (!isMounted) return null
+
   return (
     <Layout>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
+      <div className="flex gap-3 items-center mt-4">
+        <Link href="/dashboard" passHref={true}>
+          <a className="group flex items-center gap-2">
+            <HomeIcon width={16} className="group-hover:text-slate-50 text-slate-400 cursor-pointer" />
+            <Typography variant="sm" weight={700} className="group-hover:text-slate-50 text-slate-400 cursor-pointer">
+              Dashboard
+            </Typography>
+          </a>
+        </Link>
+        <ChevronRightIcon width={24} className="text-slate-400" />
+        <Typography variant="sm" weight={700} className="text-slate-600">
+          Stream
+        </Typography>
+      </div>
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-20">
         <div className="relative flex justify-center">
           <div className="absolute right-0 w-[140px] h-[180px] bg-pink/20 blur-[100px] pointer-events-none" />
           <div className="absolute left-0 bottom-0 w-[140px] h-[180px] bg-blue/20 blur-[100px] pointer-events-none" />

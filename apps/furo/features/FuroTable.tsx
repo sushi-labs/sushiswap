@@ -67,7 +67,6 @@ const defaultColumns = (tableProps: FuroTableProps) => [
   table.createDataColumn('amount', {
     header: () => <div className="w-full text-right">Amount</div>,
     cell: (props) => {
-      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
@@ -94,7 +93,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
     header: () => <div className="w-full text-left">Start Date</div>,
     cell: (props) => (
       <div className="flex flex-col gap-0.5">
-        <Typography variant="sm">
+        <Typography variant="sm" className="whitespace-nowrap">
           {props.getValue().toLocaleString('en-US', {
             year: 'numeric',
             month: 'long',

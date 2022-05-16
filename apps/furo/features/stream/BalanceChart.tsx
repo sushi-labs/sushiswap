@@ -13,7 +13,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
   const balance = useStreamBalance(stream?.id, stream?.token)
 
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
-    return streamedPct * 2 * radius * Math.PI
+    return Math.round(streamedPct * 2 * radius * Math.PI * 100) / 100
   }, [])
 
   const width = 420

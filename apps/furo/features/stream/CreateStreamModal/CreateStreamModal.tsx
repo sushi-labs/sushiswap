@@ -1,25 +1,30 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { Button, Dialog, Dots, Input, Typography } from '@sushiswap/ui'
+import { JSBI, ZERO } from '@sushiswap/math'
+import { Button, Dialog, Dots, Input, Switch, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { parseUnits } from 'ethers/lib/utils'
 import { TokenSelectorOverlay } from 'features/stream'
 import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { useFundSourceToggler } from 'hooks/useFundSourceToggler'
+import { cloneElement, FC, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
 
-export const CreateStreamModal: FC = () => {
+interface CreateStreamModalProps {
+  button?: ReactElement
+}
+
+export const CreateStreamModal: FC<CreateStreamModalProps> = ({ button }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const contract = useFuroStreamContract()
   const [open, setOpen] = useState(false)
   const [token, setToken] = useState<Token>()
   const [amount, setAmount] = useState<string>()
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(false)
+  const { value: fundSource, fromBentobox, toggle } = useFundSourceToggler()
   const [recipient, setRecipient] = useState<string>()
   const [startDate, setStartDate] = useState<string>()
   const [endDate, setEndDate] = useState<string>()
@@ -62,7 +67,7 @@ export const CreateStreamModal: FC = () => {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         amount: amountAsEntity,
-        fromBentoBox,
+        fromBentobox,
       }),
     ]
 
@@ -91,7 +96,7 @@ export const CreateStreamModal: FC = () => {
     amountAsEntity,
     contract,
     endDate,
-    fromBentoBox,
+    fromBentobox,
     recipient,
     sendTransactionAsync,
     signature,
@@ -101,15 +106,20 @@ export const CreateStreamModal: FC = () => {
 
   return (
     <>
-      <Button
-        startIcon={<PlusIcon width={18} height={18} />}
-        variant="filled"
-        color="blue"
-        size="sm"
-        onClick={() => setOpen(true)}
-      >
-        New stream
-      </Button>
+      {button ? (
+        cloneElement(button, { onClick: () => setOpen(true) })
+      ) : (
+        <Button
+          startIcon={<PlusIcon width={18} height={18} />}
+          variant="filled"
+          color="blue"
+          size="sm"
+          onClick={() => setOpen(true)}
+          className="rounded-xl"
+        >
+          New stream
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!space-y-6 !max-w-md relative overflow-hidden border border-slate-700">
           <Dialog.Header title="Create Stream" onClose={() => setOpen(false)} />
@@ -119,20 +129,25 @@ export const CreateStreamModal: FC = () => {
               <Typography variant="sm" weight={500} className="text-slate-200">
                 Amount
               </Typography>
-              {/* TODO: Enable when bentoBalance hook is dialed in*/}
-              {/*<div className="flex items-center gap-2">*/}
-              {/*  <Typography variant="xs">Use {fromBentoBox ? 'BentoBox' : 'Wallet'}</Typography>*/}
-              {/*  <Switch*/}
-              {/*    size="xs"*/}
-              {/*    id="toggle-expert-mode-button"*/}
-              {/*    checked={fromBentoBox}*/}
-              {/*    onChange={() => setFromBentoBox((prevState) => !prevState)}*/}
-              {/*    color="default"*/}
-              {/*  />*/}
-              {/*</div>*/}
+              <div className="flex items-center gap-2">
+                <Typography variant="xs">Use {fromBentobox ? 'BentoBox' : 'Wallet'}</Typography>
+                <Switch
+                  size="xs"
+                  id="toggle-expert-mode-button"
+                  checked={fromBentobox}
+                  onChange={toggle}
+                  color="default"
+                />
+              </div>
             </div>
+            <CurrencyInput
+              onChange={setAmount}
+              account={account?.address}
+              amount={amount}
+              token={token}
+              fundSource={fundSource}
+            />
           </div>
-          <CurrencyInput onChange={setAmount} account={account?.address} amount={amount} token={token} />
           <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col gap-2">
             <Typography variant="sm" weight={500} className="text-slate-200">
@@ -157,14 +172,14 @@ export const CreateStreamModal: FC = () => {
           <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
-              (token && tokenApprovalState !== ApprovalState.APPROVED)) && (
+              (token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState))) && (
               <div className="flex flex-col gap-4 md:flex-row">
                 {bentoBoxApprovalState !== ApprovalState.APPROVED && (
                   <Button variant="filled" color="blue" fullWidth disabled={!!signature} onClick={approveBentoBox}>
                     Approve Bentobox
                   </Button>
                 )}
-                {token && tokenApprovalState !== ApprovalState.APPROVED && (
+                {token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState) && (
                   <Button
                     variant="filled"
                     color="blue"
@@ -188,7 +203,8 @@ export const CreateStreamModal: FC = () => {
               disabled={
                 isWritePending ||
                 tokenApprovalState !== ApprovalState.APPROVED ||
-                (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature)
+                (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature) ||
+                !amountAsEntity?.greaterThan(ZERO)
               }
               onClick={createStream}
             >
