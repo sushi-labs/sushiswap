@@ -2,6 +2,8 @@ import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
 import { Vesting } from 'features/context'
+import { getExplorerLink } from 'functions'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
@@ -25,7 +27,7 @@ interface FuroTableProps {
 
 const table = createTable().setRowType<Stream>()
 
-const defaultColumns = (tableProps: FuroTableProps) => [
+const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
     header: () => <div className="w-full text-left">Streamed</div>,
     cell: (props) => (
@@ -87,7 +89,13 @@ const defaultColumns = (tableProps: FuroTableProps) => [
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
     header: () => <div className="w-full text-left">From</div>,
-    cell: (props) => <div className="w-full text-left text-blue">{shortenAddress(props.getValue() as string)}</div>,
+    cell: (props) => (
+      <Link href={getExplorerLink(tableProps.chainId, props.getValue(), 'address')} passHref={true}>
+        <a target="_blank" className="w-full text-left text-blue" onClick={(e) => e.stopPropagation()}>
+          {shortenAddress(props.getValue() as string)}
+        </a>
+      </Link>
+    ),
   }),
   table.createDataColumn('startTime', {
     header: () => <div className="w-full text-left">Start Date</div>,
@@ -123,7 +131,9 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     [streams, vestings],
   )
 
-  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns(props)])
+  const [columns] = React.useState<typeof defaultColumns>(() => [
+    ...defaultColumns({ ...props, chainId: activeChain?.id }),
+  ])
 
   const instance = useTableInstance(table, {
     data,
