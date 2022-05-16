@@ -8,26 +8,12 @@ const Header: FC = () => {
   const router = useRouter()
 
   return (
-    <div className="border-b border-slate-700">
+    <div className={classNames(router.pathname === '/' ? '' : 'border-b border-slate-800', 'relative z-10')}>
       <Container maxWidth="5xl" className="mx-auto px-2">
         <App.Header
-          className="h-[54px]"
+          className="h-[54px] z-10"
           brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
-          nav={
-            <Link passHref={true} href="/dashboard">
-              <Typography
-                variant="sm"
-                weight={700}
-                className={classNames(
-                  router.pathname === '/dashboard' ? 'border-blue' : '',
-                  'text-slate-50 border-b-2 hover:border-blue border-transparent cursor-pointer px-3 flex items-center h-[54px]',
-                )}
-                component="a"
-              >
-                Dashboard
-              </Typography>
-            </Link>
-          }
+          nav={<></>}
         >
           <Wallet.Button />
         </App.Header>

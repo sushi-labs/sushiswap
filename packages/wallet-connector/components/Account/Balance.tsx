@@ -1,7 +1,6 @@
 import { useBalance, useNetwork } from 'wagmi'
-import Loader from '@sushiswap/ui/loader/Loader'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
-import { Typography } from '@sushiswap/ui'
+import { Typography, Loader } from '@sushiswap/ui'
 import { Amount, Native } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 

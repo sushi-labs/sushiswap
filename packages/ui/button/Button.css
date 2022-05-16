@@ -6,7 +6,7 @@
     }
 
     .btn-disabled {
-        @apply disabled:cursor-not-allowed disabled:opacity-40 ring-0 !important
+        @apply cursor-not-allowed opacity-40 ring-0 !important
     }
 
     .btn-filled {

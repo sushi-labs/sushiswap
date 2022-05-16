@@ -2,8 +2,8 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { Button,Dialog, Dots, Input, Typography } from '@sushiswap/ui'
-import { createToast,CurrencyInput } from 'components'
+import { Button, Dialog, Dots, Input, Typography } from '@sushiswap/ui'
+import { createToast, CurrencyInput } from 'components'
 import { parseUnits } from 'ethers/lib/utils'
 import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -19,7 +19,7 @@ export const CreateStreamModal: FC = () => {
   const [open, setOpen] = useState(false)
   const [token, setToken] = useState<Token>()
   const [amount, setAmount] = useState<string>()
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
+  const [fromBentoBox, setFromBentoBox] = useState<boolean>(false)
   const [recipient, setRecipient] = useState<string>()
   const [startDate, setStartDate] = useState<string>()
   const [endDate, setEndDate] = useState<string>()

@@ -8,6 +8,7 @@ import ViewAddressModal from 'features/ViewAddressModal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAccount, useConnect } from 'wagmi'
+import { BackgroundVector } from 'components'
 
 export default function Index() {
   const router = useRouter()
@@ -26,17 +27,25 @@ export default function Index() {
 
   if (isMounted)
     return (
-      <Layout>
+      <Layout
+        gradient
+        backdrop={
+          <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+            <BackgroundVector width="100%" preserveAspectRatio="none" />
+          </div>
+        }
+      >
         <div className="flex flex-col h-full gap-8 pt-40">
-          <div className="flex flex-col gap-1">
-            <Typography variant="hero" className="text-slate-100 font-stretch" weight={900}>
-              Welcome to <span className="text-blue">Furo</span>
+          <div className="flex flex-col gap-3">
+            <Typography variant="hero" className="text-slate-100 font-stretch leading-[1.125]" weight={900}>
+              Welcome to <br />
+              <span className="text-blue">Furo</span> Streaming
             </Typography>
-            <Typography variant="h3" className="text-slate-500">
-              Decentralized asset streaming on steroids.
+            <Typography variant="h3" weight={500} className="text-slate-400 md:w-1/2">
+              Earn, stream and automate your DAO salaries and token vesting with Furo.
             </Typography>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row gap-4">
             {account?.address ? (
               <>
                 <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-2xl">

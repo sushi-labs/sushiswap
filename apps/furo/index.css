@@ -1,4 +1,6 @@
-#__next {
+.bg-noise {
+    width: 100vw;
     height: 100vh;
+    background: linear-gradient(180deg, rgba(30,41,59,0.2) 0%, rgba(15,23,42,1) 60%);
+    background-blend-mode: overlay;
 }
-
