@@ -32,7 +32,7 @@ const WIDTH = {
   md: 65,
 }
 
-const Switch: FC<SwitchProps> = ({
+export const Switch: FC<SwitchProps> = ({
   size = 'md',
   checked,
   onChange,

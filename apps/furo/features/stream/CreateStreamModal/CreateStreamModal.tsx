@@ -5,12 +5,12 @@ import { JSBI } from '@sushiswap/math'
 import { Button, Dialog, Dots, Input, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { parseUnits } from 'ethers/lib/utils'
+import { TokenSelectorOverlay } from 'features/stream'
 import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
-import { TokenSelectorOverlay } from './TokenSelectorOverlay'
 
 export const CreateStreamModal: FC = () => {
   const { data: account } = useAccount()
