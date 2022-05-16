@@ -3,12 +3,12 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
+import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import ViewAddressModal from 'features/ViewAddressModal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAccount, useConnect } from 'wagmi'
-import { BackgroundVector } from 'components'
 
 export default function Index() {
   const router = useRouter()
