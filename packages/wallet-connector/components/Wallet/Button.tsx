@@ -1,11 +1,12 @@
 import { FC, ReactElement, ReactNode } from 'react'
 import { Button as UIButton, CoinbaseWalletIcon, Loader, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
 import Account from '../Account'
 import { useIsMounted } from '@sushiswap/hooks'
 
 const Icons: Record<string, ReactNode> = {
+  Injected: <ChevronDoubleDownIcon width={16} height={16} />,
   MetaMask: <MetamaskIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
@@ -69,7 +70,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
 
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
-        <div className="px-3">
+        <div className="px-3 hidden sm:block">
           <Account.Balance address={data?.address} />
         </div>
         <Menu

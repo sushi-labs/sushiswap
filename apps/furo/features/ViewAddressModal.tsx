@@ -19,7 +19,7 @@ const ViewAddressModal: FC = () => {
     <div>
       <Button
         onClick={() => setOpen(true)}
-        className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[56px] rounded-2xl"
+        className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[44px] sm:!h-[56px] rounded-2xl"
       >
         View Address
       </Button>

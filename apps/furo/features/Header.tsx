@@ -7,18 +7,19 @@ import { CreateStreamModal } from 'features/stream'
 import CreateVestingModal from 'features/vesting/CreateVestingModal'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 const Header: FC = () => {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
+  const { isConnected } = useConnect()
   const router = useRouter()
 
   return (
     <div
       className={classNames(router.pathname === '/' ? '' : 'border-b border-slate-800 bg-slate-900', 'relative z-10')}
     >
-      <Container maxWidth="5xl" className="mx-auto px-2">
+      <Container maxWidth="5xl" className="mx-auto px-4">
         <App.Header
           className="h-[54px] z-10"
           brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
@@ -26,7 +27,7 @@ const Header: FC = () => {
         >
           <div className="flex gap-2 items-center whitespace-nowrap">
             <Wallet.Button />
-            {account?.address && isMounted && (
+            {account?.address && isMounted && isConnected && (
               <Menu
                 button={
                   <HeadlessMenu.Button

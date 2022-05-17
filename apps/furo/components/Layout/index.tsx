@@ -11,14 +11,14 @@ type Props = {
 function Layout({ children, maxWidth = '5xl', gradient = false, backdrop }: Props) {
   if (!gradient) {
     return (
-      <Container maxWidth={maxWidth} className="lg:mx-auto px-2 h-full">
+      <Container maxWidth={maxWidth} className="lg:mx-auto px-4 h-full">
         {children}
       </Container>
     )
   }
 
   return (
-    <Container maxWidth={maxWidth} className="lg:mx-auto px-2 h-full">
+    <Container maxWidth={maxWidth} className="lg:mx-auto px-4 h-full">
       <Glow className="bg-noise" backdrop={backdrop}>
         {children}
       </Glow>

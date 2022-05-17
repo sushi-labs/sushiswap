@@ -59,7 +59,7 @@ export default function DashboardPage() {
     return (
       <Layout gradient>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
-          {!account?.address && (
+          {!isConnected && (
             <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
               <div className="flex justify-center">
                 <div className="relative rounded-full bg-slate-800 p-5">
@@ -82,7 +82,7 @@ export default function DashboardPage() {
                 button={
                   <HeadlessMenu.Button
                     as="div"
-                    className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[44px] rounded-2xl"
+                    className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-slate-50 px-10 !h-[44px] rounded-2xl"
                   >
                     Connect Wallet
                   </HeadlessMenu.Button>

@@ -219,7 +219,7 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
                   </Typography>
                 </div>
               </div>
-              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/20 rounded-xl">
+              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/30 rounded-xl">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
@@ -266,7 +266,7 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
                   </Transition>
                 </Disclosure>
               </div>
-              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/20 rounded-xl">
+              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/30 rounded-xl">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
@@ -332,7 +332,6 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
             </div>
             <div className="md:pl-6 space-y-6">Vesting chart</div>
           </div>
-          <div className="h-px my-2 bg-slate-800" />
           <div className="flex justify-end gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
               (token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState))) && (
