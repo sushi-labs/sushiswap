@@ -36,11 +36,11 @@ export default function Index() {
       >
         <div className="flex flex-col h-full gap-8 pt-40">
           <div className="flex flex-col gap-3">
-            <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125]">
+            <div className="text-center font-bold sm:text-left text-5xl text-slate-100 font-stretch leading-[1.125]">
               Welcome to <br />
               <span className="text-blue">Furo</span> Streaming
             </div>
-            <div className="text-center sm:text-left text-md sm:text-xl text-slate-400 md:w-1/2">
+            <div className="text-center sm:text-left text-xl text-slate-400 md:w-1/2">
               Earn, stream and automate your DAO salaries and token vesting with Furo.
             </div>
           </div>
