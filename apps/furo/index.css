@@ -2,12 +2,6 @@ html {
     font-size: 16px;
 }
 
-@media (min-width:420px) {
-    html {
-        font-size: 14px;
-    }
-}
-
 .bg-noise {
     width: 100vw;
     height: 100vh;

@@ -20,7 +20,7 @@ export default function DashboardPage() {
 
   if (isMounted && !!pendingConnector && isConnecting && !isReconnecting) {
     return (
-      <Layout gradient>
+      <Layout>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="h-[78px] flex justify-center items-center">
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   // Return skeleton
   if (isMounted && (!activeChain?.id || !account?.address || !isConnected)) {
     return (
-      <Layout gradient>
+      <Layout>
         <div className="flex flex-col h-full gap-12 pt-20 items-center">
           {!isConnected && (
             <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">

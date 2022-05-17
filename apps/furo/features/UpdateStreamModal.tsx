@@ -1,24 +1,22 @@
-import { AddressZero } from '@ethersproject/constants'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useContractWrite } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
+  abi: object
+  address: string
 }
 
-const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
-  const { activeChain } = useNetwork()
+const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address }) => {
   const { data: account } = useAccount()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
@@ -40,8 +38,8 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      addressOrName: address,
+      contractInterface: abi,
     },
     'updateStream',
     {

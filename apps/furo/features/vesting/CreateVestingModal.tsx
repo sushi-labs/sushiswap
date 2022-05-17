@@ -3,8 +3,7 @@ import { CheckIcon, PlusIcon, XIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { Button, Dialog, Dots, Input, Select, Typography } from '@sushiswap/ui'
-import Switch from '@sushiswap/ui/switch/Switch'
+import { Button, Dialog, Dots, Input, Select, Switch, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { createToast } from 'components/Toast'
 import { BigNumber, utils } from 'ethers'
@@ -299,7 +298,7 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
                       </div>
                       <div className="flex flex-col gap-2">
                         <Typography variant="sm" weight={500} className="text-slate-200">
-                          Total amount
+                          Amount per payout
                         </Typography>
                         <CurrencyInput
                           onChange={setStepAmount}

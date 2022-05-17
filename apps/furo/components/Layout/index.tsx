@@ -8,7 +8,7 @@ type Props = {
   backdrop?: React.ReactNode
 }
 
-function Layout({ children, maxWidth = '5xl', gradient = false, backdrop }: Props) {
+function Layout({ children, maxWidth = '5xl', gradient = true, backdrop }: Props) {
   if (!gradient) {
     return (
       <Container maxWidth={maxWidth} className="lg:mx-auto px-4 h-full pb-4">

@@ -217,7 +217,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
             dy={10}
             className="text-slate-50"
           >
-            {stream?.withdrawnAmount?.toSignificant(6).split('.')[0]}
+            {stream?.withdrawnAmount?.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -226,10 +226,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
               dx={2}
               className="text-slate-300"
             >
-              .
-              {stream?.withdrawnAmount.greaterThan(0)
-                ? stream?.withdrawnAmount.toSignificant(6).split('.')[1]
-                : '000000'}
+              .{stream?.withdrawnAmount.greaterThan(0) ? stream?.withdrawnAmount.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -272,7 +269,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
             dy={10}
             className="text-slate-50"
           >
-            {streamedAmount?.toSignificant(6).split('.')[0]}
+            {streamedAmount?.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -281,7 +278,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
               dx={2}
               className="text-slate-300"
             >
-              .{streamedAmount?.greaterThan(0) ? streamedAmount.toSignificant(6).split('.')[1] : '000000'}
+              .{streamedAmount?.greaterThan(0) ? streamedAmount.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text

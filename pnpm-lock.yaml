@@ -276,7 +276,7 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.40
       '@graphql-mesh/transform-rename': 0.12.41
       '@graphql-mesh/transform-type-merging': 0.3.50
-      '@headlessui/react': ^1.6.0
+      '@headlessui/react': ^1.6.1
       '@heroicons/react': ^1.0.0
       '@popperjs/core': ^2.11.5
       '@reduxjs/toolkit': ^1.8.1
@@ -879,7 +879,7 @@ importers:
   packages/ui:
     specifiers:
       '@fontsource/inter': ^4.5.10
-      '@headlessui/react': ^1.6.0
+      '@headlessui/react': ^1.6.1
       '@heroicons/react': ^1.0.6
       '@sushiswap/config': workspace:*
       '@sushiswap/currency': workspace:*
@@ -6257,7 +6257,7 @@ packages:
       unload: 2.2.0
 
   /brorand/1.1.0:
-    resolution: {integrity: sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=}
+    resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
 
   /browser-process-hrtime/1.0.0:
     resolution: {integrity: sha512-9o5UecI3GhkpM6DrXr69PblIuWxPKk9Y0jHBRhdocZ2y7YECBFCsHm79Pr3OyR2AvjhDkabFJaDJMYRazHgsow==}
@@ -6291,7 +6291,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
 
   /bs58/4.0.1:
-    resolution: {integrity: sha1-vhYedsNU9veIrkBx9j806MTwpCo=}
+    resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
     dependencies:
       base-x: 3.0.9
 
@@ -6329,7 +6329,7 @@ packages:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
   /buffer-xor/1.0.3:
-    resolution: {integrity: sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk=}
+    resolution: {integrity: sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ==}
 
   /buffer/5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}

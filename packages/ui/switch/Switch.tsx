@@ -5,7 +5,9 @@ import { classNames } from '../index'
 
 type SwitchColor = 'default' | 'gradient'
 
-type SwitchProps = ComponentProps<typeof HeadlessUiSwitch> & {
+type SwitchProps = {
+  checked: boolean
+  onChange(checked: boolean): void
   size?: 'xs' | 'sm' | 'md'
   checkedIcon?: ReactNode
   uncheckedIcon?: ReactNode

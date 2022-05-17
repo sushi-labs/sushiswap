@@ -39,7 +39,7 @@ export const VestingChart: FC<Props> = (props) => {
   return (
     <XYChart
       height={350}
-      width={700}
+      width={430}
       xScale={{ type: 'band' }}
       yScale={{ type: 'linear', domain: [0, Number(vesting?.amount.numerator.toString())] }}
     >

@@ -1,22 +1,22 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
 import StreamProgress from 'features/stream/StreamProgress'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { useStreamBalance } from 'hooks'
 import { FC, useCallback, useRef, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
+import { useAccount, useContractWrite, useEnsAddress } from 'wagmi'
 
 interface TransferStreamModalProps {
   stream?: Stream
+  abi: object
+  address: string
+  fn?: string
 }
 
-const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
+const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, address, fn = 'transferFrom' }) => {
   const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,10 +28,10 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      addressOrName: address,
+      contractInterface: abi,
     },
-    'transferFrom',
+    fn,
     {
       onSuccess() {
         setOpen(false)

@@ -121,10 +121,7 @@ export abstract class Furo {
   }
 
   public canCancel(account: string): boolean {
-    return (
-      [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase()) &&
-      !this.isEnded
-    )
+    return this.createdBy.id.toLowerCase() === account.toLowerCase() && !this.isEnded
   }
 
   public canTransfer(account: string): boolean {

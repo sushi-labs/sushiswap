@@ -1,31 +1,31 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ArrowSmDownIcon, TrashIcon } from '@heroicons/react/outline'
 import { Button, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
 import StreamProgress from 'features/stream/StreamProgress'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { useStreamBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useContractWrite } from 'wagmi'
 
 interface CancelStreamModalProps {
   stream?: Stream
+  abi: object
+  address: string
+  fn: string
 }
 
-const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream }) => {
+const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, fn }) => {
+  const balance = useStreamBalance(stream?.id, stream?.token)
   const [open, setOpen] = useState(false)
-  const { activeChain } = useNetwork()
   const [toBentoBox, setToBentoBox] = useState<boolean>(true)
   const { data: account } = useAccount()
-  const balance = useStreamBalance(stream?.id, stream?.token)
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      addressOrName: address,
+      contractInterface: abi,
     },
-    'cancelStream',
+    fn,
     {
       onSuccess() {
         setOpen(false)

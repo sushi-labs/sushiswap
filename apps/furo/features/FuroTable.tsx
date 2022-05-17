@@ -1,7 +1,7 @@
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
-import { Vesting } from 'features/context'
+import { StreamRepresentation, Vesting, VestingRepresentation } from 'features/context'
 import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -9,7 +9,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { FuroStatus } from './context/enums'
-import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
 
 export enum FuroTableType {

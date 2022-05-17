@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@fontsource/inter": "^4.5.10",
-    "@headlessui/react": "^1.6.0",
+    "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.6",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",

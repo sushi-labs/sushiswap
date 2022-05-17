@@ -24,7 +24,7 @@
     "@ethersproject/solidity": "^5.4.0",
     "@ethersproject/strings": "^5.4.0",
     "@ethersproject/units": "^5.4.0",
-    "@headlessui/react": "^1.6.0",
+    "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.0",
     "@popperjs/core": "^2.11.5",
     "@reduxjs/toolkit": "^1.8.1",

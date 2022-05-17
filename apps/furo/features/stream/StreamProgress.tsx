@@ -10,7 +10,7 @@ interface Props {
 
 const StreamProgress: FC<Props> = ({ stream }) => {
   const balance = useStreamBalance(stream?.id, stream?.token)
-  const svgWidth = 336
+  const svgWidth = 296
 
   return (
     <div className="space-y-4">
