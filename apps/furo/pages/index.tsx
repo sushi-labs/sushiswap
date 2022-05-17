@@ -52,7 +52,7 @@ export default function Index() {
                     <Account.Name address={account.address} className="text-sm sm:text-base" />
                   </div>
                   <Link passHref={true} href="/dashboard">
-                    <Button className="w-full transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 !h-[44px] sm:!h-[56px] rounded-2xl">
+                    <Button className="w-full transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
                       Go to Dashboard
                     </Button>
                   </Link>
@@ -65,7 +65,7 @@ export default function Index() {
                   hack={connect}
                   button={
                     <Menu.Button
-                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[44px] sm:!h-[56px] rounded-2xl"
+                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
                       as="div"
                     >
                       Connect Wallet
