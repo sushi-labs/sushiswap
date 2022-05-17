@@ -60,7 +60,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
                   <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
                 ))
               ) : (
-                <Typography variant="xs" className="italic text-slate-500 flex justify-center items-center h-full pb-4">
+                <Typography variant="xs" className="flex items-center justify-center h-full pb-4 italic text-slate-500">
                   No transactions found
                 </Typography>
               )}
