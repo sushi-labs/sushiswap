@@ -1,4 +1,4 @@
-import { FC, ReactElement, ReactNode } from 'react'
+import React, { FC, ReactElement, ReactNode } from 'react'
 import { Button as UIButton, CoinbaseWalletIcon, Loader, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
@@ -25,7 +25,9 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
   const { isConnected, isReconnecting, isConnecting, connectors, connect, pendingConnector } = hack || useConnect()
 
   if (!!pendingConnector && isConnecting) {
-    return (
+    return button ? (
+      React.createElement(UIButton, { ...button.props, startIcon: <Loader />, disabled: true }, 'Authorize Wallet')
+    ) : (
       <UIButton
         endIcon={<Loader />}
         variant="filled"

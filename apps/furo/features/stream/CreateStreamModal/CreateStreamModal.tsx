@@ -13,15 +13,24 @@ import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../actions'
 
-interface CreateStreamModalProps {
+interface CreateStreamModal {
   button?: ReactElement
 }
 
-export const CreateStreamModal: FC<CreateStreamModalProps> = ({ button }) => {
+export const CreateStreamModal: FC<CreateStreamModal> = ({ button }) => {
+  const [open, setOpen] = useState(false)
+  return <CreateStreamModalControlled open={open} setOpen={setOpen} button={button} />
+}
+
+interface CreateStreamModalControlledProps extends CreateStreamModal {
+  open: boolean
+  setOpen(open: boolean): void
+}
+
+export const CreateStreamModalControlled: FC<CreateStreamModalControlledProps> = ({ button, open, setOpen }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const contract = useFuroStreamContract()
-  const [open, setOpen] = useState(false)
   const [token, setToken] = useState<Token>()
   const [amount, setAmount] = useState<string>()
   const { value: fundSource, fromBentobox, toggle } = useFundSourceToggler()

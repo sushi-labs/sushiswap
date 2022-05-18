@@ -4,25 +4,29 @@ import Button from '@sushiswap/ui/button/Button'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
-import ViewAddressModal from 'features/ViewAddressModal'
+import { CreateStreamModalControlled } from 'features/stream'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
-  const connect = useConnect({
+  const [paySomeoneOpen, setPaySomeoneOpen] = useState(false)
+
+  const paySomeone = useConnect({
+    onConnect: () => {
+      setPaySomeoneOpen(true)
+    },
+  })
+
+  const viewEarnings = useConnect({
     onConnect: () => {
       void router.push('/dashboard')
     },
   })
-
-  const { isConnected, isReconnecting, isConnecting } = connect
-  if (isMounted && (isConnected || isReconnecting || isConnecting)) {
-    if (!account?.address) return <></>
-  }
 
   if (isMounted)
     return (
@@ -47,32 +51,52 @@ export default function Index() {
           <div className="flex flex-col sm:items-center sm:flex-row gap-4">
             {account?.address ? (
               <>
-                <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-2xl">
-                  <div className="px-6">
-                    <Account.Name address={account.address} className="text-sm sm:text-base" />
-                  </div>
+                <div>
+                  <CreateStreamModalControlled
+                    open={paySomeoneOpen}
+                    setOpen={setPaySomeoneOpen}
+                    button={
+                      <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                        Pay Someone
+                      </Button>
+                    }
+                  />
+                </div>
+                <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
                   <Link passHref={true} href="/dashboard">
-                    <Button className="w-full transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
-                      Go to Dashboard
+                    <Button className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                      View My Earnings
                     </Button>
                   </Link>
+                  <div className="px-6">
+                    <Account.Name address={account?.address} className="text-sm sm:text-base" />
+                  </div>
                 </div>
-                <ViewAddressModal />
               </>
             ) : (
               <>
                 <Wallet.Button
-                  hack={connect}
+                  hack={paySomeone}
                   button={
                     <Menu.Button
-                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
+                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
                       as="div"
                     >
-                      Connect Wallet
+                      Pay Someone
                     </Menu.Button>
                   }
                 />
-                <ViewAddressModal />
+                <Wallet.Button
+                  hack={viewEarnings}
+                  button={
+                    <Menu.Button
+                      className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
+                      as="div"
+                    >
+                      View My Earnings
+                    </Menu.Button>
+                  }
+                />
               </>
             )}
           </div>
