@@ -9,7 +9,7 @@ import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
 import FUROSTREAM_ABI from '../abis/FuroStream.json'
 
 export const STREAM_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0xae3d2b9a31e85d12681e60779e95cbfeaab77e14',
+  [ChainId.KOVAN]: '0xd178a02b5a31bc44c3e2cbf4bb252c7d03faf3fe',
   [ChainId.GÖRLI]: '0x8149ed0807afcb375009e6c8bd86da249fb56a08',
 }
 
