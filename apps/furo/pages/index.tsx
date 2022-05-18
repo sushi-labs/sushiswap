@@ -56,7 +56,7 @@ export default function Index() {
                     open={paySomeoneOpen}
                     setOpen={setPaySomeoneOpen}
                     button={
-                      <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                      <Button className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
                         Pay Someone
                       </Button>
                     }

@@ -95,7 +95,9 @@ const _VestingPage: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
-        <VestingChart vesting={vesting} schedule={schedule} />
+        <div className="flex justify-center">
+          <VestingChart vesting={vesting} schedule={schedule} />
+        </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
             <ProgressBarCard

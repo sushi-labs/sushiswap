@@ -108,6 +108,7 @@ export const CreateStreamModalControlled: FC<CreateStreamModalControlledProps> =
     fromBentobox,
     recipient,
     sendTransactionAsync,
+    setOpen,
     signature,
     startDate,
     token,
