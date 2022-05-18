@@ -1,17 +1,31 @@
-import { Token } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { classNames, Loader, Typography } from '@sushiswap/ui'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { useTokenBalance } from 'hooks/useTokenBalance'
 import { FC, useRef } from 'react'
 
-interface CurrencyInput {
+type Base = {
+  amount?: string
+  className?: string
+  onChange(x: string): void
+}
+
+type CurrencyInputGetBalance = Base & {
   account?: string
   token?: Token
-  amount?: string
-  onChange(x: string): void
-  className?: string
   fundSource?: FundSource
+  balance?: never
+  balanceLabel?: never
 }
+type CurrencyInputProvideBalance = Base & {
+  account?: never
+  token?: never
+  fundSource?: never
+  balance?: Amount<Token>
+  balanceLabel?: string
+}
+
+type CurrencyInput = CurrencyInputGetBalance | CurrencyInputProvideBalance
 
 const CurrencyInput: FC<CurrencyInput> = ({
   amount,
@@ -20,9 +34,12 @@ const CurrencyInput: FC<CurrencyInput> = ({
   token,
   className = '',
   fundSource = FundSource.WALLET,
+  balance: providedBalance,
+  balanceLabel,
 }) => {
   const amountInputRef = useRef<HTMLInputElement | null>(null)
-  const { isLoading: loadingBalance, data: balance } = useTokenBalance(account, token, fundSource)
+  const { isLoading: loadingBalance, data: accountBalance } = useTokenBalance(account, token, fundSource)
+  const balance = providedBalance || accountBalance
 
   return (
     <div
@@ -48,7 +65,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
       </div>
       <div className="flex justify-between px-4 pb-3">
         <Typography variant="xs" weight={500} className="text-slate-500">
-          Balance
+          {balanceLabel || 'Balance'}
         </Typography>
         {loadingBalance ? (
           <Loader size="12px" />

@@ -40,18 +40,19 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
   const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [cliff, setCliff] = useState(false)
-  const [gradedVesting, setGradedVesting] = useState(false)
-  const [token, setToken] = useState<Token>()
   const [error, setError] = useState<string>()
-  const [stepConfig, setStepConfig] = useState<StepConfig>(stepConfigurations[0])
-  const { value: fundSource, fromBentobox, toggle } = useFundSourceToggler()
   const [recipient, setRecipient] = useState<string>()
   const [startDate, setStartDate] = useState<string>()
   const [cliffDate, setCliffDate] = useState<string>()
   const [cliffAmount, setCliffAmount] = useState<string>()
   const [stepAmount, setStepAmount] = useState<string>()
   const [stepEndDate, setStepEndDate] = useState<string>()
+  const [gradedVesting, setGradedVesting] = useState(false)
+  const [token, setToken] = useState<Token>()
+  const [stepConfig, setStepConfig] = useState<StepConfig>(stepConfigurations[0])
+
   const contract = useFuroVestingContract()
+  const { value: fundSource, fromBentobox, toggle } = useFundSourceToggler()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(open, contract?.address)
 
@@ -116,8 +117,8 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
         cliffDuration,
         stepDuration,
         steps,
-        cliffAmount: cliffAmountAsEntity ? cliffAmountAsEntity.quotient.toString() : BigNumber.from(0),
-        stepAmount: stepAmountAsEntity ? stepAmountAsEntity.quotient.toString() : BigNumber.from(0),
+        cliffAmount: cliffAmountAsEntity ? cliffAmountAsEntity.toShare().quotient.toString() : BigNumber.from(0),
+        stepAmount: stepAmountAsEntity ? stepAmountAsEntity.toShare().quotient.toString() : BigNumber.from(0),
         fromBentobox,
       }),
     ]
@@ -369,6 +370,11 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
             </Button>
+            {error && (
+              <Typography variant="xs" className="text-center text-red" weight={700}>
+                {error}
+              </Typography>
+            )}
           </div>
         </Dialog.Content>
       </Dialog>
