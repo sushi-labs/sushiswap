@@ -4,16 +4,16 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev --port 3005",
+    "dev": "next dev -p 3006",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.0",
     "@sushiswap/core-sdk": "^1.0.0-canary.65",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/sushi-data": "1.0.26",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/format": "workspace:*",
     "graphql": "^16.4.0",
     "graphql-request": "^4.2.0",
     "millify": "^4.0.0",
@@ -27,12 +27,15 @@
     "use-count-up": "^3.0.1"
   },
   "devDependencies": {
-    "@sushiswap/config": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.30",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "autoprefixer": "^10.4.5",
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "next-transpile-modules": "9.0.0",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.24",
