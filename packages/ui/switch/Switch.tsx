@@ -5,7 +5,9 @@ import { classNames } from '../index'
 
 type SwitchColor = 'default' | 'gradient'
 
-type SwitchProps = ComponentProps<typeof HeadlessUiSwitch> & {
+type SwitchProps = {
+  checked: boolean
+  onChange(checked: boolean): void
   size?: 'xs' | 'sm' | 'md'
   checkedIcon?: ReactNode
   uncheckedIcon?: ReactNode
@@ -15,7 +17,7 @@ type SwitchProps = ComponentProps<typeof HeadlessUiSwitch> & {
 
 const COLOR = {
   // @ts-ignore TYPE NEEDS FIXING
-  default: (checked) => (checked ? 'bg-high-emphesis' : 'bg-high-emphesis'),
+  default: (checked) => (checked ? 'bg-slate-100' : 'bg-slate-100'),
   // @ts-ignore TYPE NEEDS FIXING
   gradient: (checked) => (checked ? 'bg-gradient-to-r from-blue to-pink' : 'bg-slate-700'),
 }
@@ -32,7 +34,7 @@ const WIDTH = {
   md: 65,
 }
 
-const Switch: FC<SwitchProps> = ({
+export const Switch: FC<SwitchProps> = ({
   size = 'md',
   checked,
   onChange,

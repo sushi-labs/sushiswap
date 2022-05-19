@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import { CalendarIcon, Typography } from '@sushiswap/ui'
+import { CalendarIcon, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { PeriodType, Schedule, SchedulePeriod, ScheduleRepresentation, Vesting, VestingType } from 'features/context'
 import { usePopover } from 'hooks'
@@ -24,14 +24,20 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   return (
     <Popover>
       <Popover.Button ref={setReferenceElement}>
-        <div className="flex items-center gap-2 px-5 border shadow-md cursor-pointer border-slate-700 bg-slate-800 rounded-xl h-11">
-          <CalendarIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-slate-200">
-            Schedule
-          </Typography>
-        </div>
+        {({ open }) => (
+          <div
+            className={classNames(
+              open ? 'bg-slate-600' : '',
+              'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11',
+            )}
+          >
+            <CalendarIcon width={18} height={18} />
+            <Typography variant="sm" weight={700} className="text-slate-200">
+              Schedule
+            </Typography>
+          </div>
+        )}
       </Popover.Button>
-
       <Popover.Panel
         ref={setPopperElement}
         style={styles.popper}

@@ -87,7 +87,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
                     searching.current = true
                     setQuery(val)
                   }}
-                  className="!border-none !ring-offset-0 !shadow-none text-sm font-bold placeholder:font-medium !ring-0 w-full"
+                  className="!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full"
                 />
                 {searching.current && <Loader width={24} height={24} />}
               </div>

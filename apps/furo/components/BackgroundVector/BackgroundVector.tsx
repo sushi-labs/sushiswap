@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 
-export const BackgroundVector: FC = (props: React.ComponentProps<'svg'>) => {
+type BackgroundVector = Omit<React.ComponentProps<'svg'>, 'width'> & {
+  width: string | number
+}
+
+export const BackgroundVector: FC<BackgroundVector> = (props) => {
   return (
     <svg viewBox="0 0 1437 459" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g opacity={0.3} strokeLinecap="round">

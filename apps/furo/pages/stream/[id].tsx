@@ -1,18 +1,25 @@
+import { AddressZero } from '@ethersproject/constants'
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import { useIsMounted } from '@sushiswap/hooks'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
-import { StreamRepresentation, TransactionRepresentation } from 'features/context/representations'
-import { Stream } from 'features/context/Stream'
+import { ProgressBarCard } from 'components/ProgressBarCard'
+import { Stream, StreamRepresentation, TransactionRepresentation } from 'features'
+import CancelStreamModal from 'features/CancelStreamModal'
 import FuroTimer from 'features/FuroTimer'
 import HistoryPopover from 'features/HistoryPopover'
 import LinkPopover from 'features/LinkPopover'
 import BalanceChart from 'features/stream/BalanceChart'
-import CancelStreamModal from 'features/stream/CancelStreamModal'
 import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
-import TransferStreamModal from 'features/stream/TransferStreamModal'
-import UpdateStreamModal from 'features/stream/UpdateStreamModal'
-import WithdrawModal from 'features/stream/WithdrawModal'
+import TransferStreamModal from 'features/TransferStreamModal'
+import UpdateStreamModal from 'features/UpdateStreamModal'
+import WithdrawModal from 'features/WithdrawModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
+import { STREAM_ADDRESS } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -50,10 +57,17 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
+export enum BalanceChartHoverEnum {
+  NONE,
+  WITHDRAW,
+  STREAMED,
+}
+
 const _Streams: FC = () => {
+  const isMounted = useIsMounted()
   const router = useRouter()
-  const chainId = router.query.chainId as string
-  const id = router.query.id as string
+  const chainId = Number(router.query.chainId as string)
+  const id = Number(router.query.id as string)
 
   const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json()),
@@ -61,57 +75,68 @@ const _Streams: FC = () => {
   const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json()),
   )
-  const [withdrawHovered, setWithdrawHovered] = useState(false)
+  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
     [streamRepresentation],
   )
 
+  if (!isMounted) return null
+
   return (
-    <Layout>
+    <Layout
+      backdrop={
+        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+          <BackgroundVector width="100%" preserveAspectRatio="none" />
+        </div>
+      }
+    >
+      <div className="flex gap-3 items-center mt-4">
+        <Link href="/dashboard" passHref={true}>
+          <a className="group flex items-center gap-2">
+            <HomeIcon width={16} className="group-hover:text-slate-50 text-slate-400 cursor-pointer" />
+            <Typography variant="sm" weight={700} className="group-hover:text-slate-50 text-slate-400 cursor-pointer">
+              Dashboard
+            </Typography>
+          </a>
+        </Link>
+        <ChevronRightIcon width={24} className="text-slate-400" />
+        <Typography variant="sm" weight={700} className="text-slate-600">
+          Stream
+        </Typography>
+      </div>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
-        <div className="relative flex justify-center">
-          <div className="absolute right-0 w-[140px] h-[180px] bg-pink/20 blur-[100px] pointer-events-none" />
-          <div className="absolute left-0 bottom-0 w-[140px] h-[180px] bg-blue/20 blur-[100px] pointer-events-none" />
-          <BalanceChart stream={stream} withdrawHovered={withdrawHovered} setWithdrawHovered={setWithdrawHovered} />
+        <div className="flex justify-center">
+          <BalanceChart stream={stream} hover={hover} setHover={setHover} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl">
-              <div className="flex items-center justify-between gap-2">
-                <Typography variant="sm" weight={400}>
-                  Streamed:
-                </Typography>
-                <Typography variant="lg" weight={700} className="text-slate-200">
-                  {(Number(stream?.streamedPercentage) * 100).toFixed(2)}%
-                </Typography>
-              </div>
+            <ProgressBarCard
+              aria-hidden="true"
+              label="Streamed"
+              value={`${(Number(stream?.streamedPercentage) * 100).toFixed(2)}%`}
+              onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
+              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+            >
               <ProgressBar
                 progress={stream ? stream.streamedPercentage.toFixed(4) : 0}
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />
-            </div>
-            <div
+            </ProgressBarCard>
+            <ProgressBarCard
               aria-hidden="true"
-              className="flex flex-col gap-2 p-5 border shadow-md cursor-pointer bg-slate-800 border-slate-700 hover:border-slate-600 rounded-2xl"
-              onMouseEnter={() => setWithdrawHovered(true)}
-              onMouseLeave={() => setWithdrawHovered(false)}
+              label="Withdrawn"
+              value={`${(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}%`}
+              onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
+              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
             >
-              <div className="flex items-center justify-between gap-2">
-                <Typography variant="sm" weight={400}>
-                  Withdrawn:
-                </Typography>
-                <Typography variant="lg" weight={700} className="text-slate-200">
-                  {(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}%
-                </Typography>
-              </div>
               <ProgressBar
                 progress={stream ? stream.withdrawnPercentage : 0}
                 color={ProgressColor.PINK}
                 showLabel={false}
               />
-            </div>
+            </ProgressBarCard>
             <div className="mt-3">
               <FuroTimer furo={stream} />
             </div>
@@ -125,9 +150,22 @@ const _Streams: FC = () => {
         <div className="flex flex-col gap-2">
           <WithdrawModal stream={stream} />
           <div className="flex gap-2">
-            <TransferStreamModal stream={stream} />
-            <UpdateStreamModal stream={stream} />
-            <CancelStreamModal stream={stream} />
+            <TransferStreamModal
+              stream={stream}
+              abi={FUROSTREAM_ABI}
+              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+            />
+            <UpdateStreamModal
+              stream={stream}
+              abi={FUROSTREAM_ABI}
+              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+            />
+            <CancelStreamModal
+              stream={stream}
+              abi={FUROSTREAM_ABI}
+              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+              fn="cancelStream"
+            />
           </div>
         </div>
       </div>

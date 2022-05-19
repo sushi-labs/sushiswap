@@ -49,7 +49,7 @@ export interface StreamCreationActionProps {
   startDate: Date
   endDate: Date
   amount: Amount<Token>
-  fromBentoBox: boolean
+  fromBentobox: boolean
 }
 
 export const streamCreationAction = ({
@@ -59,7 +59,7 @@ export const streamCreationAction = ({
   startDate,
   endDate,
   amount,
-  fromBentoBox,
+  fromBentobox,
 }: StreamCreationActionProps): string => {
   return contract.interface.encodeFunctionData('createStream', [
     // TODO: check wnative address, pass in value
@@ -68,7 +68,7 @@ export const streamCreationAction = ({
     startDate.getTime() / 1000,
     endDate.getTime() / 1000,
     amount.quotient.toString(),
-    fromBentoBox,
+    fromBentobox,
   ])
 }
 
@@ -82,7 +82,7 @@ export interface VestingCreationProps {
   steps: BigNumber
   cliffAmount: BigNumber | string
   stepAmount: BigNumber | string
-  fromBentoBox: boolean
+  fromBentobox: boolean
 }
 
 export const vestingCreationAction = ({
@@ -95,7 +95,7 @@ export const vestingCreationAction = ({
   steps,
   cliffAmount,
   stepAmount,
-  fromBentoBox,
+  fromBentobox,
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
     // TODO: check wnative address, pass in value
@@ -107,6 +107,6 @@ export const vestingCreationAction = ({
     steps,
     cliffAmount,
     stepAmount,
-    fromBentoBox,
+    fromBentobox,
   ])
 }

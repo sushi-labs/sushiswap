@@ -1,19 +1,45 @@
-import { Token } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { classNames, Loader, Typography } from '@sushiswap/ui'
-import { useTokenWalletBalance } from 'hooks'
+import { FundSource } from 'hooks/useFundSourceToggler'
+import { useTokenBalance } from 'hooks/useTokenBalance'
 import { FC, useRef } from 'react'
 
-interface CurrencyInput {
-  account?: string
-  token?: Token
+type Base = {
   amount?: string
-  onChange(x: string): void
   className?: string
+  onChange(x: string): void
 }
 
-const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, className = '' }) => {
+type CurrencyInputGetBalance = Base & {
+  account?: string
+  token?: Token
+  fundSource?: FundSource
+  balance?: never
+  balanceLabel?: never
+}
+type CurrencyInputProvideBalance = Base & {
+  account?: never
+  token?: never
+  fundSource?: never
+  balance?: Amount<Token>
+  balanceLabel?: string
+}
+
+type CurrencyInput = CurrencyInputGetBalance | CurrencyInputProvideBalance
+
+const CurrencyInput: FC<CurrencyInput> = ({
+  amount,
+  onChange,
+  account,
+  token,
+  className = '',
+  fundSource = FundSource.WALLET,
+  balance: providedBalance,
+  balanceLabel,
+}) => {
   const amountInputRef = useRef<HTMLInputElement | null>(null)
-  const { isLoading: loadingBalance, data: tokenBalance } = useTokenWalletBalance(account, token)
+  const { isLoading: loadingBalance, data: accountBalance } = useTokenBalance(account, token, fundSource)
+  const balance = providedBalance || accountBalance
 
   return (
     <div
@@ -39,7 +65,7 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
       </div>
       <div className="flex justify-between px-4 pb-3">
         <Typography variant="xs" weight={500} className="text-slate-500">
-          Balance
+          {balanceLabel || 'Balance'}
         </Typography>
         {loadingBalance ? (
           <Loader size="12px" />
@@ -48,9 +74,9 @@ const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, cl
             variant="xs"
             weight={500}
             className="text-slate-500"
-            onClick={() => (tokenBalance ? onChange(tokenBalance?.toExact()) : undefined)}
+            onClick={() => (balance ? onChange(balance?.toExact()) : undefined)}
           >
-            {tokenBalance?.toSignificant(6)} {tokenBalance?.currency.symbol}
+            {balance?.toSignificant(6)} {balance?.currency.symbol}
           </Typography>
         )}
       </div>

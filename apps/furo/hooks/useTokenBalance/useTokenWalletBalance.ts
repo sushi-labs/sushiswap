@@ -2,27 +2,16 @@ import { Interface } from '@ethersproject/abi'
 import { isAddress } from '@ethersproject/address'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks/useTokenBalance/types'
 import { useMemo } from 'react'
 import { erc20ABI } from 'wagmi'
 
-import { useMultipleContractSingleData } from '../lib/hooks/multicall'
+import { useMultipleContractSingleData } from '../../lib/hooks/multicall'
 
 const tokenBalancesGasRequirement = { gasRequired: 125_000 }
 const ERC20Interface = new Interface(erc20ABI)
 
-type LoadingState<T> = { isLoading: true; isError: boolean; data?: T }
-type SuccessState<T> = { isLoading: false; isError: boolean; data: T }
-type ErrorState<T> = { isLoading: false; isError: true; data?: T }
-
-type UseTokenWalletBalances = (
-  account: string | undefined,
-  tokens: (Token | undefined)[],
-) =>
-  | SuccessState<Record<string, Amount<Token>>>
-  | LoadingState<Record<string, Amount<Token>>>
-  | ErrorState<Record<string, Amount<Token>>>
-
-export const useTokenWalletBalances: UseTokenWalletBalances = (account, tokens) => {
+export const useTokenWalletBalances: UseTokenBalances = (account, tokens) => {
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
       tokens.reduce<[Token[], string[]]>(
@@ -67,7 +56,10 @@ export const useTokenWalletBalances: UseTokenWalletBalances = (account, tokens) 
         ? validatedTokens.reduce<Record<string, Amount<Token>>>((acc, token, i) => {
             const value = balances?.[i]?.result?.[0]
             const amount = value ? JSBI.BigInt(value.toString()) : undefined
+
             if (amount) acc[token.address] = Amount.fromRawAmount(token, amount)
+            else acc[token.address] = Amount.fromRawAmount(token, '0')
+
             return acc
           }, {})
         : undefined
@@ -84,12 +76,7 @@ export const useTokenWalletBalances: UseTokenWalletBalances = (account, tokens) 
   }, [account, anyError, anyLoading, balances, validatedTokens])
 }
 
-type UseTokenWalletBalance = (
-  account: string | undefined,
-  token: Token | undefined,
-) => SuccessState<Amount<Token>> | LoadingState<Amount<Token>> | ErrorState<Amount<Token>>
-
-export const useTokenWalletBalance: UseTokenWalletBalance = (account, token) => {
+export const useTokenWalletBalance: UseTokenBalance = (account, token) => {
   const { isError, isLoading, data } = useTokenWalletBalances(account, [token])
 
   if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
