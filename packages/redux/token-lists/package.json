@@ -11,7 +11,6 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./index.ts",
   "source": "./index.ts",
-  "types": "./index.d.ts",
   "dependencies": {
     "@ethersproject/address": "^5.6.0",
     "@ethersproject/contracts": "^5.6.0",
@@ -24,10 +23,12 @@
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.8.1",
-    "@sushiswap/config": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@types/jest": "^27.4.1",
     "@types/node": "^17.0.30",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",

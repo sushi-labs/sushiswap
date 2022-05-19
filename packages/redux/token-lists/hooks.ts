@@ -1,27 +1,26 @@
+import { JsonRpcProvider } from '@ethersproject/providers'
+import { nanoid } from '@reduxjs/toolkit'
 import type { TokenList } from '@uniswap/token-lists'
-import { tokensToChainTokenMap, sortByListPriority, resolveENSContentHash, getTokenList } from './utils'
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import { TokenListsContext } from './context'
 import { WrappedTokenInfo } from './token'
-import { WithTokenListsState, ChainTokenMap } from './types'
-import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
+import { ChainTokenMap, WithTokenListsState } from './types'
 import UNSUPPORTED_TOKEN_LIST from './unsupported.tokenlist.json'
-
-import { nanoid } from '@reduxjs/toolkit'
-import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { getTokenList, resolveENSContentHash, sortByListPriority, tokensToChainTokenMap } from './utils'
 
 export function useFetchListCallback(
   context: TokenListsContext,
   chainId: number,
-  library: JsonRpcProvider,
+  library: JsonRpcProvider
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { actions } = context
   const dispatch = useDispatch()
 
-  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, library), [chainId, library])
+  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, library), [library])
 
   // note: prevent dispatch if using for list search or unsupported list
   return useCallback(
@@ -41,12 +40,12 @@ export function useFetchListCallback(
                 url: listUrl,
                 requestId,
                 errorMessage: error.message,
-              }),
+              })
             )
           throw error
         })
     },
-    [dispatch, ensResolver],
+    [actions, dispatch, ensResolver]
   )
 }
 
@@ -101,7 +100,7 @@ export function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): Token
       .reduce<{ [chainId: string]: true }>((memo, value) => {
         memo[value] = true
         return memo
-      }, {}),
+      }, {})
   ).map((id) => parseInt(id))
 
   return chainIds.reduce<Mutable<TokenAddressMap>>((memo, chainId) => {
@@ -151,9 +150,9 @@ export function useInactiveListUrls(context: TokenListsContext): string[] {
   return useMemo(
     () =>
       Object.keys(lists).filter(
-        (url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_TOKEN_LIST_URLS.includes(url),
+        (url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_TOKEN_LIST_URLS.includes(url)
       ),
-    [lists, allActiveListUrls],
+    [lists, allActiveListUrls]
   )
 }
 
@@ -177,7 +176,7 @@ export function useUnsupportedTokenList(context: TokenListsContext): TokenAddres
   // format into one token address map
   return useMemo(
     () => combineMaps(localUnsupportedListMap, loadedUnsupportedListMap),
-    [localUnsupportedListMap, loadedUnsupportedListMap],
+    [localUnsupportedListMap, loadedUnsupportedListMap]
   )
 }
 
