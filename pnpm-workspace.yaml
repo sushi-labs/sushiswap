@@ -3,5 +3,5 @@ packages:
   - "apps/*"
   - "examples/*"
   - "packages/**"
-  - "protocols/*"
+  - "protocols/**"
   - "subgraphs/*"

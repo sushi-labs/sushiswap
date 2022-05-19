@@ -23,12 +23,12 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w",
+    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/BentoBox.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/BentoBox.sol": {
       "lastModificationDate": 1652689142596,
       "contentHash": "04a1520267b5356a4d803d0a96eb08aa",
       "sourceName": "contracts/BentoBox.sol",
@@ -51,7 +51,7 @@
         "BentoBox"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IFlashLoan.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/interfaces/IFlashLoan.sol": {
       "lastModificationDate": 1652689142626,
       "contentHash": "588ae9386f2c346a36144f5319fedfb8",
       "sourceName": "contracts/interfaces/IFlashLoan.sol",
@@ -96,7 +96,7 @@
         "IFlashBorrower"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IWETH.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/interfaces/IWETH.sol": {
       "lastModificationDate": 1652689142626,
       "contentHash": "c15f3d0c5189096f05cbc67807dda6cb",
       "sourceName": "contracts/interfaces/IWETH.sol",
@@ -138,7 +138,7 @@
         "IWETH"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IStrategy.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/interfaces/IStrategy.sol": {
       "lastModificationDate": 1652689142626,
       "contentHash": "4dede4b780208b926396872e5cd8d5f1",
       "sourceName": "contracts/interfaces/IStrategy.sol",
@@ -181,7 +181,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "213b94e74f4829475304b234a245093b",
       "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol",
       "solcConfig": {
@@ -225,7 +225,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "5f5be51c4d31b56a74a56111dcb29fe7",
       "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol",
       "solcConfig": {
@@ -268,7 +268,7 @@
         "RebaseLibrary"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/MasterContractManager.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/MasterContractManager.sol": {
       "lastModificationDate": 1652689142596,
       "contentHash": "972ba9bf751b4f22bfd327abba5d9c5e",
       "sourceName": "contracts/MasterContractManager.sol",
@@ -314,7 +314,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringBatchable.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "be90130c2373cfd232fa5f90dd4f63e0",
       "sourceName": "@boringcrypto/boring-solidity/contracts/BoringBatchable.sol",
       "solcConfig": {
@@ -359,7 +359,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "6df503c8de0d2a367face52d73ab55ad",
       "sourceName": "@boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol",
       "solcConfig": {
@@ -401,7 +401,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "2c51ab1382906bef967136b7011fe624",
       "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
       "solcConfig": {
@@ -446,7 +446,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringOwnable.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "aa907b949db713038455d7daa5ec567e",
       "sourceName": "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
       "solcConfig": {
@@ -489,7 +489,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringFactory.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "6222a3fb0f8a5dafb5b3983d3a545d10",
       "sourceName": "@boringcrypto/boring-solidity/contracts/BoringFactory.sol",
       "solcConfig": {
@@ -533,7 +533,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "23feec09902ffcd4b27c84f08719e608",
       "sourceName": "@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol",
       "solcConfig": {
@@ -574,7 +574,7 @@
         "IMasterContract"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/samples/salary.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/samples/salary.sol": {
       "lastModificationDate": 1652689142666,
       "contentHash": "451c57432002fcfab102c79d482e5cfc",
       "sourceName": "contracts/samples/salary.sol",
@@ -618,7 +618,7 @@
         "Salary"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/samples/helloworld.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/samples/helloworld.sol": {
       "lastModificationDate": 1652689142666,
       "contentHash": "c9131636398c3b29293744f5910c491a",
       "sourceName": "contracts/samples/helloworld.sol",
@@ -662,7 +662,7 @@
         "HelloWorld"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MasterContractMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/MasterContractMock.sol": {
       "lastModificationDate": 1652689142646,
       "contentHash": "eaa56a4e1253e36ddbb6c4645052d456",
       "sourceName": "contracts/mocks/MasterContractMock.sol",
@@ -707,7 +707,7 @@
         "MasterContractMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MaliciousMasterContractMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/MaliciousMasterContractMock.sol": {
       "lastModificationDate": 1652689142646,
       "contentHash": "02e07e6806c7057ab034773b38d50eee",
       "sourceName": "contracts/mocks/MaliciousMasterContractMock.sol",
@@ -752,7 +752,7 @@
         "MaliciousMasterContractMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/strategies/SushiStrategy.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/strategies/SushiStrategy.sol": {
       "lastModificationDate": 1652689142666,
       "contentHash": "60a2df1101e0b992d2e3a392cea2bb57",
       "sourceName": "contracts/strategies/SushiStrategy.sol",
@@ -800,7 +800,7 @@
         "SushiStrategy"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/strategies/CompoundStrategy.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/strategies/CompoundStrategy.sol": {
       "lastModificationDate": 1652689142666,
       "contentHash": "bf7d7c7404986364316048aeca02ea09",
       "sourceName": "contracts/strategies/CompoundStrategy.sol",
@@ -850,7 +850,7 @@
         "IcToken"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SushiBarMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/SushiBarMock.sol": {
       "lastModificationDate": 1652689142656,
       "contentHash": "50725f8d37e975c107e83a66a68ee540",
       "sourceName": "contracts/mocks/SushiBarMock.sol",
@@ -896,7 +896,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/ERC20.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "8fd4bbd8702fc964095775d2a5daf95c",
       "sourceName": "@boringcrypto/boring-solidity/contracts/ERC20.sol",
       "solcConfig": {
@@ -941,7 +941,7 @@
       ]
     },
     "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/Domain.sol": {
-      "lastModificationDate": 1652720507743,
+      "lastModificationDate": 1652996807316,
       "contentHash": "fb3e07cd3b24b642d3ad5c62df33989e",
       "sourceName": "@boringcrypto/boring-solidity/contracts/Domain.sol",
       "solcConfig": {
@@ -982,7 +982,7 @@
         "Domain"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ERC20Mock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/ERC20Mock.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "dea491bda0ed297b438f34a142511392",
       "sourceName": "contracts/mocks/ERC20Mock.sol",
@@ -1026,7 +1026,7 @@
         "ERC20Mock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SneakyFlashLoanerMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/SneakyFlashLoanerMock.sol": {
       "lastModificationDate": 1652689142656,
       "contentHash": "568c00b52be10185f325dd1df43e1c60",
       "sourceName": "contracts/mocks/SneakyFlashLoanerMock.sol",
@@ -1072,7 +1072,7 @@
         "SneakyFlashLoanerMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/FlashLoanerMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/FlashLoanerMock.sol": {
       "lastModificationDate": 1652689142646,
       "contentHash": "dfdbbc4f52470ddd8195bc7d81e731ab",
       "sourceName": "contracts/mocks/FlashLoanerMock.sol",
@@ -1118,7 +1118,7 @@
         "FlashLoanerMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SimpleStrategyMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/SimpleStrategyMock.sol": {
       "lastModificationDate": 1652689142656,
       "contentHash": "c93dba34e16f17c267b9a5887db46a11",
       "sourceName": "contracts/mocks/SimpleStrategyMock.sol",
@@ -1164,7 +1164,7 @@
         "SimpleStrategyMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MoneySink.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/MoneySink.sol": {
       "lastModificationDate": 1652689142646,
       "contentHash": "4af0f1e7143bd2fd15fe2d33b4247c93",
       "sourceName": "contracts/mocks/MoneySink.sol",
@@ -1212,7 +1212,7 @@
         "MoneySink"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/DummyStrategyMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/DummyStrategyMock.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "ef3b885a351bb3ebc239a4b283d24b25",
       "sourceName": "contracts/mocks/DummyStrategyMock.sol",
@@ -1258,7 +1258,7 @@
         "DummyStrategyMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ExternalFunctionMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/ExternalFunctionMock.sol": {
       "lastModificationDate": 1652689142646,
       "contentHash": "b4dab128c3a0b9672c579da64a5ee3d9",
       "sourceName": "contracts/mocks/ExternalFunctionMock.sol",
@@ -1302,7 +1302,7 @@
         "ExternalFunctionMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/BentoBoxMock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/BentoBoxMock.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "793949467926aa57b1f3db776a04788e",
       "sourceName": "contracts/mocks/BentoBoxMock.sol",
@@ -1346,7 +1346,7 @@
         "BentoBoxMock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/flat/BentoBoxFlat.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/flat/BentoBoxFlat.sol": {
       "lastModificationDate": 1652689142616,
       "contentHash": "78f262791b45c0ba139b3ab9d8b4f4de",
       "sourceName": "contracts/flat/BentoBoxFlat.sol",
@@ -1406,7 +1406,7 @@
         "RebaseLibrary"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/flat/SushiStrategyFlat.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/flat/SushiStrategyFlat.sol": {
       "lastModificationDate": 1652689142606,
       "contentHash": "fb7fa2acb1a610387a5b6b54d6001c79",
       "sourceName": "contracts/flat/SushiStrategyFlat.sol",
@@ -1458,7 +1458,7 @@
         "SushiStrategyV1"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/FixedPoint.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/libraries/FixedPoint.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "f9dacf238202666f27a9d81f1f829f74",
       "sourceName": "contracts/libraries/FixedPoint.sol",
@@ -1502,7 +1502,7 @@
         "FixedPoint"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/FullMath.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/libraries/FullMath.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "f4e86689a9c9d21e6b3c1ca5c6f5c9fa",
       "sourceName": "contracts/libraries/FullMath.sol",
@@ -1544,7 +1544,7 @@
         "FullMath"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/SignedSafeMath.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/libraries/SignedSafeMath.sol": {
       "lastModificationDate": 1652689142636,
       "contentHash": "9659050eda0c68d71ddf98ee26f48518",
       "sourceName": "contracts/libraries/SignedSafeMath.sol",
@@ -1586,7 +1586,7 @@
         "SignedSafeMath"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ReturnFalseERC20Mock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/ReturnFalseERC20Mock.sol": {
       "lastModificationDate": 1652689142656,
       "contentHash": "4f8a2a3ac639671379a51d3267118fa8",
       "sourceName": "contracts/mocks/ReturnFalseERC20Mock.sol",
@@ -1628,7 +1628,7 @@
         "ReturnFalseERC20Mock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/RevertingERC20Mock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/RevertingERC20Mock.sol": {
       "lastModificationDate": 1652689142656,
       "contentHash": "5124ba81181c4ac21106574990abd104",
       "sourceName": "contracts/mocks/RevertingERC20Mock.sol",
@@ -1670,7 +1670,7 @@
         "RevertingERC20Mock"
       ]
     },
-    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/WETH9Mock.sol": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/v1/contracts/mocks/WETH9Mock.sol": {
       "lastModificationDate": 1652689673786,
       "contentHash": "dc9abb2e4a57acacec60c99ff6a0ef88",
       "sourceName": "contracts/mocks/WETH9Mock.sol",

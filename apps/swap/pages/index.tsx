@@ -1,6 +1,6 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import chain from '@sushiswap/chain'
-import { Amount, Native, tryParseAmount, Type, USDC } from '@sushiswap/currency'
+import { Amount, Native, tryParseAmount, Type, USDC, USDC_ADDRESS } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
@@ -160,31 +160,30 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
       )
     }
 
-    // if (
-    //   srcChainId &&
-    //   dstChainId &&
-    //   srcMinimumAmountOut &&
-    //   dstMinimumAmountOut &&
-    //   dstTrade?.trade instanceof TradeV1 &&
-    //   dstTrade?.trade?.route?.path?.length
-    // ) {
-    //   console.log('cook teleport and swap to v1')
-    //   cooker.teleport(
-    //     srcChainId,
-    //     dstChainId,
-    //     [3, 5],
-    //     [0, 0],
-    //     [
-    //       cooker.encodeWithdraw(USDC_ADDRESS[dstChainId], dstTrade.trade.route.pairs[0].liquidityToken.address),
-    //       cooker.encodeLegacySwap(
-    //         dstChainId,
-    //         srcMinimumAmountOut.quotient.toString(),
-    //         dstMinimumAmountOut.quotient.toString(),
-    //         dstTrade.trade.route.path.map((token) => token.address),
-    //       ),
-    //     ],
-    //   )
-    // }
+    if (
+      srcChainId &&
+      dstChainId &&
+      srcMinimumAmountOut &&
+      dstMinimumAmountOut &&
+      dstTrade instanceof TradeV1 &&
+      dstTrade?.route?.path?.length
+    ) {
+      console.log('cook teleport and swap to v1')
+      cooker.teleport(
+        srcChainId,
+        dstChainId,
+        [3, 7],
+        [0, 0],
+        [
+          cooker.encodeWithdraw(USDC_ADDRESS[dstChainId], dstTrade.route.pairs[0].liquidityToken.address),
+          cooker.encodeLegacyExactInput(
+            srcMinimumAmountOut.quotient.toString(),
+            dstMinimumAmountOut.quotient.toString(),
+            dstTrade.route.path.map((token) => token.address)
+          ),
+        ]
+      )
+    }
 
     if (
       srcChainId &&
@@ -216,7 +215,7 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
                 pool: dstTrade.route.legs[0].poolAddress,
                 data: defaultAbiCoder.encode(
                   ['address', 'address', 'bool'],
-                  [dstTrade.route.legs[0].tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], true]
+                  [dstTrade.route.legs[0].tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], dstUseBentoBox]
                 ),
               },
             ]
