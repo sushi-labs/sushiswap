@@ -1,12 +1,12 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMultipleContractSingleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { useBlockNumber } from 'wagmi'
 
-const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
+const PAIR_INTERFACE = new Interface(IUniswapV2PairArtifact.abi)
 
 export enum PairState {
   LOADING,

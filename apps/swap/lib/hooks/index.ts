@@ -1,1 +1,1 @@
-export { useLatestBlock } from './useLatestBlock'
+export * from './multicall'

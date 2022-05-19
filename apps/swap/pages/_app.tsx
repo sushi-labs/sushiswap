@@ -1,9 +1,9 @@
 import '@sushiswap/ui/index.css'
 
 import { ChainId } from '@sushiswap/chain'
+import { useLatestBlock } from '@sushiswap/hooks'
 import { App, Container, SushiIcon } from '@sushiswap/ui'
 import { client, Wallet } from '@sushiswap/wallet-connector'
-import { useLatestBlock } from 'lib/hooks'
 import { getProviders } from 'lib/provider'
 import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
 import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
@@ -82,7 +82,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       // blockNumberRopsten,
       // blockNumberGorli,
       // blockNumberKovan,
-    ],
+    ]
   )
 
   // console.log({

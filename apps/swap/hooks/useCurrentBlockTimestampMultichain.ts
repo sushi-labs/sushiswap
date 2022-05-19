@@ -1,11 +1,11 @@
 import { Interface } from '@ethersproject/abi'
 import { ChainId } from '@sushiswap/chain'
-import { abi as UniswapInterfaceMulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
+import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { MULTICALL_ADDRESS } from 'config'
 import { useMultiChainSingleContractSingleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 
-const MULTICALL_INTERFACE = new Interface(UniswapInterfaceMulticallABI)
+const MULTICALL_INTERFACE = new Interface(UniswapInterfaceMulticallArtifact.abi)
 
 export function useCurrentBlockTimestampMultichain(
   chainIds: ChainId[],
