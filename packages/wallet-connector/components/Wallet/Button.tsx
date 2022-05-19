@@ -1,12 +1,13 @@
-import { LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button as UIButton, CoinbaseWalletIcon, Loader, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
-import { FC, ReactElement, ReactNode } from 'react'
+import React, { FC, ReactElement, ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 import { Account } from '../Account'
 
 const Icons: Record<string, ReactNode> = {
+  Injected: <ChevronDoubleDownIcon width={16} height={16} />,
   MetaMask: <MetamaskIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
@@ -26,7 +27,9 @@ export const Button: FC<Props> = ({ hack, label, button }) => {
   const { isConnected, isReconnecting, isConnecting, connectors, connect, pendingConnector } = hack || useConnect()
 
   if (!!pendingConnector && isConnecting) {
-    return (
+    return button ? (
+      React.createElement(UIButton, { ...button.props, startIcon: <Loader />, disabled: true }, 'Authorize Wallet')
+    ) : (
       <UIButton
         endIcon={<Loader />}
         variant="filled"
@@ -71,7 +74,7 @@ export const Button: FC<Props> = ({ hack, label, button }) => {
 
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
-        <div className="px-3">
+        <div className="hidden px-3 sm:block">
           <Account.Balance address={data?.address} />
         </div>
         <Menu

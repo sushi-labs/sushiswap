@@ -1,12 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-// import {
-//   findMultiRouteExactIn,
-//   findMultiRouteExactOut,
-//   findSingleRouteExactIn,
-//   findSingleRouteExactOut,
-// } from '@sushiswap/tines'
-
 export default (request: VercelRequest, response: VercelResponse) => {
   const srcChain = request.query.srcChain
   const srcToken = request.query.srcToken

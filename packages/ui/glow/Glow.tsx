@@ -4,12 +4,17 @@ import React from 'react'
 type Props = {
   children?: React.ReactNode
   className?: string
+  backdrop?: React.ReactNode
 }
 
-export function Glow({ children, className }: Props): JSX.Element {
+export function Glow({
+  children,
+  className = 'from-pink/5 to-blue/5 bg-gradient-radial',
+  backdrop,
+}: Props): JSX.Element {
   return (
-    <div className={classNames(className, 'relative w-full')}>
-      <div className={classNames('from-pink/5 to-blue/5 fixed inset-0 bg-gradient-radial z-0 pointer-events-none')} />
+    <div className="relative w-full">
+      <div className={classNames(className, 'fixed inset-0 z-0 pointer-events-none')}>{backdrop}</div>
       <div className="relative filter">{children}</div>
     </div>
   )

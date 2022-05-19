@@ -1,13 +1,13 @@
 import { Switch as HeadlessUiSwitch } from '@headlessui/react'
 import classNames from 'classnames'
-import { ComponentPropsWithRef, FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 type SwitchColor = 'default' | 'gradient'
 
-type SwitchProps = ComponentPropsWithRef<typeof HeadlessUiSwitch> & {
-  size?: 'xs' | 'sm' | 'md'
+type SwitchProps = {
   checked: boolean
-  onChange: (checked: boolean) => void
+  onChange(checked: boolean): void
+  size?: 'xs' | 'sm' | 'md'
   checkedIcon?: ReactNode
   uncheckedIcon?: ReactNode
   color?: SwitchColor
@@ -15,7 +15,7 @@ type SwitchProps = ComponentPropsWithRef<typeof HeadlessUiSwitch> & {
 }
 
 const COLOR = {
-  default: (checked: boolean) => (checked ? 'bg-slate-600' : 'bg-slate-600'),
+  default: (checked: boolean) => (checked ? 'bg-slate-100' : 'bg-slate-100'),
   gradient: (checked: boolean) => (checked ? 'bg-gradient-to-r from-blue to-pink' : 'bg-slate-700'),
 }
 
@@ -48,7 +48,7 @@ export const Switch: FC<SwitchProps> = ({
       checked={checked}
       onChange={onChange}
       className={classNames(
-        `flex items-center bg-slate-800 border border-slate-700 relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`,
+        `flex items-center bg-slate-800 border border-slate-700 relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
       )}
       style={{ height, width }}
     >
@@ -57,7 +57,7 @@ export const Switch: FC<SwitchProps> = ({
         className={classNames(
           checked ? 'translate-x-[30px]' : 'translate-x-[2px]',
           COLOR[color](checked),
-          `transition-colors transition-transform pointer-events-none p-1 rounded-full shadow-md ease-in-out duration-200 inline-flex items-center justify-center`,
+          `transition-colors transition-transform pointer-events-none p-1 rounded-full shadow-md ease-in-out duration-200 inline-flex items-center justify-center`
         )}
         style={{ height: height - 6, width: height - 6, transform: `translate(${checked ? 30 : 2}, 0)` }}
       >

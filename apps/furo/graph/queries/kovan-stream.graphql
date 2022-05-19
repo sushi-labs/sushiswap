@@ -81,6 +81,7 @@ query KovanStreamTransactions($id: String) {
     toBentoBox
     createdAtBlock
     createdAtTimestamp
+    txHash
     token {
       id
       name

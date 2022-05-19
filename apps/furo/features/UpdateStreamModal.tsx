@@ -1,24 +1,22 @@
-import { AddressZero } from '@ethersproject/constants'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, Dialog,Dots, Switch, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
+import { Button, classNames, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useContractWrite } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
+  abi: object
+  address: string
 }
 
-const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
-  const { activeChain } = useNetwork()
+const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address }) => {
   const { data: account } = useAccount()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
@@ -26,6 +24,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
   const [amount, setAmount] = useState<string>()
   const [endDate, setEndDate] = useState<string>()
   const [fromBentoBox, setFromBentoBox] = useState(false)
+  const [error, setError] = useState<string>()
 
   const amountAsEntity = useMemo(() => {
     if (!stream || !amount) return undefined
@@ -40,8 +39,8 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      addressOrName: address,
+      contractInterface: abi,
     },
     'updateStream',
     {
@@ -56,26 +55,32 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
     if (topUp && !amount) return
     if (changeEndDate && !endDate) return
 
+    setError(undefined)
+
     const difference = (new Date(endDate as string)?.getTime() - stream?.endTime.getTime()) / 1000
     const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
 
-    const data = await writeAsync({
-      args: [
-        BigNumber.from(stream.id),
-        BigNumber.from(topUp ? topUpAmount : '0'),
-        changeEndDate ? difference : 0,
-        fromBentoBox,
-      ],
-    })
+    try {
+      const data = await writeAsync({
+        args: [
+          BigNumber.from(stream.id),
+          BigNumber.from(topUp ? topUpAmount : '0'),
+          changeEndDate ? difference : 0,
+          fromBentoBox,
+        ],
+      })
 
-    createToast({
-      title: 'Update stream',
-      description: `You have successfully updated your stream`,
-      promise: data.wait(),
-    })
+      createToast({
+        title: 'Update stream',
+        description: `You have successfully updated your stream`,
+        promise: data.wait(),
+      })
+    } catch (e: any) {
+      setError(e.message)
+    }
   }, [amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream) return <></>
+  if (!stream) return null
 
   return (
     <>
@@ -84,8 +89,8 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
         fullWidth
         variant="outlined"
         color="gray"
-        disabled={stream.createdBy.id.toLocaleLowerCase() !== account?.address?.toLocaleLowerCase()}
         onClick={() => setOpen(true)}
+        disabled={account?.address && !stream?.canUpdate(account.address)}
       >
         Update
       </Button>
@@ -177,6 +182,11 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream }) => {
           <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
             {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
           </Button>
+          {error && (
+            <Typography variant="xs" className="text-center text-red" weight={700}>
+              {error}
+            </Typography>
+          )}
         </Dialog.Content>
       </Dialog>
     </>

@@ -1,4 +1,4 @@
-import { formatNumber,formatUSD } from '@sushiswap/format'
+import { formatNumber, formatUSD } from '@sushiswap/format'
 import sushiData from '@sushiswap/sushi-data'
 import Head from 'next/head'
 import Image from 'next/image'

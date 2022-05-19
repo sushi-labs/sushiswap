@@ -2,17 +2,18 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { CheckIcon, PlusIcon, XIcon } from '@heroicons/react/solid'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { Button, Dialog, Dots,Input, Select, Typography } from '@sushiswap/ui'
-import Switch from '@sushiswap/ui/switch/Switch'
+import { ZERO } from '@sushiswap/math'
+import { Button, Dialog, Dots, Input, Select, Switch, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { createToast } from 'components/Toast'
 import { BigNumber, utils } from 'ethers'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { TokenSelectorOverlay } from 'features/stream'
-import { ApprovalState,useApproveCallback } from 'hooks'
+import { ApprovalState, useApproveCallback } from 'hooks'
 import { useBentoBoxApproveCallback } from 'hooks/useBentoBoxApproveCallback'
+import { useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { useFuroVestingContract } from 'hooks/useFuroVestingContract'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { cloneElement, FC, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 const { parseUnits } = utils
@@ -30,23 +31,28 @@ const stepConfigurations: StepConfig[] = [
   { label: 'Yearly', time: 31557600 },
 ]
 
-const CreateVestingModal: FC = () => {
+interface CreateVestingModal {
+  button?: ReactElement
+}
+
+const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [cliff, setCliff] = useState(false)
-  const [gradedVesting, setGradedVesting] = useState(false)
-  const [token, setToken] = useState<Token>()
   const [error, setError] = useState<string>()
-  const [stepConfig, setStepConfig] = useState<StepConfig>(stepConfigurations[0])
-  const [fromBentoBox, setFromBentoBox] = useState<boolean>(true)
   const [recipient, setRecipient] = useState<string>()
   const [startDate, setStartDate] = useState<string>()
   const [cliffDate, setCliffDate] = useState<string>()
   const [cliffAmount, setCliffAmount] = useState<string>()
   const [stepAmount, setStepAmount] = useState<string>()
   const [stepEndDate, setStepEndDate] = useState<string>()
+  const [gradedVesting, setGradedVesting] = useState(false)
+  const [token, setToken] = useState<Token>()
+  const [stepConfig, setStepConfig] = useState<StepConfig>(stepConfigurations[0])
+
   const contract = useFuroVestingContract()
+  const { value: fundSource, fromBentobox, toggle } = useFundSourceToggler()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(open, contract?.address)
 
@@ -111,9 +117,9 @@ const CreateVestingModal: FC = () => {
         cliffDuration,
         stepDuration,
         steps,
-        cliffAmount: cliffAmountAsEntity ? cliffAmountAsEntity.quotient.toString() : BigNumber.from(0),
-        stepAmount: stepAmountAsEntity ? stepAmountAsEntity.quotient.toString() : BigNumber.from(0),
-        fromBentoBox,
+        cliffAmount: cliffAmountAsEntity ? cliffAmountAsEntity.toShare().quotient.toString() : BigNumber.from(0),
+        stepAmount: stepAmountAsEntity ? stepAmountAsEntity.toShare().quotient.toString() : BigNumber.from(0),
+        fromBentobox,
       }),
     ]
 
@@ -142,7 +148,7 @@ const CreateVestingModal: FC = () => {
     cliffAmountAsEntity,
     cliffDate,
     contract,
-    fromBentoBox,
+    fromBentobox,
     gradedVesting,
     recipient,
     sendTransactionAsync,
@@ -156,26 +162,33 @@ const CreateVestingModal: FC = () => {
 
   return (
     <>
-      <Button
-        startIcon={<PlusIcon width={18} height={18} />}
-        variant="filled"
-        color="blue"
-        size="sm"
-        onClick={() => setOpen(true)}
-      >
-        New vesting
-      </Button>
+      {button ? (
+        cloneElement(button, { onClick: () => setOpen(true) })
+      ) : (
+        <Button
+          startIcon={<PlusIcon width={18} height={18} />}
+          variant="filled"
+          color="blue"
+          size="sm"
+          onClick={() => setOpen(true)}
+          className="rounded-xl"
+        >
+          New vesting
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="!space-y-6 !max-w-4xl relative overflow-hidden border border-slate-700">
+        <Dialog.Content className="!space-y-6 !max-w-5xl relative overflow-hidden border border-slate-700">
           <Dialog.Header title="Create Vesting" onClose={() => setOpen(false)} />
-          <div className="grid grid-cols-2 divide-x divide-slate-800">
-            <div className="pr-6 space-y-6">
-              <TokenSelectorOverlay onSelect={setToken} currency={token} />
-              <div className="flex flex-col gap-2">
-                <Typography variant="sm" weight={500} className="text-slate-200">
-                  Start date
-                </Typography>
-                <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
+          <div className="grid md:grid-cols-2 md:divide-x divide-slate-800 space-y-6">
+            <div className="md:pr-6 space-y-6">
+              <div className="grid md:grid-cols-2 md:space-x-6 space-y-6 md:space-y-0">
+                <TokenSelectorOverlay onSelect={setToken} currency={token} />
+                <div className="flex flex-col gap-2">
+                  <Typography variant="sm" weight={500} className="text-slate-200">
+                    Start date
+                  </Typography>
+                  <Input.DatetimeLocal value={startDate} onChange={setStartDate} />
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 <Typography variant="sm" weight={500} className="text-slate-200">
@@ -184,7 +197,29 @@ const CreateVestingModal: FC = () => {
                 <Input.Address placeholder="0x..." type="text" value={recipient} onChange={setRecipient} />
               </div>
               <div className="h-px my-2 bg-slate-800" />
-              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/20 rounded-xl">
+              <div className="flex items-center justify-between gap-3">
+                <Typography variant="sm" weight={700} className="text-slate-200">
+                  Use funds from
+                </Typography>
+                <div className="flex gap-3 items-center">
+                  <Typography
+                    variant="sm"
+                    weight={!fromBentobox ? 700 : 400}
+                    className={!fromBentobox ? 'text-slate-50' : 'text-slate-400'}
+                  >
+                    Wallet
+                  </Typography>
+                  <Switch size="sm" checked={fromBentobox} onChange={toggle} color="default" />
+                  <Typography
+                    variant="sm"
+                    weight={fromBentobox ? 700 : 400}
+                    className={fromBentobox ? 'text-slate-50' : 'text-slate-400'}
+                  >
+                    Bentobox
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/30 rounded-xl">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
@@ -224,13 +259,14 @@ const CreateVestingModal: FC = () => {
                           amount={cliffAmount}
                           token={token}
                           account={account?.address}
+                          fundSource={fundSource}
                         />
                       </div>
                     </div>
                   </Transition>
                 </Disclosure>
               </div>
-              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/20 rounded-xl">
+              <div className="flex flex-col p-5 border border-slate-700 bg-slate-800/30 rounded-xl">
                 <Disclosure as="div">
                   <Disclosure.Button className="w-full">
                     <div className="flex items-center justify-between gap-3">
@@ -263,13 +299,14 @@ const CreateVestingModal: FC = () => {
                       </div>
                       <div className="flex flex-col gap-2">
                         <Typography variant="sm" weight={500} className="text-slate-200">
-                          Total amount
+                          Amount per payout
                         </Typography>
                         <CurrencyInput
                           onChange={setStepAmount}
                           account={account?.address}
                           amount={stepAmount}
                           token={token}
+                          fundSource={fundSource}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -293,19 +330,18 @@ const CreateVestingModal: FC = () => {
                 </Disclosure>
               </div>
             </div>
-            <div className="pl-6 space-y-6">Vesting chart</div>
+            <div className="md:pl-6 space-y-6">Vesting chart</div>
           </div>
-          <div className="h-px my-2 bg-slate-800" />
           <div className="flex justify-end gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
-              (token && tokenApprovalState !== ApprovalState.APPROVED)) && (
+              (token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState))) && (
               <div className="flex flex-col gap-4 md:flex-row">
                 {bentoBoxApprovalState !== ApprovalState.APPROVED && (
                   <Button variant="filled" color="blue" disabled={!!signature} onClick={approveBentoBox}>
                     Approve Bentobox
                   </Button>
                 )}
-                {token && tokenApprovalState !== ApprovalState.APPROVED && (
+                {token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState) && (
                   <Button
                     variant="filled"
                     color="blue"
@@ -327,12 +363,18 @@ const CreateVestingModal: FC = () => {
               disabled={
                 isWritePending ||
                 tokenApprovalState !== ApprovalState.APPROVED ||
-                (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature)
+                (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature) ||
+                !totalAmountAsEntity?.greaterThan(ZERO)
               }
               onClick={createVesting}
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
             </Button>
+            {error && (
+              <Typography variant="xs" className="text-center text-red" weight={700}>
+                {error}
+              </Typography>
+            )}
           </div>
         </Dialog.Content>
       </Dialog>

@@ -1,20 +1,19 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
-import { AddressMap } from '@sushiswap/core-sdk'
-import { FuroVesting } from 'furo/typechain/FuroVesting'
+import { AddressMap, ChainId } from '@sushiswap/chain'
+import { Contract } from 'ethers'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 
 import FUROVESTING_ABI from '../abis/FuroVesting.json'
 
 export const VESTING_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0x24B159BF6fC4588438098323AE4c852ad37584a6',
-  [ChainId.GÖRLI]: '0x08A10f7D99a8a0b53EfBFC61DE1aADEF26473061',
+  [ChainId.KOVAN]: '0xc3c4a93f58c499ce025d4586aff8c3a5c4b11be8',
+  [ChainId.GÖRLI]: '0x4dc1fae47ef7a44f5f42bca3480228c915fa2ddf',
 }
 
-export function useFuroVestingContract(): FuroVesting | null {
+export function useFuroVestingContract(): Contract | null {
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
-  return useContract<FuroVesting>({
+  return useContract<Contract>({
     addressOrName: activeChain?.id ? VESTING_ADDRESS[activeChain?.id] : AddressZero,
     contractInterface: FUROVESTING_ABI,
     signerOrProvider: signer,

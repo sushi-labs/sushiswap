@@ -1,18 +1,22 @@
+import { AddressZero } from '@ethersproject/constants'
+import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import { useIsMounted } from '@sushiswap/hooks'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import FUROVESTING_ABI from 'abis/FuroVesting.json'
+import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
-import { Vesting } from 'features/context'
-import {
-  ScheduleRepresentation,
-  TransactionRepresentation,
-  VestingRepresentation,
-} from 'features/context/representations'
+import { ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
+import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
 import LinkPopover from 'features/LinkPopover'
+import TransferStreamModal from 'features/TransferStreamModal'
 import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
+import { VESTING_ADDRESS } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -52,9 +56,10 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
 }
 
 const _VestingPage: FC = () => {
+  const isMounted = useIsMounted()
   const router = useRouter()
-  const chainId = router.query.chainId as string
-  const id = router.query.id as string
+  const chainId = Number(router.query.chainId as string)
+  const id = Number(router.query.id as string)
 
   const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
   const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
@@ -65,59 +70,89 @@ const _VestingPage: FC = () => {
     [vestingRepresentation],
   )
 
+  if (!isMounted) return null
+
   return (
-    <Layout>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
-        <div className="w-[630px]">
-          <VestingChart vesting={vesting} schedule={schedule} />
-          <div className="flex justify-center gap-2">
-            <LinkPopover furo={vesting} />
-            {/* Create a DetailsPoperover for vesting */}
-            {/* <StreamDetailsPopover stream={vesting} /> */}
-            <HistoryPopover transactionRepresentations={transactions} />
-            <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
-          </div>
+    <Layout
+      backdrop={
+        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+          <BackgroundVector width="100%" preserveAspectRatio="none" />
         </div>
-        <div className="w-[280px] flex flex-col col-span-2 justify-between">
+      }
+    >
+      <div className="flex gap-3 items-center mt-4">
+        <Link href="/dashboard" passHref={true}>
+          <a className="group flex items-center gap-2">
+            <HomeIcon width={16} className="group-hover:text-slate-50 text-slate-400 cursor-pointer" />
+            <Typography variant="sm" weight={700} className="group-hover:text-slate-50 text-slate-400 cursor-pointer">
+              Dashboard
+            </Typography>
+          </a>
+        </Link>
+        <ChevronRightIcon width={24} className="text-slate-400" />
+        <Typography variant="sm" weight={700} className="text-slate-600">
+          Vesting
+        </Typography>
+      </div>
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
+        <div className="flex justify-center">
+          <VestingChart vesting={vesting} schedule={schedule} />
+        </div>
+        <div>
           <div className="flex flex-col justify-center gap-5">
-            <div className="flex flex-col gap-2 p-5 border shadow-md bg-slate-900 border-slate-800 rounded-2xl">
-              <div className="flex items-center justify-between gap-2">
-                <Typography variant="sm" weight={400}>
-                  Progress:
-                </Typography>
-                <Typography variant="lg" weight={700}>
-                  {(Number(vesting?.streamedPercentage) * 100).toFixed(2)}%
-                </Typography>
-              </div>
+            <ProgressBarCard
+              aria-hidden="true"
+              label="Streamed"
+              value={`${(Number(vesting?.streamedPercentage) * 100).toFixed(2)}%`}
+            >
               <ProgressBar
                 progress={vesting ? vesting.streamedPercentage.toFixed(4) : 0}
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />
-            </div>
-            <div className="flex flex-col gap-2 p-5 border shadow-md bg-slate-900 border-slate-800 rounded-2xl">
-              <div className="flex items-center justify-between gap-2">
-                <Typography variant="sm" weight={400}>
-                  Withdrawn:
-                </Typography>
-                <Typography variant="lg" weight={700}>
-                  {(Number(vesting?.withdrawnPercentage) * 100).toFixed(2)}%
-                </Typography>
-              </div>
+            </ProgressBarCard>
+            <ProgressBarCard
+              aria-hidden="true"
+              label="Withdrawn"
+              value={`${(Number(vesting?.withdrawnPercentage) * 100).toFixed(2)}%`}
+            >
               <ProgressBar
                 progress={vesting ? vesting?.withdrawnPercentage : 0}
                 color={ProgressColor.PINK}
                 showLabel={false}
               />
-            </div>
+            </ProgressBarCard>
             <div className="mt-3">
               <NextPaymentTimer vesting={vesting} />
             </div>
-            {/* <div className="mt-3">
-              <FuroTimer furo={vesting} />
-            </div> */}
           </div>
-          <div className="flex flex-col gap-1" />
+        </div>
+        <div className="flex items-end justify-center gap-2">
+          <LinkPopover furo={vesting} />
+          {/* Create a DetailsPopover for vesting */}
+          {/* <StreamDetailsPopover stream={vesting} /> */}
+          <HistoryPopover transactionRepresentations={transactions} />
+          <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
+        </div>
+        <div className="flex flex-col gap-2">
+          {/*<WithdrawModal*/}
+          {/*  stream={vesting}*/}
+          {/*  abi={FUROVESTING_ABI}*/}
+          {/*  address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}*/}
+          {/*/>*/}
+          <div className="flex gap-2">
+            <TransferStreamModal
+              stream={vesting}
+              abi={FUROVESTING_ABI}
+              address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+            />
+            <CancelStreamModal
+              stream={vesting}
+              abi={FUROVESTING_ABI}
+              address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+              fn="stopVesting"
+            />
+          </div>
         </div>
       </div>
     </Layout>

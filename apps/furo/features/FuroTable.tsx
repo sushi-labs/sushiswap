@@ -1,13 +1,14 @@
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
-import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { Vesting } from 'features/context'
+import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
+import { StreamRepresentation, Vesting, VestingRepresentation } from 'features/context'
+import { getExplorerLink } from 'functions'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { FuroStatus } from './context/enums'
-import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
 
 export enum FuroTableType {
@@ -16,6 +17,8 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
+  globalFilter: any
+  setGlobalFilter: any
   streams: StreamRepresentation[]
   vestings: VestingRepresentation[]
   type: FuroTableType
@@ -23,9 +26,19 @@ interface FuroTableProps {
   loading: boolean
 }
 
-const table = createTable().setRowType<Stream>()
+const showActiveOnly: FilterFn<Stream> = (row, columnId) => {
+  return row.getValue(columnId) === FuroStatus.ACTIVE
+}
 
-const defaultColumns = (tableProps: FuroTableProps) => [
+const table = createTable()
+  .setOptions({
+    filterFns: {
+      showActiveOnly: showActiveOnly,
+    },
+  })
+  .setRowType<Stream>()
+
+const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
     header: () => <div className="w-full text-left">Streamed</div>,
     cell: (props) => (
@@ -44,6 +57,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
   }),
   table.createDataColumn('status', {
     header: () => <div className="w-full text-left">Status</div>,
+    filterFn: 'showActiveOnly',
     cell: (props) => (
       <Chip
         className="capitalize"
@@ -52,7 +66,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           props.getValue() === FuroStatus.CANCELLED
             ? 'red'
             : props.getValue() === FuroStatus.COMPLETED
-            ? 'default'
+            ? 'blue'
             : props.getValue() === FuroStatus.ACTIVE
             ? 'green'
             : props.getValue() === FuroStatus.UPCOMING
@@ -67,7 +81,6 @@ const defaultColumns = (tableProps: FuroTableProps) => [
   table.createDataColumn('amount', {
     header: () => <div className="w-full text-right">Amount</div>,
     cell: (props) => {
-      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
@@ -88,13 +101,19 @@ const defaultColumns = (tableProps: FuroTableProps) => [
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
     header: () => <div className="w-full text-left">From</div>,
-    cell: (props) => <div className="w-full text-left text-blue">{shortenAddress(props.getValue() as string)}</div>,
+    cell: (props) => (
+      <Link href={getExplorerLink(tableProps.chainId, props.getValue(), 'address')} passHref={true}>
+        <a target="_blank" className="w-full text-left text-blue" onClick={(e) => e.stopPropagation()}>
+          {shortenAddress(props.getValue() as string)}
+        </a>
+      </Link>
+    ),
   }),
   table.createDataColumn('startTime', {
     header: () => <div className="w-full text-left">Start Date</div>,
     cell: (props) => (
       <div className="flex flex-col gap-0.5">
-        <Typography variant="sm">
+        <Typography variant="sm" className="whitespace-nowrap">
           {props.getValue().toLocaleString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -124,12 +143,20 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     [streams, vestings],
   )
 
-  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns(props)])
+  const [columns] = React.useState<typeof defaultColumns>(() => [
+    ...defaultColumns({ ...props, chainId: activeChain?.id }),
+  ])
 
   const instance = useTableInstance(table, {
     data,
     columns,
+    state: {
+      globalFilter: props.globalFilter,
+    },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: 'showActiveOnly',
+    onGlobalFilterChange: props.setGlobalFilter,
   })
 
   return (

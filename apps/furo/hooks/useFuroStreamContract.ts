@@ -1,19 +1,19 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
-import { AddressMap, JSBI, Token } from '@sushiswap/core-sdk'
-import { Amount } from '@sushiswap/currency'
-import { FuroStream } from 'furo/typechain/FuroStream'
+import { AddressMap, ChainId } from '@sushiswap/chain'
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
+import { Contract } from 'ethers'
 import { useMemo } from 'react'
 import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
 
 import FUROSTREAM_ABI from '../abis/FuroStream.json'
 
 export const STREAM_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0x2a214DF929fba60509Dc2a236376ac53453cf443',
-  [ChainId.GÖRLI]: '0xDDc2C7dd0578b06F708aAf7Fd10765F7e1b98156',
+  [ChainId.KOVAN]: '0xa60f90530e9412fe1a19ff91f1491f1738953b7c',
+  [ChainId.GÖRLI]: '0x9c87d6a9d88347e90c1bfdee334b41abf5c4a079',
 }
 
-export function useFuroStreamContract(): FuroStream | null {
+export function useFuroStreamContract(): Contract | null {
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
   return useContract({

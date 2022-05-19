@@ -1,4 +1,4 @@
-import { InfuraProvider,JsonRpcProvider } from '@ethersproject/providers'
+import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 
 import { getInfuraChainName } from './getInfuraChainName'

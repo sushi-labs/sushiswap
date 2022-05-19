@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { LinkIcon } from '@heroicons/react/solid'
-import { ArrowFlatLinesUp, CheckIcon, classNames,Link, Typography } from '@sushiswap/ui'
+import { ArrowFlatLinesUp, CheckIcon, classNames, Link, Typography } from '@sushiswap/ui'
 import { Stream, Vesting } from 'features/context'
 import { getExplorerLink } from 'functions/explorer'
 import { usePopover } from 'hooks/usePopover'
@@ -25,8 +25,8 @@ const LinkPopover: FC<Props> = ({ furo }) => {
           <Popover.Button ref={setReferenceElement}>
             <div
               className={classNames(
-                open ? 'border-slate-600 bg-slate-700' : 'border-slate-700',
-                'flex items-center gap-2 px-5 border shadow-md cursor-pointer hover:border-slate-600 active:border-slate-500 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-xl h-11',
+                open ? 'bg-slate-600' : '',
+                'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11',
               )}
             >
               <LinkIcon width={18} height={18} />
@@ -52,9 +52,9 @@ const LinkPopover: FC<Props> = ({ furo }) => {
               }}
               className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-md border-slate-700 hover:border-slate-600 active:border-slate-500"
             >
-              <div className="p-4 border rounded-full border-slate-700 bg-slate-800">
+              <div className="p-4 border rounded-full border-slate-700 bg-slate-800 flex items-center justify-center">
                 {!senderCopied ? (
-                  <ArrowFlatLinesUp width={48} height={48} className="transform rotate-180 text-blue" />
+                  <ArrowFlatLinesUp width={48} height={48} className="transform rotate-[225deg] text-blue" />
                 ) : (
                   <CheckIcon width={48} height={48} className="text-blue" />
                 )}
@@ -73,9 +73,9 @@ const LinkPopover: FC<Props> = ({ furo }) => {
               }}
               className="flex flex-col items-center gap-2 p-4 border cursor-pointer rounded-xl shadow-md border-slate-700 hover:border-slate-600 active:border-slate-500"
             >
-              <div className="p-4 border rounded-full border-slate-700 bg-slate-800">
+              <div className="p-4 border rounded-full border-slate-700 bg-slate-800 flex items-center justify-center">
                 {!recipentCopied ? (
-                  <ArrowFlatLinesUp width={48} height={48} className="text-pink" />
+                  <ArrowFlatLinesUp width={48} height={48} className="text-pink transform rotate-[315deg]" />
                 ) : (
                   <CheckIcon width={48} height={48} className="text-pink" />
                 )}

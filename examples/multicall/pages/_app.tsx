@@ -1,8 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import type { AppProps } from 'next/app'
-import { FC } from 'react'
-import { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 
 import { ChainId } from '../constants'

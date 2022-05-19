@@ -45,6 +45,7 @@ export interface TransactionRepresentation {
   createdAtTimestamp: string
   token: TokenRepresentation
   to: UserRepresentation
+  txHash: string
 }
 
 export interface ScheduleRepresentation {

@@ -8,7 +8,9 @@
     "type": "constructor"
   },
   { "inputs": [], "name": "InvalidStart", "type": "error" },
+  { "inputs": [], "name": "InvalidStepSetting", "type": "error" },
   { "inputs": [], "name": "NotOwner", "type": "error" },
+  { "inputs": [], "name": "NotVestReceiver", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -52,8 +54,8 @@
       { "indexed": false, "internalType": "uint32", "name": "cliffDuration", "type": "uint32" },
       { "indexed": false, "internalType": "uint32", "name": "stepDuration", "type": "uint32" },
       { "indexed": false, "internalType": "uint32", "name": "steps", "type": "uint32" },
-      { "indexed": false, "internalType": "uint128", "name": "cliffAmount", "type": "uint128" },
-      { "indexed": false, "internalType": "uint128", "name": "stepAmount", "type": "uint128" },
+      { "indexed": false, "internalType": "uint128", "name": "cliffShares", "type": "uint128" },
+      { "indexed": false, "internalType": "uint128", "name": "stepShares", "type": "uint128" },
       { "indexed": false, "internalType": "bool", "name": "fromBentoBox", "type": "bool" }
     ],
     "name": "CreateVesting",
@@ -66,15 +68,6 @@
       { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "LogUpdateOwner",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
-    ],
-    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -97,6 +90,13 @@
     ],
     "name": "Withdraw",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "PERCENTAGE_PRECISION",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -132,23 +132,31 @@
     "stateMutability": "view",
     "type": "function"
   },
-  { "inputs": [], "name": "claimOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
     "inputs": [
-      { "internalType": "contract IERC20", "name": "token", "type": "address" },
-      { "internalType": "address", "name": "recipient", "type": "address" },
-      { "internalType": "uint32", "name": "start", "type": "uint32" },
-      { "internalType": "uint32", "name": "cliffDuration", "type": "uint32" },
-      { "internalType": "uint32", "name": "stepDuration", "type": "uint32" },
-      { "internalType": "uint32", "name": "steps", "type": "uint32" },
-      { "internalType": "uint128", "name": "cliffAmount", "type": "uint128" },
-      { "internalType": "uint128", "name": "stepAmount", "type": "uint128" },
-      { "internalType": "bool", "name": "fromBentoBox", "type": "bool" }
+      {
+        "components": [
+          { "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint32", "name": "start", "type": "uint32" },
+          { "internalType": "uint32", "name": "cliffDuration", "type": "uint32" },
+          { "internalType": "uint32", "name": "stepDuration", "type": "uint32" },
+          { "internalType": "uint32", "name": "steps", "type": "uint32" },
+          { "internalType": "uint128", "name": "stepPercentage", "type": "uint128" },
+          { "internalType": "uint128", "name": "amount", "type": "uint128" },
+          { "internalType": "bool", "name": "fromBentoBox", "type": "bool" }
+        ],
+        "internalType": "struct IFuroVesting.VestParams",
+        "name": "vestParams",
+        "type": "tuple"
+      }
     ],
     "name": "createVesting",
     "outputs": [
       { "internalType": "uint256", "name": "depositedShares", "type": "uint256" },
-      { "internalType": "uint256", "name": "vestId", "type": "uint256" }
+      { "internalType": "uint256", "name": "vestId", "type": "uint256" },
+      { "internalType": "uint128", "name": "stepShares", "type": "uint128" },
+      { "internalType": "uint128", "name": "cliffShares", "type": "uint128" }
     ],
     "stateMutability": "payable",
     "type": "function"
@@ -178,22 +186,8 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "ownerOf",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pendingOwner",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -304,17 +298,6 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" },
-      { "internalType": "bool", "name": "direct", "type": "bool" },
-      { "internalType": "bool", "name": "renounce", "type": "bool" }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
       { "internalType": "uint256", "name": "vestId", "type": "uint256" },
       { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
@@ -347,8 +330,8 @@
       { "internalType": "uint32", "name": "cliffDuration", "type": "uint32" },
       { "internalType": "uint32", "name": "stepDuration", "type": "uint32" },
       { "internalType": "uint32", "name": "steps", "type": "uint32" },
-      { "internalType": "uint128", "name": "cliffAmount", "type": "uint128" },
-      { "internalType": "uint128", "name": "stepAmount", "type": "uint128" },
+      { "internalType": "uint128", "name": "cliffShares", "type": "uint128" },
+      { "internalType": "uint128", "name": "stepShares", "type": "uint128" },
       { "internalType": "uint128", "name": "claimed", "type": "uint128" }
     ],
     "stateMutability": "view",

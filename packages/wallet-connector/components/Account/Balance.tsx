@@ -1,8 +1,7 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import { Amount, Native } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { Typography } from '@sushiswap/ui'
-import Loader from '@sushiswap/ui/loader/Loader'
+import { Loader, Typography } from '@sushiswap/ui'
 import { useBalance, useNetwork } from 'wagmi'
 
 export type Props = {

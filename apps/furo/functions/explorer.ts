@@ -113,7 +113,7 @@ const chains: ChainObject = {
     link: 'https://kovan.etherscan.io',
     builder: explorers.etherscan,
   },
-  [ChainId.POLYGON_TESTNET]: {
+  [ChainId.POLYGON]: {
     link: 'https://polygonscan.com',
     builder: explorers.etherscan,
   },

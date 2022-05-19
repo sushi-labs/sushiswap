@@ -1,6 +1,6 @@
-import { Type, Token } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
-import { isAddress, getAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address'
 
 type TagDetails = Tags[keyof Tags]
 interface TagInfo extends TagDetails {

@@ -99,6 +99,8 @@ export enum ChainId {
   OPTIMISM_KOVAN_TESTNET = 69,
 }
 
+export type AddressMap = { [chainId: number]: string }
+
 export class Chain implements Chain {
   //
 }
