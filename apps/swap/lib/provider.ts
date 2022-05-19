@@ -1,66 +1,7 @@
-import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall'
-import { Contract, providers, utils } from 'ethers'
-import { useEffect, useMemo, useState } from 'react'
-import { UniswapInterfaceMulticall } from './typechain'
 import { ChainId } from '@sushiswap/chain'
-import { MULTICALL_ADDRESS } from 'config'
-import { useMultiChainSingleContractSingleData, useSingleCallResult } from './multicall'
+import { providers } from 'ethers'
 
 const providerCache: Partial<Record<ChainId, providers.JsonRpcProvider>> = {}
-const MulticallInterface = new utils.Interface(MulticallABI)
-
-export function useContract(chainId: ChainId) {
-  return useMemo(() => {
-    return new Contract(MULTICALL_ADDRESS[chainId], MulticallABI, getProvider(chainId)) as UniswapInterfaceMulticall
-  }, [chainId]) as UniswapInterfaceMulticall
-}
-
-export function useLatestBlock(provider: providers.JsonRpcProvider) {
-  const [blockNumber, setBlockNumber] = useState<number | undefined>(undefined)
-  useEffect(() => {
-    if (!provider) return
-    const onBlock = (num: number) => setBlockNumber(num)
-    provider.on('block', onBlock)
-    return () => {
-      provider.off('block', onBlock)
-    }
-  }, [provider, setBlockNumber])
-  return blockNumber
-}
-
-export function useCurrentBlockTimestamp(chainId: ChainId, blockNumber: number | undefined): string | undefined {
-  const contract = useContract(chainId)
-  const callState = useSingleCallResult(chainId, blockNumber, contract, 'getCurrentBlockTimestamp')
-  return callState.result?.[0]?.toString()
-}
-
-export function useCurrentBlockTimestampMultichain(
-  chainIds: ChainId[],
-  blockNumbers: Array<number | undefined>,
-): Array<string | undefined> {
-  const chainToBlock = useMemo(() => {
-    return chainIds.reduce((result, chainId, i) => {
-      result[chainId] = blockNumbers[i]
-      return result
-    }, {} as Record<number, number | undefined>)
-  }, [chainIds, blockNumbers])
-
-  const chainToAddress = useMemo(() => {
-    return chainIds.reduce((result, chainId) => {
-      result[chainId] = MULTICALL_ADDRESS[chainId]
-      return result
-    }, {} as Record<number, string>)
-  }, [chainIds])
-
-  const chainToCallState = useMultiChainSingleContractSingleData(
-    chainToBlock,
-    chainToAddress,
-    MulticallInterface,
-    'getCurrentBlockTimestamp',
-  )
-
-  return Object.values(chainToCallState).map((callState) => callState.result?.[0]?.toString())
-}
 
 const ALCHEMY_ENABLED_CHAINS = [
   ChainId.ETHEREUM,

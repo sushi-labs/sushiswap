@@ -1,0 +1,1 @@
+export { useLatestBlock } from './useLatestBlock'

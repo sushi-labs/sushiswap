@@ -18,6 +18,12 @@ pnp exec
 
 pnpn run dev
 
+### Beast Mode
+
+Runs dev for all apps and composes under localhost:3000
+
+pnpm exec turbo run dev --filter=...{./apps/*}
+
 #### Single Repository
 
 pnpm exec turbo run dev --scope=api/app/package/protocol

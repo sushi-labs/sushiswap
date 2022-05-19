@@ -1,6 +1,6 @@
-import React from 'react'
-import { ChainId } from './config'
-import { useContract } from './hooks'
+import { ChainId } from '@sushiswap/chain'
+import { useContract } from 'hooks'
+
 import { multicall } from './multicall'
 
 interface Props {
