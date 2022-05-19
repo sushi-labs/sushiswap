@@ -36,6 +36,7 @@ yarn-error.log*
 # webstorm
 .idea
 
+# vercel
 .vercel
 
 # env
@@ -46,3 +47,9 @@ yarn-error.log*
 
 # typechain
 typechain
+
+# cache
+cache
+
+# generated
+generated
