@@ -47,7 +47,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
       onClick={() => amountInputRef.current?.focus()}
       className={classNames(
         className,
-        'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue shadow-md',
+        'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue',
       )}
     >
       <div className="flex items-center justify-between gap-1">

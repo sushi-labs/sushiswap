@@ -8,21 +8,23 @@ export type MenuItem = ExtractProps<typeof HeadlessMenu.Item> & {
   className?: string
 }
 
-export const MenuItem: FC<MenuItem> = forwardRef<HTMLDivElement, MenuItem>(({ className, children, ...props }, ref) => {
-  return (
-    <HeadlessMenu.Item
-      {...props}
-      ref={ref}
-      as="div"
-      className={({ active }: { active: boolean; selected: boolean }) =>
-        classNames(
-          active ? 'text-white bg-blue-500' : 'text-high-emphesis',
-          'font-bold text-sm cursor-pointer select-none relative py-2 pl-4 pr-9 my-1 mx-1 rounded-xl',
-          className,
-        )
-      }
-    >
-      {children}
-    </HeadlessMenu.Item>
-  )
-})
+export const MenuItem: FC<MenuItem> = forwardRef<HTMLDivElement, MenuItem>(
+  ({ className, children, as, ...props }, ref) => {
+    return (
+      <HeadlessMenu.Item
+        {...props}
+        ref={ref}
+        as={as || 'div'}
+        className={({ active }: { active: boolean; selected: boolean }) =>
+          classNames(
+            active ? 'text-white bg-blue-500' : 'text-high-emphesis',
+            'block font-bold text-sm cursor-pointer select-none relative py-2 pl-4 pr-9 my-1 mx-1 rounded-xl',
+            className,
+          )
+        }
+      >
+        {children}
+      </HeadlessMenu.Item>
+    )
+  },
+)

@@ -4,7 +4,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
 import { CreateStreamModal } from 'features/stream'
-import CreateVestingModal from 'features/vesting/CreateVestingModal'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
@@ -41,7 +41,9 @@ const Header: FC = () => {
               >
                 <Menu.Items unmount={false} className="!min-w-0">
                   <CreateStreamModal button={<Menu.Item>Stream</Menu.Item>} />
-                  <CreateVestingModal button={<Menu.Item>Vesting</Menu.Item>} />
+                  <Link passHref={true} href="/vesting/create">
+                    <Menu.Item as="a">Vesting</Menu.Item>
+                  </Link>
                 </Menu.Items>
               </Menu>
             )}

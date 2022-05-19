@@ -18,7 +18,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       ...props,
       ref,
       className: classNames(
-        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
+        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md ring-1 ring-slate-900/10',
         className,
       ),
     },

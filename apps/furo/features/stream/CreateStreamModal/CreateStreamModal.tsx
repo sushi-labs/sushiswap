@@ -179,7 +179,6 @@ export const CreateStreamModalControlled: FC<CreateStreamModalControlledProps> =
               <Input.DatetimeLocal value={endDate} onChange={setEndDate} />
             </div>
           </div>
-          <div className="h-px my-2 bg-slate-800" />
           <div className="flex flex-col gap-4">
             {(bentoBoxApprovalState !== ApprovalState.APPROVED ||
               (token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState))) && (

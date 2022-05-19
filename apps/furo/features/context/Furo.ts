@@ -114,8 +114,9 @@ export abstract class Furo {
   }
 
   private setStatus(status: FuroStatus): FuroStatus {
+    if (status === FuroStatus.CANCELLED) return status
     if (!this.isStarted) return FuroStatus.UPCOMING
-    if (status === FuroStatus.CANCELLED || status === FuroStatus.EXTENDED) return status
+    if (status === FuroStatus.EXTENDED) return status
     if (this.isEnded) return FuroStatus.COMPLETED
     return status
   }

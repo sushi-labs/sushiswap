@@ -36,7 +36,7 @@ const table = createTable()
       showActiveOnly: showActiveOnly,
     },
   })
-  .setRowType<Stream>()
+  .setRowType<Stream | Vesting>()
 
 const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {

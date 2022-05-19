@@ -18,7 +18,7 @@ export const MenuButton: FC<MenuButton> = forwardRef(({ className, children, sta
       ...props,
       ref,
       className: classNames(
-        'relative w-full cursor-pointer rounded-xl bg-slate-900 hover:bg-slate-800 focus:bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
+        'relative w-full cursor-pointer rounded-xl bg-slate-900 hover:bg-slate-800 focus:bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md ring-1 ring-slate-900/10',
         className,
       ),
     },

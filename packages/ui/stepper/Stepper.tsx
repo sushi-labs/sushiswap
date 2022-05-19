@@ -1,0 +1,66 @@
+import React, { Children, cloneElement, createContext, FC, isValidElement, useContext, useMemo } from 'react'
+
+import { Step } from './Step'
+import { StepButtons } from './StepButtons'
+import { StepContent } from './StepContent'
+import { StepDescription } from './StepDescription'
+import { StepLabel } from './StepLabel'
+
+export interface StepDetails {
+  _index?: number
+  _active?: boolean
+  _last?: boolean
+}
+
+interface Stepper {
+  children: React.ReactElement<typeof Step> | React.ReactElement<typeof Step>[]
+  activeStep: number
+  setActiveStep(x: number): void
+}
+
+const StepperContext = createContext<Omit<Stepper, 'children'> & { steps: number }>({
+  steps: 0,
+  activeStep: 0,
+  setActiveStep(_: number) {},
+})
+
+export const useStepperContext = () => useContext(StepperContext)
+
+const StepperRoot: FC<Stepper> = ({ children, activeStep, setActiveStep }) => {
+  const contextValue = useMemo(
+    () => ({
+      steps: Children.count(children),
+      activeStep,
+      setActiveStep,
+    }),
+    [activeStep, children, setActiveStep],
+  )
+
+  return (
+    <StepperContext.Provider value={contextValue}>
+      {Children.map(children, (child, _index) => {
+        if (isValidElement(child)) {
+          return cloneElement(child, {
+            _index,
+            _active: _index === activeStep,
+            _last: _index === Children.count(children) - 1,
+          })
+        }
+      })}
+    </StepperContext.Provider>
+  )
+}
+
+export const Stepper: typeof StepperRoot & {
+  Step: typeof Step
+  Content: typeof StepContent
+  Description: typeof StepDescription
+  Label: typeof StepLabel
+  Buttons: typeof StepButtons
+} = Object.assign(StepperRoot, {
+  Step: Step,
+  Content: StepContent,
+  Description: StepDescription,
+  Label: StepLabel,
+  Buttons: StepButtons,
+})
