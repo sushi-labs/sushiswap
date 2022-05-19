@@ -1,0 +1,46 @@
+{
+  "name": "@sushiswap/swap-widget",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi UI",
+  "keywords": [
+    "sushi",
+    "ui",
+    "react",
+    "components"
+  ],
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.tsx",
+  "sideEffects": false,
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.tsx --format esm,cjs --dts --external react",
+    "dev": "tsup ./src/index.tsx --format esm,cjs --watch --dts --external react",
+    "lint": "TIMING=1 eslint src/**/*.ts* --fix",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tsup": "^5.12.7",
+    "typescript": "^4.6.4"
+  },
+  "peerDependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  }
+}
