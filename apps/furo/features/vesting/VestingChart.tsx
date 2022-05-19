@@ -62,7 +62,7 @@ export const VestingChart: FC<Props> = (props) => {
             <XYChart
               height={400}
               width={parent.width}
-              margin={{ left: 30, right: 0, top: 50, bottom: 50 }}
+              margin={{ left: 30, right: 10, top: 20, bottom: 50 }}
               captureEvents={true}
               xScale={{
                 type: 'time',
