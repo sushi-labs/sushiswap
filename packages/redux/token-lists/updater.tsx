@@ -1,10 +1,11 @@
-import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { useInterval, useIsWindowVisible } from '@sushiswap/hooks'
+import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+
 import { UNSUPPORTED_TOKEN_LIST_URLS } from './constants'
 import { TokenListsContext } from './context'
-import { useIsWindowVisible, useInterval } from '@sushiswap/hooks'
 import { useActiveListUrls, useAllLists, useFetchListCallback } from './hooks'
 
 export interface UpdaterProps {
@@ -15,7 +16,7 @@ export interface UpdaterProps {
 }
 
 function Updater(props: UpdaterProps): null {
-  const { context, chainId, library, isDebug } = props
+  const { context, library } = props
   const { actions } = context
   const dispatch = useDispatch()
 
@@ -25,12 +26,12 @@ function Updater(props: UpdaterProps): null {
   const lists = useAllLists(context)
   const activeListUrls = useActiveListUrls(context)
 
-  const fetchList = useFetchListCallback(context, chainId, library)
+  const fetchList = useFetchListCallback(context, library)
 
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
     Object.keys(lists).forEach((url) =>
-      fetchList(url).catch((error) => console.debug('interval list fetching error', error)),
+      fetchList(url).catch((error) => console.debug('interval list fetching error', error))
     )
   }, [fetchList, isWindowVisible, lists])
 
@@ -74,7 +75,7 @@ function Updater(props: UpdaterProps): null {
               dispatch(actions.accept(listUrl))
             } else {
               console.error(
-                `List at url ${listUrl} could not automatically update because the version bump was only PATCH/MINOR while the update had breaking changes and should have been MAJOR`,
+                `List at url ${listUrl} could not automatically update because the version bump was only PATCH/MINOR while the update had breaking changes and should have been MAJOR`
               )
             }
             break
@@ -85,7 +86,7 @@ function Updater(props: UpdaterProps): null {
         }
       }
     })
-  }, [dispatch, lists, activeListUrls])
+  }, [dispatch, lists, activeListUrls, actions])
 
   return null
 }

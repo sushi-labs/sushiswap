@@ -14,7 +14,6 @@ import { getTokenList, resolveENSContentHash, sortByListPriority, tokensToChainT
 
 export function useFetchListCallback(
   context: TokenListsContext,
-  chainId: number,
   library: JsonRpcProvider
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { actions } = context

@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
+
 import { DEFAULT_ACTIVE_LIST_URLS, DEFAULT_LIST_OF_LISTS } from './constants'
 import {
   AcceptPayload,
@@ -34,7 +35,7 @@ export const initialState: TokenListsState = {
   activeListUrls: DEFAULT_ACTIVE_LIST_URLS,
 }
 
-export function createTokenListsSlice(reducerPath: string) {
+export function createTokenListsSlice(reducerPath: string): Slice<TokenListsState> {
   return createSlice({
     name: reducerPath,
     initialState,
@@ -151,7 +152,7 @@ export function createTokenListsSlice(reducerPath: string) {
         } else if (state.lastInitializedDefaultListOfLists) {
           const lastInitializedSet = state.lastInitializedDefaultListOfLists.reduce<Set<string>>(
             (s, l) => s.add(l),
-            new Set(),
+            new Set()
           )
           const newListOfListsSet = DEFAULT_LIST_OF_LISTS.reduce<Set<string>>((s, l) => s.add(l), new Set())
 
