@@ -1,0 +1,12 @@
+{
+  "extends": "@sushiswap/typescript-config/base.json",
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "module": "CommonJS",
+    "target": "ES5",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  }
+}
