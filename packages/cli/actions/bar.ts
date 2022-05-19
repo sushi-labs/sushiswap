@@ -1,5 +1,5 @@
-import log from '@sushiswap/logger'
-import { getUnixTime,subMonths, subYears } from 'date-fns'
+import log from '@sushiswap/log'
+import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
 
 import { getBuiltGraphSDK } from './../.graphclient'

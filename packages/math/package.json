@@ -7,23 +7,30 @@
     "sushi",
     "math"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/math"
+  },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "./dist/index.js",
-  "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w",
+    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
-    "test": "jest"
+    "prepublishOnly": "pnpm build",
+    "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "@sushiswap/config/jest/node"
+    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "big.js": "^6.1.1",
@@ -33,10 +40,14 @@
     "toformat": "^2.0.0"
   },
   "devDependencies": {
-    "@sushiswap/config": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@types/big.js": "^6.1.3",
-    "@types/jest": "^27.4.1",
-    "jest": "^27.5.1",
-    "typescript": "^4.6.2"
+    "@types/jest": "^27.5.1",
+    "jest": "^28.1.0",
+    "tsup": "^5.12.7",
+    "typescript": "^4.6.4"
   }
 }

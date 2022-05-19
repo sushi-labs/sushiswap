@@ -10,7 +10,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
-  "source": "./src/index.ts",
+  "source": "./index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
@@ -21,17 +21,20 @@
     "dev": "tsc -w",
     "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
     "preinstall": "pnpm run generate",
-    "lint": "TIMING=1 eslint . --fix",
+    "lint": "TIMING=1 eslint ./index.ts --fix",
     "test": "jest --passWithNoTests"
   },
   "jest": {
-    "preset": "@sushiswap/config/jest/node"
+    "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@sushiswap/config": "workspace:*",
-    "@types/jest": "^27.4.1",
-    "eslint": "^8.10.0",
-    "jest": "^27.5.1",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/jest": "^27.5.1",
+    "eslint": "^8.15.0",
+    "jest": "^28.1.0",
     "typescript": "^4.6.2"
   }
 }
