@@ -4,6 +4,22 @@ import invariant from 'tiny-invariant'
 import { Token } from './Token'
 import { Type } from './Type'
 
+export class Share<T extends Type> extends Fraction {
+  public readonly currency: T
+  public readonly scale: JSBI
+
+  public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh): Share<T> {
+    return new Share(currency, rawShare)
+  }
+
+  protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
+    super(numerator, denominator)
+    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT256), 'SHARE')
+    this.currency = currency
+    this.scale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+  }
+}
+
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
@@ -28,10 +44,15 @@ export class Amount<T extends Type> extends Fraction {
     )
   }
 
-  public toShare(rebase: { base: JSBI; elastic: JSBI }) {
+  public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
     return new Amount(
       this.currency,
-      JSBI.GT(rebase.elastic, 0) ? JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic) : ZERO,
+      JSBI.GT(rebase.elastic, 0)
+        ? JSBI[roundUp ? 'add' : 'subtract'](
+            JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic),
+            JSBI.BigInt(1),
+          )
+        : ZERO,
     )
   }
 
