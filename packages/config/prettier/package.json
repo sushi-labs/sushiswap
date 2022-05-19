@@ -1,0 +1,43 @@
+{
+  "name": "@sushiswap/prettier-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Prettier Config",
+  "keywords": [
+    "sushi",
+    "config",
+    "prettier"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/prettier"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "devDependencies": {
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/prettier": "2.x",
+    "prettier": "2.x",
+    "tsup": "5.x",
+    "typescript": "4.x"
+  },
+  "peerDependencies": {
+    "prettier": "2.x"
+  }
+}

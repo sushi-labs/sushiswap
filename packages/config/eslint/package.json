@@ -1,0 +1,29 @@
+{
+  "name": "@sushiswap/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Config",
+  "keywords": [
+    "sushi",
+    "config",
+    "eslint"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "4.x",
+    "@typescript-eslint/parser": "4.x",
+    "eslint": "8.x",
+    "eslint-config-next": "12.x",
+    "eslint-config-prettier": "8.x",
+    "eslint-plugin-simple-import-sort": "7.x",
+    "eslint-plugin-unused-imports": "2.x"
+  },
+  "devDependencies": {
+    "@types/node": "17.x"
+  }
+}
