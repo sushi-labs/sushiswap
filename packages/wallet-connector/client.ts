@@ -6,8 +6,12 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 const ALCHEMY_API_KEY: Record<number, string> = {
-  [ChainId.ARBITRUM]: process.env.NEXT_PUBLIC_ARBITRUM_ALCHEMY_ID as string,
-  [ChainId.OPTIMISM]: process.env.NEXT_PUBLIC_OPTIMISM_ALCHEMY_ID as string,
+  [ChainId.ETHEREUM]: 'q1pMGalg0HNBvK1eaZoo-vng-EPWlt1t',
+  [ChainId.ARBITRUM]: 'eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV',
+  [ChainId.OPTIMISM]: 'rtbMqQGp96fbuXxzUS2fct34eYzA7tY8',
+  [ChainId.POLYGON]: 'vZft72lBzQ100fCIJTyohJR1tWrMsUei',
+  [ChainId.POLYGON_TESTNET]: 'JW13aE7MytaJNzSZ-BI4L-XfmaMqMip_',
+  [ChainId.GÖRLI]: 'BXrZLhuc63Gn91NoLVVFDJ010M-AwOa2',
 }
 
 const defaultChain = chain.mainnet
@@ -56,8 +60,6 @@ const client = createClient({
     ]
   },
   provider({ chainId }) {
-    if (!chainId) return
-
     return new providers.AlchemyProvider(
       chainId,
       // isChainSupported(chainId) ? chainId : defaultChain.id,
@@ -65,8 +67,6 @@ const client = createClient({
     )
   },
   webSocketProvider({ chainId }) {
-    if (!chainId) return
-
     return new providers.AlchemyWebSocketProvider(
       chainId,
       // isChainSupported(chainId) ? chainId : defaultChain.id,
