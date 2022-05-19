@@ -8,6 +8,9 @@
     "@vercel/node": "^1.14.1"
   },
   "devDependencies": {
-    "@sushiswap/config": "workspace:*"
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*"
   }
 }
