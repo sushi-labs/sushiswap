@@ -1,6 +1,6 @@
-import Balance from './Balance'
-import Name from './Name'
-import Disconnect from './Disconnect'
-import Avatar from './Avatar'
+import { Avatar } from './Avatar'
+import { Balance } from './Balance'
+import { Disconnect } from './Disconnect'
+import { Name } from './Name'
 
-export default { Balance, Name, Disconnect, Avatar }
+export const Account = { Balance, Name, Disconnect, Avatar }

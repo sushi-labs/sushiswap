@@ -1,14 +1,14 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import { FC, ReactNode } from 'react'
 import { useConnect } from 'wagmi'
-import { useIsMounted } from '@sushiswap/hooks'
 
-type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
+export type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
 
-interface List {
+export interface List {
   children?: ReactNode | ReactNode[] | ((x: RenderProps) => ReactNode | ReactNode[])
 }
 
-const List: FC = () => {
+export const List: FC = () => {
   const isMounted = useIsMounted()
   const connect = useConnect()
 
@@ -25,5 +25,3 @@ const List: FC = () => {
     </>
   )
 }
-
-export default List

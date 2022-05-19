@@ -1,9 +1,9 @@
 import { useAccount, useConnect } from 'wagmi'
 
-import Account from './Account'
-import Wallet from './Wallet'
+import { Account } from './Account'
+import { Wallet } from './Wallet'
 
-function Connect(): JSX.Element | null {
+export function Connect(): JSX.Element | null {
   const { data, isError, isLoading } = useAccount()
   const { isConnected, isReconnecting } = useConnect()
 
@@ -27,5 +27,3 @@ function Connect(): JSX.Element | null {
 
   return <Wallet.List />
 }
-
-export default Connect

@@ -1,11 +1,11 @@
-import { useDisconnect } from 'wagmi'
 import { classNames } from '@sushiswap/ui'
+import { useDisconnect } from 'wagmi'
 
-type Props = {
+export type Props = {
   className?: string
 }
 
-function Disconnect({ className }: Props): JSX.Element {
+export function Disconnect({ className }: Props): JSX.Element {
   const { disconnect } = useDisconnect()
   return (
     <button className={classNames(className)} onClick={() => disconnect()}>
@@ -13,5 +13,3 @@ function Disconnect({ className }: Props): JSX.Element {
     </button>
   )
 }
-
-export default Disconnect

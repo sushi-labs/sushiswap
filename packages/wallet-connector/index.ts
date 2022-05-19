@@ -7,4 +7,6 @@ export * from './components'
 
 // Export all hooks
 // export * from './hooks'
+
+// Re-export wagmi
 export * from 'wagmi'

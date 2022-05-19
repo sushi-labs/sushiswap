@@ -1,13 +1,13 @@
-import { useEnsName } from 'wagmi'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Typography } from '@sushiswap/ui'
+import { useEnsName } from 'wagmi'
 
-type Props = {
+export type Props = {
   address?: string
   className?: string
 }
 
-function Name({ address, className }: Props): JSX.Element {
+export function Name({ address, className }: Props): JSX.Element {
   const { data } = useEnsName({
     address,
   })
@@ -18,5 +18,3 @@ function Name({ address, className }: Props): JSX.Element {
     </Typography>
   )
 }
-
-export default Name

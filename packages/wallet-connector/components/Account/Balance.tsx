@@ -1,15 +1,15 @@
-import { useBalance, useNetwork } from 'wagmi'
-import Loader from '@sushiswap/ui/loader/Loader'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
-import { Typography } from '@sushiswap/ui'
 import { Amount, Native } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { Typography } from '@sushiswap/ui'
+import Loader from '@sushiswap/ui/loader/Loader'
+import { useBalance, useNetwork } from 'wagmi'
 
-type Props = {
+export type Props = {
   address?: string
 }
 
-function Balance({ address }: Props): JSX.Element {
+export function Balance({ address }: Props): JSX.Element {
   const { activeChain } = useNetwork()
   const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: true })
 
@@ -18,11 +18,11 @@ function Balance({ address }: Props): JSX.Element {
   }
 
   if (isError) {
-    return <ExclamationCircleIcon width={20} height={20} className="text-red cursor-pointer" />
+    return <ExclamationCircleIcon width={20} height={20} className="cursor-pointer text-red" />
   }
 
   return (
-    <Typography weight={700} className="text-slate-200 flex gap-1" component="span">
+    <Typography weight={700} className="flex gap-1 text-slate-200" component="span">
       <>
         {activeChain &&
           data &&
@@ -34,5 +34,3 @@ function Balance({ address }: Props): JSX.Element {
     </Typography>
   )
 }
-
-export default Balance
