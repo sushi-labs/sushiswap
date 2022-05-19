@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import React, { FC, forwardRef, ReactNode } from 'react'
 
 import { ExtractProps } from '../types'
-import { Typography } from '../typography/Typography'
+import { Typography } from '../typography'
 
 export type SelectButtonProps = ExtractProps<typeof Listbox.Button> & {
   children?: ReactNode
@@ -30,8 +30,8 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       >
         {children}
       </Typography>
-      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-        <SelectorIcon className="h-5 w-5" aria-hidden="true" />
+      <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+        <SelectorIcon className="w-5 h-5" aria-hidden="true" />
       </span>
     </>,
   )

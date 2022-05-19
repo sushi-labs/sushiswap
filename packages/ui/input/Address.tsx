@@ -3,14 +3,14 @@ import React, { FC, forwardRef } from 'react'
 
 import { DEFAULT_INPUT_CLASSNAME } from './index'
 
-export type AddressProps = Omit<React.HTMLProps<HTMLInputElement> | 'ref' | 'as' | 'onChange'> & {
+export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'> & {
   value: string
   onChange(x: string): void
 }
 
 const matchSpaces = /\s+/g
 
-export const Address: FC<AddressProps> = forwardRef(
+export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressProps>(
   (
     { value, onChange, placeholder = 'Address or ENS name', title = 'Address or ENS name', className = '', ...rest },
     ref,
