@@ -1,0 +1,44 @@
+{
+  "name": "@sushiswap/bentobox",
+  "version": "0.0.0",
+  "description": "BentoBox",
+  "keywords": [
+    "bentobox",
+    "vault"
+  ],
+  "homepage": "https://github.com/sushiswap/sushiswap/protocols/bentobox#readme",
+  "bugs": {
+    "url": "https://github.com/sushiswap/sushiswap/issues"
+  },
+  "license": "UNLICENSED",
+  "files": [
+    "artifacts",
+    "contracts",
+    "deploy",
+    "deployments",
+    "exports",
+    "types"
+  ],
+  "scripts": {
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
+    "node": "hardhat node"
+  },
+  "devDependencies": {
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/hardhat-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@types/node": "^17.0.33",
+    "ethers": "^5.6.6",
+    "hardhat": "^2.9.5",
+    "hardhat-deploy": "^0.11.4",
+    "hardhat-deploy-ethers": "0.3.0-beta.13",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}

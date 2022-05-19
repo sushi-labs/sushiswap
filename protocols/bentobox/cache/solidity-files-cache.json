@@ -1,0 +1,1716 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/BentoBox.sol": {
+      "lastModificationDate": 1652689142596,
+      "contentHash": "04a1520267b5356a4d803d0a96eb08aa",
+      "sourceName": "contracts/BentoBox.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IFlashLoan.sol",
+        "./interfaces/IWETH.sol",
+        "./interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol",
+        "./MasterContractManager.sol",
+        "@boringcrypto/boring-solidity/contracts/BoringBatchable.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BentoBox"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IFlashLoan.sol": {
+      "lastModificationDate": 1652689142626,
+      "contentHash": "588ae9386f2c346a36144f5319fedfb8",
+      "sourceName": "contracts/interfaces/IFlashLoan.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IBatchFlashBorrower",
+        "IFlashBorrower"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IWETH.sol": {
+      "lastModificationDate": 1652689142626,
+      "contentHash": "c15f3d0c5189096f05cbc67807dda6cb",
+      "sourceName": "contracts/interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/interfaces/IStrategy.sol": {
+      "lastModificationDate": 1652689142626,
+      "contentHash": "4dede4b780208b926396872e5cd8d5f1",
+      "sourceName": "contracts/interfaces/IStrategy.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IStrategy"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "213b94e74f4829475304b234a245093b",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BoringERC20"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "5f5be51c4d31b56a74a56111dcb29fe7",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./BoringMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "RebaseLibrary"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/MasterContractManager.sol": {
+      "lastModificationDate": 1652689142596,
+      "contentHash": "972ba9bf751b4f22bfd327abba5d9c5e",
+      "sourceName": "contracts/MasterContractManager.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
+        "@boringcrypto/boring-solidity/contracts/BoringFactory.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "MasterContractManager"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringBatchable.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "be90130c2373cfd232fa5f90dd4f63e0",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/BoringBatchable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BaseBoringBatchable",
+        "BoringBatchable"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "6df503c8de0d2a367face52d73ab55ad",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "2c51ab1382906bef967136b7011fe624",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BoringMath",
+        "BoringMath128",
+        "BoringMath32",
+        "BoringMath64"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringOwnable.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "aa907b949db713038455d7daa5ec567e",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BoringOwnable",
+        "BoringOwnableData"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/BoringFactory.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "6222a3fb0f8a5dafb5b3983d3a545d10",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/BoringFactory.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IMasterContract.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BoringFactory"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "23feec09902ffcd4b27c84f08719e608",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IMasterContract"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/samples/salary.sol": {
+      "lastModificationDate": 1652689142666,
+      "contentHash": "451c57432002fcfab102c79d482e5cfc",
+      "sourceName": "contracts/samples/salary.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../BentoBox.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Salary"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/samples/helloworld.sol": {
+      "lastModificationDate": 1652689142666,
+      "contentHash": "c9131636398c3b29293744f5910c491a",
+      "sourceName": "contracts/samples/helloworld.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../BentoBox.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "HelloWorld"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MasterContractMock.sol": {
+      "lastModificationDate": 1652689142646,
+      "contentHash": "eaa56a4e1253e36ddbb6c4645052d456",
+      "sourceName": "contracts/mocks/MasterContractMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol",
+        "../BentoBox.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "MasterContractMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MaliciousMasterContractMock.sol": {
+      "lastModificationDate": 1652689142646,
+      "contentHash": "02e07e6806c7057ab034773b38d50eee",
+      "sourceName": "contracts/mocks/MaliciousMasterContractMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol",
+        "../BentoBox.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "MaliciousMasterContractMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/strategies/SushiStrategy.sol": {
+      "lastModificationDate": 1652689142666,
+      "contentHash": "60a2df1101e0b992d2e3a392cea2bb57",
+      "sourceName": "contracts/strategies/SushiStrategy.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ISushiBar",
+        "SushiStrategy"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/strategies/CompoundStrategy.sol": {
+      "lastModificationDate": 1652689142666,
+      "contentHash": "bf7d7c7404986364316048aeca02ea09",
+      "sourceName": "contracts/strategies/CompoundStrategy.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "CompoundStrategy",
+        "IFactory",
+        "IPair",
+        "IcToken"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SushiBarMock.sol": {
+      "lastModificationDate": 1652689142656,
+      "contentHash": "50725f8d37e975c107e83a66a68ee540",
+      "sourceName": "contracts/mocks/SushiBarMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/ERC20.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "SushiBarMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/ERC20.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "8fd4bbd8702fc964095775d2a5daf95c",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/ERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./Domain.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ERC20",
+        "ERC20Data"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/node_modules/.pnpm/github.com+boringcrypto+BoringSolidity@8f2b54f645a_7kr7gifwiad6odmwyxjmq5fd6e/node_modules/@boringcrypto/boring-solidity/contracts/Domain.sol": {
+      "lastModificationDate": 1652720507743,
+      "contentHash": "fb3e07cd3b24b642d3ad5c62df33989e",
+      "sourceName": "@boringcrypto/boring-solidity/contracts/Domain.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Domain"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ERC20Mock.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "dea491bda0ed297b438f34a142511392",
+      "sourceName": "contracts/mocks/ERC20Mock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ERC20Mock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SneakyFlashLoanerMock.sol": {
+      "lastModificationDate": 1652689142656,
+      "contentHash": "568c00b52be10185f325dd1df43e1c60",
+      "sourceName": "contracts/mocks/SneakyFlashLoanerMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IFlashLoan.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "SneakyFlashLoanerMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/FlashLoanerMock.sol": {
+      "lastModificationDate": 1652689142646,
+      "contentHash": "dfdbbc4f52470ddd8195bc7d81e731ab",
+      "sourceName": "contracts/mocks/FlashLoanerMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IFlashLoan.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "FlashLoanerMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/SimpleStrategyMock.sol": {
+      "lastModificationDate": 1652689142656,
+      "contentHash": "c93dba34e16f17c267b9a5887db46a11",
+      "sourceName": "contracts/mocks/SimpleStrategyMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "SimpleStrategyMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/MoneySink.sol": {
+      "lastModificationDate": 1652689142646,
+      "contentHash": "4af0f1e7143bd2fd15fe2d33b4247c93",
+      "sourceName": "contracts/mocks/MoneySink.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ISushiBar",
+        "MoneySink"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/DummyStrategyMock.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "ef3b885a351bb3ebc239a4b283d24b25",
+      "sourceName": "contracts/mocks/DummyStrategyMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol",
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "DummyStrategyMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ExternalFunctionMock.sol": {
+      "lastModificationDate": 1652689142646,
+      "contentHash": "b4dab128c3a0b9672c579da64a5ee3d9",
+      "sourceName": "contracts/mocks/ExternalFunctionMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ExternalFunctionMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/BentoBoxMock.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "793949467926aa57b1f3db776a04788e",
+      "sourceName": "contracts/mocks/BentoBoxMock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../BentoBox.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BentoBoxMock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/flat/BentoBoxFlat.sol": {
+      "lastModificationDate": 1652689142616,
+      "contentHash": "78f262791b45c0ba139b3ab9d8b4f4de",
+      "sourceName": "contracts/flat/BentoBoxFlat.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BaseBoringBatchable",
+        "BentoBoxV1",
+        "BoringBatchable",
+        "BoringERC20",
+        "BoringFactory",
+        "BoringMath",
+        "BoringMath128",
+        "BoringMath32",
+        "BoringMath64",
+        "BoringOwnable",
+        "BoringOwnableData",
+        "IBatchFlashBorrower",
+        "IERC20",
+        "IFlashBorrower",
+        "IMasterContract",
+        "IStrategy",
+        "IWETH",
+        "MasterContractManager",
+        "RebaseLibrary"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/flat/SushiStrategyFlat.sol": {
+      "lastModificationDate": 1652689142606,
+      "contentHash": "fb7fa2acb1a610387a5b6b54d6001c79",
+      "sourceName": "contracts/flat/SushiStrategyFlat.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BoringERC20",
+        "BoringMath",
+        "BoringMath128",
+        "BoringMath32",
+        "BoringMath64",
+        "BoringOwnable",
+        "BoringOwnableData",
+        "IERC20",
+        "IStrategy",
+        "ISushiBar",
+        "SushiStrategyV1"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/FixedPoint.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "f9dacf238202666f27a9d81f1f829f74",
+      "sourceName": "contracts/libraries/FixedPoint.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./FullMath.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "FixedPoint"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/FullMath.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "f4e86689a9c9d21e6b3c1ca5c6f5c9fa",
+      "sourceName": "contracts/libraries/FullMath.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "FullMath"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/libraries/SignedSafeMath.sol": {
+      "lastModificationDate": 1652689142636,
+      "contentHash": "9659050eda0c68d71ddf98ee26f48518",
+      "sourceName": "contracts/libraries/SignedSafeMath.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "SignedSafeMath"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/ReturnFalseERC20Mock.sol": {
+      "lastModificationDate": 1652689142656,
+      "contentHash": "4f8a2a3ac639671379a51d3267118fa8",
+      "sourceName": "contracts/mocks/ReturnFalseERC20Mock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ReturnFalseERC20Mock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/RevertingERC20Mock.sol": {
+      "lastModificationDate": 1652689142656,
+      "contentHash": "5124ba81181c4ac21106574990abd104",
+      "sourceName": "contracts/mocks/RevertingERC20Mock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "RevertingERC20Mock"
+      ]
+    },
+    "/home/feedme/sushi/sushiswap/protocols/bentobox/contracts/mocks/WETH9Mock.sol": {
+      "lastModificationDate": 1652689673786,
+      "contentHash": "dc9abb2e4a57acacec60c99ff6a0ef88",
+      "sourceName": "contracts/mocks/WETH9Mock.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 256
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "WETH9Mock"
+      ]
+    }
+  }
+}
