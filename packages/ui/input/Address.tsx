@@ -46,5 +46,3 @@ export const Address: FC<AddressProps> = forwardRef(
     )
   },
 )
-
-export default Address

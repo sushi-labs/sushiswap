@@ -1,5 +1,5 @@
 import { shortenAddress } from '@sushiswap/format'
-import { Chip, classNames, Dialog, Typography } from '@sushiswap/ui'
+import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { PeriodType } from 'features'
 import CreateFormButtons from 'features/vesting/CreateForm/CreateFormButtons'
@@ -50,19 +50,16 @@ interface CreateFormReviewModal {
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {
   const {
-    steps,
-    cliffDuration,
-    stepDuration,
     token,
     startDate,
     stepConfig,
-    stepEndDate,
     stepAmount,
     fundSource,
     recipient,
     cliffEndDate,
     cliff,
     cliffAmount,
+    stepPayouts,
   } = formData
 
   const schedule = createScheduleRepresentation({
@@ -73,7 +70,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     stepConfig,
     startDate,
     cliffEndDate,
-    stepEndDate,
+    stepPayouts,
   })
 
   return (
@@ -105,34 +102,34 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               )}
             </Table>
             <Table title="Graded Vesting Details">
-              <Item title="Graded Vesting End Date" value={format(stepEndDate, 'dd MMM yyyy')} />
-              <Item title="Payment Frequency" value={stepConfig.label} />
               <Item
-                title="Payment per Frequency"
+                title="Payment per Period"
                 value={
                   <>
                     {stepAmount} {token.symbol}
                   </>
                 }
               />
+              <Item title="Amount of Periods" value={stepPayouts} />
+              <Item title="Period Length" value={stepConfig.label} />
             </Table>
           </div>
           <div className="flex flex-col w-full py-3">
             <Typography variant="xxs" weight={700} className="!leading-5 tracking-widest text-slate-600 uppercase">
               Schedule
             </Typography>
-            <div className="border border-slate-800 overflow-auto max-h-[440px] rounded-2xl mt-5 hide-scrollbar shadow-md">
+            <div className="border-t border-b border-slate-800 overflow-auto min-h-full max-h-[440px] mt-3 hide-scrollbar divide-y divide-slate-800">
               {schedule.map((period) => (
-                <div key={period.id} className="even:bg-slate-700/40 flex items-center justify-between gap-7 py-2 px-4">
+                <div key={period.id} className="flex items-center justify-between gap-7 py-2">
                   <Typography variant="xs" className="text-slate-500 flex flex-col text-left" weight={500}>
                     {format(new Date(period.time), 'dd MMM yyyy')}
                     <span>{format(new Date(period.time), 'hh:maaa')}</span>
                   </Typography>
                   <div className="grid grid-cols-[80px_100px] gap-2 items-center justify-center">
-                    <div>
-                      <Chip color="default" label={period.type.toLowerCase()} className="capitalize" />
-                    </div>
-                    <Typography variant="xs" weight={500} className="text-slate-200">
+                    <Typography className="capitalize text-slate-200" weight={700} variant="xs">
+                      {period.type.toLowerCase()}{' '}
+                    </Typography>
+                    <Typography variant="xs" weight={700} className="text-slate-200">
                       {period.amount.toSignificant(6)}
                       {period.type !== PeriodType.START && (
                         <span className="text-xs text-slate-500 font-medium"> {period?.amount.currency?.symbol}</span>

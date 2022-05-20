@@ -59,7 +59,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
           value={amount}
           type="text"
           placeholder="0.00"
-          className="px-4 text-left shadow-md border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
+          className="px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
           onChange={(e) => onChange(e.target.value)}
         />
         <Typography variant="sm" weight={700} className="pr-4 text-slate-500">

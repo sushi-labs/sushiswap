@@ -9,9 +9,9 @@ import { Maybe, Message } from 'yup/lib/types'
 export const stepConfigurations: StepConfig[] = [
   { label: 'Weekly', time: 604800 },
   { label: 'Bi-weekly', time: 2 * 604800 },
-  { label: 'Monthly', time: 2629800 },
-  { label: 'Quarterly', time: 3 * 2629800 },
-  { label: 'Yearly', time: 31557600 },
+  { label: 'Monthly', time: 2620800 },
+  { label: 'Quarterly', time: 3 * 2620800 },
+  { label: 'Yearly', time: 31449600 },
 ]
 
 yup.addMethod(
@@ -77,12 +77,7 @@ export const createVestingSchema = yup.object({
     then: yup.number().typeError('Target must be a number').min(0, 'Must be greater than zero'),
     otherwise: yup.number().nullable(),
   }),
-  stepEndDate: yup
-    .date()
-    .min(new Date(), 'Date is be due already')
-    .min(yup.ref('startDate'), 'Date must be later than start date')
-    .min(yup.ref('cliffEndDate'), 'Date must be later than cliff end date')
-    .required('Required field'),
+  stepPayouts: yup.number().min(0, 'Can not be less than zero').required('Required field'),
   stepAmount: yup
     .number()
     .typeError('Target must be a number')

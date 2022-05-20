@@ -17,7 +17,17 @@ interface CreateFormButtons {
 
 const CreateFormButtons: FC<CreateFormButtons> = ({
   onDismiss,
-  formData: { token, startDate, stepAmount, fundSource, recipient, cliffAmount, steps, stepDuration, cliffDuration },
+  formData: {
+    token,
+    startDate,
+    stepAmount,
+    fundSource,
+    recipient,
+    cliffAmount,
+    cliffDuration,
+    stepPayouts,
+    stepConfig,
+  },
 }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
@@ -28,11 +38,11 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(true, contract?.address)
 
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
-    if (!token || !steps) return [undefined, undefined]
+    if (!token || !stepPayouts) return [undefined, undefined]
 
     const cliff = parseAmount(token, cliffAmount.toString())
     const step = parseAmount(token, stepAmount.toString())
-    const totalStep = parseAmount(token, stepAmount.toString()).multiply(JSBI.BigInt(steps))
+    const totalStep = parseAmount(token, stepAmount.toString()).multiply(JSBI.BigInt(stepPayouts))
     const totalAmount = cliff.add(totalStep)
 
     return [
@@ -41,7 +51,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         ? new Fraction(step.multiply(JSBI.BigInt(1e18)).quotient, totalAmount.quotient).quotient
         : JSBI.BigInt(0),
     ]
-  }, [cliffAmount, stepAmount, steps, token])
+  }, [cliffAmount, stepAmount, stepPayouts, token])
 
   const [tokenApprovalState, approveToken] = useApproveCallback(
     true,
@@ -51,7 +61,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
 
   const createVesting = useCallback(async () => {
     if (!contract || !account?.address) return
-    if (!recipient || !token || !startDate || !cliffDuration || !stepDuration || !stepPercentage) {
+    if (!recipient || !token || !startDate || !cliffDuration || !stepConfig?.time || !stepPercentage) {
       setError('Missing required field')
       return
     }
@@ -66,26 +76,14 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         token,
         startDate: new Date(startDate),
         cliffDuration: cliffDuration.toString(),
-        stepDuration: stepDuration.toString(),
-        steps: steps.toString(),
+        stepDuration: stepConfig?.time.toString(),
+        steps: stepPayouts.toString(),
         stepPercentage: stepPercentage.toString(),
         amount: totalAmountAsEntity ? totalAmountAsEntity.quotient.toString() : JSBI.from('0').toString(),
         fromBentobox: fundSource === FundSource.BENTOBOX,
       }),
     ]
 
-    console.log({
-      contract,
-      recipient,
-      token,
-      startDate: new Date(startDate).getTime(),
-      cliffDuration: cliffDuration.toString(),
-      stepDuration: stepDuration.toString(),
-      steps: steps.toString(),
-      stepPercentage: stepPercentage.toString(),
-      amount: totalAmountAsEntity ? totalAmountAsEntity.quotient.toString() : JSBI.from('0').toString(),
-      fromBentobox: fundSource === FundSource.BENTOBOX,
-    })
     try {
       const data = await sendTransactionAsync({
         request: {
@@ -106,7 +104,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       setError(e.message)
     }
   }, [
-    account.address,
+    account?.address,
     cliffDuration,
     contract,
     fundSource,
@@ -115,9 +113,9 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     sendTransactionAsync,
     signature,
     startDate,
-    stepDuration,
+    stepConfig?.time,
+    stepPayouts,
     stepPercentage,
-    steps,
     token,
     totalAmountAsEntity,
   ])
