@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { BaseProvider } from '@ethersproject/providers'
 import { nanoid } from '@reduxjs/toolkit'
 import type { TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
@@ -14,7 +14,7 @@ import { getTokenList, resolveENSContentHash, sortByListPriority, tokensToChainT
 
 export function useFetchListCallback(
   context: TokenListsContext,
-  library: JsonRpcProvider
+  library: BaseProvider
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { actions } = context
   const dispatch = useDispatch()

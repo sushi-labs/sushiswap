@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { BaseProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { useInterval, useIsWindowVisible } from '@sushiswap/hooks'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
@@ -11,7 +11,7 @@ import { useActiveListUrls, useAllLists, useFetchListCallback } from './hooks'
 export interface UpdaterProps {
   context: TokenListsContext
   chainId: number | undefined // For now, one updater is required for each chainId to be watched
-  library: JsonRpcProvider
+  library: BaseProvider
   isDebug?: boolean
 }
 

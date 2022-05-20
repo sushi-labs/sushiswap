@@ -1,18 +1,18 @@
-import type { TokenInfo, TokenList } from '@uniswap/token-lists'
-import { DEFAULT_LIST_OF_LISTS } from './constants'
-import { WrappedTokenInfo } from './token'
-import { ChainTokenMap } from './types'
-import CID from 'cids'
 import { Contract } from '@ethersproject/contracts'
 import { namehash } from '@ethersproject/hash'
+import { BaseProvider } from '@ethersproject/providers'
+import type { TokenInfo, TokenList } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
-import { JsonRpcProvider } from '@ethersproject/providers'
-
+import CID from 'cids'
 // @ts-ignore TYPE NEEDS FIXING
 import { getCodec, rmPrefix } from 'multicodec'
 // @ts-ignore TYPE NEEDS FIXING
 import { decode, toB58String } from 'multihashes'
+
+import { DEFAULT_LIST_OF_LISTS } from './constants'
+import { WrappedTokenInfo } from './token'
+import { ChainTokenMap } from './types'
 
 type Mutable<T> = {
   -readonly [P in keyof T]: Mutable<T[P]>
@@ -162,7 +162,7 @@ const RESOLVER_ABI = [
 ]
 
 // cache the resolver contracts since most of them are the public resolver
-function resolverContract(resolverAddress: string, provider: JsonRpcProvider): Contract {
+function resolverContract(resolverAddress: string, provider: BaseProvider): Contract {
   return new Contract(resolverAddress, RESOLVER_ABI, provider)
 }
 
@@ -171,7 +171,7 @@ function resolverContract(resolverAddress: string, provider: JsonRpcProvider): C
  * @param ensName to resolve
  * @param provider provider to use to fetch the data
  */
-export async function resolveENSContentHash(ensName: string, provider: JsonRpcProvider): Promise<string> {
+export async function resolveENSContentHash(ensName: string, provider: BaseProvider): Promise<string> {
   const ensRegistrarContract = new Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider)
   const hash = namehash(ensName)
   const resolverAddress = await ensRegistrarContract.resolver(hash)
