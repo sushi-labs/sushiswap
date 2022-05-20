@@ -1,10 +1,9 @@
 import '@sushiswap/ui/index.css'
 
 import { ChainId } from '@sushiswap/chain'
-import { useLatestBlockNumber } from '@sushiswap/hooks/dist/useLatestBlockNumber'
+import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App, Container, SushiIcon } from '@sushiswap/ui'
-import { client, Wallet } from '@sushiswap/wallet-connector'
-import { getProviders } from 'lib/provider'
+import { client, getProviders, Wallet } from '@sushiswap/wallet-connector'
 import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
 import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
 import type { AppProps } from 'next/app'
