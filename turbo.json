@@ -17,8 +17,12 @@
       "cache": false
     },
     "export": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
       "outputs": [
-        "exports/**"
+        "exports.json"
       ]
     },
     "node": {

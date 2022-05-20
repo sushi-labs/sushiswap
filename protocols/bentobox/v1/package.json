@@ -22,7 +22,8 @@
   "scripts": {
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "hardhat clean && rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "export": "hardhat export --export-all exports.json"
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",

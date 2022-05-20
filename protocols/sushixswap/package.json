@@ -29,7 +29,8 @@
   "scripts": {
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "hardhat clean && rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "export": "hardhat export --export-all exports.json"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
