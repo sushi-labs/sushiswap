@@ -1,23 +1,15 @@
-import { ChainId } from '@sushiswap/chain'
-import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
-import { MULTICALL_ADDRESS } from 'config'
-import { UniswapInterfaceMulticall } from 'typechain'
-import { useBlockNumber, useContract, useProvider } from 'wagmi'
+import { useBlockNumber } from 'wagmi'
 
 import { multicall } from './multicall'
+import { useMulticallContract } from './useMulticallContract'
 
 interface Props {
-  chainId: ChainId
+  chainId: number
 }
 
 // Wagmi wrapper for redux multicall
 export function Updater({ chainId }: Props) {
-  const provider = useProvider({ chainId })
-  const contract = useContract<UniswapInterfaceMulticall>({
-    addressOrName: MULTICALL_ADDRESS[chainId],
-    contractInterface: UniswapInterfaceMulticallArtifact.abi,
-    signerOrProvider: provider,
-  })
+  const contract = useMulticallContract({ chainId })
   const { data: latestBlockNumber } = useBlockNumber({ chainId })
   return <multicall.Updater chainId={chainId} latestBlockNumber={latestBlockNumber} contract={contract} />
 }

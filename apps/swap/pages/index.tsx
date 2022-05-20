@@ -2,7 +2,6 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import chain from '@sushiswap/chain'
 import { Amount, Native, tryParseAmount, Type, USDC, USDC_ADDRESS } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
-import { useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots, Input, SushiIcon } from '@sushiswap/ui'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
@@ -215,7 +214,7 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
                 pool: dstTrade.route.legs[0].poolAddress,
                 data: defaultAbiCoder.encode(
                   ['address', 'address', 'bool'],
-                  [dstTrade.route.legs[0].tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], dstUseBentoBox]
+                  [dstTrade.route.legs[0].tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], !dstUseBentoBox]
                 ),
               },
             ]
@@ -433,12 +432,10 @@ export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; b
       return chain.name
     })
   const blockTimestamps = useCurrentBlockTimestampMultichain(chainIds, blockNumbers)
-  const isMounted = useIsMounted()
   const isReady = blockTimestamps.filter((b) => !!b).length >= 2
   return (
     <div className="mt-24 space-y-12">
-      {isMounted && <Widget />}
-
+      <Widget />
       <div className="text-center">
         <div>Chain Names: {chainNames.join(',')}</div>
         <div>Block Timestamps: {isReady && <span data-testid="blockTimestamps">{blockTimestamps.join(',')}</span>}</div>

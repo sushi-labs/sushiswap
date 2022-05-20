@@ -1,4 +1,4 @@
-import { BaseProvider, JsonRpcProvider } from '@ethersproject/providers'
+import { BaseProvider } from '@ethersproject/providers'
 import { useInterval, useIsWindowVisible } from '@sushiswap/hooks'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
@@ -11,12 +11,12 @@ import { useActiveListUrls, useAllLists, useFetchListCallback } from './hooks'
 export interface UpdaterProps {
   context: TokenListsContext
   chainId: number | undefined // For now, one updater is required for each chainId to be watched
-  library: BaseProvider
+  provider: BaseProvider
   isDebug?: boolean
 }
 
 function Updater(props: UpdaterProps): null {
-  const { context, library } = props
+  const { context, provider } = props
   const { actions } = context
   const dispatch = useDispatch()
 
@@ -26,7 +26,7 @@ function Updater(props: UpdaterProps): null {
   const lists = useAllLists(context)
   const activeListUrls = useActiveListUrls(context)
 
-  const fetchList = useFetchListCallback(context, library)
+  const fetchList = useFetchListCallback(context, provider)
 
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
@@ -36,7 +36,7 @@ function Updater(props: UpdaterProps): null {
   }, [fetchList, isWindowVisible, lists])
 
   // fetch all lists every 10 minutes, but only after we initialize library
-  useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
+  useInterval(fetchAllListsCallback, provider ? 1000 * 60 * 10 : null)
 
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
@@ -46,7 +46,7 @@ function Updater(props: UpdaterProps): null {
         fetchList(listUrl).catch((error) => console.debug('list added fetching error', error))
       }
     })
-  }, [dispatch, fetchList, library, lists])
+  }, [dispatch, fetchList, provider, lists])
 
   // if any lists from unsupported lists are loaded, check them too (in case new updates since last visit)
   useEffect(() => {
@@ -56,7 +56,7 @@ function Updater(props: UpdaterProps): null {
         fetchList(listUrl).catch((error) => console.debug('list added fetching error', error))
       }
     })
-  }, [dispatch, fetchList, library, lists])
+  }, [dispatch, fetchList, provider, lists])
 
   // automatically update lists if versions are minor/patch
   useEffect(() => {

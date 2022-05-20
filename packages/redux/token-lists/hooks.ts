@@ -14,12 +14,12 @@ import { getTokenList, resolveENSContentHash, sortByListPriority, tokensToChainT
 
 export function useFetchListCallback(
   context: TokenListsContext,
-  library: BaseProvider
+  provider: BaseProvider
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { actions } = context
   const dispatch = useDispatch()
 
-  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, library), [library])
+  const ensResolver = useCallback((ensName: string) => resolveENSContentHash(ensName, provider), [provider])
 
   // note: prevent dispatch if using for list search or unsupported list
   return useCallback(

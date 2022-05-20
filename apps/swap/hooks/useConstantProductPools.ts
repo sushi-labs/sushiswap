@@ -2,12 +2,11 @@ import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/exchange'
 import CONSTANT_PRODUCT_POOL_ABI from 'abis/constant-product-pool.json'
-import CONSTANT_PRODUCT_POOL_FACTORY_ABI from 'abis/constant-product-pool-factory.json'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { useBlockNumber } from 'wagmi'
 
-import { useConstantProductPoolFactoryContract } from './useContract'
+import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
 export enum PoolState {
   LOADING,
@@ -17,8 +16,6 @@ export enum PoolState {
 }
 
 const POOL_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_ABI)
-
-const CONSTANT_PRODUCT_POOL_FACTORY_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_FACTORY_ABI)
 
 export type PoolWithStateExists<T> = {
   state: PoolState.EXISTS

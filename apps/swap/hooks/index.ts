@@ -1,5 +1,5 @@
 export * from './useBentoBoxApprovalCallback'
-export * from './useContract'
+export * from '../lib/state/useMulticallContract'
 export * from './useCurrentBlockTimestamp'
 export * from './useCurrentBlockTimestampMultichain'
 export * from './usePairs'
