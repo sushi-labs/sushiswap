@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { providers } from 'ethers'
 
-const providerCache: Partial<Record<ChainId, providers.JsonRpcProvider>> = {}
+const providerCache: Partial<Record<ChainId, providers.BaseProvider>> = {}
 
 const ALCHEMY_ENABLED_CHAINS = [
   ChainId.ETHEREUM,
