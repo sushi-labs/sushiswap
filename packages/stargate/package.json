@@ -1,0 +1,40 @@
+{
+  "name": "@sushiswap/stargate",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Stargate",
+  "keywords": [
+    "sushi",
+    "stargate"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "./dist/index.js",
+  "source": "./index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "TIMING=1 eslint ./index.ts --fix",
+    "test": "jest --passWithNoTests"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "devDependencies": {
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/jest": "^27.5.1",
+    "eslint": "^8.15.0",
+    "jest": "^28.1.0",
+    "typescript": "^4.6.2"
+  }
+}

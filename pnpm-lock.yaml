@@ -555,6 +555,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/stargate': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -592,6 +593,7 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector
@@ -1258,6 +1260,30 @@ importers:
       react-redux: 8.0.1_e6senhi6gkhdouiqizr2s56gsi
       typescript: 4.6.4
 
+  packages/stargate:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^27.5.1
+      eslint: ^8.15.0
+      jest: ^28.1.0
+      typescript: ^4.6.2
+    devDependencies:
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/jest': 27.5.1
+      eslint: 8.15.0
+      jest: 28.1.0
+      typescript: 4.6.4
+
   packages/tines:
     specifiers:
       '@ethersproject/bignumber': ^5.4.0
@@ -1522,6 +1548,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/sushiswap': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
@@ -1541,6 +1568,7 @@ importers:
       '@sushiswap/hardhat-config': link:../../packages/config/hardhat
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/sushiswap': link:../sushiswap
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
       '@types/node': 17.0.35

@@ -1,8 +1,9 @@
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { ChainId } from '@sushiswap/chain'
-import { BENTOBOX_ADDRESS, FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/core-sdk'
+import { INIT_CODE_HASH } from '@sushiswap/core-sdk'
+import sushiSwapExports from '@sushiswap/sushiswap/exports.json'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-
 export const STARGATE_ROUTER_ADDRESS: Record<number, string> = {
   [ChainId.RINKEBY]: '0x82A0F5F531F9ce0df1DF5619f74a0d3fA31FF561',
   [ChainId.POLYGON_TESTNET]: '0x817436a076060D158204d955E5403b6Ed0A5fac0',
@@ -26,13 +27,14 @@ const func: DeployFunction = async function ({
   run,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
-  const chainId = Number(await getChainId())
+  const chainId = (await getChainId()) as keyof typeof sushiSwapExports & keyof typeof bentoBoxExports
 
   const { deployer } = await getNamedAccounts()
 
   const bentoBox = await ethers.getContractOrNull('BentoBoxV1')
+  const factory = await ethers.getContractOrNull('UniswapV2Factory')
 
-  if (!bentoBox && !(chainId in BENTOBOX_ADDRESS)) {
+  if (!bentoBox && !(chainId in sushiSwapExports)) {
     throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
   }
 
@@ -44,18 +46,18 @@ const func: DeployFunction = async function ({
     throw Error(`No USDC_ADDRESS for chain #${chainId}!`)
   }
 
-  // if (!(chainId in FACTORY_ADDRESS)) {
-  //   throw Error(`No FACTORY_ADDRESS for chain #${chainId}!`);
-  // }
+  if (!factory && !(chainId in sushiSwapExports)) {
+    throw Error(`No FACTORY_ADDRESS for chain #${chainId}!`)
+  }
 
   // if (!(chainId in INIT_CODE_HASH)) {
   //   throw Error(`No INIT_CODE_HASH for chain #${chainId}!`);
   // }
 
   const args = [
-    BENTOBOX_ADDRESS[chainId],
+    bentoBoxExports?.[chainId]?.[0]?.contracts?.BentoBoxV1?.address,
     STARGATE_ROUTER_ADDRESS[chainId],
-    FACTORY_ADDRESS?.[chainId] ?? ethers.constants.AddressZero,
+    sushiSwapExports?.[chainId]?.[0]?.contracts?.UniswapV2Factory ?? ethers.constants.AddressZero,
     INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
   ]
 
