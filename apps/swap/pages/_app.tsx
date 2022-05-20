@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import { ChainId } from '@sushiswap/chain'
-import { useLatestBlock } from '@sushiswap/hooks'
+import { useLatestBlockNumber } from '@sushiswap/hooks/dist/useLatestBlockNumber'
 import { App, Container, SushiIcon } from '@sushiswap/ui'
 import { client, Wallet } from '@sushiswap/wallet-connector'
 import { getProviders } from 'lib/provider'
@@ -10,11 +10,11 @@ import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
 import type { AppProps } from 'next/app'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
-import { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiProvider } from 'wagmi'
+
 const SUPPORTED_CHAIN_IDS = [
   // ChainId.ETHEREUM,
   // ChainId.BSC,
@@ -48,18 +48,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     // providerKovan,
   ] = getProviders(SUPPORTED_CHAIN_IDS)
 
-  // const blockNumberEthereum = useLatestBlock(providerEthereum)
-  // const blockNumberBsc = useLatestBlock(providerBsc)
-  // const blockNumberAvalanche = useLatestBlock(providerAvalanche)
-  // const blockNumberPolygon = useLatestBlock(providerPolygon)
-  const blockNumberArbitrum = useLatestBlock(providerArbitrum)
-  const blockNumberOptimism = useLatestBlock(providerOptimism)
-  // const blockNumberFantom = useLatestBlock(providerFantom)
-  // const blockNumberPolygonTestnet = useLatestBlock(providerPolygonTestnet)
-  // const blockNumberRinkeby = useLatestBlock(providerRinkeby)
-  // const blockNumberRopsten = useLatestBlock(providerRopsten)
-  // const blockNumberGorli = useLatestBlock(providerGorli)
-  // const blockNumberKovan = useLatestBlock(providerKovan)
+  // const blockNumberEthereum = useLatestBlockNumber(providerEthereum)
+  // const blockNumberBsc = useLatestBlockNumber(providerBsc)
+  // const blockNumberAvalanche = useLatestBlockNumber(providerAvalanche)
+  // const blockNumberPolygon = useLatestBlockNumber(providerPolygon)
+  const blockNumberArbitrum = useLatestBlockNumber(providerArbitrum)
+  const blockNumberOptimism = useLatestBlockNumber(providerOptimism)
+
+  // const blockNumberFantom = useLatestBlockNumber(providerFantom)
+  // const blockNumberPolygonTestnet = useLatestBlockNumber(providerPolygonTestnet)
+  // const blockNumberRinkeby = useLatestBlockNumber(providerRinkeby)
+  // const blockNumberRopsten = useLatestBlockNumber(providerRopsten)
+  // const blockNumberGorli = useLatestBlockNumber(providerGorli)
+  // const blockNumberKovan = useLatestBlockNumber(providerKovan)
   const blockNumbers = useMemo(
     () => [
       // blockNumberEthereum,
@@ -124,8 +125,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           {/* <MulticallUpdater chainId={ChainId.FANTOM} blockNumber={blockNumberFantom} /> */}
           {/* <MulticallUpdater chainId={ChainId.POLYGON_TESTNET} blockNumber={blockNumberPolygonTestnet} /> */}
           {/* <MulticallUpdater chainId={ChainId.RINKEBY} blockNumber={blockNumberRinkeby} /> */}
-          <MulticallUpdater chainId={ChainId.ARBITRUM} blockNumber={blockNumberArbitrum} />
-          <MulticallUpdater chainId={ChainId.OPTIMISM} blockNumber={blockNumberOptimism} />
+          <MulticallUpdater chainId={ChainId.ARBITRUM} />
+          <MulticallUpdater chainId={ChainId.OPTIMISM} />
 
           {/* <MulticallUpdater chainId={ChainId.ROPSTEN} blockNumber={blockNumberRopsten} /> */}
           {/* <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumberGorli} /> */}
