@@ -1,7 +1,7 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { BaseProvider } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 
-export function useLatestBlock(provider: JsonRpcProvider) {
+export function useLatestBlockNumber(provider: BaseProvider) {
   const [blockNumber, setBlockNumber] = useState<number | undefined>(undefined)
   useEffect(() => {
     if (!provider) return
@@ -13,5 +13,3 @@ export function useLatestBlock(provider: JsonRpcProvider) {
   }, [provider, setBlockNumber])
   return blockNumber
 }
-
-export default useLatestBlock
