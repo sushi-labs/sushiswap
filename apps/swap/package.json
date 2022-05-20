@@ -24,6 +24,7 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
+    "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",

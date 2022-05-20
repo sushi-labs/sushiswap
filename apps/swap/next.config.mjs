@@ -6,6 +6,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/chain',
   '@sushiswap/currency',
   '@sushiswap/wallet-connector',
+  '@sushiswap/stargate',
 ])
 
 export default withTranspileModules({

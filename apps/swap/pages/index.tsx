@@ -1,8 +1,9 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import chain from '@sushiswap/chain'
-import { Amount, Native, tryParseAmount, Type, USDC, USDC_ADDRESS } from '@sushiswap/currency'
+import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
+import { STARGATE_USDC } from '@sushiswap/stargate'
 import { Button, Dots, Input, SushiIcon } from '@sushiswap/ui'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { ApprovalState, useBentoBoxApprovalCallback, useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
@@ -80,7 +81,7 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
   }, [srcToken, srcTypedAmount])
 
   // srcTrade
-  const srcTrade = useTrade(srcChainId, TradeType.EXACT_INPUT, srcAmount, srcToken, USDC[srcChainId])
+  const srcTrade = useTrade(srcChainId, TradeType.EXACT_INPUT, srcAmount, srcToken, STARGATE_USDC[srcChainId])
 
   const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
   const srcMinimumAmountOut = srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
@@ -91,11 +92,11 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
   const srcAmountOutMinusFee = srcMinimumAmountOut?.multiply(new Percent(9_995, 10_000)) // 99.95%
 
   const dstAmountIn = useMemo(() => {
-    return tryParseAmount(srcAmountOutMinusFee?.toFixed(), USDC[dstChainId])
+    return tryParseAmount(srcAmountOutMinusFee?.toFixed(), STARGATE_USDC[dstChainId])
   }, [dstChainId, srcAmountOutMinusFee])
 
   // dstTrade
-  const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, USDC[dstChainId], dstToken)
+  const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, STARGATE_USDC[dstChainId], dstToken)
 
   const dstMinimumAmountOut = crossChain ? dstTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcMinimumAmountOut
 
@@ -174,7 +175,7 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
         [3, 7],
         [0, 0],
         [
-          cooker.encodeWithdraw(USDC_ADDRESS[dstChainId], dstTrade.route.pairs[0].liquidityToken.address),
+          cooker.encodeWithdraw(STARGATE_USDC[dstChainId], dstTrade.route.pairs[0].liquidityToken.address),
           cooker.encodeLegacyExactInput(
             srcMinimumAmountOut.quotient.toString(),
             dstMinimumAmountOut.quotient.toString(),
@@ -201,12 +202,12 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
         [0, 0, 0],
         [
           cooker.encodeDepositToBentoBox(
-            USDC[dstChainId],
+            STARGATE_USDC[dstChainId],
             dstTrade.route.legs[0].poolAddress,
             srcMinimumAmountOut.quotient.toString()
           ),
           cooker.encodeTridentExactInput(
-            USDC[dstChainId],
+            STARGATE_USDC[dstChainId],
             srcMinimumAmountOut.quotient.toString(),
             dstMinimumAmountOut.quotient.toString(),
             [

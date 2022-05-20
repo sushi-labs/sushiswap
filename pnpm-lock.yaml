@@ -556,6 +556,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/stargate': workspace:*
+      '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -594,6 +595,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/stargate': link:../../packages/stargate
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector
