@@ -1,5 +1,4 @@
-const hre = require('hardhat')
-import { ethers, utils } from 'ethers'
+import hre from 'hardhat'
 
 const BENTO_ADDRESS = new Map()
 const STARGATE_ROUTER_ADDRESS = new Map()
@@ -65,9 +64,9 @@ async function main() {
   console.log(await bbs.approveToStargateRouter(usdc.address))
 
   // Approve USDC
-  console.log(await usdc.approve(XBENTO_BRIDGE.get(chainId), utils.parseEther('1000000000000000')))
-  console.log(await usdc.approve(BENTO_ADDRESS.get(chainId), utils.parseEther('1000000000000000')))
-  console.log(await testToken.approve(BENTO_ADDRESS.get(chainId), utils.parseEther('10000000000000000')))
+  console.log(await usdc.approve(XBENTO_BRIDGE.get(chainId), hre.ethers.utils.parseEther('1000000000000000')))
+  console.log(await usdc.approve(BENTO_ADDRESS.get(chainId), hre.ethers.utils.parseEther('1000000000000000')))
+  console.log(await testToken.approve(BENTO_ADDRESS.get(chainId), hre.ethers.utils.parseEther('10000000000000000')))
 
   // Master Contract Approval
   //   console.log(
