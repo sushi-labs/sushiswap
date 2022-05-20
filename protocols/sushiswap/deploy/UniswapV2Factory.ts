@@ -2,7 +2,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
 // Defining bytecode and abi from original contract on mainnet to ensure bytecode matches and it produces the same pair code hash
-import { abi, bytecode } from '../deployments/mainnet/UniswapV2Factory.json'
+import { abi, bytecode } from '../deployments/ethereum/UniswapV2Factory.json'
 
 const func: DeployFunction = async function ({
   ethers,
