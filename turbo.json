@@ -17,7 +17,6 @@
       "cache": false
     },
     "export": {
-      "cache": false,
       "dependsOn": [
         "build"
       ],
