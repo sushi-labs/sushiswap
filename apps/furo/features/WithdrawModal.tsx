@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { Button, Dialog, Dots } from '@sushiswap/ui'
+import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
@@ -34,7 +34,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       onSuccess() {
         setOpen(false)
       },
-    },
+    }
   )
 
   const withdraw = useCallback(async () => {
@@ -69,7 +69,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         setAmount(Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(val, stream.token.decimals).toString())))
       }
     },
-    [stream?.token],
+    [stream?.token]
   )
 
   return (

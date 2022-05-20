@@ -1,7 +1,7 @@
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from '@ethersproject/bignumber'
 
-import { Graph, MultiRoute, RouteStatus } from "./Graph";
-import { RPool, RToken } from "./PrimaryPools";  
+import { Graph, MultiRoute, RouteStatus } from './Graph'
+import { RPool, RToken } from './PrimaryPools'
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {
@@ -9,9 +9,9 @@ function calcPriceImactWithoutFee(route: MultiRoute) {
     return undefined
   } else {
     let oneMinusCombinedFee = 1
-    route.legs.forEach(l => oneMinusCombinedFee *= (1-l.poolFee))
+    route.legs.forEach((l) => (oneMinusCombinedFee *= 1 - l.poolFee))
     //const combinedFee = 1-oneMinusCombinedFee
-    return Math.max(0, 1-route.swapPrice/route.primaryPrice/oneMinusCombinedFee)
+    return Math.max(0, 1 - route.swapPrice / route.primaryPrice / oneMinusCombinedFee)
   }
 }
 
@@ -21,8 +21,8 @@ function calcBestFlowNumber(bestSingleRoute: MultiRoute, amountIn: number, gasPr
   const priceImpact = calcPriceImactWithoutFee(bestSingleRoute)
   if (!priceImpact) return defaultFlowNumber
 
-  const bestFlowAmount = Math.sqrt(bestSingleRoute.gasSpent*(gasPriceIn || 0)*amountIn/priceImpact)
-  const bestFlowNumber = Math.round(amountIn/bestFlowAmount)
+  const bestFlowAmount = Math.sqrt((bestSingleRoute.gasSpent * (gasPriceIn || 0) * amountIn) / priceImpact)
+  const bestFlowNumber = Math.round(amountIn / bestFlowAmount)
   if (!isFinite(bestFlowNumber)) return maxFlowNumber
 
   const realFlowNumber = Math.max(1, Math.min(bestFlowNumber, maxFlowNumber))
@@ -75,8 +75,8 @@ function getBetterRouteExactOut(route1: MultiRoute, route2: MultiRoute, gasPrice
   if (route2.status == RouteStatus.NoWay) return route1
   if (route1.status == RouteStatus.Partial && route2.status == RouteStatus.Success) return route2
   if (route2.status == RouteStatus.Partial && route1.status == RouteStatus.Success) return route1
-  const totalAmountIn1 = route1.amountIn + route1.gasSpent*gasPrice
-  const totalAmountIn2 = route2.amountIn + route2.gasSpent*gasPrice
+  const totalAmountIn1 = route1.amountIn + route1.gasSpent * gasPrice
+  const totalAmountIn2 = route2.amountIn + route2.gasSpent * gasPrice
   return totalAmountIn1 < totalAmountIn2 ? route1 : route2
 }
 
@@ -160,6 +160,6 @@ export function findSingleRouteExactOut(
 export function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number> {
   const g = new Graph(pools, baseToken, 0)
   const res = new Map<RToken, number>()
-  g.vertices.forEach(v => res.set(v.token, v.price))
+  g.vertices.forEach((v) => res.set(v.token, v.price))
   return res
 }

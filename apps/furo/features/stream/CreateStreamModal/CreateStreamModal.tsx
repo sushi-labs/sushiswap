@@ -55,7 +55,7 @@ export const CreateStreamModalControlled: FC<CreateStreamModalControlledProps> =
   const [tokenApprovalState, approveToken] = useApproveCallback(
     open,
     amountAsEntity,
-    activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
+    activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined
   )
 
   const createStream = useCallback(async () => {

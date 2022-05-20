@@ -9,21 +9,21 @@
     "react",
     "components"
   ],
+  "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "source": "./src/index.tsx",
-  "sideEffects": false,
-  "license": "MIT",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
     "build": "tsup ./src/index.tsx --format esm,cjs --dts --external react",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup ./src/index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint src/**/*.ts* --fix",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",

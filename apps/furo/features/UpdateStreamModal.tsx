@@ -47,7 +47,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
       onSuccess() {
         setOpen(false)
       },
-    },
+    }
   )
 
   const updateStream = useCallback(async () => {
@@ -173,7 +173,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
               type="datetime-local"
               className={classNames(
                 changeEndDate ? '' : 'opacity-40 pointer-events-none',
-                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold',
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold'
               )}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}

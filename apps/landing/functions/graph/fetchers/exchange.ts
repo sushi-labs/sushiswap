@@ -38,7 +38,7 @@ export async function getTokenPrices(tokens: string[], chainId: number) {
       tokenPricesQuery,
       {
         where: { id_in: tokens },
-      },
+      }
     )
 
     return tokenPrices

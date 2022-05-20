@@ -195,7 +195,7 @@ const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
  */
 export async function getTokenList(
   listUrl: string,
-  resolveENSContentHash: (ensName: string) => Promise<string>,
+  resolveENSContentHash: (ensName: string) => Promise<string>
 ): Promise<TokenList> {
   const parsedENS = parseENSAddress(listUrl)
   let urls: string[]

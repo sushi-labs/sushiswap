@@ -19,7 +19,7 @@ const ComboboxInput: FC<ComboboxInputProps> = forwardRef(({ className, standalon
       ref,
       className: classNames(
         className,
-        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
+        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md'
       ),
     },
     <>
@@ -33,7 +33,7 @@ const ComboboxInput: FC<ComboboxInputProps> = forwardRef(({ className, standalon
       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
         <SelectorIcon className="h-5 w-5" aria-hidden="true" />
       </span>
-    </>,
+    </>
   )
 })
 

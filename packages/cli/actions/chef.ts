@@ -21,7 +21,7 @@ export async function chef(args: Arguments) {
     where: {
       id_in: [...MASTERCHEF_V1_pools, ...MASTERCHEF_V2_pools].reduce<string[]>(
         (previousValue, currentValue) => [...previousValue, currentValue.pair],
-        [],
+        []
       ),
     },
   })
@@ -41,7 +41,7 @@ export async function chef(args: Arguments) {
       .filter(
         (pool) =>
           (!args.all && pool.allocPoint !== '0' && ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair)) ||
-          (args.all && ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair)),
+          (args.all && ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair))
       )
       .map((pool) => {
         const pair = ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair)
@@ -71,7 +71,7 @@ export async function chef(args: Arguments) {
 
   const digestedV2 = digestPools(
     MASTERCHEF_V2_pools,
-    (MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint / MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint) * 100,
+    (MASTERCHEF_V2_pools[0].masterChef.totalAllocPoint / MASTERCHEF_V1_pools[0].masterChef.totalAllocPoint) * 100
   )
   if (digestedV2.length > 0) {
     const table = new Table({ head: Object.keys(digestedV2[0]), style: { compact: true } })

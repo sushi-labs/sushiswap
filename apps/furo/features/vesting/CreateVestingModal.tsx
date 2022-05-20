@@ -63,11 +63,11 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
 
     const cliffAmountAsEntity = Amount.fromRawAmount(
       token,
-      BigNumber.from(parseUnits(cliffAmount && Number(cliffAmount) > 0 ? cliffAmount : '0', token.decimals)).toString(),
+      BigNumber.from(parseUnits(cliffAmount && Number(cliffAmount) > 0 ? cliffAmount : '0', token.decimals)).toString()
     )
     const stepAmountAsEntity = Amount.fromRawAmount(
       token,
-      BigNumber.from(parseUnits(stepAmount && Number(stepAmount) > 0 ? stepAmount : '0', token.decimals)).toString(),
+      BigNumber.from(parseUnits(stepAmount && Number(stepAmount) > 0 ? stepAmount : '0', token.decimals)).toString()
     )
 
     return [cliffAmountAsEntity, stepAmountAsEntity, cliffAmountAsEntity.add(stepAmountAsEntity)]
@@ -76,7 +76,7 @@ const CreateVestingModal: FC<CreateVestingModal> = ({ button }) => {
   const [tokenApprovalState, approveToken] = useApproveCallback(
     open,
     totalAmountAsEntity,
-    activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
+    activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined
   )
 
   const createVesting = useCallback(async () => {

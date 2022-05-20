@@ -28,7 +28,7 @@ export const computeConstantProductPoolAddress = ({
 
   const deployData = defaultAbiCoder.encode(
     ['address', 'address', 'uint256', 'bool'],
-    [...[token0.address, token1.address].sort(), fee, twap],
+    [...[token0.address, token1.address].sort(), fee, twap]
   )
 
   const CONSTANT_PRODUCT_POOL_INIT_CODE_HASH =

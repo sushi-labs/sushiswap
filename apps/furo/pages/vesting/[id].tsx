@@ -32,15 +32,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
       fallback: {
         [`/api/vesting/${query.chainId}/${query.id}`]: (await getVesting(
           query.chainId,
-          query.id,
+          query.id
         )) as VestingRepresentation,
         [`/api/transactions/${query.chainId}/${query.id}`]: (await getVestingTransactions(
           query.chainId,
-          query.id,
+          query.id
         )) as TransactionRepresentation[],
         [`/api/schedule/${query.chainId}/${query.id}`]: (await getVestingSchedule(
           query.chainId,
-          query.id,
+          query.id
         )) as ScheduleRepresentation,
       },
     },
@@ -67,7 +67,7 @@ const _VestingPage: FC = () => {
 
   const vesting = useMemo(
     () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation }) : undefined),
-    [vestingRepresentation],
+    [vestingRepresentation]
   )
 
   if (!isMounted) return null

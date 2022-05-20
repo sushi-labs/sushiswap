@@ -19,7 +19,7 @@ const SelectLabel: FC<SelectLabelProps> = ({ className, children, standalone, ..
     },
     <Typography variant="sm" weight={500} className={classNames(className, 'text-high-emphesis')}>
       {children}
-    </Typography>,
+    </Typography>
   )
 }
 

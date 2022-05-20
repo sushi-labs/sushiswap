@@ -38,11 +38,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
       fallback: {
         [`/furo/api/stream/${query.chainId}/${query.id}`]: (await getStream(
           query.chainId,
-          query.id,
+          query.id
         )) as StreamRepresentation,
         [`/furo/api/transactions/${query.chainId}/${query.id}`]: (await getStreamTransactions(
           query.chainId,
-          query.id,
+          query.id
         )) as TransactionRepresentation[],
       },
     },
@@ -70,15 +70,15 @@ const _Streams: FC = () => {
   const id = Number(router.query.id as string)
 
   const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
-    fetch(url).then((response) => response.json()),
+    fetch(url).then((response) => response.json())
   )
   const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
-    fetch(url).then((response) => response.json()),
+    fetch(url).then((response) => response.json())
   )
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
-    [streamRepresentation],
+    [streamRepresentation]
   )
 
   if (!isMounted) return null

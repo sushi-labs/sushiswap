@@ -7,7 +7,7 @@ import { useBentoBoxContract } from './useBentoBoxContract'
 
 type UseBentoBoxRebases = (
   chainId: number,
-  tokens: (Currency | undefined)[],
+  tokens: (Currency | undefined)[]
 ) => {
   rebases: Record<string, { base: JSBI; elastic: JSBI } | undefined>
   loading: boolean
@@ -36,11 +36,11 @@ const useBentoBoxRebases: UseBentoBoxRebases = (chainId, tokens) => {
           }
           return previousValue
         },
-        {},
+        {}
       ),
       loading,
     }),
-    [loading, results, tokens],
+    [loading, results, tokens]
   )
 }
 

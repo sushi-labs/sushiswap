@@ -10,7 +10,7 @@ import { Percent } from '@sushiswap/math'
 export function computePriceImpact<TBase extends Currency, TQuote extends Currency>(
   midPrice: Price<TBase, TQuote>,
   inputAmount: Amount<TBase>,
-  outputAmount: Amount<TQuote>,
+  outputAmount: Amount<TQuote>
 ): Percent {
   const quotedOutputAmount = midPrice.quote(inputAmount)
   // calculate price impact := (exactQuote - outputAmount) / exactQuote

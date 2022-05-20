@@ -19,6 +19,6 @@ export const useFundSourceToggler = () => {
       fromBentobox: fundSource === FundSource.BENTOBOX,
       toggle,
     }),
-    [fundSource, toggle],
+    [fundSource, toggle]
   )
 }

@@ -14,7 +14,7 @@ export function useTokensFromMap(chainId: ChainId, tokenMap: ChainTokenMap): { [
         newMap[address] = tokenMap[chainId][address].token
         return newMap
       },
-      {},
+      {}
     )
 
     return mapWithoutUrls

@@ -12,7 +12,7 @@ async function getTridentFactory(chainId: number) {
   try {
     const { factories } = await request(
       `${GRAPH_HOST[chainId]}/subgraphs/name/${TRIDENT[chainId]}`,
-      tridentFactoryQuery,
+      tridentFactoryQuery
     )
     const factory = factories[0]
 

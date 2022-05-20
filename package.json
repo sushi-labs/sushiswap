@@ -4,26 +4,41 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "changeset": "changeset",
+    "changeset-publish": "turbo run build --filter=docs^... && changeset publish",
+    "changeset-version": "changeset version",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "turbo run dev --no-cache --parallel --continue",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
     "lint": "turbo run lint",
+    "prepare": "husky install",
     "sort": "sort-package-json 'package.json' 'apis/{,!(node_modules)/**/package.json' 'apps/{,!(node_modules)/**/package.json' 'examples/{,!(node_modules)/**/package.json' 'packages/{,!(node_modules)/**}/package.json' 'protocols/{,!(node_modules)/**/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/{,!(node_modules)/**/package.json' 'apps/{,!(node_modules)/**/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/**/package.json' 'protocols/{,!(node_modules)/**/package.json' --check",
-    "test": "turbo run test --parallel",
-    "changeset": "changeset",
-    "changeset-version": "changeset version",
-    "changeset-publish": "turbo run build --filter=docs^... && changeset publish"
+    "test": "turbo run test --parallel"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
+    "*.sol": [
+      "solhint -c .solhint.json",
+      "prettier --write",
+      "pnpm test"
+    ],
+    "*.md": "prettier --write"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.0.0",
     "@commitlint/config-conventional": "^16.0.0",
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "eslint": "^8.15.0",
+    "husky": "^8.0.1",
     "jest": "^28.1.0",
+    "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
     "sort-package-json": "^1.55.0",
     "ts-jest": "^28.0.2",

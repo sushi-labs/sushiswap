@@ -12,7 +12,7 @@ export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
     <span
       className={classNames(
         "after:inline-block after:content-['.'] after:animate-ellipsis after:w-4 after:text-left",
-        className,
+        className
       )}
     >
       {children}

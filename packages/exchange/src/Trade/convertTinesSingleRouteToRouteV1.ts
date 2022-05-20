@@ -8,7 +8,7 @@ export function convertTinesSingleRouteToRouteV1<TInput extends Currency, TOutpu
   route: MultiRoute,
   allPairs: Pair[],
   input: TInput,
-  output: TOutput,
+  output: TOutput
 ): RouteV1<TInput, TOutput> {
   const pairHash = new Map<string, Pair>()
   allPairs.forEach((p) => pairHash.set(p.liquidityToken.address, p))

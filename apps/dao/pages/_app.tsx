@@ -78,7 +78,7 @@ const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => 
                       <a
                         className={classNames(
                           'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
-                          href === '/' || (href !== '/' && router.asPath.includes(href) && '!text-white !underline'),
+                          href === '/' || (href !== '/' && router.asPath.includes(href) && '!text-white !underline')
                         )}
                       >
                         {children}

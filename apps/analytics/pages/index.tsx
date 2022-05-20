@@ -11,7 +11,7 @@ export default function Analytics(props: FactoryQuery) {
       userCount: previousValue.userCount + Number(currentValue.userCount),
       tokenCount: previousValue.tokenCount + Number(currentValue.tokenCount),
     }),
-    { liquidityUSD: 0, volumeUSD: 0, txCount: 0, pairCount: 0, userCount: 0, tokenCount: 0 },
+    { liquidityUSD: 0, volumeUSD: 0, txCount: 0, pairCount: 0, userCount: 0, tokenCount: 0 }
   )
 
   return (

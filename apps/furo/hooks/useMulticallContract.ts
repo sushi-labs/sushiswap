@@ -13,7 +13,7 @@ export function useMulticallContract(chainId: ChainId) {
     return new Contract(
       MULTICALL_ADDRESS[chainId] as string,
       MULTICALL_ABI,
-      getProvider(chainId),
+      getProvider(chainId)
     ) as UniswapInterfaceMulticall
   }, [chainId]) as UniswapInterfaceMulticall
 }

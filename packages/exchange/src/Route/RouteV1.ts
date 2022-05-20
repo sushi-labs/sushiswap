@@ -14,7 +14,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const chainId: number = pairs[0].chainId
     invariant(
       pairs.every((pair) => pair.chainId === chainId),
-      'CHAIN_IDS',
+      'CHAIN_IDS'
     )
 
     const wrappedInput = input.wrapped
@@ -44,7 +44,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
       prices.push(
         this.path[i].equals(pair.token0)
           ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
-          : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
+          : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient)
       )
     }
     const reduced = prices.slice(1).reduce((accumulator, currentValue) => accumulator.multiply(currentValue), prices[0])

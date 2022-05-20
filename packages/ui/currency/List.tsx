@@ -97,7 +97,7 @@ export const List = withContext(() => {
 
       return <CurrencyRow currency={currency} style={style} />
     },
-    [currencies],
+    [currencies]
   )
 
   return (

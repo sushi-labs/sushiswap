@@ -1,12 +1,7 @@
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from '@ethersproject/bignumber'
 
-import { getBigNumber, revertPositive } from "../Utils";
-import {
-  Pool,
-  PoolType,
-  RHybridPool,
-  RWeightedPool,
-} from './MultiRouterTypes'
+import { getBigNumber, revertPositive } from '../Utils'
+import { Pool, PoolType, RHybridPool, RWeightedPool } from './MultiRouterTypes'
 
 const A_PRECISION = 100
 
@@ -104,7 +99,6 @@ export function calcOutByIn(pool: Pool, amountIn: number, direction = true): num
 }
 
 export class OutOfLiquidity extends Error {}
-
 
 export function calcInByOut(pool: Pool, amountOut: number, direction: boolean): number {
   let input = 0

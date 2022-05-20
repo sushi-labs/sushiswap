@@ -28,7 +28,7 @@ export abstract class Pool {
   public abstract getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token>,
-    tokenAmountB: Amount<Token>,
+    tokenAmountB: Amount<Token>
   ): Amount<Token>
 
   public abstract getLiquidityValue(token: Token, totalSupply: Amount<Token>, liquidity: Amount<Token>): Amount<Token>

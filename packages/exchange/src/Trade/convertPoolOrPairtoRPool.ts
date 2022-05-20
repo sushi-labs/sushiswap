@@ -14,7 +14,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
       pool.assets[1].wrapped as RToken,
       pool.fee / 10000,
       BigNumber.from(pool.reserves[0].quotient.toString()),
-      BigNumber.from(pool.reserves[1].quotient.toString()),
+      BigNumber.from(pool.reserves[1].quotient.toString())
     )
   } else if (pool instanceof Pair) {
     return new ConstantProductRPool(
@@ -23,7 +23,7 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
       pool.token1 as RToken,
       Fee.DEFAULT / 10000,
       BigNumber.from(pool.reserve0.quotient.toString()),
-      BigNumber.from(pool.reserve1.quotient.toString()),
+      BigNumber.from(pool.reserve1.quotient.toString())
     )
   } else {
     throw new Error('Unsupported type of pool !!!')

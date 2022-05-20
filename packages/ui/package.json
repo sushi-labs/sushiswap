@@ -9,14 +9,14 @@
     "react",
     "components"
   ],
-  "sideEffects": false,
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "./index.ts",
   "source": "./index.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint src/**/*.ts* --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -35,19 +35,19 @@
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "tsup": "^5.12.7",
-    "typescript": "^4.6.4",
-    "postcss": "^8.4.14",
-    "autoprefixer": "^10.4.7"
+    "typescript": "^4.6.4"
   },
   "peerDependencies": {
     "react": "^18.1.0",

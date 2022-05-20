@@ -12,7 +12,7 @@ export function findSingleRouteExactIn(
   amountIn: BigNumber | number,
   pools: (Pool | Pair)[],
   baseToken: Token,
-  gasPrice: number,
+  gasPrice: number
 ): MultiRoute {
   return TinesFindSingleRouteExactIn(
     from as RToken,
@@ -20,6 +20,6 @@ export function findSingleRouteExactIn(
     amountIn,
     pools.map(convertPoolOrPairtoRPool),
     baseToken as RToken,
-    gasPrice,
+    gasPrice
   )
 }

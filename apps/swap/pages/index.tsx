@@ -241,6 +241,7 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
     dstMinimumAmountOut,
     dstToken,
     dstTrade,
+    dstUseBentoBox,
     signature,
     signer,
     srcAmount,

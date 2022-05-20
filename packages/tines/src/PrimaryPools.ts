@@ -28,7 +28,7 @@ export abstract class RPool {
     reserve0: BigNumber,
     reserve1: BigNumber,
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
-    swapGasCost = TYPICAL_SWAP_GAS_COST,
+    swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
     this.address = address
     ;(this.token0 = token0), (this.token1 = token1)
@@ -123,7 +123,7 @@ export class HybridRPool extends RPool {
     fee: number,
     A: number,
     reserve0: BigNumber,
-    reserve1: BigNumber,
+    reserve1: BigNumber
   ) {
     super(address, token0, token1, fee, reserve0, reserve1)
     this.A = A

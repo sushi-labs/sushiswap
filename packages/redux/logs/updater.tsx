@@ -53,7 +53,7 @@ export default function Updater(props: UpdaterProps): null {
               chainId,
               filter,
               results: { logs, blockNumber },
-            }),
+            })
           )
         })
         .catch((error) => {
@@ -63,7 +63,7 @@ export default function Updater(props: UpdaterProps): null {
               chainId,
               filter,
               blockNumber,
-            }),
+            })
           )
         })
     })

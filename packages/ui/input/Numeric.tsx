@@ -32,7 +32,7 @@ export const Input: FC<NumericProps> = forwardRef<HTMLInputElement, NumericProps
       maxLength = 79,
       ...rest
     },
-    ref,
+    ref
   ) => {
     const enforcer = (nextUserInput: string) => {
       if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
@@ -66,11 +66,11 @@ export const Input: FC<NumericProps> = forwardRef<HTMLInputElement, NumericProps
         maxLength={maxLength}
         className={classNames(
           'flex-auto w-full px-0 py-3 overflow-hidden bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed placeholder-slate-500 focus:placeholder-slate-400',
-          className,
+          className
         )}
       />
     )
-  },
+  }
 )
 
 export default Input

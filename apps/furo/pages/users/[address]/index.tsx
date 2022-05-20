@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
         [`/api/streams/${query.chainId}/${query.address}`]: (await getStreams(query.chainId, query.address)) as Streams,
         [`/api/vestings/${query.chainId}/${query.address}`]: (await getVestings(
           query.chainId,
-          query.address,
+          query.address
         )) as Vestings,
       },
     },
@@ -57,7 +57,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
   const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
     `/furo/api/vestings/${chainId}/${address}`,
-    fetcher,
+    fetcher
   )
 
   return (

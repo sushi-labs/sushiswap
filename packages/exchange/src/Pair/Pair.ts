@@ -107,7 +107,7 @@ export class Pair {
     const denominator = JSBI.add(JSBI.multiply(inputReserve.quotient, _1000), inputAmountWithFee)
     const outputAmount = Amount.fromRawAmount(
       inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.divide(numerator, denominator),
+      JSBI.divide(numerator, denominator)
     )
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
       throw new InsufficientInputAmountError()
@@ -131,7 +131,7 @@ export class Pair {
     const denominator = JSBI.multiply(JSBI.subtract(outputReserve.quotient, outputAmount.quotient), _997)
     const inputAmount = Amount.fromRawAmount(
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.add(JSBI.divide(numerator, denominator), ONE),
+      JSBI.add(JSBI.divide(numerator, denominator), ONE)
     )
     return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
   }
@@ -139,7 +139,7 @@ export class Pair {
   public getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token>,
-    tokenAmountB: Amount<Token>,
+    tokenAmountB: Amount<Token>
   ): Amount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
     const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
@@ -151,7 +151,7 @@ export class Pair {
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
       liquidity = JSBI.subtract(
         sqrt(JSBI.multiply(tokenAmounts[0].quotient, tokenAmounts[1].quotient)),
-        this.minLiquidity,
+        this.minLiquidity
       )
     } else {
       const amount0 = JSBI.divide(JSBI.multiply(tokenAmounts[0].quotient, totalSupply.quotient), this.reserve0.quotient)
@@ -178,7 +178,7 @@ export class Pair {
     totalSupply: Amount<Token>,
     liquidity: Amount<Token>,
     feeOn: boolean = false,
-    kLast?: BigintIsh,
+    kLast?: BigintIsh
   ): Amount<Token> {
     invariant(this.involvesToken(token), 'TOKEN')
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
@@ -209,7 +209,7 @@ export class Pair {
 
     return Amount.fromRawAmount(
       token,
-      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupplyAdjusted.quotient),
+      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupplyAdjusted.quotient)
     )
   }
 }

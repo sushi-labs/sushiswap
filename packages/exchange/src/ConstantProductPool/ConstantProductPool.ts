@@ -128,7 +128,7 @@ export class ConstantProductPool implements Pool {
     const denominator = JSBI.add(JSBI.multiply(inputReserve.quotient, this.MAX_FEE), inputAmountWithFee)
     const outputAmount = Amount.fromRawAmount(
       inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.divide(numerator, denominator),
+      JSBI.divide(numerator, denominator)
     )
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
       throw new InsufficientInputAmountError()
@@ -154,11 +154,11 @@ export class ConstantProductPool implements Pool {
     const numerator = JSBI.multiply(JSBI.multiply(inputReserve.quotient, outputAmount.quotient), this.MAX_FEE)
     const denominator = JSBI.multiply(
       JSBI.subtract(outputReserve.quotient, outputAmount.quotient),
-      JSBI.subtract(this.MAX_FEE, JSBI.BigInt(this.fee)),
+      JSBI.subtract(this.MAX_FEE, JSBI.BigInt(this.fee))
     )
     const inputAmount = Amount.fromRawAmount(
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.add(JSBI.divide(numerator, denominator), ONE),
+      JSBI.add(JSBI.divide(numerator, denominator), ONE)
     )
     return [
       inputAmount,
@@ -177,7 +177,7 @@ export class ConstantProductPool implements Pool {
         ZERO,
         JSBI.divide(
           JSBI.multiply(JSBI.BigInt(this.fee), JSBI.subtract(amount1, amount1Optimal)),
-          JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000)),
+          JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000))
         ),
       ]
     } else {
@@ -185,7 +185,7 @@ export class ConstantProductPool implements Pool {
       return [
         JSBI.divide(
           JSBI.multiply(JSBI.BigInt(this.fee), JSBI.subtract(amount0, amount0Optimal)),
-          JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000)),
+          JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000))
         ),
         ZERO,
       ]
@@ -199,9 +199,9 @@ export class ConstantProductPool implements Pool {
         const liquidity = JSBI.divide(
           JSBI.divide(
             JSBI.multiply(JSBI.multiply(totalSupply, JSBI.subtract(computed, this.kLast)), JSBI.BigInt(5)),
-            computed,
+            computed
           ),
-          JSBI.BigInt(10000),
+          JSBI.BigInt(10000)
         )
         if (JSBI.notEqual(liquidity, ZERO)) {
           return liquidity
@@ -215,7 +215,7 @@ export class ConstantProductPool implements Pool {
   public getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token>,
-    tokenAmountB: Amount<Token>,
+    tokenAmountB: Amount<Token>
   ): Amount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
     const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
@@ -237,7 +237,7 @@ export class ConstantProductPool implements Pool {
         tokenAmounts[0].quotient,
         tokenAmounts[1].quotient,
         this.reserve0.quotient,
-        this.reserve1.quotient,
+        this.reserve1.quotient
       )
 
       const reserve0 = JSBI.add(this.reserve0.quotient, fee0)
@@ -264,7 +264,7 @@ export class ConstantProductPool implements Pool {
     invariant(JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient), 'LIQUIDITY')
     return Amount.fromRawAmount(
       token,
-      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupply.quotient),
+      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupply.quotient)
     )
   }
 
@@ -272,14 +272,14 @@ export class ConstantProductPool implements Pool {
     const amountInWithFee = JSBI.multiply(amountIn, JSBI.subtract(this.MAX_FEE, JSBI.BigInt(this.fee)))
     return JSBI.divide(
       JSBI.multiply(amountInWithFee, reserveAmountOut),
-      JSBI.add(JSBI.multiply(reserveAmountIn, this.MAX_FEE), amountInWithFee),
+      JSBI.add(JSBI.multiply(reserveAmountIn, this.MAX_FEE), amountInWithFee)
     )
   }
 
   public getLiquidityValueSingleToken(
     token: Token,
     totalSupply: Amount<Token>,
-    liquidity: Amount<Token>,
+    liquidity: Amount<Token>
   ): Amount<Token> {
     invariant(this.involvesToken(token), 'TOKEN')
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
@@ -288,7 +288,7 @@ export class ConstantProductPool implements Pool {
 
     let _totalSupply = JSBI.add(
       totalSupply.quotient,
-      this.getMintFee(this.reserve0.quotient, this.reserve1.quotient, totalSupply.quotient),
+      this.getMintFee(this.reserve0.quotient, this.reserve1.quotient, totalSupply.quotient)
     )
     let amount0 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve0.quotient), _totalSupply)
     let amount1 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve1.quotient), _totalSupply)
@@ -301,9 +301,9 @@ export class ConstantProductPool implements Pool {
           this.getAmountOut(
             amount0,
             JSBI.subtract(this.reserve0.quotient, amount0),
-            JSBI.subtract(this.reserve1.quotient, amount1),
-          ),
-        ),
+            JSBI.subtract(this.reserve1.quotient, amount1)
+          )
+        )
       )
     }
 
@@ -314,9 +314,9 @@ export class ConstantProductPool implements Pool {
         this.getAmountOut(
           amount1,
           JSBI.subtract(this.reserve1.quotient, amount1),
-          JSBI.subtract(this.reserve0.quotient, amount0),
-        ),
-      ),
+          JSBI.subtract(this.reserve0.quotient, amount0)
+        )
+      )
     )
   }
 }

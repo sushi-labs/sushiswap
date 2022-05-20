@@ -8,24 +8,24 @@
 
 ### Numbers
 
-- _1e18
-- _1e12
+- \_1e18
+- \_1e12
 
 ### Functions
-
-
 
 ## Tasks
 
 - ERC20
-    - approve
-    - transfer 
+
+  - approve
+  - transfer
 
 - BentoBox
-    - permit
-    - whitelist-master-contract
+
+  - permit
+  - whitelist-master-contract
 
 - UniswapV2
-    - add-liquidity
-    - remove-liquidity
-    - swap
+  - add-liquidity
+  - remove-liquidity
+  - swap

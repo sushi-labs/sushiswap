@@ -22,7 +22,7 @@ export const Address: FC<DatetimeLocalProps> = forwardRef<HTMLInputElement, Date
         />
       </>
     )
-  },
+  }
 )
 
 export default Address

@@ -29,7 +29,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
       onSuccess() {
         setOpen(false)
       },
-    },
+    }
   )
 
   const cancelStream = useCallback(async () => {

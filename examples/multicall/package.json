@@ -1,5 +1,5 @@
 {
-  "name": "multicall",
+  "name": "multicall-example",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -24,7 +24,7 @@
     "@typechain/ethers-v5": "^10.0.0",
     "@uniswap/redux-multicall": "^1.1.1",
     "@uniswap/v3-periphery": "^1.4.1",
-    "next": "^12.1.5",
+    "next": "^12.1.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",
@@ -37,8 +37,8 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.30",
-    "@types/react": "^18.0.8",
-    "@types/react-dom": "^18.0.3",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
     "eslint": "^8.15.0",
     "ethers": "^5.6.5",
     "next-transpile-modules": "9.0.0",

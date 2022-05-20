@@ -39,7 +39,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
           hover === BalanceChartHoverEnum.WITHDRAW
             ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(39,_176,_230,_0.6)]'
             : '',
-          'text-slate-700 cursor-pointer',
+          'text-slate-700 cursor-pointer'
         )}
         onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
         onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
@@ -91,7 +91,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
           hover === BalanceChartHoverEnum.STREAMED
             ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(250,_82,_160,_0.6)]'
             : '',
-          'text-slate-700 cursor-pointer',
+          'text-slate-700 cursor-pointer'
         )}
         onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
         onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}

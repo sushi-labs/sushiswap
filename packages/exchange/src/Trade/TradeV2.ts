@@ -40,7 +40,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
    * @param amountIn the amount being passed in
    */
   public static exactIn<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute,
+    route: MultiRoute
   ): Trade<TInput, TOutput, Type.EXACT_INPUT> {
     return new Trade(route, Type.EXACT_INPUT)
   }
@@ -51,7 +51,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
    * @param amountOut the amount returned by the trade
    */
   public static exactOut<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute,
+    route: MultiRoute
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT> {
     return new Trade(route, Type.EXACT_OUTPUT)
   }
@@ -64,7 +64,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
   public constructor(
     route: MultiRoute,
     // amount: TTradeType extends TradeType.EXACT_INPUT ? CurrencyAmount<TInput> : CurrencyAmount<TOutput>,
-    tradeType: TradeType,
+    tradeType: TradeType
   ) {
     this.route = route
     this.tradeType = tradeType
@@ -85,7 +85,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
       this.inputAmount.currency,
       this.outputAmount.currency,
       this.inputAmount.quotient,
-      this.outputAmount.quotient,
+      this.outputAmount.quotient
     )
 
     // this.priceImpact = computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount)
@@ -129,22 +129,22 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
   public static bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
     route: MultiRoute,
     currencyAmountIn: Amount<TInput>,
-    currencyOut: TOutput,
+    currencyOut: TOutput
   ): Trade<TInput, TOutput, Type.EXACT_INPUT> {
     return new Trade(
       { ...route, fromToken: currencyAmountIn.currency as RToken, toToken: currencyOut as RToken },
-      Type.EXACT_INPUT,
+      Type.EXACT_INPUT
     )
   }
 
   public static bestTradeExactOut<TInput extends Currency, TOutput extends Currency>(
     route: MultiRoute,
     currencyIn: TInput,
-    currencyAmountOut: Amount<TOutput>,
+    currencyAmountOut: Amount<TOutput>
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT> {
     return new Trade(
       { ...route, fromToken: currencyIn as RToken, toToken: currencyAmountOut.currency as RToken },
-      Type.EXACT_OUTPUT,
+      Type.EXACT_OUTPUT
     )
   }
 }

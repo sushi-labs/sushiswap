@@ -50,7 +50,7 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
         // })
       }
     },
-    [href, target],
+    [href, target]
   )
   return (
     <a
@@ -62,7 +62,7 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
         'text-baseline whitespace-nowrap',
         COLOR[color],
         (startIcon || endIcon) && 'space-x-1 flex items-center justify-center',
-        className,
+        className
       )}
       {...rest}
     >

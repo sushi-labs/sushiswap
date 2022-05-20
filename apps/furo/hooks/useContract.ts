@@ -12,7 +12,7 @@ import ERC20_ABI from '../abis/erc20.json'
 export function useContract<T extends Contract = Contract>(
   addressOrAddressMap: string | { [chainId: number]: string } | undefined,
   ABI: any,
-  withSignerIfPossible = true,
+  withSignerIfPossible = true
 ): T | null {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()

@@ -19,7 +19,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       ref,
       className: classNames(
         'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
-        className,
+        className
       ),
     },
     <>
@@ -33,7 +33,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, s
       <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
         <SelectorIcon className="w-5 h-5" aria-hidden="true" />
       </span>
-    </>,
+    </>
   )
 })
 

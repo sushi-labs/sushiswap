@@ -25,7 +25,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ onSelect, currency }) => {
       onSelect(currency.wrapped)
       setOpen(false)
     },
-    [onSelect],
+    [onSelect]
   )
 
   const filteredTokens: Token[] = useMemo(() => {

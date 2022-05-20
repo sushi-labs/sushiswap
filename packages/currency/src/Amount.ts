@@ -36,11 +36,11 @@ export class Amount<T extends Type> extends Fraction {
   public static fromShare<T extends Token>(
     currency: T,
     shares: BigintIsh,
-    rebase: { base: JSBI; elastic: JSBI },
+    rebase: { base: JSBI; elastic: JSBI }
   ): Amount<T> {
     return new Amount(
       currency,
-      JSBI.GT(rebase.base, 0) ? JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base) : ZERO,
+      JSBI.GT(rebase.base, 0) ? JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base) : ZERO
     )
   }
 
@@ -50,9 +50,9 @@ export class Amount<T extends Type> extends Fraction {
       JSBI.GT(rebase.elastic, 0)
         ? JSBI[roundUp ? 'add' : 'subtract'](
             JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic),
-            JSBI.BigInt(1),
+            JSBI.BigInt(1)
           )
-        : ZERO,
+        : ZERO
     )
   }
 
@@ -65,7 +65,7 @@ export class Amount<T extends Type> extends Fraction {
   public static fromFractionalAmount<T extends Type>(
     currency: T,
     numerator: BigintIsh,
-    denominator: BigintIsh,
+    denominator: BigintIsh
   ): Amount<T> {
     return new Amount(currency, numerator, denominator)
   }
@@ -102,7 +102,7 @@ export class Amount<T extends Type> extends Fraction {
   public toSignificant(
     significantDigits: number = 6,
     format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN,
+    rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
     return super.divide(this.scale).toSignificant(significantDigits, format, rounding)
   }
@@ -110,7 +110,7 @@ export class Amount<T extends Type> extends Fraction {
   public toFixed(
     decimalPlaces: number = this.currency.decimals,
     format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN,
+    rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS')
     return super.divide(this.scale).toFixed(decimalPlaces, format, rounding)

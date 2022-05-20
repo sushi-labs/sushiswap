@@ -23,7 +23,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const chainIds = useMemo(() => [ChainId.ETHEREUM, ChainId.RINKEBY, ChainId.ROPSTEN, ChainId.GÖRLI, ChainId.KOVAN], [])
   const blockNumbers = useMemo(
     () => [blockNumberEthereum, blockNumberRinkeby, blockNumberRopsten, blockNumberGorli, blockNumberKovan],
-    [blockNumberEthereum, blockNumberGorli, blockNumberKovan, blockNumberRinkeby, blockNumberRopsten],
+    [blockNumberEthereum, blockNumberGorli, blockNumberKovan, blockNumberRinkeby, blockNumberRopsten]
   )
   return (
     <Provider store={store}>

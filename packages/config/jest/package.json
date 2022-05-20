@@ -20,7 +20,7 @@
     "node.js"
   ],
   "devDependencies": {
-    "@types/node": "^17.0.34",
-    "@sushiswap/eslint-config": "workspace:*"
+    "@sushiswap/eslint-config": "workspace:*",
+    "@types/node": "^17.0.34"
   }
 }

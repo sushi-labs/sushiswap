@@ -21,7 +21,7 @@ const SafeTable = () => {
   const { data } = useSWR('/api/safes')
 
   const balance = formatUSD(
-    String(data.reduce((previousValue, currentValue) => previousValue + Number(currentValue.balance), 0)),
+    String(data.reduce((previousValue, currentValue) => previousValue + Number(currentValue.balance), 0))
   )
 
   const columns = useMemo(
@@ -65,7 +65,7 @@ const SafeTable = () => {
                     (props.row.cells[1].value !== 'Treasury' && threshold === EXPECTED_OPS_THRESHOLD) ||
                       (props.row.cells[1].value === 'Treasury' && threshold === EXPECTED_TREASURY_THRESHOLD)
                       ? 'text-green'
-                      : 'text-red',
+                      : 'text-red'
                   )}
                 >
                   {threshold}
@@ -78,7 +78,7 @@ const SafeTable = () => {
                     (props.row.cells[1].value !== 'Treasury' && ownerCount === EXPECTED_OPS_OWNER_COUNT) ||
                       (props.row.cells[1].value === 'Treasury' && ownerCount === EXPECTED_TREASURY_OWNER_COUNT)
                       ? 'text-green'
-                      : 'text-red',
+                      : 'text-red'
                   )}
                 >
                   {ownerCount}
@@ -106,7 +106,7 @@ const SafeTable = () => {
                       href={`${explorers?.[0]?.url}/address/${address}`}
                       key={i}
                       className={classNames(
-                        !USERS.has(address) && 'text-red hover:text-red hover:underline focus:text-red active:text-red',
+                        !USERS.has(address) && 'text-red hover:text-red hover:underline focus:text-red active:text-red'
                       )}
                     >
                       {name ?? '???'}
@@ -143,7 +143,7 @@ const SafeTable = () => {
         },
       },
     ],
-    [],
+    []
   )
 
   const config = useMemo(
@@ -155,7 +155,7 @@ const SafeTable = () => {
       },
       autoResetFilters: false,
     }),
-    [columns, data],
+    [columns, data]
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
@@ -164,12 +164,12 @@ const SafeTable = () => {
     useFilters,
     useSortBy,
     useFlexLayout,
-    usePagination,
+    usePagination
   )
 
   const { data: sushiHOUSE } = useSWR(
     'https://openapi.debank.com/v1/user/total_balance?id=0x7b18913d945242a9c313573e6c99064cd940c6af',
-    (url) => fetch(url).then((response) => response.json()),
+    (url) => fetch(url).then((response) => response.json())
   )
 
   return (
@@ -258,7 +258,7 @@ export const getStaticProps = async () => {
     'https://openapi.debank.com/v1/user/total_balance?id=0x7b18913d945242a9c313573e6c99064cd940c6af',
     {
       method: 'GET',
-    },
+    }
   ).then((response) => response.json())
   return {
     props: {

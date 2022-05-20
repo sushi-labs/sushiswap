@@ -1,15 +1,17 @@
-import { checkRouteResult } from './snapshots/snapshot'
-import { RToken, ConstantProductRPool } from '../src/PrimaryPools'
+import { BigNumber } from '@ethersproject/bignumber'
 import { USDC, WNATIVE } from '@sushiswap/currency'
+import { performance } from 'perf_hooks'
+
 import {
-  getBigNumber,
-  RouteStatus,
+  closeValues,
   findMultiRouteExactIn,
   findMultiRouteExactOut,
-  closeValues,
+  getBigNumber,
   MultiRoute,
+  RouteStatus,
 } from '../src'
-import { BigNumber } from '@ethersproject/bignumber'
+import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
+import { checkRouteResult } from './snapshots/snapshot'
 
 const gasPrice = 1 * 200 * 1e-9
 
@@ -25,7 +27,7 @@ function getPool(
   price: number[],
   reserve: number,
   fee = 0.003,
-  imbalance = 0,
+  imbalance = 0
 ) {
   return new ConstantProductRPool(
     `pool-${t0}-${t1}-${reserve}-${fee}`,
@@ -33,7 +35,7 @@ function getPool(
     { ...tokens[t1] },
     fee,
     getBigNumber(reserve),
-    getBigNumber(Math.round(reserve / (price[t1] / price[t0]) - imbalance)),
+    getBigNumber(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
   )
 }
 
@@ -93,7 +95,7 @@ describe('Multirouting for bridge topology', () => {
       testPools,
       { ...tokens[2] },
       gasPrice,
-      100,
+      100
     )
 
     expect(res).toBeDefined()
@@ -135,11 +137,11 @@ describe('Multirouting for bridge topology', () => {
           WNATIVE[42] as RToken,
           0.003,
           BigNumber.from('879752148'),
-          BigNumber.from('227627092068744941'),
+          BigNumber.from('227627092068744941')
         ),
       ],
       WNATIVE[42] as RToken,
-      20 * 1e9,
+      20 * 1e9
     )
 
     expect(res).toBeDefined()
@@ -182,7 +184,7 @@ describe('Multirouting for bridge topology', () => {
       testPools,
       tokens[2],
       gasPrice,
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
     )
 
     expect(res).toBeDefined()
@@ -197,7 +199,7 @@ describe('Multirouting for bridge topology', () => {
       testPools,
       tokens[2],
       gasPrice,
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
     )
     checkExactOut(res, res2)
 

@@ -24,7 +24,7 @@ function useTokensFromMap(tokenMap: ChainTokenMap): { [address: string]: Token }
         newMap[address] = tokenMap[chainId][address].token
         return newMap
       },
-      {},
+      {}
     )
 
     return mapWithoutUrls
@@ -67,7 +67,7 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
     token ? undefined : tokenContractBytes32,
     'name',
     undefined,
-    NEVER_RELOAD,
+    NEVER_RELOAD
   )
   const symbol = useSingleCallResult(token ? undefined : tokenContract, 'symbol', undefined, NEVER_RELOAD)
   const symbolBytes32 = useSingleCallResult(token ? undefined : tokenContractBytes32, 'symbol', undefined, NEVER_RELOAD)
@@ -85,8 +85,7 @@ export function useToken(tokenAddress?: string | null): Token | undefined | null
         decimals: decimals.result[0],
         symbol: parseStringOrBytes32(symbol.result?.[0], symbolBytes32.result?.[0], 'UNKNOWN'),
         name: parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token'),
-      }
-      )
+      })
     }
     return undefined
   }, [

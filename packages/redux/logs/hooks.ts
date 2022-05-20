@@ -31,7 +31,7 @@ export function useLogs(
   context: LogsContext,
   chainId: number | undefined,
   blockNumber: number | undefined,
-  filter: EventFilter | undefined,
+  filter: EventFilter | undefined
 ): UseLogsResult {
   const { reducerPath, actions } = context
 

@@ -50,7 +50,7 @@ export const Typography: FC<TypographyProps> = forwardRef(
       select = 'auto',
       ...rest
     },
-    ref,
+    ref
   ) => {
     return React.createElement(
       component,
@@ -60,15 +60,15 @@ export const Typography: FC<TypographyProps> = forwardRef(
           WEIGHTS[weight],
           select,
           onClick ? 'cursor-pointer select-none' : '',
-          className,
+          className
         ),
         onClick,
         ...rest,
         ref,
       },
-      children,
+      children
     )
-  },
+  }
 )
 
 Typography.displayName = 'Typography'

@@ -28,9 +28,9 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
 
           return acc
         },
-        [[], []],
+        [[], []]
       ),
-    [tokens],
+    [tokens]
   )
 
   const totals = useSingleContractMultipleData(contract, 'totals', validatedTokenAddresses)
@@ -61,10 +61,10 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
 
               return acc
             },
-            [[], [], []],
+            [[], [], []]
           )
         : [[], [], []],
-    [account, anyError, anyLoading, totals, validatedTokenAddresses, validatedTokens],
+    [account, anyError, anyLoading, totals, validatedTokenAddresses, validatedTokens]
   )
 
   const balances = useSingleContractMultipleData(contract, 'balanceOf', balanceInput)

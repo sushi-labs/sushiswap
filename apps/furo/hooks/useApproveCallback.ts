@@ -22,7 +22,7 @@ export enum ApprovalState {
 export function useApproveCallback(
   watch: boolean,
   amountToApprove?: Amount<Token>,
-  spender?: string,
+  spender?: string
 ): [ApprovalState, () => Promise<void>] {
   const { data: account } = useAccount()
   const { data: signer } = useSigner()

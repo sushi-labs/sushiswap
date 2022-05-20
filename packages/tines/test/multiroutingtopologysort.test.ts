@@ -1,8 +1,8 @@
-import { Edge, Graph, Vertice } from "../src";
+import { Edge, Graph, Vertice } from '../src'
 
-import { BigNumber } from "@ethersproject/bignumber";
-import seedrandom from "seedrandom";
-import { ConstantProductRPool, RToken } from "../src/PrimaryPools";
+import { BigNumber } from '@ethersproject/bignumber'
+import seedrandom from 'seedrandom'
+import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
 
@@ -13,16 +13,9 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(
-      "" + i,
-      tokens[e[0]],
-      tokens[e[1]],
-      0.003,
-      bn,
-      bn,
-    );
-  });
-  const g = new Graph(pools, tokens[0], 0); // just a dummy
+    return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+  })
+  const g = new Graph(pools, tokens[0], 0) // just a dummy
   g.edges.forEach((e) => {
     e.amountInPrevious = 1
     e.amountOutPrevious = 1
@@ -43,18 +36,11 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool(
-      "" + i,
-      tokens[e[0]],
-      tokens[e[1]],
-      0.003,
-      bn,
-      bn,
-    );
-  });
-  const g = new Graph(pools, tokens[0], 0); // just a dummy
-  const from = g.getOrCreateVertice(tokens[0]);
-  const to = g.getOrCreateVertice(tokens[tokens.length - 1]);
+    return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+  })
+  const g = new Graph(pools, tokens[0], 0) // just a dummy
+  const from = g.getOrCreateVertice(tokens[0])
+  const to = g.getOrCreateVertice(tokens[tokens.length - 1])
   for (let i = 0; i < paths; ++i) {
     const p = generatePath(g, from, to, new Set<Vertice>())
     if (p === undefined) return [g, from, to]
@@ -250,7 +236,7 @@ function getRandomTopology(tokens: number, density: number): Topology {
 function vertIndex(v: Vertice): number {
   return parseInt(v.token.name)
 }
-function getEdge(i: number, res: {status: number, vertices: Vertice[]}): [number, number] {
+function getEdge(i: number, res: { status: number; vertices: Vertice[] }): [number, number] {
   return [vertIndex(res.vertices[i]), vertIndex(res.vertices[i - 1])]
 }
 function findEdge(edge: [number, number], t: Topology): number {
@@ -404,7 +390,7 @@ it('random topology clean test', () => {
       g = createCorrectTopology(t, 10)
     } while (g[0].topologySort(g[1], g[2]).status !== 0) // find topology with cycles
 
-    const {vertices} = g[0].cleanTopology(g[1], g[2])
+    const { vertices } = g[0].cleanTopology(g[1], g[2])
     const res = g[0].topologySort(g[1], g[2])
     expect(res.status).toEqual(2)
     expect(res.vertices.length).toEqual(vertices.length)

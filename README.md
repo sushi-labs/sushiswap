@@ -22,7 +22,7 @@ pnpn run dev
 
 Runs dev for all apps and composes under localhost:3000
 
-pnpm exec turbo run dev --filter=...{./apps/*}
+pnpm exec turbo run dev --filter=...{./apps/\*}
 
 #### Single Repository
 

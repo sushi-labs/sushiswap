@@ -13,7 +13,7 @@ const matchSpaces = /\s+/g
 export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressProps>(
   (
     { value, onChange, placeholder = 'Address or ENS name', title = 'Address or ENS name', className = '', ...rest },
-    ref,
+    ref
   ) => {
     return (
       <>
@@ -35,7 +35,7 @@ export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressPro
         />
       </>
     )
-  },
+  }
 )
 
 export default Address

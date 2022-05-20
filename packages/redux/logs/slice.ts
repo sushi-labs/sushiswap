@@ -23,7 +23,7 @@ export function createLogsSlice(reducerPath: string) {
         state,
         {
           payload: { chainId, filters, blockNumber },
-        }: PayloadAction<{ chainId: number; filters: EventFilter[]; blockNumber: number }>,
+        }: PayloadAction<{ chainId: number; filters: EventFilter[]; blockNumber: number }>
       ) {
         if (!state[chainId]) return
         for (const filter of filters) {
@@ -36,7 +36,7 @@ export function createLogsSlice(reducerPath: string) {
         state,
         {
           payload: { chainId, filter, results },
-        }: PayloadAction<{ chainId: number; filter: EventFilter; results: { blockNumber: number; logs: Log[] } }>,
+        }: PayloadAction<{ chainId: number; filter: EventFilter; results: { blockNumber: number; logs: Log[] } }>
       ) {
         if (!state[chainId]) return
         const key = filterToKey(filter)
@@ -48,7 +48,7 @@ export function createLogsSlice(reducerPath: string) {
         state,
         {
           payload: { chainId, filter, blockNumber },
-        }: PayloadAction<{ chainId: number; blockNumber: number; filter: EventFilter }>,
+        }: PayloadAction<{ chainId: number; blockNumber: number; filter: EventFilter }>
       ) {
         if (!state[chainId]) return
         const key = filterToKey(filter)

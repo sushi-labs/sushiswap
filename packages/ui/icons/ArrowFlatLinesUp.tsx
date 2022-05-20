@@ -27,4 +27,3 @@ export const ArrowFlatLinesUp = (props: React.ComponentProps<'svg'>) => {
     </svg>
   )
 }
-

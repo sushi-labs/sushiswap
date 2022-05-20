@@ -16,7 +16,7 @@ export enum ApprovalState {
 export function useBentoBoxApprovalCallback(
   chainId?: number,
   user?: string,
-  masterContract?: string,
+  masterContract?: string
 ): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
@@ -27,7 +27,7 @@ export function useBentoBoxApprovalCallback(
     {
       args: [masterContract, user],
       watch: true,
-    },
+    }
   )
   const { data: nonce } = useContractRead(
     {
@@ -38,7 +38,7 @@ export function useBentoBoxApprovalCallback(
     {
       args: [user],
       watch: true,
-    },
+    }
   )
 
   const [signature, setSignature] = useState<Signature>()
