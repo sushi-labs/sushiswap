@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { USDC_ADDRESS } from '@sushiswap/currency'
+import { Token, USDC, USDC_ADDRESS } from '@sushiswap/currency'
 
 export const STARGATE_CHAIN_ID: Record<number, number> = {
   // MAINNETS
@@ -55,4 +55,57 @@ export const STARGATE_USDC_ADDRESS: Record<number, string> = {
 
 export const STARGATE_USDT_ADDRESS: Record<number, string> = {
   [ChainId.BSC_TESTNET]: '0xF49E250aEB5abDf660d643583AdFd0be41464EfD',
+}
+
+export const STARGATE_USDC: Record<number, Token> = {
+  [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
+  [ChainId.POLYGON]: USDC[ChainId.POLYGON],
+  [ChainId.AVALANCHE]: USDC[ChainId.AVALANCHE],
+  [ChainId.FANTOM]: USDC[ChainId.FANTOM],
+  [ChainId.BSC]: USDC[ChainId.BSC],
+  [ChainId.OPTIMISM]: USDC[ChainId.OPTIMISM],
+  [ChainId.ARBITRUM]: USDC[ChainId.ARBITRUM],
+  // Testnets
+  [ChainId.RINKEBY]: new Token({
+    chainId: ChainId.RINKEBY,
+    address: STARGATE_USDC_ADDRESS[ChainId.RINKEBY],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.AVALANCHE_TESTNET]: new Token({
+    chainId: ChainId.AVALANCHE_TESTNET,
+    address: STARGATE_USDC_ADDRESS[ChainId.AVALANCHE_TESTNET],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.ARBITRUM_RINKEBY_TESTNET]: new Token({
+    chainId: ChainId.ARBITRUM_RINKEBY_TESTNET,
+    address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM_RINKEBY_TESTNET],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.POLYGON_TESTNET]: new Token({
+    chainId: ChainId.POLYGON_TESTNET,
+    address: STARGATE_USDC_ADDRESS[ChainId.POLYGON_TESTNET],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.OPTIMISM_KOVAN_TESTNET]: new Token({
+    chainId: ChainId.OPTIMISM_KOVAN_TESTNET,
+    address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM_KOVAN_TESTNET],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.FANTOM_TESTNET]: new Token({
+    chainId: ChainId.FANTOM_TESTNET,
+    address: STARGATE_USDC_ADDRESS[ChainId.FANTOM_TESTNET],
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
 }
