@@ -1506,6 +1506,7 @@ importers:
   protocols/sushiswap:
     specifiers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@openzeppelin/contracts': ^3.1.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': workspace:*
@@ -1522,6 +1523,7 @@ importers:
       typescript: ^4.6.4
     devDependencies:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.9.6
+      '@openzeppelin/contracts': 3.4.2
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': link:../../packages/currency
@@ -1550,6 +1552,7 @@ importers:
       '@sushiswap/hardhat-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/stargate': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
@@ -1570,6 +1573,7 @@ importers:
       '@sushiswap/hardhat-config': link:../../packages/config/hardhat
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushiswap': link:../sushiswap
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
@@ -5286,6 +5290,10 @@ packages:
       ethers: 5.6.6
       hardhat: 2.9.6
     dev: false
+
+  /@openzeppelin/contracts/3.4.2:
+    resolution: {integrity: sha512-z0zMCjyhhp4y7XKAcDAi3Vgms4T2PstwBdahiO0+9NaGICQKjynK3wduSRplTgk4LXmoO1yfDGO5RbjKYxtuxA==}
+    dev: true
 
   /@openzeppelin/contracts/3.4.2-solc-0.7:
     resolution: {integrity: sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==}

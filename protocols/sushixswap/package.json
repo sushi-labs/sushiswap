@@ -37,6 +37,7 @@
     "@openzeppelin/contracts": "^4.6.0",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
+    "@sushiswap/stargate": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core-sdk": "1.0.0-canary.110",
