@@ -1,9 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
-import { providers } from 'ethers'
 import { chain, createClient, defaultChains, defaultL2Chains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
+import { getProvider, getWebsocketProvider } from './provider'
 
 const ALCHEMY_API_KEY: Record<number, string> = {
   [ChainId.ETHEREUM]: 'q1pMGalg0HNBvK1eaZoo-vng-EPWlt1t',
@@ -96,16 +97,10 @@ const client = createClient({
     ]
   },
   provider({ chainId }) {
-    return new providers.AlchemyProvider(
-      getAlchemyChainName(isChainSupported(chainId) ? chainId : defaultChain.id),
-      chainId && chainId in ALCHEMY_API_KEY ? ALCHEMY_API_KEY[chainId] : undefined
-    )
+    return getProvider(chainId ? chainId : defaultChain.id)
   },
   webSocketProvider({ chainId }) {
-    return new providers.AlchemyWebSocketProvider(
-      getAlchemyChainName(isChainSupported(chainId) ? chainId : defaultChain.id),
-      chainId && chainId in ALCHEMY_API_KEY ? ALCHEMY_API_KEY[chainId] : undefined
-    )
+    return getWebsocketProvider(chainId ? chainId : defaultChain.id)
   },
   // storage: createStorage({ storage: window.localStorage }),
 })
