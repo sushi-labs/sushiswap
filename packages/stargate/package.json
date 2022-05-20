@@ -13,7 +13,9 @@
   "source": "./index.ts",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist/**"
+    "dist/**",
+    "IStargateReceiver.sol",
+    "IStargateRouter.sol"
   ],
   "scripts": {
     "build": "tsc",
