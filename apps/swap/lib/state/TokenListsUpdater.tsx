@@ -7,7 +7,8 @@ interface Props {
   chainId: ChainId
 }
 
+// Wagmi wrapper for redux token lists
 export function Updater({ chainId }: Props) {
-  const provider = useProvider(chainId)
+  const provider = useProvider({ chainId })
   return <tokenLists.Updater chainId={chainId} library={provider} />
 }
