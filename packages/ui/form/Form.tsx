@@ -1,23 +1,32 @@
-import React, { FC } from 'react'
+import React from 'react'
 
 import { Typography } from '../typography'
 import { FormButtons } from './FormButtons'
 import { FormControl } from './FormControl'
+import { FormError } from './FormError'
 import { FormSection } from './FormSection'
 
-interface Form {
+type Props<Tag extends keyof JSX.IntrinsicElements> = {
   header: string
   children: React.ReactElement<typeof FormSection> | React.ReactElement<typeof FormSection>[]
-}
+  as?: keyof JSX.IntrinsicElements
+} & JSX.IntrinsicElements[Tag]
 
-const FormRoot: FC<Form> = ({ header, children }) => {
-  return (
-    <div className="gap-x-10 divide-y divide-slate-800">
+function FormRoot<Tag extends keyof JSX.IntrinsicElements = 'div'>({
+  header,
+  children,
+  as = 'form',
+  ...rest
+}: Props<Tag>) {
+  return React.createElement(
+    as,
+    { className: 'gap-x-10 divide-y divide-slate-800', ...rest },
+    <>
       <Typography variant="h3" className="text-slate-50 py-6">
         {header}
       </Typography>
       <div className="divide-y divide-slate-800">{children}</div>
-    </div>
+    </>,
   )
 }
 
@@ -25,8 +34,10 @@ export const Form: typeof FormRoot & {
   Buttons: typeof FormButtons
   Control: typeof FormControl
   Section: typeof FormSection
+  Error: typeof FormError
 } = Object.assign(FormRoot, {
   Buttons: FormButtons,
   Control: FormControl,
   Section: FormSection,
+  Error: FormError,
 })

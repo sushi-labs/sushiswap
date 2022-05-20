@@ -64,7 +64,7 @@ export default function Index() {
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
                   <Link passHref={true} href="/dashboard">
-                    <Button className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
                       View My Earnings
                     </Button>
                   </Link>
@@ -90,7 +90,7 @@ export default function Index() {
                   hack={viewEarnings}
                   button={
                     <Menu.Button
-                      className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
+                      className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
                       as="div"
                     >
                       View My Earnings

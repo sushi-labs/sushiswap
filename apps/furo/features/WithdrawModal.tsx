@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { Button, Dialog, Dots } from '@sushiswap/ui'
+import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'

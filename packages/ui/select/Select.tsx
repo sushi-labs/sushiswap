@@ -1,6 +1,6 @@
 import { Listbox, Menu as HeadlessMenu, Transition } from '@headlessui/react'
 import classNames from 'classnames'
-import { FC, Fragment, ReactElement } from 'react'
+import { cloneElement, FC, Fragment, ReactElement } from 'react'
 
 import { ExtractProps } from '../types'
 import SelectButton, { SelectButtonProps } from './SelectButton'
@@ -9,19 +9,20 @@ import SelectOption, { SelectOptionProps } from './SelectOption'
 import SelectOptions, { SelectOptionsProps } from './SelectOptions'
 
 type SelectProps = ExtractProps<typeof HeadlessMenu.Button> & {
+  error?: boolean
   button: ReactElement<ExtractProps<typeof Listbox.Button>>
   label?: ReactElement<ExtractProps<typeof Listbox.Label>>
   children: ReactElement<ExtractProps<typeof Listbox.Options>>
 }
 
-const SelectRoot: FC<SelectProps> = ({ className, value, onChange, disabled, horizontal, button, children, label }) => {
+const SelectRoot: FC<SelectProps> = ({ className, value, onChange, disabled, horizontal, button, children, label, error = false }) => {
   return (
     <Listbox value={value} onChange={onChange} disabled={disabled} horizontal={horizontal}>
       {({ open }: { open: boolean }) => (
         <div className={classNames('space-y-2 flex flex-col gap-2', className)}>
           {label && label}
           <div className="relative">
-            {button}
+            {cloneElement(button, { error })}
             <Transition
               as={Fragment}
               show={open}

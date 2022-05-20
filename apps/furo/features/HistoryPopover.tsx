@@ -23,42 +23,39 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
 
   return (
     <Popover>
-      {({ open }) => (
-        <>
-          <Popover.Button ref={setReferenceElement}>
-            <div
-              className={classNames(
-                open ? 'bg-slate-600' : '',
-                'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11',
-              )}
-            >
-              <HistoryIcon width={18} height={18} />
-              <Typography variant="sm" weight={700} className="text-slate-200">
-                History
-              </Typography>
-            </div>
-          </Popover.Button>
-
-          <Popover.Panel
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-            className="border border-slate-700 overflow-hidden z-10 bg-slate-800 shadow-md rounded-xl flex flex-col gap-4 max-w-[530px]"
+      <Popover.Button ref={setReferenceElement}>
+        {({ open }) => (
+          <div
+            className={classNames(
+              open ? 'bg-slate-600' : '',
+              'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11',
+            )}
           >
-            <div className="max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto flex flex-col divide-y divide-slate-800">
-              {transactions?.length ? (
-                Object.values(transactions).map((transaction) => (
-                  <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
-                ))
-              ) : (
-                <Typography variant="xs" className="flex items-center justify-center h-full pb-4 italic text-slate-500">
-                  No transactions found
-                </Typography>
-              )}
-            </div>
-          </Popover.Panel>
-        </>
-      )}
+            <HistoryIcon width={18} height={18} />
+            <Typography variant="sm" weight={700} className="text-slate-200">
+              History
+            </Typography>
+          </div>
+        )}
+      </Popover.Button>
+      <Popover.Panel
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+        className="border border-slate-700 overflow-hidden z-10 bg-slate-800 shadow-md rounded-xl flex flex-col gap-4 max-w-[530px]"
+      >
+        <div className="max-h-[440px] min-w-[258px] whitespace-nowrap overflow-auto flex flex-col divide-y divide-slate-800">
+          {transactions?.length ? (
+            Object.values(transactions).map((transaction) => (
+              <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
+            ))
+          ) : (
+            <Typography variant="xs" className="flex items-center justify-center h-full pb-4 italic text-slate-500">
+              No transactions found
+            </Typography>
+          )}
+        </div>
+      </Popover.Panel>
     </Popover>
   )
 }

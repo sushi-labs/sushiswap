@@ -62,7 +62,6 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
       <Button
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px]" />}
         fullWidth
-        variant="outlined"
         color="gray"
         disabled={account?.address && !stream?.canTransfer(account.address)}
         onClick={() => setOpen(true)}
@@ -83,7 +82,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
               to withdraw from this stream after transferring
             </p>
           </Typography>
-          <Input.Address className="w-full" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
+          <Input.Address className="w-full" value={recipient} onChange={setRecipient} />
 
           <Button
             variant="filled"

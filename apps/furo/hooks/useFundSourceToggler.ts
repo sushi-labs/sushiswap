@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 
 export enum FundSource {
-  WALLET,
-  BENTOBOX,
+  WALLET = 'WALLET',
+  BENTOBOX = 'BENTOBOX',
 }
 
 export const useFundSourceToggler = (initialValue?: FundSource) => {

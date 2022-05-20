@@ -87,7 +87,6 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
       <Button
         startIcon={<PencilIcon width={18} height={18} />}
         fullWidth
-        variant="outlined"
         color="gray"
         onClick={() => setOpen(true)}
         disabled={account?.address && !stream?.canUpdate(account.address)}

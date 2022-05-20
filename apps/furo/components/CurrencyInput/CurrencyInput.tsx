@@ -1,13 +1,14 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { classNames, Loader, Typography } from '@sushiswap/ui'
+import { classNames, ERROR_INPUT_CLASSNAME, Loader, Typography } from '@sushiswap/ui'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { useTokenBalance } from 'hooks/useTokenBalance'
 import { FC, useRef } from 'react'
 
 type Base = {
-  amount?: string
+  amount?: string | number
   className?: string
-  onChange(x: string): void
+  onChange(x: string | number): void
+  error?: boolean
 }
 
 type CurrencyInputGetBalance = Base & {
@@ -36,6 +37,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
   fundSource = FundSource.WALLET,
   balance: providedBalance,
   balanceLabel,
+  error = false,
 }) => {
   const amountInputRef = useRef<HTMLInputElement | null>(null)
   const { isLoading: loadingBalance, data: accountBalance } = useTokenBalance(account, token, fundSource)
@@ -47,6 +49,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
       onClick={() => amountInputRef.current?.focus()}
       className={classNames(
         className,
+        error ? ERROR_INPUT_CLASSNAME : '',
         'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue',
       )}
     >
