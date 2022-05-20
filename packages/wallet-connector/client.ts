@@ -16,11 +16,49 @@ const ALCHEMY_API_KEY: Record<number, string> = {
 
 const defaultChain = chain.mainnet
 
+export function getAlchemyChainName(chainId?: ChainId) {
+  if (!chainId) return
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return 'homestead'
+    case ChainId.POLYGON:
+      return 'matic'
+    case ChainId.POLYGON_TESTNET:
+      return 'maticmum'
+    case ChainId.ARBITRUM:
+      return 'arbitrum'
+    case ChainId.OPTIMISM:
+      return 'optimism'
+    case ChainId.GÖRLI:
+      return 'goerli'
+    default:
+      throw new Error(`Unsupported eth alchemy chainId for ${chainId}`)
+  }
+}
+
+export function getInfuraChainName(chainId?: ChainId) {
+  if (!chainId) return
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return 'homestead'
+    case ChainId.POLYGON:
+      return 'matic'
+    case ChainId.ARBITRUM:
+      return 'arbitrum'
+    case ChainId.RINKEBY:
+      return 'rinkeby'
+    case ChainId.ROPSTEN:
+      return 'ropsten'
+    case ChainId.GÖRLI:
+      return 'goerli'
+    case ChainId.KOVAN:
+      return 'kovan'
+    default:
+      throw new Error(`Unsupported eth infura chainId for ${chainId}`)
+  }
+}
+
 const isChainSupported = (chainId?: number) => {
-  // console.log(
-  //   `isChainSupported ${chainId} `,
-  //   [...defaultChains, ...defaultL2Chains].some((x) => x.id === chainId),
-  // )
   return [...defaultChains, ...defaultL2Chains].some((x) => x.id === chainId)
 }
 
@@ -28,10 +66,8 @@ const client = createClient({
   autoConnect: true,
   connectors({ chainId }) {
     const chain = [...defaultChains, ...defaultL2Chains].find((chain) => chain.id === chainId) ?? defaultChain
-    const rpcUrl = chain.rpcUrls.alchemy
-      ? `${chain.rpcUrls.alchemy}/${ALCHEMY_API_KEY[chainId]}`
-      : chain.rpcUrls.default
-    // const rpcUrl = 'https://arb-mainnet.g.alchemy.com/v2/eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV'
+    const rpcUrl =
+      chainId && chain.rpcUrls.alchemy ? `${chain.rpcUrls.alchemy}/${ALCHEMY_API_KEY[chainId]}` : chain.rpcUrls.default
 
     console.log({ chain, rpcUrl })
     return [
@@ -61,16 +97,14 @@ const client = createClient({
   },
   provider({ chainId }) {
     return new providers.AlchemyProvider(
-      chainId,
-      // isChainSupported(chainId) ? chainId : defaultChain.id,
-      ALCHEMY_API_KEY[chainId]
+      getAlchemyChainName(isChainSupported(chainId) ? chainId : defaultChain.id),
+      chainId && chainId in ALCHEMY_API_KEY ? ALCHEMY_API_KEY[chainId] : undefined
     )
   },
   webSocketProvider({ chainId }) {
     return new providers.AlchemyWebSocketProvider(
-      chainId,
-      // isChainSupported(chainId) ? chainId : defaultChain.id,
-      ALCHEMY_API_KEY[chainId]
+      getAlchemyChainName(isChainSupported(chainId) ? chainId : defaultChain.id),
+      chainId && chainId in ALCHEMY_API_KEY ? ALCHEMY_API_KEY[chainId] : undefined
     )
   },
   // storage: createStorage({ storage: window.localStorage }),
