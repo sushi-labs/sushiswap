@@ -16,6 +16,8 @@
     "changeset-publish": "turbo run build --filter=docs^... && changeset publish"
   },
   "devDependencies": {
+    "@commitlint/cli": "^16.0.0",
+    "@commitlint/config-conventional": "^16.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
