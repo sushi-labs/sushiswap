@@ -72,6 +72,11 @@ export const defaultConfig: HardhatUserConfig = {
     // externalArtifacts?: string[];
   },
   networks: {
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ['local'],
+    },
     hardhat: {
       chainId: 31337,
       accounts,

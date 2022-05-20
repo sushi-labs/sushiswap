@@ -19,10 +19,6 @@ export default withTranspileModules({
   async rewrites() {
     return [
       {
-        source: '/',
-        destination: `${LANDING_URL}/landing`,
-      },
-      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },

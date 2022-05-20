@@ -1,7 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import { MDXProvider } from '@mdx-js/react'
-import { App, classNames, Typography } from '@sushiswap/ui'
+import { App, classNames, SushiIcon, Typography } from '@sushiswap/ui'
 import type { AppProps } from 'next/app'
 import Link from 'next/link'
 import { NextRouter, useRouter } from 'next/router'
@@ -66,29 +66,33 @@ const MyApp: FC<AppProps<{ maxWidth: string }>> = ({ Component, pageProps }) => 
         <App.Shell>
           <App.Header
             className="py-8 mx-auto max-w-7xl"
-            brand={<div className="font-bold">{getTitle(router)}</div>}
-            nav={
-              <div className="flex space-x-4 ">
-                {['/', '/safes', '/team', '/grants', '/sips'].map((href, i) => {
-                  const children =
-                    href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
-                  return (
-                    <Link key={i} href={href}>
-                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                      <a
-                        className={classNames(
-                          'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
-                          href === '/' || (href !== '/' && router.asPath.includes(href) && '!text-white !underline')
-                        )}
-                      >
-                        {children}
-                      </a>
-                    </Link>
-                  )
-                })}
-              </div>
+            brand={
+              <a className="flex items-center cursor-pointer group">
+                <SushiIcon width={32} height={32} className="mr-1 group-hover:animate-spin group-hover:text-pink" />{' '}
+                {getTitle(router)}
+              </a>
             }
-          />
+          >
+            <div className="flex space-x-4">
+              {['/', '/safes', '/team', '/grants', '/sips'].map((href, i) => {
+                const children =
+                  href !== '/' ? `${href.slice(1, href.length).charAt(0).toUpperCase()}${href.slice(2)}` : 'DAO'
+                return (
+                  <Link key={i} href={href}>
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <a
+                      className={classNames(
+                        'text-gray-400 hover:text-white hover:underline focus:text-white active:text-white',
+                        href === '/' || (href !== '/' && router.asPath.includes(href) && '!text-white !underline')
+                      )}
+                    >
+                      {children}
+                    </a>
+                  </Link>
+                )
+              })}
+            </div>
+          </App.Header>
           <App.Main className={classNames('flex flex-col h-full mx-auto my-24 space-y-8 lg:mx-auto max-w-7xl')}>
             <Component {...pageProps} />
           </App.Main>
