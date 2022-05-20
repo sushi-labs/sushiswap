@@ -172,10 +172,10 @@ function Widget({ config = defaultConfig }: { config?: Config }) {
       cooker.teleport(
         srcChainId,
         dstChainId,
-        [3, 7],
+        [Action.DST_WITHDRAW_TOKEN, Action.LEGACY_EXACT_INPUT],
         [0, 0],
         [
-          cooker.encodeWithdraw(STARGATE_USDC[dstChainId], dstTrade.route.pairs[0].liquidityToken.address),
+          cooker.encodeWithdrawToken(STARGATE_USDC[dstChainId], dstTrade.route.pairs[0].liquidityToken.address),
           cooker.encodeLegacyExactInput(
             srcMinimumAmountOut.quotient.toString(),
             dstMinimumAmountOut.quotient.toString(),

@@ -130,8 +130,12 @@ export class SushiXSwap {
     this.add(Action.SRC_TRANSFER_FROM_BENTOBOX, data)
   }
 
-  encodeWithdraw(from: string, to: string = this.user): string {
-    return defaultAbiCoder.encode(['address', 'address', 'uint256'], [from, to, 0])
+  encodeWithdrawToken(token: Type, to: string = this.user): string {
+    return defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, 0])
+  }
+
+  dstWithdrawToken(token: Type, to: string = this.user): void {
+    this.add(Action.DST_WITHDRAW_TOKEN, this.encodeWithdrawToken(token, to))
   }
 
   encodeLegacyExactInput(
