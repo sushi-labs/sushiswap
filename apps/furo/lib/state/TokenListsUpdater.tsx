@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import React from 'react'
+import { useProvider } from 'wagmi'
 
-import { getProvider } from '../../functions/getProvider'
 import { tokenLists } from './token-lists'
 
 interface Props {
@@ -9,6 +9,6 @@ interface Props {
 }
 
 export function Updater({ chainId }: Props) {
-  const provider = getProvider(chainId)
-  return <tokenLists.Updater chainId={chainId} library={provider} />
+  const provider = useProvider({ chainId })
+  return <tokenLists.Updater chainId={chainId} provider={provider} />
 }

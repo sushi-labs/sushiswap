@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react'
 
-interface DoubleGlow {
+export interface DoubleGlow {
   children?: ReactNode | ReactNode[]
 }
 
-const DoubleGlow: FC<DoubleGlow> = ({ children }) => {
+export const DoubleGlow: FC<DoubleGlow> = ({ children }) => {
   return (
     <div className="relative flex justify-center">
       <div className="absolute right-0 w-[140px] h-[180px] bg-pink/20 blur-[100px] pointer-events-none" />
@@ -13,5 +13,3 @@ const DoubleGlow: FC<DoubleGlow> = ({ children }) => {
     </div>
   )
 }
-
-export default DoubleGlow

@@ -3,6 +3,7 @@ import '../index.css'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { ChainId } from '@sushiswap/chain'
+import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
 import { client } from '@sushiswap/wallet-connector'
 import Header from 'features/Header'
@@ -15,7 +16,6 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import { WagmiProvider } from 'wagmi'
 
-import { useLatestBlock } from '../lib/hooks/useLatestBlock'
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
 import store from '../store'
@@ -42,9 +42,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, [router.events])
 
   const kovanProvider = getProvider(ChainId.KOVAN)
-  const kovanBlockNumber = useLatestBlock(kovanProvider)
+  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
   const goerliProvider = getProvider(ChainId.GÖRLI)
-  const goerliBlockNumber = useLatestBlock(goerliProvider)
+  const goerliBlockNumber = useLatestBlockNumber(goerliProvider)
 
   return (
     <>
