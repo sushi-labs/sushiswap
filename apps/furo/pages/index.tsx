@@ -4,7 +4,6 @@ import Button from '@sushiswap/ui/button/Button'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
-import { CreateStreamModalControlled } from 'features/stream'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -52,15 +51,11 @@ export default function Index() {
             {account?.address ? (
               <>
                 <div>
-                  <CreateStreamModalControlled
-                    open={paySomeoneOpen}
-                    setOpen={setPaySomeoneOpen}
-                    button={
-                      <Button className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
-                        Pay Someone
-                      </Button>
-                    }
-                  />
+                  <Link passHref={true} href="/stream/create">
+                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                      Pay Someone
+                    </Button>
+                  </Link>
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
                   <Link passHref={true} href="/dashboard">

@@ -3,7 +3,6 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
-import { CreateStreamModal } from 'features/stream'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -40,7 +39,9 @@ const Header: FC = () => {
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">
-                  <CreateStreamModal button={<Menu.Item>Stream</Menu.Item>} />
+                  <Link passHref={true} href="/stream/create">
+                    <Menu.Item as="a">Stream</Menu.Item>
+                  </Link>
                   <Link passHref={true} href="/vesting/create">
                     <Menu.Item as="a">Vesting</Menu.Item>
                   </Link>

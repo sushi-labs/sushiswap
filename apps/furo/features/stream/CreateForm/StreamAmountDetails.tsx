@@ -1,28 +1,29 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
-import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
+import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
+import { CurrencyInput } from 'components'
+import { CreateStreamFormData } from 'features/stream/CreateForm/types'
 import { TokenSelector } from 'features/TokenSelector'
-import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
 import { useTokenBentoboxBalance, useTokenWalletBalance } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
-export const GeneralDetailsSection = () => {
+export const StreamAmountDetails = () => {
   const { data: account } = useAccount()
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch } = useFormContext<CreateVestingFormData>()
+  const { control, watch } = useFormContext<CreateStreamFormData>()
   // @ts-ignore
-  const token = watch('token')
+  const [token, fundSource] = watch(['token', 'fundSource'])
 
   const { data: walletBalance } = useTokenWalletBalance(account?.address, token)
   const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, token)
 
   return (
     <Form.Section
-      title="General Details"
+      title="Stream Details"
       description="Furo allows for creating a vested stream using your Bentobox balance."
     >
       <Form.Control label="Token">
@@ -46,34 +47,6 @@ export const GeneralDetailsSection = () => {
                     <TokenSelector onSelect={onChange} currency={value as Token} onClose={() => setDialogOpen(false)} />
                   </Dialog.Content>
                 </Dialog>
-              </>
-            )
-          }}
-        />
-      </Form.Control>
-      <Form.Control label="Start date">
-        <Controller
-          control={control}
-          name="startDate"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
-            return (
-              <>
-                <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
-                <Form.Error message={error?.message} />
-              </>
-            )
-          }}
-        />
-      </Form.Control>
-      <Form.Control label="Recipient">
-        <Controller
-          control={control}
-          name="recipient"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
-            return (
-              <>
-                <Input.Address placeholder="0x..." onChange={onChange} value={value} error={!!error?.message} />
-                <Form.Error message={error?.message} />
               </>
             )
           }}
@@ -138,7 +111,31 @@ export const GeneralDetailsSection = () => {
               <Form.Error message={error?.message} />
             </div>
           )}
-        ></Controller>
+        />
+      </Form.Control>
+      <Form.Control label="Stream Amount">
+        <Controller
+          control={control}
+          name="amount"
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <>
+              <CurrencyInput
+                onChange={onChange}
+                account={account?.address}
+                amount={value}
+                token={token}
+                fundSource={fundSource}
+                error={!!error?.message}
+              />
+              <Form.Error message={error?.message} />
+              {!error?.message && (
+                <Typography variant="xs" className="text-slate-500">
+                  The total stream amount the recipient can withdraw when the stream passes its end date.
+                </Typography>
+              )}
+            </>
+          )}
+        />
       </Form.Control>
     </Form.Section>
   )

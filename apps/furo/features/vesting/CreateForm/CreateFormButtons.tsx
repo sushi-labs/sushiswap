@@ -2,10 +2,11 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { createToast } from 'components'
+import { Approve } from 'components/Approve'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { parseAmount } from 'functions/parseAmount'
-import { ApprovalState, useApproveCallback, useBentoBoxApproveCallback, useFuroVestingContract } from 'hooks'
+import { useFuroVestingContract } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
@@ -35,7 +36,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
 
   const contract = useFuroVestingContract()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
-  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApproveCallback(true, contract?.address)
 
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
     if (!token || !stepPayouts) return [undefined, undefined]
@@ -52,12 +52,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         : JSBI.BigInt(0),
     ]
   }, [cliffAmount, stepAmount, stepPayouts, token])
-
-  const [tokenApprovalState, approveToken] = useApproveCallback(
-    true,
-    totalAmountAsEntity,
-    activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
-  )
 
   const createVesting = useCallback(async () => {
     if (!contract || !account?.address) return
@@ -111,7 +105,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     onDismiss,
     recipient,
     sendTransactionAsync,
-    signature,
     startDate,
     stepConfig?.time,
     stepPayouts,
@@ -122,38 +115,27 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
 
   return (
     <Form.Buttons>
-      {bentoBoxApprovalState !== ApprovalState.APPROVED && (
-        <Button variant="filled" color="blue" disabled={!!signature} onClick={approveBentoBox}>
-          Approve Bentobox
-        </Button>
-      )}
-      {token && [ApprovalState.NOT_APPROVED, ApprovalState.PENDING].includes(tokenApprovalState) && (
-        <Button
-          variant="filled"
-          color="blue"
-          disabled={tokenApprovalState === ApprovalState.PENDING}
-          onClick={approveToken}
-        >
-          {tokenApprovalState === ApprovalState.PENDING ? (
-            <Dots>Approving {token?.symbol}</Dots>
-          ) : (
-            `Approve ${token?.symbol}`
-          )}
-        </Button>
-      )}
-      <Button
-        variant="filled"
-        color="gradient"
-        disabled={
-          isWritePending ||
-          tokenApprovalState !== ApprovalState.APPROVED ||
-          (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature) ||
-          !totalAmountAsEntity?.greaterThan(ZERO)
-        }
-        onClick={createVesting}
-      >
-        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
-      </Button>
+      <Approve
+        components={[
+          <Approve.Bentobox key={0} watch token={token} address={contract?.address} />,
+          <Approve.Token
+            key={1}
+            watch
+            amount={totalAmountAsEntity}
+            address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
+          />,
+        ]}
+        render={({ approved }) => (
+          <Button
+            variant="filled"
+            color="gradient"
+            disabled={isWritePending || !approved || !totalAmountAsEntity?.greaterThan(ZERO)}
+            onClick={createVesting}
+          >
+            {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
+          </Button>
+        )}
+      />
     </Form.Buttons>
   )
 }
