@@ -13,7 +13,7 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
-  ({ watch = true, amount, address, render, setState }) => {
+  ({ watch = true, amount, address, render, setState, disabled, ...props }) => {
     const [approvalState, onApprove] = useApproveCallback(watch, amount, address)
 
     useEffect(() => {
@@ -28,10 +28,9 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     return (
       <Button
         type="button"
-        variant="filled"
-        color="blue"
-        disabled={approvalState === ApprovalState.PENDING}
+        disabled={disabled || approvalState === ApprovalState.PENDING}
         onClick={onApprove}
+        {...props}
       >
         {approvalState === ApprovalState.PENDING ? (
           <Dots>Approving {amount.currency.symbol}</Dots>

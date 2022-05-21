@@ -6,7 +6,7 @@ import React, { isValidElement, ReactNode, useCallback, useMemo, useRef } from '
 import { FC } from 'react'
 
 interface Props {
-  components: React.ReactElement<ComponentsWrapper>
+  components: React.ReactElement<ComponentsWrapper<any>>
   render({ approved }: { approved: boolean }): ReactNode
 }
 
@@ -20,13 +20,17 @@ const Controller: FC<Props> = ({ components, render }) => {
   }, [])
 
   const children = useMemo(() => {
-    return React.Children.map(components.props.children, (component, index) => {
-      if (isValidElement<TokenApproveButton | BentoApproveButton>(component)) {
-        return React.cloneElement(component, {
-          setState: (value: ApprovalState) => handleUpdate(value, index),
-        })
-      }
-    })
+    return React.cloneElement(
+      components,
+      components.props,
+      React.Children.map(components.props.children, (component, index) => {
+        if (isValidElement<TokenApproveButton | BentoApproveButton>(component)) {
+          return React.cloneElement(component, {
+            setState: (value: ApprovalState) => handleUpdate(value, index),
+          })
+        }
+      }),
+    )
   }, [components, handleUpdate])
 
   return (

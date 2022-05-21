@@ -16,21 +16,23 @@ export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
   address?: string
 }
 
-export const BentoApproveButton: FC<BentoApproveButton> = memo(({ watch = true, token, address, render, setState }) => {
-  const [approvalState, signature, onApprove] = useBentoBoxApproveCallback(watch, address)
+export const BentoApproveButton: FC<BentoApproveButton> = memo(
+  ({ watch = true, token, address, render, setState, disabled, ...props }) => {
+    const [approvalState, signature, onApprove] = useBentoBoxApproveCallback(watch, address)
 
-  useEffect(() => {
-    if (!setState) return
+    useEffect(() => {
+      if (!setState) return
 
-    setState(approvalState)
-  }, [approvalState, setState])
+      setState(approvalState)
+    }, [approvalState, setState])
 
-  if (!token || approvalState === ApprovalState.APPROVED) return null
-  if (render) return render({ approvalState, signature, onApprove })
+    if (!token || approvalState === ApprovalState.APPROVED) return null
+    if (render) return render({ approvalState, signature, onApprove })
 
-  return (
-    <Button type="button" variant="filled" color="blue" disabled={!!signature} onClick={onApprove}>
-      Approve Bentobox
-    </Button>
-  )
-})
+    return (
+      <Button type="button" {...props} disabled={disabled || !!signature} onClick={onApprove}>
+        Approve Bentobox
+      </Button>
+    )
+  },
+)
