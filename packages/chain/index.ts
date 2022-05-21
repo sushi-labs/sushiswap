@@ -1,4 +1,4 @@
-import chains from './chains.json'
+import json from './chains.json'
 
 export interface Chain {
   name: string
@@ -102,8 +102,41 @@ export enum ChainId {
 export type AddressMap = { [chainId: number]: string }
 
 export class Chain implements Chain {
-  //
+  etTxUrl(txHash: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/tx/${txHash}`
+      }
+    }
+  }
+  getBlockUrl(blockHashOrHeight: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/block/${blockHashOrHeight}`
+      }
+    }
+  }
+  getTokenUrl(tokenAddress: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/token/${tokenAddress}`
+      }
+    }
+  }
+  getAccountUrl(accountAddress: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/account/${accountAddress}`
+      }
+    }
+  }
 }
 
 // Chain Id => Chain mapping
-export default Object.fromEntries((chains as Chain[]).map((data) => [data.chainId, data]))
+export const chains = Object.fromEntries((json as Chain[]).map((data): [number, Chain] => [data.chainId, data]))
+
+export default chains
