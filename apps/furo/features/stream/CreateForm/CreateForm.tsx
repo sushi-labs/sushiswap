@@ -5,6 +5,7 @@ import { JSBI } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { createToast } from 'components'
 import { Approve } from 'components/Approve'
+import { Signature } from 'ethers/lib/ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'features/actions'
 import { createStreamSchema } from 'features/stream/CreateForm/schema'
@@ -24,6 +25,7 @@ export const CreateForm: FC = () => {
   const [error, setError] = useState<string>()
   const contract = useFuroStreamContract()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const [signature, setSignature] = useState<Signature>()
 
   const methods = useForm<CreateStreamFormData>({
     // @ts-ignore
@@ -102,15 +104,16 @@ export const CreateForm: FC = () => {
           <StreamAmountDetails />
           <Form.Buttons>
             <Approve
-              components={[
-                <Approve.Bentobox key={0} watch token={token} address={contract?.address} />,
-                <Approve.Token
-                  key={1}
-                  watch
-                  amount={amountAsEntity}
-                  address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
-                />,
-              ]}
+              components={
+                <Approve.Components>
+                  <Approve.Bentobox watch token={token} address={contract?.address} onSignature={setSignature} />
+                  <Approve.Token
+                    watch
+                    amount={amountAsEntity}
+                    address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
+                  />
+                </Approve.Components>
+              }
               render={({ approved }) => (
                 <Button
                   type="submit"

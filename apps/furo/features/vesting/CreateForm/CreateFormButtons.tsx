@@ -1,3 +1,4 @@
+import { Signature } from '@ethersproject/bytes'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
@@ -33,6 +34,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const [error, setError] = useState<string>()
+  const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingContract()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
@@ -116,15 +118,16 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   return (
     <Form.Buttons>
       <Approve
-        components={[
-          <Approve.Bentobox key={0} watch token={token} address={contract?.address} />,
-          <Approve.Token
-            key={1}
-            watch
-            amount={totalAmountAsEntity}
-            address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
-          />,
-        ]}
+        components={
+          <Approve.Components>
+            <Approve.Bentobox watch token={token} address={contract?.address} onSignature={setSignature} />
+            <Approve.Token
+              watch
+              amount={totalAmountAsEntity}
+              address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
+            />
+          </Approve.Components>
+        }
         render={({ approved }) => (
           <Button
             variant="filled"
