@@ -10,15 +10,19 @@ interface RenderPropPayload extends ApprovalButtonRenderProp {
 }
 
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
-  onSignature(sig: Signature): void
+  onSignature(sig?: Signature): void
   watch?: boolean
   token?: Token
   address?: string
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
-  ({ watch = true, token, address, render, setState, disabled, ...props }) => {
+  ({ watch = true, token, address, render, setState, disabled, onSignature, ...props }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback(watch, address)
+
+    useEffect(() => {
+      onSignature(signature)
+    }, [onSignature, signature])
 
     useEffect(() => {
       if (!setState) return
