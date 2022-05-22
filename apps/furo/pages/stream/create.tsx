@@ -8,7 +8,7 @@ const Create = () => {
   if (!isMounted) return null
 
   return (
-    <Layout gradient={false}>
+    <Layout>
       <CreateForm />
     </Layout>
   )

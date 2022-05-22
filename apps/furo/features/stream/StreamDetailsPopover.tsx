@@ -133,7 +133,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.amount.toFixed(4)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .994k */}
                     </Typography>
                   </Typography>
@@ -142,7 +142,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
@@ -159,7 +159,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.streamedAmount.substring(0, 7)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .329k */}
                     </Typography>
                   </Typography>
@@ -168,7 +168,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
@@ -185,7 +185,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.withdrawnAmount.toFixed(4)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .105k */}
                     </Typography>
                   </Typography>
@@ -194,7 +194,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
