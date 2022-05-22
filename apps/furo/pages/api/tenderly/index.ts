@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const headers = {
     'content-type': 'application/JSON',
-    'X-Access-Key': process.env.NEXT_TENDERLY_ACCESS_KEY as string,
+    'X-Access-Key': process.env.TENDERLY_ACCESS_KEY as string,
   }
 
   const call = await fetch(apiURL, {
