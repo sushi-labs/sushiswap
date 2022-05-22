@@ -68,7 +68,13 @@ export const createVestingSchema = yup.object({
     then: yup
       .date()
       .min(new Date(), 'Date is be due already')
-      .min(yup.ref('startDate'), 'Date must be later than start date')
+      .when('startDate', (startDate, schema) => {
+        if (startDate) {
+          const dayAfter = new Date(startDate.getTime() + 1)
+          return schema.min(dayAfter, 'Date must be later than start date')
+        }
+        return schema
+      })
       .required('Required field'),
     otherwise: yup.date().nullable(),
   }),

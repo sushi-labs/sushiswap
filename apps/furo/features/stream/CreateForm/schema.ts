@@ -55,8 +55,14 @@ export const createStreamSchema = yup.object({
   startDate: yup.date().min(new Date(), 'Date is be due already').required('Required field'),
   endDate: yup
     .date()
+    .when('startDate', (startDate, schema) => {
+      if (startDate) {
+        const dayAfter = new Date(startDate.getTime() + 1)
+        return schema.min(dayAfter, 'Date must be later than start date')
+      }
+      return schema
+    })
     .min(new Date(), 'Date is be due already')
-    .min(yup.ref('startDate'), 'Date must be later than start date')
     .required('Required field'),
   amount: yup
     .number()
