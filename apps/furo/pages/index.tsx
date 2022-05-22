@@ -2,7 +2,9 @@ import { AddressZero } from '@ethersproject/constants'
 import { Menu } from '@headlessui/react'
 import { ChainId, USDC } from '@sushiswap/core-sdk'
 import { Amount } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
@@ -94,7 +96,17 @@ export default function Index() {
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.Name address={account?.address} className="text-sm sm:text-base" />
+                    <Account.Name address={account?.address}>
+                      {({ name, isEns }) => (
+                        <Typography
+                          variant="sm"
+                          weight={700}
+                          className="text-slate-50 tracking-wide text-sm sm:text-base"
+                        >
+                          {isEns ? name : !!name ? shortenAddress(name) : ''}
+                        </Typography>
+                      )}
+                    </Account.Name>
                   </div>
                 </div>
               </>

@@ -1,22 +1,19 @@
 import { useEnsName } from 'wagmi'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Typography } from '@sushiswap/ui'
+import { ReactNode } from 'react'
 
 type Props = {
   address?: string
-  className?: string
+  children({ name, isEns }: { name: string; isEns: boolean }): JSX.Element
 }
 
-function Name({ address, className }: Props): JSX.Element {
+function Name({ address, children }: Props): JSX.Element {
   const { data } = useEnsName({
     address,
   })
 
-  return (
-    <Typography variant="sm" weight={700} className={classNames('text-slate-50 tracking-wide', className)}>
-      {!!data ? data : address ? shortenAddress(address) : ''}
-    </Typography>
-  )
+  return children({ name: !!data ? data : address, isEns: !!data })
 }
 
 export default Name

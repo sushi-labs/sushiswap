@@ -1,9 +1,18 @@
 import React, { FC, ReactElement, ReactNode } from 'react'
-import { Button as UIButton, CoinbaseWalletIcon, Loader, Menu, MetamaskIcon, WalletConnectIcon } from '@sushiswap/ui'
+import {
+  Button as UIButton,
+  CoinbaseWalletIcon,
+  Loader,
+  Menu,
+  MetamaskIcon,
+  Typography,
+  WalletConnectIcon,
+} from '@sushiswap/ui'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
 import Account from '../Account'
 import { useIsMounted } from '@sushiswap/hooks'
+import { shortenAddress } from '@sushiswap/format'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -80,7 +89,13 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
             button || (
               <Menu.Button className="!rounded-xl !py-2 !bg-slate-700 p-px border-slate-1000 hover:ring-2 hover:ring-slate-600 flex gap-3">
                 <Account.Avatar address={data?.address} />
-                <Account.Name address={data?.address} />
+                <Account.Name address={data?.address}>
+                  {({ name, isEns }) => (
+                    <Typography variant="sm" weight={700} className="text-slate-50 tracking-wide">
+                      {isEns ? name : !!name ? shortenAddress(name) : ''}
+                    </Typography>
+                  )}
+                </Account.Name>
               </Menu.Button>
             )
           }
