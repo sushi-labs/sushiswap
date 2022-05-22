@@ -8,6 +8,6 @@ export const logTenderlyUrl: LogTenderly = async ({ chainId, from, to, data }) =
   const resp = await req.json()
 
   console.log(
-    `Oops transaction failed! Send the following link to the Sushi Samurai: https://dashboard.tenderly.com/Sushi/furo/simulator/${resp.simulation.id}`,
+    `Oops transaction failed! Send the following link to the Sushi Samurai: https://dashboard.tenderly.co/Sushi/furo/simulator/${resp.simulation.id}`,
   )
 }
