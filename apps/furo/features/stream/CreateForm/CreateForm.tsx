@@ -11,6 +11,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from 'featur
 import { createStreamSchema } from 'features/stream/CreateForm/schema'
 import { StreamAmountDetails } from 'features/stream/CreateForm/StreamAmountDetails'
 import { CreateStreamFormData, CreateStreamFormDataValidated } from 'features/stream/CreateForm/types'
+import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroStreamContract } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useMemo, useState } from 'react'
@@ -93,6 +94,13 @@ export const CreateForm: FC = () => {
       })
     } catch (e: any) {
       setError(e.message)
+
+      logTenderlyUrl({
+        chainId: activeChain?.id,
+        from: account.address,
+        to: contract.address,
+        data: batchAction({ contract, actions }),
+      })
     }
   }
 

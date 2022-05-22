@@ -6,6 +6,7 @@ import { createToast } from 'components'
 import { Approve } from 'components/Approve'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
+import { logTenderlyUrl } from 'functions/getTenderly'
 import { parseAmount } from 'functions/parseAmount'
 import { useFuroVestingContract } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
@@ -98,15 +99,24 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       })
     } catch (e: any) {
       setError(e.message)
+
+      logTenderlyUrl({
+        chainId: activeChain?.id,
+        from: account.address,
+        to: contract.address,
+        data: batchAction({ contract, actions }),
+      })
     }
   }, [
     account?.address,
+    activeChain?.id,
     cliffDuration,
     contract,
     fundSource,
     onDismiss,
     recipient,
     sendTransactionAsync,
+    signature,
     startDate,
     stepConfig?.time,
     stepPayouts,
