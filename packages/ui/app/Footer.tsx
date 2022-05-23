@@ -9,6 +9,8 @@ import {
   Typography,
 } from '..'
 
+export interface FooterProps extends React.HTMLProps<HTMLDivElement> {}
+
 const config: Record<string, Record<string, string>> = {
   Services: {
     Swap: 'https://app.sushi.com',
@@ -41,7 +43,7 @@ const config: Record<string, Record<string, string>> = {
   },
 }
 
-export function Footer(): JSX.Element {
+export function Footer({}: FooterProps): JSX.Element {
   return (
     <footer className="flex border-t border-slate-800 py-[72px]">
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
