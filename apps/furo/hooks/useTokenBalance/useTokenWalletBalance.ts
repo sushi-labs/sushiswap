@@ -23,9 +23,9 @@ export const useTokenWalletBalances: UseTokenBalances = (account, tokens) => {
 
           return acc
         },
-        [[], []],
+        [[], []]
       ),
-    [tokens],
+    [tokens]
   )
 
   // Wallet Balances
@@ -34,7 +34,7 @@ export const useTokenWalletBalances: UseTokenBalances = (account, tokens) => {
     ERC20Interface,
     'balanceOf',
     useMemo(() => [account], [account]),
-    tokenBalancesGasRequirement,
+    tokenBalancesGasRequirement
   )
 
   const [anyLoading, anyError] = useMemo(() => {

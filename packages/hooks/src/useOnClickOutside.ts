@@ -1,6 +1,9 @@
 import { RefObject, useEffect, useRef } from 'react'
 
-function useOnClickOutside<T extends HTMLElement>(node: RefObject<T | undefined>, handler: undefined | (() => void)) {
+export function useOnClickOutside<T extends HTMLElement>(
+  node: RefObject<T | undefined>,
+  handler: undefined | (() => void)
+) {
   const handlerRef = useRef<undefined | (() => void)>(handler)
   useEffect(() => {
     handlerRef.current = handler
@@ -21,5 +24,3 @@ function useOnClickOutside<T extends HTMLElement>(node: RefObject<T | undefined>
     }
   }, [node])
 }
-
-export default useOnClickOutside

@@ -140,7 +140,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     () =>
       streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
       [],
-    [streams, vestings],
+    [streams, vestings]
   )
 
   const [columns] = React.useState<typeof defaultColumns>(() => [

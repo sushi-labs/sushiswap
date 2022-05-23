@@ -1,4 +1,4 @@
-import log from '@sushiswap/logger'
+import log from '@sushiswap/log'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
 

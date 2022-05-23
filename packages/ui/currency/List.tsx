@@ -6,7 +6,7 @@ import { FixedSizeList } from 'react-window'
 
 import { Typography } from '../typography'
 
-interface WithCurrencyList {
+export interface WithCurrencyList {
   currencies: Type[]
   currency?: Type
   onCurrency(x: Type): void
@@ -97,7 +97,7 @@ export const List = withContext(() => {
 
       return <CurrencyRow currency={currency} style={style} />
     },
-    [currencies],
+    [currencies]
   )
 
   return (

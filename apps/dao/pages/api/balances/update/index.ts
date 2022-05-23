@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import log from '@sushiswap/logger'
+import log from '@sushiswap/log'
 import { SAFES } from 'config'
 import { getBalance } from 'gnosis'
 import type { NextApiRequest, NextApiResponse } from 'next'

@@ -37,7 +37,7 @@ export function useCurrentBlockTimestamp(chainId: ChainId, blockNumber: number |
 
 export function useCurrentBlockTimestampMultichain(
   chainIds: ChainId[],
-  blockNumbers: Array<number | undefined>,
+  blockNumbers: Array<number | undefined>
 ): Array<string | undefined> {
   const chainToBlock = useMemo(() => {
     console.log({ blockNumbers })
@@ -58,7 +58,7 @@ export function useCurrentBlockTimestampMultichain(
     chainToBlock,
     chainToAddress,
     MulticallInterface,
-    'getCurrentBlockTimestamp',
+    'getCurrentBlockTimestamp'
   )
 
   return Object.values(chainToCallState).map((callState) => callState.result?.[0]?.toString())

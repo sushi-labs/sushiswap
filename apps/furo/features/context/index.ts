@@ -6,4 +6,3 @@ export * from './SchedulePeriod'
 export * from './Stream'
 export * from './Transaction'
 export * from './Vesting'
-

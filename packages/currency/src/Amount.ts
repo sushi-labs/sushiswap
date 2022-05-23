@@ -4,6 +4,22 @@ import invariant from 'tiny-invariant'
 import { Token } from './Token'
 import { Type } from './Type'
 
+export class Share<T extends Type> extends Fraction {
+  public readonly currency: T
+  public readonly scale: JSBI
+
+  public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh): Share<T> {
+    return new Share(currency, rawShare)
+  }
+
+  protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
+    super(numerator, denominator)
+    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT256), 'SHARE')
+    this.currency = currency
+    this.scale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+  }
+}
+
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
@@ -20,18 +36,23 @@ export class Amount<T extends Type> extends Fraction {
   public static fromShare<T extends Token>(
     currency: T,
     shares: BigintIsh,
-    rebase: { base: JSBI; elastic: JSBI },
+    rebase: { base: JSBI; elastic: JSBI }
   ): Amount<T> {
     return new Amount(
       currency,
-      JSBI.GT(rebase.base, 0) ? JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base) : ZERO,
+      JSBI.GT(rebase.base, 0) ? JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base) : ZERO
     )
   }
 
-  public toShare(rebase: { base: JSBI; elastic: JSBI }) {
+  public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
     return new Amount(
       this.currency,
-      JSBI.GT(rebase.elastic, 0) ? JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic) : ZERO,
+      JSBI.GT(rebase.elastic, 0)
+        ? JSBI[roundUp ? 'add' : 'subtract'](
+            JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic),
+            JSBI.BigInt(1)
+          )
+        : ZERO
     )
   }
 
@@ -44,7 +65,7 @@ export class Amount<T extends Type> extends Fraction {
   public static fromFractionalAmount<T extends Type>(
     currency: T,
     numerator: BigintIsh,
-    denominator: BigintIsh,
+    denominator: BigintIsh
   ): Amount<T> {
     return new Amount(currency, numerator, denominator)
   }
@@ -81,7 +102,7 @@ export class Amount<T extends Type> extends Fraction {
   public toSignificant(
     significantDigits: number = 6,
     format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN,
+    rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
     return super.divide(this.scale).toSignificant(significantDigits, format, rounding)
   }
@@ -89,7 +110,7 @@ export class Amount<T extends Type> extends Fraction {
   public toFixed(
     decimalPlaces: number = this.currency.decimals,
     format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN,
+    rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS')
     return super.divide(this.scale).toFixed(decimalPlaces, format, rounding)

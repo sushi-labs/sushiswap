@@ -1,4 +1,6 @@
-import React, { FC, ReactElement, ReactNode } from 'react'
+import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
+import { shortenAddress } from '@sushiswap/format'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button as UIButton,
   CoinbaseWalletIcon,
@@ -8,11 +10,10 @@ import {
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
+import React, { FC, ReactElement, ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
-import Account from '../Account'
-import { useIsMounted } from '@sushiswap/hooks'
-import { shortenAddress } from '@sushiswap/format'
+
+import { Account } from '../Account'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -21,16 +22,17 @@ const Icons: Record<string, ReactNode> = {
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
 }
 
-export interface ButtonProps {
+export type Props = {
   label?: string
   button?: ReactElement<typeof Menu.Button>
   hack?: ReturnType<typeof useConnect>
 }
 
-const Button: FC<ButtonProps> = ({ hack, label, button }) => {
+export const Button: FC<Props> = ({ hack, label, button }) => {
   const { data } = useAccount()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { isConnected, isReconnecting, isConnecting, connectors, connect, pendingConnector } = hack || useConnect()
 
   if (!!pendingConnector && isConnecting) {
@@ -63,7 +65,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
         <Menu.Items>
           <div>
             {connectors.map((conn) => (
-              <Menu.Item key={conn.id} onClick={() => connect(conn)} className="group flex gap-3 items-center">
+              <Menu.Item key={conn.id} onClick={() => connect(conn)} className="flex items-center gap-3 group">
                 <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
                   {Icons[conn.name] && Icons[conn.name]}
                 </div>{' '}
@@ -81,7 +83,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
 
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
-        <div className="px-3 hidden sm:block">
+        <div className="hidden px-3 sm:block">
           <Account.Balance address={data?.address} />
         </div>
         <Menu
@@ -91,7 +93,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
                 <Account.Avatar address={data?.address} />
                 <Account.Name address={data?.address}>
                   {({ name, isEns }) => (
-                    <Typography variant="sm" weight={700} className="text-slate-50 tracking-wide">
+                    <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
                       {isEns ? name : !!name ? shortenAddress(name) : ''}
                     </Typography>
                   )}
@@ -102,7 +104,7 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
         >
           <Menu.Items>
             <div>
-              <Menu.Item className="group flex gap-3 items-center" onClick={() => disconnect()}>
+              <Menu.Item className="flex items-center gap-3 group" onClick={() => disconnect()}>
                 <LogoutIcon width={16} height={16} />
                 Disconnect
               </Menu.Item>
@@ -115,5 +117,3 @@ const Button: FC<ButtonProps> = ({ hack, label, button }) => {
 
   return <></>
 }
-
-export default Button

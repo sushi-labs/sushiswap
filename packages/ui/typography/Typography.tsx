@@ -51,7 +51,7 @@ export const Typography = forwardRef<HTMLElement, TypographyProps<any>>(
       select = 'auto',
       ...rest
     },
-    ref,
+    ref
   ) => {
     return React.createElement(
       as,
@@ -61,13 +61,13 @@ export const Typography = forwardRef<HTMLElement, TypographyProps<any>>(
           WEIGHTS[weight],
           select,
           onClick ? 'cursor-pointer select-none' : '',
-          className,
+          className
         ),
         onClick,
         ...rest,
         ref,
       },
-      children,
+      children
     )
-  },
+  }
 ) as typeof TypographyFn

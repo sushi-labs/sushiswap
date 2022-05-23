@@ -8,7 +8,7 @@ export type ErrorState<T> = { isLoading: false; isError: true; data?: T }
 export type UseTokenBalances = (
   account: string | undefined,
   tokens: (Token | undefined)[],
-  fundSource?: FundSource,
+  fundSource?: FundSource
 ) =>
   | SuccessState<Record<string, Amount<Token>>>
   | LoadingState<Record<string, Amount<Token>>>
@@ -17,5 +17,5 @@ export type UseTokenBalances = (
 export type UseTokenBalance = (
   account: string | undefined,
   token: Token | undefined,
-  fundSource?: FundSource,
+  fundSource?: FundSource
 ) => SuccessState<Amount<Token>> | LoadingState<Amount<Token>> | ErrorState<Amount<Token>>

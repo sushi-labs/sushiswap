@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
         [`/api/streams/${query.chainId}/${query.address}`]: (await getStreams(query.chainId, query.address)) as Streams,
         [`/api/vestings/${query.chainId}/${query.address}`]: (await getVestings(
           query.chainId,
-          query.address,
+          query.address
         )) as Vestings,
       },
     },
@@ -57,12 +57,12 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
   const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
     `/furo/api/vestings/${chainId}/${address}`,
-    fetcher,
+    fetcher
   )
 
   return (
     <div className="flex flex-col h-full gap-12 pt-10">
-      <div className="flex flex-col gap-1 justify-center pb-4">
+      <div className="flex flex-col justify-center gap-1 pb-4">
         <Typography variant="h3" weight={700} className="text-slate-200">
           Dashboard
         </Typography>
@@ -72,7 +72,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               <Typography
                 variant="sm"
                 weight={700}
-                className="text-slate-500 hover:text-blue cursor-pointer flex gap-1"
+                className="flex gap-1 cursor-pointer text-slate-500 hover:text-blue"
                 as="a"
                 target="_blank"
               >

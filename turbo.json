@@ -3,25 +3,46 @@
     "validate": {
       "cache": false
     },
+    "clean": {
+      "cache": false
+    },
     "generate": {
       "dependsOn": [
         "^build"
       ],
       "outputs": [
         "^build",
-        ".graphclient/**", 
-        "typechain"
+        ".graphclient/**"
       ],
       "cache": false
+    },
+    "export": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "exports.json"
+      ]
+    },
+    "node": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "deployments/**"
+      ]
     },
     "build": {
       "outputs": [
         ".next/**",
-        "dist/**"
+        "dist/**",
+        "typechain/**",
+        "artifacts/**",
+        "cache/**"
       ],
       "dependsOn": [
         "^build",
-        "^generate",
         "generate"
       ]
     },
@@ -46,9 +67,7 @@
       ],
       "cache": false
     },
-    "clean": {
-      "cache": false
-    },
+
     "dao#build": {
       "dependsOn": [
         "^build",
@@ -62,9 +81,12 @@
         "^build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
+        "$DAO_URL",
         "$DOCS_URL",
         "$FURO_URL",
-        "$LANDING_URL"
+        "$LANDING_URL",
+        "$SWAP_URL",
+        "$LEGACY_URL"
       ],
       "outputs": [".next/**"]
     }

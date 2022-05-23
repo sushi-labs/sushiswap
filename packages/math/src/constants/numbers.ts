@@ -19,5 +19,3 @@ export const _1e6 = JSBI.BigInt(1e6)
 
 export const MAX_SAFE_INTEGER = JSBI.BigInt(Number.MAX_SAFE_INTEGER)
 export const MAX_UINT256 = JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-
-export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)

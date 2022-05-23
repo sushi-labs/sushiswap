@@ -145,10 +145,6 @@ const chains: ChainObject = {
     link: 'https://arbiscan.io',
     builder: explorers.etherscan,
   },
-  [ChainId.MOONBEAM_TESTNET]: {
-    link: 'https://moonbeam-explorer.netlify.app',
-    builder: explorers.blockscout,
-  },
   [ChainId.AVALANCHE]: {
     link: 'https://cchain.explorer.avax.network',
     builder: explorers.blockscout,

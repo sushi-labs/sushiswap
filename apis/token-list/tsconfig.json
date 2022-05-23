@@ -3,6 +3,6 @@
     "resolveJsonModule": true,
   },
   "exclude": ["node_modules"],
-  "extends": "@sushiswap/config/typescript/base.json",
+  "extends": "@sushiswap/typescript-config/base.json",
   "include": ["."]
 }

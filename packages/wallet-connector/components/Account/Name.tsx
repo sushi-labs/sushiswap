@@ -1,15 +1,12 @@
-import { useEnsName } from 'wagmi'
-import { shortenAddress } from '@sushiswap/format'
-import { classNames, Typography } from '@sushiswap/ui'
-import { ReactNode } from 'react'
 import { ChainId } from '@sushiswap/chain'
+import { useEnsName } from 'wagmi'
 
-type Props = {
+export type Props = {
   address?: string
-  children({ name, isEns }: { name: string; isEns: boolean }): JSX.Element
+  children({ name, isEns }: { name?: string; isEns: boolean }): JSX.Element
 }
 
-function Name({ address, children }: Props): JSX.Element {
+export function Name({ address, children }: Props): JSX.Element {
   const { data } = useEnsName({
     address,
     chainId: ChainId.ETHEREUM,
@@ -17,5 +14,3 @@ function Name({ address, children }: Props): JSX.Element {
 
   return children({ name: !!data ? data : address, isEns: !!data })
 }
-
-export default Name

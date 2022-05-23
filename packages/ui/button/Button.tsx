@@ -60,7 +60,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       href,
       ...rest
     },
-    ref,
+    ref
   ) => {
     return React.createElement(
       href ? 'a' : 'button',
@@ -75,7 +75,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           COLOR[color],
           SIZE[size],
           className,
-          disabled ? 'btn-disabled' : '',
+          disabled ? 'btn-disabled' : ''
         ),
         ...(href && { href }),
       },
@@ -87,9 +87,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {children}
           {endIcon && endIcon}
         </>
-      ),
+      )
     )
-  },
+  }
 )
 
 export default Button

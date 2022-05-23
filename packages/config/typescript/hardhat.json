@@ -1,0 +1,8 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Hardhat",
+    "extends": "./node16.json",
+    "include": ["deploy", "scripts", "test", "typechain", "hardhat.config.ts"],
+    "exclude": ["node_modules"]
+  }
+  

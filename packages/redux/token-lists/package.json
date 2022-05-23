@@ -1,0 +1,50 @@
+{
+  "name": "@sushiswap/redux-token-lists",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Redux token lists",
+  "keywords": [
+    "redux",
+    "token lists"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "./index.ts",
+  "source": "./index.ts",
+  "dependencies": {
+    "@ethersproject/address": "^5.6.0",
+    "@ethersproject/contracts": "^5.6.0",
+    "@ethersproject/hash": "^5.6.0",
+    "@ethersproject/providers": "^5.6.4",
+    "ajv": "^6.12.3",
+    "cids": "^1.1.9",
+    "multicodec": "^3.2.1",
+    "multihashes": "^4.0.3"
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/node": "^17.0.30",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "@uniswap/token-lists": "^1.0.0-beta.28",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-redux": "^8.0.1",
+    "typescript": "^4.6.4"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/hooks": "workspace:*",
+    "@uniswap/token-lists": "^1.0.0-beta.28",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-redux": "^8.0.1"
+  }
+}

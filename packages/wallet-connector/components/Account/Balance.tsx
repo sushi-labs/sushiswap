@@ -1,37 +1,35 @@
-import { useBalance, useNetwork } from 'wagmi'
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
-import { Loader, Typography } from '@sushiswap/ui'
 import { Amount, Native } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { Loader, Typography } from '@sushiswap/ui'
+import { useBalance, useNetwork } from 'wagmi'
 
-type Props = {
+export type Props = {
   address?: string
 }
 
-function Balance({ address }: Props): JSX.Element {
+export function Balance({ address }: Props): JSX.Element {
   const { activeChain } = useNetwork()
-  const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: true })
+  const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: !!address })
 
   if (isLoading) {
     return <Loader />
   }
 
   if (isError) {
-    return <ExclamationCircleIcon width={20} height={20} className="text-red cursor-pointer" />
+    return <ExclamationCircleIcon width={20} height={20} className="cursor-pointer text-red" />
   }
 
   return (
-    <Typography weight={700} className="text-slate-200 flex gap-1" component="span">
+    <Typography weight={700} className="flex gap-1 text-slate-200" as="span">
       <>
         {activeChain &&
           data &&
           Amount.fromRawAmount(Native.onChain(activeChain.id), JSBI.BigInt(data.value)).toSignificant(4)}
       </>
-      <Typography weight={700} variant="sm" className="text-slate-500" component="span">
+      <Typography weight={700} variant="sm" className="text-slate-500" as="span">
         ETH
       </Typography>
     </Typography>
   )
 }
-
-export default Balance

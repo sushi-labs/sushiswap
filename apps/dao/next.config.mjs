@@ -23,5 +23,5 @@ export default withTranspileModules(
       ignoreBuildErrors: true,
     },
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  }),
+  })
 )

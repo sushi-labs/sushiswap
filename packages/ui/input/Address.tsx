@@ -3,7 +3,7 @@ import React, { FC, forwardRef } from 'react'
 
 import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
 
-export type AddressProps = Omit<React.HTMLProps<HTMLInputElement> | 'ref' | 'as' | 'onChange'> & {
+export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as' | 'onChange'> & {
   error: boolean
   value: string
   onChange(x: string): void
@@ -11,7 +11,7 @@ export type AddressProps = Omit<React.HTMLProps<HTMLInputElement> | 'ref' | 'as'
 
 const matchSpaces = /\s+/g
 
-export const Address: FC<AddressProps> = forwardRef(
+export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressProps>(
   (
     {
       value,
@@ -22,7 +22,7 @@ export const Address: FC<AddressProps> = forwardRef(
       error,
       ...rest
     },
-    ref,
+    ref
   ) => {
     return (
       <>
@@ -44,5 +44,5 @@ export const Address: FC<AddressProps> = forwardRef(
         />
       </>
     )
-  },
+  }
 )

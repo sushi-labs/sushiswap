@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
+import { useMulticallContract } from '@sushiswap/wagmi'
 
-import { useMulticallContract } from '../../hooks/useMulticallContract'
 import { multicall } from './multicall'
 
 interface Props {

@@ -1,4 +1,4 @@
-import log from '@sushiswap/logger'
+import log from '@sushiswap/log'
 import { SAFES } from 'config'
 import { getSafe } from 'gnosis'
 import type { NextApiRequest, NextApiResponse } from 'next'

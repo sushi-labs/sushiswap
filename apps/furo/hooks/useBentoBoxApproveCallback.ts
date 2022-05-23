@@ -10,7 +10,7 @@ import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback(
   watch: boolean,
-  masterContractAddress?: string,
+  masterContractAddress?: string
 ): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
@@ -24,7 +24,7 @@ export function useBentoBoxApproveCallback(
     {
       args: [masterContractAddress, account?.address],
       watch,
-    },
+    }
   )
   const { error, refetch: getNonces } = useContractRead(
     {
@@ -35,7 +35,7 @@ export function useBentoBoxApproveCallback(
     {
       args: [account?.address],
       enabled: false,
-    },
+    }
   )
 
   const [signature, setSignature] = useState<Signature>()
@@ -64,7 +64,7 @@ export function useBentoBoxApproveCallback(
       domain: {
         name: 'BentoBox V1',
         chainId: chainId,
-        verifyingContract: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : undefined,
+        verifyingContract: chainId ? BENTOBOX_ADDRESS[chainId] : undefined,
       },
       types: {
         SetMasterContractApproval: [
@@ -86,16 +86,7 @@ export function useBentoBoxApproveCallback(
     console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
-  }, [
-    approvalState,
-    masterContractAddress,
-    getNonces,
-    signTypedDataAsync,
-    chainId,
-    activeChain?.id,
-    account?.address,
-    error,
-  ])
+  }, [approvalState, masterContractAddress, getNonces, signTypedDataAsync, chainId, account?.address, error])
 
   return [approvalState, signature, approveBentoBox]
 }

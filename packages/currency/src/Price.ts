@@ -20,7 +20,7 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
           {
             baseAmount: Amount<TBase>
             quoteAmount: Amount<TQuote>
-          },
+          }
         ]
   ) {
     let baseCurrency: TBase, quoteCurrency: TQuote, denominator: BigintIsh, numerator: BigintIsh
@@ -42,7 +42,7 @@ export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
     this.quoteCurrency = quoteCurrency
     this.scalar = new Fraction(
       JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseCurrency.decimals)),
-      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(quoteCurrency.decimals)),
+      JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(quoteCurrency.decimals))
     )
   }
 

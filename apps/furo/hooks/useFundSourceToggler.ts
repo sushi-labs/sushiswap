@@ -20,6 +20,6 @@ export const useFundSourceToggler = (initialValue?: FundSource) => {
       toggle,
       setValue: setFundSource,
     }),
-    [fundSource, toggle],
+    [fundSource, toggle]
   )
 }

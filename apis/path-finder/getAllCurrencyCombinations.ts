@@ -14,7 +14,7 @@ export const CUSTOM_BASES: {
 export function getAllCurrencyCombinations(
   chainId: number,
   tokenIn: { chainId: number; address: string; decimals: number; symbol?: string; name?: string },
-  tokenOut: { chainId: number; address: string; decimals: number; symbol?: string; name?: string },
+  tokenOut: { chainId: number; address: string; decimals: number; symbol?: string; name?: string }
 ) {
   const [currencyA, currencyB] = [new Token(tokenIn), new Token(tokenOut)]
 
@@ -27,7 +27,7 @@ export function getAllCurrencyCombinations(
   const bases: Token[] = [...common, ...additionalA, ...additionalB]
 
   const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] =>
-    bases.map((otherBase) => [base, otherBase]),
+    bases.map((otherBase) => [base, otherBase])
   )
 
   if (!tokenA || !tokenB) {

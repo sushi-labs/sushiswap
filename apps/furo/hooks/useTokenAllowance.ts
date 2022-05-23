@@ -7,7 +7,7 @@ export function useTokenAllowance(
   watch: boolean,
   token?: Token,
   owner?: string,
-  spender?: string,
+  spender?: string
 ): Amount<Token> | undefined {
   const args = useMemo(() => [owner, spender], [owner, spender])
   const { data } = useContractRead(
@@ -16,7 +16,7 @@ export function useTokenAllowance(
       contractInterface: erc20ABI,
     },
     'allowance',
-    { args, watch, enabled: !!token },
+    { args, watch, enabled: !!token }
   )
 
   return data && token ? Amount.fromRawAmount(token, data.toString()) : undefined

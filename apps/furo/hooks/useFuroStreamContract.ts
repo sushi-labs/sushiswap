@@ -31,7 +31,7 @@ export function useStreamBalance(streamId?: string, token?: Token): Amount<Token
       contractInterface: FUROSTREAM_ABI,
     },
     'streamBalanceOf',
-    { args: [streamId], watch: true },
+    { args: [streamId], watch: true }
   )
 
   return useMemo(() => {

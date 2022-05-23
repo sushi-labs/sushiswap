@@ -1,5 +1,5 @@
 {
-  "name": "token-lists",
+  "name": "token-lists-example",
   "version": "0.0.0",
   "private": true,
   "description": "Redux token lists example",
@@ -7,9 +7,12 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
     "build": "next build --profile",
-    "dev": "next dev",
+    "dev": "next dev --port 4001",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.1",
@@ -17,18 +20,21 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@uniswap/token-lists": "^1.0.0-beta.28",
-    "ethers": "^5.6.4",
-    "next": "^12.1.5",
+    "ethers": "^5.6.6",
+    "next": "^12.1.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1"
   },
   "devDependencies": {
-    "@sushiswap/config": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.30",
-    "@types/react": "^18.0.8",
-    "@types/react-dom": "^18.0.3",
-    "eslint": "8.14.0",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "eslint": "^8.15.0",
     "next-transpile-modules": "^9.0.0",
     "typescript": "^4.6.4"
   }

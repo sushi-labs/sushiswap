@@ -19,7 +19,7 @@ export const MenuButton: FC<MenuButton> = forwardRef(({ className, children, sta
       ref,
       className: classNames(
         'relative w-full cursor-pointer rounded-xl bg-slate-900 hover:bg-slate-800 focus:bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md ring-1 ring-slate-900/10',
-        className,
+        className
       ),
     },
     <>
@@ -30,9 +30,9 @@ export const MenuButton: FC<MenuButton> = forwardRef(({ className, children, sta
       >
         {children}
       </Typography>
-      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-        <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+      <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+        <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
       </span>
-    </>,
+    </>
   )
 })

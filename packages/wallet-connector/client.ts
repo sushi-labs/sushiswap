@@ -1,23 +1,37 @@
-import { chain, createClient, defaultChains } from 'wagmi'
+import { ChainId } from '@sushiswap/chain'
+import { chain, createClient, defaultChains, defaultL2Chains } from 'wagmi'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { providers } from 'ethers'
 
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID as string
+import { getProvider, getWebsocketProvider } from './provider'
+
+const ALCHEMY_API_KEY: Record<number, string> = {
+  [ChainId.ETHEREUM]: 'q1pMGalg0HNBvK1eaZoo-vng-EPWlt1t',
+  [ChainId.ARBITRUM]: 'eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV',
+  [ChainId.OPTIMISM]: 'rtbMqQGp96fbuXxzUS2fct34eYzA7tY8',
+  [ChainId.POLYGON]: 'vZft72lBzQ100fCIJTyohJR1tWrMsUei',
+  [ChainId.POLYGON_TESTNET]: 'JW13aE7MytaJNzSZ-BI4L-XfmaMqMip_',
+  [ChainId.GÖRLI]: 'BXrZLhuc63Gn91NoLVVFDJ010M-AwOa2',
+}
 
 const defaultChain = chain.mainnet
 
-const isChainSupported = (chainId?: number) => defaultChains.some((x) => x.id === chainId)
+const isChainSupported = (chainId?: number) => {
+  return [...defaultChains, ...defaultL2Chains].some((x) => x.id === chainId)
+}
 
-const client = createClient({
+const client: ReturnType<typeof createClient> = createClient({
   autoConnect: true,
   connectors({ chainId }) {
-    const chain = defaultChains.find((chain) => chain.id === chainId) ?? defaultChain
-    const rpcUrl = chain.rpcUrls.alchemy ? `${chain.rpcUrls.alchemy}/${alchemyId}` : chain.rpcUrls.default
+    const chain = [...defaultChains, ...defaultL2Chains].find((chain) => chain.id === chainId) ?? defaultChain
+    const rpcUrl =
+      chainId && chain.rpcUrls.alchemy ? `${chain.rpcUrls.alchemy}/${ALCHEMY_API_KEY[chainId]}` : chain.rpcUrls.default
+
+    console.log({ chain, rpcUrl })
     return [
       new InjectedConnector({
-        chains: defaultChains,
+        chains: [...defaultChains, ...defaultL2Chains],
       }),
       new WalletConnectConnector({
         // TODO: Flesh out wallet connect options?
@@ -41,10 +55,10 @@ const client = createClient({
     ]
   },
   provider({ chainId }) {
-    return new providers.AlchemyProvider(isChainSupported(chainId) ? chainId : defaultChain.id, alchemyId)
+    return getProvider(chainId ? chainId : defaultChain.id)
   },
   webSocketProvider({ chainId }) {
-    return new providers.AlchemyWebSocketProvider(isChainSupported(chainId) ? chainId : defaultChain.id, alchemyId)
+    return getWebsocketProvider(chainId ? chainId : defaultChain.id)
   },
   // storage: createStorage({ storage: window.localStorage }),
 })

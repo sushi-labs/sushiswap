@@ -30,7 +30,7 @@ const SafeTable = () => {
 
   useEffect(() => {
     setFormattedBalance(
-      balance?.items.filter((token) => parseFloat(token.balance) > 0 && parseFloat(token.fiatBalance) > 0) ?? [],
+      balance?.items.filter((token) => parseFloat(token.balance) > 0 && parseFloat(token.fiatBalance) > 0) ?? []
     )
   }, [balance])
 
@@ -72,7 +72,7 @@ const SafeTable = () => {
         },
       },
     ],
-    [],
+    []
   )
 
   const config = useMemo(
@@ -84,7 +84,7 @@ const SafeTable = () => {
       },
       autoResetFilters: false,
     }),
-    [columns, formattedBalance],
+    [columns, formattedBalance]
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
@@ -93,7 +93,7 @@ const SafeTable = () => {
     useFilters,
     useSortBy,
     useFlexLayout,
-    usePagination,
+    usePagination
   )
 
   return (
@@ -119,7 +119,7 @@ const SafeTable = () => {
           <Typography>
             <p
               className={classNames(
-                isValidThreshold(safe.threshold, safe.owners.length) ? 'text-green-400' : 'text-red-400',
+                isValidThreshold(safe.threshold, safe.owners.length) ? 'text-green-400' : 'text-red-400'
               )}
             >
               {`${safe.threshold} / ${safe.owners.length}`}
@@ -142,7 +142,7 @@ const SafeTable = () => {
                     key={i}
                     className={classNames(
                       !USERS.has(address) &&
-                        'text-red-400 hover:text-red hover:underline focus:text-red active:text-red',
+                        'text-red-400 hover:text-red hover:underline focus:text-red active:text-red'
                     )}
                   >
                     <Typography>{name ?? '???'}</Typography>

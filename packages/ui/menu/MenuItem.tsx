@@ -19,12 +19,12 @@ export const MenuItem: FC<MenuItem> = forwardRef<HTMLDivElement, MenuItem>(
           classNames(
             active ? 'text-white bg-blue-500' : 'text-high-emphesis',
             'block font-bold text-sm cursor-pointer select-none relative py-2 pl-4 pr-9 my-1 mx-1 rounded-xl',
-            className,
+            className
           )
         }
       >
         {children}
       </HeadlessMenu.Item>
     )
-  },
+  }
 )

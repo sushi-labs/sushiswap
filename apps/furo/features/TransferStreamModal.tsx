@@ -35,7 +35,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
       onSuccess() {
         setOpen(false)
       },
-    },
+    }
   )
 
   const transferStream = useCallback(async () => {

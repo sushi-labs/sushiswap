@@ -1,11 +1,11 @@
-import { useEnsAvatar, useNetwork } from 'wagmi'
 import { ChainId } from '@sushiswap/chain'
+import { useEnsAvatar, useNetwork } from 'wagmi'
 
-type Props = {
+export type Props = {
   address?: string
 }
 
-function Avatar({ address }: Props): JSX.Element {
+export function Avatar({ address }: Props): JSX.Element {
   const { activeChain } = useNetwork()
   const { data } = useEnsAvatar({
     addressOrName: address,
@@ -15,5 +15,3 @@ function Avatar({ address }: Props): JSX.Element {
   if (data) return <>{data}</>
   return <></>
 }
-
-export default Avatar

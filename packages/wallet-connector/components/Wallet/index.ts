@@ -1,4 +1,4 @@
-import List from './List'
-import Button from './Button'
+import { Button } from './Button'
+import { List } from './List'
 
-export default { List, Button }
+export const Wallet = { List, Button }
