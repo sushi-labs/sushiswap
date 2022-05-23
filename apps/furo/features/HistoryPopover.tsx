@@ -28,7 +28,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
           <div
             className={classNames(
               open ? 'bg-slate-600' : '',
-              'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11',
+              'hover:ring-2 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11'
             )}
           >
             <HistoryIcon width={18} height={18} />

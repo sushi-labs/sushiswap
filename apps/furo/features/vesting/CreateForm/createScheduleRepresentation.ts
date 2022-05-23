@@ -5,7 +5,7 @@ import { StepConfig } from 'features/vesting/CreateForm/types'
 type CreateScheduleRepresentation = (x: {
   token: Token
   cliff: boolean
-  cliffAmount: Amount<Token>
+  cliffAmount: Amount<Token> | undefined
   stepAmount: Amount<Token>
   startDate: Date
   cliffEndDate: Date | undefined
@@ -37,7 +37,7 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
     },
   ]
 
-  if (cliff && cliffEndDate) {
+  if (cliff && cliffEndDate && cliffAmount) {
     periods.push({
       id: 'cliff',
       type: PeriodType.CLIFF,

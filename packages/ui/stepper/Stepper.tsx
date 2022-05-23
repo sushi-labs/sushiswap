@@ -33,7 +33,7 @@ const StepperRoot: FC<Stepper> = ({ children, activeStep, setActiveStep }) => {
       activeStep,
       setActiveStep,
     }),
-    [activeStep, children, setActiveStep],
+    [activeStep, children, setActiveStep]
   )
 
   return (

@@ -1,4 +1,4 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
@@ -6,7 +6,6 @@ import CreateFormButtons from 'features/vesting/CreateForm/CreateFormButtons'
 import { createScheduleRepresentation } from 'features/vesting/CreateForm/createScheduleRepresentation'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { getExplorerLink } from 'functions'
-import { parseAmount } from 'functions/parseAmount'
 import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
@@ -66,16 +65,16 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   } = formData
 
   const [_cliffAmount, _stepAmount, totalAmount, endDate] = useMemo(() => {
-    const cliff = parseAmount(token, cliffAmount?.toString())
-    const step = parseAmount(token, stepAmount.toString())
+    const cliff = tryParseAmount(cliffAmount?.toString(), token)
+    const step = tryParseAmount(stepAmount.toString(), token)
     const endDate = new Date(
-      (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
+      (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
-    return [cliff, step, step.multiply(stepPayouts).add(cliff), endDate]
+    return [cliff, step, cliff && step ? step.multiply(stepPayouts).add(cliff) : undefined, endDate]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
 
   const schedule = useMemo(() => {
-    return open
+    return open && _stepAmount
       ? createScheduleRepresentation({
           token,
           cliff,
@@ -102,7 +101,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           </span>{' '}
           consisting of{' '}
           <span className="font-bold text-slate-50">
-            {totalAmount?.toSignificant(6)} {totalAmount.currency.symbol}
+            {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
           </span>{' '}
           from <span className="font-bold text-slate-50">{format(startDate, 'dd MMM yyyy hh:mm')}</span> until{' '}
           <span className="font-bold text-slate-50">{format(endDate, 'dd MMM yyyy hh:mm')}</span>
@@ -150,12 +149,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                           {period?.amount.currency?.symbol}
                         </Typography>
                       </Typography>
-                    </div>,
+                    </div>
                   )
 
                   return acc
                 },
-                [[], Amount.fromRawAmount(token, '0')],
+                [[], Amount.fromRawAmount(token, '0')]
               )[0]
             }
           </div>

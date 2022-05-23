@@ -31,7 +31,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
         className={classNames(
           className,
           error ? ERROR_INPUT_CLASSNAME : '',
-          'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue',
+          'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue'
         )}
       >
         <div className="flex items-center justify-between gap-1">

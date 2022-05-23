@@ -21,7 +21,7 @@ export const Counter: FC<CounterProps> = forwardRef(
             DEFAULT_INPUT_CLASSNAME,
             error ? ERROR_INPUT_CLASSNAME : '',
             'grid grid-cols-12 !p-0 bg-slate-800 h-[44px]',
-            className,
+            className
           )}
         >
           <button
@@ -34,7 +34,7 @@ export const Counter: FC<CounterProps> = forwardRef(
           <input
             className={classNames(
               DEFAULT_INPUT_CLASSNAME,
-              '!p-0 !border-none col-span-6 !rounded-none flex text-center focus:!ring-0 focus:!ring-offset-0 shadow-none w-unset !shadow-none',
+              '!p-0 !border-none col-span-6 !rounded-none flex text-center focus:!ring-0 focus:!ring-offset-0 shadow-none w-unset !shadow-none'
             )}
             ref={ref}
             value={value}
@@ -43,8 +43,8 @@ export const Counter: FC<CounterProps> = forwardRef(
                 ? onChange(
                     Math.min(
                       e.target.value.replace(matchNonNumbers, ''),
-                      max ? max : e.target.value.replace(matchNonNumbers, ''),
-                    ),
+                      max ? max : e.target.value.replace(matchNonNumbers, '')
+                    )
                   )
                 : undefined
             }
@@ -60,5 +60,5 @@ export const Counter: FC<CounterProps> = forwardRef(
         </div>
       </div>
     )
-  },
+  }
 )

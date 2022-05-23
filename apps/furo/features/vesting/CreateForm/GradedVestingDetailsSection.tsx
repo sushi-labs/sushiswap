@@ -20,7 +20,7 @@ export const GradedVestingDetailsSection = () => {
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts
       ? new Date(
-          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
+          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
         )
       : undefined
 

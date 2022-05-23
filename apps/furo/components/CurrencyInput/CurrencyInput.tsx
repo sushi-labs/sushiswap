@@ -1,9 +1,8 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
-import { parseAmount } from 'functions/parseAmount'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC } from 'react'
 
@@ -42,7 +41,7 @@ const Component: FC<CurrencyInput> = ({
   return (
     <BalanceController fundSource={fundSource} token={token} account={account}>
       {({ isLoading: loading, data: balance }) => {
-        const amountAsEntity = token && value ? parseAmount(token, value.toString()) : undefined
+        const amountAsEntity = token && value ? tryParseAmount(value.toString(), token) : undefined
         const insufficientBalanceError =
           amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
         const errorMessage = errorMessageProp || insufficientBalanceError

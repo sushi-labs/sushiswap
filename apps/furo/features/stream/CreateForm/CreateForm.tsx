@@ -107,7 +107,7 @@ export const CreateForm: FC = () => {
         })
       }
     },
-    [account.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature],
+    [account.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
   )
 
   return (

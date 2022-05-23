@@ -38,5 +38,5 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
         Approve Bentobox
       </Button>
     )
-  },
+  }
 )

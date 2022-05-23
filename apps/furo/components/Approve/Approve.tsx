@@ -29,7 +29,7 @@ const Controller: FC<Props> = ({ components, render }) => {
             setState: (value: ApprovalState) => handleUpdate(value, index),
           })
         }
-      }),
+      })
     )
   }, [components, handleUpdate])
 

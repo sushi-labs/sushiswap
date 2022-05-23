@@ -1,5 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
+import { tryParseAmount } from '@sushiswap/currency'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { createToast } from 'components'
@@ -7,7 +8,6 @@ import { Approve } from 'components/Approve'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { logTenderlyUrl } from 'functions/getTenderly'
-import { parseAmount } from 'functions/parseAmount'
 import { useFuroVestingContract } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -42,14 +42,14 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
     if (!token || !stepPayouts) return [undefined, undefined]
 
-    const cliff = parseAmount(token, cliffAmount?.toString())
-    const step = parseAmount(token, stepAmount.toString())
-    const totalStep = parseAmount(token, stepAmount.toString()).multiply(JSBI.BigInt(stepPayouts))
-    const totalAmount = cliff.add(totalStep)
+    const cliff = tryParseAmount(cliffAmount?.toString(), token)
+    const step = tryParseAmount(stepAmount.toString(), token)
+    const totalStep = tryParseAmount(stepAmount.toString(), token)?.multiply(JSBI.BigInt(stepPayouts))
+    const totalAmount = cliff && totalStep ? cliff.add(totalStep) : undefined
 
     return [
       totalAmount,
-      totalAmount?.greaterThan(ZERO)
+      totalAmount?.greaterThan(ZERO) && step
         ? new Fraction(step.multiply(JSBI.BigInt(1e18)).quotient, totalAmount.quotient).quotient
         : JSBI.BigInt(0),
     ]
