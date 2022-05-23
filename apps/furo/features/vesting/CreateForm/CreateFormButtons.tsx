@@ -34,7 +34,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
 }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-  const [error, setError] = useState<string>()
   const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingContract()
@@ -43,7 +42,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
     if (!token || !stepPayouts) return [undefined, undefined]
 
-    const cliff = parseAmount(token, cliffAmount.toString())
+    const cliff = parseAmount(token, cliffAmount?.toString())
     const step = parseAmount(token, stepAmount.toString())
     const totalStep = parseAmount(token, stepAmount.toString()).multiply(JSBI.BigInt(stepPayouts))
     const totalAmount = cliff.add(totalStep)
@@ -59,11 +58,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const createVesting = useCallback(async () => {
     if (!contract || !account?.address) return
     if (!recipient || !token || !startDate || !cliffDuration || !stepConfig?.time || !stepPercentage) {
-      setError('Missing required field')
       return
     }
-
-    setError(undefined)
 
     const actions = [
       approveBentoBoxAction({ contract, user: account.address, signature }),
@@ -98,8 +94,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         promise: data.wait(),
       })
     } catch (e: any) {
-      setError(e.message)
-
       logTenderlyUrl({
         chainId: activeChain?.id,
         from: account.address,

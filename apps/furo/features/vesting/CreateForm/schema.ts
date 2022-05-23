@@ -60,7 +60,17 @@ export const createVestingSchema = yup.object({
   // @ts-ignore
   token: yup.mixed<Token>().token().required('This field is required'),
   cliff: yup.boolean().required('This field is required'),
-  startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),
+  startDate: yup
+    .date()
+    .when('cliffEndDate', (cliffEndDate, schema) => {
+      if (cliffEndDate) {
+        const dayAfter = new Date(cliffEndDate.getTime() - 1)
+        return schema.max(dayAfter, 'Date must be earlier than cliff end date')
+      }
+      return schema
+    })
+    .min(new Date(), 'Date is be due already')
+    .required('This field is required'),
   // @ts-ignore
   recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
   cliffEndDate: yup.date().when('cliff', {

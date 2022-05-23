@@ -66,12 +66,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   } = formData
 
   const [_cliffAmount, _stepAmount, totalAmount, endDate] = useMemo(() => {
-    const cliff = parseAmount(token, cliffAmount.toString())
+    const cliff = parseAmount(token, cliffAmount?.toString())
     const step = parseAmount(token, stepAmount.toString())
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
     )
-    return [cliff, step, cliff.add(step.multiply(stepPayouts)), endDate]
+    return [cliff, step, step.multiply(stepPayouts).add(cliff), endDate]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
 
   const schedule = useMemo(() => {

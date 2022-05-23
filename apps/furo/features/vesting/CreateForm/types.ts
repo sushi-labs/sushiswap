@@ -26,8 +26,8 @@ export type CreateVestingFormDataValidated = {
   cliff: boolean
   startDate: string
   recipient: string
-  cliffEndDate: string
-  cliffAmount: number
+  cliffEndDate: string | undefined
+  cliffAmount: number | undefined
   stepPayouts: number
   stepAmount: number
   stepConfig: StepConfig
@@ -40,5 +40,5 @@ export type CreateVestingFormDataTransformed = Omit<
 > & {
   startDate: Date
   cliffEndDate: Date | undefined
-  cliffDuration: JSBI | undefined
+  cliffDuration: JSBI
 }
