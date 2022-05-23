@@ -10,6 +10,8 @@ export type CounterProps = Omit<React.HTMLProps<HTMLInputElement> | 'ref' | 'as'
   onChange(x: string): void
 }
 
+const matchNonNumbers = /\D+/g
+
 export const Counter: FC<CounterProps> = forwardRef(
   ({ value, onChange, className, step, error, min, max, ...rest }, ref) => {
     return (
@@ -36,7 +38,7 @@ export const Counter: FC<CounterProps> = forwardRef(
             )}
             ref={ref}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value.replace(matchNonNumbers, ''))}
             {...rest}
           />
           <button
