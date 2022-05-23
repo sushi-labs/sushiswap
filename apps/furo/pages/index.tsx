@@ -11,10 +11,11 @@ import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { FuroStatus, FuroType, Stream } from 'features'
 import BalanceChart from 'features/stream/BalanceChart'
+import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 import { BalanceChartHoverEnum } from './stream/[id]'
 
@@ -45,6 +46,7 @@ export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
 
   const paySomeone = useConnect({
@@ -99,9 +101,11 @@ export default function Index() {
                     <Account.Name address={account?.address}>
                       {({ name, isEns }) => (
                         <Typography
+                          as="a"
+                          href={getExplorerLink(activeChain?.id, account?.address, 'address')}
                           variant="sm"
                           weight={700}
-                          className="text-slate-50 tracking-wide text-sm sm:text-base"
+                          className="hover:text-blue-400 text-slate-50 tracking-wide text-sm sm:text-base"
                         >
                           {isEns ? name : !!name ? shortenAddress(name) : ''}
                         </Typography>

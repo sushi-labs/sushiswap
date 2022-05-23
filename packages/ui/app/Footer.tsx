@@ -49,9 +49,9 @@ export function Footer(): JSX.Element {
           <div className="flex items-center justify-start gap-3">
             <SushiWithTextIcon height={36} className="text-slate-50" />
           </div>
-          <Typography className="text-sm sm:text-xxs !leading-5 sm:!leading-4 text-slate-400">
+          <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
-          </Typography>
+          </div>
           <div className="flex items-center gap-4">
             <a href="https://github.com/sushiswap" target="_blank" rel="noreferrer">
               <GithubIcon width={16} className="text-slate-300" />
