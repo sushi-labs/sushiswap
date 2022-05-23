@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_USDC_ADDRESS } from '@sushiswap/stargate'
 import SUSHI_X_SWAP_ABI from 'abis/sushixswap.json'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
@@ -69,7 +69,7 @@ export class SushiXSwap {
     )
   }
 
-  srcDepositToBentoBox(token: Type, amount: BigNumberish = Zero, share: BigNumberish = Zero): void {
+  srcDepositToBentoBox(token: Currency, amount: BigNumberish = Zero, share: BigNumberish = Zero): void {
     const data = defaultAbiCoder.encode(
       ['address', 'address', 'uint256', 'uint256'],
       [token.isNative ? AddressZero : token.address, this.user, BigNumber.from(amount), 0]
@@ -81,7 +81,7 @@ export class SushiXSwap {
   }
 
   encodeDepositToBentoBox(
-    token: Type,
+    token: Currency,
     to: string = this.user,
     amount: BigNumberish = Zero,
     share: BigNumberish = Zero
@@ -93,7 +93,7 @@ export class SushiXSwap {
   }
 
   dstDepositToBentoBox(
-    token: Type,
+    token: Currency,
     to: string = this.user,
     amount: BigNumberish = Zero,
     share: BigNumberish = Zero
@@ -103,7 +103,7 @@ export class SushiXSwap {
   }
 
   dstWithdrawFromwBentoBox(
-    token: Type,
+    token: Currency,
     to: string = this.user,
     amount: BigNumberish = Zero,
     share: BigNumberish = Zero
@@ -130,11 +130,11 @@ export class SushiXSwap {
     this.add(Action.SRC_TRANSFER_FROM_BENTOBOX, data)
   }
 
-  encodeWithdrawToken(token: Type, to: string = this.user): string {
+  encodeWithdrawToken(token: Currency, to: string = this.user): string {
     return defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, 0])
   }
 
-  dstWithdrawToken(token: Type, to: string = this.user): void {
+  dstWithdrawToken(token: Currency, to: string = this.user): void {
     this.add(Action.DST_WITHDRAW_TOKEN, this.encodeWithdrawToken(token, to))
   }
 
@@ -155,7 +155,7 @@ export class SushiXSwap {
   }
 
   encodeTridentExactInput(
-    tokenIn: Type,
+    tokenIn: Currency,
     amountIn: BigNumberish,
     amountOutMin: BigNumberish,
     path: {
@@ -170,7 +170,7 @@ export class SushiXSwap {
   }
 
   tridentExactInput(
-    tokenIn: Type,
+    tokenIn: Currency,
     amountIn: BigNumberish,
     amountOutMin: BigNumberish,
     path: {
@@ -218,7 +218,7 @@ export class SushiXSwap {
     this.add(Action.STARGATE_TELEPORT, data, parseEther('0.01'))
   }
 
-  encodeUnwrapAndTransfer(token: Type, to: string = this.user): string {
+  encodeUnwrapAndTransfer(token: Currency, to: string = this.user): string {
     return defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to])
   }
 

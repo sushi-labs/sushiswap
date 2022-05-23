@@ -1,6 +1,6 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import chain from '@sushiswap/chain'
-import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Currency, Native, tryParseAmount } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { STARGATE_USDC } from '@sushiswap/stargate'
@@ -43,8 +43,8 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
 
   const crossChain = srcChainId !== dstChainId
 
-  const [srcToken, setSrcToken] = useState<Type>(Native.onChain(srcChainId))
-  const [dstToken, setDstToken] = useState<Type>(Native.onChain(dstChainId))
+  const [srcToken, setSrcToken] = useState<Currency>(Native.onChain(srcChainId))
+  const [dstToken, setDstToken] = useState<Currency>(Native.onChain(dstChainId))
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>('')
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
@@ -139,18 +139,18 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
       console.log('cook set master contract address')
       cooker.setMasterContractApproval(signature)
     }
-    // console.log('srcCurrencyAmount', srcCurrencyAmount.quotient.toString())
 
     if (!srcUseBentoBox) {
+      console.log('cook src depoit to bentobox')
       cooker.srcDepositToBentoBox(srcToken, srcAmount.quotient.toString())
     }
 
     if (srcMinimumAmountOut && srcTrade instanceof TradeV1 && srcTrade?.route?.path?.length) {
-      // console.log('cook src transfer from bentobox')
       if (srcUseBentoBox) {
+        console.log('cook src transfer from bentobox')
         cooker.srcTransferFromBentoBox(
           srcToken.wrapped.address,
-          String(srcTrade?.route?.pairs?.[0]?.liquidityToken?.address),
+          String(srcTrade?.route?.pairs?.[0]?.liquidityToken?.address), // transfer to first pool
           0,
           srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
         )
@@ -254,6 +254,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     srcMinimumAmountOut,
     srcToken,
     srcTrade,
+    srcUseBentoBox,
   ])
 
   // exec
