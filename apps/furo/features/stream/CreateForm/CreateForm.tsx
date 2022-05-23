@@ -14,8 +14,8 @@ import { CreateStreamFormData, CreateStreamFormDataValidated } from 'features/st
 import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroStreamContract } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
-import { FC, useMemo, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { GeneralDetailsSection } from './GeneralDetailsSection'
@@ -60,49 +60,55 @@ export const CreateForm: FC = () => {
     return value
   }, [amount, token])
 
-  const onSubmit = async (data: CreateStreamFormDataValidated) => {
-    if (!amountAsEntity || !contract || !account?.address) return
+  const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
+    async (data) => {
+      if (!amountAsEntity || !contract || !account?.address) return
 
-    setError(undefined)
+      // Can cast here safely since input must have been validated already
+      const _data = data as CreateStreamFormDataValidated
 
-    const actions = [
-      approveBentoBoxAction({ contract, user: account.address, signature }),
-      streamCreationAction({
-        contract,
-        recipient: data.recipient,
-        token: data.token,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
-        amount: amountAsEntity,
-        fromBentobox: data.fundSource === FundSource.BENTOBOX,
-      }),
-    ]
+      setError(undefined)
 
-    try {
-      const data = await sendTransactionAsync({
-        request: {
-          from: account?.address,
-          to: contract?.address,
+      const actions = [
+        approveBentoBoxAction({ contract, user: account.address, signature }),
+        streamCreationAction({
+          contract,
+          recipient: _data.recipient,
+          token: _data.token,
+          startDate: new Date(_data.startDate),
+          endDate: new Date(_data.endDate),
+          amount: amountAsEntity,
+          fromBentobox: _data.fundSource === FundSource.BENTOBOX,
+        }),
+      ]
+
+      try {
+        const data = await sendTransactionAsync({
+          request: {
+            from: account?.address,
+            to: contract?.address,
+            data: batchAction({ contract, actions }),
+          },
+        })
+
+        createToast({
+          title: 'Create stream',
+          description: `You have successfully created a stream`,
+          promise: data.wait(),
+        })
+      } catch (e: any) {
+        setError(e.message)
+
+        logTenderlyUrl({
+          chainId: activeChain?.id,
+          from: account.address,
+          to: contract.address,
           data: batchAction({ contract, actions }),
-        },
-      })
-
-      createToast({
-        title: 'Create stream',
-        description: `You have successfully created a stream`,
-        promise: data.wait(),
-      })
-    } catch (e: any) {
-      setError(e.message)
-
-      logTenderlyUrl({
-        chainId: activeChain?.id,
-        from: account.address,
-        to: contract.address,
-        data: batchAction({ contract, actions }),
-      })
-    }
-  }
+        })
+      }
+    },
+    [account.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature],
+  )
 
   return (
     <>

@@ -18,8 +18,3 @@ export type CreateStreamFormDataValidated = {
   amount: string
   fundSource: FundSource
 }
-
-export type CreateStreamFormDataTransformed = Omit<CreateStreamFormDataValidated, 'startDate' | 'endDate'> & {
-  startDate: Date
-  endDate: Date
-}
