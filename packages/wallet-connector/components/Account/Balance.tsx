@@ -10,7 +10,7 @@ export type Props = {
 
 export function Balance({ address }: Props): JSX.Element {
   const { activeChain } = useNetwork()
-  const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: true })
+  const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: !!address })
 
   if (isLoading) {
     return <Loader />

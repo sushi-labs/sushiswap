@@ -29,6 +29,7 @@ export function useBentoBoxApprovalCallback(
       watch: true,
     }
   )
+
   const { data: nonce } = useContractRead(
     {
       addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
@@ -91,19 +92,6 @@ export function useBentoBoxApprovalCallback(
       },
     })
 
-    // EIP712Domain: [
-    //   { name: 'name', type: 'string' },
-    //   { name: 'chainId', type: 'uint256' },
-    //   { name: 'verifyingContract', type: 'address' },
-    // ],
-    // SetMasterContractApproval: [
-    //   { name: 'warning', type: 'string' },
-    //   { name: 'user', type: 'address' },
-    //   { name: 'masterContract', type: 'address' },
-    //   { name: 'approved', type: 'bool' },
-    //   { name: 'nonce', type: 'uint256' },
-    // ],
-
     const data = await signTypedDataAsync({
       domain: {
         name: 'BentoBox V1',
@@ -127,10 +115,9 @@ export function useBentoBoxApprovalCallback(
         nonce,
       },
     })
-    console.log('signature ', { data })
     // TODO: if loading, set pending status
     const signature = splitSignature(data)
-    console.log('signed ', { signature })
+
     setSignature(signature)
   }, [approvalState, masterContract, nonce, signTypedDataAsync, chainId, user])
 

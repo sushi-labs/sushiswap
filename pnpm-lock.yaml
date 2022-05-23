@@ -358,6 +358,7 @@ importers:
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
       '@sushiswap/wallet-connector': workspace:*
       '@tanstack/react-table': 8.0.0-alpha.72
       '@types/node': 17.0.30
@@ -380,7 +381,7 @@ importers:
       cids: ^1.0.0
       date-fns: ^2.28.0
       eslint: ^8.15.0
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       graphql: ^16.4.0
       next: ^12.1.6
       next-transpile-modules: 9.0.0
@@ -423,6 +424,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector
       '@tanstack/react-table': 8.0.0-alpha.72_ef5jwxihqo6n7gxfmzogljlgcm
       '@uniswap/redux-multicall': 1.1.1_hqr7hdlscwktfiisqjxe4dgvpi
@@ -542,10 +544,12 @@ importers:
       '@ethersproject/bignumber': ^5.6.0
       '@ethersproject/bytes': ^5.6.1
       '@ethersproject/constants': ^5.6.0
+      '@ethersproject/contracts': ^5.6.1
       '@ethersproject/experimental': ^5.6.0
       '@ethersproject/providers': ^5.6.4
       '@headlessui/react': ^1.6.1
       '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -557,9 +561,11 @@ importers:
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/swap-widget': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
       '@sushiswap/wallet-connector': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@types/node': ^17.0.30
@@ -569,7 +575,7 @@ importers:
       '@uniswap/v2-core': ^1.0.1
       '@uniswap/v3-periphery': ^1.4.1
       eslint: ^8.15.0
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       next: ^12.1.6
       next-transpile-modules: 9.0.0
       react: ^18.1.0
@@ -584,10 +590,12 @@ importers:
       '@ethersproject/bignumber': 5.6.1
       '@ethersproject/bytes': 5.6.1
       '@ethersproject/constants': 5.6.0
+      '@ethersproject/contracts': 5.6.1
       '@ethersproject/experimental': 5.6.1
       '@ethersproject/providers': 5.6.6
       '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
+      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/exchange': link:../../packages/exchange
@@ -596,11 +604,13 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/swap-widget': link:../../packages/widget/swap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector
       '@typechain/ethers-v5': 10.0.0_uxmwhbw4hrjd75ajfbfg7rru2e
-      '@uniswap/redux-multicall': 1.1.1_ohkxwquqd7i442sirz7sl7by4m
+      '@uniswap/redux-multicall': 1.1.1_hqr7hdlscwktfiisqjxe4dgvpi
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       ethers: 5.6.6
@@ -721,7 +731,7 @@ importers:
       '@types/react-dom': ^18.0.4
       '@uniswap/token-lists': ^1.0.0-beta.28
       eslint: ^8.15.0
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       next: ^12.1.6
       next-transpile-modules: ^9.0.0
       react: ^18.1.0
@@ -764,7 +774,7 @@ importers:
       '@types/react-dom': ^18.0.4
       autoprefixer: ^10.4.5
       eslint: ^8.15.0
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       next: ^12.1.6
       next-transpile-modules: ^9.0.0
       postcss: ^8.4.12
@@ -1189,7 +1199,7 @@ importers:
       '@types/node': ^17.0.30
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       react: ^18.1.0
       react-dom: ^18.1.0
       react-redux: ^8.0.1
@@ -1374,29 +1384,45 @@ importers:
 
   packages/wagmi:
     specifiers:
+      '@ethersproject/abi': ^5.6.2
+      '@ethersproject/providers': ^5.6.4
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
+      '@typechain/ethers-v5': ^10.0.0
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
+      '@uniswap/v3-periphery': ^1.4.1
+      ethers: ^5.6.6
       react: ^18.1.0
       react-dom: ^18.1.0
       tsup: ^5.12.7
+      typechain: ^8.0.0
       typescript: ^4.6.4
+      wagmi: ^0.3.5
     dependencies:
-      '@sushiswap/ui': link:../ui
+      '@ethersproject/abi': 5.6.2
+      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
+      '@sushiswap/chain': link:../chain
+      '@uniswap/v3-periphery': 1.4.1
+      wagmi: 0.3.5_psvhf2bcekgpduwaw7lrstqk6m
     devDependencies:
+      '@ethersproject/providers': 5.6.6
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
       '@sushiswap/prettier-config': link:../config/prettier
       '@sushiswap/typescript-config': link:../config/typescript
+      '@typechain/ethers-v5': 10.0.0_64g6wuhxoq2flndnasn7wtz6yq
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.4
+      ethers: 5.6.6
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       tsup: 5.12.8_typescript@4.6.4
+      typechain: 8.0.0_typescript@4.6.4
       typescript: 4.6.4
 
   packages/wallet-connector:
@@ -1415,7 +1441,7 @@ importers:
       '@types/node': ^17.0.30
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
-      ethers: ^5.6.4
+      ethers: ^5.6.6
       react: ^18.1.0
       react-dom: ^18.1.0
       typescript: ^4.6.4
@@ -5769,7 +5795,6 @@ packages:
       ts-essentials: 7.0.3_typescript@4.6.4
       typechain: 8.0.0_typescript@4.6.4
       typescript: 4.6.4
-    dev: false
 
   /@typechain/ethers-v5/10.0.0_uxmwhbw4hrjd75ajfbfg7rru2e:
     resolution: {integrity: sha512-Kot7fwAqnH96ZbI8xrRgj5Kpv9yCEdjo7mxRqrH7bYpEgijT5MmuOo8IVsdhOu7Uog4ONg7k/d5UdbAtTKUgsA==}
@@ -6403,24 +6428,6 @@ packages:
       '@ethersproject/abi': 5.6.2
       '@ethersproject/bignumber': 5.6.1
       '@ethersproject/contracts': 5.6.1
-      '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
-      react: 18.1.0
-      react-redux: 8.0.1_e6senhi6gkhdouiqizr2s56gsi
-    dev: false
-
-  /@uniswap/redux-multicall/1.1.1_ohkxwquqd7i442sirz7sl7by4m:
-    resolution: {integrity: sha512-sXX2pAbxJj1OrErSc7zMEFo7j1EXqTBbllYuUDEWCZ/A12sK/4RXgXW2+zSoXOHCN6djyVUc3FmEt0v3x2jLSw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@ethersproject/abi': '5'
-      '@ethersproject/bignumber': '5'
-      '@ethersproject/contracts': '5'
-      '@reduxjs/toolkit': '1'
-      react: '17'
-      react-redux: '7'
-    dependencies:
-      '@ethersproject/abi': 5.6.2
-      '@ethersproject/bignumber': 5.6.1
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       react: 18.1.0
       react-redux: 8.0.1_e6senhi6gkhdouiqizr2s56gsi

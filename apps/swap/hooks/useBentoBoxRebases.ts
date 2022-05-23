@@ -1,9 +1,8 @@
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { useBentoBoxContract } from '@sushiswap/wagmi'
 import { useSingleContractMultipleData } from 'lib/hooks/multicall'
 import { useMemo } from 'react'
-
-import { useBentoBoxContract } from './useBentoBoxContract'
 
 type UseBentoBoxRebases = (
   chainId: number,

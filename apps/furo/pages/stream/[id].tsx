@@ -86,16 +86,16 @@ const _Streams: FC = () => {
   return (
     <Layout
       backdrop={
-        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+        <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
           <BackgroundVector width="100%" preserveAspectRatio="none" />
         </div>
       }
     >
-      <div className="flex gap-3 items-center mt-4">
+      <div className="flex items-center gap-3 mt-4">
         <Link href="/dashboard" passHref={true}>
-          <a className="group flex items-center gap-2">
-            <HomeIcon width={16} className="group-hover:text-slate-50 text-slate-400 cursor-pointer" />
-            <Typography variant="sm" weight={700} className="group-hover:text-slate-50 text-slate-400 cursor-pointer">
+          <a className="flex items-center gap-2 group">
+            <HomeIcon width={16} className="cursor-pointer group-hover:text-slate-50 text-slate-400" />
+            <Typography variant="sm" weight={700} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
               Dashboard
             </Typography>
           </a>

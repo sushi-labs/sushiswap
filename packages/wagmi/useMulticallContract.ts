@@ -1,6 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
+import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
+import { useContract, useProvider } from 'wagmi'
 
-export const MULTICALL_ADDRESS = {
+import { UniswapInterfaceMulticall } from './typechain'
+
+export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
   [ChainId.ROPSTEN]: '0x1F98415757620B543A52E61c46B32eB19261F984',
   [ChainId.RINKEBY]: '0x1F98415757620B543A52E61c46B32eB19261F984',
@@ -21,10 +25,13 @@ export const MULTICALL_ADDRESS = {
   [ChainId.OKEX]: '0x8C8BF5Dea280A1eC68219D66E8A21E60585830F5',
   [ChainId.HECO]: '0x64e1E895866B3126f8f2E2912B475FDB35b2F315',
   [ChainId.PALM]: '0x4d4A0D45a98AE8EC25b359D93A088A87BC9eF70b',
-  [ChainId.OKEX_TESTNET]: undefined,
-  [ChainId.HARDHAT]: undefined,
   [ChainId.OPTIMISM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
 }
 
-// TODO: change to ChainID.ETHEREUM once contracts are live
-export const DEFAULT_CHAIN_ID = ChainId.RINKEBY
+export function useMulticallContract(chainId: number): UniswapInterfaceMulticall {
+  return useContract<UniswapInterfaceMulticall>({
+    addressOrName: MULTICALL_ADDRESS[chainId],
+    contractInterface: UniswapInterfaceMulticallArtifact.abi,
+    signerOrProvider: useProvider({ chainId }),
+  })
+}

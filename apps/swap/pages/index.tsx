@@ -34,7 +34,7 @@ interface Config {
   }
 }
 
-function Widget({ config = defaultConfig }: { config?: Config }) {
+function _Swap({ config = defaultConfig }: { config?: Config }) {
   const { data: account } = useAccount()
   const { data: signer } = useSigner()
 
@@ -436,7 +436,8 @@ export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; b
   const isReady = blockTimestamps.filter((b) => !!b).length >= 2
   return (
     <div className="mt-24 space-y-12">
-      <Widget />
+      <_Swap />
+      {/* <Widget /> */}
       <div className="text-center">
         <div>Chain Names: {chainNames.join(',')}</div>
         <div>Block Timestamps: {isReady && <span data-testid="blockTimestamps">{blockTimestamps.join(',')}</span>}</div>

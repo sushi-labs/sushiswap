@@ -62,7 +62,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   return (
     <div className="flex flex-col h-full gap-12 pt-10">
-      <div className="flex flex-col gap-1 justify-center pb-4">
+      <div className="flex flex-col justify-center gap-1 pb-4">
         <Typography variant="h3" weight={700} className="text-slate-200">
           Dashboard
         </Typography>
@@ -72,7 +72,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               <Typography
                 variant="sm"
                 weight={700}
-                className="text-slate-500 hover:text-blue cursor-pointer flex gap-1"
+                className="flex gap-1 cursor-pointer text-slate-500 hover:text-blue"
                 component="a"
                 target="_blank"
               >

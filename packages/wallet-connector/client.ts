@@ -17,53 +17,11 @@ const ALCHEMY_API_KEY: Record<number, string> = {
 
 const defaultChain = chain.mainnet
 
-export function getAlchemyChainName(chainId?: ChainId) {
-  if (!chainId) return
-  switch (chainId) {
-    case ChainId.ETHEREUM:
-      return 'homestead'
-    case ChainId.POLYGON:
-      return 'matic'
-    case ChainId.POLYGON_TESTNET:
-      return 'maticmum'
-    case ChainId.ARBITRUM:
-      return 'arbitrum'
-    case ChainId.OPTIMISM:
-      return 'optimism'
-    case ChainId.GÖRLI:
-      return 'goerli'
-    default:
-      throw new Error(`Unsupported eth alchemy chainId for ${chainId}`)
-  }
-}
-
-export function getInfuraChainName(chainId?: ChainId) {
-  if (!chainId) return
-  switch (chainId) {
-    case ChainId.ETHEREUM:
-      return 'homestead'
-    case ChainId.POLYGON:
-      return 'matic'
-    case ChainId.ARBITRUM:
-      return 'arbitrum'
-    case ChainId.RINKEBY:
-      return 'rinkeby'
-    case ChainId.ROPSTEN:
-      return 'ropsten'
-    case ChainId.GÖRLI:
-      return 'goerli'
-    case ChainId.KOVAN:
-      return 'kovan'
-    default:
-      throw new Error(`Unsupported eth infura chainId for ${chainId}`)
-  }
-}
-
 const isChainSupported = (chainId?: number) => {
   return [...defaultChains, ...defaultL2Chains].some((x) => x.id === chainId)
 }
 
-const client = createClient({
+const client: ReturnType<typeof createClient> = createClient({
   autoConnect: true,
   connectors({ chainId }) {
     const chain = [...defaultChains, ...defaultL2Chains].find((chain) => chain.id === chainId) ?? defaultChain

@@ -17,7 +17,7 @@
     "deploy",
     "deployments",
     "exports",
-    "types"
+    "typechain"
   ],
   "scripts": {
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",

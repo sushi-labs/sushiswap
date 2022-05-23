@@ -2,7 +2,7 @@ import { SushiIcon } from '@sushiswap/ui'
 import * as React from 'react'
 import { CSSProperties } from 'react'
 
-const defaultConfig = {
+export const defaultConfig = {
   styles: {
     root: undefined,
     header: undefined,
@@ -68,9 +68,15 @@ export function Widget({
       <header id="sushiswap-widget-header" className={config.classes.header} style={config.styles.header}>
         {header}
       </header>
+      <div className="p-3 rounded-t-xl">
+        <input />
+      </div>
       <hr id="sushiswap-widget-seperator" className={config.classes.seperator} style={config.styles.seperator}>
         {seperator}
       </hr>
+      <div className="p-3 bg-slate-800 rounded-xl ">
+        <input />
+      </div>
       <footer id="sushiswap-widget-footer" className={config.classes.footer.root} style={config.styles.footer.root}>
         {footer}
       </footer>
