@@ -3,6 +3,7 @@ import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
+import { parseAmount } from 'functions/parseAmount'
 import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC } from 'react'
 
@@ -39,9 +40,12 @@ const Component: FC<CurrencyInput> = ({
   bottomPanel,
 }) => {
   return (
-    <BalanceController fundSource={fundSource} amount={value} token={token} account={account}>
-      {({ loading, balance, error }) => {
-        const errorMessage = errorMessageProp || error
+    <BalanceController fundSource={fundSource} token={token} account={account}>
+      {({ isLoading: loading, data: balance }) => {
+        const amountAsEntity = token && value ? parseAmount(token, value.toString()) : undefined
+        const insufficientBalanceError =
+          amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
+        const errorMessage = errorMessageProp || insufficientBalanceError
 
         return (
           <CurrencyInput.Base

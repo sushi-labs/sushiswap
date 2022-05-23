@@ -1,37 +1,26 @@
 import { Token } from '@sushiswap/core-sdk'
 import { Amount } from '@sushiswap/currency'
-import { parseAmount } from 'functions/parseAmount'
 import { useTokenBalance } from 'hooks'
 import { FundSource } from 'hooks/useFundSourceToggler'
+import { ErrorState, LoadingState, SuccessState } from 'hooks/useTokenBalance/types'
 import { FC } from 'react'
 
-type RenderProps = {
-  loading: boolean
-  error?: string
-  balance?: Amount<Token>
-}
-
-type BaseProps = {
+export type BalanceControllerBaseProps = {
   account: string | undefined
   token: Token | undefined
   fundSource: FundSource | undefined
-  amount: string | number | undefined
 }
 
-type BalanceController = BaseProps & {
-  children?(props: RenderProps): JSX.Element
+type BalanceController = BalanceControllerBaseProps & {
+  children?(props: SuccessState<Amount<Token>> | LoadingState<Amount<Token>> | ErrorState<Amount<Token>>): JSX.Element
 }
 
-export const BalanceController: FC<BalanceController> = ({ amount, account, token, fundSource, children }) => {
-  const { isLoading: loading, data: balance } = useTokenBalance(account, token, fundSource)
-
-  const amountAsEntity = token && amount ? parseAmount(token, amount.toString()) : undefined
-  const insufficientBalanceError =
-    amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
+export const BalanceController: FC<BalanceController> = ({ account, token, fundSource, children }) => {
+  const data = useTokenBalance(account, token, fundSource)
 
   if (!children) {
     return null
   }
 
-  return children({ loading, error: account ? insufficientBalanceError : undefined, balance })
+  return children(data)
 }
