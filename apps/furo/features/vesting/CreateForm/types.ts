@@ -12,12 +12,12 @@ export type CreateVestingFormData = {
   stepConfig: StepConfig
 
   token: Token | undefined
-  startDate: string | undefined
-  recipient: string | undefined
-  cliffEndDate: string | undefined
-  cliffAmount: number | undefined
-  stepPayouts: number | undefined
-  stepAmount: number | undefined
+  startDate: string | ''
+  recipient: string | ''
+  cliffEndDate: string | ''
+  cliffAmount: number | ''
+  stepPayouts: number | ''
+  stepAmount: number | ''
   fundSource: FundSource | undefined
 }
 
@@ -39,6 +39,6 @@ export type CreateVestingFormDataTransformed = Omit<
   'startDate' | 'cliffEndDate' | 'stepEndDate'
 > & {
   startDate: Date
-  cliffEndDate: Date
-  cliffDuration: JSBI
+  cliffEndDate: Date | undefined
+  cliffDuration: JSBI | undefined
 }

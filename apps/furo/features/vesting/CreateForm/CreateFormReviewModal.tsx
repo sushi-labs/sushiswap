@@ -1,12 +1,14 @@
+import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { PeriodType } from 'features'
 import CreateFormButtons from 'features/vesting/CreateForm/CreateFormButtons'
 import { createScheduleRepresentation } from 'features/vesting/CreateForm/createScheduleRepresentation'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
+import { getExplorerLink } from 'functions'
 import { parseAmount } from 'functions/parseAmount'
-import React, { FC } from 'react'
+import React, { FC, ReactNode, useMemo } from 'react'
+import { useNetwork } from 'wagmi'
 
 interface Item {
   title: string
@@ -16,11 +18,11 @@ interface Item {
 
 const Item: FC<Item> = ({ title, value, className }) => {
   return (
-    <div className="flex flex-col gap-1">
-      <Typography variant="xs" weight={700} className="whitespace-nowrap text-slate-500">
+    <div className="flex w-full justify-between items-center gap-1">
+      <Typography variant="xs" className="whitespace-nowrap text-slate-500">
         {title}
       </Typography>
-      <Typography variant="sm" weight={700} className={classNames(className, 'whitespace-nowrap text-slate-200')}>
+      <Typography variant="xs" weight={700} className={classNames(className, 'whitespace-nowrap text-slate-200')}>
         {value}
       </Typography>
     </div>
@@ -33,11 +35,11 @@ const Table: FC<{
   children: React.ReactElement<typeof Item> | React.ReactElement<typeof Item>[]
 }> = ({ children, title, className }) => {
   return (
-    <div className={classNames(className, 'flex flex-col py-4 gap-2')}>
-      <Typography variant="xxs" className="!leading-5 tracking-widest text-slate-600 uppercase">
+    <div className={classNames(className, 'flex flex-col pb-3 gap-2')}>
+      <Typography variant="xxs" className="!leading-5 tracking-widest text-slate-50 font-medium uppercase">
         {title}
       </Typography>
-      <div className="flex gap-x-6 gap-y-6 flex-wrap">{children}</div>
+      <div className="flex gap-2 flex-wrap">{children}</div>
     </div>
   )
 }
@@ -49,6 +51,7 @@ interface CreateFormReviewModal {
 }
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {
+  const { activeChain } = useNetwork()
   const {
     token,
     startDate,
@@ -62,11 +65,20 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     stepPayouts,
   } = formData
 
+  const [_cliffAmount, _stepAmount, totalAmount, endDate] = useMemo(() => {
+    const cliff = parseAmount(token, cliffAmount.toString())
+    const step = parseAmount(token, stepAmount.toString())
+    const endDate = new Date(
+      (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
+    )
+    return [cliff, step, cliff.add(step), endDate]
+  }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
+
   const schedule = createScheduleRepresentation({
     token,
     cliff,
-    cliffAmount: parseAmount(token, cliffAmount.toString()),
-    stepAmount: parseAmount(token, stepAmount.toString()),
+    cliffAmount: _cliffAmount,
+    stepAmount: _stepAmount,
     stepConfig,
     startDate,
     cliffEndDate,
@@ -75,73 +87,110 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
 
   return (
     <Dialog open={open} onClose={onDismiss}>
-      <Dialog.Content className="!space-y-6 min-h-[300px] !max-w-3xl relative overflow-hidden border border-slate-700">
+      <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden border border-slate-700">
         <Dialog.Header title="Review Details" onClose={onDismiss} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-          <div className="flex flex-col gap-2">
-            <Table title="General Details">
-              <Item title="Start Date" value={format(startDate, 'dd MMM yyyy')} />
-              <Item title="Recipient" value={shortenAddress(recipient)} />
-              <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
-            </Table>
-            <Table title="Cliff Details" className={cliff ? '' : 'opacity-40'}>
-              {cliff ? (
-                <>
-                  <Item title="Cliff End Date" value={format(cliffEndDate, 'dd MMM yyyy')} />
-                  <Item
-                    title="Cliff Amount"
-                    value={
-                      <>
-                        {cliffAmount} {token.symbol}
-                      </>
-                    }
-                  />
-                </>
-              ) : (
-                <Item title="Cliff Amount" value={<span className="italic">Not enabled</span>} />
-              )}
-            </Table>
-            <Table title="Graded Vesting Details">
-              <Item
-                title="Payment per Period"
-                value={
-                  <>
-                    {stepAmount} {token.symbol}
-                  </>
-                }
-              />
-              <Item title="Amount of Periods" value={stepPayouts} />
-              <Item title="Period Length" value={stepConfig.label} />
-            </Table>
-          </div>
-          <div className="flex flex-col w-full py-3">
-            <Typography variant="xxs" weight={700} className="!leading-5 tracking-widest text-slate-600 uppercase">
-              Schedule
-            </Typography>
-            <div className="border-t border-b border-slate-800 overflow-auto min-h-full max-h-[440px] mt-3 hide-scrollbar divide-y divide-slate-800">
-              {schedule.map((period) => (
-                <div key={period.id} className="flex items-center justify-between gap-7 py-2">
-                  <Typography variant="xs" className="text-slate-500 flex flex-col text-left" weight={500}>
-                    {format(new Date(period.time), 'dd MMM yyyy')}
-                    <span>{format(new Date(period.time), 'hh:maaa')}</span>
-                  </Typography>
-                  <div className="grid grid-cols-[80px_100px] gap-2 items-center justify-center">
-                    <Typography className="capitalize text-slate-200" weight={700} variant="xs">
-                      {period.type.toLowerCase()}{' '}
-                    </Typography>
-                    <Typography variant="xs" weight={700} className="text-slate-200">
-                      {period.amount.toSignificant(6)}
-                      {period.type !== PeriodType.START && (
-                        <span className="text-xs text-slate-500 font-medium"> {period?.amount.currency?.symbol}</span>
-                      )}
-                    </Typography>
-                  </div>
-                </div>
-              ))}
+        <Typography variant="xs" className="!leading-5 text-slate-400">
+          This will create a stream to{' '}
+          <span className="font-bold text-slate-50 hover:text-blue">
+            <a href={getExplorerLink(activeChain?.id, recipient, 'address')}>{shortenAddress(recipient)}</a>
+          </span>{' '}
+          consisting of{' '}
+          <span className="font-bold text-slate-50">
+            {totalAmount?.toSignificant(6)} {totalAmount.currency.symbol}
+          </span>{' '}
+          from <span className="font-bold text-slate-50">{format(startDate, 'dd MMM yyyy hh:mm')}</span> until{' '}
+          <span className="font-bold text-slate-50">{format(endDate, 'dd MMM yyyy hh:mm')}</span>
+        </Typography>
+        <div className="flex flex-col w-full">
+          <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[440px] mt-2 hide-scrollbar divide-y divide-slate-800">
+            <div className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
+              <Typography className="capitalize text-slate-500 tracking-wider" variant="xxs">
+                Schedule
+              </Typography>
+              <Typography className="capitalize text-slate-500 tracking-wider" variant="xxs">
+                Date
+              </Typography>
+              <Typography className="capitalize text-slate-500 tracking-wider text-right" variant="xxs">
+                Amount
+              </Typography>
+              <Typography className="capitalize text-slate-500 tracking-wider text-right" variant="xxs">
+                Total
+              </Typography>
             </div>
+            {
+              schedule.reduce<[ReactNode[], Amount<Token>]>(
+                (acc, period) => {
+                  acc[1] = acc[1].add(period.amount)
+                  acc[0].push(
+                    <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
+                      <Typography className="capitalize text-slate-200 tracking-wider" weight={700} variant="xxs">
+                        {period.type.toLowerCase()}
+                      </Typography>
+                      <Typography variant="xs" className="text-slate-200 flex flex-col text-left" weight={500}>
+                        {format(new Date(period.time), 'dd MMM yyyy')}
+                        <Typography as="span" variant="xxs" className="text-slate-500">
+                          {format(new Date(period.time), 'hh:maaa')}
+                        </Typography>
+                      </Typography>
+                      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+                        {period.amount.toSignificant(6)}
+                        <Typography as="span" variant="xxs" className="text-slate-500">
+                          {period?.amount.currency?.symbol}
+                        </Typography>
+                      </Typography>
+                      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+                        {acc[1].toSignificant(6)}
+                        <Typography as="span" variant="xxs" className="text-slate-500">
+                          {period?.amount.currency?.symbol}
+                        </Typography>
+                      </Typography>
+                    </div>,
+                  )
+
+                  return acc
+                },
+                [[], Amount.fromRawAmount(token, '0')],
+              )[0]
+            }
           </div>
         </div>
-        <CreateFormButtons formData={formData} onDismiss={onDismiss} />
+        <div className="flex flex-col gap-2">
+          <Table title="Details">
+            <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
+          </Table>
+          <Table title="Cliff Details" className={cliff ? '' : 'opacity-40'}>
+            {cliff ? (
+              <>
+                <Item title="Cliff End Date" value={format(cliffEndDate, 'dd MMM yyyy')} />
+                <Item
+                  title="Cliff Amount"
+                  value={
+                    <>
+                      {cliffAmount} {token.symbol}
+                    </>
+                  }
+                />
+              </>
+            ) : (
+              <Item title="Cliff Amount" value={<span className="italic">Not enabled</span>} />
+            )}
+          </Table>
+          <Table title="Graded Vesting Details">
+            <Item
+              title="Payment per Period"
+              value={
+                <>
+                  {stepAmount} {token.symbol}
+                </>
+              }
+            />
+            <Item title="Period Length" value={stepConfig.label} />
+            <Item title="Amount of Periods" value={stepPayouts} />
+          </Table>
+        </div>
+        <div className="border-t border-slate-800">
+          <CreateFormButtons formData={formData} onDismiss={onDismiss} />
+        </div>
       </Dialog.Content>
     </Dialog>
   )

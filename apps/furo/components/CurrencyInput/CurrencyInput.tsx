@@ -56,7 +56,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
       <div className="flex items-center justify-between gap-1">
         <input
           ref={amountInputRef}
-          value={amount}
+          defaultValue={amount}
           type="text"
           placeholder="0.00"
           className="px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"

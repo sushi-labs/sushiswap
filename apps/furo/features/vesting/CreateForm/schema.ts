@@ -58,11 +58,11 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
 
 export const createVestingSchema = yup.object({
   // @ts-ignore
-  token: yup.mixed<Token>().token().required('Required field'),
-  cliff: yup.boolean().required('Required field'),
-  startDate: yup.date().min(new Date(), 'Date is be due already').required('Required field'),
+  token: yup.mixed<Token>().token().required('This field is required'),
+  cliff: yup.boolean().required('This field is required'),
+  startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),
   // @ts-ignore
-  recipient: yup.string().isAddress('Invalid recipient address').required('Required field'),
+  recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
   cliffEndDate: yup.date().when('cliff', {
     is: (value: boolean) => value,
     then: yup
@@ -75,7 +75,7 @@ export const createVestingSchema = yup.object({
         }
         return schema
       })
-      .required('Required field'),
+      .required('This field is required'),
     otherwise: yup.date().nullable(),
   }),
   cliffAmount: yup.number().when('cliff', {
@@ -83,12 +83,17 @@ export const createVestingSchema = yup.object({
     then: yup.number().typeError('Target must be a number').min(0, 'Must be greater than zero'),
     otherwise: yup.number().nullable(),
   }),
-  stepPayouts: yup.number().min(0, 'Can not be less than zero').required('Required field'),
+  stepPayouts: yup
+    .number()
+    .min(1, 'Must be more than 1')
+    .integer('Must be a whole number')
+    .typeError('This field is required')
+    .required('This field is required'),
   stepAmount: yup
     .number()
     .typeError('Target must be a number')
     .min(0, 'Must be greater than zero')
-    .required('Required field'),
-  stepConfig: yup.mixed<StepConfig>().required('Required field'),
-  fundSource: yup.mixed<FundSource>().required('Required field'),
+    .required('This field is required'),
+  stepConfig: yup.mixed<StepConfig>().required('This field is required'),
+  fundSource: yup.mixed<FundSource>().required('This field is required'),
 })

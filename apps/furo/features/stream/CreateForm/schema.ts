@@ -49,10 +49,10 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
 
 export const createStreamSchema = yup.object({
   // @ts-ignore
-  token: yup.mixed<Token>().token().required('Required field'),
+  token: yup.mixed<Token>().token().required('This field is required'),
   // @ts-ignore
-  recipient: yup.string().isAddress('Invalid recipient address').required('Required field'),
-  startDate: yup.date().min(new Date(), 'Date is be due already').required('Required field'),
+  recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
+  startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),
   endDate: yup
     .date()
     .when('startDate', (startDate, schema) => {
@@ -63,11 +63,11 @@ export const createStreamSchema = yup.object({
       return schema
     })
     .min(new Date(), 'Date is be due already')
-    .required('Required field'),
+    .required('This field is required'),
   amount: yup
     .number()
     .typeError('Target must be a number')
     .min(0, 'Must be greater than zero')
-    .required('Required field'),
-  fundSource: yup.mixed<FundSource>().required('Required field'),
+    .required('This field is required'),
+  fundSource: yup.mixed<FundSource>().required('This field is required'),
 })

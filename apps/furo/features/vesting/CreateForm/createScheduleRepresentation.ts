@@ -8,7 +8,7 @@ type CreateScheduleRepresentation = (x: {
   cliffAmount: Amount<Token>
   stepAmount: Amount<Token>
   startDate: Date
-  cliffEndDate: Date
+  cliffEndDate: Date | undefined
   stepPayouts: number
   stepConfig: StepConfig
 }) => {
@@ -37,7 +37,7 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
     },
   ]
 
-  if (cliff) {
+  if (cliff && cliffEndDate) {
     periods.push({
       id: 'cliff',
       type: PeriodType.CLIFF,
@@ -46,7 +46,7 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
     })
   }
 
-  let time = cliffEndDate.getTime()
+  let time = (cliff && cliffEndDate ? cliffEndDate : startDate).getTime()
   for (let i = 0; i < stepPayouts - 1; i++) {
     time += stepConfig.time * 1000
     periods.push({

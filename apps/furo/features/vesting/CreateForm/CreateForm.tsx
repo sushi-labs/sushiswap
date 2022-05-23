@@ -23,7 +23,7 @@ export const CreateForm: FC = () => {
       recipient: undefined,
       cliffEndDate: undefined,
       cliffAmount: undefined,
-      stepPayouts: undefined,
+      stepPayouts: 1,
       stepAmount: undefined,
       stepConfig: stepConfigurations[0],
       fundSource: undefined,

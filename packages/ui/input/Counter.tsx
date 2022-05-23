@@ -32,12 +32,10 @@ export const Counter: FC<CounterProps> = forwardRef(
           <input
             className={classNames(
               DEFAULT_INPUT_CLASSNAME,
-              '!p-0 !border-none col-span-6 !rounded-none flex text-center focus:!ring-0 focus:!ring-offset-0 shadow-none w-unset',
+              '!p-0 !border-none col-span-6 !rounded-none flex text-center focus:!ring-0 focus:!ring-offset-0 shadow-none w-unset !shadow-none',
             )}
             ref={ref}
-            type="number"
-            step={step}
-            value={value || 0}
+            value={value}
             onChange={(e) => onChange(e.target.value)}
             {...rest}
           />
