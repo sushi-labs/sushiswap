@@ -4,15 +4,12 @@ import { format } from 'date-fns'
 import { stepConfigurations } from 'features/vesting/CreateForm/schema'
 import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
 
 export const GradedVestingDetailsSection = () => {
-  const { data: account } = useAccount()
   const { control, watch } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
-  const [token, fundSource, stepConfig, cliff, cliffEndDate, startDate, stepPayouts] = watch([
+  const [token, stepConfig, cliff, cliffEndDate, startDate, stepPayouts] = watch([
     'token',
-    'fundSource',
     'stepConfig',
     'cliff',
     'cliffEndDate',
@@ -34,24 +31,28 @@ export const GradedVestingDetailsSection = () => {
           control={control}
           name="stepAmount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <>
-              <CurrencyInput
-                onChange={onChange}
-                account={account?.address}
-                amount={value}
-                token={token}
-                fundSource={fundSource}
-                error={!!error?.message}
-              />
-              <Form.Error message={error?.message} />
-              {!error?.message && (
-                <Typography variant="xs" className="text-slate-500">
-                  The amount the recipient receives after every period. For a value of 6 and a{' '}
-                  {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {token?.symbol}{' '}
-                  {stepConfig?.label.toLowerCase()}.
-                </Typography>
-              )}
-            </>
+            <CurrencyInput.Base
+              onChange={onChange}
+              value={value}
+              token={token}
+              error={!!error?.message}
+              helperTextPanel={
+                <CurrencyInput.HelperTextPanel
+                  text={
+                    !!error?.message ? (
+                      error.message
+                    ) : (
+                      <>
+                        The amount the recipient receives after every period. For a value of 6 and a{' '}
+                        {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {token?.symbol}{' '}
+                        {stepConfig?.label.toLowerCase()}.
+                      </>
+                    )
+                  }
+                  isError={!!error?.message}
+                />
+              }
+            />
           )}
         />
       </Form.Control>
@@ -100,7 +101,9 @@ export const GradedVestingDetailsSection = () => {
             {format(endDate, 'dd MMM yyyy hh:maaa')}
           </Typography>
         ) : (
-          <Typography className="italic">Not available</Typography>
+          <Typography variant="sm" className="text-slate-500 italic">
+            Not available
+          </Typography>
         )}
       </Form.Control>
     </Form.Section>

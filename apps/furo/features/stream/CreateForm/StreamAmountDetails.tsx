@@ -122,17 +122,21 @@ export const StreamAmountDetails = () => {
               <CurrencyInput
                 onChange={onChange}
                 account={account?.address}
-                amount={value}
+                value={value}
                 token={token}
                 fundSource={fundSource}
-                error={!!error?.message}
+                errorMessage={error?.message}
+                helperTextPanel={({ errorMessage }) => (
+                  <CurrencyInput.HelperTextPanel
+                    text={
+                      !!errorMessage
+                        ? errorMessage
+                        : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
+                    }
+                    isError={!!errorMessage}
+                  />
+                )}
               />
-              <Form.Error message={error?.message} />
-              {!error?.message && (
-                <Typography variant="xs" className="text-slate-500">
-                  The total stream amount the recipient can withdraw when the stream passes its end date.
-                </Typography>
-              )}
             </>
           )}
         />

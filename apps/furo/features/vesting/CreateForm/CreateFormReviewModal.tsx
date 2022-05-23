@@ -159,7 +159,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
           </Table>
           <Table title="Cliff Details" className={cliff ? '' : 'opacity-40'}>
-            {cliff ? (
+            {cliff && cliffEndDate ? (
               <>
                 <Item title="Cliff End Date" value={format(cliffEndDate, 'dd MMM yyyy')} />
                 <Item

@@ -1,4 +1,6 @@
+export * from './Approve'
 export * from './BackgroundVector'
+export * from './Balance'
 export * from './CurrencyInput'
 export * from './DoubleGlow'
 export * from './Layout'
