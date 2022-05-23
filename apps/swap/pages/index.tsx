@@ -147,12 +147,14 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
 
     if (srcMinimumAmountOut && srcTrade instanceof TradeV1 && srcTrade?.route?.path?.length) {
       // console.log('cook src transfer from bentobox')
-      cooker.srcTransferFromBentoBox(
-        srcToken.wrapped.address,
-        String(srcTrade?.route?.pairs?.[0]?.liquidityToken?.address),
-        0,
-        srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
-      )
+      if (srcUseBentoBox) {
+        cooker.srcTransferFromBentoBox(
+          srcToken.wrapped.address,
+          String(srcTrade?.route?.pairs?.[0]?.liquidityToken?.address),
+          0,
+          srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
+        )
+      }
       console.log('cook src legacy swap')
       cooker.legacyExactInput(
         srcAmount.quotient.toString(),
