@@ -2,6 +2,8 @@ html {
     font-size: 16px;
 }
 
-body {
-    background: linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 1) 30%, rgba(112, 26, 117, 0.15) 100%);
+@media screen and (min-width: 640px) {
+    body {
+        background: linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 1) 30%, rgba(112, 26, 117, 0.15) 100%);
+    }
 }

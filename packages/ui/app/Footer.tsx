@@ -44,12 +44,12 @@ const config: Record<string, Record<string, string>> = {
 export function Footer(): JSX.Element {
   return (
     <footer className="flex border-t border-slate-800 py-[72px]">
-      <Container maxWidth="5xl" className="grid grid-cols-[176px_auto] mx-auto px-4 gap-4">
+      <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3">
             <SushiWithTextIcon height={36} className="text-slate-50" />
           </div>
-          <Typography variant="xxs" className="!leading-4 text-slate-400">
+          <Typography className="text-sm sm:text-xxs !leading-5 sm:!leading-4 text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
           </Typography>
           <div className="flex items-center gap-4">
@@ -70,14 +70,14 @@ export function Footer(): JSX.Element {
             </a>
           </div>
         </div>
-        <div className="px-10 grid grid-cols-5 gap-x-6 mt-[10px]">
+        <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">
           {Object.entries(config).map(([title, items]) => (
             <div key={title} className="flex flex-col gap-[10px]">
-              <Typography variant="xs" weight={700} className="text-slate-100">
+              <Typography variant="xs" weight={700} className="text-sm sm:text-xs text-slate-100">
                 {title}
               </Typography>
               {Object.entries(items).map(([item, href]) => (
-                <a key={item} href={href} className="text-xs text-slate-400 hover:underline cursor-pointer">
+                <a key={item} href={href} className="text-sm sm:text-xs text-slate-400 hover:underline cursor-pointer">
                   {item}
                 </a>
               ))}
