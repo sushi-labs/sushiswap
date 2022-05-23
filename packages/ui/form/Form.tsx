@@ -23,7 +23,7 @@ function FormRoot<Tag extends AnyTag = 'form'>({ header, children, as = 'form', 
         {header}
       </Typography>
       <div className="divide-y divide-slate-800">{children}</div>
-    </>,
+    </>
   )
 }
 

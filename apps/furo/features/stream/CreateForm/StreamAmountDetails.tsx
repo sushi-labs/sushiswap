@@ -65,7 +65,7 @@ export const StreamAmountDetails = () => {
                     value === FundSource.BENTOBOX
                       ? 'border-green/70 ring-green/70'
                       : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]',
+                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
                   <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -88,7 +88,7 @@ export const StreamAmountDetails = () => {
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
                     value === FundSource.WALLET ? 'border-green/70 ring-green/70' : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]',
+                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
                   <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">

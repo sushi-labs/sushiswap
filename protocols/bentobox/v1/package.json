@@ -22,18 +22,18 @@
   "scripts": {
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "hardhat clean && rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
-    "node": "hardhat node",
-    "export": "hardhat export --export-all exports.json"
+    "export": "hardhat export --export-all exports.json",
+    "node": "hardhat node"
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
-    "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/hardhat-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/hardhat-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.33",
     "ethers": "^5.6.6",
     "hardhat": "^2.9.5",

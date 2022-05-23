@@ -39,5 +39,5 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         )}
       </Button>
     )
-  },
+  }
 )

@@ -19,7 +19,7 @@ yup.addMethod(
   'token',
   function (
     address: string | Reference<string>,
-    msg: Message<{ address: string }> = '${address} is not a valid token address',
+    msg: Message<{ address: string }> = '${address} is not a valid token address'
   ) {
     return this.test({
       message: msg,
@@ -36,7 +36,7 @@ yup.addMethod(
         }
       },
     })
-  },
+  }
 )
 
 yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string }> = 'Invalid address') {

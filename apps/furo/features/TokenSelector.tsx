@@ -25,7 +25,7 @@ export const TokenSelector: FC<Props> = ({ onSelect, currency, onClose }) => {
       onSelect(currency.wrapped)
       onClose()
     },
-    [onSelect],
+    [onSelect]
   )
 
   const filteredTokens: Token[] = useMemo(() => {

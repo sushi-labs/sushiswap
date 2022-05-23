@@ -69,7 +69,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     const cliff = parseAmount(token, cliffAmount?.toString())
     const step = parseAmount(token, stepAmount.toString())
     const endDate = new Date(
-      (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
+      (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
     return [cliff, step, step.multiply(stepPayouts).add(cliff), endDate]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
@@ -150,12 +150,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                           {period?.amount.currency?.symbol}
                         </Typography>
                       </Typography>
-                    </div>,
+                    </div>
                   )
 
                   return acc
                 },
-                [[], Amount.fromRawAmount(token, '0')],
+                [[], Amount.fromRawAmount(token, '0')]
               )[0]
             }
           </div>
