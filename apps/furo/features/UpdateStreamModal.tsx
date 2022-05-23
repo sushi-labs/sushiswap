@@ -7,6 +7,7 @@ import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
+import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
 
@@ -87,7 +88,6 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
       <Button
         startIcon={<PencilIcon width={18} height={18} />}
         fullWidth
-        variant="outlined"
         color="gray"
         onClick={() => setOpen(true)}
         disabled={account?.address && !stream?.canUpdate(account.address)}
@@ -148,10 +148,11 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
               />
             </div>
             <CurrencyInput
+              fundSource={FundSource.WALLET}
               className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
               onChange={setAmount}
               token={stream.token}
-              amount={amount}
+              value={amount}
               account={account?.address}
             />
           </div>

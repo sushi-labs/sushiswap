@@ -21,13 +21,13 @@ export function Balance({ address }: Props): JSX.Element {
   }
 
   return (
-    <Typography weight={700} className="flex gap-1 text-slate-200" component="span">
+    <Typography weight={700} className="flex gap-1 text-slate-200" as="span">
       <>
         {activeChain &&
           data &&
           Amount.fromRawAmount(Native.onChain(activeChain.id), JSBI.BigInt(data.value)).toSignificant(4)}
       </>
-      <Typography weight={700} variant="sm" className="text-slate-500" component="span">
+      <Typography weight={700} variant="sm" className="text-slate-500" as="span">
         ETH
       </Typography>
     </Typography>

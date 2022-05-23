@@ -35,12 +35,7 @@ export default function DashboardPage() {
               </Typography>
             </div>
             <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
-              <Typography
-                component="a"
-                target="_blank"
-                variant="xs"
-                className="text-blue hover:text-blue-300 cursor-pointer"
-              >
+              <Typography as="a" target="_blank" variant="xs" className="text-blue hover:text-blue-300 cursor-pointer">
                 How to setup a wallet?
               </Typography>
             </Link>
@@ -90,7 +85,7 @@ export default function DashboardPage() {
               />
               <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
                 <Typography
-                  component="a"
+                  as="a"
                   target="_blank"
                   variant="xs"
                   className="text-blue hover:text-blue-300 cursor-pointer"
@@ -108,7 +103,6 @@ export default function DashboardPage() {
   if (isMounted) {
     return (
       <Layout
-        gradient
         backdrop={
           <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
             <BackgroundVector width="100%" preserveAspectRatio="none" />

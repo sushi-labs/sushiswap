@@ -73,7 +73,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                 variant="sm"
                 weight={700}
                 className="flex gap-1 cursor-pointer text-slate-500 hover:text-blue"
-                component="a"
+                as="a"
                 target="_blank"
               >
                 {shortenAddress(address)}

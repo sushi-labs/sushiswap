@@ -88,12 +88,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <StreamProgress stream={stream} />
-          <CurrencyInput
+          <CurrencyInput.Base
+            token={stream?.token}
             onChange={onInput}
-            amount={amount?.toExact()}
-            balance={balance}
-            balanceLabel="Available"
-            className="w-full"
+            value={amount?.toExact()}
+            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
           />
           <Button
             variant="filled"

@@ -1,9 +1,10 @@
 import classNames from 'classnames'
 import React, { FC, forwardRef } from 'react'
 
-import { DEFAULT_INPUT_CLASSNAME } from './index'
+import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
 
-export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'> & {
+export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as' | 'onChange'> & {
+  error: boolean
   value: string
   onChange(x: string): void
 }
@@ -12,7 +13,15 @@ const matchSpaces = /\s+/g
 
 export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressProps>(
   (
-    { value, onChange, placeholder = 'Address or ENS name', title = 'Address or ENS name', className = '', ...rest },
+    {
+      value,
+      onChange,
+      placeholder = 'Address or ENS name',
+      title = 'Address or ENS name',
+      className = '',
+      error,
+      ...rest
+    },
     ref
   ) => {
     return (
@@ -23,7 +32,7 @@ export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressPro
           placeholder={placeholder}
           value={value}
           type="text"
-          className={classNames(DEFAULT_INPUT_CLASSNAME, className)}
+          className={classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)}
           onChange={(event) => onChange && onChange(event.target.value.replace(matchSpaces, ''))}
           inputMode="text"
           autoComplete="off"
@@ -37,5 +46,3 @@ export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressPro
     )
   }
 )
-
-export default Address

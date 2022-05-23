@@ -1,20 +1,16 @@
-import { shortenAddress } from '@sushiswap/format'
-import { classNames, Typography } from '@sushiswap/ui'
+import { ChainId } from '@sushiswap/chain'
 import { useEnsName } from 'wagmi'
 
 export type Props = {
   address?: string
-  className?: string
+  children({ name, isEns }: { name?: string; isEns: boolean }): JSX.Element
 }
 
-export function Name({ address, className }: Props): JSX.Element {
+export function Name({ address, children }: Props): JSX.Element {
   const { data } = useEnsName({
     address,
+    chainId: ChainId.ETHEREUM,
   })
 
-  return (
-    <Typography variant="sm" weight={700} className={classNames('text-slate-50 tracking-wide', className)}>
-      {!!data ? data : address ? shortenAddress(address) : ''}
-    </Typography>
-  )
+  return children({ name: !!data ? data : address, isEns: !!data })
 }

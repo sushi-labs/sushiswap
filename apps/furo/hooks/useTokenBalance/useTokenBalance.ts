@@ -9,8 +9,8 @@ export const useTokenBalances: UseTokenBalances = (account, tokens, fundSource) 
   return fundSource === FundSource.BENTOBOX ? bentoBalance : walletBalance
 }
 
-export const useTokenBalance: UseTokenBalance = (account, tokens, fundSource) => {
-  const walletBalance = useTokenWalletBalance(account, tokens)
-  const bentoBalance = useTokenBentoboxBalance(account, tokens)
+export const useTokenBalance: UseTokenBalance = (account, token, fundSource) => {
+  const walletBalance = useTokenWalletBalance(account, token)
+  const bentoBalance = useTokenBentoboxBalance(account, token)
   return fundSource === FundSource.BENTOBOX ? bentoBalance : walletBalance
 }

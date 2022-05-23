@@ -10,7 +10,7 @@ import FUROSTREAM_ABI from '../abis/FuroStream.json'
 
 export const STREAM_ADDRESS: AddressMap = {
   [ChainId.KOVAN]: '0xa60f90530e9412fe1a19ff91f1491f1738953b7c',
-  [ChainId.GÖRLI]: '0x9c87d6a9d88347e90c1bfdee334b41abf5c4a079',
+  [ChainId.GÖRLI]: '0x3c4bc596c4946d812d0ea77940038576f228fac7',
 }
 
 export function useFuroStreamContract(): Contract | null {

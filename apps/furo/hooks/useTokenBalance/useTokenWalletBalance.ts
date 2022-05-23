@@ -78,7 +78,6 @@ export const useTokenWalletBalances: UseTokenBalances = (account, tokens) => {
 
 export const useTokenWalletBalance: UseTokenBalance = (account, token) => {
   const { isError, isLoading, data } = useTokenWalletBalances(account, [token])
-
   if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
   if (!isLoading && isError) return { isLoading: false, isError: true, data: undefined } as ErrorState<Amount<Token>>
 

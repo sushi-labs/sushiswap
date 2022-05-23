@@ -2,9 +2,8 @@ import { formatUnits } from '@ethersproject/units'
 import { curveStepAfter } from '@visx/curve'
 import { ParentSize } from '@visx/responsive'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, buildChartTheme, Tooltip, XYChart } from '@visx/xychart'
+import { ScheduleRepresentation, Vesting } from 'features'
 import { FC, useEffect, useState } from 'react'
-
-import { ScheduleRepresentation, Vesting } from '../context'
 
 interface Props {
   vesting?: Vesting

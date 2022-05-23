@@ -17,7 +17,7 @@ import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
 import WithdrawModal from 'features/WithdrawModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
-import { STREAM_ADDRESS } from 'hooks'
+import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -81,6 +81,9 @@ const _Streams: FC = () => {
     [streamRepresentation]
   )
 
+  console.log(streamRepresentation)
+  const balance = useStreamBalance(stream?.id, stream?.token)
+
   if (!isMounted) return null
 
   return (
@@ -107,7 +110,7 @@ const _Streams: FC = () => {
       </div>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="flex justify-center">
-          <BalanceChart stream={stream} hover={hover} setHover={setHover} />
+          <BalanceChart stream={stream} hover={hover} setHover={setHover} balance={balance} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">

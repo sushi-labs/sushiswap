@@ -101,7 +101,7 @@ export const List = withContext(() => {
   )
 
   return (
-    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800 shadow-md">
+    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800">
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <FixedSizeList

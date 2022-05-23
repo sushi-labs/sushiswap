@@ -1,21 +1,20 @@
+import { Amount, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'features/context'
-import { useStreamBalance } from 'hooks'
 import { FC, useCallback } from 'react'
 
 import { BalanceChartHoverEnum } from '../../pages/stream/[id]'
 
 interface Props {
   stream?: Stream
-  hover: BalanceChartHoverEnum
-  setHover(x: BalanceChartHoverEnum): void
+  balance?: Amount<Token>
+  hover?: BalanceChartHoverEnum
+  setHover?(x: BalanceChartHoverEnum): void
 }
 
-const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
-  const balance = useStreamBalance(stream?.id, stream?.token)
-
+const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, setHover, balance }) => {
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
     return Math.round(streamedPct * 2 * radius * Math.PI * 100) / 100
   }, [])
@@ -36,13 +35,13 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
       <g
         stroke="currentColor"
         className={classNames(
-          hover === BalanceChartHoverEnum.WITHDRAW
+          hover === BalanceChartHoverEnum.STREAMED
             ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(39,_176,_230,_0.6)]'
             : '',
           'text-slate-700 cursor-pointer'
         )}
-        onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
-        onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+        onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.STREAMED)}
+        onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
       >
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -80,7 +79,7 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
-          className="drop-shadow-[0px_0px_2px_rgba(39,_176,_230,_0.87)] animate-[dash_1s_ease-in-out_forwards]"
+          className="drop-shadow-[0px_0px_6px_rgba(39,_176,_230,_0.37)] animate-[dash_1s_ease-in-out_forwards]"
         >
           <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
         </g>
@@ -88,13 +87,13 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
       <g
         stroke="currentColor"
         className={classNames(
-          hover === BalanceChartHoverEnum.STREAMED
+          hover === BalanceChartHoverEnum.WITHDRAW
             ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(250,_82,_160,_0.6)]'
             : '',
           'text-slate-700 cursor-pointer'
         )}
-        onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
-        onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+        onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.WITHDRAW)}
+        onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
       >
         <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -114,8 +113,8 @@ const BalanceChart: FC<Props> = ({ stream, hover, setHover }) => {
           strokeWidth={1}
         />
         <g
-          onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
-          onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+          onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.WITHDRAW)}
+          onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
           width={width}
           height={width}
           strokeDasharray={`${dashArray({

@@ -1,27 +1,17 @@
-import { Container, Glow, MaxWidth } from '@sushiswap/ui'
+import { Backdrop, classNames, Container, MaxWidth } from '@sushiswap/ui'
 import React from 'react'
 
 type Props = {
   children?: React.ReactNode
   maxWidth?: MaxWidth
-  gradient?: boolean
   backdrop?: React.ReactNode
+  className?: string
 }
 
-function Layout({ children, maxWidth = '5xl', gradient = true, backdrop }: Props) {
-  if (!gradient) {
-    return (
-      <Container maxWidth={maxWidth} className="lg:mx-auto px-4 h-full pb-4">
-        {children}
-      </Container>
-    )
-  }
-
+function Layout({ children, maxWidth = '5xl', backdrop, className }: Props) {
   return (
-    <Container maxWidth={maxWidth} className="lg:mx-auto px-4 h-full pb-4">
-      <Glow className="bg-noise" backdrop={backdrop}>
-        {children}
-      </Glow>
+    <Container maxWidth={maxWidth} className={classNames(className, 'lg:mx-auto px-4 h-full pb-4 mb-40')}>
+      <Backdrop backdrop={backdrop}>{children}</Backdrop>
     </Container>
   )
 }

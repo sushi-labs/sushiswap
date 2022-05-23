@@ -33,46 +33,6 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
     })
   }, 1000)
 
-  const ActiveStreamDetails = () => {
-    return (
-      <>
-        <Typography variant="xs" weight={400} className="text-slate-500">
-          Time Remaining
-        </Typography>
-        <Typography variant="lg" weight={700} className="mt-1 text-slate-300">
-          {`${remaining?.days} days ${remaining?.hours} hours ${remaining?.minutes} min ${remaining?.seconds} sec`}
-        </Typography>
-        <Typography variant="xs" weight={400} className="mt-3 text-slate-400">
-          {`The stream was started on ${stream?.startTime.toLocaleDateString()} @ ${stream?.startTime.toLocaleTimeString()} and has been active for 
-            ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes.
-              If the sender does not cancel the stream, the full amount will be disbursed to you on 
-              ${stream?.endTime.toLocaleDateString()} @ ${stream?.endTime.toLocaleTimeString()}.`}
-        </Typography>
-      </>
-    )
-  }
-
-  const CancelledStreamDetails = () => {
-    return (
-      <>
-        <Typography variant="xs" weight={400} className="text-slate-500">
-          Time Remaining
-        </Typography>
-        <Typography variant="lg" weight={700} className="mt-1 text-slate-200">
-          -
-        </Typography>
-        <Typography variant="xs" weight={400} className="mt-3">
-          {`The stream was cancelled on ${stream?.modifiedAtTimestamp.toLocaleDateString()} @ ${stream?.modifiedAtTimestamp.toLocaleTimeString()} and was active for 
-          ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes. `}
-        </Typography>
-      </>
-    )
-  }
-
-  const StreamDetails = () => {
-    return stream?.status !== FuroStatus.CANCELLED ? <ActiveStreamDetails /> : <CancelledStreamDetails />
-  }
-
   return (
     <Popover>
       {({ open }) => (
@@ -131,7 +91,35 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
               </div>
             </div>
             <div className="flex flex-col p-4 border shadow-md rounded-xl border-slate-700">
-              <StreamDetails />
+              {stream?.status !== FuroStatus.CANCELLED ? (
+                <>
+                  <Typography variant="xs" weight={400} className="text-slate-500">
+                    Time Remaining
+                  </Typography>
+                  <Typography variant="lg" weight={700} className="mt-1 text-slate-300">
+                    {`${remaining?.days} days ${remaining?.hours} hours ${remaining?.minutes} min ${remaining?.seconds} sec`}
+                  </Typography>
+                  <Typography variant="xs" weight={400} className="mt-3 text-slate-400">
+                    {`The stream was started on ${stream?.startTime.toLocaleDateString()} @ ${stream?.startTime.toLocaleTimeString()} and has been active for 
+            ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes.
+              If the sender does not cancel the stream, the full amount will be disbursed to you on 
+              ${stream?.endTime.toLocaleDateString()} @ ${stream?.endTime.toLocaleTimeString()}.`}
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <Typography variant="xs" weight={400} className="text-slate-500">
+                    Time Remaining
+                  </Typography>
+                  <Typography variant="lg" weight={700} className="mt-1 text-slate-200">
+                    -
+                  </Typography>
+                  <Typography variant="xs" weight={400} className="mt-3">
+                    {`The stream was cancelled on ${stream?.modifiedAtTimestamp.toLocaleDateString()} @ ${stream?.modifiedAtTimestamp.toLocaleTimeString()} and was active for 
+          ${stream?.activeTime?.days} days ${stream?.activeTime?.hours} hours ${stream?.activeTime?.minutes} minutes. `}
+                  </Typography>
+                </>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-4 p-4 border shadow-md border-slate-700 rounded-xl">
@@ -145,7 +133,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.amount.toFixed(4)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .994k */}
                     </Typography>
                   </Typography>
@@ -154,7 +142,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
@@ -171,7 +159,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.streamedAmount.substring(0, 7)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .329k */}
                     </Typography>
                   </Typography>
@@ -180,7 +168,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>
@@ -197,7 +185,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   </Typography>
                   <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
                     {stream?.withdrawnAmount.toFixed(4)}
-                    <Typography variant="lg" component="span" weight={700}>
+                    <Typography variant="lg" as="span" weight={700}>
                       {/* .105k */}
                     </Typography>
                   </Typography>
@@ -206,7 +194,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                       variant="xs"
                       weight={700}
                       className="text-slate-200 border border-slate-700 bg-slate-800 rounded-xl px-3 py-1.5"
-                      component="span"
+                      as="span"
                     >
                       {stream?.withdrawnAmount.currency.symbol}
                     </Typography>

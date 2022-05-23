@@ -1,5 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber, Contract, Signature } from 'ethers'
+import { Contract, Signature } from 'ethers'
 
 interface Batch {
   contract: Contract
@@ -77,11 +77,11 @@ export interface VestingCreationProps {
   recipient: string
   token: Token
   startDate: Date
-  cliffDuration: BigNumber
-  stepDuration: BigNumber
-  steps: BigNumber
-  cliffAmount: BigNumber | string
-  stepAmount: BigNumber | string
+  cliffDuration: string
+  stepDuration: string
+  steps: string
+  stepPercentage: string
+  amount: string
   fromBentobox: boolean
 }
 
@@ -93,20 +93,21 @@ export const vestingCreationAction = ({
   cliffDuration,
   stepDuration,
   steps,
-  cliffAmount,
-  stepAmount,
+  stepPercentage,
+  amount,
   fromBentobox,
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
-    // TODO: check wnative address, pass in value
-    token.address,
-    recipient,
-    startDate.getTime() / 1000,
-    cliffDuration,
-    stepDuration,
-    steps,
-    cliffAmount,
-    stepAmount,
-    fromBentobox,
+    {
+      token: token.address,
+      recipient: recipient,
+      start: startDate.getTime() / 1000,
+      cliffDuration: cliffDuration,
+      stepDuration: stepDuration,
+      steps: steps,
+      stepPercentage: stepPercentage,
+      amount: amount,
+      fromBentoBox: fromBentobox,
+    },
   ])
 }

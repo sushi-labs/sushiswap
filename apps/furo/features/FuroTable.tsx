@@ -36,7 +36,7 @@ const table = createTable()
       showActiveOnly: showActiveOnly,
     },
   })
-  .setRowType<Stream>()
+  .setRowType<Stream | Vesting>()
 
 const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
@@ -165,7 +165,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.thead>
           {instance.getHeaderGroups().map((headerGroup, i) => (
             <Table.thr key={headerGroup.id}>
-              {initialized && streams.length === 0 && vestings.length == 0 ? (
+              {!initialized && streams.length === 0 && vestings.length == 0 ? (
                 <th colSpan={headerGroup.headers.length} className="border-b border-slate-800">
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </th>
@@ -182,12 +182,12 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {initialized && streams.length === 0 && vestings.length == 0 ? (
+              {!initialized && streams.length === 0 && vestings.length == 0 ? (
                 <td colSpan={columns.length}>
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </td>
               ) : (
-                <Table.td colSpan={columns.length} className="text-center text-slate-500">
+                <Table.td colSpan={columns.length} className="!text-xs italic text-center text-slate-500">
                   {placeholder}
                 </Table.td>
               )}

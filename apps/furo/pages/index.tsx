@@ -1,24 +1,57 @@
+import { AddressZero } from '@ethersproject/constants'
 import { Menu } from '@headlessui/react'
+import { ChainId, USDC } from '@sushiswap/core-sdk'
+import { Amount } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { Account, Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
-import { CreateStreamModalControlled } from 'features/stream'
+import { FuroStatus, FuroType, Stream } from 'features'
+import BalanceChart from 'features/stream/BalanceChart'
+import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
+
+import { BalanceChartHoverEnum } from './stream/[id]'
+
+const now = new Date().getTime()
+const exampleStream = new Stream({
+  stream: {
+    id: '0',
+    __typename: FuroType.STREAM,
+    status: FuroStatus.ACTIVE,
+    totalAmount: '119994000000',
+    withdrawnAmount: '69308282750',
+    recipient: { id: AddressZero },
+    createdBy: { id: AddressZero },
+    expiresAt: (new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    startedAt: (new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
+    modifiedAtTimestamp: (new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    token: {
+      name: 'USDC',
+      decimals: '6',
+      symbol: 'USDC',
+      id: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+    },
+    txHash: '',
+  },
+})
 
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
-  const [paySomeoneOpen, setPaySomeoneOpen] = useState(false)
+  const { activeChain } = useNetwork()
+  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
 
   const paySomeone = useConnect({
     onConnect: () => {
-      setPaySomeoneOpen(true)
+      void router.push('/stream/create')
     },
   })
 
@@ -28,17 +61,17 @@ export default function Index() {
     },
   })
 
-  if (isMounted)
-    return (
-      <Layout
-        gradient
-        backdrop={
-          <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
-            <BackgroundVector width="100%" preserveAspectRatio="none" />
-          </div>
-        }
-      >
-        <div className="flex flex-col h-full gap-8 pt-40">
+  return (
+    <Layout
+      className="my-40"
+      backdrop={
+        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+          <BackgroundVector width="100%" preserveAspectRatio="none" />
+        </div>
+      }
+    >
+      <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
+        <div className="flex flex-col h-full justify-center gap-8">
           <div className="flex flex-col gap-3">
             <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
               Welcome to <br />
@@ -49,27 +82,36 @@ export default function Index() {
             </div>
           </div>
           <div className="flex flex-col sm:items-center sm:flex-row gap-4">
-            {account?.address ? (
+            {isMounted && account?.address ? (
               <>
                 <div>
-                  <CreateStreamModalControlled
-                    open={paySomeoneOpen}
-                    setOpen={setPaySomeoneOpen}
-                    button={
-                      <Button className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
-                        Pay Someone
-                      </Button>
-                    }
-                  />
+                  <Link passHref={true} href="/stream/create">
+                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                      Pay Someone
+                    </Button>
+                  </Link>
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
                   <Link passHref={true} href="/dashboard">
-                    <Button className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl">
+                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
                       View My Earnings
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.Name address={account?.address} className="text-sm sm:text-base" />
+                    <Account.Name address={account?.address}>
+                      {({ name, isEns }) => (
+                        <Typography
+                          as="a"
+                          target="_blank"
+                          href={getExplorerLink(activeChain?.id, account?.address, 'address')}
+                          variant="sm"
+                          weight={700}
+                          className="hover:text-blue-400 text-slate-50 tracking-wide text-sm sm:text-base"
+                        >
+                          {isEns ? name : !!name ? shortenAddress(name) : ''}
+                        </Typography>
+                      )}
+                    </Account.Name>
                   </div>
                 </div>
               </>
@@ -79,7 +121,7 @@ export default function Index() {
                   hack={paySomeone}
                   button={
                     <Menu.Button
-                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
+                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                       as="div"
                     >
                       Pay Someone
@@ -90,7 +132,7 @@ export default function Index() {
                   hack={viewEarnings}
                   button={
                     <Menu.Button
-                      className="transition-all hover:ring-4 ring-gray-700 btn bg-gray-600 btn-filled btn-default text-sm sm:text-base text-slate-50 px-10 h-[52px] sm:!h-[56px] rounded-2xl"
+                      className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                       as="div"
                     >
                       View My Earnings
@@ -101,8 +143,15 @@ export default function Index() {
             )}
           </div>
         </div>
-      </Layout>
-    )
-
-  return null
+        <div className="scale-[0.9] hidden lg:block flex justify-center">
+          <BalanceChart
+            stream={exampleStream}
+            hover={hover}
+            setHover={setHover}
+            balance={Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')}
+          />
+        </div>
+      </div>
+    </Layout>
+  )
 }

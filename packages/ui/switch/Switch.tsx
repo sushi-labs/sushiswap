@@ -57,7 +57,7 @@ export const Switch: FC<SwitchProps> = ({
         className={classNames(
           checked ? 'translate-x-[30px]' : 'translate-x-[2px]',
           COLOR[color](checked),
-          `transition-colors transition-transform pointer-events-none p-1 rounded-full shadow-md ease-in-out duration-200 inline-flex items-center justify-center`
+          `transition-colors transition-transform pointer-events-none p-1 rounded-full ease-in-out duration-200 inline-flex items-center justify-center`
         )}
         style={{ height: height - 6, width: height - 6, transform: `translate(${checked ? 30 : 2}, 0)` }}
       >

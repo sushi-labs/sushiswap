@@ -1,18 +1,16 @@
 import classNames from 'classnames'
-import React, { FC, forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 
-export type TypographyWeight = 400 | 500 | 700 | 900
+import { AnyTag, Polymorphic } from '../types'
 
-const WEIGHTS = {
+const WEIGHTS: Record<string, string> = {
   400: 'font-normal',
   500: 'font-medium',
   700: 'font-bold',
   900: 'font-black',
 }
 
-export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'xl' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
-
-const VARIANTS = {
+const VARIANTS: Record<string, string> = {
   hero: 'text-5xl leading-[4rem]',
   h1: 'text-4xl leading-[28px]',
   h2: 'text-3xl tracking-[-0.02em]',
@@ -25,26 +23,29 @@ const VARIANTS = {
   xxs: 'text-[0.625rem] leading-[1.2]',
 }
 
-export interface TypographyProps extends React.AllHTMLAttributes<React.ReactHTML> {
+export type TypographyWeight = 400 | 500 | 700 | 900
+export type TypographySelect = 'none' | 'text' | 'all' | 'auto'
+export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'xl' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
+
+type OwnProps = {
   children: ReactNode | ReactNode[]
   variant?: TypographyVariant
   weight?: TypographyWeight
-  component?: keyof React.ReactHTML
   className?: string
-  clickable?: boolean
   select?: TypographySelect
 }
 
-export type TypographySelect = 'none' | 'text' | 'all' | 'auto'
+export type TypographyProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
 
-export const Typography: FC<TypographyProps> = forwardRef(
+declare function TypographyFn<Tag extends AnyTag = 'div'>(props: TypographyProps<Tag>): JSX.Element
+
+export const Typography = forwardRef<HTMLElement, TypographyProps<any>>(
   (
     {
       variant = 'base',
       weight = 400,
-      component = 'div',
+      as = 'div',
       className = 'text-slate-400',
-      clickable = false,
       children = [],
       onClick = undefined,
       select = 'auto',
@@ -53,7 +54,7 @@ export const Typography: FC<TypographyProps> = forwardRef(
     ref
   ) => {
     return React.createElement(
-      component,
+      as,
       {
         className: classNames(
           VARIANTS[variant],
@@ -69,8 +70,4 @@ export const Typography: FC<TypographyProps> = forwardRef(
       children
     )
   }
-)
-
-Typography.displayName = 'Typography'
-
-export default Typography
+) as typeof TypographyFn
