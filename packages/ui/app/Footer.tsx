@@ -1,4 +1,13 @@
-import { Container, DiscordIcon, GithubIcon, InstagramIcon, MediumIcon, SushiIcon, TwitterIcon, Typography } from '..'
+import {
+  Container,
+  DiscordIcon,
+  GithubIcon,
+  InstagramIcon,
+  MediumIcon,
+  SushiWithTextIcon,
+  TwitterIcon,
+  Typography,
+} from '..'
 
 const config: Record<string, Record<string, string>> = {
   Services: {
@@ -37,11 +46,8 @@ export function Footer(): JSX.Element {
     <footer className="flex border-t border-slate-800 py-[72px]">
       <Container maxWidth="5xl" className="grid grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
-          <div className="flex items-center gap-3">
-            <SushiIcon width={32} height={32} />
-            <Typography variant="lg" weight={900} className="text-slate-200 tracking-tight">
-              SushiSwap
-            </Typography>
+          <div className="flex items-center justify-start gap-3">
+            <SushiWithTextIcon height={36} className="text-slate-50" />
           </div>
           <Typography variant="xxs" className="!leading-4 text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
