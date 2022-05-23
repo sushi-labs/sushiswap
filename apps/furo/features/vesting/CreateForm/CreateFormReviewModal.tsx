@@ -71,7 +71,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000,
     )
-    return [cliff, step, cliff.add(step), endDate]
+    return [cliff, step, cliff.add(step.multiply(stepPayouts)), endDate]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
 
   const schedule = createScheduleRepresentation({
@@ -102,7 +102,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           <span className="font-bold text-slate-50">{format(endDate, 'dd MMM yyyy hh:mm')}</span>
         </Typography>
         <div className="flex flex-col w-full">
-          <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[440px] mt-2 hide-scrollbar divide-y divide-slate-800">
+          <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[240px] mt-2 hide-scrollbar divide-y divide-slate-800">
             <div className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
               <Typography className="capitalize text-slate-500 tracking-wider" variant="xxs">
                 Schedule
