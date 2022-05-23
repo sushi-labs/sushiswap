@@ -96,7 +96,9 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <Typography variant="xs" className="!leading-5 text-slate-400">
           This will create a stream to{' '}
           <span className="font-bold text-slate-50 hover:text-blue">
-            <a href={getExplorerLink(activeChain?.id, recipient, 'address')}>{shortenAddress(recipient)}</a>
+            <a target="_blank" href={getExplorerLink(activeChain?.id, recipient, 'address')} rel="noreferrer">
+              {shortenAddress(recipient)}
+            </a>
           </span>{' '}
           consisting of{' '}
           <span className="font-bold text-slate-50">

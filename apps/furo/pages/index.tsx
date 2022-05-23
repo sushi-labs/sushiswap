@@ -102,6 +102,7 @@ export default function Index() {
                       {({ name, isEns }) => (
                         <Typography
                           as="a"
+                          target="_blank"
                           href={getExplorerLink(activeChain?.id, account?.address, 'address')}
                           variant="sm"
                           weight={700}

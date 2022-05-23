@@ -54,19 +54,19 @@ export function Footer(): JSX.Element {
           </div>
           <div className="flex items-center gap-4">
             <a href="https://github.com/sushiswap" target="_blank" rel="noreferrer">
-              <GithubIcon width={16} className="text-slate-300" />
+              <GithubIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
             <a href="https://twitter.com/sushiswap" target="_blank" rel="noreferrer">
-              <TwitterIcon width={16} className="text-slate-300" />
+              <TwitterIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
             <a href="https://instagram.com/instasushiswap" target="_blank" rel="noreferrer">
-              <InstagramIcon width={16} className="text-slate-300" />
+              <InstagramIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
             <a href="https://medium.com/sushiswap-org" target="_blank" rel="noreferrer">
-              <MediumIcon width={16} className="text-slate-300" />
+              <MediumIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
             <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noreferrer">
-              <DiscordIcon width={16} className="text-slate-300" />
+              <DiscordIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
           </div>
         </div>
