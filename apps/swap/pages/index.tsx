@@ -141,7 +141,9 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     }
     // console.log('srcCurrencyAmount', srcCurrencyAmount.quotient.toString())
 
-    cooker.srcDepositToBentoBox(srcToken, srcAmount.quotient.toString())
+    if (!srcUseBentoBox) {
+      cooker.srcDepositToBentoBox(srcToken, srcAmount.quotient.toString())
+    }
 
     if (srcMinimumAmountOut && srcTrade instanceof TradeV1 && srcTrade?.route?.path?.length) {
       // console.log('cook src transfer from bentobox')
