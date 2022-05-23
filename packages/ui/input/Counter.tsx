@@ -38,7 +38,16 @@ export const Counter: FC<CounterProps> = forwardRef(
             )}
             ref={ref}
             value={value}
-            onChange={(e) => onChange(e.target.value.replace(matchNonNumbers, ''))}
+            onChange={(e) =>
+              max
+                ? onChange(
+                    Math.min(
+                      e.target.value.replace(matchNonNumbers, ''),
+                      max ? max : e.target.value.replace(matchNonNumbers, ''),
+                    ),
+                  )
+                : undefined
+            }
             {...rest}
           />
           <button

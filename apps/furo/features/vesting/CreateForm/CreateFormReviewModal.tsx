@@ -74,19 +74,23 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     return [cliff, step, cliff.add(step.multiply(stepPayouts)), endDate]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
 
-  const schedule = createScheduleRepresentation({
-    token,
-    cliff,
-    cliffAmount: _cliffAmount,
-    stepAmount: _stepAmount,
-    stepConfig,
-    startDate,
-    cliffEndDate,
-    stepPayouts,
-  })
+  const schedule = useMemo(() => {
+    return open
+      ? createScheduleRepresentation({
+          token,
+          cliff,
+          cliffAmount: _cliffAmount,
+          stepAmount: _stepAmount,
+          stepConfig,
+          startDate,
+          cliffEndDate,
+          stepPayouts,
+        })
+      : undefined
+  }, [_cliffAmount, _stepAmount, cliff, cliffEndDate, open, startDate, stepConfig, stepPayouts, token])
 
   return (
-    <Dialog open={open} onClose={onDismiss}>
+    <Dialog open={open} onClose={onDismiss} unmount={true}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden border border-slate-700">
         <Dialog.Header title="Review Details" onClose={onDismiss} />
         <Typography variant="xs" className="!leading-5 text-slate-400">
@@ -118,7 +122,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               </Typography>
             </div>
             {
-              schedule.reduce<[ReactNode[], Amount<Token>]>(
+              schedule?.reduce<[ReactNode[], Amount<Token>]>(
                 (acc, period) => {
                   acc[1] = acc[1].add(period.amount)
                   acc[0].push(

@@ -63,7 +63,7 @@ export const GradedVestingDetailsSection = () => {
             name="stepPayouts"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <Input.Counter step={1} min={0} onChange={onChange} value={value} error={!!error?.message} />
+                <Input.Counter step={1} min={0} max={100} onChange={onChange} value={value} error={!!error?.message} />
                 <Form.Error message={error?.message} />
               </>
             )}
