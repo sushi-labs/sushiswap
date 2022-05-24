@@ -1,15 +1,24 @@
+import { FarmType } from 'features/onsen/context/types'
+
 const SUSHI_LP_TOKEN = 'Sushi LP Token'
 const SUSHISWAP_LP_TOKEN = 'SushiSwap LP Token'
 const KASHI_MEDIUM_RISK = 'Kashi Medium Risk'
 
-export function isTridentPool(name: string): boolean {
+export function getFarmType(name: string): FarmType {
+  if (isTridentPool(name)) return FarmType.TRIDENT
+  else if (isLegacyPair(name)) return FarmType.LEGACY
+  else if (isKashiPair(name)) return FarmType.KASHI
+  else return FarmType.TOKEN
+}
+
+function isTridentPool(name: string): boolean {
   return name === SUSHI_LP_TOKEN
 }
 
-export function isLegacyPair(name: string): boolean {
+function isLegacyPair(name: string): boolean {
   return name === SUSHISWAP_LP_TOKEN
 }
 
-export function isKashiPair(name: string): boolean {
+function isKashiPair(name: string): boolean {
   return name.startsWith(KASHI_MEDIUM_RISK)
 }

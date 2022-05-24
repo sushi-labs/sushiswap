@@ -1,11 +1,12 @@
-import { App } from '@sushiswap/ui'
 import '@sushiswap/ui/index.css'
+import 'react-toastify/dist/ReactToastify.css'
+
+import { App } from '@sushiswap/ui'
 import { client } from '@sushiswap/wallet-connector'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { FC, useEffect } from 'react'
-import 'react-toastify/dist/ReactToastify.css'
 import { WagmiProvider } from 'wagmi'
 
 

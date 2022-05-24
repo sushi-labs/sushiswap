@@ -1,5 +1,5 @@
-query Farms {
-  incentives {
+query KovanOnsenFarms {
+  KOVAN_ONSEN_incentives {
     id
     token {
       id
@@ -19,8 +19,8 @@ query Farms {
   }
 }
 
-query Incentive($id: ID!) {
-  incentive(id: $id) {
+query KovanOnsenFarm($id: ID!) {
+  KOVAN_ONSEN_incentive(id: $id) {
     id
     token {
       id

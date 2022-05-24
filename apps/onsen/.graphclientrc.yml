@@ -1,16 +1,3 @@
-sources:
-  - name: stake
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/stake
-  - name: trident
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident
-    # transforms:
-    #   - filterSchema:
-    #       mode: wrap
-    #       filters:
-    #         - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot}
+sources: !includes ./graph/sources
 documents:
-  - './queries/*.graphql'
+  - './graph/queries/*.graphql'

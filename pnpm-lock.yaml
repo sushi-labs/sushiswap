@@ -470,10 +470,12 @@ importers:
       '@graphql-mesh/transform-prefix': 0.11.40
       '@graphql-mesh/transform-rename': 0.12.41
       '@graphql-mesh/transform-type-merging': 0.3.50
+      '@headlessui/react': ^1.6.0
       '@heroicons/react': ^1.0.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/hooks': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wallet-connector': workspace:*
@@ -499,9 +501,11 @@ importers:
     dependencies:
       '@ethersproject/units': 5.6.0
       '@graphql-mesh/transform-filter-schema': 0.14.55_graphql@16.4.0
+      '@headlessui/react': 1.6.1_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wallet-connector': link:../../packages/wallet-connector

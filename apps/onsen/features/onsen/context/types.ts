@@ -34,8 +34,9 @@
 //   to: User
 // }
 
-// export enum StreamStatus {
-//   ACTIVE = 'ACTIVE',
-//   EXTENDED = 'EXTENDED',
-//   CANCELLED = 'CANCELLED',
-// }
+export enum FarmType {
+  TRIDENT = 'TRIDENT',
+  LEGACY = 'LEGACY',
+  KASHI = 'KASHI',
+  TOKEN = 'TOKEN',
+}

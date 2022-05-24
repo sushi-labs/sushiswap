@@ -1,5 +1,5 @@
-query Pool($id: ID!) {
-  pool(id: $id) {
+query KovanTridentPool($id: ID!) {
+  KOVAN_TRIDENT_pool(id: $id) {
     id
     assets {
       token {

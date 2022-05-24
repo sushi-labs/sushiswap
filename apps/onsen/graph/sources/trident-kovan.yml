@@ -1,0 +1,16 @@
+name: trident-kovan
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident
+transforms:
+  - prefix:
+      value: KOVAN_TRIDENT_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
+# TODO: This should be enabled after adding prefix
+#   - filterSchema:
+#       mode: wrap
+#       filters:
+#         - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot}
