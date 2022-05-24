@@ -19,7 +19,7 @@ const customTheme = buildChartTheme({
   backgroundColor: '#1e293b',
   colors: ['#c90a7a', '#eccdfe'],
   gridColor: 'rgba(255,255,255,0.05)',
-  gridStyles: { strokeWidth: 1, 'stroke-dasharray': '2' },
+  gridStyles: { strokeWidth: 1, strokeDasharray: '2' },
   tickLength: 0,
   gridColorDark: '#fff',
 })

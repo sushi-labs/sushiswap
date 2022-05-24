@@ -37,7 +37,7 @@ export function useStreamBalance(streamId?: string, token?: Token): Amount<Token
       contractInterface: FUROSTREAM_ABI,
     },
     'streamBalanceOf',
-    { args: [streamId], watch: true }
+    { enabled: !!streamId, args: [streamId], watch: true }
   )
 
   const {
@@ -50,7 +50,7 @@ export function useStreamBalance(streamId?: string, token?: Token): Amount<Token
       contractInterface: BENTOBOX_ABI,
     },
     'totals',
-    { args: [token?.address], watch: true }
+    { enabled: !!token?.address, args: [token?.address], watch: true }
   )
 
   return useMemo(() => {

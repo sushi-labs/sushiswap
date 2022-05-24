@@ -80,8 +80,12 @@ const _Streams: FC = () => {
     [chainId, streamRepresentation]
   )
 
-  console.log(streamRepresentation)
   const balance = useStreamBalance(stream?.id, stream?.token)
+
+  // Sync balance to Stream entity
+  if (stream && balance) {
+    stream.balance = balance
+  }
 
   if (!isMounted) return null
 
@@ -109,19 +113,19 @@ const _Streams: FC = () => {
       </div>
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
         <div className="flex justify-center">
-          <BalanceChart stream={stream} hover={hover} setHover={setHover} balance={balance} />
+          <BalanceChart stream={stream} hover={hover} setHover={setHover} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
             <ProgressBarCard
               aria-hidden="true"
               label="Streamed"
-              value={`${(Number(stream?.streamedPercentage) * 100).toFixed(2)}%`}
+              value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
               onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
               onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
             >
               <ProgressBar
-                progress={stream ? stream.streamedPercentage.toFixed(4) : 0}
+                progress={stream ? stream.streamedPercentage.divide(100).toSignificant(4) : 0}
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />
@@ -129,12 +133,12 @@ const _Streams: FC = () => {
             <ProgressBarCard
               aria-hidden="true"
               label="Withdrawn"
-              value={`${(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}%`}
+              value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
               onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
               onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
             >
               <ProgressBar
-                progress={stream ? stream.withdrawnPercentage : 0}
+                progress={stream ? stream.withdrawnPercentage.divide(100).toSignificant(4) : 0}
                 color={ProgressColor.PINK}
                 showLabel={false}
               />

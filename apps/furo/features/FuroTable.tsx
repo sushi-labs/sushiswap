@@ -46,11 +46,11 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
         <ProgressBar
           showLabel={false}
           className="min-w-[100px] max-w-[100px] h-3"
-          progress={Math.min(Math.max(props.getValue(), 0), 1)}
+          progress={props.getValue().divide(100).toSignificant(4)}
           color={ProgressColor.GRADIENT}
         />
         <Typography variant="sm" weight={700} className="text-slate-200">
-          {(Number(Math.min(Math.max(props.getValue(), 0), 1)) * 100).toFixed(1)}%
+          {props.getValue().toSignificant(4)}%
         </Typography>
       </div>
     ),

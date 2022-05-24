@@ -36,7 +36,7 @@ export function useVestingBalance(vestingId?: string, token?: Token): Amount<Tok
       contractInterface: FUROVESTING_ABI,
     },
     'vestBalance',
-    { args: [vestingId], watch: true }
+    { enabled: !!vestingId, args: [vestingId], watch: true }
   )
 
   const {
@@ -49,7 +49,7 @@ export function useVestingBalance(vestingId?: string, token?: Token): Amount<Tok
       contractInterface: BENTOBOX_ABI,
     },
     'totals',
-    { args: [token?.address], watch: true }
+    { enabled: !!token?.address, args: [token?.address], watch: true }
   )
 
   return useMemo(() => {

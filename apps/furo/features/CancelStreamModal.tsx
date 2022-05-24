@@ -3,7 +3,6 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
-import { useStreamBalance } from 'hooks'
 import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
@@ -16,7 +15,6 @@ interface CancelStreamModalProps {
 }
 
 const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, fn }) => {
-  const balance = useStreamBalance(stream?.id, stream?.token)
   const [open, setOpen] = useState(false)
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
   const { data: account } = useAccount()
@@ -43,7 +41,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
       description: `You have successfully cancelled your stream`,
       promise: data.wait(),
     })
-  }, [account, stream, writeAsync])
+  }, [account, fundSource, stream, writeAsync])
 
   if (account?.address && !stream?.canCancel(account.address)) return <></>
 
@@ -101,7 +99,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
           <Typography variant="xs" weight={400} className="text-center italic text-slate-400">
             This will send the remaining amount of <br />{' '}
             <span className="font-bold text-slate-200">
-              {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
+              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount.currency.symbol}
             </span>{' '}
             to your{' '}
             <span className="font-bold text-slate-200">

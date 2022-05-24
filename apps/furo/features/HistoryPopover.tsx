@@ -19,7 +19,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
             ?.filter((transaction) => transaction.to.id === account?.address?.toLocaleLowerCase())
             .map((transaction) => new Transaction(transaction, activeChain?.id))
         : [],
-    [transactionRepresentations, account]
+    [activeChain?.id, transactionRepresentations, account?.address]
   )
 
   return (

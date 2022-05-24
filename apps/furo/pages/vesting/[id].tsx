@@ -5,7 +5,7 @@ import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import FUROVESTING_ABI from 'abis/FuroVesting.json'
 import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
-import { ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
+import { FuroStatus, ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
@@ -14,7 +14,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import WithdrawModal from 'features/vesting/WithdrawModal'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
-import { VESTING_ADDRESS } from 'hooks'
+import { useStreamBalance, VESTING_ADDRESS } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -70,6 +70,13 @@ const _VestingPage: FC = () => {
     [vestingRepresentation]
   )
 
+  const balance = useStreamBalance(vesting?.id, vesting?.token)
+
+  // Sync balance to Vesting entity
+  if (vesting && balance) {
+    vesting.balance = balance
+  }
+
   if (!isMounted) return null
 
   return (
@@ -103,10 +110,10 @@ const _VestingPage: FC = () => {
             <ProgressBarCard
               aria-hidden="true"
               label="Streamed"
-              value={`${(Number(vesting?.streamedPercentage) * 100).toFixed(2)}%`}
+              value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
             >
               <ProgressBar
-                progress={vesting ? vesting.streamedPercentage.toFixed(4) : 0}
+                progress={vesting ? vesting.streamedPercentage.divide(100).toSignificant(4) : 0}
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />
@@ -114,10 +121,10 @@ const _VestingPage: FC = () => {
             <ProgressBarCard
               aria-hidden="true"
               label="Withdrawn"
-              value={`${(Number(vesting?.withdrawnPercentage) * 100).toFixed(2)}%`}
+              value={`${vesting?.withdrawnPercentage?.toSignificant(4)}%`}
             >
               <ProgressBar
-                progress={vesting ? vesting?.withdrawnPercentage : 0}
+                progress={vesting ? vesting.withdrawnPercentage.divide(100).toSignificant(4) : 0}
                 color={ProgressColor.PINK}
                 showLabel={false}
               />
@@ -131,22 +138,24 @@ const _VestingPage: FC = () => {
           <HistoryPopover transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
         </div>
-        <div className="flex flex-col gap-2">
-          <WithdrawModal vesting={vesting} />
-          <div className="flex gap-2">
-            <TransferStreamModal
-              stream={vesting}
-              abi={FUROVESTING_ABI}
-              address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
-            />
-            <CancelStreamModal
-              stream={vesting}
-              abi={FUROVESTING_ABI}
-              address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
-              fn="stopVesting"
-            />
+        {vesting?.status !== FuroStatus.CANCELLED && (
+          <div className="flex flex-col gap-2">
+            <WithdrawModal vesting={vesting} />
+            <div className="flex gap-2">
+              <TransferStreamModal
+                stream={vesting}
+                abi={FUROVESTING_ABI}
+                address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+              />
+              <CancelStreamModal
+                stream={vesting}
+                abi={FUROVESTING_ABI}
+                address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+                fn="stopVesting"
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </Layout>
   )

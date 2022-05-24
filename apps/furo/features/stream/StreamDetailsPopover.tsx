@@ -142,10 +142,10 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Streamed
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-blue-300">
-                  {(Number(stream?.streamedPercentage) * 100).toFixed(2)}% of total
+                  {stream?.streamedPercentage.toSignificant(4)}% of total
                 </Typography>
                 <Typography variant="h2" className="flex items-center mt-3 text-blue-200" weight={700}>
-                  {stream?.streamedAmount.substring(0, 7)}
+                  {stream?.streamedAmount?.toSignificant(6)}
                 </Typography>
                 <Typography variant="xs" weight={700} as="span" className="mt-1 text-blue-300/80">
                   {stream?.withdrawnAmount.currency.symbol}
@@ -158,7 +158,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Withdrawn
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-pink-300">
-                  {(Number(stream?.withdrawnPercentage) * 100).toFixed(2)}% of total
+                  {stream?.withdrawnPercentage.toSignificant(4)}% of total
                 </Typography>
                 <Typography variant="h2" className="flex items-center mt-3 text-pink-200" weight={700}>
                   {stream?.withdrawnAmount.toSignificant(2)}

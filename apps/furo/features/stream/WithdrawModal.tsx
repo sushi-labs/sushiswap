@@ -1,14 +1,14 @@
 import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
+import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { STREAM_ADDRESS } from 'hooks'
 import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -21,7 +21,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const balance = useStreamBalance(stream?.id, stream?.token)
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
@@ -83,7 +82,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={account?.address && !stream?.canWithdraw(account.address)}
+        disabled={(account?.address && !stream?.canWithdraw(account.address)) || !stream?.balance.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -98,10 +97,10 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               token={stream?.token}
               onChange={onInput}
               value={amount?.toExact()}
-              error={amount && balance && amount.greaterThan(balance)}
-              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={stream?.balance} />}
               helperTextPanel={
-                amount && balance && amount.greaterThan(balance) ? (
+                amount && stream?.balance && amount.greaterThan(stream.balance) ? (
                   <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
                 ) : (
                   <></>
@@ -153,7 +152,13 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             variant="filled"
             color="gradient"
             fullWidth
-            disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
+            disabled={
+              isWritePending ||
+              !amount ||
+              !stream?.balance ||
+              !amount.greaterThan(0) ||
+              amount.greaterThan(stream.balance)
+            }
             onClick={withdraw}
           >
             {!amount?.greaterThan(0) ? (

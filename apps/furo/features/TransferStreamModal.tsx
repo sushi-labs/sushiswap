@@ -1,9 +1,9 @@
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
+import { ZERO } from '@sushiswap/math'
 import { Button, Dialog, Dots, Form, Input, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
-import { useStreamBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useEnsAddress } from 'wagmi'
 
@@ -19,7 +19,6 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
   const [error, setError] = useState<string>()
-  const balance = useStreamBalance(stream?.id, stream?.token)
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
@@ -63,7 +62,9 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px]" />}
         fullWidth
         color="gray"
-        disabled={account?.address && !stream?.canTransfer(account.address)}
+        disabled={
+          (account?.address && !stream?.canTransfer(account.address)) || !stream?.remainingAmount?.greaterThan(ZERO)
+        }
         onClick={() => setOpen(true)}
       >
         Transfer
@@ -74,7 +75,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
             <span className="font-bold text-slate-200">
-              {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
+              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount.currency.symbol}
             </span>{' '}
             to the entered recipient.
             <p className="mt-2">

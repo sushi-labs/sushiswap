@@ -1,4 +1,3 @@
-import { Amount, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
@@ -9,12 +8,11 @@ import { BalanceChartHoverEnum } from '../../pages/stream/[id]'
 
 interface Props {
   stream?: Stream
-  balance?: Amount<Token>
   hover?: BalanceChartHoverEnum
   setHover?(x: BalanceChartHoverEnum): void
 }
 
-const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, setHover, balance }) => {
+const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, setHover }) => {
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
     return Math.round(streamedPct * 2 * radius * Math.PI * 100) / 100
   }, [])
@@ -23,8 +21,6 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
   const strokeWidth = 16
   const outerRadius = width / 2 - strokeWidth
   const innerRadius = width / 2 - 3 * strokeWidth
-
-  const streamedAmount = balance && stream?.withdrawnAmount ? balance?.add(stream?.withdrawnAmount) : undefined
 
   return (
     <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`}>
@@ -65,8 +61,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
           height={width}
           strokeDasharray={`${dashArray({
             radius: outerRadius,
-            streamedPct:
-              Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
+            streamedPct: Number(stream?.streamedPercentage.divide(100).toSignificant(4)),
           })}, ${Math.PI * outerRadius * 2}`}
           fill="none"
           strokeWidth={16}
@@ -74,8 +69,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
           strokeDashoffset={
             dashArray({
               radius: outerRadius,
-              streamedPct:
-                Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
+              streamedPct: Number(stream?.streamedPercentage.divide(100).toSignificant(4)),
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
@@ -119,12 +113,12 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
           height={width}
           strokeDasharray={`${dashArray({
             radius: innerRadius,
-            streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
+            streamedPct: Number(stream?.withdrawnPercentage.divide(100).toSignificant(4)),
           })}, ${Math.PI * innerRadius * 2}`}
           strokeDashoffset={
             dashArray({
               radius: innerRadius,
-              streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
+              streamedPct: Number(stream?.withdrawnPercentage.divide(100).toSignificant(4)),
             }) / 1.5
           }
           fill="none"
@@ -163,7 +157,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             dy={10}
             className="text-slate-50"
           >
-            {balance?.toSignificant(6).split('.')[0]}
+            {stream?.balance.toSignificant(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -172,7 +166,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
               dx={2}
               className="text-slate-300"
             >
-              .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
+              .{stream?.balance.greaterThan(ZERO) ? stream?.balance.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -185,7 +179,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             className="text-slate-500"
             fontWeight={700}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0.000'} {stream?.token.symbol} Total
           </text>
         </>
       )}
@@ -268,7 +262,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             dy={10}
             className="text-slate-50"
           >
-            {streamedAmount?.toFixed(6).split('.')[0]}
+            {stream?.streamedAmount.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -277,7 +271,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
               dx={2}
               className="text-slate-300"
             >
-              .{streamedAmount?.greaterThan(0) ? streamedAmount.toFixed(6).split('.')[1] : '000000'}
+              .{stream?.streamedAmount?.greaterThan(0) ? stream?.streamedAmount.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -290,7 +284,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             className="text-slate-500"
             fontWeight={700}
           >
-            / {balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
