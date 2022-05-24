@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { Decimal, JSBI } from '@sushiswap/math'
 
@@ -19,10 +20,10 @@ export abstract class Furo {
   public readonly token: Token
   public readonly txHash: string
 
-  public constructor({ furo }: { furo: FuroRepresentation }) {
+  public constructor({ furo, chainId }: { furo: FuroRepresentation; chainId: ChainId }) {
     this.id = furo.id
     this.type = furo.__typename
-    this.token = toToken(furo.token)
+    this.token = toToken(furo.token, chainId)
     this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.totalAmount))
     this.withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)

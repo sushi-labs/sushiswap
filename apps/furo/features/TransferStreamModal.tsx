@@ -1,6 +1,6 @@
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Button, Dialog, Dots, Input, Typography } from '@sushiswap/ui'
+import { Button, Dialog, Dots, Form, Input, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
 import { useStreamBalance } from 'hooks'
@@ -73,7 +73,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
-            <span className="font-bold">
+            <span className="font-bold text-slate-200">
               {stream && balance ? stream.amount.subtract(balance).toExact().toString() : ''} {stream?.token.symbol}
             </span>{' '}
             to the entered recipient.
@@ -82,7 +82,9 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
               to withdraw from this stream after transferring
             </p>
           </Typography>
-          <Input.Address className="w-full" value={recipient} onChange={setRecipient} />
+          <Form.Control label="Recipient">
+            <Input.Address className="w-full" value={recipient} onChange={setRecipient} />
+          </Form.Control>
 
           <Button
             variant="filled"

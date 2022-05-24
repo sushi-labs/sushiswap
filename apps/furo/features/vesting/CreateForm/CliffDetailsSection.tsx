@@ -1,6 +1,7 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { Form, Input, Switch } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
+import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
 import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -9,7 +10,7 @@ import { CreateVestingFormData } from '.'
 
 export const CliffDetailsSection: FC = () => {
   const { data: account } = useAccount()
-  const { control, watch } = useFormContext<CreateVestingFormData>()
+  const { control, watch, resetField } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const [token, cliff, fundSource] = watch(['token', 'cliff', 'fundSource'])
 
@@ -21,7 +22,14 @@ export const CliffDetailsSection: FC = () => {
           render={({ field: { onChange, value } }) => (
             <Switch
               checked={value}
-              onChange={onChange}
+              onChange={(val) => {
+                onChange(val)
+
+                if (!val) {
+                  resetField('cliffEndDate')
+                  resetField('cliffAmount')
+                }
+              }}
               size="sm"
               color="gradient"
               uncheckedIcon={<XIcon />}
@@ -37,7 +45,7 @@ export const CliffDetailsSection: FC = () => {
           name="cliffEndDate"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Input.DatetimeLocal onChange={onChange} defaultValue={value} error={!!error?.message} />
+              <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
               <Form.Error message={error?.message} />
             </>
           )}
@@ -55,6 +63,12 @@ export const CliffDetailsSection: FC = () => {
               value={value}
               onChange={onChange}
               token={token}
+              helperTextPanel={({ errorMessage }) => (
+                <HelperTextPanel
+                  isError={!!errorMessage}
+                  text={!!errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
+                />
+              )}
             />
           )}
         />

@@ -1,12 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/core-sdk'
 import { Token } from '@sushiswap/currency'
+import { TokenRepresentation } from 'features'
 
-import { TokenRepresentation } from './representations'
-
-export function toToken(token: TokenRepresentation): Token {
+export function toToken(token: TokenRepresentation, chainId: ChainId): Token {
   return new Token({
-    // TODO: make dynamic
-    chainId: ChainId.ETHEREUM,
+    chainId,
     address: token.id,
     decimals: Number(token.decimals),
     symbol: token.symbol,

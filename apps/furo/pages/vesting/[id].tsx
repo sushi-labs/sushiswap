@@ -8,11 +8,11 @@ import Layout from 'components/Layout'
 import { ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
-import LinkPopover from 'features/LinkPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
+import WithdrawModal from 'features/vesting/WithdrawModal'
 import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
 import { VESTING_ADDRESS } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -66,7 +66,7 @@ const _VestingPage: FC = () => {
   const { data: schedule } = useSWR<ScheduleRepresentation>(`/api/schedule/${chainId}/${id}`)
 
   const vesting = useMemo(
-    () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation }) : undefined),
+    () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation, chainId }) : undefined),
     [vestingRepresentation]
   )
 
@@ -128,18 +128,11 @@ const _VestingPage: FC = () => {
           </div>
         </div>
         <div className="flex items-end justify-center gap-2">
-          <LinkPopover furo={vesting} />
-          {/* Create a DetailsPopover for vesting */}
-          {/* <StreamDetailsPopover stream={vesting} /> */}
           <HistoryPopover transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
         </div>
         <div className="flex flex-col gap-2">
-          {/*<WithdrawModal*/}
-          {/*  stream={vesting}*/}
-          {/*  abi={FUROVESTING_ABI}*/}
-          {/*  address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}*/}
-          {/*/>*/}
+          <WithdrawModal vesting={vesting} />
           <div className="flex gap-2">
             <TransferStreamModal
               stream={vesting}

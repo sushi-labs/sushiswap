@@ -21,6 +21,7 @@ import { BalanceChartHoverEnum } from './stream/[id]'
 
 const now = new Date().getTime()
 const exampleStream = new Stream({
+  chainId: ChainId.ETHEREUM,
   stream: {
     id: '0',
     __typename: FuroType.STREAM,

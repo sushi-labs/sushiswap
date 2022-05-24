@@ -31,12 +31,12 @@ const showActiveOnly: FilterFn<Stream> = (row, columnId) => {
 }
 
 const table = createTable()
+  .setRowType<Stream | Vesting>()
   .setOptions({
     filterFns: {
       showActiveOnly: showActiveOnly,
     },
   })
-  .setRowType<Stream | Vesting>()
 
 const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
@@ -128,7 +128,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
   const { streams, vestings, placeholder, loading } = props
-  const [initialized, setInitialized] = useState(loading)
+  const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
     if (!loading) setInitialized(true)
@@ -138,9 +138,12 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   const { activeChain } = useNetwork()
   const data = useMemo(
     () =>
-      streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
-      [],
-    [streams, vestings]
+      activeChain?.id
+        ? streams
+            ?.map((stream) => new Stream({ stream, chainId: activeChain.id }))
+            .concat(vestings?.map((vesting) => new Vesting({ vesting, chainId: activeChain.id }))) ?? []
+        : [],
+    [activeChain.id, streams, vestings]
   )
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
@@ -163,26 +166,20 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     <Table.container>
       <Table.table>
         <Table.thead>
-          {instance.getHeaderGroups().map((headerGroup, i) => (
+          {instance.getHeaderGroups().map((headerGroup) => (
             <Table.thr key={headerGroup.id}>
-              {!initialized && streams.length === 0 && vestings.length == 0 ? (
-                <th colSpan={headerGroup.headers.length} className="border-b border-slate-800">
-                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
-                </th>
-              ) : (
-                headerGroup.headers.map((header, i) => (
-                  <Table.th key={header.id} colSpan={header.colSpan}>
-                    {header.renderHeader()}
-                  </Table.th>
-                ))
-              )}
+              {headerGroup.headers.map((header) => (
+                <Table.th key={header.id} colSpan={header.colSpan}>
+                  {header.renderHeader()}
+                </Table.th>
+              ))}
             </Table.thr>
           ))}
         </Table.thead>
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {!initialized && streams.length === 0 && vestings.length == 0 ? (
+              {!initialized ? (
                 <td colSpan={columns.length}>
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </td>

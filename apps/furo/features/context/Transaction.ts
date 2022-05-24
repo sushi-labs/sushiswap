@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
@@ -15,10 +16,10 @@ export class Transaction {
   public readonly toBentoBox: boolean
   public readonly txHash: string
 
-  public constructor(transaction: TransactionRepresentation) {
+  public constructor(transaction: TransactionRepresentation, chainId: ChainId) {
     this.id = transaction.id
     this.status = TransactionType[transaction.type]
-    this.token = toToken(transaction.token)
+    this.token = toToken(transaction.token, chainId)
     this.recipient = transaction.to
     this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(transaction.amount))
     this.timestamp = new Date(parseInt(transaction.createdAtTimestamp) * 1000)

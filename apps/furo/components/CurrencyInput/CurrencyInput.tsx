@@ -37,6 +37,7 @@ const Component: FC<CurrencyInput> = ({
   onChange,
   helperTextPanel,
   bottomPanel,
+  ...props
 }) => {
   return (
     <BalanceController fundSource={fundSource} token={token} account={account}>
@@ -48,6 +49,7 @@ const Component: FC<CurrencyInput> = ({
 
         return (
           <CurrencyInput.Base
+            {...props}
             error={!!errorMessage}
             value={value}
             onChange={onChange}
@@ -70,11 +72,10 @@ const Component: FC<CurrencyInput> = ({
                 ) : (
                   helperTextPanel
                 )
+              ) : !!errorMessage ? (
+                <CurrencyInput.HelperTextPanel text={errorMessage} isError={true} />
               ) : (
-                <CurrencyInput.HelperTextPanel
-                  text={!!errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
-                  isError={!!errorMessage}
-                />
+                <></>
               )
             }
           />

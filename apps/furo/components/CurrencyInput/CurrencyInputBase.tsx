@@ -1,5 +1,6 @@
 import { Token } from '@sushiswap/currency'
 import { classNames, ERROR_INPUT_CLASSNAME, Typography } from '@sushiswap/ui'
+import React from 'react'
 import { FC, useRef } from 'react'
 
 export type CurrencyInputBase = {
@@ -37,7 +38,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
         <div className="flex items-center justify-between gap-1">
           <input
             ref={amountInputRef}
-            defaultValue={value}
+            value={value || ''}
             type="text"
             placeholder="0.00"
             className="px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
@@ -47,7 +48,12 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
             {token?.symbol}
           </Typography>
         </div>
-        {bottomPanel}
+        {bottomPanel &&
+          React.cloneElement(
+            bottomPanel,
+            { ...bottomPanel.props, onChange: bottomPanel.props.onChange ?? onChange },
+            bottomPanel.props.children
+          )}
       </div>
       {helperTextPanel}
     </>

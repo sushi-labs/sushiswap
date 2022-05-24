@@ -58,7 +58,7 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.DatetimeLocal onChange={onChange} defaultValue={value} error={!!error?.message} />
+                <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
                 <Form.Error message={error?.message} />
               </>
             )
@@ -72,7 +72,7 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.Address placeholder="0x..." onChange={onChange} defaultValue={value} error={!!error?.message} />
+                <Input.Address placeholder="0x..." onChange={onChange} value={value} error={!!error?.message} />
                 <Form.Error message={error?.message} />
               </>
             )

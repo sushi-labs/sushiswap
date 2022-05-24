@@ -3,9 +3,9 @@ import React, { FC, forwardRef } from 'react'
 
 import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
 
-export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as' | 'onChange'> & {
-  error: boolean
-  value: string
+export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as' | 'onChange' | 'value'> & {
+  error?: boolean
+  value: string | undefined
   onChange(x: string): void
 }
 
@@ -30,7 +30,7 @@ export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressPro
           ref={ref}
           title={title}
           placeholder={placeholder}
-          value={value}
+          value={value || ''}
           type="text"
           className={classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)}
           onChange={(event) => onChange && onChange(event.target.value.replace(matchSpaces, ''))}

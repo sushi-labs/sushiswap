@@ -1,14 +1,15 @@
 import { AddressZero } from '@ethersproject/constants'
+import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import StreamProgress from 'features/stream/StreamProgress'
 import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
@@ -21,6 +22,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
   const balance = useStreamBalance(stream?.id, stream?.token)
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
@@ -44,7 +46,13 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
     try {
       const data = await writeAsync({
-        args: [BigNumber.from(stream.id), BigNumber.from(amount.quotient.toString()), stream.recipient.id, false, '0x'],
+        args: [
+          BigNumber.from(stream.id),
+          BigNumber.from(amount.quotient.toString()),
+          stream.recipient.id,
+          fundSource === FundSource.BENTOBOX,
+          '0x',
+        ],
       })
 
       createToast({
@@ -57,9 +65,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     } catch (e: any) {
       setError(e.message)
     }
-
-    setAmount(undefined)
-  }, [amount, stream, writeAsync])
+  }, [amount, fundSource, stream, writeAsync])
 
   const onInput = useCallback(
     (val: string) => {
@@ -87,13 +93,62 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <StreamProgress stream={stream} />
-          <CurrencyInput.Base
-            token={stream?.token}
-            onChange={onInput}
-            value={amount?.toExact()}
-            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-          />
+          <Form.Control label="Amount to withdraw">
+            <CurrencyInput.Base
+              token={stream?.token}
+              onChange={onInput}
+              value={amount?.toExact()}
+              error={amount && balance && amount.greaterThan(balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              helperTextPanel={
+                amount && balance && amount.greaterThan(balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
+              }
+            />
+          </Form.Control>
+          <Form.Control label="Receive funds in">
+            <div className="grid grid-cols-2 gap-5 items-center">
+              <div
+                onClick={() => setFundSource(FundSource.BENTOBOX)}
+                className={classNames(
+                  fundSource === FundSource.BENTOBOX
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Bentobox
+                </Typography>
+                {fundSource === FundSource.BENTOBOX && (
+                  <div className="absolute top-3 right-3 w-5 h-5">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setFundSource(FundSource.WALLET)}
+                className={classNames(
+                  fundSource === FundSource.WALLET
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Wallet
+                </Typography>
+                {fundSource === FundSource.WALLET && (
+                  <div className="absolute top-3 right-3 w-5 h-5">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </Form.Control>
           <Button
             variant="filled"
             color="gradient"
@@ -105,8 +160,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               'Enter an amount'
             ) : !stream?.token ? (
               'Invalid stream token'
-            ) : balance && amount.greaterThan(balance) ? (
-              'Not enough balance'
             ) : isWritePending ? (
               <Dots>Confirm Withdraw</Dots>
             ) : (

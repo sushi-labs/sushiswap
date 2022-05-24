@@ -86,7 +86,7 @@ export const createVestingSchema = yup.object({
         return schema
       })
       .required('This field is required'),
-    otherwise: yup.date().nullable(),
+    otherwise: yup.date().nullable().notRequired(),
   }),
   cliffAmount: yup.number().when('cliff', {
     is: (value: boolean) => value,

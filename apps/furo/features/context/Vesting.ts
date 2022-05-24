@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
@@ -13,8 +14,8 @@ export class Vesting extends Furo {
   public readonly stepDuration: number
   public readonly vestingType: VestingType
 
-  public constructor({ vesting }: { vesting: VestingRepresentation }) {
-    super({ furo: vesting })
+  public constructor({ vesting, chainId }: { vesting: VestingRepresentation; chainId: ChainId }) {
+    super({ furo: vesting, chainId })
     this.steps = parseInt(vesting.steps)
     this.cliffAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffAmount))
     this.stepAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.stepAmount))

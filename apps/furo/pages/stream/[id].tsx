@@ -10,12 +10,11 @@ import { Stream, StreamRepresentation, TransactionRepresentation } from 'feature
 import CancelStreamModal from 'features/CancelStreamModal'
 import FuroTimer from 'features/FuroTimer'
 import HistoryPopover from 'features/HistoryPopover'
-import LinkPopover from 'features/LinkPopover'
 import BalanceChart from 'features/stream/BalanceChart'
 import StreamDetailsPopover from 'features/stream/StreamDetailsPopover'
+import WithdrawModal from 'features/stream/WithdrawModal'
 import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
-import WithdrawModal from 'features/WithdrawModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
 import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -77,8 +76,8 @@ const _Streams: FC = () => {
   )
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
-    () => (streamRepresentation ? new Stream({ stream: streamRepresentation }) : undefined),
-    [streamRepresentation]
+    () => (streamRepresentation ? new Stream({ stream: streamRepresentation, chainId }) : undefined),
+    [chainId, streamRepresentation]
   )
 
   console.log(streamRepresentation)
@@ -146,7 +145,6 @@ const _Streams: FC = () => {
           </div>
         </div>
         <div className="flex items-end justify-center gap-2">
-          <LinkPopover furo={stream} />
           <StreamDetailsPopover stream={stream} />
           <HistoryPopover transactionRepresentations={transactions} />
         </div>
