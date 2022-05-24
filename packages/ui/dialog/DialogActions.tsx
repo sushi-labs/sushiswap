@@ -1,5 +1,5 @@
+import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
-import { classNames } from '../lib/classNames'
 
 export interface DialogActionProps {
   className?: string

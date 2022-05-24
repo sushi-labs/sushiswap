@@ -1,4 +1,8 @@
-node_modules
 .next
-out
-build
+dist
+
+.graphclient
+generated
+typechain
+
+node_modules

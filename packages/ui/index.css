@@ -1,8 +1,12 @@
 @tailwind base;
+
+@import '@fontsource/inter/index.css';
+
 @tailwind components;
 @tailwind utilities;
 
 @import "./variables.css";
+@import "./button/Button.css";
 
 *,
 *:before,
@@ -37,3 +41,22 @@ body {
   color: var(--color);
   overscroll-behavior-x: none;
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+

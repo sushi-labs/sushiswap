@@ -1,28 +1,38 @@
-import { ExtractProps } from '../types'
 import { Menu as HeadlessMenu } from '@headlessui/react'
-import { FC, forwardRef } from 'react'
-import { classNames } from '../lib/classNames'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react/outline'
+import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
+
+import { ExtractProps } from '../types'
+import { Typography } from '../typography/Typography'
 
 export type MenuButton = ExtractProps<typeof HeadlessMenu.Button> & {
-  className?: string
+  children?: ReactNode
+  standalone?: boolean
 }
 
-export const MenuButton: FC<MenuButton> = forwardRef<HTMLDivElement, MenuButton>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div ref={ref}>
-        <HeadlessMenu.Button
-          {...props}
-          className={classNames(
-            className,
-            'inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500',
-          )}
-        >
-          {children}
-          <ChevronDownIcon className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
-        </HeadlessMenu.Button>
-      </div>
-    )
-  },
-)
+export const MenuButton: FC<MenuButton> = forwardRef(({ className, children, standalone, ...props }, ref) => {
+  return React.createElement(
+    standalone ? 'div' : HeadlessMenu.Button,
+    {
+      ...props,
+      ref,
+      className: classNames(
+        'relative w-full cursor-pointer rounded-xl bg-slate-900 hover:bg-slate-800 focus:bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
+        className,
+      ),
+    },
+    <>
+      <Typography
+        variant="sm"
+        weight={children ? 700 : 400}
+        className={classNames(children ? '' : 'text-slate-600', 'block truncate')}
+      >
+        {children}
+      </Typography>
+      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+        <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+      </span>
+    </>,
+  )
+})

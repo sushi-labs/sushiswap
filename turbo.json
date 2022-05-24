@@ -1,16 +1,28 @@
 {
   "pipeline": {
+    "validate": {
+      "cache": false
+    },
     "generate": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "^build",
+        ".graphclient/**", 
+        "typechain"
+      ],
       "cache": false
     },
     "build": {
       "outputs": [
-        "dist/**",
-        ".next/**"
+        ".next/**",
+        "dist/**"
       ],
       "dependsOn": [
         "^build",
-        "^generate"
+        "^generate",
+        "generate"
       ]
     },
     "test": {
@@ -28,22 +40,33 @@
       ]  
     },
     "dev": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
       "cache": false
     },
     "clean": {
       "cache": false
+    },
+    "dao#build": {
+      "dependsOn": [
+        "^build",
+        "generate",
+        "$REDIS_PATH"
+      ],
+      "outputs": [".next/**"]
     },
     "root#build": {
       "dependsOn": [
         "^build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
-        "$DOCS_URL"
+        "$DOCS_URL",
+        "$FURO_URL",
+        "$LANDING_URL"
       ],
       "outputs": [".next/**"]
-    },
-    "analytics#generate": {
-      "outputs": [".graphclient/**"]
     }
   }
 }

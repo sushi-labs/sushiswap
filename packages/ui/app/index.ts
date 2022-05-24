@@ -1,5 +1,15 @@
-import Header from './Header'
-import Shell from './Shell'
-import Nav from './Nav'
+import Footer, { FooterProps } from './Footer'
+import Header, { HeaderProps } from './Header'
+import Main, { MainProps } from './Main'
+import Nav, { NavProps } from './Nav'
+import Shell, { ShellProps } from './Shell'
 
-export const App = { Header, Shell, Nav }
+export type AppProps = {
+  Header: HeaderProps
+  Shell: ShellProps
+  Nav: NavProps
+  Main: MainProps
+  Footer: FooterProps
+}
+
+export const App = { Header, Shell, Nav, Main, Footer }

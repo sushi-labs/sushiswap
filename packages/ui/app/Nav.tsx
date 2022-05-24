@@ -1,5 +1,7 @@
-import { FC } from 'react'
+export interface NavProps extends React.HTMLProps<HTMLElement> {}
 
-const Nav: FC = ({ children }) => <nav>{children}</nav>
+export function Nav({ children, className }: NavProps): JSX.Element {
+  return <nav className={className}>{children}</nav>
+}
 
 export default Nav

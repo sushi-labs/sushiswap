@@ -1,5 +1,6 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
+
 import { MAX_SAFE_INTEGER, ONE, TWO, ZERO } from '..'
 
 /**

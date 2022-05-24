@@ -1,8 +1,9 @@
-import { FC, forwardRef } from 'react'
-import { classNames } from '../lib/classNames'
+import classNames from 'classnames'
+import React, { FC, forwardRef } from 'react'
 
 export interface DialogContentProps {
   className?: string
+  children?: React.ReactNode
 }
 
 const DialogContent: FC<DialogContentProps> = forwardRef<HTMLDivElement, DialogContentProps>(
@@ -12,7 +13,7 @@ const DialogContent: FC<DialogContentProps> = forwardRef<HTMLDivElement, DialogC
         ref={ref}
         className={classNames(
           className,
-          'space-y-3 inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform ring-1 ring-slate-900/5 bg-white dark:bg-slate-800 shadow-xl rounded-2xl',
+          'space-y-3 inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-slate-900 shadow-xl rounded-2xl',
         )}
       >
         {children}

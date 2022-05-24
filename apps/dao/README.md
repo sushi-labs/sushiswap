@@ -1,19 +1,7 @@
-## Dao
+# Dao
 
-Dao app
-
-- [x] Init
-- [ ] List multisigs across networks
-    - [ ] Name (Ethereum Treasury, Sushi Operations, Shoyu Operations etc...)
-    - [ ] Address
-    - [ ] Threshold 
-        - if threshold is unexpected negative color
-    - [ ] Expected Signers
-        - by name
-    - [ ] Unexpected Signers
-        - by name if previously known, address if not
-        - negative color
+First time installation, see [DEVELOPMENT.md](./docs/DEVELOPMENT.md)
 
 ## Refs
 
-- https://gnosis.github.io/safe-react-gateway-sdk/modules.html#SafeInfo
+- https://safe-transaction.gnosis.io/

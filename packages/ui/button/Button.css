@@ -1,0 +1,65 @@
+@tailwind components;
+
+@layer components {
+    .btn {
+        @apply font-bold flex hover:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer text-slate-100
+    }
+
+    .btn-disabled {
+        @apply disabled:cursor-not-allowed disabled:opacity-40 ring-0 !important
+    }
+
+    .btn-filled {
+
+    }
+
+    .btn-outlined {
+        @apply border-none hover:ring-2
+    }
+
+    .btn-red {
+        @apply bg-red ring-red-700
+    }
+
+    .btn-pink {
+        @apply bg-pink ring-blue-700
+    }
+
+    .btn-blue {
+        @apply bg-blue ring-blue-700
+    }
+
+    .btn-purple {
+        @apply bg-purple ring-purple-700
+    }
+
+    .btn-gradient {
+        @apply bg-gradient-to-r hover:ring-4 ring-slate-600 ring-purple/30 from-blue to-pink focus:border-blue-700
+    }
+
+    .btn-gray {
+        @apply bg-slate-700 ring-slate-600
+    }
+
+    .btn-xs {
+        @apply px-2 h-[28px] text-xs
+    }
+
+    .btn-sm {
+        @apply px-3 h-[36px] text-sm rounded-lg
+    }
+
+    .btn-default {
+        @apply px-3 h-[44px] text-sm
+    }
+
+    .btn-md {
+        @apply px-4 h-[52px]
+    }
+
+    .btn-lg {
+        @apply px-6 h-[60px]
+    }
+}
+
+

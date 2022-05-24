@@ -1,29 +1,40 @@
 import { Listbox } from '@headlessui/react'
-import { FC, forwardRef, MutableRefObject } from 'react'
+import { SelectorIcon } from '@heroicons/react/outline'
+import classNames from 'classnames'
+import React, { FC, forwardRef, ReactNode } from 'react'
+
 import { ExtractProps } from '../types'
-import { SelectorIcon } from '@heroicons/react/solid'
-import { classNames } from '../lib/classNames'
+import { Typography } from '../typography/Typography'
 
-export type SelectButtonProps = ExtractProps<typeof Listbox.Label> & {}
+export type SelectButtonProps = ExtractProps<typeof Listbox.Button> & {
+  children?: ReactNode
+  standalone?: boolean
+}
 
-const SelectButton: FC<SelectButtonProps> = forwardRef<MutableRefObject<HTMLDivElement>, SelectButtonProps>(
-  ({ children, ...props }, ref) => {
-    return (
-      <Listbox.Button
-        {...props}
-        ref={ref}
-        className={classNames(
-          props.className,
-          'dark:bg-slate-700 bg-white relative w-full border border-slate-300 dark:border-slate-700 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
-        )}
+const SelectButton: FC<SelectButtonProps> = forwardRef(({ className, children, standalone, ...props }, ref) => {
+  return React.createElement(
+    standalone ? 'div' : Listbox.Button,
+    {
+      ...props,
+      ref,
+      className: classNames(
+        'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md',
+        className,
+      ),
+    },
+    <>
+      <Typography
+        variant="sm"
+        weight={children ? 700 : 400}
+        className={classNames(children ? '' : 'text-slate-600', 'block truncate')}
       >
         {children}
-        <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <SelectorIcon className="w-5 h-5 text-slate-400" aria-hidden="true" />
-        </span>
-      </Listbox.Button>
-    )
-  },
-)
+      </Typography>
+      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+        <SelectorIcon className="h-5 w-5" aria-hidden="true" />
+      </span>
+    </>,
+  )
+})
 
 export default SelectButton

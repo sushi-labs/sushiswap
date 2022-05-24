@@ -11,8 +11,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else {
         res.status(401).json({ success: false })
       }
-    } catch (err) {
-      res.status(500).json({ statusCode: 500, message: err.message })
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ statusCode: 500, message: error.message })
+      }
     }
   } else {
     res.setHeader('Allow', 'POST')

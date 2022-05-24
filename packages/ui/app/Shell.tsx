@@ -1,5 +1,9 @@
-import { FC } from 'react'
+export interface ShellProps {
+  children?: React.ReactNode
+}
 
-const Shell: FC = ({ children }) => <div>{children}</div>
+export function Shell({ children }: ShellProps): JSX.Element {
+  return <>{children}</>
+}
 
 export default Shell

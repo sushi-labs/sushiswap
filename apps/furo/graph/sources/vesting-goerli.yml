@@ -1,0 +1,11 @@
+name: furovesting_goerli
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-goerli
+transforms:
+  - prefix:
+      value: GOERLI_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+      ignore:
+        - _SubgraphErrorPolicy_

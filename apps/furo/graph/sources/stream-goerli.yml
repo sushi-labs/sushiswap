@@ -1,0 +1,11 @@
+name: furostream_goerli
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-goerli
+transforms:
+  - prefix:
+      value: GOERLI_STREAM_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
