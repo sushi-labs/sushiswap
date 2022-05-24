@@ -29,7 +29,7 @@ export abstract class Furo {
     this.withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
-    this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
+    this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp ?? furo.startedAt) * 1000)
     this.status = this.setStatus(FuroStatus[furo.status])
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
@@ -95,7 +95,7 @@ export abstract class Furo {
     // to trigger re-renders on balance updates
     if (this.balance?.greaterThan(ZERO)) return new Percent(this.streamedAmount.quotient, this.amount.quotient)
 
-    const now = this.status !== FuroStatus.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
+    const now = this.status === FuroStatus.CANCELLED ? this.modifiedAtTimestamp.getTime() : Date.now()
     const total = this.endTime.getTime() - this.startTime.getTime()
     const current = now - this.startTime.getTime()
     console.log(current, total)
