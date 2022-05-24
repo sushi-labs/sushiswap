@@ -58,6 +58,15 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         } from your stream`,
         promise: data.wait(),
       })
+
+      console.log('hi')
+      // Optimistic response
+      data.wait().then(() => {
+        if (vesting && amount) {
+          vesting.withdrawnAmount = vesting.withdrawnAmount.add(amount)
+          vesting.balance = vesting.balance.subtract(amount)
+        }
+      })
     } catch (e: any) {
       setError(e.message)
 

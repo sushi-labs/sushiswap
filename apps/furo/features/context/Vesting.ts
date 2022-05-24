@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId, Percent } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
@@ -73,5 +73,29 @@ export class Vesting extends Furo {
       return { days, hours, minutes, seconds }
     }
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
+
+  public get streamedAmount(): Amount<Token> {
+    if (!this.isStarted) return Amount.fromRawAmount(this.token, '0')
+
+    let sum = Amount.fromRawAmount(this.token, '0')
+    if (this.cliffDuration && Date.now() > this.startTime.getTime() + this.cliffDuration * 1000) {
+      sum = sum.add(this.cliffAmount)
+
+      const payouts = Math.floor(
+        (Date.now() - this.startTime.getTime() + this.cliffDuration * 1000) / (this.stepDuration * 1000)
+      )
+      sum = sum.add(this.stepAmount.multiply(payouts))
+    } else {
+      const payouts = Math.floor((Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000))
+      sum = sum.add(this.stepAmount.multiply(payouts))
+    }
+
+    return sum
+  }
+
+  public get streamedPercentage(): Percent {
+    if (!this.isStarted) return new Percent(0, 100)
+    return new Percent(this.streamedAmount.quotient, this.amount.quotient)
   }
 }

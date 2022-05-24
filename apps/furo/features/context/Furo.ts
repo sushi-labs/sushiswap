@@ -1,18 +1,19 @@
 import { ChainId } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
-  private _balance: Amount<Token>
+  public _balance: Amount<Token>
+  public _withdrawnAmount: Amount<Token>
+
   public readonly id: string
   public readonly type: FuroType
   public readonly status: FuroStatus
   public readonly amount: Amount<Token>
-  public readonly withdrawnAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
@@ -26,15 +27,24 @@ export abstract class Furo {
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
     this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.totalAmount))
-    this.withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
-    this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp ?? furo.startedAt) * 1000)
+    this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
     this.status = this.setStatus(FuroStatus[furo.status])
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
+
+    this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this._balance = Amount.fromRawAmount(this.token, '0')
+  }
+
+  public get withdrawnAmount() {
+    return this._withdrawnAmount
+  }
+
+  public set withdrawnAmount(amount: Amount<Token>) {
+    this._withdrawnAmount = amount
   }
 
   public get balance() {
@@ -88,42 +98,16 @@ export abstract class Furo {
     return { days, hours, minutes, seconds }
   }
 
-  public get streamedPercentage(): Percent {
-    if (!this.isStarted) return new Percent(0, 100)
-
-    // If balance is available calculate streamedPercentage like this
-    // to trigger re-renders on balance updates
-    if (this.balance?.greaterThan(ZERO)) return new Percent(this.streamedAmount.quotient, this.amount.quotient)
-
-    const now = this.status === FuroStatus.CANCELLED ? this.modifiedAtTimestamp.getTime() : Date.now()
-    const total = this.endTime.getTime() - this.startTime.getTime()
-    const current = now - this.startTime.getTime()
-    console.log(current, total)
-
-    return new Percent(current, total)
-  }
-
   public get withdrawnPercentage(): Percent {
     if (this.status === FuroStatus.CANCELLED) return new Percent(100, 100)
-    if (this.withdrawnAmount.toExact() === '0') return new Percent(0, 100)
-    return new Percent(this.withdrawnAmount.quotient, this.amount.quotient)
-  }
-
-  public get streamedAmount(): Amount<Token> {
-    if (!this.isStarted) return Amount.fromRawAmount(this.token, '0')
-
-    // If balance is available calculate streamedAmount like this
-    // to trigger re-renders on balance updates
-    if (this.balance?.greaterThan(ZERO)) return this.balance.add(this.withdrawnAmount)
-
-    // Otherwise, use subgraph only
-    return this.amount.multiply(this.streamedPercentage)
+    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
+    return new Percent(this._withdrawnAmount.quotient, this.amount.quotient)
   }
 
   public get remainingAmount(): Amount<Token> {
     if (!this.isStarted) return this.amount
     if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, '0')
-    return this.amount.subtract(this.withdrawnAmount).subtract(this.balance)
+    return this.amount.subtract(this._withdrawnAmount).subtract(this._balance)
   }
 
   public get isStarted(): boolean {

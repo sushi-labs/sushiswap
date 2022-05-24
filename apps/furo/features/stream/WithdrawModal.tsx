@@ -61,6 +61,14 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         } from your stream`,
         promise: data.wait(),
       })
+
+      // Optimistic response
+      data.wait().then(() => {
+        if (stream && amount) {
+          stream.withdrawnAmount = stream.withdrawnAmount.add(amount)
+          stream.balance = stream.balance.subtract(amount)
+        }
+      })
     } catch (e: any) {
       setError(e.message)
     }

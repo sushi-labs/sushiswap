@@ -67,7 +67,7 @@ const _VestingPage: FC = () => {
 
   const vesting = useMemo(
     () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation, chainId }) : undefined),
-    [vestingRepresentation]
+    [chainId, vestingRepresentation]
   )
 
   const balance = useStreamBalance(vesting?.id, vesting?.token)
