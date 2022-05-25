@@ -10,8 +10,8 @@ import { useMemo } from 'react'
 import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
 
 export const VESTING_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0x09464506e15c72D9B3dc3272Fc00757982E99E9c',
-  [ChainId.GÖRLI]: '0xb449f33126a2b17526b48a962c15da0dd2d1fb44',
+  [ChainId.KOVAN]: '0x359E322451EaF32e793C557Fc2A31B5fb45FF2dd',
+  [ChainId.GÖRLI]: '0x344b7c97f1142d6743d9e5C38E81eCe46eAb68BA',
 }
 
 export function useFuroVestingContract(): Contract | null {
