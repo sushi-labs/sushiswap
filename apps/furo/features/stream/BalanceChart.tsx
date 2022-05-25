@@ -61,7 +61,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
           height={width}
           strokeDasharray={`${dashArray({
             radius: outerRadius,
-            streamedPct: Number(stream?.streamedPercentage.divide(100).toSignificant(4)),
+            streamedPct: Number(stream?.streamedPercentage?.divide(100).toSignificant(4)),
           })}, ${Math.PI * outerRadius * 2}`}
           fill="none"
           strokeWidth={16}
@@ -69,7 +69,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
           strokeDashoffset={
             dashArray({
               radius: outerRadius,
-              streamedPct: Number(stream?.streamedPercentage.divide(100).toSignificant(4)),
+              streamedPct: Number(stream?.streamedPercentage?.divide(100).toSignificant(4)),
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
@@ -157,7 +157,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             dy={10}
             className="text-slate-50"
           >
-            {stream?.balance.toSignificant(6).split('.')[0]}
+            {stream?.balance?.toSignificant(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -166,7 +166,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
               dx={2}
               className="text-slate-300"
             >
-              .{stream?.balance.greaterThan(ZERO) ? stream?.balance.toSignificant(6).split('.')[1] : '000000'}
+              .{stream?.balance?.greaterThan(ZERO) ? stream?.balance.toSignificant(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -262,7 +262,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             dy={10}
             className="text-slate-50"
           >
-            {stream?.streamedAmount.toFixed(6).split('.')[0]}
+            {stream?.streamedAmount?.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"

@@ -1,3 +1,4 @@
+import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
@@ -17,6 +18,7 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
+  balances: Record<string, Amount<Token>> | undefined
   globalFilter: any
   setGlobalFilter: any
   streams: StreamRepresentation[]
@@ -46,11 +48,11 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
         <ProgressBar
           showLabel={false}
           className="min-w-[100px] max-w-[100px] h-3"
-          progress={props.getValue().divide(100).toSignificant(4)}
+          progress={props.getValue()?.divide(100).toSignificant(4)}
           color={ProgressColor.GRADIENT}
         />
         <Typography variant="sm" weight={700} className="text-slate-200">
-          {props.getValue().toSignificant(4)}%
+          {props.getValue()?.toSignificant(4)}%
         </Typography>
       </div>
     ),
@@ -161,6 +163,14 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     globalFilterFn: 'showActiveOnly',
     onGlobalFilterChange: props.setGlobalFilter,
   })
+
+  useMemo(() => {
+    data.forEach((stream) => {
+      if (stream instanceof Stream && !!props.balances?.[stream.id]) {
+        stream.balance = props.balances[stream.id]
+      }
+    }, [])
+  }, [data, props.balances])
 
   return (
     <Table.container>

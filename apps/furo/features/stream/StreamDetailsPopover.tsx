@@ -142,7 +142,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Streamed
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-blue-300">
-                  {stream?.streamedPercentage.toSignificant(4)}% of total
+                  {stream?.streamedPercentage?.toSignificant(4)}% of total
                 </Typography>
                 <Typography variant="h2" className="flex items-center mt-3 text-blue-200" weight={700}>
                   {stream?.streamedAmount?.toSignificant(6)}

@@ -82,12 +82,12 @@ const _Streams: FC = () => {
 
   const balance = useStreamBalance(stream?.id, stream?.token)
 
+  if (!isMounted) return null
+
   // Sync balance to Stream entity
   if (stream && balance) {
     stream.balance = balance
   }
-
-  if (!isMounted) return null
 
   return (
     <Layout
@@ -125,7 +125,9 @@ const _Streams: FC = () => {
               onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
             >
               <ProgressBar
-                progress={stream ? stream.streamedPercentage.divide(100).toSignificant(4) : 0}
+                progress={
+                  stream && stream.streamedPercentage ? stream.streamedPercentage.divide(100).toSignificant(4) : 0
+                }
                 color={ProgressColor.BLUE}
                 showLabel={false}
               />

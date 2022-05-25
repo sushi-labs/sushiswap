@@ -62,6 +62,8 @@ export default function Index() {
     },
   })
 
+  exampleStream.balance = isMounted ? Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250') : undefined
+
   return (
     <Layout
       className="my-40"
@@ -145,12 +147,7 @@ export default function Index() {
           </div>
         </div>
         <div className="scale-[0.9] hidden lg:block flex justify-center">
-          <BalanceChart
-            stream={exampleStream}
-            hover={hover}
-            setHover={setHover}
-            balance={Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')}
-          />
+          <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />
         </div>
       </div>
     </Layout>

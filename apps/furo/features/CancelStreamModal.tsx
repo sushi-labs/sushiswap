@@ -99,7 +99,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
           <Typography variant="xs" weight={400} className="text-center italic text-slate-400">
             This will send the remaining amount of <br />{' '}
             <span className="font-bold text-slate-200">
-              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount.currency.symbol}
+              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to your{' '}
             <span className="font-bold text-slate-200">

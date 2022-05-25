@@ -62,11 +62,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         promise: data.wait(),
       })
 
-      // Optimistic response
-      data.wait().then(() => {
+      // Optimistic response (after 0 confirmation)
+      data.wait(1).then(() => {
         if (stream && amount) {
           stream.withdrawnAmount = stream.withdrawnAmount.add(amount)
-          stream.balance = stream.balance.subtract(amount)
+          stream.balance = stream.balance?.subtract(amount)
         }
       })
     } catch (e: any) {
@@ -90,7 +90,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={(account?.address && !stream?.canWithdraw(account.address)) || !stream?.balance.greaterThan(ZERO)}
+        disabled={(account?.address && !stream?.canWithdraw(account.address)) || !stream?.balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}

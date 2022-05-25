@@ -3,7 +3,7 @@ import React, { FC, forwardRef } from 'react'
 
 import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
 
-export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as' | 'onChange' | 'value'> & {
+export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'as' | 'onChange' | 'value'> & {
   error?: boolean
   value: string | undefined
   onChange(x: string): void

@@ -75,7 +75,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
             <span className="font-bold text-slate-200">
-              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount.currency.symbol}
+              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to the entered recipient.
             <p className="mt-2">

@@ -5,10 +5,9 @@ import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
+import { Dashboard } from 'features'
 import Link from 'next/link'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
-
-import { Dashboard } from './users/[address]'
 
 export default function DashboardPage() {
   const isMounted = useIsMounted()

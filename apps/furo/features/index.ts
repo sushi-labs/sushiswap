@@ -1,4 +1,5 @@
 export * from './context'
+export * from './Dashboard'
 export * from './FuroTable'
 export * from './FuroTimer'
 export * from './Header'
