@@ -1,0 +1,25 @@
+name: kashi-kovan
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/kashi-kovan
+transforms:
+  # - filterSchema: #TODO: filter
+  #     mode: bare
+  #     filters:
+  #       - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot, PoolDaySnapshot, PoolHourSnapshot, TokenDaySnapshot, TokenHourSnapshot, PoolSnapshot, TokenSnapshot, MasterDeployer}
+  - prefix:
+      value: KOVAN_KASHI_
+      includeRootOperations: true
+      ignore: 
+        - _SubgraphErrorPolicy_
+  # Teach Type Merging how to resolve this entity
+  - rename:
+      - from:
+          type: KOVAN_KASHI_KashiPair
+        to:
+          type: Token
+  - typeMerging:
+      queryFields:
+        - queryFieldName: KOVAN_KASHI_kashiPairs
+          keyField: id
+          keyArg: 'where.id_in'

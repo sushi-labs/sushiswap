@@ -3,30 +3,23 @@ handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident
 transforms:
+  - filterSchema:
+      mode: bare
+      filters:
+        - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot, PoolDaySnapshot, PoolHourSnapshot, TokenDaySnapshot, TokenHourSnapshot, PoolSnapshot, TokenSnapshot, MasterDeployer}
   - prefix:
       value: KOVAN_TRIDENT_
       includeRootOperations: true
-      # includeTypes: true
-      # includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_
-  # - filterSchema:
-  #     mode: wrap
-  #     filters:
-  #       - Type.!{WhitelistedFactory, WhitelistedPool, ConstantProductPoolFactory, ConcentratedLiquidityPoolFactory, ConcentratedLiquidityPool, ConcentratedLiquidityPoolKpi, HybridPoolFactory, HybridPoolAsset, HybridPool, IndexPoolFactory, IndexPool, Transaction, Mint, Burn, Swap, Collect, FactoryHourSnapshot, FactoryDaySnapshot, Rebase, User, LiquidityPosition, Factory, FactoryKpi, FactorySnapshot, PoolDaySnapshot, PoolHourSnapshot, TokenDaySnapshot, TokenHourSnapshot, PoolSnapshot, TokenSnapshot, MasterDeployer}
+  # Teach Type Merging how to resolve this entity
   - rename:
       - from:
           type: KOVAN_TRIDENT_ConstantProductPool
         to:
           type: Token
-      # - from:
-      #     type: KOVAN_TRIDENT_Token
-      #   to:
-      #     type: TokenIsh
-      # Teach Type Merging how to resolve this entity
   - typeMerging:
       queryFields:
         - queryFieldName: KOVAN_TRIDENT_pools
           keyField: id
           keyArg: 'where.id_in'
-          # keyArg: id
