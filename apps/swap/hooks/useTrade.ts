@@ -12,7 +12,6 @@ import {
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 
 import { PoolState, useGetAllExistedPools } from './useConstantProductPools'
@@ -51,7 +50,8 @@ export function useTrade(
 
   const data = useMemo(
     () => ({
-      gasPrice: parseUnits('1', 'gwei'),
+      gasPrice: BigNumber.from(1000000),
+      // gasPrice: parseUnits('1', 'wei'),
     }),
     []
   )
