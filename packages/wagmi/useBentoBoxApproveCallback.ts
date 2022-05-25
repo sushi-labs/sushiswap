@@ -1,13 +1,13 @@
 import { splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import { ChainId } from '@sushiswap/chain'
-import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Signature } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
 
 import { ApprovalState } from './useApproveCallback'
-import { BENTOBOX_INTERFACE } from './useBentoBoxContract'
+import { BENTOBOX_ADDRESS } from './useBentoBoxContract'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback(
@@ -22,7 +22,7 @@ export function useBentoBoxApproveCallback(
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
       addressOrName: _chainId ? BENTOBOX_ADDRESS[_chainId] : AddressZero,
-      contractInterface: BENTOBOX_INTERFACE,
+      contractInterface: bentoBoxArtifact.abi,
     },
     'masterContractApproved',
     {
@@ -33,7 +33,7 @@ export function useBentoBoxApproveCallback(
   const { error, refetch: getNonces } = useContractRead(
     {
       addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
-      contractInterface: BENTOBOX_INTERFACE,
+      contractInterface: bentoBoxArtifact.abi,
     },
     'nonces',
     {
@@ -64,6 +64,7 @@ export function useBentoBoxApproveCallback(
     }
 
     const { data: nonces } = await getNonces()
+
     const data = await signTypedDataAsync({
       domain: {
         name: 'BentoBox V1',

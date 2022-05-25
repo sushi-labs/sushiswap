@@ -17,7 +17,7 @@ import { TokenApproveButton } from './TokenApproveButton'
 
 interface Props {
   components: ReactElement<ComponentsWrapper<any>>
-  render({ approved }: { approved: boolean }): ReactNode
+  render({ approved, isUnknown }: { approved: boolean; isUnknown: boolean }): ReactNode
 }
 
 const Controller: FC<Props> = ({ components, render }) => {
@@ -43,10 +43,16 @@ const Controller: FC<Props> = ({ components, render }) => {
     )
   }, [components, handleUpdate])
 
+  const isUnknown = refs.current.some((el) => el === ApprovalState.UNKNOWN)
+  const approved = refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING)
+
   return (
     <>
       {children}
-      {render({ approved: refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) })}
+      {render({
+        isUnknown,
+        approved,
+      })}
     </>
   )
 }

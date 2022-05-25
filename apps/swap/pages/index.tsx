@@ -1,9 +1,10 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
-import { ChevronDownIcon, CogIcon } from '@heroicons/react/outline'
+import { CogIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/solid'
 import chain, { ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, tryParseAmount, USDT } from '@sushiswap/currency'
+import { Amount, Currency, Native, Price, tryParseAmount, USDT } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
@@ -14,6 +15,7 @@ import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
 import { useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
 import { useBentoBoxRebase } from 'hooks/useBentoBoxRebases'
+import Link from 'next/link'
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SushiXSwap } from 'SushiXSwap'
 import { useAccount, useSigner } from 'wagmi'
@@ -24,7 +26,7 @@ const defaultConfig = {
     title: undefined,
   },
   classes: {
-    root: 'flex flex-col max-w-sm mx-auto p-0.5 bg-slate-700 rounded-xl relative shadow-md shadow-slate-900',
+    root: 'flex flex-col max-w-sm mx-auto bg-slate-700 p-0.5 rounded-xl relative shadow-md shadow-black/10',
     title: '',
   },
 }
@@ -650,6 +652,11 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     srcUseBentoBox,
   ])
 
+  const price =
+    srcAmount && dstMinimumAmountOut
+      ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
+      : undefined
+
   // exec
   if (!isMounted) return null
 
@@ -668,7 +675,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           <div aria-hidden className="flex flex-col">
             <div className="flex flex-row justify-between">
               <button
-                className="flex items-center gap-1 py-1 text-xs text-slate-400 hover:text-slate-300"
+                className="flex items-center gap-1 py-1 text-xs font-bold text-slate-400 hover:text-slate-300"
                 onClick={() => setSrcSelectorOpen(true)}
               >
                 {chain[srcChainId].name} <ChevronDownIcon width={16} height={16} />
@@ -685,7 +692,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               <div className="flex items-center">
                 <Input.Numeric
                   ref={inputRef}
-                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
+                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-2xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
                   value={srcTypedAmount}
                   title="Amount In"
                   onUserInput={(value) => setSrcTypedAmount(value)}
@@ -696,16 +703,18 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               </div>
             </div>
             <div className="flex flex-row justify-between">
-              <div className="py-1 text-xs select-none text-slate-400">-</div>
+              <Typography variant="xs" className="py-1 select-none text-slate-400">
+                -
+              </Typography>
               <button className="py-1 text-xs text-slate-400 hover:text-slate-300">MAX</button>
             </div>
           </div>
         </div>
-        <div className="p-3 bg-slate-800 rounded-xl ">
+        <div className="p-3 pb-2 bg-slate-800 rounded-xl ">
           <div className="flex flex-col">
             <div className="flex flex-row justify-between">
               <button
-                className="flex items-center gap-1 py-1 text-xs text-slate-500 hover:text-slate-300"
+                className="flex items-center gap-1 py-1 text-xs font-bold text-slate-500 hover:text-slate-300"
                 onClick={() => setSrcSelectorOpen(true)}
               >
                 {chain[dstChainId].name} <ChevronDownIcon width={16} height={16} />
@@ -720,67 +729,76 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             <div className="flex flex-col">
               <div className="relative flex items-center">
                 <Input.Numeric
-                  className="flex-auto w-full px-0 py-2 overflow-hidden text-xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
+                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-2xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
                   value={dstTypedAmount}
                   title="Amount Out"
                   readOnly
                 />
-                <button className="flex items-center gap-1 py-2 text-xl text-slate-500 hover:text-slate-300">
+                <button className="font-bold flex items-center gap-1 py-2 text-xl text-slate-400 hover:text-slate-300 ">
                   {dstToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
               </div>
             </div>
           </div>
-          <div className="flex flex-row justify-between">
-            <div className="py-1 text-xs select-none text-slate-500">-</div>
+          <div className="pb-3 flex flex-row justify-between">
+            <Typography variant="xs" className="py-1 select-none text-slate-500">
+              -
+            </Typography>
             <button className="py-1 text-xs text-slate-500 hover:text-slate-300">MAX</button>
           </div>
-          <div className="py-2 text-xs text-slate-500">
-            {!srcAmount ? (
-              'Enter an amount'
-            ) : !dstTrade ? (
-              <Dots>Fetching best price</Dots>
-            ) : (
-              <div>
-                <div>
-                  {`1 ${srcToken.symbol} = ${srcTrade?.executionPrice.asFraction
-                    .multiply(dstTrade?.executionPrice)
-                    .toSignificant(4)} ${dstToken.symbol}`}
-                </div>
-              </div>
-            )}
-          </div>
-          <Approve
-            components={
-              <Approve.Components>
-                <Approve.Bentobox
-                  chainId={srcChainId}
-                  watch
-                  token={srcAmount?.currency}
-                  address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                  onSignature={setSignature}
-                />
-                <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
-              </Approve.Components>
-            }
-            render={({ approved }) => (
-              <Button
-                fullWidth
-                variant="filled"
-                color="gradient"
-                disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
-                onClick={execute}
-              >
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
-              </Button>
-            )}
-          />
 
-          <div className="flex gap-2 items-center justify-center cursor-pointer pointer-events-auto text-slate-400 group">
-            <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}
-            <Typography variant="xxs" className="py-1 text-slate-500 group-hover:text-slate-300 select-none">
-              Powered by <span className="font-bold">Sushi</span>
+          <div className="flex justify-between border-t border-slate-700/40">
+            <Typography variant="xs" className="cursor-pointer py-3">
+              Rate
             </Typography>
+            <Typography variant="xs" className="cursor-pointer py-3 hover:text-slate-300 text-slate-400">
+              {!srcAmount ? (
+                'Enter an amount'
+              ) : !dstTrade ? (
+                <Dots>Fetching best price</Dots>
+              ) : (
+                <>
+                  1 {price?.baseCurrency.symbol} = {price?.toSignificant(6)} {price?.quoteCurrency.symbol}
+                </>
+              )}
+            </Typography>
+          </div>
+
+          <div className="flex gap-2">
+            <Approve
+              components={
+                <Approve.Components className="flex gap-4">
+                  <Approve.Bentobox
+                    fullWidth
+                    chainId={srcChainId}
+                    watch
+                    token={srcAmount?.currency}
+                    address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                    onSignature={setSignature}
+                  />
+                  <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
+                </Approve.Components>
+              }
+              render={({ approved }) => (
+                <Button
+                  fullWidth
+                  variant="filled"
+                  color="gradient"
+                  disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                  onClick={execute}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                </Button>
+              )}
+            />
+          </div>
+          <div className="mt-2 flex gap-2 items-center justify-center cursor-pointer pointer-events-auto text-slate-400 group">
+            <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}
+            <Link href="https://app.sushi.com" passHref={true}>
+              <a className="text-xs py-1 text-slate-500 group-hover:text-slate-300 select-none">
+                Powered by <span className="font-bold">Sushi</span>
+              </a>
+            </Link>
           </div>
         </div>
       </div>
