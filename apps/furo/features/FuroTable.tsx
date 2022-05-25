@@ -105,7 +105,11 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
     header: () => <div className="w-full text-left">From</div>,
     cell: (props) => (
       <Link href={getExplorerLink(tableProps.chainId, props.getValue(), 'address')} passHref={true}>
-        <a target="_blank" className="w-full text-left text-blue" onClick={(e) => e.stopPropagation()}>
+        <a
+          target="_blank"
+          className="w-full text-left text-blue hover:text-blue-200"
+          onClick={(e) => e.stopPropagation()}
+        >
           {shortenAddress(props.getValue() as string)}
         </a>
       </Link>

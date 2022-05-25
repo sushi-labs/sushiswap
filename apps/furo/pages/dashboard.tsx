@@ -1,7 +1,7 @@
 import { Menu as HeadlessMenu } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { useWalletState } from '@sushiswap/wagmi/useWalletState'
+import { useWalletState } from '@sushiswap/wagmi'
 import { Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
