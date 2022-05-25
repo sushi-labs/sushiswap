@@ -1,10 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
-import { useIsMounted } from '@sushiswap/hooks'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { useWalletState } from '@sushiswap/wagmi'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
+import { Overlay } from 'components/Overlay'
 import { ProgressBarCard } from 'components/ProgressBarCard'
 import { Stream, StreamRepresentation, TransactionRepresentation } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
@@ -22,6 +23,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { useAccount, useConnect } from 'wagmi'
 
 interface Props {
   fallback?: {
@@ -63,10 +65,12 @@ export enum BalanceChartHoverEnum {
 }
 
 const _Streams: FC = () => {
-  const isMounted = useIsMounted()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
+  const connect = useConnect()
+  const { data: account } = useAccount()
+  const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
   const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json())
@@ -80,14 +84,13 @@ const _Streams: FC = () => {
     [chainId, streamRepresentation]
   )
 
-  const balance = useStreamBalance(stream?.id, stream?.token)
-
-  if (!isMounted) return null
-
   // Sync balance to Stream entity
+  const balance = useStreamBalance(stream?.id, stream?.token)
   if (stream && balance) {
     stream.balance = balance
   }
+
+  if (connecting || reconnecting) return <Overlay />
 
   return (
     <Layout

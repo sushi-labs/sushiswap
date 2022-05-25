@@ -1,10 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
-import { useIsMounted } from '@sushiswap/hooks'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { useWalletState } from '@sushiswap/wagmi'
 import FUROVESTING_ABI from 'abis/FuroVesting.json'
 import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
+import { Overlay } from 'components/Overlay'
 import { FuroStatus, ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
@@ -21,6 +22,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { useAccount, useConnect } from 'wagmi'
 
 interface Props {
   fallback?: Record<string, any>
@@ -57,10 +59,12 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
 }
 
 const _VestingPage: FC = () => {
-  const isMounted = useIsMounted()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
+  const connect = useConnect()
+  const { data: account } = useAccount()
+  const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
   const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
   const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
@@ -71,14 +75,13 @@ const _VestingPage: FC = () => {
     [chainId, vestingRepresentation]
   )
 
-  const balance = useStreamBalance(vesting?.id, vesting?.token)
-
   // Sync balance to Vesting entity
+  const balance = useStreamBalance(vesting?.id, vesting?.token)
   if (vesting && balance) {
     vesting.balance = balance
   }
 
-  if (!isMounted) return null
+  if (connecting || reconnecting) return <Overlay />
 
   return (
     <Layout

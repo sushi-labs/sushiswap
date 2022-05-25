@@ -83,9 +83,6 @@ query KovanVesting($id: ID!) {
       decimals
     }
     status
-    schedule {
-      id
-    }
     recipient {
       id
     }
@@ -112,19 +109,6 @@ query KovanVestingTransactions($id: String) {
     }
     to {
       id
-    }
-  }
-}
-
-query KovanVestingSchedule($id: ID!) {
-  KOVAN_VESTING_vesting(id: $id) {
-    schedule {
-      periods(orderBy: time, first: 170) {
-        id
-        type
-        time
-        amount
-      }
     }
   }
 }

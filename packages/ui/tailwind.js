@@ -156,7 +156,7 @@ module.exports = {
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
         'spin-slow': 'spin 2s linear infinite',
-        blink: 'blink 0.25s infinite',
+        heartbeat: 'heartbeat 1.5s ease 1.5s infinite normal forwards',
       },
       keyframes: {
         ellipsis: {
@@ -164,10 +164,12 @@ module.exports = {
           '33%': { content: '".."' },
           '66%': { content: '"..."' },
         },
-        blink: {
-          '0%': { transform: 'scale(1)' },
-          '33%': { transform: 'scale(1.05)' },
-          '66%': { transform: 'scale(1.1)' },
+        heartbeat: {
+          '0%': { transform: 'scale(1)', transformOrigin: 'center center', animationTimingFunction: 'ease-out' },
+          '10%': { animationTimingFunction: 'ease-out', transform: 'scale(0.91)' },
+          '17%': { animationTimingFunction: 'ease-out', transform: 'scale(0.98)' },
+          '33%': { animationTimingFunction: 'ease-out', transform: 'scale(0.87)' },
+          '45%': { animationTimingFunction: 'ease-out', transform: 'scale(1)' },
         },
       },
     },
