@@ -8,14 +8,14 @@ const SUPPORTED_CHAINS = [ChainId.KOVAN]
 
 const isNetworkSupported = (chainId: number) => SUPPORTED_CHAINS.includes(chainId)
 
-export const getFarm = async (chainId: string, id: string): Promise<FarmRepresentation | undefined> => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return undefined
-  const sdk = getBuiltGraphSDK()
-  if (network === ChainId.KOVAN) {
-    return (await sdk.KovanOnsenFarm({ id })).KOVAN_ONSEN_incentive as FarmRepresentation
-  }
-}
+// export const getFarm = async (chainId: string, id: string): Promise<FarmRepresentation | undefined> => {
+//   const network = Number(chainId)
+//   if (!isNetworkSupported(network)) return undefined
+//   const sdk = getBuiltGraphSDK()
+//   if (network === ChainId.KOVAN) {
+//     return (await sdk.KovanOnsenFarm({ id })).KOVAN_ONSEN_incentive as FarmRepresentation
+//   }
+// }
 
 export const getFarms = async (chainId: string): Promise<FarmRepresentation[] | undefined> => {
   const network = Number(chainId)
