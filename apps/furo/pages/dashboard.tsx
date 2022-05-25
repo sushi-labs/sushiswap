@@ -1,7 +1,7 @@
 import { Menu as HeadlessMenu } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
+import { Dots, Loader, LogoLoader, Typography, WalletIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wallet-connector'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
@@ -15,7 +15,15 @@ export default function DashboardPage() {
   const { data: account } = useAccount()
   const connect = useConnect()
 
-  const { isConnecting, isConnected, pendingConnector, isReconnecting } = connect
+  const { isConnecting, isConnected, pendingConnector, isReconnecting, activeConnector } = connect
+
+  console.log({ isConnecting, isConnected, pendingConnector, isReconnecting, activeConnector })
+
+  return <LogoLoader size="48px" />
+
+  if (isConnected || isReconnecting || isConnecting) {
+    if (!account?.address) return <LogoLoader size={48} />
+  }
 
   if (isMounted && !!pendingConnector && isConnecting && !isReconnecting) {
     return (
@@ -42,10 +50,6 @@ export default function DashboardPage() {
         </div>
       </Layout>
     )
-  }
-
-  if (isConnected || isReconnecting || isConnecting) {
-    if (!account?.address) return <></>
   }
 
   // Return skeleton

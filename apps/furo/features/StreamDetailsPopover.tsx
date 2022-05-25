@@ -3,7 +3,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { NotepadIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { FuroStatus, Stream } from 'features/context'
+import { FuroStatus, Stream, Vesting } from 'features/context'
 import { getExplorerLink } from 'functions'
 import { FC, useState } from 'react'
 
@@ -15,7 +15,7 @@ interface StreamTimerState {
 }
 
 interface Props {
-  stream?: Stream
+  stream?: Stream | Vesting
 }
 
 const StreamDetailsPopover: FC<Props> = ({ stream }) => {

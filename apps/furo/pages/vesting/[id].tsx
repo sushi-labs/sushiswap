@@ -8,6 +8,7 @@ import Layout from 'components/Layout'
 import { FuroStatus, ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
+import StreamDetailsPopover from 'features/StreamDetailsPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
@@ -135,6 +136,7 @@ const _VestingPage: FC = () => {
           </div>
         </div>
         <div className="flex items-end justify-center gap-2">
+          <StreamDetailsPopover stream={vesting} />
           <HistoryPopover transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
         </div>
