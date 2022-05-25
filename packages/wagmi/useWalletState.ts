@@ -1,15 +1,16 @@
-// type UseWalletState = (
-//   hook: ReturnType<typeof useConnect>,
-//   account: string
-// ) => {
-//   connecting: boolean
-//   notConnected: boolean
-//   pendingConnection: boolean
-//   reconnecting: boolean
-// }
+import { useConnect } from 'wagmi'
+
+type UseWalletStateReturn = {
+  connecting: boolean
+  notConnected: boolean
+  pendingConnection: boolean
+  reconnecting: boolean
+}
+
+type UseWalletState = (hook: ReturnType<typeof useConnect>, account: string) => UseWalletStateReturn
 
 // Mutually exclusive states
-export const useWalletState = (useConnect, account) => {
+export const useWalletState: UseWalletState = (useConnect, account) => {
   const { isConnecting, pendingConnector, isReconnecting } = useConnect
 
   // Trying to see if wallet is connected
