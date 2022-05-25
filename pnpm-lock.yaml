@@ -17715,7 +17715,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
