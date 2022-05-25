@@ -6,6 +6,18 @@ transforms:
   - prefix:
       value: KOVAN_ONSEN_
       includeRootOperations: true
-      includeTypes: false
+      # includeTypes: true
       ignore: 
         - _SubgraphErrorPolicy_
+        - Token
+  # - rename:
+  #     - from:
+  #         type: KOVAN_ONSEN_Token
+  #       to:
+  #         type: Tokenish
+  - typeMerging:
+      queryFields:
+        - queryFieldName: KOVAN_ONSEN_token
+          keyField: id
+          keyArg: id
+          # keyArg: 'where.id_in'

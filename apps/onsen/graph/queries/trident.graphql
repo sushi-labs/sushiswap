@@ -1,13 +1,13 @@
 query KovanTridentPool($id: ID!) {
   KOVAN_TRIDENT_pool(id: $id) {
     id
-    assets {
-      token {
-        id
-        symbol
-        name
-      }
-    }
+    # assets {
+    #   token {
+    #     id
+    #     symbol
+    #     name
+    #   }
+    # }
     kpi {
       volume
       volumeUSD
