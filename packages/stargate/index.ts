@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token, USDC, USDC_ADDRESS } from '@sushiswap/currency'
+import { Token, USDC, USDC_ADDRESS, USDT, USDT_ADDRESS } from '@sushiswap/currency'
 
 export const STARGATE_CHAIN_ID: Record<number, number> = {
   // MAINNETS
@@ -54,6 +54,11 @@ export const STARGATE_USDC_ADDRESS: Record<number, string> = {
 }
 
 export const STARGATE_USDT_ADDRESS: Record<number, string> = {
+  [ChainId.ETHEREUM]: USDT_ADDRESS[ChainId.ETHEREUM],
+  [ChainId.POLYGON]: USDT_ADDRESS[ChainId.POLYGON],
+  [ChainId.AVALANCHE]: USDT_ADDRESS[ChainId.AVALANCHE],
+  [ChainId.BSC]: USDT_ADDRESS[ChainId.BSC],
+  [ChainId.ARBITRUM]: USDT_ADDRESS[ChainId.ARBITRUM],
   [ChainId.BSC_TESTNET]: '0xF49E250aEB5abDf660d643583AdFd0be41464EfD',
 }
 
@@ -108,4 +113,32 @@ export const STARGATE_USDC: Record<number, Token> = {
     symbol: 'USDC',
     name: 'USD Coin',
   }),
+}
+
+export const STARGATE_USDT: Record<number, Token> = {
+  [ChainId.ETHEREUM]: USDT[ChainId.ETHEREUM],
+  [ChainId.POLYGON]: USDT[ChainId.POLYGON],
+  [ChainId.AVALANCHE]: USDT[ChainId.AVALANCHE],
+  [ChainId.BSC]: USDT[ChainId.BSC],
+  [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
+}
+
+export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
+  [ChainId.ETHEREUM]: [STARGATE_USDC[ChainId.ETHEREUM], STARGATE_USDT[ChainId.ETHEREUM]],
+  [ChainId.POLYGON]: [STARGATE_USDC[ChainId.POLYGON], STARGATE_USDT[ChainId.POLYGON]],
+  [ChainId.AVALANCHE]: [STARGATE_USDC[ChainId.AVALANCHE], STARGATE_USDT[ChainId.AVALANCHE]],
+  [ChainId.FANTOM]: [STARGATE_USDC[ChainId.FANTOM]],
+  [ChainId.BSC]: [STARGATE_USDT[ChainId.BSC]],
+  [ChainId.OPTIMISM]: [STARGATE_USDC[ChainId.OPTIMISM]],
+  [ChainId.ARBITRUM]: [STARGATE_USDC[ChainId.ARBITRUM], STARGATE_USDT[ChainId.ARBITRUM]],
+}
+
+export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
+  [ChainId.OPTIMISM]: {
+    [USDC_ADDRESS[ChainId.OPTIMISM]]: 1,
+  },
+  [ChainId.ARBITRUM]: {
+    [USDC_ADDRESS[ChainId.ARBITRUM]]: 1,
+    [USDT_ADDRESS[ChainId.ARBITRUM]]: 2,
+  },
 }

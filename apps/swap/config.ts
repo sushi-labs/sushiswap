@@ -20,8 +20,8 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 export const SUSHI_X_SWAP_ADDRESS: Record<number, string> = {
   [ChainId.RINKEBY]: '',
   [ChainId.POLYGON_TESTNET]: '',
-  [ChainId.ARBITRUM]: '0x7A4af156379f512DE147ed3b96393047226d923F',
-  [ChainId.OPTIMISM]: '0x3D2f8ae0344d38525d2AE96Ab750B83480c0844F',
+  [ChainId.ARBITRUM]: '0x3D2f8ae0344d38525d2AE96Ab750B83480c0844F',
+  [ChainId.OPTIMISM]: '0x7cf167390E2526Bc03F3CF6852A7AF1CEC3e243d',
 }
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {

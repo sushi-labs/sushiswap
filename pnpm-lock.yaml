@@ -579,7 +579,6 @@ importers:
       '@types/react-dom': ^18.0.4
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v2-core': ^1.0.1
-      '@uniswap/v3-periphery': ^1.4.1
       eslint: ^8.15.0
       ethers: ^5.6.6
       next: ^12.1.6
@@ -618,7 +617,6 @@ importers:
       '@typechain/ethers-v5': 10.0.0_uxmwhbw4hrjd75ajfbfg7rru2e
       '@uniswap/redux-multicall': 1.1.1_hqr7hdlscwktfiisqjxe4dgvpi
       '@uniswap/v2-core': 1.0.1
-      '@uniswap/v3-periphery': 1.4.1
       ethers: 5.6.6
       next: 12.1.6_ef5jwxihqo6n7gxfmzogljlgcm
       react: 18.1.0
