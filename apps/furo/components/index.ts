@@ -1,4 +1,3 @@
-export * from './Approve'
 export * from './BackgroundVector'
 export * from './Balance'
 export * from './CurrencyInput'

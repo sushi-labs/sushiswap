@@ -4,7 +4,7 @@ import { BentoBox } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
 import { useContract, useProvider } from 'wagmi'
 
-const BENTOBOX_INTERFACE = new Interface(bentoBoxArtifact.abi)
+export const BENTOBOX_INTERFACE = new Interface(bentoBoxArtifact.abi)
 
 export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',

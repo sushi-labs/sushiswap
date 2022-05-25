@@ -4,7 +4,6 @@ const withTranspileModules = transpileModules([
   '@sushiswap/ui',
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
-  '@sushiswap/currency',
   '@sushiswap/wallet-connector',
   '@sushiswap/stargate',
 ])

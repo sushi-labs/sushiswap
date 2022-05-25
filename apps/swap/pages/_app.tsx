@@ -2,12 +2,12 @@ import '@sushiswap/ui/index.css'
 
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App, Container, SushiIcon } from '@sushiswap/ui'
-import { client, getProviders, Wallet } from '@sushiswap/wallet-connector'
+import { App } from '@sushiswap/ui'
+import { client, getProviders } from '@sushiswap/wallet-connector'
+import { Header } from 'features'
 import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
 import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
 import type { AppProps } from 'next/app'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
@@ -99,22 +99,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     <WagmiProvider client={client}>
       <Provider store={store}>
         <App.Shell>
-          <div className="border-b border-slate-700">
-            <Container maxWidth="full" className="px-2">
-              <App.Header
-                className="h-[54px]"
-                brand={
-                  <Link href="/">
-                    <a>
-                      <SushiIcon width={32} height={32} className="mr-1 hover:animate-spin hover:text-pink" />
-                    </a>
-                  </Link>
-                }
-              >
-                <Wallet.Button />
-              </App.Header>
-            </Container>
-          </div>
+          <Header />
           {/* <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={blockNumberEthereum} />/ */}
           {/* <MulticallUpdater chainId={ChainId.BSC} blockNumber={blockNumberBsc} /> */}
           {/* <MulticallUpdater chainId={ChainId.AVALANCHE} blockNumber={blockNumberAvalanche} /> */}
@@ -135,6 +120,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <TokenListsUpdater chainId={ChainId.ARBITRUM} />
           <TokenListsUpdater chainId={ChainId.OPTIMISM} />
           <Component {...pageProps} blockNumbers={blockNumbers} chainIds={SUPPORTED_CHAIN_IDS} />
+          <App.Footer />
         </App.Shell>
       </Provider>
     </WagmiProvider>

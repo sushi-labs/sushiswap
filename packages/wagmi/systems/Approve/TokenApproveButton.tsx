@@ -1,14 +1,15 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Currency } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
-import { ApprovalButtonRenderProp, ApproveButton } from 'components/Approve/types'
-import { ApprovalState, useApproveCallback } from 'hooks'
 import { FC, memo, useEffect } from 'react'
+
+import { ApprovalState, useApproveCallback } from '../../useApproveCallback'
+import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
 interface RenderPropPayload extends ApprovalButtonRenderProp {}
 
 export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
   watch?: boolean
-  amount?: Amount<Token>
+  amount?: Amount<Currency>
   address?: string
 }
 

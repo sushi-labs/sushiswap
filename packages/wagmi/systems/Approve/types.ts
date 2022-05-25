@@ -1,6 +1,7 @@
 import { ButtonProps } from '@sushiswap/ui'
-import { ApprovalState } from 'hooks'
 import { ReactElement } from 'react'
+
+import { ApprovalState } from '../../useApproveCallback'
 
 export type ApprovalButtonRenderProp = {
   onApprove(): void

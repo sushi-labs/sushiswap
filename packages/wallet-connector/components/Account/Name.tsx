@@ -10,6 +10,7 @@ export function Name({ address, children }: Props): JSX.Element {
   const { data } = useEnsName({
     address,
     chainId: ChainId.ETHEREUM,
+    enabled: !!address,
   })
 
   return children({ name: !!data ? data : address, isEns: !!data })

@@ -1,5 +1,3 @@
-import './popover.css'
-
 import { Popover as HeadlessPopover } from '@headlessui/react'
 import React, { FC } from 'react'
 

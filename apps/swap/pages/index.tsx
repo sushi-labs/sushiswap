@@ -1,16 +1,20 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
+import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
+import { ChevronDownIcon, CogIcon } from '@heroicons/react/outline'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, tryParseAmount, USDT } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
-import { Percent } from '@sushiswap/math'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button, Dots, Input, SushiIcon } from '@sushiswap/ui'
+import { Button, Dots, Input, SushiIcon, Typography } from '@sushiswap/ui'
+import { Approve, BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
-import { ApprovalState, useBentoBoxApprovalCallback, useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
+import { useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
 import { useBentoBoxRebase } from 'hooks/useBentoBoxRebases'
-import { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SushiXSwap } from 'SushiXSwap'
 import { useAccount, useSigner } from 'wagmi'
 
@@ -35,6 +39,7 @@ interface Config {
     title: string
   }
 }
+
 function getComplexPathParams(trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT>) {
   const initialPathCount = trade.route.legs.filter(
     (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
@@ -117,7 +122,11 @@ export function getBigNumber(value: number): BigNumber {
 function _Swap({ config = defaultConfig }: { config?: Config }) {
   const { data: account } = useAccount()
   const { data: signer } = useSigner()
+  const isMounted = useIsMounted()
+  const inputRef = useRef<HTMLInputElement | undefined>()
 
+  const [isWritePending, setIsWritePending] = useState<boolean>()
+  const [signature, setSignature] = useState<Signature>()
   const [srcChainId, setSrcChainId] = useState(ChainId.ARBITRUM)
   const [dstChainId, setDstChainId] = useState(ChainId.OPTIMISM)
 
@@ -215,39 +224,14 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     setDstTypedAmount(dstMinimumAmountOut?.toFixed() ?? '')
   }, [dstMinimumAmountOut])
 
-  const [bentoBoxApprovalState, signature, approveBentoBox] = useBentoBoxApprovalCallback(
-    srcChainId,
-    account?.address,
-    SUSHI_X_SWAP_ADDRESS[srcChainId]
-  )
-
   console.log({ crossChain, srcMinimumAmountOut })
 
   const execute = useCallback(() => {
-    console.log(
-      !srcChainId,
-      !srcAmount,
-      !dstChainId,
-      !account,
-      !account?.address,
-      !signer,
-      !srcBentoBoxRebase,
-      bentoBoxApprovalState !== ApprovalState.APPROVED && !signature
-    )
-
-    if (
-      !srcChainId ||
-      !srcAmount ||
-      !dstChainId ||
-      !account ||
-      !account.address ||
-      !signer ||
-      !srcBentoBoxRebase ||
-      (bentoBoxApprovalState !== ApprovalState.APPROVED && !signature)
-    ) {
+    if (!srcChainId || !srcAmount || !dstChainId || !account || !account.address || !signer || !srcBentoBoxRebase) {
       return
     }
 
+    setIsWritePending(true)
     // Transfers Scenarios
     // T1: BentoBox - Stargate - BentoBox
     // T2: Wallet - Stargate - Wallet
@@ -371,17 +355,17 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             srcMinimumAmountOut.quotient.toString(),
             srcTrade.route.legs.map((leg, i) => {
               const isLastLeg = i === srcTrade.route.legs.length - 1
-              const recipentAddress = isLastLeg
+              const recipientAddress = isLastLeg
                 ? crossChain
                   ? SUSHI_X_SWAP_ADDRESS[srcChainId]
                   : account.address
                 : leg.poolAddress
-              console.log(recipentAddress)
+              console.log(recipientAddress)
               return {
                 pool: leg.poolAddress,
                 data: defaultAbiCoder.encode(
                   ['address', 'address', 'bool'],
-                  [leg.tokenFrom.address, recipentAddress, crossChain ? isLastLeg : isLastLeg && dstUseBentoBox]
+                  [leg.tokenFrom.address, recipientAddress, crossChain ? isLastLeg : isLastLeg && dstUseBentoBox]
                 ),
               }
             })
@@ -520,7 +504,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               dstMinimumAmountOut.quotient.toString(),
               dstTrade.route.legs.map((leg, i) => {
                 const isLastLeg = i === dstTrade.route.legs.length - 1
-                const recipentAddress = isLastLeg
+                const recipientAddress = isLastLeg
                   ? dstToken.isNative && !dstUseBentoBox
                     ? SUSHI_X_SWAP_ADDRESS[dstChainId]
                     : account.address
@@ -529,7 +513,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                   pool: leg.poolAddress,
                   data: defaultAbiCoder.encode(
                     ['address', 'address', 'bool'],
-                    [leg.tokenFrom.address, recipentAddress, isLastLeg && !dstUseBentoBox]
+                    [leg.tokenFrom.address, recipientAddress, isLastLeg && !dstUseBentoBox]
                   ),
                 }
               })
@@ -642,9 +626,11 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
       .catch((err) => {
         console.log('catch err', err)
       })
+      .finally(() => {
+        setIsWritePending(false)
+      })
   }, [
     account,
-    bentoBoxApprovalState,
     crossChain,
     dstBridgeToken,
     dstChainId,
@@ -665,50 +651,27 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
   ])
 
   // exec
+  if (!isMounted) return null
 
   return (
-    <>
+    <div className="mb-60 mt-20">
       <div className={config.classes.root} style={config.styles.root}>
-        <div className="p-3 rounded-t-xl">
+        <div className="p-3 rounded-t-xl" onClick={() => inputRef.current?.focus()}>
           <div className="flex justify-between pb-4 font-medium">
-            <div className="flex items-center gap-2 font-medium">
-              <SushiIcon className="w-5 h-5" /> Swap
-            </div>
+            <Typography weight={900} className="flex items-center gap-2">
+              <SushiIcon width={20} height={20} /> Swap
+            </Typography>
             <button className="hover:animate-spin-slow">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <CogIcon width={20} height={20} />
             </button>
           </div>
-          <div className="flex flex-col">
+          <div aria-hidden className="flex flex-col">
             <div className="flex flex-row justify-between">
               <button
                 className="flex items-center gap-1 py-1 text-xs text-slate-400 hover:text-slate-300"
                 onClick={() => setSrcSelectorOpen(true)}
               >
-                {chain[srcChainId].name}{' '}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                {chain[srcChainId].name} <ChevronDownIcon width={16} height={16} />
               </button>
               <button
                 className="py-1 text-xs text-slate-400 hover:text-slate-300"
@@ -721,23 +684,14 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             <div className="flex flex-col">
               <div className="flex items-center">
                 <Input.Numeric
-                  className="flex-auto w-full px-0 py-2 overflow-hidden text-xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
+                  ref={inputRef}
+                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
                   value={srcTypedAmount}
                   title="Amount In"
                   onUserInput={(value) => setSrcTypedAmount(value)}
                 />
-                <button className="flex items-center gap-1 py-2 text-xl text-slate-400 hover:text-slate-300 ">
-                  {srcToken.symbol}{' '}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className="font-bold flex items-center gap-1 py-2 text-xl text-slate-400 hover:text-slate-300 ">
+                  {srcToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
               </div>
             </div>
@@ -754,17 +708,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                 className="flex items-center gap-1 py-1 text-xs text-slate-500 hover:text-slate-300"
                 onClick={() => setSrcSelectorOpen(true)}
               >
-                {chain[dstChainId].name}{' '}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                {chain[dstChainId].name} <ChevronDownIcon width={16} height={16} />
               </button>
               <button
                 className="py-1 text-xs text-slate-500 hover:text-slate-300"
@@ -782,17 +726,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                   readOnly
                 />
                 <button className="flex items-center gap-1 py-2 text-xl text-slate-500 hover:text-slate-300">
-                  {dstToken.symbol}{' '}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
+                  {dstToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
               </div>
             </div>
@@ -816,25 +750,41 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               </div>
             )}
           </div>
-          {bentoBoxApprovalState === ApprovalState.NOT_APPROVED ? (
-            <Button fullWidth color="gradient" className="my-3" onClick={approveBentoBox}>
-              Approve BentoBox
-            </Button>
-          ) : (
-            <Button fullWidth color="gradient" className="my-3" onClick={execute}>
-              Review swap
-            </Button>
-          )}
+          <Approve
+            components={
+              <Approve.Components>
+                <Approve.Bentobox
+                  chainId={srcChainId}
+                  watch
+                  token={srcAmount?.currency}
+                  address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                  onSignature={setSignature}
+                />
+                <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
+              </Approve.Components>
+            }
+            render={({ approved }) => (
+              <Button
+                fullWidth
+                variant="filled"
+                color="gradient"
+                disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                onClick={execute}
+              >
+                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+              </Button>
+            )}
+          />
 
-          <div className="flex items-center justify-center cursor-pointer pointer-events-auto text-slate-400 group hover:text-pink">
-            <SushiIcon width="1em" height="1em" className="mr-1 group-hover:animate-spin" />{' '}
-            <span className="text-xs !text-slate-500 group-hover:!text-slate-300 select-none">
-              Powered by the SushiSwap protocol
-            </span>
+          <div className="flex gap-2 items-center justify-center cursor-pointer pointer-events-auto text-slate-400 group">
+            <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}
+            <Typography variant="xxs" className="py-1 text-slate-500 group-hover:text-slate-300 select-none">
+              Powered by <span className="font-bold">Sushi</span>
+            </Typography>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -850,10 +800,10 @@ export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; b
     <div className="mt-24 space-y-12">
       <_Swap />
       {/* <Widget /> */}
-      <div className="text-center">
-        <div>Chain Names: {chainNames.join(',')}</div>
-        <div>Block Timestamps: {isReady && <span data-testid="blockTimestamps">{blockTimestamps.join(',')}</span>}</div>
-      </div>
+      {/*<div className="text-center">*/}
+      {/*  <div>Chain Names: {chainNames.join(',')}</div>*/}
+      {/*  <div>Block Timestamps: {isReady && <span data-testid="blockTimestamps">{blockTimestamps.join(',')}</span>}</div>*/}
+      {/*</div>*/}
     </div>
   )
 }

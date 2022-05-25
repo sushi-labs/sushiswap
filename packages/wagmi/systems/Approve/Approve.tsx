@@ -1,12 +1,22 @@
-import { BentoApproveButton } from 'components/Approve/BentoApproveButton'
-import { ComponentsWrapper } from 'components/Approve/ComponentsWrapper'
-import { TokenApproveButton } from 'components/Approve/TokenApproveButton'
-import { ApprovalState } from 'hooks'
-import React, { isValidElement, ReactNode, useCallback, useMemo, useRef } from 'react'
-import { FC } from 'react'
+import React, {
+  Children,
+  cloneElement,
+  FC,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react'
+
+import { ApprovalState } from '../../useApproveCallback'
+import { BentoApproveButton } from './BentoApproveButton'
+import { ComponentsWrapper } from './ComponentsWrapper'
+import { TokenApproveButton } from './TokenApproveButton'
 
 interface Props {
-  components: React.ReactElement<ComponentsWrapper<any>>
+  components: ReactElement<ComponentsWrapper<any>>
   render({ approved }: { approved: boolean }): ReactNode
 }
 
@@ -20,12 +30,12 @@ const Controller: FC<Props> = ({ components, render }) => {
   }, [])
 
   const children = useMemo(() => {
-    return React.cloneElement(
+    return cloneElement(
       components,
       components.props,
-      React.Children.map(components.props.children, (component, index) => {
+      Children.map(components.props.children, (component, index) => {
         if (isValidElement<TokenApproveButton | BentoApproveButton>(component)) {
-          return React.cloneElement(component, {
+          return cloneElement(component, {
             setState: (value: ApprovalState) => handleUpdate(value, index),
           })
         }

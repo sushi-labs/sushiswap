@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
-import Loader from '../loader/Loader'
+import { Loader } from '../loader'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'

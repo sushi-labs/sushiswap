@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Currency } from '@sushiswap/currency'
 import { MAX_UINT256 } from '@sushiswap/math'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
@@ -21,7 +21,7 @@ export enum ApprovalState {
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(
   watch: boolean,
-  amountToApprove?: Amount<Token>,
+  amountToApprove?: Amount<Currency>,
   spender?: string
 ): [ApprovalState, () => Promise<void>] {
   const { data: account } = useAccount()
