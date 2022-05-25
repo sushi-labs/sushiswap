@@ -12,15 +12,15 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "source": "./src/index.ts",
+  "source": "./index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup ./index.ts --format esm,cjs --dts --external react,ethers",
+    "build": "tsup ./index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup ./index.ts --format esm,cjs --watch --dts --external react,ethers",
+    "dev": "tsup ./index.ts --format esm,cjs --watch --dts",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
     "lint": "TIMING=1 eslint ./*.ts* --fix",
     "test": "jest --passWithNoTests"
@@ -57,6 +57,7 @@
   },
   "peerDependencies": {
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "ethers": "^5.6.6"
   }
 }

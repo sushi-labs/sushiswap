@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui'
 import { Signature } from 'ethers'
-import { FC, memo, useEffect } from 'react'
+import React, { FC, memo, useEffect } from 'react'
 
 import { ApprovalState } from '../../useApproveCallback'
 import { useBentoBoxApproveCallback } from '../../useBentoBoxApproveCallback'
