@@ -1,13 +1,17 @@
-query KovanOnsenFarms {
+query KovanOnsenIncentives {
   KOVAN_ONSEN_incentives {
     id
     token {
       id
       name
+      symbol
+      decimals
     }
     rewardToken {
       id
       name
+      symbol
+      decimals
     }
     creator {
       id

@@ -20,6 +20,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wallet-connector": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@headlessui/react": "^1.6.0",
     "ethers": "^5.6.1",

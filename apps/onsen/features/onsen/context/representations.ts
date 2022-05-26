@@ -1,17 +1,3 @@
-export interface FarmRepresentation {
-  id: string
-  token: {
-    id: string
-    name: string
-  }
-  rewardToken: {
-    id: string
-  }
-  endTime: string
-  lastRewardTime: string
-  rewardRemaining: string
-  liquidityStaked: string
-}
 
 export interface IncentiveRepresentation {
   id: string
@@ -21,12 +7,20 @@ export interface IncentiveRepresentation {
   lastRewardTime: string
   rewardRemaining: string
   liquidityStaked: string
+  creator: UserRepresentation
+  timestamp: string
+  block: string
+}
+
+export interface UserRepresentation {
+  id: string
 }
 
 export interface TokenRepresentation {
   id: string
-  name?: string
-  symbol?: string
+  symbol: string
+  name: string
+  decimals: string
 }
 
 export interface TridentPoolRepresentation {

@@ -11,12 +11,12 @@ export default withTranspileModules({
   basePath: '/onsen',
   reactStrictMode: true,
   swcMinify: true,
-  runtime: 'edge',
-  serverComponents: true,
-  rewrites: {
-    source: '/',
-    destination: '/furo',
-  },
+  // runtime: 'edge',
+  // serverComponents: true,
+  // rewrites: {
+  //   source: '/',
+  //   destination: '/on',
+  // },
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,

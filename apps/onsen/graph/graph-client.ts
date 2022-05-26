@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
-import { FarmRepresentation, TridentPoolRepresentation } from 'features/onsen/context/representations'
-import { FarmType } from 'features/onsen/context/types'
+import { IncentiveRepresentation } from 'features/onsen/context/representations'
 
 import { getBuiltGraphSDK } from '.graphclient'
+
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 
@@ -17,32 +17,32 @@ const isNetworkSupported = (chainId: number) => SUPPORTED_CHAINS.includes(chainI
 //   }
 // }
 
-export const getFarms = async (chainId: string): Promise<FarmRepresentation[] | undefined> => {
+export const getFarms = async (chainId: string): Promise<IncentiveRepresentation[] | undefined> => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
   if (network === ChainId.KOVAN) {
-    return (await sdk.KovanOnsenFarms()).KOVAN_ONSEN_incentives as FarmRepresentation[]
+    return (await sdk.KovanOnsenIncentives()).KOVAN_ONSEN_incentives as IncentiveRepresentation[]
   }
 }
 
-export const getFarmToken = async (chainId: string, id: string, type: FarmType): Promise<TridentPoolRepresentation | undefined> => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return undefined
-  const sdk = getBuiltGraphSDK()
-  if (network === ChainId.KOVAN) {
-    if (type === FarmType.TRIDENT) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
-    // if (type === FarmType.LEGACY) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
-    else return undefined
-  }
-}
+// export const getFarmToken = async (chainId: string, id: string, type: FarmType): Promise<TridentPoolRepresentation | undefined> => {
+//   const network = Number(chainId)
+//   if (!isNetworkSupported(network)) return undefined
+//   const sdk = getBuiltGraphSDK()
+//   if (network === ChainId.KOVAN) {
+//     if (type === FarmType.TRIDENT) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
+//     // if (type === FarmType.LEGACY) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
+//     else return undefined
+//   }
+// }
 
 
-export const getTridentPool = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
-  const sdk = await getBuiltGraphSDK()
-  if (network === ChainId.KOVAN) {
-    return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool ?? {}
-  }
-}
+// export const getTridentPool = async (chainId: string, id: string) => {
+//   const network = Number(chainId)
+//   if (!isNetworkSupported(network)) return {}
+//   const sdk = await getBuiltGraphSDK()
+//   if (network === ChainId.KOVAN) {
+//     return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool ?? {}
+//   }
+// }
