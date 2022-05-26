@@ -12,11 +12,11 @@ export default withTranspileModules({
   reactStrictMode: true,
   swcMinify: true,
   // runtime: 'edge',
-  // serverComponents: true,
-  // rewrites: {
-  //   source: '/',
-  //   destination: '/on',
-  // },
+  serverComponents: true,
+  rewrites: {
+    source: '/',
+    destination: '/onsen',
+  },
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,

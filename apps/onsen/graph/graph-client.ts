@@ -1,8 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { IncentiveRepresentation } from 'features/onsen/context/representations'
 
-import { getBuiltGraphSDK } from '.graphclient'
-
+import { getBuiltGraphSDK } from '../.graphclient'
+import { IncentiveRepresentation } from '../features/onsen/context/representations'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 
@@ -36,7 +35,6 @@ export const getFarms = async (chainId: string): Promise<IncentiveRepresentation
 //     else return undefined
 //   }
 // }
-
 
 // export const getTridentPool = async (chainId: string, id: string) => {
 //   const network = Number(chainId)

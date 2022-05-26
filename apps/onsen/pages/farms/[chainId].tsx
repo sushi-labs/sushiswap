@@ -1,10 +1,11 @@
-import { Incentive } from 'features/onsen/context/Onsen'
-import { IncentiveRepresentation } from 'features/onsen/context/representations'
-import { getFarms } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+
+import { Incentive } from '../../features/onsen/context/Onsen'
+import { IncentiveRepresentation } from '../../features/onsen/context/representations'
+import { getFarms } from '../../graph/graph-client'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -40,9 +41,15 @@ const _FarmsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 }
 
 export const FarmsPage: FC<{ chainId: number }> = ({ chainId }) => {
-  const { data: incentiveRepresentations, isValidating } = useSWR<IncentiveRepresentation[]>(`/onsen/api/farms/${chainId}`, fetcher)
+  const { data: incentiveRepresentations, isValidating } = useSWR<IncentiveRepresentation[]>(
+    `/onsen/api/farms/${chainId}`,
+    fetcher,
+  )
 
-  const incentives = useMemo( () => incentiveRepresentations?.map(incentive => new Incentive({incentive})), [incentiveRepresentations])
+  const incentives = useMemo(
+    () => incentiveRepresentations?.map((incentive) => new Incentive({ incentive })),
+    [incentiveRepresentations],
+  )
 
   return (
     <div className="px-2 pt-16">
