@@ -40,6 +40,6 @@
     "eslint": "^8.15.0",
     "seedrandom": "^3.0.5",
     "tsup": "^5.12.7",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.2"
   }
 }

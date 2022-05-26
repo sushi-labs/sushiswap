@@ -45,7 +45,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "tsup": "^5.12.7",
-    "typescript": "^4.6.4",
+    "typescript": "^4.7.2",
     "typechain": "^8.0.0",
     "react-query": "4.0.0-beta.12",
     "wagmi": "^0.4.3"

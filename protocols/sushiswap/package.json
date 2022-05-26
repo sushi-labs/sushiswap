@@ -48,6 +48,6 @@
     "hardhat": "^2.9.5",
     "hardhat-deploy": "^0.11.4",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.2"
   }
 }

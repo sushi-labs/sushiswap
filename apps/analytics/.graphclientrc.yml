@@ -142,22 +142,22 @@ sources:
   #           - queryFieldName: HARMONY_factory
   #             keyField: id
   #             keyArg: id
-  - name: celo-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/sushitestsubgraph
-    transforms:
-      - prefix:
-          value: CELO_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: CELO_factory
-              keyField: id
-              keyArg: id
+  # - name: celo-exchange
+  #   handler:
+  #     graphql:
+  #       endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/sushitestsubgraph
+  #   transforms:
+  #     - prefix:
+  #         value: CELO_
+  #         includeRootOperations: true
+  #         ignore:
+  #           - _SubgraphErrorPolicy_
+  #     - typeMerging:
+  #         queryFields:
+  #           # Without batching
+  #           - queryFieldName: CELO_factory
+  #             keyField: id
+  #             keyArg: id
   - name: fuse-exchange
     handler:
       graphql:
