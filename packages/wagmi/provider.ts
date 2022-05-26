@@ -39,13 +39,13 @@ const ANKR_API_KEY: Record<number, string | undefined> = {
   [ChainId.OPTIMISM]: process.env.ANKR_OPTIMISM_ID || process.env.NEXT_PUBLIC_ANKR_OPTIMISM_ID,
 }
 
-const ALCHEMY_API_KEY: Record<number, string> = {
-  [ChainId.ETHEREUM]: 'q1pMGalg0HNBvK1eaZoo-vng-EPWlt1t',
-  [ChainId.ARBITRUM]: 'eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV',
-  [ChainId.OPTIMISM]: 'rtbMqQGp96fbuXxzUS2fct34eYzA7tY8',
-  [ChainId.POLYGON]: 'vZft72lBzQ100fCIJTyohJR1tWrMsUei',
-  [ChainId.POLYGON_TESTNET]: 'JW13aE7MytaJNzSZ-BI4L-XfmaMqMip_',
-  [ChainId.GÖRLI]: 'BXrZLhuc63Gn91NoLVVFDJ010M-AwOa2',
+const ALCHEMY_API_KEY: Record<number, string | undefined> = {
+  [ChainId.ETHEREUM]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
+  [ChainId.ARBITRUM]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
+  [ChainId.OPTIMISM]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
+  [ChainId.POLYGON]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
+  [ChainId.POLYGON_TESTNET]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
+  [ChainId.GÖRLI]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
 }
 
 export function getProvider(chainId: ChainId) {
@@ -57,8 +57,8 @@ export function getProvider(chainId: ChainId) {
     const name = getAlchemyChainName(chainId)
     providerCache[chainId] = new AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
-    const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-    if (!infuraKey) throw new Error('INFURA_PROJECT_ID || NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
+    const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_ID
+    if (!infuraKey) throw new Error('INFURA_PROJECT_ID || NEXT_PUBLIC_INFURA_ID is required for provider')
     const name = getInfuraChainName(chainId)
     providerCache[chainId] = new InfuraProvider(name, infuraKey)
   } else if (ANKR_ENABLED_CHAINS.includes(chainId)) {
@@ -84,9 +84,8 @@ export function getWebsocketProvider(chainId: ChainId) {
     const name = getAlchemyChainName(chainId)
     websocketProviderCache[chainId] = new AlchemyWebSocketProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
-    const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-    if (!infuraKey)
-      throw new Error('INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
+    const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_ID
+    if (!infuraKey) throw new Error('INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_ID is required for provider')
     const name = getInfuraChainName(chainId)
     websocketProviderCache[chainId] = new InfuraWebSocketProvider(name, infuraKey)
   }

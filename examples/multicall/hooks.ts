@@ -66,8 +66,8 @@ export function useCurrentBlockTimestampMultichain(
 
 export function getProvider(chainId: ChainId) {
   if (providerCache[chainId]) return providerCache[chainId]!
-  const infuraKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-  if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
+  const infuraKey = process.env.NEXT_PUBLIC_INFURA_ID
+  if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_ID is required for provider')
   const name = getInfuraChainName(chainId)
   providerCache[chainId] = new InfuraProvider(name, infuraKey)
   return providerCache[chainId]!

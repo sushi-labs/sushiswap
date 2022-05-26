@@ -8,8 +8,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
-const alchemyId = process.env.ALCHEMY_ID
-const infuraId = process.env.INFURA_ID
+const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
+const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
 const { chains, provider, webSocketProvider } = configureChains(
   [...defaultChains, ...defaultL2Chains],
