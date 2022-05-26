@@ -3,6 +3,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button as UIButton,
+  ButtonProps,
   CoinbaseWalletIcon,
   Loader,
   Menu,
@@ -10,10 +11,11 @@ import {
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
-import React, { FC, ReactElement, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
-import { Account } from '../Account'
+import { useWalletState } from '../../hooks'
+import { Account } from '..'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -22,65 +24,68 @@ const Icons: Record<string, ReactNode> = {
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
 }
 
-export type Props = {
-  label?: string
-  button?: ReactElement<typeof Menu.Button>
+export type Props = ButtonProps & {
   hack?: ReturnType<typeof useConnect>
 }
 
-export const Button: FC<Props> = ({ hack, label, button }) => {
+export const Button: FC<Props> = ({ hack, children, ...rest }) => {
   const { data } = useAccount()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { isConnected, isReconnecting, isConnecting, connectors, connect, pendingConnector } = hack || useConnect()
+  const hook = hack || useConnect()
+  const { isConnected, connectors, connect } = hook
+  const { pendingConnection, reconnecting } = useWalletState(hook, data?.address)
 
-  if (!!pendingConnector && isConnecting) {
-    return button ? (
-      React.createElement(UIButton, { ...button.props, startIcon: <Loader />, disabled: true }, 'Authorize Wallet')
-    ) : (
+  // Pending confirmation state
+  // Awaiting wallet confirmation
+  if (pendingConnection) {
+    return (
       <UIButton
         endIcon={<Loader />}
         variant="filled"
         color="blue"
         disabled
-        className="!h-[36px] w-[158px] flex justify-between"
+        className={rest.className || '!h-[36px] w-[158px] flex justify-between'}
+        {...rest}
       >
         Authorize Wallet
       </UIButton>
     )
   }
 
-  if (isMounted && !isConnected && !isReconnecting && !isConnecting) {
+  // Disconnected state
+  // We are mounted on the client, but we're not connected, and we're not reconnecting (address is not available0
+  if (!isConnected && !reconnecting && isMounted) {
     return (
       <Menu
+        className={rest.fullWidth ? 'w-full' : ''}
         button={
-          button || (
-            <Menu.Button className="w-full min-w-[158px] !h-[36px] btn !bg-blue btn-blue btn-default" as="div">
-              {label || 'Connect Wallet'}
-            </Menu.Button>
-          )
+          <Menu.Button {...rest} as="div">
+            {children || 'Connect Wallet'}
+          </Menu.Button>
         }
       >
         <Menu.Items>
           <div>
-            {connectors.map((conn) => (
-              <Menu.Item key={conn.id} onClick={() => connect(conn)} className="flex items-center gap-3 group">
-                <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
-                  {Icons[conn.name] && Icons[conn.name]}
-                </div>{' '}
-                {conn.name}
-              </Menu.Item>
-            ))}
+            {isMounted &&
+              connectors.map((conn) => (
+                <Menu.Item key={conn.id} onClick={() => connect(conn)} className="flex items-center gap-3 group">
+                  <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
+                    {Icons[conn.name] && Icons[conn.name]}
+                  </div>{' '}
+                  {conn.name}
+                </Menu.Item>
+              ))}
           </div>
         </Menu.Items>
       </Menu>
     )
   }
 
-  if (isMounted && (isConnected || isReconnecting || isConnecting)) {
-    if (!data?.address) return null
-
+  // Connected state
+  // Show account name and balance
+  if (isMounted && !children) {
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
         <div className="hidden px-3 sm:block">
@@ -88,18 +93,16 @@ export const Button: FC<Props> = ({ hack, label, button }) => {
         </div>
         <Menu
           button={
-            button || (
-              <Menu.Button className="!rounded-xl !py-2 !bg-slate-700 p-px border-slate-1000 hover:ring-2 hover:ring-slate-600 flex gap-3">
-                {/* <Account.Avatar address={data?.address} /> */}
-                <Account.Name address={data?.address}>
-                  {({ name, isEns }) => (
-                    <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                      {isEns ? name : !!name ? shortenAddress(name) : ''}
-                    </Typography>
-                  )}
-                </Account.Name>
-              </Menu.Button>
-            )
+            <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
+              <Account.Avatar address={data?.address} />
+              <Account.Name address={data?.address}>
+                {({ name, isEns }) => (
+                  <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
+                    {isEns ? name : !!name ? shortenAddress(name) : ''}
+                  </Typography>
+                )}
+              </Account.Name>
+            </Menu.Button>
           }
         >
           <Menu.Items>
@@ -115,5 +118,10 @@ export const Button: FC<Props> = ({ hack, label, button }) => {
     )
   }
 
-  return <></>
+  // Placeholder
+  if (isMounted) {
+    return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
+  }
+
+  return null
 }

@@ -1,7 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Menu } from '@headlessui/react'
-import { ChainId, USDC } from '@sushiswap/currency'
-import { Amount } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, USDC } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
@@ -120,27 +119,19 @@ export default function Index() {
             ) : (
               <>
                 <Wallet.Button
+                  color="blue"
+                  className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
-                  button={
-                    <Menu.Button
-                      className="transition-all hover:ring-4 ring-blue-800 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
-                      as="div"
-                    >
-                      Pay Someone
-                    </Menu.Button>
-                  }
-                />
+                >
+                  Pay Someone
+                </Wallet.Button>
                 <Wallet.Button
+                  color="gray"
+                  className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}
-                  button={
-                    <Menu.Button
-                      className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
-                      as="div"
-                    >
-                      View My Earnings
-                    </Menu.Button>
-                  }
-                />
+                >
+                  View My Earnings
+                </Wallet.Button>
               </>
             )}
           </div>

@@ -15,7 +15,7 @@ export const Header = () => {
           </Link>
         }
       >
-        <Wallet.Button />
+        <Wallet.Button className="!h-[36px]" />
       </App.Header>
     </Container>
   )

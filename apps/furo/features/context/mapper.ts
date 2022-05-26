@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { TokenRepresentation } from 'features'
 

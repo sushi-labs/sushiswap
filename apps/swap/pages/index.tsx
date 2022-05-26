@@ -10,7 +10,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button, Dots, Input, SushiIcon, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useAccount, useSigner } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useAccount, useSigner, Wallet } from '@sushiswap/wagmi'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
 import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
@@ -591,9 +591,6 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
-  // exec
-  if (!isMounted) return null
-
   return (
     <div className="mt-20 mb-60">
       <div className={config.classes.root} style={config.styles.root}>
@@ -712,42 +709,43 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           </div>
 
           <div className="flex gap-2">
-            {!account ? (
-              // 1. Connect wallet (Connect button?)
-              <button className="w-full">Connect</button>
-            ) : activeChain.id !== srcChainId ? (
-              // 2. Network reconsiliation - If network mismatch, render switch network button
-              <button className="w-full" type="button" onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                Switch network
-              </button>
-            ) : (
-              // 3. Approvals and primary action
-              <Approve
-                components={
-                  <Approve.Components className="flex gap-4">
-                    <Approve.Bentobox
-                      fullWidth
-                      watch
-                      token={srcAmount?.currency}
-                      address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                      onSignature={setSignature}
-                    />
-                    <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
-                  </Approve.Components>
-                }
-                render={({ approved }) => (
+            <Approve
+              components={
+                <Approve.Components className="flex gap-4">
+                  <Approve.Bentobox
+                    fullWidth
+                    watch
+                    token={srcAmount?.currency}
+                    address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                    onSignature={setSignature}
+                  />
+                  <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
+                </Approve.Components>
+              }
+              render={({ approved }) =>
+                !isMounted ? (
                   <Button
                     fullWidth
                     variant="filled"
-                    color="gradient"
+                    color={isMounted ? 'gradient' : 'blue'}
                     disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
                     onClick={execute}
                   >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                    {isMounted ? 'Connect Wallet' : isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
                   </Button>
-                )}
-              />
-            )}
+                ) : !account && isMounted ? (
+                  <Wallet.Button fullWidth color="blue">
+                    Connect Wallet
+                  </Wallet.Button>
+                ) : activeChain?.id !== srcChainId && isMounted ? (
+                  <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+                    Switch Network
+                  </Button>
+                ) : (
+                  <></>
+                )
+              }
+            />
           </div>
           <div className="flex items-center justify-center gap-2 mt-2 cursor-pointer pointer-events-auto text-slate-400 group">
             <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}

@@ -7,7 +7,7 @@ type UseWalletStateReturn = {
   reconnecting: boolean
 }
 
-type UseWalletState = (hook: ReturnType<typeof useConnect>, account: string) => UseWalletStateReturn
+type UseWalletState = (hook: ReturnType<typeof useConnect>, account: string | undefined) => UseWalletStateReturn
 
 // Mutually exclusive states
 export const useWalletState: UseWalletState = (useConnect, account) => {

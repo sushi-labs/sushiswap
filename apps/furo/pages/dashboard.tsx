@@ -1,8 +1,6 @@
-import { Menu as HeadlessMenu } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { useWalletState } from '@sushiswap/wagmi'
-import { Wallet } from '@sushiswap/wagmi'
+import { useWalletState, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
@@ -42,16 +40,11 @@ export default function DashboardPage() {
               </Typography>
             </div>
             <Wallet.Button
+              className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-slate-50 px-10 !h-[44px] rounded-2xl"
               hack={connect}
-              button={
-                <HeadlessMenu.Button
-                  as="div"
-                  className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-slate-50 px-10 !h-[44px] rounded-2xl"
-                >
-                  Connect Wallet
-                </HeadlessMenu.Button>
-              }
-            />
+            >
+              Connect Wallet
+            </Wallet.Button>
             <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
               <Typography as="a" target="_blank" variant="xs" className="text-blue hover:text-blue-300 cursor-pointer">
                 How to setup a wallet?

@@ -1,4 +1,5 @@
-import { ChainId, Percent } from '@sushiswap/core-sdk'
+import { ChainId } from '@sushiswap/chain'
+import { Percent } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 
 import { Furo } from './Furo'
