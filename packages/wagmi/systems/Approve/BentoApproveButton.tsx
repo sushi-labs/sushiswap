@@ -1,8 +1,7 @@
-import { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui'
 import { Signature } from 'ethers'
-import React, { FC, memo, useEffect } from 'react'
+import { FC, memo, useEffect } from 'react'
 
 import { ApprovalState } from '../../useApproveCallback'
 import { useBentoBoxApproveCallback } from '../../useBentoBoxApproveCallback'
@@ -13,7 +12,6 @@ interface RenderPropPayload extends ApprovalButtonRenderProp {
 }
 
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
-  chainId?: ChainId
   onSignature(sig?: Signature): void
   watch?: boolean
   token?: Currency
@@ -21,8 +19,8 @@ export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
-  ({ chainId, watch = true, token, address, render, setState, disabled, onSignature, ...props }) => {
-    const [approvalState, signature, onApprove] = useBentoBoxApproveCallback(watch, address, chainId)
+  ({ watch = true, token, address: masterContract, render, setState, disabled, onSignature, ...props }) => {
+    const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract })
 
     useEffect(() => {
       onSignature(signature)

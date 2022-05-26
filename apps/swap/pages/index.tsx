@@ -10,15 +10,14 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button, Dots, Input, SushiIcon, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useAccount, useSigner } from '@sushiswap/wagmi'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
-import { useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
-import { useBentoBoxRebase } from 'hooks/useBentoBoxRebases'
+import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
 import Link from 'next/link'
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SushiXSwap } from 'SushiXSwap'
-import { useAccount, useSigner } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 const defaultConfig = {
   styles: {
@@ -42,73 +41,6 @@ interface Config {
   }
 }
 
-function getComplexPathParams(trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT>) {
-  const initialPathCount = trade.route.legs.filter(
-    (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-  ).length
-  return trade.route.legs.reduce<
-    [
-      {
-        tokenIn: string
-        pool: string
-        native: boolean
-        amount: BigNumberish
-        data: string
-      }[],
-      {
-        tokenIn: string
-        pool: string
-        balancePercentage: BigNumberish
-        data: string
-      }[]
-    ]
-  >(
-    ([initialPath, percentagePath], leg, i) => {
-      const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-      if (isInitialPath) {
-        return [
-          [
-            ...initialPath,
-            {
-              tokenIn: leg.tokenFrom.address,
-              pool: leg.poolAddress,
-              amount:
-                initialPathCount > 1 && i === initialPathCount - 1
-                  ? getBigNumber(trade.route.amountIn).sub(
-                      initialPath.reduce((previousValue, currentValue) => previousValue.add(currentValue.amount), Zero)
-                    )
-                  : getBigNumber(trade.route.amountIn * leg.absolutePortion),
-              native: false,
-              data: defaultAbiCoder.encode(
-                ['address', 'address', 'bool'],
-                [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
-              ),
-            },
-          ],
-          percentagePath,
-        ]
-      } else {
-        return [
-          initialPath,
-          [
-            ...percentagePath,
-            {
-              tokenIn: leg.tokenFrom.address,
-              pool: leg.poolAddress,
-              balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-              data: defaultAbiCoder.encode(
-                ['address', 'address', 'bool'],
-                [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
-              ),
-            },
-          ],
-        ]
-      }
-    },
-    [[], []]
-  )
-}
-
 export function getBigNumber(value: number): BigNumber {
   const v = Math.abs(value)
   if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value))
@@ -124,6 +56,7 @@ export function getBigNumber(value: number): BigNumber {
 function _Swap({ config = defaultConfig }: { config?: Config }) {
   const { data: account } = useAccount()
   const { data: signer } = useSigner()
+  const { activeChain, switchNetwork } = useNetwork()
   const isMounted = useIsMounted()
   const inputRef = useRef<HTMLInputElement | undefined>()
 
@@ -406,7 +339,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(srcTrade.route.amountIn).sub(
+                          ? getBigNumber(srcTrade.route.amountInBN).sub(
                               initialPath.reduce(
                                 (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
@@ -661,7 +594,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
   if (!isMounted) return null
 
   return (
-    <div className="mb-60 mt-20">
+    <div className="mt-20 mb-60">
       <div className={config.classes.root} style={config.styles.root}>
         <div className="p-3 rounded-t-xl" onClick={() => inputRef.current?.focus()}>
           <div className="flex justify-between pb-4 font-medium">
@@ -692,12 +625,12 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               <div className="flex items-center">
                 <Input.Numeric
                   ref={inputRef}
-                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-2xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
+                  className="flex-auto w-full px-0 py-2 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
                   value={srcTypedAmount}
                   title="Amount In"
                   onUserInput={(value) => setSrcTypedAmount(value)}
                 />
-                <button className="font-bold flex items-center gap-1 py-2 text-xl text-slate-400 hover:text-slate-300 ">
+                <button className="flex items-center gap-1 py-2 text-xl font-bold text-slate-400 hover:text-slate-300 ">
                   {srcToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
               </div>
@@ -729,18 +662,18 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             <div className="flex flex-col">
               <div className="relative flex items-center">
                 <Input.Numeric
-                  className="font-bold flex-auto w-full px-0 py-2 overflow-hidden text-2xl bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
+                  className="flex-auto w-full px-0 py-2 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
                   value={dstTypedAmount}
                   title="Amount Out"
                   readOnly
                 />
-                <button className="font-bold flex items-center gap-1 py-2 text-xl text-slate-400 hover:text-slate-300 ">
+                <button className="flex items-center gap-1 py-2 text-xl font-bold text-slate-400 hover:text-slate-300 ">
                   {dstToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
               </div>
             </div>
           </div>
-          <div className="pb-3 flex flex-row justify-between">
+          <div className="flex flex-row justify-between pb-3">
             <Typography variant="xs" className="py-1 select-none text-slate-500">
               -
             </Typography>
@@ -748,10 +681,10 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           </div>
 
           <div className="flex justify-between border-t border-slate-700/40">
-            <Typography variant="xs" className="cursor-pointer py-3">
+            <Typography variant="xs" className="py-3 cursor-pointer">
               Rate
             </Typography>
-            <Typography variant="xs" className="cursor-pointer py-3 hover:text-slate-300 text-slate-400">
+            <Typography variant="xs" className="py-3 cursor-pointer hover:text-slate-300 text-slate-400">
               {!srcAmount ? (
                 'Enter an amount'
               ) : !dstTrade ? (
@@ -765,37 +698,47 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           </div>
 
           <div className="flex gap-2">
-            <Approve
-              components={
-                <Approve.Components className="flex gap-4">
-                  <Approve.Bentobox
+            {!account ? (
+              // 1. Connect wallet (Connect button?)
+              <button className="w-full">Connect</button>
+            ) : activeChain.id !== srcChainId ? (
+              // 2. Network reconsiliation - If network mismatch, render switch network button
+              <button className="w-full" type="button" onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+                Switch network
+              </button>
+            ) : (
+              // 3. Approvals and primary action
+              <Approve
+                components={
+                  <Approve.Components className="flex gap-4">
+                    <Approve.Bentobox
+                      fullWidth
+                      watch
+                      token={srcAmount?.currency}
+                      address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                      onSignature={setSignature}
+                    />
+                    <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
+                  </Approve.Components>
+                }
+                render={({ approved }) => (
+                  <Button
                     fullWidth
-                    chainId={srcChainId}
-                    watch
-                    token={srcAmount?.currency}
-                    address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                    onSignature={setSignature}
-                  />
-                  <Approve.Token watch amount={srcAmount} address={BENTOBOX_ADDRESS[srcChainId]} />
-                </Approve.Components>
-              }
-              render={({ approved }) => (
-                <Button
-                  fullWidth
-                  variant="filled"
-                  color="gradient"
-                  disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
-                  onClick={execute}
-                >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
-                </Button>
-              )}
-            />
+                    variant="filled"
+                    color="gradient"
+                    disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                    onClick={execute}
+                  >
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                  </Button>
+                )}
+              />
+            )}
           </div>
-          <div className="mt-2 flex gap-2 items-center justify-center cursor-pointer pointer-events-auto text-slate-400 group">
+          <div className="flex items-center justify-center gap-2 mt-2 cursor-pointer pointer-events-auto text-slate-400 group">
             <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}
             <Link href="https://app.sushi.com" passHref={true}>
-              <a className="text-xs py-1 text-slate-500 group-hover:text-slate-300 select-none">
+              <a className="py-1 text-xs select-none text-slate-500 group-hover:text-slate-300">
                 Powered by <span className="font-bold">Sushi</span>
               </a>
             </Link>

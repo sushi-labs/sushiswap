@@ -1,7 +1,6 @@
 import { splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
-import { ChainId } from '@sushiswap/chain'
 import { Signature } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
@@ -10,24 +9,27 @@ import { ApprovalState } from './useApproveCallback'
 import { BENTOBOX_ADDRESS } from './useBentoBoxContract'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
-export function useBentoBoxApproveCallback(
-  watch: boolean,
-  masterContractAddress?: string,
-  chainId?: ChainId
-): [ApprovalState, Signature | undefined, () => Promise<void>] {
+export function useBentoBoxApproveCallback({
+  masterContract,
+  watch,
+}: {
+  masterContract?: string
+  watch: boolean
+}): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-  const _chainId = chainId || activeChain?.id
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
     {
-      addressOrName: _chainId ? BENTOBOX_ADDRESS[_chainId] : AddressZero,
+      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
       contractInterface: bentoBoxArtifact.abi,
     },
     'masterContractApproved',
     {
-      args: [masterContractAddress, account?.address],
+      args: [masterContract, account ? account.address : AddressZero],
+      // This should probably always be true anyway...
       watch,
+      enabled: Boolean(account),
     }
   )
   const { error, refetch: getNonces } = useContractRead(
@@ -37,7 +39,7 @@ export function useBentoBoxApproveCallback(
     },
     'nonces',
     {
-      args: [account?.address],
+      args: [account ? account.address : AddressZero],
       enabled: false,
     }
   )
@@ -54,12 +56,23 @@ export function useBentoBoxApproveCallback(
   }, [isBentoBoxApproved, signature, isLoading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
-    if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
+    if (!activeChain) {
+      console.error('no active chain')
       return
     }
-    if (!masterContractAddress) {
-      console.error('no address')
+
+    if (!(activeChain.id in BENTOBOX_ADDRESS)) {
+      console.error('no bentobox for active chain ' + activeChain.id)
+      return
+    }
+
+    if (!masterContract) {
+      console.error('no master contract')
+      return
+    }
+
+    if (approvalState !== ApprovalState.NOT_APPROVED) {
+      console.error('approve was called unnecessarily')
       return
     }
 
@@ -68,8 +81,8 @@ export function useBentoBoxApproveCallback(
     const data = await signTypedDataAsync({
       domain: {
         name: 'BentoBox V1',
-        chainId: _chainId,
-        verifyingContract: _chainId ? BENTOBOX_ADDRESS[_chainId] : undefined,
+        chainId: activeChain.id,
+        verifyingContract: BENTOBOX_ADDRESS[activeChain.id],
       },
       types: {
         SetMasterContractApproval: [
@@ -83,7 +96,7 @@ export function useBentoBoxApproveCallback(
       value: {
         warning: 'Give FULL access to funds in (and approved to) BentoBox?',
         user: account?.address,
-        masterContract: masterContractAddress,
+        masterContract,
         approved: true,
         nonce: nonces,
       },
@@ -91,7 +104,7 @@ export function useBentoBoxApproveCallback(
     console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
-  }, [approvalState, masterContractAddress, getNonces, signTypedDataAsync, _chainId, account?.address, error])
+  }, [approvalState, masterContract, activeChain, getNonces, signTypedDataAsync, account?.address, error])
 
   return [approvalState, signature, approveBentoBox]
 }

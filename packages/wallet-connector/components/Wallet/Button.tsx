@@ -90,7 +90,7 @@ export const Button: FC<Props> = ({ hack, label, button }) => {
           button={
             button || (
               <Menu.Button className="!rounded-xl !py-2 !bg-slate-700 p-px border-slate-1000 hover:ring-2 hover:ring-slate-600 flex gap-3">
-                <Account.Avatar address={data?.address} />
+                {/* <Account.Avatar address={data?.address} /> */}
                 <Account.Name address={data?.address}>
                   {({ name, isEns }) => (
                     <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">

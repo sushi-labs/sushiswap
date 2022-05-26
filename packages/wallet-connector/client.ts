@@ -1,66 +1,46 @@
-import { ChainId } from '@sushiswap/chain'
-import { chain, createClient, defaultChains, defaultL2Chains } from 'wagmi'
+import { configureChains, createClient, defaultChains, defaultL2Chains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
 
-import { getProvider, getWebsocketProvider } from './provider'
+const alchemyId = process.env.ALCHEMY_ID
+const infuraId = process.env.INFURA_ID
 
-const ALCHEMY_API_KEY: Record<number, string> = {
-  [ChainId.ETHEREUM]: 'q1pMGalg0HNBvK1eaZoo-vng-EPWlt1t',
-  [ChainId.ARBITRUM]: 'eO_ha0kuIlFWSqXokR6-K5LzGx4qB9XV',
-  [ChainId.OPTIMISM]: 'rtbMqQGp96fbuXxzUS2fct34eYzA7tY8',
-  [ChainId.POLYGON]: 'vZft72lBzQ100fCIJTyohJR1tWrMsUei',
-  [ChainId.POLYGON_TESTNET]: 'JW13aE7MytaJNzSZ-BI4L-XfmaMqMip_',
-  [ChainId.GÖRLI]: 'BXrZLhuc63Gn91NoLVVFDJ010M-AwOa2',
-}
+const { chains, provider, webSocketProvider } = configureChains(
+  [...defaultChains, ...defaultL2Chains],
+  [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()]
+)
 
-const defaultChain = chain.mainnet
-
-const isChainSupported = (chainId?: number) => {
-  return [...defaultChains, ...defaultL2Chains].some((x) => x.id === chainId)
-}
-
-const client: ReturnType<typeof createClient> = createClient({
+export default createClient({
   autoConnect: true,
   connectors({ chainId }) {
-    const chain = [...defaultChains, ...defaultL2Chains].find((chain) => chain.id === chainId) ?? defaultChain
-    const rpcUrl =
-      chainId && chain.rpcUrls.alchemy ? `${chain.rpcUrls.alchemy}/${ALCHEMY_API_KEY[chainId]}` : chain.rpcUrls.default
-
-    console.log({ chain, rpcUrl })
     return [
       new InjectedConnector({
-        chains: [...defaultChains, ...defaultL2Chains],
+        chains,
       }),
       new WalletConnectConnector({
+        chains,
         // TODO: Flesh out wallet connect options?
-        // bridge?
         options: {
+          // Bridge?
+          chainId,
           qrcode: true,
-          rpc: {
-            [chain.id]: rpcUrl,
-          },
         },
       }),
       new CoinbaseWalletConnector({
         // TODO: Flesh out coinbase wallet connect options?
+        chains,
         options: {
           appName: 'Sushi 2.0',
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
-          chainId: chain.id,
-          jsonRpcUrl: rpcUrl,
+          chainId,
         },
       }),
     ]
   },
-  provider({ chainId }) {
-    return getProvider(chainId ? chainId : defaultChain.id)
-  },
-  webSocketProvider({ chainId }) {
-    return getWebsocketProvider(chainId ? chainId : defaultChain.id)
-  },
-  // storage: createStorage({ storage: window.localStorage }),
+  provider,
+  webSocketProvider,
 })
-
-export default client

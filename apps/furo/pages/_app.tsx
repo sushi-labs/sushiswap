@@ -14,7 +14,7 @@ import Script from 'next/script'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
-import { WagmiProvider } from 'wagmi'
+import { WagmiConfig } from 'wagmi'
 
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
@@ -48,7 +48,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   return (
     <>
-      <WagmiProvider client={client}>
+      <WagmiConfig client={client}>
         <ReduxProvider store={store}>
           <App.Shell>
             <Header />
@@ -61,7 +61,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Footer />
           </App.Shell>
         </ReduxProvider>
-      </WagmiProvider>
+      </WagmiConfig>
       <Script
         id="gtag"
         strategy="afterInteractive"

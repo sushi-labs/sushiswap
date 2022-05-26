@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiProvider } from 'wagmi'
+import { WagmiConfig } from 'wagmi'
 
 const SUPPORTED_CHAIN_IDS = [
   // ChainId.ETHEREUM,
@@ -96,7 +96,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   // })
 
   return (
-    <WagmiProvider client={client}>
+    <WagmiConfig client={client}>
       <Provider store={store}>
         <App.Shell>
           <Header />
@@ -123,7 +123,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <App.Footer />
         </App.Shell>
       </Provider>
-    </WagmiProvider>
+    </WagmiConfig>
   )
 }
 

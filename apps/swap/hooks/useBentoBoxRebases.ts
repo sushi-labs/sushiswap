@@ -12,7 +12,7 @@ type UseBentoBoxRebases = (
   loading: boolean
 }
 
-const useBentoBoxRebases: UseBentoBoxRebases = (chainId, tokens) => {
+export const useBentoBoxRebases: UseBentoBoxRebases = (chainId, tokens) => {
   const addresses = useMemo(() => tokens.map((token) => [token?.wrapped.address]), [tokens])
   const bentoboxContract = useBentoBoxContract(chainId)
   const results = useSingleContractMultipleData(bentoboxContract, 'totals', addresses)
@@ -54,5 +54,3 @@ export const useBentoBoxRebase = (chainId: number, token: Currency | undefined) 
     return { rebase: undefined, loading }
   }, [loading, rebases, token])
 }
-
-export default useBentoBoxRebases
