@@ -2,7 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
 import { CogIcon } from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, SwitchHorizontalIcon } from '@heroicons/react/solid'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount, USDT } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
@@ -58,8 +58,9 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
   const { data: signer } = useSigner()
   const { activeChain, switchNetwork } = useNetwork()
   const isMounted = useIsMounted()
-  const inputRef = useRef<HTMLInputElement | undefined>()
+  const inputRef = useRef<HTMLInputElement>()
 
+  const [invert, setInvert] = useState(false)
   const [isWritePending, setIsWritePending] = useState<boolean>()
   const [signature, setSignature] = useState<Signature>()
   const [srcChainId, setSrcChainId] = useState(ChainId.ARBITRUM)
@@ -339,7 +340,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(srcTrade.route.amountInBN).sub(
+                          ? getBigNumber(srcTrade.route.amountIn).sub(
                               initialPath.reduce(
                                 (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
@@ -637,7 +638,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             </div>
             <div className="flex flex-row justify-between">
               <Typography variant="xs" className="py-1 select-none text-slate-400">
-                -
+                $0.00
               </Typography>
               <button className="py-1 text-xs text-slate-400 hover:text-slate-300">MAX</button>
             </div>
@@ -675,24 +676,37 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           </div>
           <div className="flex flex-row justify-between pb-3">
             <Typography variant="xs" className="py-1 select-none text-slate-500">
-              -
+              $0.00
             </Typography>
             <button className="py-1 text-xs text-slate-500 hover:text-slate-300">MAX</button>
           </div>
 
           <div className="flex justify-between border-t border-slate-700/40">
-            <Typography variant="xs" className="py-3 cursor-pointer">
+            <Typography variant="xs" className="cursor-pointer py-3 text-slate-400">
               Rate
             </Typography>
-            <Typography variant="xs" className="py-3 cursor-pointer hover:text-slate-300 text-slate-400">
+            <Typography
+              variant="xs"
+              className="cursor-pointer h-[40px] flex items-center hover:text-slate-300 text-slate-400"
+            >
               {!srcAmount ? (
                 'Enter an amount'
               ) : !dstTrade ? (
                 <Dots>Fetching best price</Dots>
               ) : (
-                <>
-                  1 {price?.baseCurrency.symbol} = {price?.toSignificant(6)} {price?.quoteCurrency.symbol}
-                </>
+                <div className="flex gap-1 items-center h-full" onClick={() => setInvert((prevState) => !prevState)}>
+                  {invert ? (
+                    <>
+                      1 {price?.invert().baseCurrency.symbol} = {price?.invert().toSignificant(6)}{' '}
+                      {price?.invert().quoteCurrency.symbol}
+                    </>
+                  ) : (
+                    <>
+                      1 {price?.baseCurrency.symbol} = {price?.toSignificant(6)} {price?.quoteCurrency.symbol}
+                    </>
+                  )}
+                  <SwitchHorizontalIcon width={12} height={12} />
+                </div>
               )}
             </Typography>
           </div>

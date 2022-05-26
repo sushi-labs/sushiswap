@@ -10,7 +10,7 @@ import React, {
   useRef,
 } from 'react'
 
-import { ApprovalState } from '../../hooks/useApproveCallback'
+import { ApprovalState } from '../../hooks'
 import { BentoApproveButton } from './BentoApproveButton'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { TokenApproveButton } from './TokenApproveButton'

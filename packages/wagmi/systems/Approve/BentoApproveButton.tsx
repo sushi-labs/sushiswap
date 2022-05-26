@@ -3,8 +3,7 @@ import { Currency } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
-import { ApprovalState } from '../../hooks/useApproveCallback'
-import { useBentoBoxApproveCallback } from '../../hooks/useBentoBoxApproveCallback'
+import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
 interface RenderPropPayload extends ApprovalButtonRenderProp {
