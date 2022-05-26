@@ -1,4 +1,4 @@
-import { FuroStatus, FuroType, PeriodType, TransactionType } from './enums'
+import { FuroStatus, FuroType, TransactionType } from './enums'
 
 export interface FuroRepresentation {
   id: string
@@ -46,15 +46,4 @@ export interface TransactionRepresentation {
   token: TokenRepresentation
   to: UserRepresentation
   txHash: string
-}
-
-export interface ScheduleRepresentation {
-  periods: PeriodRepresentation[]
-}
-
-export interface PeriodRepresentation {
-  id: string
-  type: PeriodType
-  time: string
-  amount: string
 }

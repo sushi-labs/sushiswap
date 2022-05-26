@@ -71,14 +71,3 @@ export const getVestingTransactions = async (chainId: string, id: string) => {
     return (await sdk.GoerliVestingTransactions({ id })).GOERLI_VESTING_transactions ?? {}
   }
 }
-
-export const getVestingSchedule = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
-  const sdk = await getBuiltGraphSDK()
-  if (network === ChainId.KOVAN) {
-    return (await (await sdk.KovanVestingSchedule({ id })).KOVAN_VESTING_vesting.schedule) ?? {}
-  } else if (network === ChainId.GÖRLI) {
-    return (await (await sdk.GoerliVestingSchedule({ id })).GOERLI_VESTING_vesting.schedule) ?? {}
-  }
-}

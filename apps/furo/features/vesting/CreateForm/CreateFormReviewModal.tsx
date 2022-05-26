@@ -2,8 +2,8 @@ import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
+import { createScheduleRepresentation } from 'features/vesting'
 import CreateFormButtons from 'features/vesting/CreateForm/CreateFormButtons'
-import { createScheduleRepresentation } from 'features/vesting/CreateForm/createScheduleRepresentation'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { getExplorerLink } from 'functions'
 import React, { FC, ReactNode, useMemo } from 'react'
@@ -77,16 +77,15 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     return open && _stepAmount
       ? createScheduleRepresentation({
           token,
-          cliff,
           cliffAmount: _cliffAmount,
           stepAmount: _stepAmount,
-          stepConfig,
+          stepDuration: stepConfig.time * 1000,
           startDate,
           cliffEndDate,
           stepPayouts,
         })
       : undefined
-  }, [_cliffAmount, _stepAmount, cliff, cliffEndDate, open, startDate, stepConfig, stepPayouts, token])
+  }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, token])
 
   return (
     <Dialog open={open} onClose={onDismiss} unmount={true}>
@@ -132,9 +131,9 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                         {period.type.toLowerCase()}
                       </Typography>
                       <Typography variant="xs" className="text-slate-200 flex flex-col text-left" weight={500}>
-                        {format(new Date(period.time), 'dd MMM yyyy')}
+                        {format(period.date, 'dd MMM yyyy')}
                         <Typography as="span" variant="xxs" className="text-slate-500">
-                          {format(new Date(period.time), 'hh:maaa')}
+                          {format(period.date, 'hh:maaa')}
                         </Typography>
                       </Typography>
                       <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>

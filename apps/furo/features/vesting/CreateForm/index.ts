@@ -1,7 +1,6 @@
 export * from './CliffDetailsSection'
 export * from './CreateForm'
 export * from './CreateFormReviewModal'
-export * from './createScheduleRepresentation'
 export * from './GeneralDetailsSection'
 export * from './GradedVestingDetailsSection'
 export * from './schema'

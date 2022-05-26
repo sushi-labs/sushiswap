@@ -2,24 +2,17 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { shortenAddress } from '@sushiswap/format'
 import { CalendarIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { PeriodType, Schedule, SchedulePeriod, ScheduleRepresentation, Vesting, VestingType } from 'features/context'
+import { PeriodType, Vesting, VestingType } from 'features/context'
+import { Period, Schedule } from 'features/vesting/createScheduleRepresentation'
 import { getExplorerLink } from 'functions'
-import { FC, memo, useMemo } from 'react'
+import { FC, memo } from 'react'
 
 interface Props {
   vesting?: Vesting
-  scheduleRepresentation?: ScheduleRepresentation
+  schedule?: Schedule
 }
 
-const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
-  const schedule = useMemo(
-    () =>
-      vesting && scheduleRepresentation
-        ? new Schedule({ token: vesting.token, schedule: scheduleRepresentation })
-        : undefined,
-    [vesting, scheduleRepresentation]
-  )
-
+const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
   if (!vesting) return null
 
   return (
@@ -85,8 +78,8 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
             </div>
           </div>
           <div className="px-4 overflow-auto max-h-[240px] hide-scrollbar divide-y divide-slate-700/50">
-            {schedule?.periods.length ? (
-              Object.values(schedule.periods).map((period) => (
+            {schedule?.length ? (
+              Object.values(schedule).map((period) => (
                 <SchedulePopoverItem vesting={vesting} period={period} key={period.id} />
               ))
             ) : (
@@ -101,7 +94,7 @@ const SchedulePopover: FC<Props> = ({ vesting, scheduleRepresentation }) => {
   )
 }
 
-const SchedulePopoverItem: FC<{ vesting?: Vesting; period: SchedulePeriod }> = memo(({ vesting, period }) => {
+const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ vesting, period }) => {
   return (
     <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
       <Typography className="capitalize text-slate-200 tracking-wider" weight={700} variant="xxs">
