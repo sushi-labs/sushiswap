@@ -1,4 +1,6 @@
-import { configureChains, createClient, defaultChains, defaultL2Chains } from 'wagmi'
+import { FallbackProvider, StaticJsonRpcProvider, WebSocketProvider } from '@ethersproject/providers'
+import { QueryClient } from 'react-query'
+import { Client, configureChains, createClient, defaultChains, defaultL2Chains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -14,7 +16,9 @@ const { chains, provider, webSocketProvider } = configureChains(
   [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()]
 )
 
-export default createClient({
+export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketProvider> & {
+  queryClient: QueryClient
+} = createClient({
   autoConnect: true,
   connectors({ chainId }) {
     return [

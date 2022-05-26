@@ -3,7 +3,7 @@ import '@sushiswap/ui/index.css'
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
-import { client, getProviders } from '@sushiswap/wallet-connector'
+import { client, getProviders, WagmiConfig } from '@sushiswap/wagmi'
 import { Header } from 'features'
 import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
 import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
-import { WagmiConfig } from 'wagmi'
 
 const SUPPORTED_CHAIN_IDS = [
   // ChainId.ETHEREUM,

@@ -31,7 +31,6 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/wallet-connector": "workspace:*",
     "@sushiswap/swap-widget": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
     "@uniswap/redux-multicall": "^1.1.1",

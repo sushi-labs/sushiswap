@@ -1,7 +1,6 @@
-import { splitSignature } from '@ethersproject/bytes'
+import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
-import { Signature } from 'ethers'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
 

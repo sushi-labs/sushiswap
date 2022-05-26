@@ -359,7 +359,6 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wallet-connector': workspace:*
       '@tanstack/react-table': 8.0.0-alpha.87
       '@types/node': 17.0.30
       '@types/react': ^18.0.9
@@ -426,7 +425,6 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
-      '@sushiswap/wallet-connector': link:../../packages/wallet-connector
       '@tanstack/react-table': 8.0.0-alpha.87_ef5jwxihqo6n7gxfmzogljlgcm
       '@uniswap/redux-multicall': 1.1.1_hqr7hdlscwktfiisqjxe4dgvpi
       '@uniswap/token-lists': 1.0.0-beta.28
@@ -569,7 +567,6 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
-      '@sushiswap/wallet-connector': workspace:*
       '@typechain/ethers-v5': ^10.0.0
       '@types/node': ^17.0.30
       '@types/react': ^18.0.9
@@ -611,7 +608,6 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
-      '@sushiswap/wallet-connector': link:../../packages/wallet-connector
       '@typechain/ethers-v5': 10.0.0_uxmwhbw4hrjd75ajfbfg7rru2e
       '@uniswap/redux-multicall': 1.1.1_hqr7hdlscwktfiisqjxe4dgvpi
       '@uniswap/v2-core': 1.0.1
@@ -770,7 +766,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@sushiswap/wallet-connector': workspace:*
+      '@sushiswap/wagmi': workspace:*
       '@types/node': 17.0.25
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
@@ -787,7 +783,7 @@ importers:
       wagmi: ^0.4.3
     dependencies:
       '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/wallet-connector': link:../../packages/wallet-connector
+      '@sushiswap/wagmi': link:../../packages/wagmi
       ethers: 5.6.6
       next: 12.1.6_ef5jwxihqo6n7gxfmzogljlgcm
       react: 18.1.0
@@ -1394,10 +1390,12 @@ importers:
       '@ethersproject/bytes': ^5.6.1
       '@ethersproject/constants': ^5.6.0
       '@ethersproject/providers': ^5.6.4
+      '@heroicons/react': ^1.0.6
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -1407,10 +1405,11 @@ importers:
       '@typechain/ethers-v5': ^10.0.0
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
-      '@uniswap/v3-periphery': ^1.4.1
+      '@uniswap/v3-periphery': 1.4.1
       ethers: ^5.6.6
       react: ^18.1.0
       react-dom: ^18.1.0
+      react-query: 4.0.0-beta.12
       tsup: ^5.12.7
       typechain: ^8.0.0
       typescript: ^4.6.4
@@ -1420,14 +1419,15 @@ importers:
       '@ethersproject/bytes': 5.6.1
       '@ethersproject/constants': 5.6.0
       '@ethersproject/providers': 5.6.6
+      '@heroicons/react': 1.0.6_react@18.1.0
       '@sushiswap/bentobox': link:../../protocols/bentobox/v1
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
+      '@sushiswap/format': link:../format
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
       '@sushiswap/ui': link:../ui
       '@uniswap/v3-periphery': 1.4.1
-      wagmi: 0.4.3_psvhf2bcekgpduwaw7lrstqk6m
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -1439,50 +1439,9 @@ importers:
       ethers: 5.6.6
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
+      react-query: 4.0.0-beta.12_ef5jwxihqo6n7gxfmzogljlgcm
       tsup: 5.12.8_typescript@4.6.4
       typechain: 8.0.0_typescript@4.6.4
-      typescript: 4.6.4
-
-  packages/wallet-connector:
-    specifiers:
-      '@heroicons/react': ^1.0.6
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@types/node': ^17.0.30
-      '@types/react': ^18.0.9
-      '@types/react-dom': ^18.0.4
-      ethers: ^5.6.6
-      react: ^18.1.0
-      react-dom: ^18.1.0
-      typescript: ^4.6.4
-      wagmi: ^0.4.3
-    dependencies:
-      '@heroicons/react': 1.0.6_react@18.1.0
-    devDependencies:
-      '@sushiswap/chain': link:../chain
-      '@sushiswap/currency': link:../currency
-      '@sushiswap/eslint-config': link:../config/eslint
-      '@sushiswap/format': link:../format
-      '@sushiswap/hooks': link:../hooks
-      '@sushiswap/jest-config': link:../config/jest
-      '@sushiswap/math': link:../math
-      '@sushiswap/prettier-config': link:../config/prettier
-      '@sushiswap/typescript-config': link:../config/typescript
-      '@sushiswap/ui': link:../ui
-      '@types/node': 17.0.35
-      '@types/react': 18.0.9
-      '@types/react-dom': 18.0.4
-      ethers: 5.6.6
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
       typescript: 4.6.4
       wagmi: 0.4.3_psvhf2bcekgpduwaw7lrstqk6m
 
@@ -10304,6 +10263,8 @@ packages:
     dependencies:
       debug: 3.2.7
       resolve: 1.22.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /eslint-import-resolver-typescript/2.7.1_gwd37gqv3vjv3xlpl7ju3ag2qu:
@@ -10343,8 +10304,12 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/parser': 5.25.0_eslint@8.15.0
+      debug: 3.2.7
       eslint-import-resolver-node: 0.3.6
       eslint-import-resolver-typescript: 2.7.1_gwd37gqv3vjv3xlpl7ju3ag2qu
+      find-up: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /eslint-plugin-import/2.26.0_cubvsak2fflmoxzlyy3qtfibly:
@@ -11254,6 +11219,8 @@ packages:
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
 
   /ext/1.6.0:
     resolution: {integrity: sha512-sdBImtzkq2HpkdRLtlLWDa6w4DX22ijZLKx8BMPUuKe1c5lbN6xwQDQCxSfxBQnHZ13ls/FH0MQZx/q/gr6FQg==}
@@ -11454,6 +11421,8 @@ packages:
       parseurl: 1.3.3
       statuses: 2.0.1
       unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   /find-replace/1.0.3:
     resolution: {integrity: sha1-uI5zZNLZyVlVnziMZmcNYTBEH6A=}
@@ -17452,6 +17421,8 @@ packages:
       on-finished: 2.4.1
       range-parser: 1.2.1
       statuses: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   /sentence-case/3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
@@ -17474,6 +17445,8 @@ packages:
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 0.18.0
+    transitivePeerDependencies:
+      - supports-color
 
   /servify/0.1.12:
     resolution: {integrity: sha512-/xE6GvsKKqyo1BAY+KxOWXcLpPsUUyji7Qg3bVD7hh1eRze5bR1uYiuDA/k3Gof1s9BTzQZEJK8sNcNGFIzeWw==}

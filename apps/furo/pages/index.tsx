@@ -1,12 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Menu } from '@headlessui/react'
-import { ChainId, USDC } from '@sushiswap/core-sdk'
+import { ChainId, USDC } from '@sushiswap/currency'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
-import Button from '@sushiswap/ui/button/Button'
-import { Account, Wallet } from '@sushiswap/wallet-connector'
+import { Button, Typography } from '@sushiswap/ui'
+import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { FuroStatus, FuroType, Stream } from 'features'
@@ -68,23 +67,23 @@ export default function Index() {
     <Layout
       className="my-40"
       backdrop={
-        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+        <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
           <BackgroundVector width="100%" preserveAspectRatio="none" />
         </div>
       }
     >
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
-        <div className="flex flex-col h-full justify-center gap-8">
+        <div className="flex flex-col justify-center h-full gap-8">
           <div className="flex flex-col gap-3">
             <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
               Welcome to <br />
               <span className="text-blue">Furo</span> Streaming
             </div>
-            <div className="text-center sm:text-left text-lg sm:text-xl text-slate-400 md:w-1/2">
+            <div className="text-lg text-center sm:text-left sm:text-xl text-slate-400 md:w-1/2">
               Earn, stream and automate your DAO salaries and token vesting with Furo.
             </div>
           </div>
-          <div className="flex flex-col sm:items-center sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
             {isMounted && account?.address ? (
               <>
                 <div>
@@ -109,7 +108,7 @@ export default function Index() {
                           href={getExplorerLink(activeChain?.id, account?.address, 'address')}
                           variant="sm"
                           weight={700}
-                          className="hover:text-blue-400 text-slate-50 tracking-wide text-sm sm:text-base"
+                          className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
                           {isEns ? name : !!name ? shortenAddress(name) : ''}
                         </Typography>

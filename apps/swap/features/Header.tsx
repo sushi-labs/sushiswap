@@ -1,5 +1,5 @@
 import { App, Container, SushiIcon } from '@sushiswap/ui'
-import { Wallet } from '@sushiswap/wallet-connector'
+import { Wallet } from '@sushiswap/wagmi'
 import Link from 'next/link'
 
 export const Header = () => {

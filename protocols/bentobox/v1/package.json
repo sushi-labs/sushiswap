@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
-    "clean": "hardhat clean && rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node"
   },

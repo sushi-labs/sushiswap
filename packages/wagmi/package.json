@@ -11,52 +11,50 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "source": "./index.ts",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
-    "build": "tsup ./index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup ./index.ts --format esm,cjs --watch --dts",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
-    "lint": "TIMING=1 eslint ./*.ts* --fix",
+    "lint": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@ethersproject/abi":"^5.6.2",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/bentobox": "workspace:*",
-    "@sushiswap/ui": "workspace:*",
-    "@sushiswap/math": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@ethersproject/bytes": "^5.6.1",
     "@ethersproject/constants": "^5.6.0",
     "@ethersproject/providers": "^5.6.4",
+    "@heroicons/react": "^1.0.6",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
-    "@uniswap/v3-periphery": "^1.4.1",
-    "wagmi": "^0.4.3"
+    "@sushiswap/math": "workspace:*",
+    "@sushiswap/ui": "workspace:*",
+    "@uniswap/v3-periphery": "1.4.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
-    "ethers": "^5.6.6",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
+    "ethers": "^5.6.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "tsup": "^5.12.7",
     "typescript": "^4.6.4",
-    "typechain": "^8.0.0"
+    "typechain": "^8.0.0",
+    "react-query": "4.0.0-beta.12",
+    "wagmi": "^0.4.3"
+
   },
   "peerDependencies": {
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "ethers": "^5.6.6"
+    "ethers": "^5.6.6",
+    "wagmi": "^0.4.3"
   }
 }

@@ -1,8 +1,15 @@
+import {
+  AlchemyProvider,
+  AlchemyWebSocketProvider,
+  BaseProvider,
+  InfuraProvider,
+  InfuraWebSocketProvider,
+  WebSocketProvider,
+} from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
-import { providers } from 'ethers'
 
-const providerCache: Partial<Record<ChainId, providers.BaseProvider>> = {}
-const websocketProviderCache: Partial<Record<ChainId, providers.WebSocketProvider>> = {}
+const providerCache: Partial<Record<ChainId, BaseProvider>> = {}
+const websocketProviderCache: Partial<Record<ChainId, WebSocketProvider>> = {}
 
 const ALCHEMY_ENABLED_CHAINS = [
   ChainId.ETHEREUM,
@@ -48,17 +55,17 @@ export function getProvider(chainId: ChainId) {
     const alchemyKey = ALCHEMY_API_KEY[chainId]
     if (!alchemyKey) throw new Error('ALCHEMY_API_KEY || NEXT_PUBLIC_ALCHEMY_API_KEY is required for provider')
     const name = getAlchemyChainName(chainId)
-    providerCache[chainId] = new providers.AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
+    providerCache[chainId] = new AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
     const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
     if (!infuraKey) throw new Error('INFURA_PROJECT_ID || NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
     const name = getInfuraChainName(chainId)
-    providerCache[chainId] = new providers.InfuraProvider(name, infuraKey)
+    providerCache[chainId] = new InfuraProvider(name, infuraKey)
   } else if (ANKR_ENABLED_CHAINS.includes(chainId)) {
     const ankrKey = ANKR_API_KEY[chainId]
     if (!ankrKey) throw new Error('PUBLIC_ANKR_ID || NEXT_PUBLIC_ANKR_ID is required for provider')
     // const name = getAnkrChainName(chainId)
-    // providerCache[chainId] = new providers.AnkrProvider(name, ankrKey)
+    // providerCache[chainId] = new AnkrProvider(name, ankrKey)
   }
 
   return providerCache[chainId]!
@@ -75,13 +82,13 @@ export function getWebsocketProvider(chainId: ChainId) {
     const alchemyKey = ALCHEMY_API_KEY[chainId]
     if (!alchemyKey) throw new Error('ALCHEMY_API_KEY || NEXT_PUBLIC_ALCHEMY_API_KEY is required for provider')
     const name = getAlchemyChainName(chainId)
-    websocketProviderCache[chainId] = new providers.AlchemyWebSocketProvider(name, ALCHEMY_API_KEY[chainId])
+    websocketProviderCache[chainId] = new AlchemyWebSocketProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
     const infuraKey = process.env.INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
     if (!infuraKey)
       throw new Error('INFURA_PROJECT_ID || process.env.NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
     const name = getInfuraChainName(chainId)
-    websocketProviderCache[chainId] = new providers.InfuraWebSocketProvider(name, infuraKey)
+    websocketProviderCache[chainId] = new InfuraWebSocketProvider(name, infuraKey)
   }
 
   return websocketProviderCache[chainId]!

@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { useContract, useProvider } from 'wagmi'
 
-import { UniswapInterfaceMulticall } from './typechain'
+import type { UniswapInterfaceMulticall } from '../typechain'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',

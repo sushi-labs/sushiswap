@@ -1,10 +1,18 @@
+// Export pre-configured client for now
+// TODO: Configurable version
+export { client } from './client'
+
+// Export components
+export * from './components'
+
+// Export hooks
+export * from './hooks'
+
+// Export provider
+export * from './provider'
+
+// Export systems
 export * from './systems'
-export * from './useApproveCallback'
-export * from './useBentoBoxApproveCallback'
-export * from './useBentoBoxContract'
-export * from './useMulticallContract'
-export * from './useTokenAllowance'
-export * from './useWalletState'
 
 // Re-export wagmi
 export * from 'wagmi'

@@ -1,10 +1,10 @@
+import { Signature } from '@ethersproject/bytes'
 import { Currency } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui'
-import { Signature } from 'ethers'
 import { FC, memo, useEffect } from 'react'
 
-import { ApprovalState } from '../../useApproveCallback'
-import { useBentoBoxApproveCallback } from '../../useBentoBoxApproveCallback'
+import { ApprovalState } from '../../hooks/useApproveCallback'
+import { useBentoBoxApproveCallback } from '../../hooks/useBentoBoxApproveCallback'
 import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
 interface RenderPropPayload extends ApprovalButtonRenderProp {
