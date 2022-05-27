@@ -62,7 +62,7 @@ export const TokenSelector: FC<Props> = ({ onSelect, currency, onClose }) => {
             }}
             className="!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full"
           />
-          {searching.current && <Loader width={24} height={24} />}
+          {searching.current && <Loader size="24px" />}
         </div>
         <Currency.List currency={currency} onCurrency={handleSelect} currencies={filteredSortedTokens} />
       </Dialog.Content>

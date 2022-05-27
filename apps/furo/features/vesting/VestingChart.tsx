@@ -1,13 +1,12 @@
-import { formatUnits } from '@ethersproject/units'
 import { curveStepAfter } from '@visx/curve'
 import { ParentSize } from '@visx/responsive'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, buildChartTheme, Tooltip, XYChart } from '@visx/xychart'
-import { ScheduleRepresentation, Vesting } from 'features'
+import { Schedule, Vesting } from 'features'
 import { FC, useEffect, useState } from 'react'
 
 interface Props {
   vesting?: Vesting
-  schedule?: ScheduleRepresentation
+  schedule?: Schedule
 }
 
 interface ChartDataTuple {
@@ -30,17 +29,15 @@ const TickComponent: React.FC<{ formattedValue: string; tickProps: any }> = ({ f
   </text>
 )
 
-export const VestingChart: FC<Props> = (props) => {
+export const VestingChart: FC<Props> = ({ vesting, schedule }) => {
   const [chartData, setChartData] = useState<ChartDataTuple[]>()
   const [currentData, setCurrentData] = useState<ChartDataTuple[]>()
-  let { vesting, schedule } = props
 
   useEffect(() => {
-    const data = schedule?.periods.map((period): ChartDataTuple => {
-      const date = new Date(parseInt(period.time) * 1000)
+    const data = schedule?.map((period): ChartDataTuple => {
       return {
-        x: date,
-        y: formatUnits(period.amount, vesting?.token.decimals).toString(),
+        x: period.date,
+        y: period.total.toSignificant(6),
       }
     })
     const dataBeforeNow = data?.filter(({ x }) => Date.now() >= x.getTime())

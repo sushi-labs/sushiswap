@@ -1,10 +1,10 @@
-name: furostream_goerli
+name: furostream_ethereum
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-ethereum
 transforms:
   - prefix:
-      value: GOERLI_STREAM_
+      value: ETHEREUM_STREAM_
       includeRootOperations: true
       includeTypes: false
       ignore: 

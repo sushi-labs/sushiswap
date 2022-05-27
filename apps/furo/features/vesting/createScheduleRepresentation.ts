@@ -1,68 +1,77 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { PeriodType } from 'features'
-import { StepConfig } from 'features/vesting/CreateForm/types'
+
+export type Schedule = Period[]
+export type Period = {
+  id: string
+  type: PeriodType
+  date: Date
+  amount: Amount<Token>
+  total: Amount<Token>
+}
 
 type CreateScheduleRepresentation = (x: {
   token: Token
-  cliff: boolean
   cliffAmount: Amount<Token> | undefined
   stepAmount: Amount<Token>
   startDate: Date
   cliffEndDate: Date | undefined
   stepPayouts: number
-  stepConfig: StepConfig
-}) => {
-  id: string
-  type: PeriodType
-  time: Date
-  amount: Amount<Token>
-}[]
+  stepDuration: number
+}) => Schedule
 
 export const createScheduleRepresentation: CreateScheduleRepresentation = ({
   token,
-  cliff,
   cliffAmount,
   stepAmount,
-  stepConfig,
+  stepDuration,
   startDate,
   cliffEndDate,
   stepPayouts,
 }) => {
+  let total = Amount.fromRawAmount(token, '0')
   const periods = [
     {
       id: 'start',
       type: PeriodType.START,
-      time: startDate,
+      date: startDate,
       amount: Amount.fromRawAmount(token, '0'),
+      total: Amount.fromRawAmount(token, '0'),
     },
   ]
 
-  if (cliff && cliffEndDate && cliffAmount) {
+  if (cliffEndDate && cliffAmount) {
+    total = cliffAmount
     periods.push({
       id: 'cliff',
       type: PeriodType.CLIFF,
-      time: cliffEndDate,
+      date: cliffEndDate,
       amount: cliffAmount,
+      total,
     })
   }
 
-  let time = (cliff && cliffEndDate ? cliffEndDate : startDate).getTime()
+  let time = (cliffEndDate ? cliffEndDate : startDate).getTime()
   for (let i = 0; i < stepPayouts - 1; i++) {
-    time += stepConfig.time * 1000
+    time += stepDuration
+    total = total.add(stepAmount)
     periods.push({
       id: `step:${i}`,
       type: PeriodType.STEP,
-      time: new Date(time),
+      date: new Date(time),
       amount: stepAmount,
+      total,
     })
   }
 
-  time += stepConfig.time * 1000
+  time += stepDuration
+  total = total.add(stepAmount)
   periods.push({
     id: 'end',
     type: PeriodType.END,
-    time: new Date(time),
+    date: new Date(time),
     amount: stepAmount,
+    total,
   })
 
   return periods

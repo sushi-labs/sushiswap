@@ -6,7 +6,13 @@ import FUROVESTING_ABI from 'abis/FuroVesting.json'
 import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
-import { FuroStatus, ScheduleRepresentation, TransactionRepresentation, Vesting, VestingRepresentation } from 'features'
+import {
+  createScheduleRepresentation,
+  FuroStatus,
+  TransactionRepresentation,
+  Vesting,
+  VestingRepresentation,
+} from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
 import StreamDetailsPopover from 'features/StreamDetailsPopover'
@@ -15,7 +21,7 @@ import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import WithdrawModal from 'features/vesting/WithdrawModal'
-import { getVesting, getVestingSchedule, getVestingTransactions } from 'graph/graph-client'
+import { getVesting, getVestingTransactions } from 'graph/graph-client'
 import { useStreamBalance, VESTING_ADDRESS } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
@@ -41,10 +47,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
           query.chainId,
           query.id
         )) as TransactionRepresentation[],
-        [`/api/schedule/${query.chainId}/${query.id}`]: (await getVestingSchedule(
-          query.chainId,
-          query.id
-        )) as ScheduleRepresentation,
       },
     },
   }
@@ -68,12 +70,23 @@ const _VestingPage: FC = () => {
 
   const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
   const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
-  const { data: schedule } = useSWR<ScheduleRepresentation>(`/api/schedule/${chainId}/${id}`)
 
   const vesting = useMemo(
     () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation, chainId }) : undefined),
     [chainId, vestingRepresentation]
   )
+
+  const schedule = vesting
+    ? createScheduleRepresentation({
+        token: vesting.token,
+        cliffEndDate: new Date(vesting.startTime.getTime() + vesting.cliffDuration * 1000),
+        cliffAmount: vesting.cliffAmount,
+        stepAmount: vesting.stepAmount,
+        stepDuration: vesting.stepDuration * 1000,
+        startDate: vesting.startTime,
+        stepPayouts: vesting.steps,
+      })
+    : undefined
 
   // Sync balance to Vesting entity
   const balance = useStreamBalance(vesting?.id, vesting?.token)
@@ -141,7 +154,7 @@ const _VestingPage: FC = () => {
         <div className="flex items-end justify-center gap-2">
           <StreamDetailsPopover stream={vesting} />
           <HistoryPopover transactionRepresentations={transactions} />
-          <SchedulePopover vesting={vesting} scheduleRepresentation={schedule} />
+          <SchedulePopover vesting={vesting} schedule={schedule} />
         </div>
         {vesting?.status !== FuroStatus.CANCELLED && (
           <div className="flex flex-col gap-2">
