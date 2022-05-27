@@ -5,13 +5,16 @@ import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { CreateStreamFormData } from 'features/stream/CreateForm/types'
 import { TokenSelector } from 'features/TokenSelector'
-import { useTokenBentoboxBalance, useTokenWalletBalance } from 'hooks'
+import { useTokenBentoboxBalance, useTokens, useTokenWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 export const StreamAmountDetails = () => {
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
+  const tokenMap = useTokens(activeChain?.id)
+
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const { control, watch } = useFormContext<CreateStreamFormData>()
@@ -44,7 +47,15 @@ export const StreamAmountDetails = () => {
                 <Form.Error message={error?.message} />
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector onSelect={onChange} currency={value as Token} onClose={() => setDialogOpen(false)} />
+                    <TokenSelector
+                      tokenMap={tokenMap}
+                      onSelect={(token) => {
+                        onChange(token)
+                        setDialogOpen(false)
+                      }}
+                      currency={value as Token}
+                      onClose={() => setDialogOpen(false)}
+                    />
                   </Dialog.Content>
                 </Dialog>
               </>

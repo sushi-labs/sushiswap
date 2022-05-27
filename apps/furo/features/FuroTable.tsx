@@ -9,8 +9,7 @@ import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-import { FuroStatus } from './context/enums'
-import { Stream } from './context/Stream'
+import { FuroStatus, Stream } from './context'
 
 export enum FuroTableType {
   INCOMING,
