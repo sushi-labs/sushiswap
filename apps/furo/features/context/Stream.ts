@@ -10,7 +10,7 @@ export class Stream extends Furo {
     super({ chainId, furo: stream })
   }
 
-  public get balance(): Amount<Token> {
+  public get balance2(): Amount<Token> {
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
     return Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))

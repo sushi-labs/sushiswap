@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI, Percent } from '@sushiswap/math'
+import { JSBI, minimum, Percent } from '@sushiswap/math'
 
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
@@ -30,6 +30,28 @@ export class Vesting extends Furo {
     } else {
       this.vestingType = VestingType.IMMEDIATE
     }
+  }
+
+  public get balance2(): Amount<Token> {
+    const timeAfterCliff = JSBI.add(JSBI.BigInt(this.startTime.getTime()), JSBI.BigInt(this.cliffDuration))
+
+    const now = JSBI.BigInt(Date.now())
+
+    if (JSBI.lessThan(now, timeAfterCliff)) {
+      return Amount.fromRawAmount(this.token, 0)
+    }
+
+    const passedSinceCliff = JSBI.subtract(now, timeAfterCliff)
+
+    const stepPassed = minimum(JSBI.BigInt(this.steps), JSBI.divide(passedSinceCliff, JSBI.BigInt(this.stepDuration)))
+
+    return Amount.fromRawAmount(
+      this.token,
+      JSBI.subtract(
+        JSBI.add(this.cliffAmount.quotient, JSBI.multiply(this.stepAmount.quotient, stepPassed)),
+        this.remainingAmount.quotient
+      )
+    )
   }
 
   public get nextPaymentTimeRemaining(): { days: number; hours: number; minutes: number; seconds: number } | undefined {

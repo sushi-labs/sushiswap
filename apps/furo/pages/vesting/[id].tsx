@@ -22,7 +22,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import WithdrawModal from 'features/vesting/WithdrawModal'
 import { getVesting, getVestingTransactions } from 'graph/graph-client'
-import { useStreamBalance } from 'hooks'
+import { useVestingBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -89,10 +89,12 @@ const _VestingPage: FC = () => {
     : undefined
 
   // Sync balance to Vesting entity
-  const balance = useStreamBalance(chainId, vesting?.id, vesting?.token)
+  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
   if (vesting && balance) {
     vesting.balance = balance
   }
+
+  console.log({ balance: balance?.toExact(), balance2: vesting?.balance2.toExact() })
 
   if (connecting || reconnecting) return <Overlay />
 

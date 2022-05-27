@@ -7,7 +7,7 @@ import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
-  public _balance: Amount<Token> | undefined
+  public _balance: Amount<Token>
   public _withdrawnAmount: Amount<Token>
 
   public readonly id: string
@@ -34,10 +34,8 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
-
     this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
-    // TODO: Causes undefined on initial load
-    this._balance = undefined
+    this._balance = Amount.fromRawAmount(this.token, 0)
   }
 
   public get withdrawnAmount(): Amount<Token> {
@@ -48,11 +46,11 @@ export abstract class Furo {
     this._withdrawnAmount = amount
   }
 
-  public get balance(): Amount<Token> | undefined {
+  public get balance(): Amount<Token> {
     return this._balance
   }
 
-  public set balance(amount: Amount<Token> | undefined) {
+  public set balance(amount: Amount<Token>) {
     this._balance = amount
   }
 
@@ -104,10 +102,9 @@ export abstract class Furo {
     return new Percent(this._withdrawnAmount.quotient, this.amount.quotient)
   }
 
-  public get remainingAmount(): Amount<Token> | undefined {
-    if (!this._balance) return undefined
+  public get remainingAmount(): Amount<Token> {
     if (!this.isStarted) return this.amount
-    if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, '0')
+    if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, 0)
     return this.amount.subtract(this._withdrawnAmount).subtract(this._balance)
   }
 
