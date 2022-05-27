@@ -18,7 +18,6 @@ import StreamDetailsPopover from 'features/StreamDetailsPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
-import { useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -86,15 +85,7 @@ const _Streams: FC = () => {
     [chainId, streamRepresentation]
   )
 
-  // Sync balance to Stream entity
-  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
-  if (stream && balance) {
-    stream.balance = balance
-  }
-
   if (connecting || reconnecting) return <Overlay />
-
-  // console.log({ streamRepresentation, balance }, stream?.streamedPercentage?.toSignificant(4))
 
   return (
     <Layout
