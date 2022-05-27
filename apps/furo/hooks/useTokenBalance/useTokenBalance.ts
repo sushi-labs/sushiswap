@@ -1,7 +1,12 @@
-import { FundSource } from 'hooks/useFundSourceToggler'
-import { UseTokenBalance, UseTokenBalances } from 'hooks/useTokenBalance/types'
-import { useTokenBentoboxBalance, useTokenBentoboxBalances } from 'hooks/useTokenBalance/useTokenBentoboxBalance'
-import { useTokenWalletBalance, useTokenWalletBalances } from 'hooks/useTokenBalance/useTokenWalletBalance'
+import {
+  FundSource,
+  UseTokenBalance,
+  UseTokenBalances,
+  useTokenBentoboxBalance,
+  useTokenBentoboxBalances,
+  useTokenWalletBalance,
+  useTokenWalletBalances,
+} from 'hooks'
 
 export const useTokenBalances: UseTokenBalances = (account, tokens, fundSource) => {
   const walletBalance = useTokenWalletBalances(account, tokens)

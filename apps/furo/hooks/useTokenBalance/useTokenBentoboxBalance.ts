@@ -4,7 +4,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import BENTOBOX_ABI from 'abis/bentobox.json'
-import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks/useTokenBalance/types'
+import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks'
 import { useMemo } from 'react'
 import { useContract, useNetwork } from 'wagmi'
 
