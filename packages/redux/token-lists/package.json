@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",

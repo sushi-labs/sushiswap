@@ -7,6 +7,7 @@ import { FixedSizeList } from 'react-window'
 import { Typography } from '../typography'
 
 export interface WithCurrencyList {
+  className?: string
   currencies: Type[]
   currency?: Type
   onCurrency(x: Type): void
@@ -43,7 +44,7 @@ const CurrencyRow: FC<{
             <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
               {currency.name}
             </Typography>
-            <Typography variant="sm" weight={700} className="text-slate-200 group-hover:text-slate-50">
+            <Typography variant="xs" weight={700} className="text-slate-200 group-hover:text-slate-50">
               {currency.symbol}
             </Typography>
           </div>
@@ -75,17 +76,17 @@ const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
 }
 
 const withContext =
-  (Component: React.ComponentType<{ children?: ReactNode }>): React.FC<WithCurrencyList> =>
-  ({ currencies, currency, onCurrency, children }) =>
+  (Component: React.ComponentType<{ children?: ReactNode; className?: string }>): React.FC<WithCurrencyList> =>
+  ({ currencies, currency, onCurrency, children, className }) =>
     (
       <CurrencyListContext.Provider
         value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
       >
-        <Component>{children}</Component>
+        <Component className={className}>{children}</Component>
       </CurrencyListContext.Provider>
     )
 
-export const List = withContext(() => {
+export const List = withContext(({ className }) => {
   const { currencies } = useCurrencyListContext()
 
   const Row = useCallback(
@@ -101,14 +102,16 @@ export const List = withContext(() => {
   )
 
   return (
-    <div className="lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800">
+    <div
+      className={classNames(className, 'lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800')}
+    >
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <FixedSizeList
             height={height}
             width={width}
             itemCount={currencies.length}
-            itemSize={48}
+            itemSize={42}
             className="h-full divide-y hide-scrollbar divide-slate-700"
           >
             {Row}
