@@ -118,7 +118,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 5,
       live: true,

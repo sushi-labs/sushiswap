@@ -15,17 +15,6 @@ const func: DeployFunction = async ({
 
   const chainId = Number(await getChainId())
 
-  // const wnative = await ethers.getContractOrNull('WETH9')
-  // const bentoBox = await ethers.getContractOrNull('BentoBoxV1')
-
-  // if (!wnative && !(chainId in WNATIVE_ADDRESS)) {
-  //   throw Error(`No WETH9 deployment for chain #${chainId}!`)
-  // }
-
-  // if (!bentoBox && !(chainId in BENTOBOX_ADDRESS)) {
-  //   throw Error(`No BentoBox deployment for chain #${chainId}!`)
-  // }
-
   const args = [BENTOBOX_ADDRESS[chainId], WNATIVE_ADDRESS[chainId]]
 
   const { address } = await deploy('FuroStream', {
@@ -55,8 +44,6 @@ const func: DeployFunction = async ({
 
   console.log(`Furo Stream deployed to ${address}`)
 }
-
-// func.dependencies = ['BentoBoxV1']
 
 func.tags = ['FuroStream']
 
