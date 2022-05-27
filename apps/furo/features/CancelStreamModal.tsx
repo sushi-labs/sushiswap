@@ -43,7 +43,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
     })
   }, [account, fundSource, stream, writeAsync])
 
-  if (account?.address && !stream?.canCancel(account.address)) return <></>
+  if (!account || !stream?.canCancel(account.address)) return <></>
 
   return (
     <>
@@ -57,7 +57,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
           <Form.Control label="Receive funds in">
-            <div className="grid grid-cols-2 gap-5 items-center">
+            <div className="grid items-center grid-cols-2 gap-5">
               <div
                 onClick={() => setFundSource(FundSource.BENTOBOX)}
                 className={classNames(
@@ -71,7 +71,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
                   Bentobox
                 </Typography>
                 {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}
@@ -89,14 +89,14 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}
               </div>
             </div>
           </Form.Control>
-          <Typography variant="xs" weight={400} className="text-center italic text-slate-400">
+          <Typography variant="xs" weight={400} className="italic text-center text-slate-400">
             This will send the remaining amount of <br />{' '}
             <span className="font-bold text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}

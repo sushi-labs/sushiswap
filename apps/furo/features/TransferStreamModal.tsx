@@ -62,9 +62,7 @@ const TransferStreamModal: FC<TransferStreamModalProps> = ({ stream, abi, addres
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px]" />}
         fullWidth
         color="gray"
-        disabled={
-          (account?.address && !stream?.canTransfer(account.address)) || !stream?.remainingAmount?.greaterThan(ZERO)
-        }
+        disabled={!account || !stream?.canTransfer(account.address) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
         Transfer

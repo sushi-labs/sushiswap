@@ -90,7 +90,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
         fullWidth
         color="gray"
         onClick={() => setOpen(true)}
-        disabled={account?.address && !stream?.canUpdate(account.address)}
+        disabled={!account || !stream?.canUpdate(account.address)}
       >
         Update
       </Button>

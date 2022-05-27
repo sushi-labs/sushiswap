@@ -92,7 +92,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={(account?.address && !stream?.canWithdraw(account.address)) || !stream?.balance?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canWithdraw(account.address) || !stream?.balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
