@@ -1,24 +1,44 @@
 import { SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { Price, Type } from '@sushiswap/currency'
-import { Dots, Typography } from '@sushiswap/ui'
+import { classNames, Dots, Typography } from '@sushiswap/ui'
 import { FC, useState } from 'react'
+
+import { Theme } from '../types'
 
 interface Rate {
   loading: boolean
   price: Price<Type, Type> | undefined
+  theme: Theme
 }
 
-export const Rate: FC<Rate> = ({ loading, price }) => {
+export const Rate: FC<Rate> = ({ loading, price, theme }) => {
   const [invert, setInvert] = useState(false)
 
   return (
-    <div className="flex justify-between border-t border-slate-700/40">
-      <Typography variant="xs" className="cursor-pointer py-3 text-slate-400">
+    <div
+      className={classNames(
+        theme.secondary.default,
+        theme.secondary.hover,
+        'flex justify-between border-t border-opacity-40 border-slate-700'
+      )}
+    >
+      <Typography
+        variant="xs"
+        className={classNames(
+          theme.secondary.default,
+          theme.secondary.hover,
+          'cursor-pointer h-[36px] flex items-center '
+        )}
+      >
         Rate
       </Typography>
       <Typography
         variant="xs"
-        className="cursor-pointer h-[40px] flex items-center hover:text-slate-300 text-slate-400"
+        className={classNames(
+          theme.secondary.default,
+          theme.secondary.hover,
+          'cursor-pointer h-[36px] flex items-center '
+        )}
       >
         {loading ? (
           <Dots>Fetching best price</Dots>

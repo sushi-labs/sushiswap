@@ -1,6 +1,6 @@
 import { Token } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { FundSource } from 'hooks/useFundSourceToggler'
 
 export type StepConfig = {
   label: string

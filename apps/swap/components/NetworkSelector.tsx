@@ -1,8 +1,11 @@
 import { CheckIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Dialog, Input, Loader, SlideIn, Typography } from '@sushiswap/ui'
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { classNames, Input, Loader, SlideIn, Typography } from '@sushiswap/ui'
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
+
+import { Theme } from '../types'
+import { OverlayContent, OverlayHeader } from './Overlay'
 
 interface NetworkSelector {
   open: boolean
@@ -11,6 +14,7 @@ interface NetworkSelector {
   selected: ChainId
   className?: string
   networks?: { [k: string]: Chain }
+  theme: Theme
 }
 
 export const NetworkSelector: FC<NetworkSelector> = ({
@@ -20,6 +24,7 @@ export const NetworkSelector: FC<NetworkSelector> = ({
   onSelect,
   selected,
   className,
+  theme,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState<string>()
@@ -47,10 +52,16 @@ export const NetworkSelector: FC<NetworkSelector> = ({
   }, [networks, debouncedQuery])
 
   return (
-    <SlideIn.FromLeft show={open} unmount={false} onClose={onClose}>
-      <Dialog.Content className={classNames(className, '!p-3 !space-y-3 inset-0 !my-0 h-full')}>
-        <Dialog.Header title="Select Network" onClose={onClose} onBack={onClose} />
-        <div className="bg-slate-800 w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2 ring-blue">
+    <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
+      <OverlayContent theme={theme}>
+        <OverlayHeader onClose={onClose} title="Select Network" theme={theme} />
+        <div
+          className={classNames(
+            theme.background.secondary,
+            'w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2'
+          )}
+          style={{ '--tw-ring-color': theme.accent }}
+        >
           <Input.Address
             ref={inputRef}
             placeholder="Search token by address"
@@ -59,11 +70,15 @@ export const NetworkSelector: FC<NetworkSelector> = ({
               searching.current = true
               setQuery(val)
             }}
-            className="!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full"
+            className={classNames(
+              theme.primary.default,
+              theme.primary.hover,
+              '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
+            )}
           />
           {searching.current && <Loader size="16px" />}
         </div>
-        <div className="bg-slate-800 rounded-xl overflow-hidden h-[calc(100%-92px)]">
+        <div className={classNames(theme.background.secondary, 'rounded-xl overflow-hidden h-[calc(100%-92px)]')}>
           <div className="h-full overflow-auto hide-scrollbar">
             {filteredChains.map(([k, chain]) => (
               <Typography
@@ -71,8 +86,10 @@ export const NetworkSelector: FC<NetworkSelector> = ({
                 key={chain.chainId}
                 variant="sm"
                 className={classNames(
-                  selected === chain.chainId ? 'pl-1.5 text-slate-300 !font-bold' : 'pl-8 text-slate-400 !font-medium',
-                  'flex gap-1.5 hover:bg-slate-800 cursor-pointer hover:text-slate-200 py-2 pr-3'
+                  selected === chain.chainId
+                    ? classNames(theme.primary.default, theme.primary.hover, 'pl-1.5 !font-bold ')
+                    : classNames(theme.secondary.default, theme.secondary.hover, 'pl-8 !font-medium '),
+                  'flex gap-1.5 cursor-pointer py-2 pr-3'
                 )}
               >
                 {selected === chain.chainId && <CheckIcon width={20} height={20} className="text-blue" />}
@@ -81,7 +98,7 @@ export const NetworkSelector: FC<NetworkSelector> = ({
             ))}
           </div>
         </div>
-      </Dialog.Content>
+      </OverlayContent>
     </SlideIn.FromLeft>
   )
 }

@@ -25,7 +25,7 @@ export const FromLeft: FC<FromLeft> = ({
 }) => {
   return (
     <Transition.Root show={show} unmount={unmount} as={Fragment}>
-      <div className={classNames('absolute inset-0 translate-x-[-100%]')}>
+      <div className={classNames('absolute inset-0 translate-x-[-100%] z-50')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"

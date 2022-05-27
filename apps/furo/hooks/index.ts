@@ -1,5 +1,4 @@
 export * from './types'
-export * from './useFundSourceToggler'
 export * from './useFuroStreamContract'
 export * from './useFuroVestingContract'
 export * from './usePopover'

@@ -1,5 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { tryParseAmount } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
@@ -9,7 +10,6 @@ import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'featu
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroVestingContract } from 'hooks'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 

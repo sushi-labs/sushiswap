@@ -1,22 +1,26 @@
-import { classNames, SushiIcon } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { FC } from 'react'
 
+import { Theme } from '../types'
+
 interface Caption {
   className?: string
+  theme: Theme
 }
 
-export const Caption: FC<Caption> = ({ className }) => {
+export const Caption: FC<Caption> = ({ className, theme }) => {
   return (
     <div
       className={classNames(
         className,
-        'flex items-center justify-center gap-2 cursor-pointer pointer-events-auto text-slate-400 group'
+        theme.secondary.default,
+        theme.secondary.hover,
+        'flex items-center justify-center gap-2 cursor-pointer'
       )}
     >
-      <SushiIcon width={12} height={12} className="group-hover:text-slate-300 group-hover:animate-heartbeat" />{' '}
       <Link href="https://app.sushi.com" passHref={true}>
-        <a className="py-1 text-xs select-none text-slate-500 group-hover:text-slate-300">
+        <a className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs select-none')}>
           Powered by <span className="font-bold">Sushi</span>
         </a>
       </Link>

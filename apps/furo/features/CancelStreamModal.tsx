@@ -1,9 +1,9 @@
 import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
 import { Stream } from 'features/context/Stream'
-import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
 

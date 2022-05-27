@@ -1,7 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { useTokenBalance } from 'hooks'
 import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC } from 'react'
 
 export type BalanceControllerBaseProps = {

@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
+import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
@@ -10,9 +11,9 @@ import { parseUnits } from 'ethers/lib/utils'
 import { Vesting } from 'features'
 import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroVestingContract, useVestingBalance } from 'hooks'
-import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+
 interface WithdrawModalProps {
   vesting?: Vesting
 }
