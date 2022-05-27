@@ -5,7 +5,6 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 export default withTranspileModules({
   reactStrictMode: true,
   swcMinify: true,
-  basePath: '/landing',
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
