@@ -1,19 +1,18 @@
 import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
+import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import FUROVESTING_ABI from 'abis/FuroVesting.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Vesting } from 'features'
 import { logTenderlyUrl } from 'functions/getTenderly'
-import { useFuroVestingContract, useVestingBalance, VESTING_ADDRESS } from 'hooks'
+import { useFuroVestingContract, useVestingBalance } from 'hooks'
 import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-
 interface WithdrawModalProps {
   vesting?: Vesting
 }
@@ -23,15 +22,19 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
-  const balance = useVestingBalance(vesting?.id, vesting?.token)
-  const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-  const contract = useFuroVestingContract()
+  const { data: account } = useAccount()
+  const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
+  const contract = useFuroVestingContract(activeChain?.id)
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? VESTING_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROVESTING_ABI,
+      addressOrName: activeChain?.id
+        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
+        : AddressZero,
+      contractInterface: activeChain?.id
+        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.abi
+        : undefined,
     },
     'withdraw',
     {
@@ -72,7 +75,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       logTenderlyUrl({
         chainId: activeChain?.id,
         from: account.address,
-        to: activeChain?.id ? VESTING_ADDRESS[activeChain.id] : AddressZero,
+        to: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address : AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',
@@ -80,7 +83,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         ]),
       })
     }
-  }, [account.address, activeChain.id, amount, contract?.interface, fundSource, vesting, writeAsync])
+  }, [account?.address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
 
   const onInput = useCallback(
     (val: string) => {
@@ -98,7 +101,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={account?.address && !vesting?.canWithdraw(account.address)}
+        disabled={!account || !vesting?.canWithdraw(account.address)}
         onClick={() => {
           setOpen(true)
         }}
@@ -125,7 +128,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
             />
           </Form.Control>
           <Form.Control label="Receive funds in">
-            <div className="grid grid-cols-2 gap-5 items-center">
+            <div className="grid items-center grid-cols-2 gap-5">
               <div
                 onClick={() => setFundSource(FundSource.BENTOBOX)}
                 className={classNames(
@@ -139,7 +142,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
                   Bentobox
                 </Typography>
                 {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}
@@ -157,7 +160,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}

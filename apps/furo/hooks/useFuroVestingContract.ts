@@ -1,41 +1,34 @@
 import { AddressZero } from '@ethersproject/constants'
-import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
+import { FuroVesting } from '@sushiswap/furo/typechain'
 import { JSBI } from '@sushiswap/math'
+import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import BENTOBOX_ABI from 'abis/bentobox.json'
 import FURO_VESTING_ABI from 'abis/FuroVesting.json'
-import { Contract } from 'ethers'
 import { useMemo } from 'react'
-import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
+import { useContract, useContractRead, useProvider } from 'wagmi'
 
-export function useFuroVestingContract(): Contract | null {
-  const { data: signer } = useSigner()
-  const { activeChain } = useNetwork()
-  return useContract<Contract>({
-    addressOrName: activeChain?.id
-      ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
-      : AddressZero,
+export function useFuroVestingContract(chainId?: number): FuroVesting | null {
+  return useContract<FuroVesting>({
+    addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero,
     contractInterface: FURO_VESTING_ABI,
-    signerOrProvider: signer,
+    signerOrProvider: useProvider({ chainId }),
   })
 }
 
-export function useVestingBalance(vestingId?: string, token?: Token): Amount<Token> | undefined {
-  const { activeChain } = useNetwork()
+export function useVestingBalance(chainId?: number, vestingId?: string, token?: Token): Amount<Token> | undefined {
   const {
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
   } = useContractRead(
     {
-      addressOrName: activeChain?.id
-        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
-        : AddressZero,
-      contractInterface: FURO_VESTING_ABI,
+      addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero,
+      contractInterface: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi : undefined,
     },
     'vestBalance',
-    { enabled: !!vestingId, args: [vestingId], watch: true }
+    { enabled: !!vestingId, args: [vestingId], watch: true, chainId }
   )
 
   const {
@@ -44,11 +37,11 @@ export function useVestingBalance(vestingId?: string, token?: Token): Amount<Tok
     isLoading: rebaseLoading,
   } = useContractRead(
     {
-      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : AddressZero,
+      addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
       contractInterface: BENTOBOX_ABI,
     },
     'totals',
-    { enabled: !!token?.address, args: [token?.address], watch: true }
+    { enabled: !!token?.address, args: [token?.address], watch: true, chainId }
   )
 
   return useMemo(() => {

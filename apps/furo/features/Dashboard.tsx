@@ -46,7 +46,9 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
     return [ids, tokens]
   }, [chainId, streams?.incomingStreams, streams?.outgoingStreams])
 
-  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(ids, tokens, { blocksPerFetch: 3 })
+  const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {
+    blocksPerFetch: 3,
+  })
 
   return (
     <div className="flex flex-col h-full gap-12 pt-10">

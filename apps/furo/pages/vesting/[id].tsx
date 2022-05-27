@@ -72,7 +72,7 @@ const _VestingPage: FC = () => {
   const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
 
   const vesting = useMemo(
-    () => (vestingRepresentation ? new Vesting({ vesting: vestingRepresentation, chainId }) : undefined),
+    () => (vestingRepresentation ? new Vesting({ chainId, vesting: vestingRepresentation }) : undefined),
     [chainId, vestingRepresentation]
   )
 

@@ -38,7 +38,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   return (
     <Popover
       button={
-        <div className="hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11">
+        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
           <NotepadIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Details
@@ -47,7 +47,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
       }
       panel={
         <div className="max-w-[530px] gap-4 z-10 shadow-md overflow-hidden rounded-xl flex flex-col bg-slate-800">
-          <div className="flex justify-between p-4 gap-4 bg-slate-700">
+          <div className="flex justify-between gap-4 p-4 bg-slate-700">
             <div className="flex gap-6">
               <div className="flex items-center justify-end gap-2">
                 <Typography variant="xs" weight={700}>
@@ -88,14 +88,14 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="flex flex-col px-4">
             {stream?.status !== FuroStatus.CANCELLED ? (
               <>
-                <Typography variant="xxs" weight={400} className="uppercase text-slate-500 tracking-wider">
+                <Typography variant="xxs" weight={400} className="tracking-wider uppercase text-slate-500">
                   Time Remaining
                 </Typography>
                 <Typography weight={700} className="mt-2 text-slate-300">
-                  {remaining?.days} <span className="font-medium text-slate-500 text-sm">days</span> {remaining?.hours}{' '}
-                  <span className="font-medium text-slate-500 text-sm">hours</span> {remaining?.minutes}{' '}
-                  <span className="font-medium text-slate-500 text-sm">min</span> {remaining?.seconds}{' '}
-                  <span className="font-medium text-slate-500 text-sm">sec</span>
+                  {remaining?.days} <span className="text-sm font-medium text-slate-500">days</span> {remaining?.hours}{' '}
+                  <span className="text-sm font-medium text-slate-500">hours</span> {remaining?.minutes}{' '}
+                  <span className="text-sm font-medium text-slate-500">min</span> {remaining?.seconds}{' '}
+                  <span className="text-sm font-medium text-slate-500">sec</span>
                 </Typography>
                 <Typography variant="xs" weight={400} className="mt-3 text-slate-400">
                   The stream was started on{' '}
@@ -122,7 +122,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="grid grid-cols-3 gap-4 px-4 pb-4">
             <div className="flex flex-col gap-4 p-4 bg-slate-700 rounded-xl">
               <div className="flex flex-col">
-                <Typography className="text-slate-200" weight={700}>
+                <Typography variant="lg" className="text-slate-200" weight={700}>
                   Total
                 </Typography>
                 <Typography variant="xs" className="text-slate-400" weight={500}>
