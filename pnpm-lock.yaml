@@ -93,27 +93,48 @@ importers:
 
   apps/_root:
     specifiers:
+      '@headlessui/react': ^1.6.0
       '@sushiswap/chain': workspace:*
+      '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@types/node': 17.0.31
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
+      autoprefixer: ^10.4.5
       eslint: ^8.15.0
       next: 12.1.5
       next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
+      postcss: ^8.4.12
       react: ^18.1.0
       react-dom: ^18.1.0
+      react-ticker: ^1.3.2
+      react-transition-group: ^4.4.2
+      styled-components: ^5.3.5
+      tailwindcss: ^3.0.24
       typescript: ^4.7.2
+      use-count-up: ^3.0.1
     dependencies:
+      '@headlessui/react': 1.6.3_ef5jwxihqo6n7gxfmzogljlgcm
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/core-sdk': 1.0.0-canary.110
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/ui': link:../../packages/ui
       next: 12.1.5_ef5jwxihqo6n7gxfmzogljlgcm
+      numeral: 2.0.6
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
+      react-ticker: 1.3.2_ef5jwxihqo6n7gxfmzogljlgcm
+      react-transition-group: 4.4.2_ef5jwxihqo6n7gxfmzogljlgcm
+      styled-components: 5.3.5_ef5jwxihqo6n7gxfmzogljlgcm
+      use-count-up: 3.0.1_react@18.1.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -122,8 +143,11 @@ importers:
       '@types/node': 17.0.31
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.5
+      autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 8.16.0
       next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.0.24
       typescript: 4.7.2
 
   apps/analytics:
@@ -473,69 +497,6 @@ importers:
       postcss: 8.4.14
       tailwindcss: 3.0.24
       typechain: 8.0.0_typescript@4.7.2
-      typescript: 4.7.2
-
-  apps/landing:
-    specifiers:
-      '@headlessui/react': ^1.6.0
-      '@sushiswap/core-sdk': ^1.0.0-canary.65
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/sushi-data': 1.0.26
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@types/node': ^17.0.30
-      '@types/react': ^18.0.9
-      '@types/react-dom': ^18.0.4
-      autoprefixer: ^10.4.5
-      eslint: ^8.15.0
-      graphql: ^16.5.0
-      graphql-request: ^4.2.0
-      millify: ^4.0.0
-      next: 12.1.5
-      next-transpile-modules: 9.0.0
-      numeral: ^2.0.6
-      postcss: ^8.4.12
-      react: ^18.1.0
-      react-dom: ^18.1.0
-      react-ticker: ^1.3.2
-      react-transition-group: ^4.4.2
-      styled-components: ^5.3.5
-      tailwindcss: ^3.0.24
-      typescript: ^4.7.2
-      use-count-up: ^3.0.1
-    dependencies:
-      '@headlessui/react': 1.6.3_ef5jwxihqo6n7gxfmzogljlgcm
-      '@sushiswap/core-sdk': 1.0.0-canary.110
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/sushi-data': 1.0.26
-      '@sushiswap/ui': link:../../packages/ui
-      graphql: 16.5.0
-      graphql-request: 4.2.0_graphql@16.5.0
-      millify: 4.0.0
-      next: 12.1.5_ef5jwxihqo6n7gxfmzogljlgcm
-      numeral: 2.0.6
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-      react-ticker: 1.3.2_ef5jwxihqo6n7gxfmzogljlgcm
-      react-transition-group: 4.4.2_ef5jwxihqo6n7gxfmzogljlgcm
-      styled-components: 5.3.5_ef5jwxihqo6n7gxfmzogljlgcm
-      use-count-up: 3.0.1_react@18.1.0
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/jest-config': link:../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../packages/config/typescript
-      '@types/node': 17.0.35
-      '@types/react': 18.0.9
-      '@types/react-dom': 18.0.5
-      autoprefixer: 10.4.7_postcss@8.4.14
-      eslint: 8.16.0
-      next-transpile-modules: 9.0.0
-      postcss: 8.4.14
-      tailwindcss: 3.0.24
       typescript: 4.7.2
 
   apps/swap:
@@ -13020,19 +12981,6 @@ packages:
       extract-files: 9.0.0
       form-data: 3.0.1
       graphql: 14.5.8
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  /graphql-request/4.2.0_graphql@16.5.0:
-    resolution: {integrity: sha512-uFeMyhhl8ss4LFgjlfPeAn2pqYw+CJto+cjj71uaBYIMMK2jPIqgHm5KEFxUk0YDD41A8Bq31a2b4G2WJBlp2Q==}
-    peerDependencies:
-      graphql: 14 - 16
-    dependencies:
-      cross-fetch: 3.1.5
-      extract-files: 9.0.0
-      form-data: 3.0.1
-      graphql: 16.5.0
     transitivePeerDependencies:
       - encoding
     dev: false
