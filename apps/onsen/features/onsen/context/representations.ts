@@ -1,4 +1,3 @@
-
 export interface IncentiveRepresentation {
   id: string
   stakeToken: TokenRepresentation

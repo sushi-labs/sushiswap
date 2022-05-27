@@ -4,7 +4,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/ui',
   '@sushiswap/chain',
   // '@sushiswap/redux-token-lists',
-  '@sushiswap/wallet-connector',
+  '@sushiswap/wagmi',
 ])
 
 export default withTranspileModules({

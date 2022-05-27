@@ -43,12 +43,12 @@ const _FarmsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export const FarmsPage: FC<{ chainId: number }> = ({ chainId }) => {
   const { data: incentiveRepresentations, isValidating } = useSWR<IncentiveRepresentation[]>(
     `/onsen/api/farms/${chainId}`,
-    fetcher,
+    fetcher
   )
 
   const incentives = useMemo(
     () => incentiveRepresentations?.map((incentive) => new Incentive({ incentive })),
-    [incentiveRepresentations],
+    [incentiveRepresentations]
   )
 
   return (

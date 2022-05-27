@@ -1,5 +1,3 @@
-
-  
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 
