@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
+import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
@@ -8,7 +9,6 @@ import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { STREAM_ADDRESS } from 'hooks'
 import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -27,7 +27,9 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
+      addressOrName: activeChain?.id
+        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.address
+        : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
     'withdrawFromStream',
@@ -117,7 +119,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             />
           </Form.Control>
           <Form.Control label="Receive funds in">
-            <div className="grid grid-cols-2 gap-5 items-center">
+            <div className="grid items-center grid-cols-2 gap-5">
               <div
                 onClick={() => setFundSource(FundSource.BENTOBOX)}
                 className={classNames(
@@ -131,7 +133,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                   Bentobox
                 </Typography>
                 {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}
@@ -149,7 +151,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
-                  <div className="absolute top-3 right-3 w-5 h-5">
+                  <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
                 )}

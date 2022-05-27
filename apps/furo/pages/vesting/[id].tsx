@@ -1,8 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import FUROVESTING_ABI from 'abis/FuroVesting.json'
 import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
@@ -22,7 +22,7 @@ import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import WithdrawModal from 'features/vesting/WithdrawModal'
 import { getVesting, getVestingTransactions } from 'graph/graph-client'
-import { useStreamBalance, VESTING_ADDRESS } from 'hooks'
+import { useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -89,7 +89,7 @@ const _VestingPage: FC = () => {
     : undefined
 
   // Sync balance to Vesting entity
-  const balance = useStreamBalance(vesting?.id, vesting?.token)
+  const balance = useStreamBalance(chainId, vesting?.id, vesting?.token)
   if (vesting && balance) {
     vesting.balance = balance
   }
@@ -162,13 +162,13 @@ const _VestingPage: FC = () => {
             <div className="flex gap-2">
               <TransferStreamModal
                 stream={vesting}
-                abi={FUROVESTING_ABI}
-                address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+                abi={(furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi}
+                address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero}
               />
               <CancelStreamModal
                 stream={vesting}
-                abi={FUROVESTING_ABI}
-                address={chainId ? VESTING_ADDRESS[chainId] : AddressZero}
+                abi={(furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi}
+                address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero}
                 fn="stopVesting"
               />
             </div>

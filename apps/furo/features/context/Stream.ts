@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { Percent } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
+import { Percent } from '@sushiswap/math'
 
 import { Furo } from './Furo'
 import { StreamRepresentation } from './representations'

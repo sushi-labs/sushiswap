@@ -351,6 +351,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/furo': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -420,6 +421,7 @@ importers:
       '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/furo': link:../../protocols/furo
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists

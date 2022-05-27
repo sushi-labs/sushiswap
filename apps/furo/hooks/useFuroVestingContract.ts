@@ -1,25 +1,22 @@
 import { AddressZero } from '@ethersproject/constants'
-import { AddressMap, ChainId } from '@sushiswap/chain'
 import { BENTOBOX_ADDRESS } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
+import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import BENTOBOX_ABI from 'abis/bentobox.json'
-import FUROVESTING_ABI from 'abis/FuroVesting.json'
+import FURO_VESTING_ABI from 'abis/FuroVesting.json'
 import { Contract } from 'ethers'
 import { useMemo } from 'react'
 import { useContract, useContractRead, useNetwork, useSigner } from 'wagmi'
-
-export const VESTING_ADDRESS: AddressMap = {
-  [ChainId.KOVAN]: '0x359E322451EaF32e793C557Fc2A31B5fb45FF2dd',
-  [ChainId.GÖRLI]: '0x344b7c97f1142d6743d9e5C38E81eCe46eAb68BA',
-}
 
 export function useFuroVestingContract(): Contract | null {
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
   return useContract<Contract>({
-    addressOrName: activeChain?.id ? VESTING_ADDRESS[activeChain?.id] : AddressZero,
-    contractInterface: FUROVESTING_ABI,
+    addressOrName: activeChain?.id
+      ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
+      : AddressZero,
+    contractInterface: FURO_VESTING_ABI,
     signerOrProvider: signer,
   })
 }
@@ -32,8 +29,10 @@ export function useVestingBalance(vestingId?: string, token?: Token): Amount<Tok
     isLoading: balanceLoading,
   } = useContractRead(
     {
-      addressOrName: activeChain?.id ? VESTING_ADDRESS[activeChain.id] : AddressZero,
-      contractInterface: FUROVESTING_ABI,
+      addressOrName: activeChain?.id
+        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
+        : AddressZero,
+      contractInterface: FURO_VESTING_ABI,
     },
     'vestBalance',
     { enabled: !!vestingId, args: [vestingId], watch: true }

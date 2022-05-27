@@ -24,6 +24,9 @@ export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketP
     return [
       new InjectedConnector({
         chains,
+        options: {
+          shimDisconnect: true,
+        },
       }),
       new WalletConnectConnector({
         chains,

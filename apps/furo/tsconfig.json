@@ -4,21 +4,6 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "preserveSymlinks": true,
-    "baseUrl": ".",
-    "paths": {
-      "abis/*": ["./abis/*"],
-      "config": ["./config/index.ts"],
-      "config/*": ["./config/*"],
-      "components": ["./components/index.ts"],
-      "components/*": ["./components/*"],
-      "features": ["./features/index.ts"],
-      "features/*": ["./features/*"],
-      "functions": ["./functions/index.ts"],
-      "functions/*": ["./functions/*"],
-      "hooks": ["./hooks/index.ts"],
-      "hooks/*": ["./hooks/*"],
-      "types": ["./types/index.ts"],
-      "types/*": ["./types/*"]
-    }
+    "baseUrl": "."
   }
 }

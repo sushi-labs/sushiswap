@@ -1,5 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
@@ -17,14 +18,13 @@ import StreamDetailsPopover from 'features/StreamDetailsPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
+import { useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
-
 interface Props {
   fallback?: {
     stream?: StreamRepresentation
@@ -75,9 +75,11 @@ const _Streams: FC = () => {
   const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+
   const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
     () => (streamRepresentation ? new Stream({ stream: streamRepresentation, chainId }) : undefined),
@@ -85,12 +87,14 @@ const _Streams: FC = () => {
   )
 
   // Sync balance to Stream entity
-  const balance = useStreamBalance(stream?.id, stream?.token)
+  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
   if (stream && balance) {
     stream.balance = balance
   }
 
   if (connecting || reconnecting) return <Overlay />
+
+  // console.log({ streamRepresentation, balance }, stream?.streamedPercentage?.toSignificant(4))
 
   return (
     <Layout
@@ -163,17 +167,17 @@ const _Streams: FC = () => {
             <TransferStreamModal
               stream={stream}
               abi={FUROSTREAM_ABI}
-              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
             />
             <UpdateStreamModal
               stream={stream}
               abi={FUROSTREAM_ABI}
-              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
             />
             <CancelStreamModal
               stream={stream}
               abi={FUROSTREAM_ABI}
-              address={chainId ? STREAM_ADDRESS[chainId] : AddressZero}
+              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
               fn="cancelStream"
             />
           </div>

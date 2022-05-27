@@ -94,7 +94,7 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
         <Menu
           button={
             <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
-              <Account.Avatar address={data?.address} />
+              {/* <Account.Avatar address={data?.address} /> */}
               <Account.Name address={data?.address}>
                 {({ name, isEns }) => (
                   <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
