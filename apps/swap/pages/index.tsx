@@ -10,21 +10,13 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button, classNames, Dots, Input, Loader, SushiIcon, Typography } from '@sushiswap/ui'
-import {
-  Approve,
-  BENTOBOX_ADDRESS,
-  NetworkSelector,
-  TokenSelector,
-  useAccount,
-  useSigner,
-  Wallet,
-} from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, NetworkSelector, TokenSelector, Wallet } from '@sushiswap/wagmi'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
 import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTokens, useTrade } from 'hooks'
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SushiXSwap } from 'SushiXSwap'
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 
 import { Caption, Rate } from '../components'
 
@@ -607,7 +599,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               </button>
               <button className="flex items-center gap-2 text-xs text-slate-400">
                 Pay from
-                <div className="py-1 px-2 flex gap-2 bg-black/20 rounded-full">
+                <div className="flex gap-2 px-2 py-1 rounded-full bg-black/20">
                   <span
                     onClick={() => setSrcUseBentoBox(false)}
                     className={classNames(srcUseBentoBox ? '' : 'text-white font-bold')}
@@ -635,7 +627,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                 />
                 <button
                   onClick={() => setSrcTokenSelectorOpen(true)}
-                  className="py-1 flex items-center gap-1 text-xl font-bold text-slate-300 hover:text-slate-100"
+                  className="flex items-center gap-1 py-1 text-xl font-bold text-slate-300 hover:text-slate-100"
                 >
                   {srcToken.symbol} <ChevronDownIcon width={24} height={24} />
                 </button>
@@ -649,7 +641,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             </div>
           </div>
         </div>
-        <div className="p-3 pb-2 bg-slate-800 rounded-xl border-2 border-slate-700">
+        <div className="p-3 pb-2 border-2 bg-slate-800 rounded-xl border-slate-700">
           <div className="flex flex-col">
             <div className="flex flex-row justify-between">
               <button
@@ -660,7 +652,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
               </button>
               <button className="flex items-center gap-2 text-xs text-slate-400">
                 Receive in
-                <div className="py-1 px-2 flex gap-2 bg-slate-700 rounded-full">
+                <div className="flex gap-2 px-2 py-1 rounded-full bg-slate-700">
                   <span
                     onClick={() => setDstUseBentoBox(false)}
                     className={classNames(dstUseBentoBox ? '' : 'text-white font-bold')}
@@ -686,7 +678,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                 />
                 <button
                   onClick={() => setDstTokenSelectorOpen(true)}
-                  className="py-1 flex items-center gap-1 text-lg font-bold text-slate-300 hover:text-slate-100"
+                  className="flex items-center gap-1 py-1 text-lg font-bold text-slate-300 hover:text-slate-100"
                 >
                   {dstToken.symbol} <ChevronDownIcon width={16} height={16} />
                 </button>
