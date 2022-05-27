@@ -1,5 +1,5 @@
+import { FundSource } from '@sushiswap/hooks'
 import {
-  FundSource,
   UseTokenBalance,
   UseTokenBalances,
   useTokenBentoboxBalance,

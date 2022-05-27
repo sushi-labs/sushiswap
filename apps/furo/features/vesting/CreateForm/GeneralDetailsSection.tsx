@@ -4,13 +4,16 @@ import { FundSource } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from 'features/TokenSelector'
 import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
-import { useTokenBentoboxBalance, useTokenWalletBalance } from 'hooks'
+import { useTokenBentoboxBalance, useTokens, useTokenWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 export const GeneralDetailsSection = () => {
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
+  const tokenMap = useTokens(activeChain?.id)
+
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const { control, watch } = useFormContext<CreateVestingFormData>()
@@ -43,7 +46,15 @@ export const GeneralDetailsSection = () => {
                 <Form.Error message={error?.message} />
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector onSelect={onChange} currency={value as Token} onClose={() => setDialogOpen(false)} />
+                    <TokenSelector
+                      tokenMap={tokenMap}
+                      onSelect={(token) => {
+                        onChange(token)
+                        setDialogOpen(false)
+                      }}
+                      currency={value as Token}
+                      onClose={() => setDialogOpen(false)}
+                    />
                   </Dialog.Content>
                 </Dialog>
               </>

@@ -60,7 +60,7 @@ export default function Index() {
     },
   })
 
-  exampleStream.balance = isMounted ? Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250') : undefined
+  exampleStream._balance = isMounted ? Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250') : undefined
 
   return (
     <Layout

@@ -1,5 +1,4 @@
-import { CheckIcon } from '@heroicons/react/outline'
-import { XIcon } from '@heroicons/react/outline'
+import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -33,12 +32,12 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
     const ids: [string][] = []
     const tokens: Token[] = []
 
-    streams?.incomingStreams.forEach((stream) => {
+    streams?.incomingStreams?.forEach((stream) => {
       ids.push([stream.id])
       tokens.push(toToken(stream.token, chainId))
     })
 
-    streams?.outgoingStreams.forEach((stream) => {
+    streams?.outgoingStreams?.forEach((stream) => {
       ids.push([stream.id])
       tokens.push(toToken(stream.token, chainId))
     })
