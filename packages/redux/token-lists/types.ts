@@ -1,5 +1,11 @@
 import type { TokenList } from '@uniswap/token-lists'
+
 import { WrappedTokenInfo } from './token'
+
+export type TokenAddressMap = ChainTokenMap
+export type Mutable<T> = {
+  -readonly [P in keyof T]: Mutable<T[P]>
+}
 
 export interface TokenListsState {
   readonly byUrl: {

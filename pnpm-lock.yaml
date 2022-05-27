@@ -1228,6 +1228,7 @@ importers:
       '@ethersproject/hash': ^5.6.0
       '@ethersproject/providers': ^5.6.4
       '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -1257,6 +1258,7 @@ importers:
       multihashes: 4.0.3
     devDependencies:
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
+      '@sushiswap/chain': link:../../chain
       '@sushiswap/currency': link:../../currency
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/hooks': link:../../hooks
@@ -1392,6 +1394,7 @@ importers:
       '@ethersproject/bytes': ^5.6.1
       '@ethersproject/constants': ^5.6.0
       '@ethersproject/providers': ^5.6.4
+      '@headlessui/react': ^1.6.3
       '@heroicons/react': ^1.0.6
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -1421,6 +1424,7 @@ importers:
       '@ethersproject/bytes': 5.6.1
       '@ethersproject/constants': 5.6.0
       '@ethersproject/providers': 5.6.6
+      '@headlessui/react': 1.6.3_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@sushiswap/bentobox': link:../../protocols/bentobox/v1
       '@sushiswap/chain': link:../chain
@@ -5278,6 +5282,17 @@ packages:
 
   /@headlessui/react/1.6.2_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-x+kbTjJ+ixgsignqUU9MluoZYBJAlIYMeya4w7dk/Mo13vIdI/mSnzJAVgHhHKzE/hX//+rXylr4jUVThuQq/A==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
+  /@headlessui/react/1.6.3_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-WNu/ypGzl0JmJ+sD34KtdycEu2n7EZjKFx2rq6fivsszPdoEyOVZ/GYQMJ437dfAJI0/ZxoRYfrOVduZHjlokQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18
