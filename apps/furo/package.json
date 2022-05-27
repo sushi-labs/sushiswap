@@ -35,6 +35,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/log": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/furo": "workspace:*",
     "@tanstack/react-table": "8.0.0-alpha.87",
@@ -68,10 +69,10 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.7",
-    "@graphql-mesh/transform-prefix": "0.11.40",
-    "@graphql-mesh/transform-rename": "0.12.41",
-    "@graphql-mesh/transform-type-merging": "0.3.50",
+    "@graphprotocol/client-cli": "0.0.11",
+    "@graphql-mesh/transform-prefix": "0.11.45",
+    "@graphql-mesh/transform-rename": "0.12.46",
+    "@graphql-mesh/transform-type-merging": "0.4.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

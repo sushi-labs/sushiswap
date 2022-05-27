@@ -8,7 +8,7 @@ import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
-import { logTenderlyUrl } from 'functions/getTenderly'
+import log from '@sushiswap/log'
 import { useFuroVestingContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
@@ -94,7 +94,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         promise: data.wait(),
       })
     } catch (e: any) {
-      logTenderlyUrl({
+      log.tenderly({
         chainId: activeChain?.id,
         from: account.address,
         to: contract.address,

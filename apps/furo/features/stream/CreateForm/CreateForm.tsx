@@ -12,7 +12,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from 'featur
 import { createStreamSchema } from 'features/stream/CreateForm/schema'
 import { StreamAmountDetails } from 'features/stream/CreateForm/StreamAmountDetails'
 import { CreateStreamFormData, CreateStreamFormDataValidated } from 'features/stream/CreateForm/types'
-import { logTenderlyUrl } from 'functions/getTenderly'
+import log from '@sushiswap/log'
 import { useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
@@ -99,7 +99,7 @@ export const CreateForm: FC = () => {
       } catch (e: any) {
         setError(e.message)
 
-        logTenderlyUrl({
+        log.tenderly({
           chainId: activeChain?.id,
           from: account.address,
           to: contract.address,

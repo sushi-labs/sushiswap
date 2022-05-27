@@ -6,7 +6,7 @@ import { Switch, Typography } from '@sushiswap/ui'
 import { toToken } from 'features/context/mapper'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
 import { getExplorerLink } from 'functions'
-import { useStreamBalances } from 'hooks'
+import { useChain, useStreamBalances } from 'hooks'
 import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -20,6 +20,7 @@ const fetcher = (params: any) =>
     .catch((e) => console.log(JSON.stringify(e)))
 
 export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+  const chain = useChain(chainId)
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
   const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)

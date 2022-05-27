@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { useDebounce } from '@sushiswap/hooks'
-import { filterTokens, useSortedTokensByQuery } from '@sushiswap/hooks/dist/useSortedTokensByQuery'
+import { filterTokens, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
 import { FC, RefObject, useMemo, useRef, useState } from 'react'
 import { useToken } from 'wagmi'
 

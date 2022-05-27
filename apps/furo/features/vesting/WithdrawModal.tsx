@@ -9,7 +9,7 @@ import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Vesting } from 'features'
-import { logTenderlyUrl } from 'functions/getTenderly'
+import log from '@sushiswap/log'
 import { useFuroVestingContract, useVestingBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -73,7 +73,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     } catch (e: any) {
       setError(e.message)
 
-      logTenderlyUrl({
+      log.tenderly({
         chainId: activeChain?.id,
         from: account.address,
         to: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address : AddressZero,
