@@ -21,9 +21,9 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
     () =>
       tokens.reduce<[Token[], string[][]]>(
         (acc, token) => {
-          if (token?.address && isAddress(token.address)) {
+          if (token && isAddress(token.address)) {
             acc[0].push(token)
-            acc[1].push([token?.address])
+            acc[1].push([token.address])
           }
 
           return acc
