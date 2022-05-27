@@ -1,13 +1,22 @@
 import '@sushiswap/ui/index.css'
 import 'react-toastify/dist/ReactToastify.css'
 
+import { ChainId } from '@sushiswap/chain'
+import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
+import Header from 'features/Header'
+import { getProvider } from 'functions/getProvider'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { FC, useEffect } from 'react'
-import { WagmiProvider } from 'wagmi'
+import { Provider as ReduxProvider } from 'react-redux'
+import { WagmiConfig } from 'wagmi'
+
+import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
+import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
+import store from '../store'
 
 declare global {
   interface Window {
@@ -19,7 +28,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
 
   useEffect(() => {
-    const handler = (page) =>
+    const handler = (page: any) =>
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -30,27 +39,24 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  // const kovanProvider = getProvider(ChainId.KOVAN)
-  // const kovanBlockNumber = useLatestBlock(kovanProvider)
-  // const goerliProvider = getProvider(ChainId.GÖRLI)
-  // const goerliBlockNumber = useLatestBlock(goerliProvider)
+  const kovanProvider = getProvider(ChainId.KOVAN)
+  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
 
   return (
     <>
-      <WagmiProvider client={client}>
-        {/* <ReduxProvider store={store}> */}
-        <App.Shell>
-          {/* <Header /> */}
-          {/* <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} /> */}
-          {/* <TokenListUpdater chainId={ChainId.KOVAN} /> */}
-          {/* <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} /> */}
-          {/* <TokenListUpdater chainId={ChainId.GÖRLI} /> */}
-          <Component {...pageProps} />
-          {/* <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} /> */}
-          <App.Footer />
-        </App.Shell>
-        {/* </ReduxProvider> */}
-      </WagmiProvider>
+      <WagmiConfig client={client}>
+        <ReduxProvider store={store}>
+          <App.Shell>
+            <Header />
+            <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
+            <TokenListUpdater chainId={ChainId.KOVAN} />
+
+            <Component {...pageProps} />
+            {/* <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} /> */}
+            <App.Footer />
+          </App.Shell>
+        </ReduxProvider>
+      </WagmiConfig>
       <Script
         id="gtag"
         strategy="afterInteractive"

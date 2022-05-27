@@ -3,7 +3,7 @@ import transpileModules from 'next-transpile-modules'
 const withTranspileModules = transpileModules([
   '@sushiswap/ui',
   '@sushiswap/chain',
-  // '@sushiswap/redux-token-lists',
+  '@sushiswap/redux-token-lists',
   '@sushiswap/wagmi',
 ])
 

@@ -1,4 +1,6 @@
+import { Button } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -53,6 +55,11 @@ export const FarmsPage: FC<{ chainId: number }> = ({ chainId }) => {
 
   return (
     <div className="px-2 pt-16">
+      <Link passHref={true} href="/farm/create">
+        <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+          create incentive
+        </Button>
+      </Link>
       {incentives?.length ? (
         Object.values(incentives).map((incentive) => (
           <div key={incentive.id}>

@@ -13,7 +13,7 @@
       "components/*": ["./components/*"],
       "features": ["./features/index.ts"],
       "features/*": ["./features/*"],
-      "functions": ["./functions/index.ts"],
+      "functions": ["functions/getFarmType.ts"],
       "functions/*": ["./functions/*"],
       "hooks": ["./hooks/index.ts"],
       "hooks/*": ["./hooks/*"],
