@@ -1,9 +1,9 @@
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC } from 'react'
 
 type BottomPanelRenderProps = {

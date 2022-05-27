@@ -1,6 +1,6 @@
 import { Token } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { getAddress } from 'ethers/lib/utils'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import * as yup from 'yup'
 import Reference from 'yup/lib/Reference'
 import { Maybe, Message } from 'yup/lib/types'

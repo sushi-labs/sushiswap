@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { FundSource } from 'hooks/useFundSourceToggler'
+import { FundSource } from '@sushiswap/hooks'
 
 export type CreateStreamFormData = {
   token: Token | undefined
