@@ -25,7 +25,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   return (
     <Popover
       button={
-        <div className="hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11">
+        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
           <HistoryIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             History
@@ -33,16 +33,16 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
         </div>
       }
       panel={
-        <div className="z-10 shadow-md overflow-hidden rounded-xl flex flex-col bg-slate-800">
+        <div className="z-10 flex flex-col overflow-hidden shadow-md rounded-xl bg-slate-800">
           <div className="p-4 bg-slate-700">
             <div className="grid grid-cols-[80px_80px_100px] gap-2 items-center">
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider" variant="xxs">
+              <Typography weight={700} className="tracking-wider capitalize text-slate-400" variant="xxs">
                 Type
               </Typography>
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider text-left" variant="xxs">
+              <Typography weight={700} className="tracking-wider text-left capitalize text-slate-400" variant="xxs">
                 Date
               </Typography>
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider text-right" variant="xxs">
+              <Typography weight={700} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
                 Amount
               </Typography>
             </div>
@@ -53,7 +53,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
                 <HistoryPopoverTransaction transaction={transaction} key={transaction.id} />
               ))
             ) : (
-              <Typography variant="xs" className="flex items-center justify-center h-full pb-4 italic text-slate-500">
+              <Typography variant="xs" className="flex items-center justify-center h-full py-4 italic text-slate-500">
                 No transactions found
               </Typography>
             )}
@@ -67,10 +67,10 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
 const HistoryPopoverTransaction: FC<{ transaction: Transaction }> = memo(({ transaction }) => {
   return (
     <div key={transaction.id} className="py-2 grid grid-cols-[80px_80px_100px] gap-2 items-center">
-      <Typography className="capitalize text-slate-200 tracking-wider" weight={700} variant="xxs">
+      <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
         {transaction.status.toLowerCase()}
       </Typography>
-      <Typography variant="xs" className="text-slate-200 flex flex-col text-left" weight={500}>
+      <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
         {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
         <Typography as="span" variant="xxs" className="text-slate-500">
           {format(new Date(transaction.timestamp), 'hh:maaa')}
