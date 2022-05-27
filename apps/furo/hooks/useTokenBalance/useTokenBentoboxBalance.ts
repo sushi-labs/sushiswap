@@ -1,10 +1,10 @@
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
-import { BENTOBOX_ADDRESS, JSBI, Rebase } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { ZERO } from '@sushiswap/math'
+import { JSBI, ZERO } from '@sushiswap/math'
+import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import BENTOBOX_ABI from 'abis/bentobox.json'
-import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks/useTokenBalance/types'
+import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks'
 import { useMemo } from 'react'
 import { useContract, useNetwork } from 'wagmi'
 
@@ -21,9 +21,9 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
     () =>
       tokens.reduce<[Token[], string[][]]>(
         (acc, token) => {
-          if (token?.address && isAddress(token.address)) {
+          if (token && isAddress(token.address)) {
             acc[0].push(token)
-            acc[1].push([token?.address])
+            acc[1].push([token.address])
           }
 
           return acc
@@ -50,7 +50,16 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
   const [tokensWithTotal, baseTotals, balanceInput] = useMemo(
     () =>
       !anyLoading && !anyError
-        ? totals.reduce<[Token[], Rebase[], string[][]]>(
+        ? totals.reduce<
+            [
+              Token[],
+              {
+                base: JSBI
+                elastic: JSBI
+              }[],
+              string[][]
+            ]
+          >(
             (acc, el, i) => {
               if (account && el?.result && JSBI.greaterThan(JSBI.BigInt(el.result[0]), JSBI.BigInt(0))) {
                 const { base, elastic } = el.result

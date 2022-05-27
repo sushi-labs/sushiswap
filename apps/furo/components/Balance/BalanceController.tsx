@@ -1,5 +1,4 @@
-import { Token } from '@sushiswap/core-sdk'
-import { Amount } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { useTokenBalance } from 'hooks'
 import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
 import { FundSource } from 'hooks/useFundSourceToggler'
