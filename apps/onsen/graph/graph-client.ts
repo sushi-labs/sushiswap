@@ -21,7 +21,7 @@ export const getFarms = async (chainId: string): Promise<IncentiveRepresentation
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
   if (network === ChainId.KOVAN) {
-    return (await sdk.KovanOnsenIncentives()).KOVAN_ONSEN_incentives as IncentiveRepresentation[]
+    return (await sdk.KovanStakingIncentives()).KOVAN_STAKING_incentives as IncentiveRepresentation[]
   }
 }
 

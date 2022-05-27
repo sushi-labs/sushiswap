@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { Incentive } from '../../features/onsen/context/Onsen'
+import { Incentive } from '../../features/onsen/context/Incentive'
 import { IncentiveRepresentation } from '../../features/onsen/context/representations'
 import { getFarms } from '../../graph/graph-client'
 

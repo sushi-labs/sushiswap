@@ -20,10 +20,10 @@ export class Incentive {
   public constructor({ incentive }: { incentive: IncentiveRepresentation }) {
     this.id = incentive.id
     this.rewardRemaining = Amount.fromRawAmount(toToken(incentive.rewardToken, ChainId.KOVAN), incentive.rewardRemaining) // TODO: pass in active network to constructor
-    this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.token, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
-    this.startTime = new Date(Number(incentive.timestamp) * 1000)
+    this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
+    this.startTime = new Date(Number(incentive.startTime) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
-    this.createdBy = incentive.creator
+    this.createdBy = incentive.createdBy
     // this.txHash = incentive.txHash
   }
 

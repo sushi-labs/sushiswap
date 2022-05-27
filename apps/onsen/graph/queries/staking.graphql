@@ -1,7 +1,10 @@
-query KovanOnsenIncentives {
-  KOVAN_ONSEN_incentives {
+query KovanStakingIncentives {
+  KOVAN_STAKING_incentives {
     id
-    token {
+    lastRewardTime
+    rewardRemaining
+    liquidityStaked
+    stakeToken {
       id
       name
       symbol
@@ -13,13 +16,14 @@ query KovanOnsenIncentives {
       symbol
       decimals
     }
-    creator {
+    createdBy {
       id
     }
     endTime
-    lastRewardTime
-    rewardRemaining
-    liquidityStaked
+    createdAtBlock
+    createdAtTimestamp
+    modifiedAtBlock
+    modifiedAtTimestamp
   }
 }
 

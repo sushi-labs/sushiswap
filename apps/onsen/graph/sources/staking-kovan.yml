@@ -1,10 +1,10 @@
 name: staking-kovan
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/stake
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/staking-kovan
 transforms:
   - prefix:
-      value: KOVAN_ONSEN_
+      value: KOVAN_STAKING_
       includeRootOperations: true
       ignore: 
         - _SubgraphErrorPolicy_

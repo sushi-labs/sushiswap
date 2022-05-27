@@ -1,15 +1,18 @@
 
 export interface IncentiveRepresentation {
   id: string
-  token: TokenRepresentation
+  stakeToken: TokenRepresentation
   rewardToken: TokenRepresentation
+  startTime: string
   endTime: string
   lastRewardTime: string
   rewardRemaining: string
   liquidityStaked: string
-  creator: UserRepresentation
-  timestamp: string
-  block: string
+  createdBy: UserRepresentation
+  createdAtTimestamp: string
+  createdAtBlock: string
+  modifiedAtTimestamp: string
+  modifiedAtBlock: string
 }
 
 export interface UserRepresentation {
