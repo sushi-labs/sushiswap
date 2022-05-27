@@ -82,7 +82,7 @@ const _Streams: FC = () => {
 
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
   const stream = useMemo(
-    () => (streamRepresentation ? new Stream({ stream: streamRepresentation, chainId }) : undefined),
+    () => (streamRepresentation ? new Stream({ chainId, stream: streamRepresentation }) : undefined),
     [chainId, streamRepresentation]
   )
 

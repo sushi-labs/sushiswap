@@ -36,6 +36,7 @@ export abstract class Furo {
     this.txHash = furo.txHash
 
     this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
+    // TODO: Causes undefined on initial load
     this._balance = undefined
   }
 

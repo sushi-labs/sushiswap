@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
-import { BENTOBOX_ADDRESS, useBentoBoxContract, useBlockNumber, useContractRead } from '@sushiswap/wagmi'
+import { BENTOBOX_ADDRESS, useBentoBoxContract } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import BENTOBOX_ABI from 'abis/bentobox.json'
 import FURO_STREAM_ABI from 'abis/FuroStream.json'
@@ -10,21 +10,25 @@ import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
 import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
+import { useBlockNumber, useContractRead } from 'wagmi'
 
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
-  console.log(chainId, streamId, token)
   const {
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
   } = useContractRead(
     {
-      chainId,
       addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero,
       contractInterface: FURO_STREAM_ABI,
     },
     'streamBalanceOf',
-    { enabled: !!streamId, args: [streamId], watch: true }
+    {
+      chainId,
+      enabled: !!streamId,
+      args: [streamId],
+      watch: true,
+    }
   )
 
   const {
@@ -33,24 +37,15 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     isLoading: rebaseLoading,
   } = useContractRead(
     {
-      chainId,
       addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
       contractInterface: BENTOBOX_ABI,
     },
     'totals',
-    { enabled: !!token?.address, args: [token?.address], watch: true }
-  )
-
-  console.log(
     {
-      addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero,
-      contractInterface: FURO_STREAM_ABI,
       chainId,
-    },
-    {
-      addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
-      contractInterface: BENTOBOX_ABI,
-      chainId,
+      enabled: !!token?.address,
+      args: [token?.address],
+      watch: true,
     }
   )
 

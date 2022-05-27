@@ -21,13 +21,13 @@ export default function DashboardPage() {
   if (notConnected) {
     return (
       <Layout>
-        <div className="flex flex-col h-full gap-12 pt-20 items-center">
+        <div className="flex flex-col items-center h-full gap-12 pt-20">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="flex justify-center">
-              <div className="relative rounded-full bg-slate-800 p-5">
+              <div className="relative p-5 rounded-full bg-slate-800">
                 <WalletIcon width={38} height={38} className="text-slate-300" />
-                <div className="rounded-full absolute top-0 right-0 flex items-center justify-center text-slate-900">
-                  <XCircleIcon width={24} className="text-slate-400 bg-slate-800 rounded-full" />
+                <div className="absolute top-0 right-0 flex items-center justify-center rounded-full text-slate-900">
+                  <XCircleIcon width={24} className="rounded-full text-slate-400 bg-slate-800" />
                 </div>
               </div>
             </div>
@@ -46,7 +46,7 @@ export default function DashboardPage() {
               Connect Wallet
             </Wallet.Button>
             <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
-              <Typography as="a" target="_blank" variant="xs" className="text-blue hover:text-blue-300 cursor-pointer">
+              <Typography as="a" target="_blank" variant="xs" className="cursor-pointer text-blue hover:text-blue-300">
                 How to setup a wallet?
               </Typography>
             </Link>
@@ -59,7 +59,7 @@ export default function DashboardPage() {
   if (pendingConnection) {
     return (
       <Layout>
-        <div className="flex flex-col h-full gap-12 pt-20 items-center">
+        <div className="flex flex-col items-center h-full gap-12 pt-20">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="h-[78px] flex justify-center items-center">
               <Loader size="40px" />
@@ -73,7 +73,7 @@ export default function DashboardPage() {
               </Typography>
             </div>
             <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
-              <Typography as="a" target="_blank" variant="xs" className="text-blue hover:text-blue-300 cursor-pointer">
+              <Typography as="a" target="_blank" variant="xs" className="cursor-pointer text-blue hover:text-blue-300">
                 How to setup a wallet?
               </Typography>
             </Link>
@@ -86,7 +86,7 @@ export default function DashboardPage() {
   return (
     <Layout
       backdrop={
-        <div className="fixed inset-0 z-0 pointer-events-none right-0 opacity-20">
+        <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
           <BackgroundVector width="100%" preserveAspectRatio="none" />
         </div>
       }
