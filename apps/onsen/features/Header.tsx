@@ -25,7 +25,7 @@ const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <Wallet.Button className="!h-[36px]" />
+            {/* <Wallet.Button className="!h-[36px]" /> */}
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={
