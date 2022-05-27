@@ -1,8 +1,7 @@
 import '@sushiswap/ui/index.css'
 
 import type { AppProps } from 'next/app'
-import { FC } from 'react'
-import { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 
 import { ChainId } from '../constants'
@@ -24,7 +23,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const chainIds = useMemo(() => [ChainId.ETHEREUM, ChainId.RINKEBY, ChainId.ROPSTEN, ChainId.GÖRLI, ChainId.KOVAN], [])
   const blockNumbers = useMemo(
     () => [blockNumberEthereum, blockNumberRinkeby, blockNumberRopsten, blockNumberGorli, blockNumberKovan],
-    [blockNumberEthereum, blockNumberGorli, blockNumberKovan, blockNumberRinkeby, blockNumberRopsten],
+    [blockNumberEthereum, blockNumberGorli, blockNumberKovan, blockNumberRinkeby, blockNumberRopsten]
   )
   return (
     <Provider store={store}>

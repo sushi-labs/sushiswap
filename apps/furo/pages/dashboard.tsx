@@ -1,26 +1,65 @@
-import { Menu as HeadlessMenu } from '@headlessui/react'
 import { XCircleIcon } from '@heroicons/react/outline'
-import { useIsMounted } from '@sushiswap/hooks'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { Wallet } from '@sushiswap/wallet-connector'
+import { useWalletState, Wallet } from '@sushiswap/wagmi'
+import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
+import { Overlay } from 'components/Overlay'
+import { Dashboard } from 'features'
 import Link from 'next/link'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { Dashboard } from './users/[address]'
-
 export default function DashboardPage() {
-  const isMounted = useIsMounted()
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const connect = useConnect()
+  const { connecting, notConnected, pendingConnection, reconnecting } = useWalletState(connect, account?.address)
 
-  const { isConnecting, isConnected, pendingConnector, isReconnecting } = connect
+  if (connecting || reconnecting) {
+    return <Overlay />
+  }
 
-  if (isMounted && !!pendingConnector && isConnecting && !isReconnecting) {
+  if (notConnected) {
     return (
       <Layout>
-        <div className="flex flex-col h-full gap-12 pt-20 items-center">
+        <div className="flex flex-col items-center h-full gap-12 pt-20">
+          <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
+            <div className="flex justify-center">
+              <div className="relative p-5 rounded-full bg-slate-800">
+                <WalletIcon width={38} height={38} className="text-slate-300" />
+                <div className="absolute top-0 right-0 flex items-center justify-center rounded-full text-slate-900">
+                  <XCircleIcon width={24} className="rounded-full text-slate-400 bg-slate-800" />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Typography variant="xl" className="text-slate-200">
+                No Wallet Connected
+              </Typography>
+              <Typography variant="sm" className="text-slate-400">
+                Get started by connecting your wallet.
+              </Typography>
+            </div>
+            <Wallet.Button
+              className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-slate-50 px-10 !h-[44px] rounded-2xl"
+              hack={connect}
+            >
+              Connect Wallet
+            </Wallet.Button>
+            <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
+              <Typography as="a" target="_blank" variant="xs" className="cursor-pointer text-blue hover:text-blue-300">
+                How to setup a wallet?
+              </Typography>
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (pendingConnection) {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center h-full gap-12 pt-20">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="h-[78px] flex justify-center items-center">
               <Loader size="40px" />
@@ -34,12 +73,7 @@ export default function DashboardPage() {
               </Typography>
             </div>
             <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
-              <Typography
-                component="a"
-                target="_blank"
-                variant="xs"
-                className="text-blue hover:text-blue-300 cursor-pointer"
-              >
+              <Typography as="a" target="_blank" variant="xs" className="cursor-pointer text-blue hover:text-blue-300">
                 How to setup a wallet?
               </Typography>
             </Link>
@@ -49,68 +83,15 @@ export default function DashboardPage() {
     )
   }
 
-  if (isConnected || isReconnecting || isConnecting) {
-    if (!account?.address) return <></>
-  }
-
-  // Return skeleton
-  if (isMounted && (!activeChain?.id || !account?.address || !isConnected)) {
-    return (
-      <Layout>
-        <div className="flex flex-col h-full gap-12 pt-20 items-center">
-          {!account?.address && (
-            <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
-              <div className="flex justify-center">
-                <div className="relative rounded-full bg-slate-800 p-5">
-                  <WalletIcon width={38} height={38} className="text-slate-300" />
-                  <div className="rounded-full absolute top-0 right-0 flex items-center justify-center text-slate-900">
-                    <XCircleIcon width={24} className="text-slate-400 bg-slate-800 rounded-full" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Typography variant="xl" className="text-slate-200">
-                  No Wallet Connected
-                </Typography>
-                <Typography variant="sm" className="text-slate-400">
-                  Get started by connecting your wallet.
-                </Typography>
-              </div>
-              <Wallet.Button
-                hack={connect}
-                button={
-                  <HeadlessMenu.Button
-                    as="div"
-                    className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-base text-slate-50 px-10 !h-[44px] rounded-2xl"
-                  >
-                    Connect Wallet
-                  </HeadlessMenu.Button>
-                }
-              />
-              <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
-                <Typography
-                  component="a"
-                  target="_blank"
-                  variant="xs"
-                  className="text-blue hover:text-blue-300 cursor-pointer"
-                >
-                  How to setup a wallet?
-                </Typography>
-              </Link>
-            </div>
-          )}
+  return (
+    <Layout
+      backdrop={
+        <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
+          <BackgroundVector width="100%" preserveAspectRatio="none" />
         </div>
-      </Layout>
-    )
-  }
-
-  if (isMounted) {
-    return (
-      <Layout>
-        <Dashboard chainId={activeChain.id} address={account.address} />
-      </Layout>
-    )
-  }
-
-  return null
+      }
+    >
+      <Dashboard chainId={activeChain.id} address={account.address} />
+    </Layout>
+  )
 }

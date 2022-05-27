@@ -1,5 +1,4 @@
-import Loader from '@sushiswap/ui/loader/Loader'
-import { Typography } from '@sushiswap/ui/typography/Typography'
+import { Loader, Typography } from '@sushiswap/ui'
 import React, { ReactNode } from 'react'
 import { toast, ToastOptions } from 'react-toastify'
 

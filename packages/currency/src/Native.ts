@@ -1,19 +1,10 @@
 import CHAIN from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
+import { WNATIVE } from './constants'
 import { Currency } from './Currency'
 import { Token } from './Token'
 import { Type } from './Type'
-
-export const WNATIVE: Record<number, Token> = {
-  [1]: new Token({
-    chainId: 1,
-    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  }),
-}
 
 export class Native extends Currency {
   public readonly isNative: true = true

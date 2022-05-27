@@ -1,7 +1,7 @@
 name: furovesting_goerli
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furovesting-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-goerli
 transforms:
   - prefix:
       value: GOERLI_VESTING_

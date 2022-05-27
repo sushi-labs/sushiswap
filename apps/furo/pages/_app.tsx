@@ -1,9 +1,11 @@
 import '@sushiswap/ui/index.css'
+import '../index.css'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { ChainId } from '@sushiswap/chain'
+import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
-import { client } from '@sushiswap/wallet-connector'
+import { client } from '@sushiswap/wagmi'
 import Header from 'features/Header'
 import { getProvider } from 'functions'
 import type { AppProps } from 'next/app'
@@ -12,9 +14,8 @@ import Script from 'next/script'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
-import { WagmiProvider } from 'wagmi'
+import { WagmiConfig } from 'wagmi'
 
-import { useLatestBlock } from '../lib/hooks/useLatestBlock'
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
 import store from '../store'
@@ -29,7 +30,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
 
   useEffect(() => {
-    const handler = (page) =>
+    const handler = (page: any) =>
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -41,13 +42,13 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   }, [router.events])
 
   const kovanProvider = getProvider(ChainId.KOVAN)
-  const kovanBlockNumber = useLatestBlock(kovanProvider)
+  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
   const goerliProvider = getProvider(ChainId.GÖRLI)
-  const goerliBlockNumber = useLatestBlock(goerliProvider)
+  const goerliBlockNumber = useLatestBlockNumber(goerliProvider)
 
   return (
     <>
-      <WagmiProvider client={client}>
+      <WagmiConfig client={client}>
         <ReduxProvider store={store}>
           <App.Shell>
             <Header />
@@ -60,7 +61,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Footer />
           </App.Shell>
         </ReduxProvider>
-      </WagmiProvider>
+      </WagmiConfig>
       <Script
         id="gtag"
         strategy="afterInteractive"

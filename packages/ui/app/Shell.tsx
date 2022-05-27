@@ -5,5 +5,3 @@ export interface ShellProps {
 export function Shell({ children }: ShellProps): JSX.Element {
   return <>{children}</>
 }
-
-export default Shell

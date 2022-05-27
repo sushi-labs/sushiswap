@@ -2,7 +2,7 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
 
-const { BLOG_URL, ANALYTICS_URL, DOCS_URL, FURO_URL, LEGACY_URL } = process.env
+const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL } = process.env
 
 export default withTranspileModules({
   reactStrictMode: true,
@@ -18,10 +18,6 @@ export default withTranspileModules({
   },
   async rewrites() {
     return [
-      {
-        source: '/:path*',
-        destination: `/:path*`,
-      },
       {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
@@ -39,6 +35,14 @@ export default withTranspileModules({
         destination: `${BLOG_URL}/blog/:path*`,
       },
       {
+        source: '/dao',
+        destination: `${DAO_URL}/dao`,
+      },
+      {
+        source: '/dao/:path*',
+        destination: `${DAO_URL}/dao/:path*`,
+      },
+      {
         source: '/docs',
         destination: `${DOCS_URL}/docs`,
       },
@@ -54,14 +58,14 @@ export default withTranspileModules({
         source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
       },
-      // {
-      //   source: '/store',
-      //   destination: `${STORE_URL}/store`,
-      // },
-      // {
-      //   source: '/store/:path*',
-      //   destination: `${STORE_URL}/store/:path*`,
-      // },
+      {
+        source: '/swap',
+        destination: `${SWAP_URL}/swap`,
+      },
+      {
+        source: '/swap/:path*',
+        destination: `${SWAP_URL}/swap/:path*`,
+      },
       {
         source: '/legacy',
         destination: `${LEGACY_URL}/legacy`,

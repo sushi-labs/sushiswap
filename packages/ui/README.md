@@ -26,7 +26,7 @@ UI library
   - Label
   - Option
 
-## Lint 
+## Lint
 
 pnpm exec turbo run lint --scope=ui
 
@@ -35,11 +35,11 @@ pnpm exec turbo run lint --scope=ui
 FC is redudant, let's avoid unessasary inports and just use regular functions
 
 type Props = {
-  children?: React.ReactNode
+children?: React.ReactNode
 }
 
 function Component({ children }: Props): JSX.Element {
-  return <>I'm a typed component</>
+return <>I'm a typed component</>
 }
 
 ## Resources

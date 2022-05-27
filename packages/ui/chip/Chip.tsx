@@ -59,7 +59,7 @@ export const Chip: FC<ChipProps> = ({
         SIZE[size],
         onClick ? 'pr-1' : 'pr-3',
         'whitespace-nowrap inline-flex rounded-[12px] py-0.5 pl-3 font-bold text-xs leading-5 gap-2 items-center justify-center',
-        className,
+        className
       )}
     >
       {icon && (

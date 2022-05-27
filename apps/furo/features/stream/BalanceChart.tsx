@@ -1,20 +1,20 @@
-import { ZERO } from '@sushiswap/core-sdk'
+import { ZERO } from '@sushiswap/math'
+import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'features/context'
-import { useStreamBalance } from 'hooks'
 import { FC, useCallback } from 'react'
+
+import { BalanceChartHoverEnum } from '../../pages/stream/[id]'
 
 interface Props {
   stream?: Stream
-  withdrawHovered: boolean
-  setWithdrawHovered(x: boolean): void
+  hover?: BalanceChartHoverEnum
+  setHover?(x: BalanceChartHoverEnum): void
 }
 
-const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }) => {
-  const balance = useStreamBalance(stream?.id, stream?.token)
-
+const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, setHover }) => {
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
-    return streamedPct * 2 * radius * Math.PI
+    return Math.round(streamedPct * 2 * radius * Math.PI * 100) / 100
   }, [])
 
   const width = 420
@@ -30,7 +30,14 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
 
       <g
         stroke="currentColor"
-        className="hover:drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.2)] text-slate-700 hover:text-slate-600 cursor-pointer"
+        className={classNames(
+          hover === BalanceChartHoverEnum.STREAMED
+            ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(39,_176,_230,_0.6)]'
+            : '',
+          'text-slate-700 cursor-pointer'
+        )}
+        onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.STREAMED)}
+        onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
       >
         <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -54,8 +61,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           height={width}
           strokeDasharray={`${dashArray({
             radius: outerRadius,
-            streamedPct:
-              Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
+            streamedPct: Number(stream?.streamedPercentage?.divide(100).toSignificant(4)),
           })}, ${Math.PI * outerRadius * 2}`}
           fill="none"
           strokeWidth={16}
@@ -63,21 +69,25 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           strokeDashoffset={
             dashArray({
               radius: outerRadius,
-              streamedPct:
-                Number(stream?.streamedAmount) / (Number(stream?.streamedAmount) + Number(stream?.unclaimableAmount)),
+              streamedPct: Number(stream?.streamedPercentage?.divide(100).toSignificant(4)),
             }) / 1.5
           }
           transform="translate(0 420) rotate(-90)"
-          className="drop-shadow-[0px_0px_4px_rgba(39,_176,_230,_0.67)] animate-[dash_1s_ease-in-out_forwards]"
+          className="drop-shadow-[0px_0px_6px_rgba(39,_176,_230,_0.37)] animate-[dash_1s_ease-in-out_forwards]"
         >
           <circle cx={width / 2} cy={width / 2} r={outerRadius} stroke="url('#gblue')" />
         </g>
       </g>
       <g
         stroke="currentColor"
-        className="text-slate-700 hover:text-slate-600 cursor-pointer hover:drop-shadow-[0px_0px_4px_rgba(250,_82,_160,_0.2)]"
-        onMouseEnter={() => setWithdrawHovered(true)}
-        onMouseLeave={() => setWithdrawHovered(false)}
+        className={classNames(
+          hover === BalanceChartHoverEnum.WITHDRAW
+            ? 'text-slate-600 drop-shadow-[0px_0px_2px_rgba(250,_82,_160,_0.6)]'
+            : '',
+          'text-slate-700 cursor-pointer'
+        )}
+        onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.WITHDRAW)}
+        onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
       >
         <circle cx={width / 2} cy={width / 2} r={innerRadius} stroke="url('#unfilled')" fill="none" strokeWidth={16} />
         <circle
@@ -97,18 +107,18 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
           strokeWidth={1}
         />
         <g
-          onMouseEnter={() => setWithdrawHovered(true)}
-          onMouseLeave={() => setWithdrawHovered(false)}
+          onMouseEnter={() => setHover && setHover(BalanceChartHoverEnum.WITHDRAW)}
+          onMouseLeave={() => setHover && setHover(BalanceChartHoverEnum.NONE)}
           width={width}
           height={width}
           strokeDasharray={`${dashArray({
             radius: innerRadius,
-            streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
+            streamedPct: Number(stream?.withdrawnPercentage.divide(100).toSignificant(4)),
           })}, ${Math.PI * innerRadius * 2}`}
           strokeDashoffset={
             dashArray({
               radius: innerRadius,
-              streamedPct: Number(stream?.withdrawnAmount.toExact()) / Number(stream?.amount.toExact()),
+              streamedPct: Number(stream?.withdrawnPercentage.divide(100).toSignificant(4)),
             }) / 1.5
           }
           fill="none"
@@ -121,7 +131,60 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
         </g>
       </g>
 
-      {withdrawHovered ? (
+      {hover === BalanceChartHoverEnum.NONE && (
+        <>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontFamily="Inter"
+            fontSize={12}
+            x={width / 2}
+            y={width / 2}
+            letterSpacing="3"
+            dy={-50}
+            className="uppercase text-slate-200"
+          >
+            Available
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontWeight={700}
+            fontFamily="Inter"
+            fontSize={40}
+            x={width / 2}
+            y={width / 2}
+            dy={10}
+            className="text-slate-50"
+          >
+            {stream?.balance?.toSignificant(6).split('.')[0]}
+            <tspan
+              textAnchor="middle"
+              fill="currentColor"
+              fontWeight={700}
+              fontSize={24}
+              dx={2}
+              className="text-slate-300"
+            >
+              .{stream?.balance?.greaterThan(ZERO) ? stream?.balance.toSignificant(6).split('.')[1] : '000000'}
+            </tspan>
+          </text>
+          <text
+            textAnchor="middle"
+            fill="currentColor"
+            fontSize={14}
+            dy={40}
+            x={width / 2}
+            y={width / 2}
+            className="text-slate-500"
+            fontWeight={700}
+          >
+            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0.000'} {stream?.token.symbol} Total
+          </text>
+        </>
+      )}
+
+      {hover === BalanceChartHoverEnum.WITHDRAW && (
         <>
           <text
             textAnchor="middle"
@@ -145,9 +208,9 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-slate-200"
+            className="text-slate-50"
           >
-            {stream?.withdrawnAmount?.toSignificant(6).split('.')[0]}
+            {stream?.withdrawnAmount?.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -156,10 +219,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               dx={2}
               className="text-slate-300"
             >
-              .
-              {stream?.withdrawnAmount.greaterThan(ZERO)
-                ? stream?.withdrawnAmount.toSignificant(6).split('.')[1]
-                : '000000'}
+              .{stream?.withdrawnAmount.greaterThan(0) ? stream?.withdrawnAmount.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -169,13 +229,14 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-slate-300"
+            className="text-slate-500"
             fontWeight={700}
           >
             / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
           </text>
         </>
-      ) : (
+      )}
+      {hover === BalanceChartHoverEnum.STREAMED && (
         <>
           <text
             textAnchor="middle"
@@ -199,9 +260,9 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             x={width / 2}
             y={width / 2}
             dy={10}
-            className="text-slate-200"
+            className="text-slate-50"
           >
-            {balance?.toSignificant(6).split('.')[0]}
+            {stream?.streamedAmount?.toFixed(6).split('.')[0]}
             <tspan
               textAnchor="middle"
               fill="currentColor"
@@ -210,7 +271,7 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
               dx={2}
               className="text-slate-300"
             >
-              .{balance?.greaterThan(ZERO) ? balance?.toSignificant(6).split('.')[1] : '000000'}
+              .{stream?.streamedAmount?.greaterThan(0) ? stream?.streamedAmount.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text
@@ -220,10 +281,10 @@ const BalanceChart: FC<Props> = ({ stream, withdrawHovered, setWithdrawHovered }
             dy={40}
             x={width / 2}
             y={width / 2}
-            className="text-slate-300"
+            className="text-slate-500"
             fontWeight={700}
           >
-            / {balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}

@@ -17,6 +17,30 @@ module.exports = {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
       },
       colors: {
+        // primary: {
+        //   50: colors.pink[50],
+        //   100: colors.pink[100],
+        //   200: colors.pink[200],
+        //   300: colors.pink[300],
+        //   400: colors.pink[400],
+        //   500: colors.pink[500],
+        //   600: colors.pink[600],
+        //   700: colors.pink[700],
+        //   800: colors.pink[800],
+        //   900: colors.pink[900],
+        // },
+        // neutral: {
+        //   50: colors.slate[50],
+        //   100: colors.slate[100],
+        //   200: colors.slate[200],
+        //   300: colors.slate[300],
+        //   400: colors.slate[400],
+        //   500: colors.slate[500],
+        //   600: colors.slate[600],
+        //   700: colors.slate[700],
+        //   800: colors.slate[800],
+        //   900: colors.slate[900],
+        // },
         purple: {
           DEFAULT: '#A755DD',
           50: '#F6EEFC',
@@ -132,12 +156,20 @@ module.exports = {
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
         'spin-slow': 'spin 2s linear infinite',
+        heartbeat: 'heartbeat 1.5s ease 1.5s infinite normal forwards',
       },
       keyframes: {
         ellipsis: {
           '0%': { content: '"."' },
           '33%': { content: '".."' },
           '66%': { content: '"..."' },
+        },
+        heartbeat: {
+          '0%': { transform: 'scale(1)', transformOrigin: 'center center', animationTimingFunction: 'ease-out' },
+          '10%': { animationTimingFunction: 'ease-out', transform: 'scale(0.91)' },
+          '17%': { animationTimingFunction: 'ease-out', transform: 'scale(0.98)' },
+          '33%': { animationTimingFunction: 'ease-out', transform: 'scale(0.87)' },
+          '45%': { animationTimingFunction: 'ease-out', transform: 'scale(1)' },
         },
       },
     },

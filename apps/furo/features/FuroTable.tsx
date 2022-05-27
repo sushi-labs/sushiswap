@@ -1,13 +1,15 @@
+import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
-import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { Vesting } from 'features/context'
+import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
+import { StreamRepresentation, Vesting, VestingRepresentation } from 'features/context'
+import { getExplorerLink } from 'functions'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { FuroStatus } from './context/enums'
-import { StreamRepresentation, VestingRepresentation } from './context/representations'
 import { Stream } from './context/Stream'
 
 export enum FuroTableType {
@@ -16,6 +18,9 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
+  balances: Record<string, Amount<Token>> | undefined
+  globalFilter: any
+  setGlobalFilter: any
   streams: StreamRepresentation[]
   vestings: VestingRepresentation[]
   type: FuroTableType
@@ -23,9 +28,19 @@ interface FuroTableProps {
   loading: boolean
 }
 
-const table = createTable().setRowType<Stream>()
+const showActiveOnly: FilterFn<Stream> = (row, columnId) => {
+  return row.getValue(columnId) === FuroStatus.ACTIVE
+}
 
-const defaultColumns = (tableProps: FuroTableProps) => [
+const table = createTable()
+  .setRowType<Stream | Vesting>()
+  .setOptions({
+    filterFns: {
+      showActiveOnly: showActiveOnly,
+    },
+  })
+
+const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDataColumn('streamedPercentage', {
     header: () => <div className="w-full text-left">Streamed</div>,
     cell: (props) => (
@@ -33,17 +48,18 @@ const defaultColumns = (tableProps: FuroTableProps) => [
         <ProgressBar
           showLabel={false}
           className="min-w-[100px] max-w-[100px] h-3"
-          progress={Math.min(Math.max(props.getValue(), 0), 1)}
+          progress={props.getValue()?.divide(100).toSignificant(4)}
           color={ProgressColor.GRADIENT}
         />
         <Typography variant="sm" weight={700} className="text-slate-200">
-          {(Number(Math.min(Math.max(props.getValue(), 0), 1)) * 100).toFixed(1)}%
+          {props.getValue()?.toSignificant(4)}%
         </Typography>
       </div>
     ),
   }),
   table.createDataColumn('status', {
     header: () => <div className="w-full text-left">Status</div>,
+    filterFn: 'showActiveOnly',
     cell: (props) => (
       <Chip
         className="capitalize"
@@ -52,7 +68,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           props.getValue() === FuroStatus.CANCELLED
             ? 'red'
             : props.getValue() === FuroStatus.COMPLETED
-            ? 'default'
+            ? 'blue'
             : props.getValue() === FuroStatus.ACTIVE
             ? 'green'
             : props.getValue() === FuroStatus.UPCOMING
@@ -67,7 +83,6 @@ const defaultColumns = (tableProps: FuroTableProps) => [
   table.createDataColumn('amount', {
     header: () => <div className="w-full text-right">Amount</div>,
     cell: (props) => {
-      if (props.row.original?.status === FuroStatus.CANCELLED) return `-`
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
@@ -88,13 +103,23 @@ const defaultColumns = (tableProps: FuroTableProps) => [
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
     header: () => <div className="w-full text-left">From</div>,
-    cell: (props) => <div className="w-full text-left text-blue">{shortenAddress(props.getValue() as string)}</div>,
+    cell: (props) => (
+      <Link href={getExplorerLink(tableProps.chainId, props.getValue(), 'address')} passHref={true}>
+        <a
+          target="_blank"
+          className="w-full text-left text-blue hover:text-blue-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {shortenAddress(props.getValue() as string)}
+        </a>
+      </Link>
+    ),
   }),
   table.createDataColumn('startTime', {
     header: () => <div className="w-full text-left">Start Date</div>,
     cell: (props) => (
       <div className="flex flex-col gap-0.5">
-        <Typography variant="sm">
+        <Typography variant="sm" className="whitespace-nowrap">
           {props.getValue().toLocaleString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -109,7 +134,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
   const { streams, vestings, placeholder, loading } = props
-  const [initialized, setInitialized] = useState(loading)
+  const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
     if (!loading) setInitialized(true)
@@ -119,48 +144,61 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   const { activeChain } = useNetwork()
   const data = useMemo(
     () =>
-      streams?.map((stream) => new Stream({ stream })).concat(vestings?.map((vesting) => new Vesting({ vesting }))) ??
-      [],
-    [streams, vestings],
+      activeChain?.id
+        ? streams
+            ?.map((stream) => new Stream({ stream, chainId: activeChain.id }))
+            .concat(vestings?.map((vesting) => new Vesting({ vesting, chainId: activeChain.id }))) ?? []
+        : [],
+    [activeChain.id, streams, vestings]
   )
 
-  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns(props)])
+  const [columns] = React.useState<typeof defaultColumns>(() => [
+    ...defaultColumns({ ...props, chainId: activeChain?.id }),
+  ])
 
   const instance = useTableInstance(table, {
     data,
     columns,
+    state: {
+      globalFilter: props.globalFilter,
+    },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: 'showActiveOnly',
+    onGlobalFilterChange: props.setGlobalFilter,
   })
+
+  useMemo(() => {
+    data.forEach((stream) => {
+      if (stream instanceof Stream && !!props.balances?.[stream.id]) {
+        stream.balance = props.balances[stream.id]
+      }
+    }, [])
+  }, [data, props.balances])
 
   return (
     <Table.container>
       <Table.table>
         <Table.thead>
-          {instance.getHeaderGroups().map((headerGroup, i) => (
+          {instance.getHeaderGroups().map((headerGroup) => (
             <Table.thr key={headerGroup.id}>
-              {initialized && streams.length === 0 && vestings.length == 0 ? (
-                <th colSpan={headerGroup.headers.length} className="border-b border-slate-800">
-                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
-                </th>
-              ) : (
-                headerGroup.headers.map((header, i) => (
-                  <Table.th key={header.id} colSpan={header.colSpan}>
-                    {header.renderHeader()}
-                  </Table.th>
-                ))
-              )}
+              {headerGroup.headers.map((header) => (
+                <Table.th key={header.id} colSpan={header.colSpan}>
+                  {header.renderHeader()}
+                </Table.th>
+              ))}
             </Table.thr>
           ))}
         </Table.thead>
         <Table.tbody>
           {instance.getRowModel().rows.length === 0 && (
             <Table.tr>
-              {initialized && streams.length === 0 && vestings.length == 0 ? (
+              {!initialized ? (
                 <td colSpan={columns.length}>
                   <div className="w-full h-12 animate-pulse bg-slate-800/30" />
                 </td>
               ) : (
-                <Table.td colSpan={columns.length} className="text-center text-slate-500">
+                <Table.td colSpan={columns.length} className="!text-xs italic text-center text-slate-500">
                   {placeholder}
                 </Table.td>
               )}

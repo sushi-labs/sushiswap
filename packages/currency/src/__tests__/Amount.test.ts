@@ -2,7 +2,7 @@ import { Native } from '../Native'
 import { Token } from '../Token'
 import { Amount } from '../Amount'
 
-import { Percent, JSBI, MAX_UINT256 } from '@sushiswap/math'
+import { JSBI, MAX_UINT256, Percent } from '@sushiswap/math'
 
 describe('Amount', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
@@ -39,8 +39,8 @@ describe('Amount', () => {
     expect(() =>
       Amount.fromRawAmount(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        JSBI.add(MAX_UINT256, JSBI.BigInt(1)),
-      ),
+        JSBI.add(MAX_UINT256, JSBI.BigInt(1))
+      )
     ).toThrow('AMOUNT')
   })
   it('token amount quotient cannot exceed max uint256', () => {
@@ -48,15 +48,15 @@ describe('Amount', () => {
       Amount.fromFractionalAmount(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
         JSBI.add(JSBI.multiply(MAX_UINT256, JSBI.BigInt(2)), JSBI.BigInt(2)),
-        JSBI.BigInt(2),
-      ),
+        JSBI.BigInt(2)
+      )
     ).toThrow('AMOUNT')
   })
   it('token amount numerator can be gt. uint256 if denominator is gt. 1', () => {
     const amount = Amount.fromFractionalAmount(
       new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
       JSBI.add(MAX_UINT256, JSBI.BigInt(2)),
-      2,
+      2
     )
     expect(amount.numerator).toEqual(JSBI.add(JSBI.BigInt(2), MAX_UINT256))
   })

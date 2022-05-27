@@ -1,0 +1,26 @@
+{
+  "name": "@sushiswap/jest-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Jest Config",
+  "keywords": [
+    "sushi",
+    "jest",
+    "config"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/jest"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "files": [
+    "node.js"
+  ],
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@types/node": "^17.0.34"
+  }
+}

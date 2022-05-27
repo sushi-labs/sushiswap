@@ -85,16 +85,16 @@ query Factory {
     #     volumeUSD
     #     liquidityUSD
     # }
-    CELO_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
-        __typename
-        id
-        volumeUSD
-        liquidityUSD
-        txCount
-        pairCount
-        tokenCount
-        userCount
-    }
+    # CELO_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
+    #     __typename
+    #     id
+    #     volumeUSD
+    #     liquidityUSD
+    #     txCount
+    #     pairCount
+    #     tokenCount
+    #     userCount
+    # }
     # PALM_factory(id: "0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
     #     __typename
     #     id

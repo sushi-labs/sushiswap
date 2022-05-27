@@ -10,7 +10,7 @@ function getSize() {
 }
 
 // https://usehooks.com/useWindowSize/
-const useWindowSize = () => {
+export const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(getSize)
 
   useEffect(() => {
@@ -28,5 +28,3 @@ const useWindowSize = () => {
 
   return windowSize
 }
-
-export default useWindowSize

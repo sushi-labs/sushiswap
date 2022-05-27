@@ -1,5 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber, Contract, Signature } from 'ethers'
+import { Contract, Signature } from 'ethers'
 
 interface Batch {
   contract: Contract
@@ -49,7 +49,7 @@ export interface StreamCreationActionProps {
   startDate: Date
   endDate: Date
   amount: Amount<Token>
-  fromBentoBox: boolean
+  fromBentobox: boolean
 }
 
 export const streamCreationAction = ({
@@ -59,7 +59,7 @@ export const streamCreationAction = ({
   startDate,
   endDate,
   amount,
-  fromBentoBox,
+  fromBentobox,
 }: StreamCreationActionProps): string => {
   return contract.interface.encodeFunctionData('createStream', [
     // TODO: check wnative address, pass in value
@@ -68,7 +68,7 @@ export const streamCreationAction = ({
     startDate.getTime() / 1000,
     endDate.getTime() / 1000,
     amount.quotient.toString(),
-    fromBentoBox,
+    fromBentobox,
   ])
 }
 
@@ -77,12 +77,12 @@ export interface VestingCreationProps {
   recipient: string
   token: Token
   startDate: Date
-  cliffDuration: BigNumber
-  stepDuration: BigNumber
-  steps: BigNumber
-  cliffAmount: BigNumber | string
-  stepAmount: BigNumber | string
-  fromBentoBox: boolean
+  cliffDuration: string
+  stepDuration: string
+  steps: string
+  stepPercentage: string
+  amount: string
+  fromBentobox: boolean
 }
 
 export const vestingCreationAction = ({
@@ -93,20 +93,21 @@ export const vestingCreationAction = ({
   cliffDuration,
   stepDuration,
   steps,
-  cliffAmount,
-  stepAmount,
-  fromBentoBox,
+  stepPercentage,
+  amount,
+  fromBentobox,
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
-    // TODO: check wnative address, pass in value
-    token.address,
-    recipient,
-    startDate.getTime() / 1000,
-    cliffDuration,
-    stepDuration,
-    steps,
-    cliffAmount,
-    stepAmount,
-    fromBentoBox,
+    {
+      token: token.address,
+      recipient: recipient,
+      start: startDate.getTime() / 1000,
+      cliffDuration: cliffDuration,
+      stepDuration: stepDuration,
+      steps: steps,
+      stepPercentage: stepPercentage,
+      amount: amount,
+      fromBentoBox: fromBentobox,
+    },
   ])
 }

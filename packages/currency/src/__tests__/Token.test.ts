@@ -8,7 +8,7 @@ describe('Token', () => {
   describe('#constructor', () => {
     it('fails with invalid address', () => {
       expect(() => new Token({ chainId: 3, address: INVALID_ADDRESS, decimals: 18 }).address).toThrow(
-        `${INVALID_ADDRESS} is not a valid address`,
+        `${INVALID_ADDRESS} is not a valid address`
       )
     })
     it('fails with negative decimals', () => {
@@ -26,32 +26,32 @@ describe('Token', () => {
     it('fails if address differs', () => {
       expect(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }).equals(
-          new Token({ chainId: 1, address: ADDRESS_TWO, decimals: 18 }),
-        ),
+          new Token({ chainId: 1, address: ADDRESS_TWO, decimals: 18 })
+        )
       ).toBe(false)
     })
 
     it('false if chain id differs', () => {
       expect(
         new Token({ chainId: 3, address: ADDRESS_ONE, decimals: 18 }).equals(
-          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        ),
+          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 })
+        )
       ).toBe(false)
     })
 
     it('true if only decimals differs', () => {
       expect(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 9 }).equals(
-          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        ),
+          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 })
+        )
       ).toBe(true)
     })
 
     it('true if address is the same', () => {
       expect(
         new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }).equals(
-          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 }),
-        ),
+          new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 })
+        )
       ).toBe(true)
     })
 

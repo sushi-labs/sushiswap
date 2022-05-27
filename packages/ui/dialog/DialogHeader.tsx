@@ -1,7 +1,8 @@
-import { Dialog } from '@headlessui/react'
 import { ChevronLeftIcon, XIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
+
+import { Typography } from '..'
 
 export interface DialogHeaderProps {
   title: string | ReactNode
@@ -14,19 +15,21 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose }) => {
     <div className="flex items-start justify-between">
       <div
         aria-hidden="true"
-        className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-4 items-center')}
+        className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-2 items-center')}
         {...(onBack && { onClick: onBack })}
       >
         {onBack && (
-          <ChevronLeftIcon width={18} height={18} className="cursor-pointer text-high-emphesis hover:text-blue-500" />
+          <div className="rounded-full flex items-center justify-center cursor-pointer">
+            <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
+          </div>
         )}
-        <Dialog.Title as="h3" className="flex gap-4 text-lg font-bold leading-6 text-high-emphesis">
+        <Typography weight={700} as="h3" className="flex gap-4 text-lg font-bold leading-6 text-slate-100">
           {title}
-        </Dialog.Title>
+        </Typography>
       </div>
       {onClose ? (
-        <div aria-hidden="true" className="flex items-center justify-center w-6 h-6 cursor-pointer" onClick={onClose}>
-          <XIcon width={24} height={24} className="text-high-emphesis hover:text-white" />
+        <div aria-hidden="true" className="flex items-center justify-center cursor-pointer" onClick={onClose}>
+          <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
         </div>
       ) : (
         <span />

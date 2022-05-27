@@ -1,7 +1,6 @@
 import { StreamRepresentation } from 'features/context'
+import { getStream } from 'graph/graph-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-import { getStream } from '../../../../graph/graph-client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query

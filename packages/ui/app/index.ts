@@ -1,8 +1,8 @@
-import Footer, { FooterProps } from './Footer'
-import Header, { HeaderProps } from './Header'
-import Main, { MainProps } from './Main'
-import Nav, { NavProps } from './Nav'
-import Shell, { ShellProps } from './Shell'
+import { type FooterProps, Footer } from './Footer'
+import { type HeaderProps, Header } from './Header'
+import { type MainProps, Main } from './Main'
+import { type NavProps, Nav } from './Nav'
+import { type ShellProps, Shell } from './Shell'
 
 export type AppProps = {
   Header: HeaderProps

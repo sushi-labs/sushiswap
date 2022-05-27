@@ -1,61 +1,96 @@
-import { Token } from '@sushiswap/currency'
-import { classNames, Loader,Typography } from '@sushiswap/ui'
-import { useTokenWalletBalance } from 'hooks'
-import { FC, useRef } from 'react'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { BalanceController } from 'components'
+import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
+import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
+import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
+import { FundSource } from 'hooks/useFundSourceToggler'
+import { FC } from 'react'
 
-interface CurrencyInput {
-  account?: string
-  token?: Token
-  amount?: string
-  onChange(x: string): void
-  className?: string
+type BottomPanelRenderProps = {
+  onChange(value: string): void
+  loading: boolean
+  amount: Amount<Token> | undefined
 }
 
-const CurrencyInput: FC<CurrencyInput> = ({ amount, onChange, account, token, className = '' }) => {
-  const amountInputRef = useRef<HTMLInputElement | null>(null)
-  const { isLoading: loadingBalance, data: tokenBalance } = useTokenWalletBalance(account, token)
+type HelperTextPanelRenderProps = {
+  errorMessage: string | undefined
+}
 
+type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel'> & {
+  fundSource: FundSource | undefined
+  account: string | undefined
+  errorMessage?: string
+  bottomPanel?:
+    | React.ReactElement<typeof HelperTextPanel>
+    | ((props: BottomPanelRenderProps) => React.ReactElement<typeof HelperTextPanel>)
+  helperTextPanel?:
+    | React.ReactElement<typeof HelperTextPanel>
+    | ((props: HelperTextPanelRenderProps) => React.ReactElement<typeof HelperTextPanel>)
+}
+
+const Component: FC<CurrencyInput> = ({
+  account,
+  fundSource,
+  value,
+  token,
+  errorMessage: errorMessageProp,
+  onChange,
+  helperTextPanel,
+  bottomPanel,
+  ...props
+}) => {
   return (
-    <div
-      aria-hidden="true"
-      onClick={() => amountInputRef.current?.focus()}
-      className={classNames(
-        className,
-        'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue shadow-md',
-      )}
-    >
-      <div className="flex items-center justify-between gap-1">
-        <input
-          ref={amountInputRef}
-          value={amount}
-          type="text"
-          placeholder="0.00"
-          className="px-4 text-left shadow-md border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
-          onChange={(e) => onChange(e.target.value)}
-        />
-        <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
-          {token?.symbol}
-        </Typography>
-      </div>
-      <div className="flex justify-between px-4 pb-3">
-        <Typography variant="xs" weight={500} className="text-slate-500">
-          Balance
-        </Typography>
-        {loadingBalance ? (
-          <Loader size="12px" />
-        ) : (
-          <Typography
-            variant="xs"
-            weight={500}
-            className="text-slate-500"
-            onClick={() => (tokenBalance ? onChange(tokenBalance?.toExact()) : undefined)}
-          >
-            {tokenBalance?.toSignificant(6)} {tokenBalance?.currency.symbol}
-          </Typography>
-        )}
-      </div>
-    </div>
+    <BalanceController fundSource={fundSource} token={token} account={account}>
+      {({ isLoading: loading, data: balance }) => {
+        const amountAsEntity = token && value ? tryParseAmount(value.toString(), token) : undefined
+        const insufficientBalanceError =
+          amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
+        const errorMessage = errorMessageProp || insufficientBalanceError
+
+        return (
+          <CurrencyInput.Base
+            {...props}
+            error={!!errorMessage}
+            value={value}
+            onChange={onChange}
+            token={token}
+            bottomPanel={
+              bottomPanel ? (
+                typeof bottomPanel === 'function' ? (
+                  bottomPanel({ onChange, loading, amount: balance })
+                ) : (
+                  bottomPanel
+                )
+              ) : (
+                <CurrencyInput.BottomPanel onChange={onChange} loading={loading} label="Balance" amount={balance} />
+              )
+            }
+            helperTextPanel={
+              helperTextPanel ? (
+                typeof helperTextPanel === 'function' ? (
+                  helperTextPanel({ errorMessage })
+                ) : (
+                  helperTextPanel
+                )
+              ) : !!errorMessage ? (
+                <CurrencyInput.HelperTextPanel text={errorMessage} isError={true} />
+              ) : (
+                <></>
+              )
+            }
+          />
+        )
+      }}
+    </BalanceController>
   )
 }
 
-export default CurrencyInput
+export const CurrencyInput: typeof Component & {
+  Base: typeof CurrencyInputBase
+  BottomPanel: typeof BottomPanel
+  HelperTextPanel: typeof HelperTextPanel
+} = Object.assign(Component, {
+  Base: CurrencyInputBase,
+  BottomPanel: BottomPanel,
+  HelperTextPanel: HelperTextPanel,
+})

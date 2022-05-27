@@ -1,4 +1,4 @@
-import chains from './chains.json'
+import json from './chains.json'
 
 export interface Chain {
   name: string
@@ -69,27 +69,74 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   POLYGON = 137,
+  POLYGON_TESTNET = 80001,
   FANTOM = 250,
+  FANTOM_TESTNET = 4002,
   GNOSIS = 100,
   BSC = 56,
+  BSC_TESTNET = 97,
   ARBITRUM = 42161,
+  ARBITRUM_RINKEBY_TESTNET = 421611,
+  ARBITRUM_GNOSIS_TESTNET = 200,
+  ARBITRUM_TESTNET = 79377087078960,
   AVALANCHE = 43114,
+  AVALANCHE_TESTNET = 43113,
   HECO = 128,
+  HECO_TESTNET = 256,
   HARMONY = 1666600000,
+  HARMONY_TESTNET = 1666700000,
   OKEX = 66,
   OKEX_TESTNET = 65,
   CELO = 42220,
   PALM = 11297108109,
+  PALM_TESTNET = 11297108099,
   MOONRIVER = 1285,
   FUSE = 122,
   TELOS = 40,
   HARDHAT = 31337,
   MOONBEAM = 1284,
+  OPTIMISM = 10,
+  OPTIMISM_KOVAN_TESTNET = 69,
 }
 
+export type AddressMap = { [chainId: number]: string }
+
 export class Chain implements Chain {
-  //
+  etTxUrl(txHash: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/tx/${txHash}`
+      }
+    }
+  }
+  getBlockUrl(blockHashOrHeight: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/block/${blockHashOrHeight}`
+      }
+    }
+  }
+  getTokenUrl(tokenAddress: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/token/${tokenAddress}`
+      }
+    }
+  }
+  getAccountUrl(accountAddress: string) {
+    if (!this.explorers) return
+    for (const explorer of this.explorers) {
+      if (explorer.standard === Standard.Eip3091) {
+        return `${explorer.url}/account/${accountAddress}`
+      }
+    }
+  }
 }
 
 // Chain Id => Chain mapping
-export default Object.fromEntries((chains as Chain[]).map((data) => [data.chainId, data]))
+export const chains = Object.fromEntries((json as Chain[]).map((data): [number, Chain] => [data.chainId, data]))
+
+export default chains

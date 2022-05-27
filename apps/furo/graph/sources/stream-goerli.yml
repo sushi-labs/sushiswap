@@ -1,7 +1,7 @@
 name: furostream_goerli
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-goerli
 transforms:
   - prefix:
       value: GOERLI_STREAM_

@@ -1,17 +1,16 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ArrowSmDownIcon } from '@heroicons/react/outline'
-import { ZERO } from '@sushiswap/core-sdk'
+import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
-import { Button, Dialog,Dots, Typography } from '@sushiswap/ui'
+import furoExports from '@sushiswap/furo/exports.json'
+import { JSBI, ZERO } from '@sushiswap/math'
+import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import FUROSTREAM_ABI from 'abis/FuroStream.json'
-import { createToast } from 'components'
+import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import StreamProgress from 'features/stream/StreamProgress'
-import { STREAM_ADDRESS, useStreamBalance } from 'hooks'
-import { ChangeEvent, FC, useCallback, useRef, useState } from 'react'
+import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
+import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
@@ -20,15 +19,17 @@ interface WithdrawModalProps {
 
 const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
+  const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const inputRef = useRef<HTMLInputElement>(null)
-  const balance = useStreamBalance(stream?.id, stream?.token)
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id ? STREAM_ADDRESS[activeChain.id] : AddressZero,
+      addressOrName: activeChain?.id
+        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.address
+        : AddressZero,
       contractInterface: FUROSTREAM_ABI,
     },
     'withdrawFromStream',
@@ -36,37 +37,54 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       onSuccess() {
         setOpen(false)
       },
-    },
+    }
   )
 
   const withdraw = useCallback(async () => {
     if (!stream || !amount) return
-    const data = await writeAsync({
-      args: [BigNumber.from(stream.id), BigNumber.from(amount.quotient.toString()), stream.recipient.id, false, '0x'],
-    })
 
-    createToast({
-      title: 'Withdraw from stream',
-      description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
-        amount.currency.symbol
-      } from your stream`,
-      promise: data.wait(),
-    })
+    setError(undefined)
 
-    setAmount(undefined)
-  }, [amount, stream, writeAsync])
+    try {
+      const data = await writeAsync({
+        args: [
+          BigNumber.from(stream.id),
+          BigNumber.from(amount.quotient.toString()),
+          stream.recipient.id,
+          fundSource === FundSource.BENTOBOX,
+          '0x',
+        ],
+      })
+
+      createToast({
+        title: 'Withdraw from stream',
+        description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
+          amount.currency.symbol
+        } from your stream`,
+        promise: data.wait(),
+      })
+
+      // Optimistic response (after 0 confirmation)
+      data.wait(1).then(() => {
+        if (stream && amount) {
+          stream.withdrawnAmount = stream.withdrawnAmount.add(amount)
+          stream.balance = stream.balance?.subtract(amount)
+        }
+      })
+    } catch (e: any) {
+      setError(e.message)
+    }
+  }, [amount, fundSource, stream, writeAsync])
 
   const onInput = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(+e.target.value) || +e.target.value <= 0 || !stream?.token) {
+    (val: string) => {
+      if (isNaN(Number(val)) || Number(val) <= 0 || !stream?.token) {
         setAmount(undefined)
       } else {
-        setAmount(
-          Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(e.target.value, stream.token.decimals).toString())),
-        )
+        setAmount(Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(val, stream.token.decimals).toString())))
       }
     },
-    [stream?.token],
+    [stream?.token]
   )
 
   return (
@@ -74,7 +92,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={stream?.recipient.id.toLowerCase() !== account?.address?.toLowerCase()}
+        disabled={!account || !stream?.canWithdraw(account.address) || !stream?.balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -82,70 +100,92 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         Withdraw
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-4 !max-w-sm">
+        <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <StreamProgress stream={stream} />
-          <div className="flex justify-center !-mb-8 !mt-3 relative">
-            <div className="p-1 bg-slate-800 border-[3px] border-slate-700 rounded-2xl">
-              <ArrowSmDownIcon width={24} height={24} className="text-slate-200" />
-            </div>
-          </div>
-          <div
-            className="-ml-6 !-mb-6 -mr-6 p-6 pt-8 bg-slate-800 border-t rounded-2xl border-slate-700 flex flex-col gap-1"
-            onClick={() => inputRef.current?.focus()}
-          >
-            <div className="flex justify-between gap-3">
-              <Typography variant="sm" weight={400}>
-                Available
-              </Typography>
-              <Typography
-                weight={700}
-                variant="sm"
-                className="text-slate-200"
-                onClick={() => {
-                  if (stream?.token) setAmount(balance)
-                }}
-              >
-                {balance ? balance.toSignificant(6) : ''} {stream?.token.symbol}
-              </Typography>
-            </div>
-            <div className="flex mb-3">
-              <input
-                value={amount?.toExact()}
-                ref={inputRef}
-                onChange={onInput}
-                type="text"
-                inputMode="decimal"
-                title="Token Amount"
-                autoComplete="off"
-                autoCorrect="off"
-                placeholder="0.00"
-                pattern="^[0-9]*[.,]?[0-9]*$"
-                className="p-0 pb-1 !border-b border-t-0 border-l-0 border-r-0 border-slate-700 placeholder:text-slate-500 bg-transparent 0 text-2xl !ring-0 !outline-none font-bold w-full"
-              />
-            </div>
-            <Button
-              variant="filled"
-              color="gradient"
-              fullWidth
-              disabled={
-                isWritePending || !amount || !balance || !amount.greaterThan(ZERO) || amount.greaterThan(balance)
+          <Form.Control label="Amount to withdraw">
+            <CurrencyInput.Base
+              token={stream?.token}
+              onChange={onInput}
+              value={amount?.toExact()}
+              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={stream?.balance} />}
+              helperTextPanel={
+                amount && stream?.balance && amount.greaterThan(stream.balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
               }
-              onClick={withdraw}
-            >
-              {!amount?.greaterThan(ZERO) ? (
-                'Enter an amount'
-              ) : !stream?.token ? (
-                'Invalid stream token'
-              ) : balance && amount.greaterThan(balance) ? (
-                'Not enough balance'
-              ) : isWritePending ? (
-                <Dots>Confirm Withdraw</Dots>
-              ) : (
-                'Withdraw'
-              )}
-            </Button>
-          </div>
+            />
+          </Form.Control>
+          <Form.Control label="Receive funds in">
+            <div className="grid items-center grid-cols-2 gap-5">
+              <div
+                onClick={() => setFundSource(FundSource.BENTOBOX)}
+                className={classNames(
+                  fundSource === FundSource.BENTOBOX
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Bentobox
+                </Typography>
+                {fundSource === FundSource.BENTOBOX && (
+                  <div className="absolute w-5 h-5 top-3 right-3">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setFundSource(FundSource.WALLET)}
+                className={classNames(
+                  fundSource === FundSource.WALLET
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Wallet
+                </Typography>
+                {fundSource === FundSource.WALLET && (
+                  <div className="absolute w-5 h-5 top-3 right-3">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </Form.Control>
+          <Button
+            variant="filled"
+            color="gradient"
+            fullWidth
+            disabled={
+              isWritePending ||
+              !amount ||
+              !stream?.balance ||
+              !amount.greaterThan(0) ||
+              amount.greaterThan(stream.balance)
+            }
+            onClick={withdraw}
+          >
+            {!amount?.greaterThan(0) ? (
+              'Enter an amount'
+            ) : !stream?.token ? (
+              'Invalid stream token'
+            ) : isWritePending ? (
+              <Dots>Confirm Withdraw</Dots>
+            ) : (
+              'Withdraw'
+            )}
+          </Button>
+          {error && (
+            <Typography variant="xs" className="text-center text-red" weight={700}>
+              {error}
+            </Typography>
+          )}
         </Dialog.Content>
       </Dialog>
     </>

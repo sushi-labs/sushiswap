@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
-import Loader from '../loader/Loader'
+import { Loader } from '../loader'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
@@ -60,7 +60,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       href,
       ...rest
     },
-    ref,
+    ref
   ) => {
     return React.createElement(
       href ? 'a' : 'button',
@@ -75,7 +75,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           COLOR[color],
           SIZE[size],
           className,
-          disabled ? 'btn-disabled' : '',
+          disabled ? 'btn-disabled' : ''
         ),
         ...(href && { href }),
       },
@@ -87,9 +87,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {children}
           {endIcon && endIcon}
         </>
-      ),
+      )
     )
-  },
+  }
 )
 
 export default Button

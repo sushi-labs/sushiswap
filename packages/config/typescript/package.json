@@ -1,0 +1,27 @@
+{
+  "name": "@sushiswap/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi TypeScript Config",
+  "keywords": [
+    "sushi",
+    "typescript",
+    "config"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/typescript"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "files": [
+    "base.json",
+    "hardhat.json",
+    "nextjs.json",
+    "node14.json",
+    "node16.json",
+    "react-library.json"
+  ]
+}

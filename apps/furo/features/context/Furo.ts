@@ -1,16 +1,19 @@
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { Decimal, JSBI } from '@sushiswap/math'
+import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
+  public _balance: Amount<Token> | undefined
+  public _withdrawnAmount: Amount<Token>
+
   public readonly id: string
   public readonly type: FuroType
   public readonly status: FuroStatus
   public readonly amount: Amount<Token>
-  public readonly withdrawnAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
@@ -19,12 +22,11 @@ export abstract class Furo {
   public readonly token: Token
   public readonly txHash: string
 
-  public constructor({ furo }: { furo: FuroRepresentation }) {
+  public constructor({ furo, chainId }: { furo: FuroRepresentation; chainId: ChainId }) {
     this.id = furo.id
     this.type = furo.__typename
-    this.token = toToken(furo.token)
+    this.token = toToken(furo.token, chainId)
     this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.totalAmount))
-    this.withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
@@ -32,6 +34,26 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
+
+    this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
+    // TODO: Causes undefined on initial load
+    this._balance = undefined
+  }
+
+  public get withdrawnAmount(): Amount<Token> {
+    return this._withdrawnAmount
+  }
+
+  public set withdrawnAmount(amount: Amount<Token>) {
+    this._withdrawnAmount = amount
+  }
+
+  public get balance(): Amount<Token> | undefined {
+    return this._balance
+  }
+
+  public set balance(amount: Amount<Token> | undefined) {
+    this._balance = amount
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
@@ -77,32 +99,16 @@ export abstract class Furo {
     return { days, hours, minutes, seconds }
   }
 
-  /**
-   * Returns streamed percentage in decimals, e.g. 0.562
-   */
-  public get streamedPercentage(): number {
-    if (!this.isStarted) return 0
-    const now = this.status !== FuroStatus.CANCELLED ? Date.now() : this.modifiedAtTimestamp.getTime()
-    const total = this.endTime.getTime() - this.startTime.getTime()
-    const current = now - this.startTime.getTime()
-    const streamed = current / total
-    return streamed < 1 ? streamed : 1
+  public get withdrawnPercentage(): Percent {
+    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
+    return new Percent(this._withdrawnAmount.quotient, this.amount.quotient)
   }
 
-  public get withdrawnPercentage(): number {
-    if (this.withdrawnAmount.toExact() === '0') return 0
-    return Decimal(this.withdrawnAmount.toExact()) / Decimal(this.amount.toExact())
-  }
-
-  public get streamedAmount(): string {
-    if (!this.isStarted) return '0'
-    return Decimal(this.amount.toExact()).mul(this.streamedPercentage).toString()
-  }
-
-  public get unclaimableAmount(): string {
-    if (!this.isStarted) return '0'
-    const leftToStreamPercentage = 1 - this.streamedPercentage
-    return Decimal(this.amount.toExact()).mul(leftToStreamPercentage).toString()
+  public get remainingAmount(): Amount<Token> | undefined {
+    if (!this._balance) return undefined
+    if (!this.isStarted) return this.amount
+    if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, '0')
+    return this.amount.subtract(this._withdrawnAmount).subtract(this._balance)
   }
 
   public get isStarted(): boolean {
@@ -114,9 +120,26 @@ export abstract class Furo {
   }
 
   private setStatus(status: FuroStatus): FuroStatus {
+    if (status === FuroStatus.CANCELLED) return status
     if (!this.isStarted) return FuroStatus.UPCOMING
-    if (status === FuroStatus.CANCELLED || status === FuroStatus.EXTENDED) return status
+    if (status === FuroStatus.EXTENDED) return status
     if (this.isEnded) return FuroStatus.COMPLETED
     return status
+  }
+
+  public canCancel(account: string): boolean {
+    return this.createdBy.id.toLowerCase() === account.toLowerCase() && !this.isEnded
+  }
+
+  public canTransfer(account: string): boolean {
+    return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
+  }
+
+  public canWithdraw(account: string): boolean {
+    return this.recipient.id.toLowerCase() === account.toLowerCase() && this.isStarted
+  }
+
+  public canUpdate(account: string): boolean {
+    return this.createdBy.id.toLowerCase() === account.toLowerCase()
   }
 }

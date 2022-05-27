@@ -14,8 +14,8 @@ interface MenuProps {
 
 const MenuRoot: FC<MenuProps> = ({ className, button, children }) => {
   return (
-    <HeadlessMenu as="div" className={classNames(className, 'relative inline-block text-left')}>
-      <div>{button}</div>
+    <HeadlessMenu as="div" className={classNames(className, 'relative')}>
+      {button}
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -24,6 +24,7 @@ const MenuRoot: FC<MenuProps> = ({ className, button, children }) => {
         leave="transition ease-in duration-75"
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
+        unmount={false}
       >
         {children}
       </Transition>

@@ -30,27 +30,27 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       // don't prevent default, don't redirect if it's a new tab
       if (target === '_blank' || event.ctrlKey || event.metaKey) {
-        window.gtag('event', href, {
-          event_category: 'Outbound Link',
-          event_label: href,
-          event_callback: () => {
-            console.debug('Fired outbound link event', href)
-          },
-        })
+        // window.gtag('event', href, {
+        //   event_category: 'Outbound Link',
+        //   event_label: href,
+        //   event_callback: () => {
+        //     console.debug('Fired outbound link event', href)
+        //   },
+        // })
       } else {
         event.preventDefault()
         // send a gtag event and then trigger a location change
 
-        window.gtag('event', href, {
-          event_category: 'Outbound Link',
-          event_label: href,
-          event_callback: () => {
-            window.location.href = href
-          },
-        })
+        // window.gtag('event', href, {
+        //   event_category: 'Outbound Link',
+        //   event_label: href,
+        //   event_callback: () => {
+        //     window.location.href = href
+        //   },
+        // })
       }
     },
-    [href, target],
+    [href, target]
   )
   return (
     <a
@@ -62,7 +62,7 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
         'text-baseline whitespace-nowrap',
         COLOR[color],
         (startIcon || endIcon) && 'space-x-1 flex items-center justify-center',
-        className,
+        className
       )}
       {...rest}
     >

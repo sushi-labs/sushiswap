@@ -1,4 +1,4 @@
-import { Dialog as HeadlessDialog,Transition } from '@headlessui/react'
+import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 import React, { FC, Fragment, FunctionComponent } from 'react'
 
 import { ExtractProps } from '../types'

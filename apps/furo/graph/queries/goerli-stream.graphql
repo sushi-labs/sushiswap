@@ -79,6 +79,7 @@ query GoerliStreamTransactions($id: String) {
     type
     amount
     toBentoBox
+    txHash
     createdAtBlock
     createdAtTimestamp
     token {

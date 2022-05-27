@@ -27,11 +27,11 @@ export default async function getBentoTVL() {
           const nativePrice = await getNativePrice(chainId)
           const { tokens: bentoTokens } = await pager(
             `${GRAPH_HOST[chainId]}/subgraphs/name/${BENTOBOX[chainId]}`,
-            bentoTokensQuery,
+            bentoTokensQuery
           )
           const tokenPrices = await getTokenPrices(
             bentoTokens.map((bentoToken) => bentoToken.id),
-            chainId,
+            chainId
           )
 
           return bentoTokens
@@ -45,7 +45,7 @@ export default async function getBentoTVL() {
         } catch {
           return 0
         }
-      })(),
+      })()
     )
   }
 

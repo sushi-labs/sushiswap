@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Contract } from '@ethersproject/contracts'
-import { InfuraProvider,JsonRpcProvider } from '@ethersproject/providers'
+import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -37,7 +37,7 @@ export function useCurrentBlockTimestamp(chainId: ChainId, blockNumber: number |
 
 export function useCurrentBlockTimestampMultichain(
   chainIds: ChainId[],
-  blockNumbers: Array<number | undefined>,
+  blockNumbers: Array<number | undefined>
 ): Array<string | undefined> {
   const chainToBlock = useMemo(() => {
     console.log({ blockNumbers })
@@ -58,7 +58,7 @@ export function useCurrentBlockTimestampMultichain(
     chainToBlock,
     chainToAddress,
     MulticallInterface,
-    'getCurrentBlockTimestamp',
+    'getCurrentBlockTimestamp'
   )
 
   return Object.values(chainToCallState).map((callState) => callState.result?.[0]?.toString())
@@ -66,8 +66,8 @@ export function useCurrentBlockTimestampMultichain(
 
 export function getProvider(chainId: ChainId) {
   if (providerCache[chainId]) return providerCache[chainId]!
-  const infuraKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-  if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_PROJECT_ID is required for provider')
+  const infuraKey = process.env.NEXT_PUBLIC_INFURA_ID
+  if (!infuraKey) throw new Error('NEXT_PUBLIC_INFURA_ID is required for provider')
   const name = getInfuraChainName(chainId)
   providerCache[chainId] = new InfuraProvider(name, infuraKey)
   return providerCache[chainId]!

@@ -1,20 +1,17 @@
+import { FC } from 'react'
+
+import { LoaderProps } from './types'
+
 /**
  * Takes in custom size and stroke for circle color, default to primary color as fill,
  * need ...rest for layered styles on top
  */
-export function Loader({
-  size = '16px',
-  stroke = '#FFFFFF',
-  ...rest
-}: {
-  size?: string
-  stroke?: string
-  [k: string]: any
-}) {
+export const Loader: FC<LoaderProps> = ({ size = '16px', stroke = '#FFFFFF', ...rest }) => {
   return (
     <svg
+      width={size || rest.width}
+      height={size || rest.height}
       className="animate-spin-slow"
-      style={{ height: size, width: size }}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -30,5 +27,3 @@ export function Loader({
     </svg>
   )
 }
-
-export default Loader
