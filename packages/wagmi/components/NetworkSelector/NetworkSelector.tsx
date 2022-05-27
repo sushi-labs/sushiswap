@@ -48,7 +48,7 @@ export const NetworkSelector: FC<NetworkSelector> = ({
 
   return (
     <SlideIn.FromLeft show={open} unmount={false} onClose={onClose}>
-      <Dialog.Content className={classNames(className, 'p-3 !space-y-3 inset-0 !my-0 h-full')}>
+      <Dialog.Content className={classNames(className, '!p-3 !space-y-3 inset-0 !my-0 h-full')}>
         <Dialog.Header title="Select Network" onClose={onClose} onBack={onClose} />
         <div className="bg-slate-800 w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2 ring-blue">
           <Input.Address
