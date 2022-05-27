@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { Percent } from '@sushiswap/core-sdk'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
+import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'

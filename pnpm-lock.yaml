@@ -347,7 +347,6 @@ importers:
       '@hookform/resolvers': ^2.8.10
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
-      '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
@@ -366,7 +365,6 @@ importers:
       '@types/react-dom': ^18.0.4
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/token-lists': ^1.0.0-beta.28
-      '@uniswap/v3-periphery': ^1.4.1
       '@visx/curve': ^2.1.0
       '@visx/gradient': ^2.1.0
       '@visx/group': ^2.1.0
@@ -418,7 +416,6 @@ importers:
       '@hookform/resolvers': 2.8.10_react-hook-form@7.31.1
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core-sdk': 1.0.0-canary.110
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/furo': link:../../protocols/furo
@@ -468,7 +465,6 @@ importers:
       '@types/node': 17.0.30
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.4
-      '@uniswap/v3-periphery': 1.4.1
       autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 8.15.0
       next-transpile-modules: 9.0.0
@@ -6013,6 +6009,7 @@ packages:
 
   /@openzeppelin/contracts/3.4.2-solc-0.7:
     resolution: {integrity: sha512-W6QmqgkADuFcTLzHL8vVoNBtkwjvQRpYIAom7KiUNoLKghyx3FgH0GBjt8NRvigV1ZmMOBllvE1By1C+bi8WpA==}
+    dev: false
 
   /@openzeppelin/contracts/4.6.0:
     resolution: {integrity: sha512-8vi4d50NNya/bQqCmaVzvHNmwHvS0OBKb7HNtuNwEE3scXWrP31fKQoGxNMT+KbzmrNZzatE3QK5p2gFONI/hg==}
@@ -7094,6 +7091,7 @@ packages:
   /@uniswap/lib/4.0.1-alpha:
     resolution: {integrity: sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==}
     engines: {node: '>=10'}
+    dev: false
 
   /@uniswap/redux-multicall/1.1.1_hqr7hdlscwktfiisqjxe4dgvpi:
     resolution: {integrity: sha512-sXX2pAbxJj1OrErSc7zMEFo7j1EXqTBbllYuUDEWCZ/A12sK/4RXgXW2+zSoXOHCN6djyVUc3FmEt0v3x2jLSw==}
@@ -7121,10 +7119,12 @@ packages:
   /@uniswap/v2-core/1.0.1:
     resolution: {integrity: sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==}
     engines: {node: '>=10'}
+    dev: false
 
   /@uniswap/v3-core/1.0.0:
     resolution: {integrity: sha512-kSC4djMGKMHj7sLMYVnn61k9nu+lHjMIxgg9CDQT+s2QYLoA56GbSK9Oxr+qJXzzygbkrmuY6cwgP6cW2JXPFA==}
     engines: {node: '>=10'}
+    dev: false
 
   /@uniswap/v3-periphery/1.4.1:
     resolution: {integrity: sha512-Ab0ZCKOQrQMKIcpBTezTsEhWfQjItd0TtkCG8mPhoQu+wC67nPaf4hYUhM6wGHeFUmDiYY5MpEQuokB0ENvoTg==}
@@ -7138,6 +7138,7 @@ packages:
       hardhat-watcher: 2.3.0
     transitivePeerDependencies:
       - hardhat
+    dev: false
 
   /@vercel/node-bridge/2.2.2:
     resolution: {integrity: sha512-haGBC8noyA5BfjCRXRH+VIkHCDVW5iD5UX24P2nOdilwUxI4qWsattS/co8QBGq64XsNLRAMdM5pQUE3zxkF9Q==}
@@ -8854,6 +8855,7 @@ packages:
 
   /base64-sol/1.0.1:
     resolution: {integrity: sha512-ld3cCNMeXt4uJXmLZBHFGMvVpK9KsLVEhPpFRXnvSVAqABKbuNZg/+dsq3NuM+wxFLb/UrVkz7m1ciWmkMfTbg==}
+    dev: false
 
   /bcrypt-pbkdf/1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
@@ -12895,6 +12897,7 @@ packages:
       hardhat: ^2.0.0
     dependencies:
       chokidar: 3.5.3
+    dev: false
 
   /hardhat/2.9.6:
     resolution: {integrity: sha512-Vnm1iDfhbavNjvLxArt47rt6G3vPIV4Q/+pNgFkh6sfQH8JVf8px5VxiEs5cj4rPxmU+DXGKoalY+pK8fAL4oA==}
