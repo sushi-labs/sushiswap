@@ -103,7 +103,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDisplayColumn({
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
-    header: () => <div className="w-full text-left">From</div>,
+    header: () => <div className="w-full text-left">{tableProps.type === FuroTableType.INCOMING ? 'From' : 'To'}</div>,
     cell: (props) => (
       <Link href={getExplorerLink(tableProps.chainId, props.getValue() as string, 'address')} passHref={true}>
         <a

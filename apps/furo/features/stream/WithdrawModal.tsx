@@ -20,7 +20,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
@@ -120,24 +120,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Form.Control label="Receive funds in">
             <div className="grid items-center grid-cols-2 gap-5">
               <div
-                onClick={() => setFundSource(FundSource.BENTOBOX)}
-                className={classNames(
-                  fundSource === FundSource.BENTOBOX
-                    ? 'border-green/70 ring-green/70'
-                    : 'ring-transparent border-slate-700',
-                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                )}
-              >
-                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                  Bentobox
-                </Typography>
-                {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute w-5 h-5 top-3 right-3">
-                    <CheckCircleIcon className="text-green/70" />
-                  </div>
-                )}
-              </div>
-              <div
                 onClick={() => setFundSource(FundSource.WALLET)}
                 className={classNames(
                   fundSource === FundSource.WALLET
@@ -150,6 +132,24 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
+                  <div className="absolute w-5 h-5 top-3 right-3">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setFundSource(FundSource.BENTOBOX)}
+                className={classNames(
+                  fundSource === FundSource.BENTOBOX
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Bentobox
+                </Typography>
+                {fundSource === FundSource.BENTOBOX && (
                   <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>
