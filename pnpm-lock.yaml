@@ -776,7 +776,7 @@ importers:
       '@types/jest': ^27.5.1
       eslint: ^8.15.0
       jest: ^28.1.0
-      typescript: ^4.6.2
+      typescript: ^4.0.0
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -785,7 +785,7 @@ importers:
       '@types/jest': 27.5.1
       eslint: 8.15.0
       jest: 28.1.0
-      typescript: 4.6.4
+      typescript: 4.7.2
 
   packages/cli:
     specifiers:
@@ -1099,7 +1099,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^27.5.1
       '@types/node': ^16.11.33
-      chalk: ^5.0.1
+      chalk: ^4.0.0
       eslint: ^8.15.0
       isomorphic-unfetch: ^3.1.0
       jest: ^28.1.0
@@ -1107,7 +1107,7 @@ importers:
       typescript: ^4.5.4
     dependencies:
       '@sushiswap/chain': link:../chain
-      chalk: 5.0.1
+      chalk: 4.1.2
       isomorphic-unfetch: 3.1.0
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
@@ -1251,7 +1251,7 @@ importers:
       '@types/jest': ^27.5.1
       eslint: ^8.15.0
       jest: ^28.1.0
-      typescript: ^4.6.2
+      typescript: ^4.0.0
     devDependencies:
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
@@ -1262,7 +1262,7 @@ importers:
       '@types/jest': 27.5.1
       eslint: 8.15.0
       jest: 28.1.0
-      typescript: 4.6.4
+      typescript: 4.7.2
 
   packages/tines:
     specifiers:
@@ -9697,11 +9697,6 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
-
-  /chalk/5.0.1:
-    resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: false
 
   /change-case-all/1.0.14:
     resolution: {integrity: sha512-CWVm2uT7dmSHdO/z1CXT/n47mWonyypzBbuCy5tN7uMg22BsfkhwT6oHmFCAk+gL1LOOxhdbB9SZz3J1KTY3gA==}

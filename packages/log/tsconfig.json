@@ -1,5 +1,5 @@
 {
-  "extends": "@sushiswap/typescript-config/base.json",
+  "extends": "@sushiswap/typescript-config/node16.json",
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {

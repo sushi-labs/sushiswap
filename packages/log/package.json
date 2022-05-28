@@ -34,10 +34,10 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
+    "chalk": "^4.0.0",
     "isomorphic-unfetch": "^3.1.0"
   },
   "devDependencies": {
-    "chalk": "^5.0.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
