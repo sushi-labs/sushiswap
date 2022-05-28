@@ -1,3 +1,4 @@
+import { ContractInterface } from '@ethersproject/contracts'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -13,7 +14,7 @@ import { useAccount, useContractWrite } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
-  abi: object
+  abi: ContractInterface
   address: string
 }
 
@@ -151,7 +152,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
               fundSource={FundSource.WALLET}
               className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
               onChange={setAmount}
-              token={stream.token}
+              currency={stream.token}
               value={amount}
               account={account?.address}
             />

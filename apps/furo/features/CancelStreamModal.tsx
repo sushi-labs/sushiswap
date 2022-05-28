@@ -1,3 +1,4 @@
+import { ContractInterface } from '@ethersproject/contracts'
 import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
@@ -9,7 +10,7 @@ import { useAccount, useContractWrite } from 'wagmi'
 
 interface CancelStreamModalProps {
   stream?: Stream
-  abi: object
+  abi: ContractInterface
   address: string
   fn: string
 }
@@ -43,7 +44,7 @@ const CancelStreamModal: FC<CancelStreamModalProps> = ({ stream, abi, address, f
     })
   }, [account, fundSource, stream, writeAsync])
 
-  if (!account || !stream?.canCancel(account.address)) return <></>
+  if (!account || !stream?.canCancel(account?.address)) return <></>
 
   return (
     <>

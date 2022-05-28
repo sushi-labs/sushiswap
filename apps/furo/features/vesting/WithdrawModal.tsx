@@ -3,13 +3,13 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
+import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Vesting } from 'features'
-import log from '@sushiswap/log'
 import { useFuroVestingContract, useVestingBalance } from 'hooks'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -114,7 +114,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <Form.Control label="Amount to withdraw">
             <CurrencyInput.Base
-              token={vesting?.token}
+              currency={vesting?.token}
               onChange={onInput}
               value={amount?.toExact()}
               error={amount && balance && amount.greaterThan(balance)}

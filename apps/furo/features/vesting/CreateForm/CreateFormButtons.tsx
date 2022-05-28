@@ -1,6 +1,8 @@
 import { Signature } from '@ethersproject/bytes'
 import { tryParseAmount } from '@sushiswap/currency'
+import { FuroVesting } from '@sushiswap/furo/typechain'
 import { FundSource } from '@sushiswap/hooks'
+import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
@@ -8,7 +10,6 @@ import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'features/actions'
 import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
-import log from '@sushiswap/log'
 import { useFuroVestingContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
@@ -21,7 +22,7 @@ interface CreateFormButtons {
 const CreateFormButtons: FC<CreateFormButtons> = ({
   onDismiss,
   formData: {
-    token,
+    currency,
     startDate,
     stepAmount,
     fundSource,
@@ -36,15 +37,15 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const { activeChain } = useNetwork()
   const [signature, setSignature] = useState<Signature>()
 
-  const contract = useFuroVestingContract()
+  const contract = useFuroVestingContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
-    if (!token || !stepPayouts) return [undefined, undefined]
+    if (!currency || !stepPayouts) return [undefined, undefined]
 
-    const cliff = tryParseAmount(cliffAmount?.toString(), token)
-    const step = tryParseAmount(stepAmount.toString(), token)
-    const totalStep = tryParseAmount(stepAmount.toString(), token)?.multiply(JSBI.BigInt(stepPayouts))
+    const cliff = tryParseAmount(cliffAmount?.toString(), currency)
+    const step = tryParseAmount(stepAmount.toString(), currency)
+    const totalStep = tryParseAmount(stepAmount.toString(), currency)?.multiply(JSBI.BigInt(stepPayouts))
     const totalAmount = cliff && totalStep ? cliff.add(totalStep) : undefined
 
     return [
@@ -53,26 +54,34 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         ? new Fraction(step.multiply(JSBI.BigInt(1e18)).quotient, totalAmount.quotient).quotient
         : JSBI.BigInt(0),
     ]
-  }, [cliffAmount, stepAmount, stepPayouts, token])
+  }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   const createVesting = useCallback(async () => {
     if (!contract || !account?.address) return
-    if (!recipient || !token || !startDate || !cliffDuration || !stepConfig?.time || !stepPercentage) {
+    if (
+      !recipient ||
+      !currency ||
+      !startDate ||
+      !cliffDuration ||
+      !stepConfig?.time ||
+      !stepPercentage ||
+      !totalAmountAsEntity
+    ) {
       return
     }
 
     const actions = [
-      approveBentoBoxAction({ contract, user: account.address, signature }),
+      approveBentoBoxAction<FuroVesting>({ contract, user: account.address, signature }),
       vestingCreationAction({
         contract,
         recipient,
-        token,
+        currency: currency,
         startDate: new Date(startDate),
         cliffDuration: cliffDuration.toString(),
         stepDuration: stepConfig?.time.toString(),
         steps: stepPayouts.toString(),
         stepPercentage: stepPercentage.toString(),
-        amount: totalAmountAsEntity ? totalAmountAsEntity.quotient.toString() : JSBI.from('0').toString(),
+        amount: totalAmountAsEntity.quotient.toString(),
         fromBentobox: fundSource === FundSource.BENTOBOX,
       }),
     ]
@@ -82,7 +91,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         request: {
           from: account.address,
           to: contract.address,
-          data: batchAction({ contract, actions }),
+          data: batchAction<FuroVesting>({ contract, actions }),
+          value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
         },
       })
 
@@ -98,7 +108,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         chainId: activeChain?.id,
         from: account.address,
         to: contract.address,
-        data: batchAction({ contract, actions }),
+        data: batchAction<FuroVesting>({ contract, actions }),
+        value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
       })
     }
   }, [
@@ -115,7 +126,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     stepConfig?.time,
     stepPayouts,
     stepPercentage,
-    token,
+    currency,
     totalAmountAsEntity,
   ])
 
@@ -124,7 +135,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       <Approve
         components={
           <Approve.Components>
-            <Approve.Bentobox watch token={token} address={contract?.address} onSignature={setSignature} />
+            <Approve.Bentobox watch address={contract?.address} onSignature={setSignature} />
             <Approve.Token
               watch
               amount={totalAmountAsEntity}

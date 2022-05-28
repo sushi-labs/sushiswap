@@ -1,12 +1,11 @@
-import { Token } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
 import { classNames, ERROR_INPUT_CLASSNAME, Typography } from '@sushiswap/ui'
-import React from 'react'
-import { FC, useRef } from 'react'
+import React, { FC, useRef } from 'react'
 
 export type CurrencyInputBase = {
   value: string | number | undefined
   onChange(value: string): void
-  token: Token | undefined
+  currency: Type | undefined
   className?: string
   error?: boolean
   bottomPanel?: JSX.Element
@@ -16,7 +15,7 @@ export type CurrencyInputBase = {
 export const CurrencyInputBase: FC<CurrencyInputBase> = ({
   value,
   onChange,
-  token,
+  currency,
   className = '',
   error,
   bottomPanel,
@@ -45,7 +44,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
             onChange={(e) => onChange(e.target.value)}
           />
           <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
-            {token?.symbol}
+            {currency?.symbol}
           </Typography>
         </div>
         {bottomPanel &&

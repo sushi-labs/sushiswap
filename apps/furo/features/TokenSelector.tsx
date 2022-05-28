@@ -1,20 +1,20 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { Currency, Dialog, Input, Loader } from '@sushiswap/ui'
 import { TokenListFilterByQuery } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 interface Props {
   tokenMap: Record<string, Token>
-  chainId?: ChainId
-  currency?: Token
-  onSelect(x: Token): void
+  chainId: ChainId | undefined
+  currency: Token | undefined
+  onSelect(x: Type): void
   onClose(): void
 }
 
 export const TokenSelector: FC<Props> = ({ tokenMap, chainId, onSelect, currency, onClose }) => {
   return (
-    <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
+    <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId} includeNative={true}>
       {({ currencies, inputRef, query, onInput, searching }) => (
         <Dialog.Content className="!space-y-5 fixed inset-0 !my-0 h-full !rounded-r-none">
           <Dialog.Header title="Select Token" onClose={onClose} />

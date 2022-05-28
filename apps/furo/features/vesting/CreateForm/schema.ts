@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { getAddress } from 'ethers/lib/utils'
 import { StepConfig } from 'features/vesting/CreateForm/types'
@@ -16,17 +16,18 @@ export const stepConfigurations: StepConfig[] = [
 
 yup.addMethod(
   yup.mixed,
-  'token',
+  'currency',
   function (
     address: string | Reference<string>,
     msg: Message<{ address: string }> = '${address} is not a valid token address'
   ) {
     return this.test({
       message: msg,
-      name: 'token',
+      name: 'currency',
       exclusive: true,
       params: { address },
-      test(value: Maybe<Token>) {
+      test(value: Maybe<Type>) {
+        if (value instanceof Native) return true
         if (value?.address.length === 0) return true
 
         try {
@@ -58,7 +59,7 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
 
 export const createVestingSchema = yup.object({
   // @ts-ignore
-  token: yup.mixed<Token>().token().required('This field is required'),
+  currency: yup.mixed<Token>().currency().required('This field is required'),
   cliff: yup.boolean().required('This field is required'),
   startDate: yup
     .date()

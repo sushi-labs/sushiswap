@@ -1,4 +1,4 @@
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
@@ -9,7 +9,7 @@ import { FC } from 'react'
 type BottomPanelRenderProps = {
   onChange(value: string): void
   loading: boolean
-  amount: Amount<Token> | undefined
+  amount: Amount<Type> | undefined
 }
 
 type HelperTextPanelRenderProps = {
@@ -32,7 +32,7 @@ const Component: FC<CurrencyInput> = ({
   account,
   fundSource,
   value,
-  token,
+  currency,
   errorMessage: errorMessageProp,
   onChange,
   helperTextPanel,
@@ -40,9 +40,9 @@ const Component: FC<CurrencyInput> = ({
   ...props
 }) => {
   return (
-    <BalanceController fundSource={fundSource} token={token} account={account}>
+    <BalanceController fundSource={fundSource} currency={currency} account={account}>
       {({ isLoading: loading, data: balance }) => {
-        const amountAsEntity = token && value ? tryParseAmount(value.toString(), token) : undefined
+        const amountAsEntity = currency && value ? tryParseAmount(value.toString(), currency) : undefined
         const insufficientBalanceError =
           amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
         const errorMessage = errorMessageProp || insufficientBalanceError
@@ -53,7 +53,7 @@ const Component: FC<CurrencyInput> = ({
             error={!!errorMessage}
             value={value}
             onChange={onChange}
-            token={token}
+            currency={currency}
             bottomPanel={
               bottomPanel ? (
                 typeof bottomPanel === 'function' ? (

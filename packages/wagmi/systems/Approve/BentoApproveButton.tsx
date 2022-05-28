@@ -1,5 +1,4 @@
 import { Signature } from '@ethersproject/bytes'
-import { Currency } from '@sushiswap/currency'
 import { Button } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
@@ -13,12 +12,11 @@ interface RenderPropPayload extends ApprovalButtonRenderProp {
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
   onSignature(sig?: Signature): void
   watch?: boolean
-  token?: Currency
   address?: string
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
-  ({ watch = true, token, address: masterContract, render, setState, disabled, onSignature, ...props }) => {
+  ({ watch = true, address: masterContract, render, setState, disabled, onSignature, ...props }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract })
 
     useEffect(() => {
@@ -31,7 +29,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       setState(approvalState)
     }, [approvalState, setState])
 
-    if (!token || approvalState === ApprovalState.APPROVED) return null
+    if (approvalState === ApprovalState.APPROVED) return null
     if (render) return render({ approvalState, signature, onApprove })
 
     return (

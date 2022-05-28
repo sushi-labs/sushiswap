@@ -92,7 +92,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account.address) || !stream?.balance?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canWithdraw(account?.address) || !stream?.balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -104,7 +104,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <Form.Control label="Amount to withdraw">
             <CurrencyInput.Base
-              token={stream?.token}
+              currency={stream?.token}
               onChange={onInput}
               value={amount?.toExact()}
               error={amount && stream?.balance && amount.greaterThan(stream.balance)}
