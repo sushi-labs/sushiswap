@@ -1,8 +1,8 @@
-import { Token } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 
 export type CreateStreamFormData = {
-  token: Token | undefined
+  currency: Type | undefined
   startDate: string | undefined
   endDate: string | undefined
   recipient: string | undefined
@@ -11,7 +11,7 @@ export type CreateStreamFormData = {
 }
 
 export type CreateStreamFormDataValidated = {
-  token: Token
+  currency: Type
   startDate: string
   endDate: string
   recipient: string

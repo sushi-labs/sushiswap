@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 export const GeneralDetailsSection = () => {
   const { control, watch } = useFormContext<CreateStreamFormData>()
   // @ts-ignore
-  const token = watch('token')
+  const currency = watch('currency')
 
   return (
     <Form.Section

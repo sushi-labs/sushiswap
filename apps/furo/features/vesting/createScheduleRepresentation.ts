@@ -1,4 +1,4 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { PeriodType } from 'features'
 
 export type Schedule = Period[]
@@ -6,14 +6,14 @@ export type Period = {
   id: string
   type: PeriodType
   date: Date
-  amount: Amount<Token>
-  total: Amount<Token>
+  amount: Amount<Type>
+  total: Amount<Type>
 }
 
 type CreateScheduleRepresentation = (x: {
-  token: Token
-  cliffAmount: Amount<Token> | undefined
-  stepAmount: Amount<Token>
+  currency: Type
+  cliffAmount: Amount<Type> | undefined
+  stepAmount: Amount<Type>
   startDate: Date
   cliffEndDate: Date | undefined
   stepPayouts: number
@@ -21,7 +21,7 @@ type CreateScheduleRepresentation = (x: {
 }) => Schedule
 
 export const createScheduleRepresentation: CreateScheduleRepresentation = ({
-  token,
+  currency,
   cliffAmount,
   stepAmount,
   stepDuration,
@@ -29,14 +29,14 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
   cliffEndDate,
   stepPayouts,
 }) => {
-  let total = Amount.fromRawAmount(token, '0')
+  let total = Amount.fromRawAmount(currency, '0')
   const periods = [
     {
       id: 'start',
       type: PeriodType.START,
       date: startDate,
-      amount: Amount.fromRawAmount(token, '0'),
-      total: Amount.fromRawAmount(token, '0'),
+      amount: Amount.fromRawAmount(currency, '0'),
+      total: Amount.fromRawAmount(currency, '0'),
     },
   ]
 

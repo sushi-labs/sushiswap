@@ -629,7 +629,6 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
                     <Approve.Bentobox
                       className="whitespace-nowrap"
                       fullWidth
-                      token={srcAmount?.currency}
                       address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
                       onSignature={setSignature}
                     />

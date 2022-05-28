@@ -1,7 +1,8 @@
 import chalk from 'chalk'
+
+import error from './error'
 import tenderly from './tenderly'
 import warning from './warning'
-import error from './error'
 
 const log = (message: any, ...optionalParams: any[]) => console.log(chalk.blue(message), chalk.green(optionalParams))
 

@@ -12,7 +12,7 @@ export const CliffDetailsSection: FC = () => {
   const { data: account } = useAccount()
   const { control, watch, resetField } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
-  const [token, cliff, fundSource] = watch(['token', 'cliff', 'fundSource'])
+  const [currency, cliff, fundSource] = watch(['currency', 'cliff', 'fundSource'])
 
   return (
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
@@ -62,7 +62,7 @@ export const CliffDetailsSection: FC = () => {
               errorMessage={validationError?.message}
               value={value}
               onChange={onChange}
-              token={token}
+              currency={currency}
               helperTextPanel={({ errorMessage }) => (
                 <HelperTextPanel
                   isError={!!errorMessage}

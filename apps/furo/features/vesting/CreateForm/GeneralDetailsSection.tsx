@@ -4,7 +4,7 @@ import { FundSource } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from 'features/TokenSelector'
 import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
-import { useTokenBentoboxBalance, useTokens, useTokenWalletBalance } from 'hooks'
+import { useTokenBentoboxBalance, useTokens, useWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
@@ -18,10 +18,10 @@ export const GeneralDetailsSection = () => {
 
   const { control, watch } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
-  const token = watch('token')
+  const currency = watch('currency')
 
-  const { data: walletBalance } = useTokenWalletBalance(account?.address, token)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, token)
+  const { data: walletBalance } = useWalletBalance(account?.address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
 
   return (
     <Form.Section
@@ -31,7 +31,7 @@ export const GeneralDetailsSection = () => {
       <Form.Control label="Token">
         <Controller
           control={control}
-          name="token"
+          name="currency"
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
@@ -41,15 +41,16 @@ export const GeneralDetailsSection = () => {
                   className="!cursor-pointer"
                   onClick={() => setDialogOpen(true)}
                 >
-                  {value?.symbol || <span className="text-slate-500">Select a token</span>}
+                  {value?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
                     <TokenSelector
+                      chainId={activeChain?.id}
                       tokenMap={tokenMap}
-                      onSelect={(token) => {
-                        onChange(token)
+                      onSelect={(currency) => {
+                        onChange(currency)
                         setDialogOpen(false)
                       }}
                       currency={value as Token}

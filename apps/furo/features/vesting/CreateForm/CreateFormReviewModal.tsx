@@ -1,4 +1,4 @@
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
@@ -52,7 +52,7 @@ interface CreateFormReviewModal {
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {
   const { activeChain } = useNetwork()
   const {
-    token,
+    currency,
     startDate,
     stepConfig,
     stepAmount,
@@ -65,18 +65,18 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   } = formData
 
   const [_cliffAmount, _stepAmount, totalAmount, endDate] = useMemo(() => {
-    const cliff = tryParseAmount(cliffAmount?.toString(), token)
-    const step = tryParseAmount(stepAmount.toString(), token)
+    const cliff = tryParseAmount(cliffAmount?.toString(), currency)
+    const step = tryParseAmount(stepAmount.toString(), currency)
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
     return [cliff, step, cliff && step ? step.multiply(stepPayouts).add(cliff) : undefined, endDate]
-  }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, token])
+  }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, currency])
 
   const schedule = useMemo(() => {
     return open && _stepAmount
       ? createScheduleRepresentation({
-          token,
+          currency,
           cliffAmount: _cliffAmount,
           stepAmount: _stepAmount,
           stepDuration: stepConfig.time * 1000,
@@ -85,7 +85,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           stepPayouts,
         })
       : undefined
-  }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, token])
+  }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
   return (
     <Dialog open={open} onClose={onDismiss} unmount={true}>
@@ -122,7 +122,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               </Typography>
             </div>
             {
-              schedule?.reduce<[ReactNode[], Amount<Token>]>(
+              schedule?.reduce<[ReactNode[], Amount<Type>]>(
                 (acc, period) => {
                   acc[1] = acc[1].add(period.amount)
                   acc[0].push(
@@ -153,7 +153,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
 
                   return acc
                 },
-                [[], Amount.fromRawAmount(token, '0')]
+                [[], Amount.fromRawAmount(currency, '0')]
               )[0]
             }
           </div>
@@ -170,7 +170,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                   title="Cliff Amount"
                   value={
                     <>
-                      {cliffAmount} {token.symbol}
+                      {cliffAmount} {currency.symbol}
                     </>
                   }
                 />
@@ -184,7 +184,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               title="Payment per Period"
               value={
                 <>
-                  {stepAmount} {token.symbol}
+                  {stepAmount} {currency.symbol}
                 </>
               }
             />

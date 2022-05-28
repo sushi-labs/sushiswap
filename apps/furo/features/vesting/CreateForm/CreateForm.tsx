@@ -17,7 +17,7 @@ export const CreateForm: FC = () => {
     // @ts-ignore
     resolver: yupResolver(createVestingSchema),
     defaultValues: {
-      token: undefined,
+      currency: undefined,
       cliff: false,
       startDate: undefined,
       recipient: undefined,

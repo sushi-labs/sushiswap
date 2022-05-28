@@ -127,7 +127,7 @@ export class Chain implements Chain {
     }
   }
   getAccountUrl(accountAddress: string) {
-    if (!this.explorers) return 
+    if (!this.explorers) return
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
         return `${explorer.url}/account/${accountAddress}`

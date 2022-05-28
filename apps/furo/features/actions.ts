@@ -1,8 +1,10 @@
-import { Amount, Token } from '@sushiswap/currency'
-import { Contract, Signature } from 'ethers'
+import { AddressZero } from '@ethersproject/constants'
+import { Amount, Type } from '@sushiswap/currency'
+import { FuroStream, FuroVesting } from '@sushiswap/furo/typechain'
+import { BaseContract, Signature } from 'ethers'
 
-interface Batch {
-  contract: Contract
+interface Batch<T> {
+  contract: T
   actions: (string | undefined)[]
 }
 
@@ -12,7 +14,7 @@ interface Batch {
  * @param contract should contain batch function
  * @param actions array of encoded function data
  */
-export const batchAction = <T = any>({ contract, actions = [] }: Batch): string | undefined => {
+export const batchAction = <T extends BaseContract>({ contract, actions = [] }: Batch<T>): string | undefined => {
   const validated = actions.filter(Boolean)
 
   if (validated.length === 0) throw new Error('No valid actions')
@@ -24,18 +26,21 @@ export const batchAction = <T = any>({ contract, actions = [] }: Batch): string 
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    console.log(validated.toString())
     return contract.interface.encodeFunctionData('batch', [validated, true])
   }
 }
 
-export interface ApproveBentoBoxActionProps {
-  contract: Contract
+export interface ApproveBentoBoxActionProps<T> {
+  contract: T
   user: string
   signature?: Signature
 }
 
-export const approveBentoBoxAction = ({ contract, user, signature }: ApproveBentoBoxActionProps) => {
+export const approveBentoBoxAction = <T extends BaseContract>({
+  contract,
+  user,
+  signature,
+}: ApproveBentoBoxActionProps<T>) => {
   if (!signature) return undefined
 
   const { v, r, s } = signature
@@ -43,28 +48,27 @@ export const approveBentoBoxAction = ({ contract, user, signature }: ApproveBent
 }
 
 export interface StreamCreationActionProps {
-  contract: Contract
+  contract: FuroStream
   recipient: string
-  token: Token
+  currency: Type
   startDate: Date
   endDate: Date
-  amount: Amount<Token>
+  amount: Amount<Type>
   fromBentobox: boolean
 }
 
 export const streamCreationAction = ({
   contract,
   recipient,
-  token,
+  currency,
   startDate,
   endDate,
   amount,
   fromBentobox,
 }: StreamCreationActionProps): string => {
   return contract.interface.encodeFunctionData('createStream', [
-    // TODO: check wnative address, pass in value
     recipient,
-    token.address,
+    currency.isNative ? AddressZero : currency.address,
     startDate.getTime() / 1000,
     endDate.getTime() / 1000,
     amount.quotient.toString(),
@@ -73,9 +77,9 @@ export const streamCreationAction = ({
 }
 
 export interface VestingCreationProps {
-  contract: Contract
+  contract: FuroVesting
   recipient: string
-  token: Token
+  currency: Type
   startDate: Date
   cliffDuration: string
   stepDuration: string
@@ -88,7 +92,7 @@ export interface VestingCreationProps {
 export const vestingCreationAction = ({
   contract,
   recipient,
-  token,
+  currency,
   startDate,
   cliffDuration,
   stepDuration,
@@ -99,7 +103,7 @@ export const vestingCreationAction = ({
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
     {
-      token: token.address,
+      token: currency.isNative ? AddressZero : currency.address,
       recipient: recipient,
       start: startDate.getTime() / 1000,
       cliffDuration: cliffDuration,

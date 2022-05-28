@@ -5,7 +5,7 @@ import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { CreateStreamFormData } from 'features/stream/CreateForm/types'
 import { TokenSelector } from 'features/TokenSelector'
-import { useTokenBentoboxBalance, useTokens, useTokenWalletBalance } from 'hooks'
+import { useTokenBentoboxBalance, useTokens, useWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
@@ -19,10 +19,10 @@ export const StreamAmountDetails = () => {
 
   const { control, watch } = useFormContext<CreateStreamFormData>()
   // @ts-ignore
-  const [token, fundSource] = watch(['token', 'fundSource'])
+  const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useTokenWalletBalance(account?.address, token)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, token)
+  const { data: walletBalance } = useWalletBalance(account?.address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
 
   return (
     <Form.Section
@@ -32,7 +32,7 @@ export const StreamAmountDetails = () => {
       <Form.Control label="Token">
         <Controller
           control={control}
-          name="token"
+          name="currency"
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
@@ -42,15 +42,16 @@ export const StreamAmountDetails = () => {
                   className="!cursor-pointer"
                   onClick={() => setDialogOpen(true)}
                 >
-                  {value?.symbol || <span className="text-slate-500">Select a token</span>}
+                  {value?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
                     <TokenSelector
+                      chainId={activeChain?.id}
                       tokenMap={tokenMap}
-                      onSelect={(token) => {
-                        onChange(token)
+                      onSelect={(currency) => {
+                        onChange(currency)
                         setDialogOpen(false)
                       }}
                       currency={value as Token}
@@ -134,7 +135,7 @@ export const StreamAmountDetails = () => {
                 onChange={onChange}
                 account={account?.address}
                 value={value}
-                token={token}
+                currency={currency}
                 fundSource={fundSource}
                 errorMessage={error?.message}
                 helperTextPanel={({ errorMessage }) => (
