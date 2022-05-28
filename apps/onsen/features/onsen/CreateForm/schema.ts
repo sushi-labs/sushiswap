@@ -1,23 +1,24 @@
-import { Token } from '@sushiswap/currency'
+import { Native, Token, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { getAddress } from 'ethers/lib/utils'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import * as yup from 'yup'
 import Reference from 'yup/lib/Reference'
 import { Maybe, Message } from 'yup/lib/types'
 
 yup.addMethod(
   yup.mixed,
-  'token',
+  'currency',
   function (
     address: string | Reference<string>,
     msg: Message<{ address: string }> = '${address} is not a valid token address'
   ) {
     return this.test({
       message: msg,
-      name: 'token',
+      name: 'currency',
       exclusive: true,
       params: { address },
-      test(value: Maybe<Token>) {
+      test(value: Maybe<Type>) {
+        if (value instanceof Native) return true
         if (value?.address.length === 0) return true
 
         try {
@@ -47,9 +48,9 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
   })
 })
 
-export const createStreamSchema = yup.object({
+export const createIncentiveSchema = yup.object({
   // @ts-ignore
-  token: yup.mixed<Token>().token().required('This field is required'),
+  currency: yup.mixed<Token>().currency().required('This field is required'),
   // @ts-ignore
   recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
   startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),

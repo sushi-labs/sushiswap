@@ -1,9 +1,6 @@
-import { Menu as HeadlessMenu } from '@headlessui/react'
-import { PlusIcon } from '@heroicons/react/solid'
 import { useIsMounted } from '@sushiswap/hooks'
-import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
+import { App, classNames, Container, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
@@ -25,8 +22,8 @@ const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            {/* <Wallet.Button className="!h-[36px]" /> */}
-            {account?.address && isMounted && isConnected && (
+            <Wallet.Button className="!h-[36px]" />
+            {/* {account?.address && isMounted && isConnected && (
               <Menu
                 button={
                   <HeadlessMenu.Button
@@ -47,7 +44,7 @@ const Header: FC = () => {
                   </Link>
                 </Menu.Items>
               </Menu>
-            )}
+            )} */}
           </div>
         </App.Header>
       </Container>

@@ -1,8 +1,8 @@
-import { Token } from '@sushiswap/currency'
-import { FundSource } from 'hooks/useFundSourceToggler'
+import { Currency } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 
 export type CreateIncentiveFormData = {
-  token: Token | undefined
+  currency: Currency | undefined
   startDate: string | undefined
   endDate: string | undefined
   recipient: string | undefined
@@ -11,7 +11,7 @@ export type CreateIncentiveFormData = {
 }
 
 export type CreateIncentiveFormDataValidated = {
-  token: Token
+  currency: Currency
   startDate: string
   endDate: string
   recipient: string

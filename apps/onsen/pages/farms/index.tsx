@@ -31,18 +31,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
 }
 
 const _FarmsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
-  const router = useRouter()
-  const chainId = Number(router.query.chainId)
-  const address = router.query.address as string
-
   return (
     <SWRConfig value={{ fallback }}>
-      <FarmsPage chainId={chainId} />
+      <FarmsPage />
     </SWRConfig>
   )
 }
 
-export const FarmsPage: FC<{ chainId: number }> = ({ chainId }) => {
+export const FarmsPage: FC = () => {
+  const router = useRouter()
+  const chainId = Number(router.query.chainId as string)
+  // const connect = useConnect()
+  // const { data: account } = useAccount()
+  // const { connecting, reconnecting } = useWalletState(connect, account?.address)
   const { data: incentiveRepresentations, isValidating } = useSWR<IncentiveRepresentation[]>(
     `/onsen/api/farms/${chainId}`,
     fetcher
