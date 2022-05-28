@@ -7,7 +7,7 @@ import "../interfaces/IFuroVesting.sol";
 contract FuroVesting is
     IFuroVesting,
     ERC721("Furo Vesting", "FUROVEST"),
-    BoringBatchable,
+    Multicall,
     BoringOwnable
 {
     IBentoBoxMinimal public immutable bentoBox;
@@ -48,7 +48,7 @@ contract FuroVesting is
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override {
+    ) external payable override {
         bentoBox.setMasterContractApproval(
             user,
             address(this),
