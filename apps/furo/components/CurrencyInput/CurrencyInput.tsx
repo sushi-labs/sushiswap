@@ -1,4 +1,4 @@
-import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
@@ -9,7 +9,7 @@ import { FC } from 'react'
 type BottomPanelRenderProps = {
   onChange(value: string): void
   loading: boolean
-  amount: Amount<Type> | undefined
+  amount: Amount<Currency> | undefined
 }
 
 type HelperTextPanelRenderProps = {

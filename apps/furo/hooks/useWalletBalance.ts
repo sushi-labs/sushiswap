@@ -1,4 +1,4 @@
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Currency, Native } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useBalance } from 'wagmi'
 
@@ -7,9 +7,9 @@ import { useTokenBalance } from './useTokenBalance'
 
 export const useWalletBalance = (
   account: string | undefined,
-  currency: Type | undefined,
+  currency: Currency | undefined,
   fundSource?: FundSource
-): SuccessState<Amount<Type>> | LoadingState<Amount<Type>> | ErrorState<Amount<Type>> => {
+): SuccessState<Amount<Currency>> | LoadingState<Amount<Currency>> | ErrorState<Amount<Currency>> => {
   const {
     data: nativeBalance,
     isLoading: isBalanceLoading,
@@ -25,7 +25,7 @@ export const useWalletBalance = (
   if (currency instanceof Native) {
     return {
       isLoading: isBalanceLoading,
-      data: nativeBalance?.value ? Amount.fromRawAmount(currency, nativeBalance.value) : undefined,
+      data: nativeBalance?.value ? Amount.fromRawAmount(currency, nativeBalance.value.toString()) : undefined,
       isError: isBalanceError,
     }
   }

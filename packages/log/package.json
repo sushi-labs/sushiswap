@@ -33,11 +33,11 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "chalk": "^5.0.1",
     "@sushiswap/chain": "workspace:*",
     "isomorphic-unfetch": "^3.1.0"
   },
   "devDependencies": {
+    "chalk": "^5.0.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

@@ -1,11 +1,11 @@
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Currency } from '@sushiswap/currency'
 import { Loader, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 interface BottomPanel {
   loading: boolean
   label: string
-  amount?: Amount<Type>
+  amount?: Amount<Currency>
   onChange?(value: string): void
 }
 
