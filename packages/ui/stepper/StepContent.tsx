@@ -2,10 +2,10 @@ import { Transition } from '@headlessui/react'
 import React, { Children, cloneElement, FC, Fragment, isValidElement, ReactElement } from 'react'
 
 import { classNames, StepDetails } from '../index'
-import { StepDescription } from './StepDescription'
+import { StepDescriptionInterface } from './StepDescription'
 
-interface StepContentInterface extends StepDetails {
-  description: React.ReactElement<typeof StepDescription>
+export interface StepContentInterface extends StepDetails {
+  description: React.ReactElement<StepDescriptionInterface>
   children: ReactElement | ReactElement[]
 }
 
@@ -30,7 +30,7 @@ export const StepContent: FC<StepContentInterface> = ({ children, description, _
           <div />
           {Children.map(children, (child) => {
             if (isValidElement(child)) {
-              return cloneElement(child, {
+              return cloneElement(child as any, {
                 _index,
                 _active,
                 _last,
