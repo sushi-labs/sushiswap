@@ -4,7 +4,6 @@ import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import BENTOBOX_ABI from 'abis/bentobox.json'
-import FURO_VESTING_ABI from 'abis/FuroVesting.json'
 import { useMemo } from 'react'
 import { useContractRead } from 'wagmi'
 
@@ -16,7 +15,7 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
   } = useContractRead(
     {
       addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero,
-      contractInterface: FURO_VESTING_ABI,
+      contractInterface: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi : [],
     },
     'vestBalance',
     { chainId, enabled: !!chainId && !!vestingId, args: [vestingId], watch: true }

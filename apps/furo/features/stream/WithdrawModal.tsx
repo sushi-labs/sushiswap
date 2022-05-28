@@ -5,7 +5,6 @@ import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
@@ -30,7 +29,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       addressOrName: activeChain?.id
         ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.address
         : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      contractInterface: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.abi : [],
     },
     'withdrawFromStream',
     {
