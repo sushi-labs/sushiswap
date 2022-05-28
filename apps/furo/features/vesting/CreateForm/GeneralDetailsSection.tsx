@@ -17,7 +17,7 @@ export const GeneralDetailsSection = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch } = useFormContext<CreateVestingFormData>()
+  const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const currency = watch('currency')
 
@@ -51,6 +51,10 @@ export const GeneralDetailsSection = () => {
                       chainId={activeChain?.id}
                       tokenMap={tokenMap}
                       onSelect={(currency) => {
+                        if (currency.isNative) {
+                          setValue('fundSource', FundSource.WALLET)
+                        }
+
                         onChange(currency)
                         setDialogOpen(false)
                       }}
@@ -99,37 +103,39 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <div className="flex flex-col">
               <div className="flex gap-3 items-center">
-                <div
-                  onClick={() => onChange(FundSource.BENTOBOX)}
-                  className={classNames(
-                    value === FundSource.BENTOBOX
-                      ? 'border-green/70 ring-green/70'
-                      : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                  )}
-                >
-                  <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                    Bentobox
-                  </Typography>
-                  <div className="flex flex-col gap-1">
-                    <Typography variant="xs">Available Balance</Typography>
-                    <Typography weight={700} variant="xs" className="text-slate-200">
-                      {isMounted ? (
-                        <>
-                          {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
-                          <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
-                        </>
-                      ) : (
-                        <div className="h-4" />
-                      )}
+                {!currency?.isNative && (
+                  <div
+                    onClick={() => onChange(FundSource.BENTOBOX)}
+                    className={classNames(
+                      value === FundSource.BENTOBOX
+                        ? 'border-green/70 ring-green/70'
+                        : 'ring-transparent border-slate-700',
+                      'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                    )}
+                  >
+                    <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                      Bentobox
                     </Typography>
-                  </div>
-                  {value === FundSource.BENTOBOX && (
-                    <div className="absolute top-3 right-3 w-5 h-5">
-                      <CheckCircleIcon className="text-green/70" />
+                    <div className="flex flex-col gap-1">
+                      <Typography variant="xs">Available Balance</Typography>
+                      <Typography weight={700} variant="xs" className="text-slate-200">
+                        {isMounted ? (
+                          <>
+                            {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
+                            <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                          </>
+                        ) : (
+                          <div className="h-4" />
+                        )}
+                      </Typography>
                     </div>
-                  )}
-                </div>
+                    {value === FundSource.BENTOBOX && (
+                      <div className="absolute top-3 right-3 w-5 h-5">
+                        <CheckCircleIcon className="text-green/70" />
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
