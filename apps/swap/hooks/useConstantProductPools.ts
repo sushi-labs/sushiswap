@@ -61,8 +61,8 @@ export function useGetAllExistedPools(
     const pairsMap = new Map<string, [Token, Token]>()
     currencies.map(([c1, c2]) => {
       if (c1 && c2) {
-        let addr1 = c1.wrapped.address as string | undefined
-        let addr2 = c2.wrapped.address as string | undefined
+        const addr1 = c1.wrapped.address as string | undefined
+        const addr2 = c2.wrapped.address as string | undefined
         if (addr1 !== undefined && addr2 !== undefined) {
           if (addr1.toLowerCase() < addr2.toLowerCase()) pairsMap.set(addr1 + addr2, [c1, c2] as [Token, Token])
           else pairsMap.set(addr2 + addr1, [c2, c1] as [Token, Token])

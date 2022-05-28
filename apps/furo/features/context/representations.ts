@@ -15,7 +15,7 @@ export interface FuroRepresentation {
   txHash: string
 }
 
-export interface StreamRepresentation extends FuroRepresentation {}
+export type StreamRepresentation = FuroRepresentation
 
 export interface VestingRepresentation extends FuroRepresentation {
   steps: string

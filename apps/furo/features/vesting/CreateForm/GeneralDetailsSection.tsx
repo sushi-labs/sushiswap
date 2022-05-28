@@ -1,24 +1,28 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from 'features/TokenSelector'
 import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
-import { useTokenBentoboxBalance, useTokenWalletBalance } from 'hooks'
-import { FundSource } from 'hooks/useFundSourceToggler'
+import { useTokenBentoboxBalance, useTokens, useWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 export const GeneralDetailsSection = () => {
+  const isMounted = useIsMounted()
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
+  const tokenMap = useTokens(activeChain?.id)
+
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch } = useFormContext<CreateVestingFormData>()
+  const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
-  const token = watch('token')
+  const currency = watch('currency')
 
-  const { data: walletBalance } = useTokenWalletBalance(account?.address, token)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, token)
+  const { data: walletBalance } = useWalletBalance(account?.address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
 
   return (
     <Form.Section
@@ -28,7 +32,7 @@ export const GeneralDetailsSection = () => {
       <Form.Control label="Token">
         <Controller
           control={control}
-          name="token"
+          name="currency"
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
@@ -38,12 +42,25 @@ export const GeneralDetailsSection = () => {
                   className="!cursor-pointer"
                   onClick={() => setDialogOpen(true)}
                 >
-                  {value?.symbol || <span className="text-slate-500">Select a token</span>}
+                  {value?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector onSelect={onChange} currency={value as Token} onClose={() => setDialogOpen(false)} />
+                    <TokenSelector
+                      chainId={activeChain?.id}
+                      tokenMap={tokenMap}
+                      onSelect={(currency) => {
+                        if (currency.isNative) {
+                          setValue('fundSource', FundSource.WALLET)
+                        }
+
+                        onChange(currency)
+                        setDialogOpen(false)
+                      }}
+                      currency={value as Token}
+                      onClose={() => setDialogOpen(false)}
+                    />
                   </Dialog.Content>
                 </Dialog>
               </>
@@ -86,31 +103,39 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <div className="flex flex-col">
               <div className="flex gap-3 items-center">
-                <div
-                  onClick={() => onChange(FundSource.BENTOBOX)}
-                  className={classNames(
-                    value === FundSource.BENTOBOX
-                      ? 'border-green/70 ring-green/70'
-                      : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                  )}
-                >
-                  <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                    Bentobox
-                  </Typography>
-                  <div className="flex flex-col gap-1">
-                    <Typography variant="xs">Available Balance</Typography>
-                    <Typography weight={700} variant="xs" className="text-slate-200">
-                      {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
-                      <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                {!currency?.isNative && (
+                  <div
+                    onClick={() => onChange(FundSource.BENTOBOX)}
+                    className={classNames(
+                      value === FundSource.BENTOBOX
+                        ? 'border-green/70 ring-green/70'
+                        : 'ring-transparent border-slate-700',
+                      'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                    )}
+                  >
+                    <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                      Bentobox
                     </Typography>
-                  </div>
-                  {value === FundSource.BENTOBOX && (
-                    <div className="absolute top-3 right-3 w-5 h-5">
-                      <CheckCircleIcon className="text-green/70" />
+                    <div className="flex flex-col gap-1">
+                      <Typography variant="xs">Available Balance</Typography>
+                      <Typography weight={700} variant="xs" className="text-slate-200">
+                        {isMounted ? (
+                          <>
+                            {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
+                            <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                          </>
+                        ) : (
+                          <div className="h-4" />
+                        )}
+                      </Typography>
                     </div>
-                  )}
-                </div>
+                    {value === FundSource.BENTOBOX && (
+                      <div className="absolute top-3 right-3 w-5 h-5">
+                        <CheckCircleIcon className="text-green/70" />
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
@@ -124,8 +149,14 @@ export const GeneralDetailsSection = () => {
                   <div className="flex flex-col gap-1">
                     <Typography variant="xs">Available Balance</Typography>
                     <Typography weight={700} variant="xs" className="text-slate-200">
-                      {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
-                      <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                      {isMounted ? (
+                        <>
+                          {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
+                          <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                        </>
+                      ) : (
+                        <div className="h-4" />
+                      )}
                     </Typography>
                   </div>
                   {value === FundSource.WALLET && (

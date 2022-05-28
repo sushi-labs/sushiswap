@@ -56,13 +56,13 @@ export class StableSwapRPool extends RPool {
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     const x = direction ? this.reserve0 : this.reserve1
     const y = direction ? this.reserve1 : this.reserve0
-    let yNew = y.sub(getBigNumber(Math.ceil(amountOut)))
+    const yNew = y.sub(getBigNumber(Math.ceil(amountOut)))
     if (yNew.lt(this.minLiquidity))
       // not possible swap
       return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
     const xNew = this.computeY(yNew, x)
-    let input = Math.round(parseInt(xNew.sub(x).toString()) / (1 - this.fee)) + 1 // with precision loss compensation
+    const input = Math.round(parseInt(xNew.sub(x).toString()) / (1 - this.fee)) + 1 // with precision loss compensation
     return { inp: input, gasSpent: this.swapGasCost }
   }
 

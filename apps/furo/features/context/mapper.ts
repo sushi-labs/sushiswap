@@ -1,8 +1,13 @@
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { TokenRepresentation } from 'features'
 
 export function toToken(token: TokenRepresentation, chainId: ChainId): Token {
+  if (token.id === AddressZero) {
+    return Native.onChain(chainId).wrapped
+  }
+
   return new Token({
     chainId,
     address: token.id,

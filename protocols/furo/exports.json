@@ -5,7 +5,7 @@
       "chainId": "1",
       "contracts": {
         "FuroStream": {
-          "address": "0x4f74b61f78179da88c9507955d0d97cf3b486ca5",
+          "address": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE",
           "abi": [
             {
               "inputs": [
@@ -22,17 +22,6 @@
               ],
               "stateMutability": "nonpayable",
               "type": "constructor"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "bytes",
-                  "name": "innerError",
-                  "type": "bytes"
-                }
-              ],
-              "name": "BatchError",
-              "type": "error"
             },
             {
               "inputs": [],
@@ -356,24 +345,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "bytes[]",
-                  "name": "calls",
-                  "type": "bytes[]"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "revertOnFail",
-                  "type": "bool"
-                }
-              ],
-              "name": "batch",
-              "outputs": [],
-              "stateMutability": "payable",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "bentoBox",
               "outputs": [
@@ -566,6 +537,25 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -621,54 +611,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "contract IERC20",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "deadline",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "v",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "r",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "s",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "permitToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -770,7 +712,7 @@
               ],
               "name": "setBentoBoxApproval",
               "outputs": [],
-              "stateMutability": "nonpayable",
+              "stateMutability": "payable",
               "type": "function"
             },
             {
@@ -1089,7 +1031,7 @@
           ]
         },
         "FuroVesting": {
-          "address": "0x593453768Ba2163eaE6d0FA1f3d292C02672A2Ba",
+          "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
             {
               "inputs": [
@@ -1106,17 +1048,6 @@
               ],
               "stateMutability": "nonpayable",
               "type": "constructor"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "bytes",
-                  "name": "innerError",
-                  "type": "bytes"
-                }
-              ],
-              "name": "BatchError",
-              "type": "error"
             },
             {
               "inputs": [],
@@ -1443,24 +1374,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "bytes[]",
-                  "name": "calls",
-                  "type": "bytes[]"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "revertOnFail",
-                  "type": "bool"
-                }
-              ],
-              "name": "batch",
-              "outputs": [],
-              "stateMutability": "payable",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "bentoBox",
               "outputs": [
@@ -1605,6 +1518,25 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -1660,54 +1592,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "contract IERC20",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "deadline",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "v",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "r",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "s",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "permitToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -1809,7 +1693,7 @@
               ],
               "name": "setBentoBoxApproval",
               "outputs": [],
-              "stateMutability": "nonpayable",
+              "stateMutability": "payable",
               "type": "function"
             },
             {
@@ -2109,7 +1993,7 @@
       "chainId": "5",
       "contracts": {
         "FuroStream": {
-          "address": "0x4F74B61f78179DA88C9507955d0d97Cf3B486ca5",
+          "address": "0x4ab2FC6e258a0cA7175D05fF10C5cF798A672cAE",
           "abi": [
             {
               "inputs": [
@@ -2126,17 +2010,6 @@
               ],
               "stateMutability": "nonpayable",
               "type": "constructor"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "bytes",
-                  "name": "innerError",
-                  "type": "bytes"
-                }
-              ],
-              "name": "BatchError",
-              "type": "error"
             },
             {
               "inputs": [],
@@ -2460,24 +2333,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "bytes[]",
-                  "name": "calls",
-                  "type": "bytes[]"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "revertOnFail",
-                  "type": "bool"
-                }
-              ],
-              "name": "batch",
-              "outputs": [],
-              "stateMutability": "payable",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "bentoBox",
               "outputs": [
@@ -2670,6 +2525,25 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -2725,54 +2599,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "contract IERC20",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "deadline",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "v",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "r",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "s",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "permitToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -2874,7 +2700,7 @@
               ],
               "name": "setBentoBoxApproval",
               "outputs": [],
-              "stateMutability": "nonpayable",
+              "stateMutability": "payable",
               "type": "function"
             },
             {
@@ -3193,7 +3019,7 @@
           ]
         },
         "FuroVesting": {
-          "address": "0x593453768Ba2163eaE6d0FA1f3d292C02672A2Ba",
+          "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
             {
               "inputs": [
@@ -3210,17 +3036,6 @@
               ],
               "stateMutability": "nonpayable",
               "type": "constructor"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "bytes",
-                  "name": "innerError",
-                  "type": "bytes"
-                }
-              ],
-              "name": "BatchError",
-              "type": "error"
             },
             {
               "inputs": [],
@@ -3547,24 +3362,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "bytes[]",
-                  "name": "calls",
-                  "type": "bytes[]"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "revertOnFail",
-                  "type": "bool"
-                }
-              ],
-              "name": "batch",
-              "outputs": [],
-              "stateMutability": "payable",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "bentoBox",
               "outputs": [
@@ -3709,6 +3506,25 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -3764,54 +3580,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "contract IERC20",
-                  "name": "token",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "deadline",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "v",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "r",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "s",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "permitToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -3913,7 +3681,7 @@
               ],
               "name": "setBentoBoxApproval",
               "outputs": [],
-              "stateMutability": "nonpayable",
+              "stateMutability": "payable",
               "type": "function"
             },
             {
@@ -4205,13 +3973,6 @@
           ]
         }
       }
-    }
-  ],
-  "31337": [
-    {
-      "name": "hardhat",
-      "chainId": "31337",
-      "contracts": {}
     }
   ]
 }

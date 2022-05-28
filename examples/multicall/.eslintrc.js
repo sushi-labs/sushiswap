@@ -1,1 +1,1 @@
-module.exports = require('@sushiswap/eslint-config')
+module.exports = require('@sushiswap/eslint-config/nextjs')

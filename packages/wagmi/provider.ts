@@ -53,7 +53,7 @@ export function getProvider(chainId: ChainId) {
 
   if (ALCHEMY_ENABLED_CHAINS.includes(chainId)) {
     const alchemyKey = ALCHEMY_API_KEY[chainId]
-    if (!alchemyKey) throw new Error('ALCHEMY_API_KEY || NEXT_PUBLIC_ALCHEMY_API_KEY is required for provider')
+    if (!alchemyKey) throw new Error('ALCHEMY_ID || NEXT_PUBLIC_ALCHEMY_ID is required for provider')
     const name = getAlchemyChainName(chainId)
     providerCache[chainId] = new AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {

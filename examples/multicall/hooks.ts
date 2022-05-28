@@ -52,7 +52,7 @@ export function useCurrentBlockTimestampMultichain(
       result[chainId] = MULTICALL_ADDRESS
       return result
     }, {} as Record<number, string>)
-  }, [])
+  }, [chainIds])
 
   const chainToCallState = useMultiChainSingleContractSingleData(
     chainToBlock,

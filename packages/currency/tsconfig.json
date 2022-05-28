@@ -4,8 +4,6 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "lib": ["DOM", "ES2015"],
-    "resolveJsonModule": true
+    "rootDir": "./src"
   }
 }

@@ -8,8 +8,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 export const GradedVestingDetailsSection = () => {
   const { control, watch } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
-  const [token, stepConfig, cliff, cliffEndDate, startDate, stepPayouts] = watch([
-    'token',
+  const [currency, stepConfig, cliff, cliffEndDate, startDate, stepPayouts] = watch([
+    'currency',
     'stepConfig',
     'cliff',
     'cliffEndDate',
@@ -34,17 +34,17 @@ export const GradedVestingDetailsSection = () => {
             <CurrencyInput.Base
               onChange={onChange}
               value={value}
-              token={token}
+              currency={currency}
               error={!!error?.message}
               helperTextPanel={
                 <CurrencyInput.HelperTextPanel
                   text={
-                    !!error?.message ? (
+                    error?.message ? (
                       error.message
                     ) : (
                       <>
                         The amount the recipient receives after every period. For a value of 6 and a{' '}
-                        {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {token?.symbol}{' '}
+                        {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {currency?.symbol}{' '}
                         {stepConfig?.label.toLowerCase()}.
                       </>
                     )

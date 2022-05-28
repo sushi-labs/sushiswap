@@ -60,7 +60,7 @@ export default function Index() {
     },
   })
 
-  exampleStream.balance = isMounted ? Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250') : undefined
+  exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
   return (
     <Layout
@@ -109,7 +109,7 @@ export default function Index() {
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {isEns ? name : !!name ? shortenAddress(name) : ''}
+                          {isEns ? name : name ? shortenAddress(name) : ''}
                         </Typography>
                       )}
                     </Account.Name>
@@ -136,7 +136,7 @@ export default function Index() {
             )}
           </div>
         </div>
-        <div className="scale-[0.9] hidden lg:block flex justify-center">
+        <div className="scale-[0.9] lg:block flex justify-center">
           <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />
         </div>
       </div>

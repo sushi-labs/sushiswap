@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Button } from '../button'
 import { StepDetails, useStepperContext } from './Stepper'
 
-interface StepButtonsInterface extends StepDetails {
+export interface StepButtonsInterface extends StepDetails {
   disabled?: boolean
 }
 

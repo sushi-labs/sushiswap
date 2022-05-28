@@ -32,7 +32,7 @@ export async function chef(args: Arguments) {
         where: { id_in: ['0x6b3595068778dd592e39a122f4f5a5cf09c90fe2'] },
       })
 
-      return bundle!.ethPrice * tokens[0].derivedETH
+      return bundle?.ethPrice * tokens[0].derivedETH
     }
   })()
 
@@ -58,7 +58,7 @@ export async function chef(args: Arguments) {
           APR: numeral(apr).format('0.00 %'),
         }
       })
-      .sort((a, b) => Number(a!.Index) - Number(b!.Index))
+      .sort((a, b) => Number(a?.Index) - Number(b?.Index))
 
   const digestedV1 = digestPools(MASTERCHEF_V1_pools, 100)
   if (digestedV1.length > 0) {

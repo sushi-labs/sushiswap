@@ -12,7 +12,7 @@ const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
-  let transactions = useMemo(
+  const transactions = useMemo(
     () =>
       activeChain?.id
         ? transactionRepresentations

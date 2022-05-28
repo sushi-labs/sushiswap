@@ -1,3 +1,4 @@
+import { ContractInterface } from '@ethersproject/contracts'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { ZERO } from '@sushiswap/math'
@@ -9,7 +10,7 @@ import { useAccount, useContractWrite, useEnsAddress } from 'wagmi'
 
 interface TransferStreamModalProps {
   stream?: Stream
-  abi: object
+  abi: ContractInterface
   address: string
   fn?: string
 }

@@ -2,14 +2,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
+import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
@@ -21,7 +20,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
 
@@ -30,7 +29,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       addressOrName: activeChain?.id
         ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.address
         : AddressZero,
-      contractInterface: FUROSTREAM_ABI,
+      contractInterface: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroStream.abi : [],
     },
     'withdrawFromStream',
     {
@@ -92,7 +91,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Button
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account.address) || !stream?.balance?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canWithdraw(account?.address) || !stream?.balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -104,7 +103,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <Form.Control label="Amount to withdraw">
             <CurrencyInput.Base
-              token={stream?.token}
+              currency={stream?.token}
               onChange={onInput}
               value={amount?.toExact()}
               error={amount && stream?.balance && amount.greaterThan(stream.balance)}
@@ -121,24 +120,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Form.Control label="Receive funds in">
             <div className="grid items-center grid-cols-2 gap-5">
               <div
-                onClick={() => setFundSource(FundSource.BENTOBOX)}
-                className={classNames(
-                  fundSource === FundSource.BENTOBOX
-                    ? 'border-green/70 ring-green/70'
-                    : 'ring-transparent border-slate-700',
-                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                )}
-              >
-                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                  Bentobox
-                </Typography>
-                {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute w-5 h-5 top-3 right-3">
-                    <CheckCircleIcon className="text-green/70" />
-                  </div>
-                )}
-              </div>
-              <div
                 onClick={() => setFundSource(FundSource.WALLET)}
                 className={classNames(
                   fundSource === FundSource.WALLET
@@ -151,6 +132,24 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
+                  <div className="absolute w-5 h-5 top-3 right-3">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setFundSource(FundSource.BENTOBOX)}
+                className={classNames(
+                  fundSource === FundSource.BENTOBOX
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Bentobox
+                </Typography>
+                {fundSource === FundSource.BENTOBOX && (
                   <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>

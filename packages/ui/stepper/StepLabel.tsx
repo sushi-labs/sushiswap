@@ -5,7 +5,7 @@ import { CircleWithText } from '../icons'
 import { Typography } from '../typography'
 import { StepDetails, useStepperContext } from './Stepper'
 
-interface StepLabelInterface extends StepDetails {
+export interface StepLabelInterface extends StepDetails {
   children: string
 }
 

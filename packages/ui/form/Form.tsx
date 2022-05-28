@@ -14,9 +14,9 @@ type OwnProps = {
 
 export type FormRootProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
 
-function FormRoot<Tag extends AnyTag = 'form'>({ header, children, as = 'form', ...rest }: FormRootProps<Tag>) {
+function FormRoot<Tag extends AnyTag = 'form'>({ header, children, as, ...rest }: FormRootProps<Tag>) {
   return React.createElement(
-    as,
+    as || 'form',
     { className: 'gap-x-10 divide-y divide-slate-800', ...rest },
     <>
       <Typography variant="h3" className="text-slate-50 py-6">

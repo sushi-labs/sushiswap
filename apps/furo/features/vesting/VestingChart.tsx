@@ -1,8 +1,11 @@
+// @ts-ignore
+import { TickRendererProps } from '@visx/axis/lib/types'
 import { curveStepAfter } from '@visx/curve'
+// @ts-ignore
 import { ParentSize } from '@visx/responsive'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, buildChartTheme, Tooltip, XYChart } from '@visx/xychart'
 import { Schedule, Vesting } from 'features'
-import { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 interface Props {
   vesting?: Vesting
@@ -23,7 +26,7 @@ const customTheme = buildChartTheme({
   gridColorDark: '#fff',
 })
 
-const TickComponent: React.FC<{ formattedValue: string; tickProps: any }> = ({ formattedValue, ...tickProps }) => (
+const TickComponent: FC<TickRendererProps> = ({ formattedValue, ...tickProps }) => (
   <text {...tickProps} style={{ fill: 'white' }}>
     {formattedValue}
   </text>
@@ -101,7 +104,7 @@ export const VestingChart: FC<Props> = ({ vesting, schedule }) => {
                 snapTooltipToDatumY
                 showSeriesGlyphs
                 renderTooltip={({ tooltipData }: { tooltipData?: any }) => (
-                  <div className="flex flex-col justify-center items-center font-medium px-0 py-1">
+                  <div className="flex flex-col items-center justify-center px-0 py-1 font-medium">
                     <span className="text-slate-500">
                       {new Intl.DateTimeFormat('en-US').format(accessors.xAccessor(tooltipData.nearestDatum.datum))}
                     </span>

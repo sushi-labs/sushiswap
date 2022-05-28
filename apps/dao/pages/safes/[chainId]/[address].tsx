@@ -26,7 +26,7 @@ const SafeTable = () => {
   const { data: balance } = useSWR(`/api/balances/${chainId}/${address}`)
 
   const [formattedBalance, setFormattedBalance] = useState([])
-  const { explorers } = chain?.[chainId]
+  const { explorers } = chain[chainId]
 
   useEffect(() => {
     setFormattedBalance(

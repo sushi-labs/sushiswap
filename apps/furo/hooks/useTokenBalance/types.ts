@@ -1,6 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
-import { FundSource } from 'hooks/useFundSourceToggler'
 
 export type UseTokenBalances = (
   account: string | undefined,

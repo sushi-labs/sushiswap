@@ -2,17 +2,18 @@ import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
+import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
+import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Vesting } from 'features'
-import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroVestingContract, useVestingBalance } from 'hooks'
-import { FundSource, useFundSourceToggler } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+
 interface WithdrawModalProps {
   vesting?: Vesting
 }
@@ -21,7 +22,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [amount, setAmount] = useState<Amount<Token>>()
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.BENTOBOX)
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
@@ -29,12 +30,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id
-        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
-        : AddressZero,
-      contractInterface: activeChain?.id
-        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.abi
-        : undefined,
+      addressOrName:
+        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+        AddressZero,
+      contractInterface:
+        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? [],
     },
     'withdraw',
     {
@@ -72,10 +72,12 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     } catch (e: any) {
       setError(e.message)
 
-      logTenderlyUrl({
+      log.tenderly({
         chainId: activeChain?.id,
-        from: account.address,
-        to: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address : AddressZero,
+        from: account?.address,
+        to:
+          furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+          AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',
@@ -113,7 +115,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <Form.Control label="Amount to withdraw">
             <CurrencyInput.Base
-              token={vesting?.token}
+              currency={vesting?.token}
               onChange={onInput}
               value={amount?.toExact()}
               error={amount && balance && amount.greaterThan(balance)}
@@ -130,24 +132,6 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Form.Control label="Receive funds in">
             <div className="grid items-center grid-cols-2 gap-5">
               <div
-                onClick={() => setFundSource(FundSource.BENTOBOX)}
-                className={classNames(
-                  fundSource === FundSource.BENTOBOX
-                    ? 'border-green/70 ring-green/70'
-                    : 'ring-transparent border-slate-700',
-                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                )}
-              >
-                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                  Bentobox
-                </Typography>
-                {fundSource === FundSource.BENTOBOX && (
-                  <div className="absolute w-5 h-5 top-3 right-3">
-                    <CheckCircleIcon className="text-green/70" />
-                  </div>
-                )}
-              </div>
-              <div
                 onClick={() => setFundSource(FundSource.WALLET)}
                 className={classNames(
                   fundSource === FundSource.WALLET
@@ -160,6 +144,24 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
                   Wallet
                 </Typography>
                 {fundSource === FundSource.WALLET && (
+                  <div className="absolute w-5 h-5 top-3 right-3">
+                    <CheckCircleIcon className="text-green/70" />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setFundSource(FundSource.BENTOBOX)}
+                className={classNames(
+                  fundSource === FundSource.BENTOBOX
+                    ? 'border-green/70 ring-green/70'
+                    : 'ring-transparent border-slate-700',
+                  'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                )}
+              >
+                <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  Bentobox
+                </Typography>
+                {fundSource === FundSource.BENTOBOX && (
                   <div className="absolute w-5 h-5 top-3 right-3">
                     <CheckCircleIcon className="text-green/70" />
                   </div>

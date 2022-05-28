@@ -1,6 +1,5 @@
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { ChainId } from '@sushiswap/chain'
-import { INIT_CODE_HASH } from '@sushiswap/core-sdk'
+import { BENTOBOX_ADDRESS, INIT_CODE_HASH } from '@sushiswap/core-sdk'
 import sushiSwapExports from '@sushiswap/sushiswap/exports.json'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
@@ -27,7 +26,7 @@ const func: DeployFunction = async function ({
   run,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
-  const chainId = (await getChainId()) as keyof typeof sushiSwapExports & keyof typeof bentoBoxExports
+  const chainId = (await getChainId()) as keyof typeof sushiSwapExports
 
   const { deployer } = await getNamedAccounts()
 
@@ -55,7 +54,7 @@ const func: DeployFunction = async function ({
   // }
 
   const args = [
-    bentoBoxExports?.[chainId]?.[0]?.contracts?.BentoBoxV1?.address,
+    BENTOBOX_ADDRESS[chainId],
     STARGATE_ROUTER_ADDRESS[chainId],
     sushiSwapExports?.[chainId]?.[0]?.contracts?.UniswapV2Factory ?? ethers.constants.AddressZero,
     INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,

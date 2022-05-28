@@ -7,7 +7,7 @@ import { toToken } from './mapper'
 import { FuroRepresentation, UserRepresentation } from './representations'
 
 export abstract class Furo {
-  public _balance: Amount<Token> | undefined
+  public _balance: Amount<Token>
   public _withdrawnAmount: Amount<Token>
 
   public readonly id: string
@@ -34,10 +34,8 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
-
     this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
-    // TODO: Causes undefined on initial load
-    this._balance = undefined
+    this._balance = Amount.fromRawAmount(this.token, 0)
   }
 
   public get withdrawnAmount(): Amount<Token> {
@@ -48,11 +46,11 @@ export abstract class Furo {
     this._withdrawnAmount = amount
   }
 
-  public get balance(): Amount<Token> | undefined {
+  public get balance(): Amount<Token> {
     return this._balance
   }
 
-  public set balance(amount: Amount<Token> | undefined) {
+  public set balance(amount: Amount<Token>) {
     this._balance = amount
   }
 
@@ -61,10 +59,10 @@ export abstract class Furo {
       const now = Date.now()
       const interval = this.endTime.getTime() - now
 
-      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
       return { days, hours, minutes, seconds }
     }
@@ -76,10 +74,10 @@ export abstract class Furo {
       const now = Date.now()
       const interval = this.startTime.getTime() - now
 
-      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
       return { days, hours, minutes, seconds }
     }
@@ -91,10 +89,10 @@ export abstract class Furo {
 
     const interval = now - this.startTime.getTime()
 
-    let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-    let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-    let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+    const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
     return { days, hours, minutes, seconds }
   }
@@ -104,10 +102,9 @@ export abstract class Furo {
     return new Percent(this._withdrawnAmount.quotient, this.amount.quotient)
   }
 
-  public get remainingAmount(): Amount<Token> | undefined {
-    if (!this._balance) return undefined
+  public get remainingAmount(): Amount<Token> {
     if (!this.isStarted) return this.amount
-    if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, '0')
+    if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, 0)
     return this.amount.subtract(this._withdrawnAmount).subtract(this._balance)
   }
 
@@ -127,19 +124,23 @@ export abstract class Furo {
     return status
   }
 
-  public canCancel(account: string): boolean {
+  public canCancel(account: string | undefined): boolean {
+    if (!account) return false
     return this.createdBy.id.toLowerCase() === account.toLowerCase() && !this.isEnded
   }
 
-  public canTransfer(account: string): boolean {
+  public canTransfer(account: string | undefined): boolean {
+    if (!account) return false
     return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
   }
 
-  public canWithdraw(account: string): boolean {
+  public canWithdraw(account: string | undefined): boolean {
+    if (!account) return false
     return this.recipient.id.toLowerCase() === account.toLowerCase() && this.isStarted
   }
 
-  public canUpdate(account: string): boolean {
+  public canUpdate(account: string | undefined): boolean {
+    if (!account) return false
     return this.createdBy.id.toLowerCase() === account.toLowerCase()
   }
 }

@@ -1,19 +1,20 @@
+import { ContractInterface } from '@ethersproject/contracts'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
+import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
 import { BigNumber } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { Stream } from 'features/context/Stream'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
 
 interface UpdateStreamModalProps {
   stream?: Stream
-  abi: object
+  abi: ContractInterface
   address: string
 }
 
@@ -33,7 +34,9 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
     let value = undefined
     try {
       value = Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(amount, stream.token.decimals).toString()))
-    } catch (e) {}
+    } catch (e) {
+      console.debug(e)
+    }
 
     return value
   }, [amount, stream])
@@ -151,7 +154,7 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
               fundSource={FundSource.WALLET}
               className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
               onChange={setAmount}
-              token={stream.token}
+              currency={stream.token}
               value={amount}
               account={account?.address}
             />

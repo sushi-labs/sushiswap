@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { ChainTokenMap } from '../types'
 
-export function useTokensFromMap(chainId: ChainId, tokenMap: ChainTokenMap): Record<string, Token> {
+export function useTokensFromMap(chainId: ChainId | undefined, tokenMap: ChainTokenMap): Record<string, Token> {
   return useMemo(() => {
     if (!chainId) return {}
 

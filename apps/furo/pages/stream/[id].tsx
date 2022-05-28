@@ -3,7 +3,6 @@ import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
@@ -18,6 +17,7 @@ import StreamDetailsPopover from 'features/StreamDetailsPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
 import { getStream, getStreamTransactions } from 'graph/graph-client'
+import { useStreamBalance } from 'hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -85,7 +85,15 @@ const _Streams: FC = () => {
     [chainId, streamRepresentation]
   )
 
+  // Sync balance to Stream entity
+  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
+  if (stream && balance) {
+    stream.balance = balance
+  }
+
   if (connecting || reconnecting) return <Overlay />
+
+  // console.log({ streamRepresentation, balance }, stream?.streamedPercentage?.toSignificant(4))
 
   return (
     <Layout
@@ -157,18 +165,27 @@ const _Streams: FC = () => {
           <div className="flex gap-2">
             <TransferStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
             />
             <UpdateStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
             />
             <CancelStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
               fn="cancelStream"
             />
           </div>

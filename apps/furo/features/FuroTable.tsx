@@ -9,8 +9,7 @@ import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-import { FuroStatus } from './context/enums'
-import { Stream } from './context/Stream'
+import { FuroStatus, Stream } from './context'
 
 export enum FuroTableType {
   INCOMING,
@@ -28,7 +27,8 @@ interface FuroTableProps {
   loading: boolean
 }
 
-const showActiveOnly: FilterFn<Stream> = (row, columnId) => {
+// @ts-ignore
+const showActiveOnly: FilterFn<Stream | Vesting> = (row, columnId) => {
   return row.getValue(columnId) === FuroStatus.ACTIVE
 }
 
@@ -36,6 +36,7 @@ const table = createTable()
   .setRowType<Stream | Vesting>()
   .setOptions({
     filterFns: {
+      // @ts-ignore
       showActiveOnly: showActiveOnly,
     },
   })
@@ -48,7 +49,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
         <ProgressBar
           showLabel={false}
           className="min-w-[100px] max-w-[100px] h-3"
-          progress={props.getValue()?.divide(100).toSignificant(4)}
+          progress={Number(props.getValue()?.divide(100).toSignificant(4))}
           color={ProgressColor.GRADIENT}
         />
         <Typography variant="sm" weight={700} className="text-slate-200">
@@ -102,9 +103,9 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
   table.createDisplayColumn({
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
-    header: () => <div className="w-full text-left">From</div>,
+    header: () => <div className="w-full text-left">{tableProps.type === FuroTableType.INCOMING ? 'From' : 'To'}</div>,
     cell: (props) => (
-      <Link href={getExplorerLink(tableProps.chainId, props.getValue(), 'address')} passHref={true}>
+      <Link href={getExplorerLink(tableProps.chainId, props.getValue() as string, 'address')} passHref={true}>
         <a
           target="_blank"
           className="w-full text-left text-blue hover:text-blue-200"
@@ -149,7 +150,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             ?.map((stream) => new Stream({ stream, chainId: activeChain.id }))
             .concat(vestings?.map((vesting) => new Vesting({ vesting, chainId: activeChain.id }))) ?? []
         : [],
-    [activeChain.id, streams, vestings]
+    [activeChain?.id, streams, vestings]
   )
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
@@ -158,6 +159,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
 
   const instance = useTableInstance(table, {
     data,
+    // @ts-ignore
     columns,
     state: {
       globalFilter: props.globalFilter,

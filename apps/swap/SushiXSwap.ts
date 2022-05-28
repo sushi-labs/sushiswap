@@ -149,7 +149,7 @@ export class SushiXSwap {
     to: string,
     amount: BigNumberish,
     share: BigNumberish = Zero,
-    unwrap: boolean = true
+    unwrap = true
   ): void {
     const data = defaultAbiCoder.encode(
       ['address', 'address', 'uint256', 'uint256', 'bool'],

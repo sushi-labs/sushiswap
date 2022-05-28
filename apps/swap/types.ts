@@ -12,3 +12,20 @@ export type TakeFirst<T extends readonly any[], N extends number> = TupleSplit<T
 export type SkipFirst<T extends readonly any[], N extends number> = TupleSplit<T, N>[1]
 
 export type NonNullable<T> = T extends null | undefined ? never : T
+
+export interface Theme {
+  accent?: string
+  primary: {
+    default?: string
+    hover?: string
+  }
+  secondary: {
+    default?: string
+    hover?: string
+  }
+  borderRadius?: number
+  background: {
+    primary?: string
+    secondary?: string
+  }
+}

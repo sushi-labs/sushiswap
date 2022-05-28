@@ -5,7 +5,7 @@ import { FC, memo, useEffect } from 'react'
 import { ApprovalState, useApproveCallback } from '../../hooks'
 import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
-interface RenderPropPayload extends ApprovalButtonRenderProp {}
+type RenderPropPayload = ApprovalButtonRenderProp
 
 export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
   watch?: boolean

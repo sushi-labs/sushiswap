@@ -1,19 +1,19 @@
+import { Signature } from '@ethersproject/bytes'
+import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Amount } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
+import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
-import { Signature } from 'ethers/lib/ethers'
-import { parseUnits } from 'ethers/lib/utils'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'features/actions'
 import { createStreamSchema } from 'features/stream/CreateForm/schema'
 import { StreamAmountDetails } from 'features/stream/CreateForm/StreamAmountDetails'
 import { CreateStreamFormData, CreateStreamFormDataValidated } from 'features/stream/CreateForm/types'
-import { logTenderlyUrl } from 'functions/getTenderly'
 import { useFuroStreamContract } from 'hooks'
-import { FundSource } from 'hooks/useFundSourceToggler'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
@@ -24,7 +24,7 @@ export const CreateForm: FC = () => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const [error, setError] = useState<string>()
-  const contract = useFuroStreamContract()
+  const contract = useFuroStreamContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
 
@@ -32,7 +32,7 @@ export const CreateForm: FC = () => {
     // @ts-ignore
     resolver: yupResolver(createStreamSchema),
     defaultValues: {
-      token: undefined,
+      currency: undefined,
       startDate: undefined,
       endDate: undefined,
       recipient: undefined,
@@ -47,18 +47,20 @@ export const CreateForm: FC = () => {
   } = methods
 
   // @ts-ignore
-  const [token, amount] = watch(['token', 'amount'])
+  const [currency, amount] = watch(['currency', 'amount'])
 
   const amountAsEntity = useMemo(() => {
-    if (!token || !amount) return undefined
+    if (!currency || !amount) return undefined
 
     let value = undefined
     try {
-      value = Amount.fromRawAmount(token, JSBI.BigInt(parseUnits(amount, token.decimals).toString()))
-    } catch (e) {}
+      value = Amount.fromRawAmount(currency, JSBI.BigInt(parseUnits(amount, currency.decimals).toString()))
+    } catch (e) {
+      console.debug(e)
+    }
 
     return value
-  }, [amount, token])
+  }, [amount, currency])
 
   const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
     async (data) => {
@@ -74,7 +76,7 @@ export const CreateForm: FC = () => {
         streamCreationAction({
           contract,
           recipient: _data.recipient,
-          token: _data.token,
+          currency: _data.currency,
           startDate: new Date(_data.startDate),
           endDate: new Date(_data.endDate),
           amount: amountAsEntity,
@@ -88,6 +90,7 @@ export const CreateForm: FC = () => {
             from: account?.address,
             to: contract?.address,
             data: batchAction({ contract, actions }),
+            value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
           },
         })
 
@@ -99,11 +102,12 @@ export const CreateForm: FC = () => {
       } catch (e: any) {
         setError(e.message)
 
-        logTenderlyUrl({
+        log.tenderly({
           chainId: activeChain?.id,
           from: account.address,
           to: contract.address,
           data: batchAction({ contract, actions }),
+          value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
         })
       }
     },
@@ -120,11 +124,10 @@ export const CreateForm: FC = () => {
             <Approve
               components={
                 <Approve.Components>
-                  <Approve.Bentobox watch token={token} address={contract?.address} onSignature={setSignature} />
+                  <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
                   <Approve.Token
-                    watch
                     amount={amountAsEntity}
-                    address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
+                    address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
                   />
                 </Approve.Components>
               }

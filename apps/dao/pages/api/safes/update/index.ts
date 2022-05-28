@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await new Promise((resolve) => setTimeout(resolve, 5000))
       successfulUpdates += 1
     } catch (e) {
-      log.warn(`Safe for ${address} could not be updated, ${e}`)
+      log.warning(`Safe for ${address} could not be updated, ${e}`)
     }
   }
   res.status(200).send(`Updated info on ${successfulUpdates} of ${Object.entries(SAFES).length} safes.`)

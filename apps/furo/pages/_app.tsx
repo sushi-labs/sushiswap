@@ -40,6 +40,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
+  const ethereumProvider = getProvider(ChainId.ETHEREUM)
+  const ethereumBlockNumber = useLatestBlockNumber(ethereumProvider)
   const kovanProvider = getProvider(ChainId.KOVAN)
   const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
   const goerliProvider = getProvider(ChainId.GÖRLI)
@@ -51,6 +53,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ReduxProvider store={store}>
           <App.Shell>
             <Header />
+            <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={ethereumBlockNumber} />
+            <TokenListUpdater chainId={ChainId.ETHEREUM} />
             <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
             <TokenListUpdater chainId={ChainId.KOVAN} />
             <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />

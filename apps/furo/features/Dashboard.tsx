@@ -1,5 +1,4 @@
-import { CheckIcon } from '@heroicons/react/outline'
-import { XIcon } from '@heroicons/react/outline'
+import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -7,7 +6,7 @@ import { Switch, Typography } from '@sushiswap/ui'
 import { toToken } from 'features/context/mapper'
 import { FuroTable, FuroTableType } from 'features/FuroTable'
 import { getExplorerLink } from 'functions'
-import { useStreamBalances } from 'hooks'
+import { useChain, useStreamBalances } from 'hooks'
 import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -21,6 +20,7 @@ const fetcher = (params: any) =>
     .catch((e) => console.log(JSON.stringify(e)))
 
 export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+  const chain = useChain(chainId)
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
   const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
@@ -33,12 +33,12 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
     const ids: [string][] = []
     const tokens: Token[] = []
 
-    streams?.incomingStreams.forEach((stream) => {
+    streams?.incomingStreams?.forEach((stream) => {
       ids.push([stream.id])
       tokens.push(toToken(stream.token, chainId))
     })
 
-    streams?.outgoingStreams.forEach((stream) => {
+    streams?.outgoingStreams?.forEach((stream) => {
       ids.push([stream.id])
       tokens.push(toToken(stream.token, chainId))
     })
