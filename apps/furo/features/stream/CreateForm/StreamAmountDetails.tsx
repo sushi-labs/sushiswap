@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { CreateStreamFormData } from 'features/stream/CreateForm/types'
@@ -11,6 +11,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
 export const StreamAmountDetails = () => {
+  const isMounted = useIsMounted()
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
@@ -86,8 +87,14 @@ export const StreamAmountDetails = () => {
                   <div className="flex flex-col gap-1">
                     <Typography variant="xs">Available Balance</Typography>
                     <Typography weight={700} variant="xs" className="text-slate-200">
-                      {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
-                      <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                      {isMounted ? (
+                        <>
+                          {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
+                          <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                        </>
+                      ) : (
+                        <div className="h-4" />
+                      )}
                     </Typography>
                   </div>
                   {value === FundSource.BENTOBOX && (
@@ -109,8 +116,14 @@ export const StreamAmountDetails = () => {
                   <div className="flex flex-col gap-1">
                     <Typography variant="xs">Available Balance</Typography>
                     <Typography weight={700} variant="xs" className="text-slate-200">
-                      {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
-                      <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                      {isMounted ? (
+                        <>
+                          {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
+                          <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                        </>
+                      ) : (
+                        <div className="h-4" />
+                      )}
                     </Typography>
                   </div>
                   {value === FundSource.WALLET && (
