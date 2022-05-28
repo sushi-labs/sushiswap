@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePopper } from 'react-popper'
 
-export const usePopover = () => {
+export const usePopover = (): ReturnType<typeof usePopper> => {
   const [referenceElement, setReferenceElement] = useState(null)
   const [popperElement, setPopperElement] = useState(null)
   const [arrowElement, setArrowElement] = useState(null)

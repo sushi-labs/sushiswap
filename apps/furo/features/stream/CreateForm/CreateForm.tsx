@@ -1,6 +1,7 @@
+import { Signature } from '@ethersproject/bytes'
+import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Amount } from '@sushiswap/currency'
-import { FuroStream } from '@sushiswap/furo/typechain'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
@@ -8,8 +9,6 @@ import { Button, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
-import { Signature } from 'ethers/lib/ethers'
-import { parseUnits } from 'ethers/lib/utils'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'features/actions'
 import { createStreamSchema } from 'features/stream/CreateForm/schema'
 import { StreamAmountDetails } from 'features/stream/CreateForm/StreamAmountDetails'
@@ -71,7 +70,7 @@ export const CreateForm: FC = () => {
       setError(undefined)
 
       const actions = [
-        approveBentoBoxAction<FuroStream>({ contract, user: account.address, signature }),
+        approveBentoBoxAction({ contract, user: account.address, signature }),
         streamCreationAction({
           contract,
           recipient: _data.recipient,
@@ -88,7 +87,7 @@ export const CreateForm: FC = () => {
           request: {
             from: account?.address,
             to: contract?.address,
-            data: batchAction<FuroStream>({ contract, actions }),
+            data: batchAction({ contract, actions }),
             value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
           },
         })
@@ -105,7 +104,7 @@ export const CreateForm: FC = () => {
           chainId: activeChain?.id,
           from: account.address,
           to: contract.address,
-          data: batchAction<FuroStream>({ contract, actions }),
+          data: batchAction({ contract, actions }),
           value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
         })
       }

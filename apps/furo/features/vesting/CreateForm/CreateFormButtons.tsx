@@ -1,6 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FuroVesting } from '@sushiswap/furo/typechain'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
@@ -71,7 +70,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     }
 
     const actions = [
-      approveBentoBoxAction<FuroVesting>({ contract, user: account.address, signature }),
+      approveBentoBoxAction({ contract, user: account.address, signature }),
       vestingCreationAction({
         contract,
         recipient,
@@ -91,7 +90,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         request: {
           from: account.address,
           to: contract.address,
-          data: batchAction<FuroVesting>({ contract, actions }),
+          data: batchAction({ contract, actions }),
           value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
         },
       })
@@ -108,7 +107,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         chainId: activeChain?.id,
         from: account.address,
         to: contract.address,
-        data: batchAction<FuroVesting>({ contract, actions }),
+        data: batchAction({ contract, actions }),
         value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
       })
     }

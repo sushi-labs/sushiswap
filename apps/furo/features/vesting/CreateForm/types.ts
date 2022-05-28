@@ -1,4 +1,4 @@
-import { Type } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 
@@ -11,7 +11,7 @@ export type CreateVestingFormData = {
   cliff: boolean
   stepConfig: StepConfig
 
-  currency: Type | undefined
+  currency: Currency | undefined
   startDate: string | ''
   recipient: string | ''
   cliffEndDate: string | ''
@@ -22,7 +22,7 @@ export type CreateVestingFormData = {
 }
 
 export type CreateVestingFormDataValidated = {
-  currency: Type
+  currency: Currency
   cliff: boolean
   startDate: string
   recipient: string

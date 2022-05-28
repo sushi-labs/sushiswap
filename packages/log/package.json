@@ -33,6 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "chalk": "^5.0.1",
     "@sushiswap/chain": "workspace:*",
     "isomorphic-unfetch": "^3.1.0"
   },
@@ -43,7 +44,6 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "@types/node": "^16.11.33",
-    "chalk": "^5.0.1",
     "eslint": "^8.15.0",
     "jest": "^28.1.0",
     "tsup": "^6.0.1",

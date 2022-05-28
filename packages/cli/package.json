@@ -55,6 +55,6 @@
     "graphql": "^16.5.0",
     "graphql-jit": "^0.7.3",
     "numeral": "^2.0.6",
-    "typescript": "^4.7.2"
+    "typescript": "^4.0.0"
   }
 }

@@ -75,7 +75,7 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
 
       log.tenderly({
         chainId: activeChain?.id,
-        from: account.address,
+        from: account?.address,
         to: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address : AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),

@@ -1,7 +1,8 @@
+import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import { BaseContract } from '@ethersproject/contracts'
 import { Amount, Type } from '@sushiswap/currency'
 import { FuroStream, FuroVesting } from '@sushiswap/furo/typechain'
-import { BaseContract, Signature } from 'ethers'
 
 interface Batch<T> {
   contract: T
@@ -26,7 +27,7 @@ export const batchAction = <T extends BaseContract>({ contract, actions = [] }: 
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return contract.interface.encodeFunctionData('batch', [validated, true])
+    return contract.interface.encodeFunctionData('multicall', [validated])
   }
 }
 
