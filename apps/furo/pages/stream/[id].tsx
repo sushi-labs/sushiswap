@@ -3,7 +3,6 @@ import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import FUROSTREAM_ABI from 'abis/FuroStream.json'
 import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
@@ -166,17 +165,17 @@ const _Streams: FC = () => {
           <div className="flex gap-2">
             <TransferStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
+              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
               address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
             />
             <UpdateStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
+              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
               address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
             />
             <CancelStreamModal
               stream={stream}
-              abi={FUROSTREAM_ABI}
+              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
               address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
               fn="cancelStream"
             />
