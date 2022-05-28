@@ -127,7 +127,7 @@ export const CreateForm: FC = () => {
                   <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
                   <Approve.Token
                     amount={amountAsEntity}
-                    address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
+                    address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
                   />
                 </Approve.Components>
               }

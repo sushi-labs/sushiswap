@@ -14,7 +14,4 @@ export default withTranspileModules({
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    esmExternals: 'loose',
-  },
 })

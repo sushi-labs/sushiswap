@@ -4,8 +4,10 @@ import { useContract, useProvider } from 'wagmi'
 
 export function useFuroStreamContract(chainId: number | undefined) {
   return useContract({
-    addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero,
-    contractInterface: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : [],
+    addressOrName:
+      furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ?? AddressZero,
+    contractInterface:
+      furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? [],
     signerOrProvider: useProvider({ chainId }),
   })
 }

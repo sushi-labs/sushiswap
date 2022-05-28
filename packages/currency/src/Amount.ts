@@ -99,11 +99,7 @@ export class Amount<T extends Type> extends Fraction {
     return Amount.fromFractionalAmount(this.currency, divided.numerator, divided.denominator)
   }
 
-  public toSignificant(
-    significantDigits = 6,
-    format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN
-  ): string {
+  public toSignificant(significantDigits = 6, format?: object, rounding: Rounding = Rounding.ROUND_DOWN): string {
     return super.divide(this.scale).toSignificant(significantDigits, format, rounding)
   }
 

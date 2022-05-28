@@ -1,16 +1,15 @@
 import { AddressZero } from '@ethersproject/constants'
+import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS, useBentoBoxContract } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
-import BENTOBOX_ABI from 'abis/bentobox.json'
 import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
 import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { useBlockNumber, useContractRead } from 'wagmi'
-
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
   const {
     data: balance,
@@ -18,8 +17,10 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     isLoading: balanceLoading,
   } = useContractRead(
     {
-      addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero,
-      contractInterface: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : [],
+      addressOrName:
+        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ?? AddressZero,
+      contractInterface:
+        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? [],
     },
     'streamBalanceOf',
     {
@@ -37,7 +38,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
   } = useContractRead(
     {
       addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
-      contractInterface: BENTOBOX_ABI,
+      contractInterface: bentoBoxArtifact.abi,
     },
     'totals',
     {

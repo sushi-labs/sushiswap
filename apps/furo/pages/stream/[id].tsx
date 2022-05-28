@@ -165,18 +165,27 @@ const _Streams: FC = () => {
           <div className="flex gap-2">
             <TransferStreamModal
               stream={stream}
-              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
             />
             <UpdateStreamModal
               stream={stream}
-              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
             />
             <CancelStreamModal
               stream={stream}
-              abi={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.abi : []}
-              address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroStream.address : AddressZero}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                AddressZero
+              }
               fn="cancelStream"
             />
           </div>

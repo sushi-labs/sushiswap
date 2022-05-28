@@ -30,12 +30,11 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: activeChain?.id
-        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address
-        : AddressZero,
-      contractInterface: activeChain?.id
-        ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.abi
-        : undefined,
+      addressOrName:
+        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+        AddressZero,
+      contractInterface:
+        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? [],
     },
     'withdraw',
     {
@@ -76,7 +75,9 @@ const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       log.tenderly({
         chainId: activeChain?.id,
         from: account?.address,
-        to: activeChain?.id ? (furoExports as any)[activeChain.id]?.[0].contracts.FuroVesting.address : AddressZero,
+        to:
+          furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+          AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',

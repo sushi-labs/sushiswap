@@ -78,7 +78,7 @@ const _VestingPage: FC = () => {
 
   const schedule = vesting
     ? createScheduleRepresentation({
-        token: vesting.token,
+        currency: vesting.token,
         cliffEndDate: new Date(vesting.startTime.getTime() + vesting.cliffDuration * 1000),
         cliffAmount: vesting.cliffAmount,
         stepAmount: vesting.stepAmount,
@@ -164,13 +164,23 @@ const _VestingPage: FC = () => {
             <div className="flex gap-2">
               <TransferStreamModal
                 stream={vesting}
-                abi={(furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi}
-                address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero}
+                abi={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
+                }
+                address={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                  AddressZero
+                }
               />
               <CancelStreamModal
                 stream={vesting}
-                abi={(furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi}
-                address={chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero}
+                abi={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
+                }
+                address={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                  AddressZero
+                }
                 fn="stopVesting"
               />
             </div>

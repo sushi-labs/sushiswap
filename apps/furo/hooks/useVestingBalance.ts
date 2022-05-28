@@ -1,12 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
+import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
-import BENTOBOX_ABI from 'abis/bentobox.json'
 import { useMemo } from 'react'
 import { useContractRead } from 'wagmi'
-
 export function useVestingBalance(chainId?: number, vestingId?: string, token?: Token): Amount<Token> | undefined {
   const {
     data: balance,
@@ -14,8 +13,11 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     isLoading: balanceLoading,
   } = useContractRead(
     {
-      addressOrName: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.address : AddressZero,
-      contractInterface: chainId ? (furoExports as any)[chainId]?.[0].contracts.FuroVesting.abi : [],
+      addressOrName:
+        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+        AddressZero,
+      contractInterface:
+        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? [],
     },
     'vestBalance',
     { chainId, enabled: !!chainId && !!vestingId, args: [vestingId], watch: true }
@@ -28,7 +30,7 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
   } = useContractRead(
     {
       addressOrName: chainId ? BENTOBOX_ADDRESS[chainId] : AddressZero,
-      contractInterface: BENTOBOX_ABI,
+      contractInterface: bentoBoxArtifact.abi,
     },
     'totals',
     { chainId, enabled: !!chainId && !!token, args: [token?.address], watch: true }

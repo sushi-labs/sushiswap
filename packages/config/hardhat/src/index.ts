@@ -108,7 +108,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 4,
       live: true,
@@ -127,7 +127,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 42,
       live: true,
@@ -325,9 +325,8 @@ export const defaultConfig: HardhatUserConfig = {
     },
   },
   namedAccounts: {
-    deployer: {
-      default: 0,
-    },
+    // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
+    deployer: process.env.LEDGER || { default: 0 },
     alice: {
       default: 1,
     },

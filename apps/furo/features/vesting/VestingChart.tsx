@@ -104,7 +104,7 @@ export const VestingChart: FC<Props> = ({ vesting, schedule }) => {
                 snapTooltipToDatumY
                 showSeriesGlyphs
                 renderTooltip={({ tooltipData }: { tooltipData?: any }) => (
-                  <div className="flex flex-col justify-center items-center font-medium px-0 py-1">
+                  <div className="flex flex-col items-center justify-center px-0 py-1 font-medium">
                     <span className="text-slate-500">
                       {new Intl.DateTimeFormat('en-US').format(accessors.xAccessor(tooltipData.nearestDatum.datum))}
                     </span>

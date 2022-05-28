@@ -28,6 +28,7 @@
     "@heroicons/react": "^1.0.0",
     "@hookform/resolvers": "^2.8.10",
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",

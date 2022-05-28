@@ -17,7 +17,7 @@ interface Item {
 
 const Item: FC<Item> = ({ title, value, className }) => {
   return (
-    <div className="flex w-full justify-between items-center gap-1">
+    <div className="flex items-center justify-between w-full gap-1">
       <Typography variant="xs" className="whitespace-nowrap text-slate-500">
         {title}
       </Typography>
@@ -38,7 +38,7 @@ const Table: FC<{
       <Typography variant="xxs" className="!leading-5 tracking-widest text-slate-50 font-medium uppercase">
         {title}
       </Typography>
-      <div className="flex gap-2 flex-wrap">{children}</div>
+      <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   )
 }
@@ -108,16 +108,16 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <div className="flex flex-col w-full">
           <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[240px] mt-2 hide-scrollbar divide-y divide-slate-800">
             <div className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-              <Typography className="capitalize text-slate-500 tracking-wider" variant="xxs">
+              <Typography className="tracking-wider capitalize text-slate-500" variant="xxs">
                 Schedule
               </Typography>
-              <Typography className="capitalize text-slate-500 tracking-wider" variant="xxs">
+              <Typography className="tracking-wider capitalize text-slate-500" variant="xxs">
                 Date
               </Typography>
-              <Typography className="capitalize text-slate-500 tracking-wider text-right" variant="xxs">
+              <Typography className="tracking-wider text-right capitalize text-slate-500" variant="xxs">
                 Amount
               </Typography>
-              <Typography className="capitalize text-slate-500 tracking-wider text-right" variant="xxs">
+              <Typography className="tracking-wider text-right capitalize text-slate-500" variant="xxs">
                 Total
               </Typography>
             </div>
@@ -127,22 +127,22 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                   acc[1] = acc[1].add(period.amount)
                   acc[0].push(
                     <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-                      <Typography className="capitalize text-slate-200 tracking-wider" weight={700} variant="xxs">
+                      <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
                         {period.type.toLowerCase()}
                       </Typography>
-                      <Typography variant="xs" className="text-slate-200 flex flex-col text-left" weight={500}>
+                      <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
                         {format(period.date, 'dd MMM yyyy')}
                         <Typography as="span" variant="xxs" className="text-slate-500">
                           {format(period.date, 'hh:maaa')}
                         </Typography>
                       </Typography>
-                      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
                         {period.amount.toSignificant(6)}
                         <Typography as="span" variant="xxs" className="text-slate-500">
                           {period?.amount.currency?.symbol}
                         </Typography>
                       </Typography>
-                      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
                         {acc[1].toSignificant(6)}
                         <Typography as="span" variant="xxs" className="text-slate-500">
                           {period?.amount.currency?.symbol}
