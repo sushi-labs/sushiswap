@@ -375,7 +375,7 @@ export class Graph {
       const [vFrom, vTo] =
         bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
       if (vTo.price !== 0) continue
-      let p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
       vTo.price = vFrom.price * p
       vTo.gasPrice = vFrom.gasPrice / p
       addVertice(vTo)
@@ -393,7 +393,7 @@ export class Graph {
     edges.forEach(([e, _]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
-      let p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
+      const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
       this.setPrices(v, price * p, gasPrice / p)
     })
   }
@@ -1081,6 +1081,7 @@ export class Graph {
         minOutput = out
       }
     })
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     minVert.getOutputEdges().forEach((e) => {
       if (minVert.getNeibour(e) !== minVertNext) return

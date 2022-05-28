@@ -87,10 +87,10 @@ export class Vesting extends Furo {
         return { days: 0, hours: 0, minutes: 0, seconds: 0 }
       }
 
-      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
       return { days, hours, minutes, seconds }
     }

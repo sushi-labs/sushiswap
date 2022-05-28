@@ -59,10 +59,10 @@ export abstract class Furo {
       const now = Date.now()
       const interval = this.endTime.getTime() - now
 
-      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
       return { days, hours, minutes, seconds }
     }
@@ -74,10 +74,10 @@ export abstract class Furo {
       const now = Date.now()
       const interval = this.startTime.getTime() - now
 
-      let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-      let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+      const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
       return { days, hours, minutes, seconds }
     }
@@ -89,10 +89,10 @@ export abstract class Furo {
 
     const interval = now - this.startTime.getTime()
 
-    let days = Math.floor(interval / (1000 * 60 * 60 * 24))
-    let hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    let minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-    let seconds = Math.floor((interval % (1000 * 60)) / 1000)
+    const days = Math.floor(interval / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((interval % (1000 * 60)) / 1000)
 
     return { days, hours, minutes, seconds }
   }

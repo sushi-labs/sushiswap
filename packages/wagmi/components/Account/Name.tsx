@@ -13,5 +13,5 @@ export function Name({ address, children }: Props): JSX.Element {
     enabled: !!address,
   })
 
-  return children({ name: !!data ? data : address, isEns: !!data })
+  return children({ name: data ? data : address, isEns: !!data })
 }

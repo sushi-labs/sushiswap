@@ -1,13 +1,31 @@
 module.exports = {
   root: true,
+  env: {
+    node: true,
+    browser: true,
+    es6: true,
+  },
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-  ignorePatterns: ['**/__tests__/*.test.ts'],
+  ignorePatterns: [
+    '**/__tests__/*.test.ts',
+    '**/dist/**',
+    '**/node_modules/**',
+    '**/generated/**',
+    '**/typechain/**',
+    '**/coverage/**',
+    '**/exports/**',
+  ],
   rules: {
     'simple-import-sort/exports': 'error',
     'simple-import-sort/imports': 'error',
     'unused-imports/no-unused-imports': 'error',
-    'unused-imports/no-unused-vars': 'off',
+    'unused-imports/no-unused-vars': 'warn',
+    'no-unused-vars': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
   },
 }

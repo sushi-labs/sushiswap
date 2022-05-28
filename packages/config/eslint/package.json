@@ -12,7 +12,9 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "hardhat/index.js",
+    "nextjs/index.js"
   ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "5.x",
@@ -24,7 +26,7 @@
     "eslint-plugin-unused-imports": "2.x"
   },
   "devDependencies": {
-    "@types/node": "17.x",
-    "@types/eslint": "8.x"
+    "@types/eslint": "8.x",
+    "@types/node": "17.x"
   }
 }

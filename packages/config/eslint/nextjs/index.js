@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../base/index.js', 'next', 'prettier'],
+  extends: ['@sushiswap/eslint-config', 'next'],
   settings: {
     next: {
       rootDir: ['apps/*/', 'packages/*/'],

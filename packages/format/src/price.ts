@@ -1,3 +1,3 @@
-import Numeral from 'numeral'
+import numeral from 'numeral'
 
-export const formatUSD = (value: string) => Numeral(value).format('($0.00a)')
+export const formatUSD = (value: string) => numeral(value).format('($0.00a)')

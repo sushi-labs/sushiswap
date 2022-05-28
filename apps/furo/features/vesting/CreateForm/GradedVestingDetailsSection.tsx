@@ -39,7 +39,7 @@ export const GradedVestingDetailsSection = () => {
               helperTextPanel={
                 <CurrencyInput.HelperTextPanel
                   text={
-                    !!error?.message ? (
+                    error?.message ? (
                       error.message
                     ) : (
                       <>

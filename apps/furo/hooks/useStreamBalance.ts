@@ -5,7 +5,6 @@ import { JSBI } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS, useBentoBoxContract } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import BENTOBOX_ABI from 'abis/bentobox.json'
-
 import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
 import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
 import { useSingleContractMultipleData } from 'lib/state/multicall'

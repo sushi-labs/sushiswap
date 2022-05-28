@@ -34,7 +34,9 @@ const UpdateStreamModal: FC<UpdateStreamModalProps> = ({ stream, abi, address })
     let value = undefined
     try {
       value = Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(amount, stream.token.decimals).toString()))
-    } catch (e) {}
+    } catch (e) {
+      console.debug(e)
+    }
 
     return value
   }, [amount, stream])

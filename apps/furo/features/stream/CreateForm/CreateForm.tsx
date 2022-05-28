@@ -55,7 +55,9 @@ export const CreateForm: FC = () => {
     let value = undefined
     try {
       value = Amount.fromRawAmount(currency, JSBI.BigInt(parseUnits(amount, currency.decimals).toString()))
-    } catch (e) {}
+    } catch (e) {
+      console.debug(e)
+    }
 
     return value
   }, [amount, currency])

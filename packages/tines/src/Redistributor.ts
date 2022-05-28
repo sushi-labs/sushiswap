@@ -77,6 +77,7 @@ export class Redistributor {
     })
 
     this.paths = new Array(this.tokenNumber) // TODO: test with []
+    // eslint-disable-next-line for-direction
     for (let i = this.tokenNumber - 2; i >= 0; ++i) {
       const nextNodes = this.outputTokens[i]
       for (let j = i + 1; j < this.tokenNumber; ++j) {

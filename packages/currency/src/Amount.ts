@@ -100,7 +100,7 @@ export class Amount<T extends Type> extends Fraction {
   }
 
   public toSignificant(
-    significantDigits: number = 6,
+    significantDigits = 6,
     format?: object,
     rounding: Rounding = Rounding.ROUND_DOWN
   ): string {

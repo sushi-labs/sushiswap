@@ -160,7 +160,7 @@ export const StreamAmountDetails = () => {
                 helperTextPanel={({ errorMessage }) => (
                   <CurrencyInput.HelperTextPanel
                     text={
-                      !!errorMessage
+                      errorMessage
                         ? errorMessage
                         : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
                     }

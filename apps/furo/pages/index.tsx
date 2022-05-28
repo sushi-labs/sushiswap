@@ -109,7 +109,7 @@ export default function Index() {
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {isEns ? name : !!name ? shortenAddress(name) : ''}
+                          {isEns ? name : name ? shortenAddress(name) : ''}
                         </Typography>
                       )}
                     </Account.Name>

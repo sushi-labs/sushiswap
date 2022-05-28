@@ -72,7 +72,7 @@ const Component: FC<CurrencyInput> = ({
                 ) : (
                   helperTextPanel
                 )
-              ) : !!errorMessage ? (
+              ) : errorMessage ? (
                 <CurrencyInput.HelperTextPanel text={errorMessage} isError={true} />
               ) : (
                 <></>

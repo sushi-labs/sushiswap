@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ['../base/index.js'],
+  extends: ['@sushiswap/eslint-config'],
 }

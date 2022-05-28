@@ -21,7 +21,9 @@ interface Stepper {
 const StepperContext = createContext<Omit<Stepper, 'children'> & { steps: number }>({
   steps: 0,
   activeStep: 0,
-  setActiveStep(_: number) {},
+  setActiveStep(_: number) {
+    //
+  },
 })
 
 export const useStepperContext = () => useContext(StepperContext)

@@ -1,3 +1,3 @@
-import Numeral from 'numeral'
+import numeral from 'numeral'
 
-export const formatPercent = (value: string) => Numeral(value).format('0.00%')
+export const formatPercent = (value: any) => numeral(value).format('0.00%')

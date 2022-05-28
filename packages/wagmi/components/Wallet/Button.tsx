@@ -32,7 +32,6 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
   const { data } = useAccount()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const hook = hack || useConnect()
   const { isConnected, connectors, connect } = hook
   const { pendingConnection, reconnecting } = useWalletState(hook, data?.address)
@@ -98,7 +97,7 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
               <Account.Name address={data?.address}>
                 {({ name, isEns }) => (
                   <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                    {isEns ? name : !!name ? shortenAddress(name) : ''}
+                    {isEns ? name : name ? shortenAddress(name) : ''}
                   </Typography>
                 )}
               </Account.Name>

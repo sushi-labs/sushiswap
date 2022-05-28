@@ -66,7 +66,7 @@ export const CliffDetailsSection: FC = () => {
               helperTextPanel={({ errorMessage }) => (
                 <HelperTextPanel
                   isError={!!errorMessage}
-                  text={!!errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
+                  text={errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
                 />
               )}
             />
