@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Typography } from '../typography'
 import { StepDetails } from './Stepper'
 
-interface StepDescriptionInterface extends StepDetails {
+export interface StepDescriptionInterface extends StepDetails {
   children: string
 }
 

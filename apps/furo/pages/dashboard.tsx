@@ -91,7 +91,7 @@ export default function DashboardPage() {
         </div>
       }
     >
-      <Dashboard chainId={activeChain.id} address={account.address} />
+      {activeChain && account?.address && <Dashboard chainId={activeChain.id} address={account.address} />}
     </Layout>
   )
 }

@@ -1,6 +1,6 @@
 import React, { Children, cloneElement, createContext, FC, isValidElement, useContext, useMemo } from 'react'
 
-import { Step } from './Step'
+import { Step, StepInterface } from './Step'
 import { StepButtons } from './StepButtons'
 import { StepContent } from './StepContent'
 import { StepDescription } from './StepDescription'
@@ -13,7 +13,7 @@ export interface StepDetails {
 }
 
 interface Stepper {
-  children: React.ReactElement<typeof Step> | React.ReactElement<typeof Step>[]
+  children: React.ReactElement<StepInterface> | Array<React.ReactElement<StepInterface>>
   activeStep: number
   setActiveStep(x: number): void
 }
