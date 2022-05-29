@@ -4,13 +4,14 @@ import { Updater } from './MulticallUpdater'
 
 interface Props {
   chainIds: ChainId[]
+  isDebug?: boolean
 }
 
-export function Updaters({ chainIds }: Props) {
+export function Updaters({ chainIds, isDebug = false }: Props) {
   return (
     <>
       {chainIds.map((chainId) => (
-        <Updater key={chainId} chainId={chainId} />
+        <Updater key={chainId} chainId={chainId} isDebug={isDebug} />
       ))}
     </>
   )

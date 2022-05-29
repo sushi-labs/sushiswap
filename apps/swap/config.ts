@@ -1,5 +1,21 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const SUPPORTED_CHAIN_IDS = [
+  // ChainId.ETHEREUM,
+  // ChainId.BSC,
+  // ChainId.AVALANCHE,
+  // ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  // ChainId.FANTOM,
+  // TESTNETS
+  // ChainId.POLYGON_TESTNET,
+  // ChainId.RINKEBY,
+  // ChainId.ROPSTEN,
+  // ChainId.GÖRLI,
+  // ChainId.KOVAN,
+]
+
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
