@@ -3,7 +3,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { erc20ABI, useContractRead } from 'wagmi'
 
-export function useTokenAllowance(
+export function useERC20Allowance(
   watch: boolean,
   token?: Token,
   owner?: string,

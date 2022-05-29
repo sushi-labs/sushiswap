@@ -2,7 +2,7 @@ import { Amount, Currency } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
-import { ApprovalState, useApproveCallback } from '../../hooks'
+import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
 import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
 type RenderPropPayload = ApprovalButtonRenderProp
@@ -15,7 +15,7 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
   ({ watch = true, amount, address, render, setState, disabled, ...props }) => {
-    const [approvalState, onApprove] = useApproveCallback(watch, amount, address)
+    const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
 
     useEffect(() => {
       if (!setState) return

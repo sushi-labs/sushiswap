@@ -5,7 +5,7 @@ import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContract, useSigner } from 'wagmi'
 
-import { useTokenAllowance } from './useTokenAllowance'
+import { useERC20Allowance } from './useERC20Allowance'
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
   return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
@@ -19,7 +19,7 @@ export enum ApprovalState {
 }
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
-export function useApproveCallback(
+export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove?: Amount<Currency>,
   spender?: string
@@ -28,7 +28,7 @@ export function useApproveCallback(
   const { data: signer } = useSigner()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useTokenAllowance(watch, token, account?.address ?? undefined, spender)
+  const currentAllowance = useERC20Allowance(watch, token, account?.address ?? undefined, spender)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
