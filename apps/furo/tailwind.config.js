@@ -3,7 +3,7 @@ module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    '../../packages/wagmi/**/*.tsx',
+    '../../packages/wagmi/{components,systems}/**/*.tsx',
     '../../packages/ui/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {

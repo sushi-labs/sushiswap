@@ -19,7 +19,6 @@
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "generate": "graphclient build",
     "lint": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },

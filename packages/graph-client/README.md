@@ -1,3 +1,3 @@
-# Format
+# Graph Client
 
-Format library
+Graph Client library
