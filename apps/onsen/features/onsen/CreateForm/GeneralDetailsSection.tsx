@@ -8,10 +8,7 @@ export const GeneralDetailsSection = () => {
   const token = watch('token')
 
   return (
-    <Form.Section
-      title="General Details"
-      description="Furo allows for creating a vested stream using your Bentobox balance."
-    >
+    <Form.Section title="General Details">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Form.Control label="Start date">
           <Controller
@@ -42,10 +39,10 @@ export const GeneralDetailsSection = () => {
           />
         </Form.Control>
       </div>
-      <Form.Control label="Recipient">
+      <Form.Control label="Stake token address">
         <Controller
           control={control}
-          name="recipient"
+          name="stakeTokenAddress"
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>

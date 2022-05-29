@@ -52,7 +52,7 @@ export const createIncentiveSchema = yup.object({
   // @ts-ignore
   currency: yup.mixed<Token>().currency().required('This field is required'),
   // @ts-ignore
-  recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
+  stakeTokenAddress: yup.string().isAddress('Invalid stake token address').required('This field is required'),
   startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),
   endDate: yup
     .date()

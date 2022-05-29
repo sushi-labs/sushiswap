@@ -5,7 +5,7 @@ export type CreateIncentiveFormData = {
   currency: Currency | undefined
   startDate: string | undefined
   endDate: string | undefined
-  recipient: string | undefined
+  stakeTokenAddress: string | undefined
   amount: string | undefined
   fundSource: FundSource | undefined
 }
@@ -14,7 +14,7 @@ export type CreateIncentiveFormDataValidated = {
   currency: Currency
   startDate: string
   endDate: string
-  recipient: string
+  stakeTokenAddress: string
   amount: string
   fundSource: FundSource
 }

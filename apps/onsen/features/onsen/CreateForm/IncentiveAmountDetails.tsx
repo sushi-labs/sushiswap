@@ -26,11 +26,8 @@ export const IncentiveAmountDetails = () => {
   const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
 
   return (
-    <Form.Section
-      title="Stream Details"
-      description="Furo allows for creating a vested stream using your Bentobox balance."
-    >
-      <Form.Control label="Token">
+    <Form.Section title="Reward Details">
+      <Form.Control label="Reward Token">
         <Controller
           control={control}
           name="currency"
@@ -144,7 +141,7 @@ export const IncentiveAmountDetails = () => {
           )}
         />
       </Form.Control>
-      <Form.Control label="Stream Amount">
+      <Form.Control label="Reward Amount">
         <Controller
           control={control}
           name="amount"
@@ -162,7 +159,7 @@ export const IncentiveAmountDetails = () => {
                     text={
                       errorMessage
                         ? errorMessage
-                        : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
+                        : 'The total reward amount the stakeholders can withdraw when the incentive passes its end date.'
                     }
                     isError={!!errorMessage}
                   />
