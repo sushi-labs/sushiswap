@@ -3,12 +3,13 @@ import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.s
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
-import { BENTOBOX_ADDRESS, useBentoBoxContract } from '@sushiswap/wagmi'
+import { BENTOBOX_ADDRESS, useBentoBoxContract, useFuroStreamContract } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
-import { ErrorState, LoadingState, SuccessState, useFuroStreamContract } from 'hooks'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { useBlockNumber, useContractRead } from 'wagmi'
+
+import { ErrorState, LoadingState, SuccessState } from './types'
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
   const {
     data: balance,

@@ -6,7 +6,7 @@ import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalanc
 import { useMemo } from 'react'
 import { erc20ABI } from 'wagmi'
 
-import { useMultipleContractSingleData } from '../../lib/hooks/multicall'
+import { useMultipleContractSingleData } from '../multicall'
 
 const tokenBalancesGasRequirement = { gasRequired: 125_000 }
 const ERC20Interface = new Interface(erc20ABI)

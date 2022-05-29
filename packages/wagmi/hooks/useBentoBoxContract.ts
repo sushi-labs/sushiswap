@@ -1,4 +1,6 @@
+import { AddressZero } from '@ethersproject/constants'
 import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
 import { useContract, useProvider } from 'wagmi'
@@ -26,12 +28,16 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
 
-export const getBentoBoxContractConfig = (chainId: number) => ({
-  addressOrName: BENTOBOX_ADDRESS[chainId],
-  contractInterface: bentoBoxArtifact.abi,
+export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
+  addressOrName:
+    bentoBoxExports[chainId as unknown as keyof typeof bentoBoxExports]?.[0]?.contracts?.BentoBoxV1?.address ??
+    AddressZero,
+  contractInterface:
+    bentoBoxExports[chainId as unknown as keyof typeof bentoBoxExports]?.[0]?.contracts?.BentoBoxV1?.abi ??
+    bentoBoxArtifact.abi,
 })
 
-export function useBentoBoxContract(chainId: number) {
+export function useBentoBoxContract(chainId: number | undefined) {
   return useContract<BentoBoxV1>({
     ...getBentoBoxContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),

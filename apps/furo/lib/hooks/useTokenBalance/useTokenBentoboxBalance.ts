@@ -8,7 +8,7 @@ import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalanc
 import { useMemo } from 'react'
 import { useContract, useNetwork } from 'wagmi'
 
-import { useSingleContractMultipleData } from '../../lib/hooks/multicall'
+import { useSingleContractMultipleData } from '../multicall'
 
 export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
   const { activeChain } = useNetwork()

@@ -1,11 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
-import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { createToast, CurrencyInput } from 'components'
 import { useStreamBalance } from 'hooks'
 import { Stream } from 'lib'
@@ -27,13 +26,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName:
-        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-        AddressZero,
-      contractInterface:
-        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? [],
-    },
+    getFuroStreamContractConfig(activeChain?.id),
     'withdrawFromStream',
     {
       onSuccess() {
