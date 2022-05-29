@@ -4,8 +4,8 @@ import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.s
 import { useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
 
-import { ApprovalState } from './useApproveCallback'
 import { BENTOBOX_ADDRESS } from './useBentoBoxContract'
+import { ApprovalState } from './useERC20ApproveCallback'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({

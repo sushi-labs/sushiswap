@@ -6,6 +6,7 @@ import {
   useFetchListCallback as _useFetchListCallback,
   useInactiveListUrls as _useInactiveListUrls,
   useIsListActive as _useIsListActive,
+  useTokens as _useTokensCallback,
   useUnsupportedTokenList as _useUnsupportedTokenList,
 } from './hooks'
 import { createTokenListsSlice } from './slice'
@@ -21,6 +22,25 @@ type ParamsWithoutContext<T extends (...args: any) => any> = RemoveFirstFromTupl
 
 export interface TokenListsOptions {
   reducerPath?: string
+}
+
+export type TokenListHooks = {
+  useAllLists: (...args: ParamsWithoutContext<typeof _useAllLists>) => ReturnType<typeof _useAllLists>
+  useActiveListUrls: (...args: ParamsWithoutContext<typeof _useActiveListUrls>) => ReturnType<typeof _useActiveListUrls>
+  useInactiveListUrls: (
+    ...args: ParamsWithoutContext<typeof _useInactiveListUrls>
+  ) => ReturnType<typeof _useInactiveListUrls>
+  useCombinedActiveList: (
+    ...args: ParamsWithoutContext<typeof _useCombinedActiveList>
+  ) => ReturnType<typeof _useCombinedActiveList>
+  useUnsupportedTokenList: (
+    ...args: ParamsWithoutContext<typeof _useUnsupportedTokenList>
+  ) => ReturnType<typeof _useUnsupportedTokenList>
+  useIsListActive: (...args: ParamsWithoutContext<typeof _useIsListActive>) => ReturnType<typeof _useIsListActive>
+  useFetchListCallback: (
+    ...args: ParamsWithoutContext<typeof _useFetchListCallback>
+  ) => ReturnType<typeof _useFetchListCallback>
+  useTokens: (...args: ParamsWithoutContext<typeof _useTokensCallback>) => ReturnType<typeof _useTokensCallback>
 }
 
 // Inspired by RTK Query's createApi
@@ -42,8 +62,9 @@ export function createTokenLists(options?: TokenListsOptions) {
   const useIsListActive = (...args: ParamsWithoutContext<typeof _useIsListActive>) => _useIsListActive(context, ...args)
   const useFetchListCallback = (...args: ParamsWithoutContext<typeof _useFetchListCallback>) =>
     _useFetchListCallback(context, ...args)
+  const useTokens = (...args: ParamsWithoutContext<typeof _useTokensCallback>) => _useTokensCallback(context, ...args)
 
-  const hooks = {
+  const hooks: TokenListHooks = {
     useAllLists,
     useActiveListUrls,
     useInactiveListUrls,
@@ -51,6 +72,7 @@ export function createTokenLists(options?: TokenListsOptions) {
     useUnsupportedTokenList,
     useIsListActive,
     useFetchListCallback,
+    useTokens,
   }
 
   const Updater = createUpdater(context)

@@ -11,7 +11,8 @@ import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, Wallet } from '@sushiswap/wagmi'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { BigNumber, BigNumberish } from 'ethers'
-import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTokens, useTrade } from 'hooks'
+import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'hooks'
+import { useTokens } from 'lib/state/token-lists'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { SushiXSwap } from 'SushiXSwap'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -574,7 +575,7 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
         >
           Swap
         </Typography>
-        <Caption className="col-span-4 flex justify-center" theme={theme} />
+        <Caption className="flex justify-center col-span-4" theme={theme} />
         <div className="flex justify-end">
           <WidgetSettings theme={theme} />
         </div>
@@ -674,7 +675,7 @@ export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; b
   const isReady = blockTimestamps.filter((b) => !!b).length >= 2
 
   return (
-    <div className="mt-40 mb-60 space-y-12">
+    <div className="mt-40 space-y-12 mb-60">
       <_Swap theme={theme} />
     </div>
   )

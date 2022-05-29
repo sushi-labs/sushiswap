@@ -8,6 +8,7 @@ import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { getVestingContractConfig } from '@sushiswap/wagmi'
 import { createToast, CurrencyInput } from 'components'
 import { useFuroVestingContract, useVestingBalance } from 'hooks'
 import { Vesting } from 'lib'
@@ -29,13 +30,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const contract = useFuroVestingContract(activeChain?.id)
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName:
-        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-        AddressZero,
-      contractInterface:
-        furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? [],
-    },
+    getVestingContractConfig(activeChain?.id),
     'withdraw',
     {
       onSuccess() {

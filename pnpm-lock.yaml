@@ -1382,10 +1382,13 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/furo': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/sushixswap': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@typechain/ethers-v5': ^10.0.0
@@ -1412,8 +1415,11 @@ importers:
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/format': link:../format
+      '@sushiswap/furo': link:../../protocols/furo
       '@sushiswap/hooks': link:../hooks
       '@sushiswap/math': link:../math
+      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/ui': link:../ui
       '@uniswap/v3-periphery': 1.4.1
     devDependencies:

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 
 import { TokenListsContext } from '../context'
-import { WithTokenListsState } from '../types'
+import { WithTokenListsState, TokenListState } from '../types'
 
 export function useAllLists(context: TokenListsContext) {
   const { reducerPath } = context
