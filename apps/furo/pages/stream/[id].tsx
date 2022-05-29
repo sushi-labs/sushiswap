@@ -7,7 +7,7 @@ import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
 import { ProgressBarCard } from 'components/ProgressBarCard'
-import { Stream, StreamRepresentation, TransactionRepresentation } from 'features'
+import { Stream } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import FuroTimer from 'features/FuroTimer'
 import HistoryPopover from 'features/HistoryPopover'
@@ -16,34 +16,39 @@ import WithdrawModal from 'features/stream/WithdrawModal'
 import StreamDetailsPopover from 'features/StreamDetailsPopover'
 import TransferStreamModal from 'features/TransferStreamModal'
 import UpdateStreamModal from 'features/UpdateStreamModal'
-import { getStream, getStreamTransactions } from 'graph/graph-client'
-import { useStreamBalance } from 'hooks'
+import { getRebase, getStream, getStreamTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
+
+import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
+
 interface Props {
   fallback?: {
-    stream?: StreamRepresentation
-    transactions?: TransactionRepresentation[]
+    stream?: StreamDTO
+    transactions?: TransactionDTO[]
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
+  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+
+  const stream = (await getStream(chainId as string, id as string)) as StreamDTO
   return {
     props: {
       fallback: {
-        [`/furo/api/stream/${query.chainId}/${query.id}`]: (await getStream(
-          query.chainId,
-          query.id
-        )) as StreamRepresentation,
-        [`/furo/api/transactions/${query.chainId}/${query.id}`]: (await getStreamTransactions(
-          query.chainId,
-          query.id
-        )) as TransactionRepresentation[],
+        [`/furo/api/stream/${chainId}/${id}`]: stream,
+        [`/furo/api/transactions/${chainId}/${id}`]: (await getStreamTransactions(
+          chainId as string,
+          id as string
+        )) as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: (await getRebase(
+          chainId as string,
+          stream.token.id
+        )) as RebaseDTO,
       },
     },
   }
@@ -71,29 +76,27 @@ const _Streams: FC = () => {
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
-  const { data: transactions } = useSWR(`/furo/api/transactions/${chainId}/${id}`, (url) =>
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
-  const { data: streamRepresentation } = useSWR(`/furo/api/stream/${chainId}/${id}`, (url) =>
+  const { data: furo } = useSWR<StreamDTO>(`/furo/api/stream/${chainId}/${id}`, (url) =>
     fetch(url).then((response) => response.json())
+  )
+
+  const { data: rebase } = useSWR<RebaseDTO>(
+    () => (chainId && furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
+    (url) => fetch(url).then((response) => response.json())
   )
 
   const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
+
   const stream = useMemo(
-    () => (streamRepresentation ? new Stream({ chainId, stream: streamRepresentation }) : undefined),
-    [chainId, streamRepresentation]
+    () => (chainId && furo && rebase ? new Stream({ chainId, furo, rebase }) : undefined),
+    [chainId, furo, rebase]
   )
 
-  // Sync balance to Stream entity
-  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
-  if (stream && balance) {
-    stream.balance = balance
-  }
-
   if (connecting || reconnecting) return <Overlay />
-
-  // console.log({ streamRepresentation, balance }, stream?.streamedPercentage?.toSignificant(4))
 
   return (
     <Layout

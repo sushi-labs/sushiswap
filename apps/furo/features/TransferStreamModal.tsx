@@ -4,9 +4,10 @@ import { ChainId } from '@sushiswap/chain'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dialog, Dots, Form, Input, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
-import { Stream } from 'features/context/Stream'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useEnsAddress } from 'wagmi'
+
+import { Stream } from './context'
 
 interface TransferStreamModalProps {
   stream?: Stream

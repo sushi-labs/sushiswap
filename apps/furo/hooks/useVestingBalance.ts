@@ -41,8 +41,8 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
       return undefined
 
     return Amount.fromShare(token, JSBI.BigInt(balance), {
-      base: JSBI.BigInt(rebase[0]),
-      elastic: JSBI.BigInt(rebase[1]),
+      base: JSBI.BigInt(rebase[1]),
+      elastic: JSBI.BigInt(rebase[0]),
     })
   }, [balanceError, rebaseError, balanceLoading, rebaseLoading, balance, vestingId, token, rebase])
 }

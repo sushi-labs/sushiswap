@@ -10,15 +10,15 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'features/actions'
-import { createStreamSchema } from 'features/stream/CreateForm/schema'
-import { StreamAmountDetails } from 'features/stream/CreateForm/StreamAmountDetails'
-import { CreateStreamFormData, CreateStreamFormDataValidated } from 'features/stream/CreateForm/types'
 import { useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { GeneralDetailsSection } from './GeneralDetailsSection'
+import { createStreamSchema } from './schema'
+import { StreamAmountDetails } from './StreamAmountDetails'
+import { CreateStreamFormData, CreateStreamFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
   const { data: account } = useAccount()

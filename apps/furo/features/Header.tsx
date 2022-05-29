@@ -18,13 +18,13 @@ const Header: FC = () => {
     <div
       className={classNames(router.pathname === '/' ? '' : 'border-b border-slate-800 bg-slate-900', 'relative z-10')}
     >
-      <Container maxWidth="5xl" className="mx-auto px-4">
+      <Container maxWidth="5xl" className="px-4 mx-auto">
         <App.Header
           className="h-[54px] z-10"
           brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
           nav={<></>}
         >
-          <div className="flex gap-2 items-center whitespace-nowrap">
+          <div className="flex items-center gap-2 whitespace-nowrap">
             <Wallet.Button className="!h-[36px]" />
             {account?.address && isMounted && isConnected && (
               <Menu

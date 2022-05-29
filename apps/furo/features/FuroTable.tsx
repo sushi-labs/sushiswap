@@ -1,8 +1,9 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { AddressZero } from '@ethersproject/constants'
+import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
-import { StreamRepresentation, Vesting, VestingRepresentation } from 'features/context'
+import { Vesting } from 'features/context'
 import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -10,6 +11,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { FuroStatus, Stream } from './context'
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,
@@ -20,8 +22,9 @@ interface FuroTableProps {
   balances: Record<string, Amount<Token>> | undefined
   globalFilter: any
   setGlobalFilter: any
-  streams: StreamRepresentation[]
-  vestings: VestingRepresentation[]
+  streams: StreamDTO[]
+  vestings: VestingDTO[]
+  rebases: { base: string; elastic: string; id: string }[] | undefined
   type: FuroTableType
   placeholder: string
   loading: boolean
@@ -134,7 +137,7 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
 ]
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
-  const { streams, vestings, placeholder, loading } = props
+  const { streams, vestings, rebases, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
@@ -143,15 +146,38 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
 
   const router = useRouter()
   const { activeChain } = useNetwork()
-  const data = useMemo(
-    () =>
-      activeChain?.id
-        ? streams
-            ?.map((stream) => new Stream({ stream, chainId: activeChain.id }))
-            .concat(vestings?.map((vesting) => new Vesting({ vesting, chainId: activeChain.id }))) ?? []
-        : [],
-    [activeChain?.id, streams, vestings]
-  )
+  const data = useMemo(() => {
+    console.log(streams, vestings, rebases)
+    if (!activeChain || !streams || !vestings || !rebases) return []
+    return streams
+      .map(
+        (stream) =>
+          new Stream({
+            chainId: activeChain.id,
+            furo: stream,
+            rebase: rebases.find((rebase) =>
+              stream.token.id === AddressZero
+                ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                : rebase.id === stream.token.id
+            ) as Rebase,
+          })
+      )
+      .concat(
+        vestings?.map(
+          (vesting) =>
+            new Vesting({
+              furo: vesting,
+              chainId: activeChain.id,
+              rebase: rebases.find((rebase) =>
+                vesting.token.id === AddressZero
+                  ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                  : rebase.id === vesting.token.id
+              ) as Rebase,
+            })
+        )
+      )
+    //rebase: rebases.find(rebase => rebase.id === vesting.token) as { base: string; elastic: string }
+  }, [activeChain, streams, vestings, rebases])
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns({ ...props, chainId: activeChain?.id }),
@@ -170,13 +196,13 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     onGlobalFilterChange: props.setGlobalFilter,
   })
 
-  useMemo(() => {
-    data.forEach((stream) => {
-      if (stream instanceof Stream && !!props.balances?.[stream.id]) {
-        stream.balance = props.balances[stream.id]
-      }
-    }, [])
-  }, [data, props.balances])
+  // useMemo(() => {
+  //   data.forEach((stream) => {
+  //     if (stream instanceof Stream && !!props.balances?.[stream.id]) {
+  //       stream.balance = props.balances[stream.id]
+  //     }
+  //   }, [])
+  // }, [data, props.balances])
 
   return (
     <Table.container>

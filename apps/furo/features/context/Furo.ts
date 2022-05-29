@@ -4,8 +4,7 @@ import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
-import { FuroRepresentation, UserRepresentation } from './representations'
-
+import { type Rebase, type Stream as StreamDTO, type User as UserDTO } from '.graphclient'
 export abstract class Furo {
   public _balance: Amount<Token>
   public _withdrawnAmount: Amount<Token>
@@ -17,16 +16,23 @@ export abstract class Furo {
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
-  public readonly recipient: UserRepresentation
-  public readonly createdBy: UserRepresentation
+  public readonly recipient: UserDTO
+  public readonly createdBy: UserDTO
   public readonly token: Token
+  public readonly rebase: Pick<Rebase, 'base' | 'elastic'>
   public readonly txHash: string
 
-  public constructor({ furo, chainId }: { furo: FuroRepresentation; chainId: ChainId }) {
+  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: Rebase }) {
+    this.rebase = {
+      base: JSBI.BigInt(Math.round(parseInt(rebase.base))),
+      elastic: JSBI.BigInt(Math.round(parseInt(rebase.elastic))),
+    }
     this.id = furo.id
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
-    this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.totalAmount))
+    this.amount = Amount.fromShare(this.token, JSBI.BigInt(furo.totalAmount), this.rebase)
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
@@ -34,7 +40,7 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
-    this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
+    this._withdrawnAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.withdrawnAmount), this.rebase)
     this._balance = Amount.fromRawAmount(this.token, 0)
   }
 

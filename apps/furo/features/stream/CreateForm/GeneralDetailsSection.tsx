@@ -1,6 +1,7 @@
 import { Form, Input } from '@sushiswap/ui'
-import { CreateStreamFormData } from 'features/stream/CreateForm/types'
 import { Controller, useFormContext } from 'react-hook-form'
+
+import { CreateStreamFormData } from './types'
 
 export const GeneralDetailsSection = () => {
   const { control, watch } = useFormContext<CreateStreamFormData>()
@@ -12,7 +13,7 @@ export const GeneralDetailsSection = () => {
       title="General Details"
       description="Furo allows for creating a vested stream using your Bentobox balance."
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Form.Control label="Start date">
           <Controller
             control={control}

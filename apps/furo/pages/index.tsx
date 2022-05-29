@@ -18,10 +18,13 @@ import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { BalanceChartHoverEnum } from './stream/[id]'
 
 const now = new Date().getTime()
+
 const exampleStream = new Stream({
   chainId: ChainId.ETHEREUM,
-  stream: {
+  furo: {
     id: '0',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
     totalAmount: '119994000000',
@@ -39,7 +42,13 @@ const exampleStream = new Stream({
     },
     txHash: '',
   },
+  rebase: {
+    base: '1',
+    elastic: '1',
+  },
 })
+
+exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
 export default function Index() {
   const router = useRouter()
@@ -59,8 +68,6 @@ export default function Index() {
       void router.push('/dashboard')
     },
   })
-
-  exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
   return (
     <Layout
@@ -83,40 +90,7 @@ export default function Index() {
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
-            {isMounted && account?.address ? (
-              <>
-                <div>
-                  <Link passHref={true} href="/stream/create">
-                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-                      Pay Someone
-                    </Button>
-                  </Link>
-                </div>
-                <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
-                  <Link passHref={true} href="/dashboard">
-                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-                      View My Earnings
-                    </Button>
-                  </Link>
-                  <div className="px-6">
-                    <Account.Name address={account?.address}>
-                      {({ name, isEns }) => (
-                        <Typography
-                          as="a"
-                          target="_blank"
-                          href={getExplorerLink(activeChain?.id, account?.address, 'address')}
-                          variant="sm"
-                          weight={700}
-                          className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
-                        >
-                          {isEns ? name : name ? shortenAddress(name) : ''}
-                        </Typography>
-                      )}
-                    </Account.Name>
-                  </div>
-                </div>
-              </>
-            ) : (
+            {!isMounted || !activeChain || !account ? (
               <>
                 <Wallet.Button
                   color="blue"
@@ -132,6 +106,39 @@ export default function Index() {
                 >
                   View My Earnings
                 </Wallet.Button>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Link passHref={true} href="/stream/create">
+                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                      Pay Someone
+                    </Button>
+                  </Link>
+                </div>
+                <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
+                  <Link passHref={true} href="/dashboard">
+                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                      View My Earnings
+                    </Button>
+                  </Link>
+                  <div className="px-6">
+                    <Account.Name address={account.address}>
+                      {({ name, isEns }) => (
+                        <Typography
+                          as="a"
+                          target="_blank"
+                          href={getExplorerLink(activeChain.id, account?.address ?? '', 'address')}
+                          variant="sm"
+                          weight={700}
+                          className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
+                        >
+                          {isEns ? name : name ? shortenAddress(name) : ''}
+                        </Typography>
+                      )}
+                    </Account.Name>
+                  </div>
+                </div>
               </>
             )}
           </div>

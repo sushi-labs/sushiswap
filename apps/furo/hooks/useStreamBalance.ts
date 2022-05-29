@@ -5,8 +5,7 @@ import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
 import { BENTOBOX_ADDRESS, useBentoBoxContract } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
-import { ErrorState, LoadingState, SuccessState } from 'hooks/types'
-import { useFuroStreamContract } from 'hooks/useFuroStreamContract'
+import { ErrorState, LoadingState, SuccessState, useFuroStreamContract } from 'hooks'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { useBlockNumber, useContractRead } from 'wagmi'
@@ -54,8 +53,8 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
       return undefined
 
     return Amount.fromShare(token, JSBI.BigInt(balance[1]), {
-      base: JSBI.BigInt(rebase[0]),
-      elastic: JSBI.BigInt(rebase[1]),
+      elastic: JSBI.BigInt(rebase[0]),
+      base: JSBI.BigInt(rebase[1]),
     })
   }, [balanceError, rebaseError, balanceLoading, rebaseLoading, balance, streamId, token, rebase])
 }
@@ -109,8 +108,8 @@ export const useStreamBalances: UseStreamBalances = (chainId, streamIds, tokens,
   return useMemo(() => {
     const data = streamIds.reduce<Record<string, Amount<Token>>>((acc, streamId, index) => {
       const balance = balances?.[index]?.result?.[1]
-      const base = totals?.[index]?.result?.[0]
-      const elastic = totals?.[index]?.result?.[1]
+      const elastic = totals?.[index]?.result?.[0]
+      const base = totals?.[index]?.result?.[1]
 
       acc[streamId[0]] =
         balance && base && elastic

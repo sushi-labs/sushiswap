@@ -3,9 +3,10 @@ import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { NotepadIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { FuroStatus, Stream, Vesting } from 'features/context'
 import { getExplorerLink } from 'functions'
 import { FC, useState } from 'react'
+
+import { FuroStatus, Stream, Vesting } from './context'
 
 interface StreamTimerState {
   days: string

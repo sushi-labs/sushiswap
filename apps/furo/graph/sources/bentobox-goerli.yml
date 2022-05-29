@@ -1,0 +1,11 @@
+name: bentobox_goerli
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+transforms:
+  - prefix:
+      value: GOERLI_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_

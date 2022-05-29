@@ -4,9 +4,10 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { createToast } from 'components'
-import { Stream } from 'features/context/Stream'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
+
+import { Stream } from './context'
 
 interface CancelStreamModalProps {
   stream?: Stream

@@ -3,11 +3,12 @@ import { Token } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from 'features/TokenSelector'
-import { CreateVestingFormData } from 'features/vesting/CreateForm/types'
 import { useTokenBentoboxBalance, useTokens, useWalletBalance } from 'hooks'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
+
+import { CreateVestingFormData } from './types'
 
 export const GeneralDetailsSection = () => {
   const isMounted = useIsMounted()
@@ -102,7 +103,7 @@ export const GeneralDetailsSection = () => {
           name="fundSource"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <div className="flex flex-col">
-              <div className="flex gap-3 items-center">
+              <div className="flex items-center gap-3">
                 {!currency?.isNative && (
                   <div
                     onClick={() => onChange(FundSource.BENTOBOX)}
@@ -130,7 +131,7 @@ export const GeneralDetailsSection = () => {
                       </Typography>
                     </div>
                     {value === FundSource.BENTOBOX && (
-                      <div className="absolute top-3 right-3 w-5 h-5">
+                      <div className="absolute w-5 h-5 top-3 right-3">
                         <CheckCircleIcon className="text-green/70" />
                       </div>
                     )}
@@ -160,7 +161,7 @@ export const GeneralDetailsSection = () => {
                     </Typography>
                   </div>
                   {value === FundSource.WALLET && (
-                    <div className="absolute top-3 right-3 w-5 h-5">
+                    <div className="absolute w-5 h-5 top-3 right-3">
                       <CheckCircleIcon className="text-green/70" />
                     </div>
                   )}

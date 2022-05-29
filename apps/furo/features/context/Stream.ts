@@ -3,22 +3,23 @@ import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, Percent } from '@sushiswap/math'
 
 import { Furo } from './Furo'
-import { StreamRepresentation } from './representations'
+import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
-  public constructor({ chainId, stream }: { chainId: ChainId; stream: StreamRepresentation }) {
-    super({ chainId, furo: stream })
+  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
+    super({ chainId, furo, rebase })
   }
 
-  public get balance2(): Amount<Token> {
+  public get balance(): Amount<Token> {
+    if (!this.isStarted) return this._balance
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
     return Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))
   }
 
   public get streamedAmount(): Amount<Token> | undefined {
-    if (!this.isStarted) return Amount.fromRawAmount(this.token, '0')
-    return this.balance.add(this._withdrawnAmount)
+    if (!this.isStarted) return this._balance
+    return this.balance
   }
 
   public get streamedPercentage(): Percent | undefined {

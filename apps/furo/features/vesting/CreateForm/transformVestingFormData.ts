@@ -1,5 +1,6 @@
 import { JSBI } from '@sushiswap/math'
-import { CreateVestingFormDataTransformed, CreateVestingFormDataValidated } from 'features/vesting/CreateForm/types'
+
+import { CreateVestingFormDataTransformed, CreateVestingFormDataValidated } from './types'
 
 type TransformVestingFormData = (x: CreateVestingFormDataValidated) => CreateVestingFormDataTransformed
 

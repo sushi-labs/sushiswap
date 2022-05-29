@@ -6,13 +6,7 @@ import { useWalletState } from '@sushiswap/wagmi'
 import { BackgroundVector, ProgressBarCard } from 'components'
 import Layout from 'components/Layout'
 import { Overlay } from 'components/Overlay'
-import {
-  createScheduleRepresentation,
-  FuroStatus,
-  TransactionRepresentation,
-  Vesting,
-  VestingRepresentation,
-} from 'features'
+import { createScheduleRepresentation, FuroStatus, Vesting } from 'features'
 import CancelStreamModal from 'features/CancelStreamModal'
 import HistoryPopover from 'features/HistoryPopover'
 import StreamDetailsPopover from 'features/StreamDetailsPopover'
@@ -21,8 +15,7 @@ import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
 import SchedulePopover from 'features/vesting/SchedulePopover'
 import { VestingChart } from 'features/vesting/VestingChart'
 import WithdrawModal from 'features/vesting/WithdrawModal'
-import { getVesting, getVestingTransactions } from 'graph/graph-client'
-import { useVestingBalance } from 'hooks'
+import { getRebase, getVesting, getVestingTransactions } from 'graph/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -30,23 +23,31 @@ import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
 
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
+
 interface Props {
-  fallback?: Record<string, any>
+  fallback?: {
+    vesting?: VestingDTO
+    transactions?: TransactionDTO[]
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  const { chainId, id } = query
+  const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
   return {
     props: {
       fallback: {
-        [`/api/vesting/${query.chainId}/${query.id}`]: (await getVesting(
-          query.chainId,
-          query.id
-        )) as VestingRepresentation,
-        [`/api/transactions/${query.chainId}/${query.id}`]: (await getVestingTransactions(
-          query.chainId,
-          query.id
-        )) as TransactionRepresentation[],
+        [`/furo/api/vesting/${chainId}/${id}`]: vesting,
+        [`/furo/api/transactions/${chainId}/${id}`]: (await getVestingTransactions(
+          chainId as string,
+          id as string
+        )) as TransactionDTO[],
+        [`/furo/api/rebase/${query.chainId}/${vesting.token.id}`]: (await getRebase(
+          chainId as string,
+          vesting.token.id
+        )) as Rebase,
       },
     },
   }
@@ -68,12 +69,15 @@ const _VestingPage: FC = () => {
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
-  const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
-  const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
-
+  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`)
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`)
+  const { data: rebase } = useSWR<Rebase>(
+    () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
+    (url) => fetch(url).then((response) => response.json())
+  )
   const vesting = useMemo(
-    () => (vestingRepresentation ? new Vesting({ chainId, vesting: vestingRepresentation }) : undefined),
-    [chainId, vestingRepresentation]
+    () => (chainId && furo && rebase ? new Vesting({ chainId, furo, rebase }) : undefined),
+    [chainId, furo, rebase]
   )
 
   const schedule = vesting
@@ -89,12 +93,10 @@ const _VestingPage: FC = () => {
     : undefined
 
   // Sync balance to Vesting entity
-  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
-  if (vesting && balance) {
-    vesting.balance = balance
-  }
-
-  console.log({ balance: balance?.toExact(), balance2: vesting?.balance2.toExact() })
+  // const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
+  // if (vesting && balance) {
+  //   vesting.balance = balance
+  // }
 
   if (connecting || reconnecting) return <Overlay />
 

@@ -4,14 +4,16 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
+import { Streams, Vestings } from 'types'
 
-import { Streams } from '../../api/streams/[chainId]/[address]'
-import { Vestings } from '../../api/vestings/[chainId]/[address]'
+import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
-  fallback?: Record<string, any>
+  fallback?: {
+    vesting?: StreamDTO
+    transactions?: TransactionDTO[]
+  }
 }
-
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   if (typeof query.chainId !== 'string' || typeof query.address !== 'string') return { props: {} }
 

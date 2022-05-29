@@ -1,11 +1,13 @@
 import { HistoryIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { Transaction, TransactionRepresentation } from 'features/context'
 import { FC, memo, useMemo } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { Transaction } from './context'
+import { type Transaction as TransactionDTO } from '.graphclient'
+
 interface Props {
-  transactionRepresentations?: TransactionRepresentation[]
+  transactionRepresentations?: TransactionDTO[]
 }
 
 const HistoryPopover: FC<Props> = ({ transactionRepresentations }) => {
@@ -68,7 +70,7 @@ const HistoryPopoverTransaction: FC<{ transaction: Transaction }> = memo(({ tran
   return (
     <div key={transaction.id} className="py-2 grid grid-cols-[80px_80px_100px] gap-2 items-center">
       <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
-        {transaction.status.toLowerCase()}
+        {transaction?.status?.toLowerCase()}
       </Typography>
       <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
         {format(new Date(transaction.timestamp), 'dd MMM yyyy')}

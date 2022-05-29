@@ -1,10 +1,10 @@
-name: furostream_kovan
+name: bentobox_ethereum
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/furostream-kovan
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum
 transforms:
   - prefix:
-      value: KOVAN_STREAM_
+      value: ETHEREUM_BENTOBOX_
       includeRootOperations: true
       includeTypes: false
       ignore: 

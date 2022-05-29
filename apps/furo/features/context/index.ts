@@ -1,6 +1,5 @@
 export * from './enums'
 export * from './Furo'
-export * from './representations'
 export * from './Stream'
 export * from './Transaction'
 export * from './Vesting'

@@ -2,12 +2,13 @@ import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { createScheduleRepresentation } from 'features/vesting'
-import CreateFormButtons from 'features/vesting/CreateForm/CreateFormButtons'
-import { CreateVestingFormDataTransformed } from 'features/vesting/CreateForm/types'
 import { getExplorerLink } from 'functions'
 import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
+
+import { createScheduleRepresentation } from '../createScheduleRepresentation'
+import CreateFormButtons from './CreateFormButtons'
+import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string

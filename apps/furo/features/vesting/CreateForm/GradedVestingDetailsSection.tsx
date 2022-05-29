@@ -56,7 +56,7 @@ export const GradedVestingDetailsSection = () => {
           )}
         />
       </Form.Control>
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col gap-6 md:flex-row">
         <Form.Control label="Amount of Periods">
           <Controller
             control={control}
@@ -101,7 +101,7 @@ export const GradedVestingDetailsSection = () => {
             {format(endDate, 'dd MMM yyyy hh:maaa')}
           </Typography>
         ) : (
-          <Typography variant="sm" className="text-slate-500 italic">
+          <Typography variant="sm" className="italic text-slate-500">
             Not available
           </Typography>
         )}

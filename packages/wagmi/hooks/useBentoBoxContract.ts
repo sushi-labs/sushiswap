@@ -1,5 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
+import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
 import { useContract, useProvider } from 'wagmi'
 
@@ -28,7 +29,7 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 }
 
 export function useBentoBoxContract(chainId: number) {
-  return useContract({
+  return useContract<BentoBoxV1>({
     addressOrName: BENTOBOX_ADDRESS[chainId],
     contractInterface: bentoBoxArtifact.abi,
     signerOrProvider: useProvider({ chainId }),

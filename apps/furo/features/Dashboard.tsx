@@ -3,8 +3,6 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Switch, Typography } from '@sushiswap/ui'
-import { toToken } from 'features/context/mapper'
-import { FuroTable, FuroTableType } from 'features/FuroTable'
 import { getExplorerLink } from 'functions'
 import { useChain, useStreamBalances } from 'hooks'
 import Link from 'next/link'
@@ -13,6 +11,9 @@ import useSWR from 'swr'
 
 import { Streams } from '../pages/api/streams/[chainId]/[address]'
 import { Vestings } from '../pages/api/vestings/[chainId]/[address]'
+import { toToken } from './context/mapper'
+import { FuroTable, FuroTableType } from './FuroTable'
+import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -23,12 +24,14 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const chain = useChain(chainId)
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
-  const { data: streams, isValidating } = useSWR<Streams>(`/furo/api/streams/${chainId}/${address}`, fetcher)
-  const { data: vestings, isValidating: isValidating2 } = useSWR<Vestings>(
+  const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
+    `/furo/api/streams/${chainId}/${address}`,
+    fetcher
+  )
+  const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
     `/furo/api/vestings/${chainId}/${address}`,
     fetcher
   )
-
   const [ids, tokens] = useMemo(() => {
     const ids: [string][] = []
     const tokens: Token[] = []
@@ -46,9 +49,22 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
     return [ids, tokens]
   }, [chainId, streams?.incomingStreams, streams?.outgoingStreams])
 
+  const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
+    () =>
+      streams
+        ? [
+            `/furo/api/rebases/${chainId}/${tokens.map((token) => token.address).join('/')}`,
+            tokens.map((token) => token.address),
+          ]
+        : null,
+    fetcher
+  )
+
   const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {
     blocksPerFetch: 3,
   })
+
+  console.log('REBASES', rebases)
 
   return (
     <div className="flex flex-col h-full gap-12 pt-10">
@@ -97,9 +113,10 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             balances={balancesData}
             globalFilter={showActiveIncoming}
             setGlobalFilter={setShowActiveIncoming}
-            loading={isValidating || balancesLoading}
+            loading={isValidatingStreams || isValidatingRebases || balancesLoading}
             streams={streams?.incomingStreams ?? []}
             vestings={vestings?.incomingVestings ?? []}
+            rebases={rebases}
             type={FuroTableType.INCOMING}
             placeholder="No incoming streams found"
           />
@@ -127,9 +144,10 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             balances={balancesData}
             globalFilter={showActiveOutgoing}
             setGlobalFilter={setShowActiveOutgoing}
-            loading={isValidating2 || balancesLoading}
+            loading={isValidatingVestings || isValidatingRebases || balancesLoading}
             streams={streams?.outgoingStreams ?? []}
             vestings={vestings?.outgoingVestings ?? []}
+            rebases={rebases}
             type={FuroTableType.OUTGOING}
             placeholder="No outgoing streams found"
           />

@@ -4,7 +4,7 @@ import { JSBI, minimum, Percent } from '@sushiswap/math'
 
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
-import { VestingRepresentation } from './representations'
+import { type Vesting as VestingDTO, Rebase } from '.graphclient'
 
 export class Vesting extends Furo {
   public readonly steps: number
@@ -14,11 +14,11 @@ export class Vesting extends Furo {
   public readonly stepDuration: number
   public readonly vestingType: VestingType
 
-  public constructor({ vesting, chainId }: { vesting: VestingRepresentation; chainId: ChainId }) {
-    super({ furo: vesting, chainId })
+  public constructor({ chainId, furo: vesting, rebase }: { chainId: ChainId; furo: VestingDTO; rebase: Rebase }) {
+    super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
-    this.cliffAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.cliffAmount))
-    this.stepAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(vesting.stepAmount))
+    this.cliffAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.cliffAmount), this.rebase)
+    this.stepAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.stepAmount), this.rebase)
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
     if (this.stepDuration && this.cliffDuration) {
@@ -32,7 +32,7 @@ export class Vesting extends Furo {
     }
   }
 
-  public get balance2(): Amount<Token> {
+  public get balance(): Amount<Token> {
     const timeAfterCliff = JSBI.add(JSBI.BigInt(this.startTime.getTime()), JSBI.BigInt(this.cliffDuration))
 
     const now = JSBI.BigInt(Date.now())

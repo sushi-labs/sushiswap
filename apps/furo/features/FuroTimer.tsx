@@ -2,9 +2,7 @@ import { useInterval } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
-import { Vesting } from './context'
-import { FuroStatus } from './context/enums'
-import { Stream } from './context/Stream'
+import { FuroStatus, Stream, Vesting } from './context'
 
 interface FuroTimerState {
   days: string

@@ -15,7 +15,7 @@
     "@sushiswap/sushi-data": "1.0.26",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "next": "12.1.5",
+    "next": "^12.1.6",
     "numeral": "^2.0.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

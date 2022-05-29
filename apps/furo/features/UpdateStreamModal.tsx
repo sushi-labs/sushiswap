@@ -1,4 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { ContractInterface } from '@ethersproject/contracts'
+import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
@@ -6,11 +8,10 @@ import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { Button, classNames, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import { createToast, CurrencyInput } from 'components'
-import { BigNumber } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils'
-import { Stream } from 'features/context/Stream'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
+
+import { Stream } from './context'
 
 interface UpdateStreamModalProps {
   stream?: Stream

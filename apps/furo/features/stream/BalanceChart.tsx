@@ -144,7 +144,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             dy={-50}
             className="uppercase text-slate-200"
           >
-            Available
+            Streamed
           </text>
           <text
             textAnchor="middle"
@@ -179,7 +179,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             className="text-slate-500"
             fontWeight={700}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0.000'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0.000'} {stream?.token.symbol}
           </text>
         </>
       )}
@@ -232,7 +232,7 @@ const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.NONE, s
             className="text-slate-500"
             fontWeight={700}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol}
           </text>
         </>
       )}

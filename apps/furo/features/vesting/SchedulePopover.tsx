@@ -3,9 +3,10 @@ import { shortenAddress } from '@sushiswap/format'
 import { CalendarIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { PeriodType, Vesting, VestingType } from 'features/context'
-import { Period, Schedule } from 'features/vesting/createScheduleRepresentation'
 import { getExplorerLink } from 'functions'
 import { FC, memo } from 'react'
+
+import { Period, Schedule } from './createScheduleRepresentation'
 
 interface Props {
   vesting?: Vesting
@@ -18,7 +19,7 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
   return (
     <Popover
       button={
-        <div className="hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 flex items-center gap-2 px-5 shadow-md cursor-pointer bg-slate-700 rounded-xl h-11">
+        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
           <CalendarIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Schedule
@@ -28,7 +29,7 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
       panel={
         <div className="z-10 shadow-md overflow-hidden rounded-xl flex flex-col max-w-[530px] bg-slate-800">
           <div className="p-4 bg-slate-700">
-            <div className="flex gap-10 items-start">
+            <div className="flex items-start gap-10">
               <Typography variant="xs" className="!leading-5 text-slate-300">
                 This stream to{' '}
                 <span className="font-bold text-slate-200 hover:text-blue">
@@ -63,16 +64,16 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
               </a>
             </div>
             <div className="mt-6 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider" variant="xxs">
+              <Typography weight={700} className="tracking-wider capitalize text-slate-400" variant="xxs">
                 Schedule
               </Typography>
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider" variant="xxs">
+              <Typography weight={700} className="tracking-wider capitalize text-slate-400" variant="xxs">
                 Date
               </Typography>
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider text-right" variant="xxs">
+              <Typography weight={700} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
                 Amount
               </Typography>
-              <Typography weight={700} className="capitalize text-slate-400 tracking-wider text-right" variant="xxs">
+              <Typography weight={700} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
                 Total
               </Typography>
             </div>
@@ -97,16 +98,16 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
 const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ vesting, period }) => {
   return (
     <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-      <Typography className="capitalize text-slate-200 tracking-wider" weight={700} variant="xxs">
+      <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
         {period.type.toLowerCase()}
       </Typography>
-      <Typography variant="xs" className="text-slate-200 flex flex-col text-left" weight={500}>
+      <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
         {format(period.date, 'dd MMM yyyy')}
         <Typography as="span" variant="xxs" className="text-slate-500">
           {format(period.date, 'hh:maaa')}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
         {period.type === PeriodType.START
           ? `0`
           : period.type === PeriodType.CLIFF
@@ -121,7 +122,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
           {period?.amount.currency?.symbol}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="text-slate-200 flex flex-col text-right" weight={700}>
+      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
         <span>
           {period?.amount.toSignificant(6)} <span className="text-slate-500">/ {vesting?.amount.toSignificant(6)}</span>
         </span>
