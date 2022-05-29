@@ -15,7 +15,4 @@ export default withTranspileModules({
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    dirs: ['components', 'hooks', 'lib', 'pages'],
-  },
 })

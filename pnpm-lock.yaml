@@ -1043,6 +1043,8 @@ importers:
 
   packages/graph-client:
     specifiers:
+      '@graphprotocol/client-auto-pagination': 0.0.6
+      '@graphprotocol/client-block-tracking': 0.0.4
       '@graphprotocol/client-cli': 0.0.11
       '@graphql-mesh/cache-localforage': 0.6.6
       '@graphql-mesh/cross-helpers': 0.1.5
@@ -1065,6 +1067,8 @@ importers:
       tsup: ^6.0.1
       typescript: ^4.0.0
     dependencies:
+      '@graphprotocol/client-auto-pagination': 0.0.6_graphql@16.5.0
+      '@graphprotocol/client-block-tracking': 0.0.4_graphql@16.5.0
       '@graphql-mesh/cache-localforage': 0.6.6_graphql@16.5.0
       '@graphql-mesh/cross-helpers': 0.1.5
       '@graphql-mesh/graphql': 0.26.0_graphql@16.5.0
@@ -3206,7 +3210,6 @@ packages:
       graphql: 16.5.0
       lodash: 4.17.21
       tslib: 2.4.0
-    dev: true
 
   /@graphprotocol/client-block-tracking/0.0.3_graphql@16.5.0:
     resolution: {integrity: sha512-ajRdLOv04noUXb7mxjNYFq3hDQ8p64FM8+mp6uPNV1HqjzQMeQ/LsxR1MCZuVCu5ykrRbk8aLzmRoRZWf4RbYQ==}
@@ -3228,7 +3231,6 @@ packages:
       '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       graphql: 16.5.0
       tslib: 2.4.0
-    dev: true
 
   /@graphprotocol/client-cli/0.0.10_q6qi6dame5k4ytdcjqikteqque:
     resolution: {integrity: sha512-mXsSvKSMUxGG/Y8IDJBzgJfMN5uROMw3GDDbgOKpA/kOQQk+aTPFQ9uRKel7TOXih2pNerzjOoi8sFv82T+Xqg==}
@@ -3288,8 +3290,8 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       '@graphql-codegen/plugin-helpers': 2.4.2_graphql@16.5.0
-      '@graphql-tools/schema': 8.3.12_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
+      '@graphql-tools/schema': 8.3.13_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       graphql: 16.5.0
       tslib: 2.3.1
     dev: true
@@ -3299,7 +3301,7 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       change-case-all: 1.0.14
       common-tags: 1.8.2
       graphql: 16.5.0
@@ -3314,7 +3316,7 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       '@graphql-codegen/plugin-helpers': 2.4.2_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       graphql: 16.5.0
       tslib: 2.3.1
     dev: true
@@ -4402,16 +4404,6 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /@graphql-tools/merge/8.2.12_graphql@16.5.0:
-    resolution: {integrity: sha512-0b07QoAfINuuoJ59gupOBe5gWy+WVjEO9ZbbpPD98nuLn5aNxI12wj1SvQlACFE8cVAPiRxrO+03QjyXXPDu8A==}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-    dependencies:
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
-      graphql: 16.5.0
-      tslib: 2.4.0
-    dev: true
-
   /@graphql-tools/merge/8.2.13_graphql@16.5.0:
     resolution: {integrity: sha512-lhzjCa6wCthOYl7B6UzER3SGjU2WjSGnW0WGr8giMYsrtf6G3vIRotMcSVMlhDzyyMIOn7uPULOUt3/kaJ/rIA==}
     peerDependencies:
@@ -4463,18 +4455,6 @@ packages:
     dependencies:
       '@graphql-tools/merge': 8.2.11_graphql@16.5.0
       '@graphql-tools/utils': 8.6.10_graphql@16.5.0
-      graphql: 16.5.0
-      tslib: 2.4.0
-      value-or-promise: 1.0.11
-    dev: true
-
-  /@graphql-tools/schema/8.3.12_graphql@16.5.0:
-    resolution: {integrity: sha512-X8tjAIhf7svAXAH1RRlm6J1mqG2YxCGYffp8RytbKobXqZDgj5VL50Lm5xSzvv/uzkFO4iNTpV5cm5nARN7odQ==}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-    dependencies:
-      '@graphql-tools/merge': 8.2.12_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
       graphql: 16.5.0
       tslib: 2.4.0
       value-or-promise: 1.0.11
@@ -4664,8 +4644,8 @@ packages:
       '@envelop/core': 2.3.2_graphql@16.5.0
       '@envelop/parser-cache': 4.3.2_bexjeslli2sjt4tqfz3gz23hgu
       '@envelop/validation-cache': 4.3.2_bexjeslli2sjt4tqfz3gz23hgu
-      '@graphql-tools/schema': 8.3.12_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
+      '@graphql-tools/schema': 8.3.13_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.5.0
       '@graphql-yoga/subscription': 2.0.0
       cross-undici-fetch: 0.4.3
@@ -4682,7 +4662,7 @@ packages:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
       '@envelop/core': 2.3.2_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.11_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
       '@graphql-yoga/common': 2.6.0_graphql@16.5.0
       '@graphql-yoga/subscription': 2.0.0
       cross-undici-fetch: 0.4.3

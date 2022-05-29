@@ -8,4 +8,10 @@ transforms:
       includeRootOperations: true
       includeTypes: false
       ignore: 
-        - _SubgraphErrorPolicy_  
+        - _SubgraphErrorPolicy_
+  # - blockTracking:
+  #     validateSchema: true
+  - autoPagination:
+      validateSchema: true
+serve:
+  browser: false

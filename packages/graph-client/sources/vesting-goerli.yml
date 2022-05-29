@@ -9,3 +9,9 @@ transforms:
       includeTypes: false
       ignore:
         - _SubgraphErrorPolicy_
+  # - blockTracking:
+  #     validateSchema: true
+  - autoPagination:
+      validateSchema: true
+serve:
+  browser: false

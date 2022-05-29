@@ -43,7 +43,9 @@
     "@graphql-mesh/transform-prefix": "0.11.45",
     "@graphql-mesh/transform-rename": "0.12.46",
     "@graphql-mesh/transform-type-merging": "0.4.0",
-    "@graphql-mesh/utils": "0.35.0"
+    "@graphql-mesh/utils": "0.35.0",
+    "@graphprotocol/client-block-tracking": "0.0.4",
+    "@graphprotocol/client-auto-pagination": "0.0.6"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.11",
