@@ -1,4 +1,4 @@
-name: bentobox_goerli
+name: bentobox-goerli
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli

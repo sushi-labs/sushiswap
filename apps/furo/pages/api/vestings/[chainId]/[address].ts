@@ -1,4 +1,4 @@
-import { getVestings } from 'graph/graph-client'
+import { getVestings } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Vestings } from 'types'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

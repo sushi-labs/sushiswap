@@ -1,4 +1,4 @@
-name: furostream_ethereum
+name: furo-stream-ethereum
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-ethereum

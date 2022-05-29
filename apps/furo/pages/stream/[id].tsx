@@ -3,20 +3,21 @@ import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import { BackgroundVector } from 'components'
-import Layout from 'components/Layout'
-import { Overlay } from 'components/Overlay'
-import { ProgressBarCard } from 'components/ProgressBarCard'
-import { Stream } from 'features'
-import CancelStreamModal from 'features/CancelStreamModal'
-import FuroTimer from 'features/FuroTimer'
-import HistoryPopover from 'features/HistoryPopover'
-import BalanceChart from 'features/stream/BalanceChart'
-import WithdrawModal from 'features/stream/WithdrawModal'
-import StreamDetailsPopover from 'features/StreamDetailsPopover'
-import TransferStreamModal from 'features/TransferStreamModal'
-import UpdateStreamModal from 'features/UpdateStreamModal'
-import { getRebase, getStream, getStreamTransactions } from 'graph/graph-client'
+import {
+  BackgroundVector,
+  CancelModal,
+  FuroTimer,
+  HistoryPopover,
+  Layout,
+  Overlay,
+  ProgressBarCard,
+  StreamDetailsPopover,
+  TransferModal,
+  UpdateModal,
+} from 'components'
+import { BalanceChart, WithdrawModal } from 'components/stream'
+import { Stream } from 'lib'
+import { getRebase, getStream, getStreamTransactions } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -166,7 +167,7 @@ const _Streams: FC = () => {
         <div className="flex flex-col gap-2">
           <WithdrawModal stream={stream} />
           <div className="flex gap-2">
-            <TransferStreamModal
+            <TransferModal
               stream={stream}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
               address={
@@ -174,7 +175,7 @@ const _Streams: FC = () => {
                 AddressZero
               }
             />
-            <UpdateStreamModal
+            <UpdateModal
               stream={stream}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
               address={
@@ -182,7 +183,7 @@ const _Streams: FC = () => {
                 AddressZero
               }
             />
-            <CancelStreamModal
+            <CancelModal
               stream={stream}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
               address={

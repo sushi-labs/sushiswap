@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { getRebases } from 'graph/graph-client'
+import { getRebases } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Rebase as RebaseDTO } from '.graphclient'

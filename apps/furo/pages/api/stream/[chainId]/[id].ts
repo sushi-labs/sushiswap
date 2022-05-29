@@ -1,4 +1,4 @@
-import { getStream } from 'graph/graph-client'
+import { getStream } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Stream } from '.graphclient'

@@ -1,4 +1,4 @@
-import { getStreamTransactions } from 'graph/graph-client'
+import { getStreamTransactions } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Transaction as TransactionDTO } from '.graphclient'

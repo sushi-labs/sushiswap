@@ -1,4 +1,4 @@
-name: furostream_goerli
+name: furo-stream-goerli
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-goerli

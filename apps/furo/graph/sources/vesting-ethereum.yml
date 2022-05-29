@@ -1,4 +1,4 @@
-name: furovesting_ethereum
+name: furo-vesting-ethereum
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-ethereum

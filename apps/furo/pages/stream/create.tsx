@@ -1,5 +1,5 @@
-import Layout from 'components/Layout'
-import { CreateForm } from 'features/stream/CreateForm'
+import { Layout } from 'components'
+import { CreateForm } from 'components/stream'
 
 const Create = () => {
   return (

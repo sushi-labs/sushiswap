@@ -1,5 +1,5 @@
-import { Dashboard } from 'features'
-import { getStreams, getVestings } from 'graph/graph-client'
+import { Dashboard } from 'components'
+import { getStreams, getVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'

@@ -1,10 +1,7 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { useWalletState, Wallet } from '@sushiswap/wagmi'
-import { BackgroundVector } from 'components'
-import Layout from 'components/Layout'
-import { Overlay } from 'components/Overlay'
-import { Dashboard } from 'features'
+import { BackgroundVector, Dashboard, Layout, Overlay } from 'components'
 import Link from 'next/link'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 

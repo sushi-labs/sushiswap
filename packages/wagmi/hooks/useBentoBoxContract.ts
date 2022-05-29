@@ -28,10 +28,14 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
 
+const getBentoBoxContractConfig = (chainId: number) => ({
+  addressOrName: BENTOBOX_ADDRESS[chainId],
+  contractInterface: bentoBoxArtifact.abi,
+})
+
 export function useBentoBoxContract(chainId: number) {
   return useContract<BentoBoxV1>({
-    addressOrName: BENTOBOX_ADDRESS[chainId],
-    contractInterface: bentoBoxArtifact.abi,
+    ...getBentoBoxContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })
 }

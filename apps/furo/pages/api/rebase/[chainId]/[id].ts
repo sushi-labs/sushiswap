@@ -1,4 +1,4 @@
-import { getRebase } from 'graph/graph-client'
+import { getRebase } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Rebase as RebaseDTO } from '.graphclient'

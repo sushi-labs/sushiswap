@@ -3,19 +3,25 @@ import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import { BackgroundVector, ProgressBarCard } from 'components'
-import Layout from 'components/Layout'
-import { Overlay } from 'components/Overlay'
-import { createScheduleRepresentation, FuroStatus, Vesting } from 'features'
-import CancelStreamModal from 'features/CancelStreamModal'
-import HistoryPopover from 'features/HistoryPopover'
-import StreamDetailsPopover from 'features/StreamDetailsPopover'
-import TransferStreamModal from 'features/TransferStreamModal'
-import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
-import SchedulePopover from 'features/vesting/SchedulePopover'
-import { VestingChart } from 'features/vesting/VestingChart'
-import WithdrawModal from 'features/vesting/WithdrawModal'
-import { getRebase, getVesting, getVestingTransactions } from 'graph/graph-client'
+import {
+  BackgroundVector,
+  CancelModal,
+  HistoryPopover,
+  Layout,
+  Overlay,
+  ProgressBarCard,
+  StreamDetailsPopover,
+  TransferModal,
+} from 'components'
+import {
+  createScheduleRepresentation,
+  NextPaymentTimer,
+  SchedulePopover,
+  VestingChart,
+  WithdrawModal,
+} from 'components/vesting'
+import { FuroStatus, Vesting } from 'lib'
+import { getRebase, getVesting, getVestingTransactions } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -164,7 +170,7 @@ const _VestingPage: FC = () => {
           <div className="flex flex-col gap-2">
             <WithdrawModal vesting={vesting} />
             <div className="flex gap-2">
-              <TransferStreamModal
+              <TransferModal
                 stream={vesting}
                 abi={
                   furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
@@ -174,7 +180,7 @@ const _VestingPage: FC = () => {
                   AddressZero
                 }
               />
-              <CancelStreamModal
+              <CancelModal
                 stream={vesting}
                 abi={
                   furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []

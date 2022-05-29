@@ -1,4 +1,4 @@
-name: bentobox_ethereum
+name: bentobox-ethereum
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum
