@@ -1,17 +1,17 @@
 import { AddressZero } from '@ethersproject/constants'
+import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { Vesting } from 'features/context'
-import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { FuroStatus, Stream } from './context'
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase } from '.graphclient'
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,
@@ -19,12 +19,13 @@ export enum FuroTableType {
 }
 
 interface FuroTableProps {
+  chainId: number | undefined
   balances: Record<string, Amount<Token>> | undefined
   globalFilter: any
   setGlobalFilter: any
   streams: StreamDTO[]
   vestings: VestingDTO[]
-  rebases: { base: string; elastic: string; id: string }[] | undefined
+  rebases: RebaseDTO[] | undefined
   type: FuroTableType
   placeholder: string
   loading: boolean
@@ -44,7 +45,7 @@ const table = createTable()
     },
   })
 
-const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
+const defaultColumns = (tableProps: FuroTableProps) => [
   table.createDataColumn('streamedPercentage', {
     header: () => <div className="w-full text-left">Streamed</div>,
     cell: (props) => (
@@ -107,17 +108,18 @@ const defaultColumns = (tableProps: FuroTableProps & { chainId?: number }) => [
     id: 'from',
     accessorFn: (props) => (tableProps.type === FuroTableType.INCOMING ? props.createdBy.id : props.recipient.id),
     header: () => <div className="w-full text-left">{tableProps.type === FuroTableType.INCOMING ? 'From' : 'To'}</div>,
-    cell: (props) => (
-      <Link href={getExplorerLink(tableProps.chainId, props.getValue() as string, 'address')} passHref={true}>
-        <a
-          target="_blank"
-          className="w-full text-left text-blue hover:text-blue-200"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {shortenAddress(props.getValue() as string)}
-        </a>
-      </Link>
-    ),
+    cell: (props) =>
+      tableProps.chainId ? (
+        <Link href={Chain.from(tableProps.chainId).getAccountUrl(props.getValue() as string)} passHref={true}>
+          <a
+            target="_blank"
+            className="w-full text-left text-blue hover:text-blue-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {shortenAddress(props.getValue() as string)}
+          </a>
+        </Link>
+      ) : null,
   }),
   table.createDataColumn('startTime', {
     header: () => <div className="w-full text-left">Start Date</div>,
@@ -159,7 +161,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
               stream.token.id === AddressZero
                 ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
                 : rebase.id === stream.token.id
-            ) as Rebase,
+            ) as RebaseDTO,
           })
       )
       .concat(
@@ -172,7 +174,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
                 vesting.token.id === AddressZero
                   ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
                   : rebase.id === vesting.token.id
-              ) as Rebase,
+              ) as RebaseDTO,
             })
         )
       )

@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, USDC } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
@@ -9,7 +9,6 @@ import { BackgroundVector } from 'components'
 import Layout from 'components/Layout'
 import { FuroStatus, FuroType, Stream } from 'features'
 import BalanceChart from 'features/stream/BalanceChart'
-import { getExplorerLink } from 'functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -29,11 +28,17 @@ const exampleStream = new Stream({
     status: FuroStatus.ACTIVE,
     totalAmount: '119994000000',
     withdrawnAmount: '69308282750',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     recipient: { id: AddressZero },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     createdBy: { id: AddressZero },
     expiresAt: (new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     startedAt: (new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
     modifiedAtTimestamp: (new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     token: {
       name: 'USDC',
       decimals: '6',
@@ -42,6 +47,8 @@ const exampleStream = new Stream({
     },
     txHash: '',
   },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   rebase: {
     base: '1',
     elastic: '1',
@@ -128,7 +135,7 @@ export default function Index() {
                         <Typography
                           as="a"
                           target="_blank"
-                          href={getExplorerLink(activeChain.id, account?.address ?? '', 'address')}
+                          href={Chain.from(activeChain.id).getAccountUrl(account?.address ?? '')}
                           variant="sm"
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"

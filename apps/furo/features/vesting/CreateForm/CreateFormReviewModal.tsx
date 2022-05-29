@@ -1,8 +1,8 @@
+import { Chain } from '@sushiswap/chain'
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { getExplorerLink } from 'functions'
 import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
@@ -95,9 +95,11 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <Typography variant="xs" className="!leading-5 text-slate-400">
           This will create a stream to{' '}
           <span className="font-bold text-slate-50 hover:text-blue">
-            <a target="_blank" href={getExplorerLink(activeChain?.id, recipient, 'address')} rel="noreferrer">
-              {shortenAddress(recipient)}
-            </a>
+            {activeChain && (
+              <a target="_blank" href={Chain.from(activeChain.id).getAccountUrl(recipient)} rel="noreferrer">
+                {shortenAddress(recipient)}
+              </a>
+            )}
           </span>{' '}
           consisting of{' '}
           <span className="font-bold text-slate-50">

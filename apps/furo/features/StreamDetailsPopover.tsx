@@ -1,9 +1,9 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { NotepadIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { getExplorerLink } from 'functions'
 import { FC, useState } from 'react'
 
 import { FuroStatus, Stream, Vesting } from './context'
@@ -79,7 +79,7 @@ const StreamDetailsPopover: FC<Props> = ({ stream }) => {
             </div>
             <a
               target="_blank"
-              href={getExplorerLink(stream.amount.currency.chainId, stream.txHash, 'transaction')}
+              href={Chain.from(stream.amount.currency.chainId).getTxUrl(stream.txHash)}
               rel="noreferrer"
               className="-mt-1 -mr-1 p-1 hover:bg-[rgba(255,255,255,0.12)] rounded-full text-slate-400 hover:text-slate-300"
             >

@@ -32,9 +32,9 @@
     "@tailwindcss/typography": "^0.5.2",
     "classnames": "^2.3.1",
     "react-popper": "^2.2.5",
+    "react-toastify": "^9.0.1",
     "react-virtualized-auto-sizer": "^1.0.6",
-    "react-window": "^1.8.7",
-    "react-toastify": "^9.0.1"
+    "react-window": "^1.8.7"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

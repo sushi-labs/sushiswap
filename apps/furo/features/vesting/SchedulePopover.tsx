@@ -1,9 +1,9 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
+import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { CalendarIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { PeriodType, Vesting, VestingType } from 'features/context'
-import { getExplorerLink } from 'functions'
 import { FC, memo } from 'react'
 
 import { Period, Schedule } from './createScheduleRepresentation'
@@ -35,7 +35,7 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
                 <span className="font-bold text-slate-200 hover:text-blue">
                   <a
                     target="_blank"
-                    href={getExplorerLink(vesting.amount.currency.chainId, vesting.recipient.id, 'address')}
+                    href={Chain.from(vesting.amount.currency.chainId).getAccountUrl(vesting.recipient.id)}
                     rel="noreferrer"
                   >
                     {shortenAddress(vesting.recipient.id)}
@@ -56,7 +56,7 @@ const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
               </Typography>
               <a
                 target="_blank"
-                href={getExplorerLink(vesting.amount.currency.chainId, vesting.txHash, 'transaction')}
+                href={Chain.from(vesting.amount.currency.chainId).getTxUrl(vesting.txHash)}
                 rel="noreferrer"
                 className="-mt-1 -mr-1 p-1 hover:bg-[rgba(255,255,255,0.12)] rounded-full text-slate-400 hover:text-slate-300"
               >

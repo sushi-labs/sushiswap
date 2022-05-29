@@ -3,14 +3,12 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Switch, Typography } from '@sushiswap/ui'
-import { getExplorerLink } from 'functions'
 import { useChain, useStreamBalances } from 'hooks'
 import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
+import { Streams, Vestings } from 'types'
 
-import { Streams } from '../pages/api/streams/[chainId]/[address]'
-import { Vestings } from '../pages/api/vestings/[chainId]/[address]'
 import { toToken } from './context/mapper'
 import { FuroTable, FuroTableType } from './FuroTable'
 import { Rebase } from '.graphclient'
@@ -63,9 +61,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const { isLoading: balancesLoading, data: balancesData } = useStreamBalances(chainId, ids, tokens, {
     blocksPerFetch: 3,
   })
-
-  console.log('REBASES', rebases)
-
+  chain
   return (
     <div className="flex flex-col h-full gap-12 pt-10">
       <div className="flex flex-col justify-center gap-1 pb-4">
@@ -74,7 +70,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
         </Typography>
         {address && (
           <div className="flex">
-            <Link passHref={true} href={getExplorerLink(chainId, address, 'address')}>
+            <Link passHref={true} href={chain.getAccountUrl(address)}>
               <Typography
                 variant="sm"
                 weight={700}
@@ -110,6 +106,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             </div>
           </div>
           <FuroTable
+            chainId={chainId}
             balances={balancesData}
             globalFilter={showActiveIncoming}
             setGlobalFilter={setShowActiveIncoming}
@@ -141,6 +138,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             </div>
           </div>
           <FuroTable
+            chainId={chainId}
             balances={balancesData}
             globalFilter={showActiveOutgoing}
             setGlobalFilter={setShowActiveOutgoing}
