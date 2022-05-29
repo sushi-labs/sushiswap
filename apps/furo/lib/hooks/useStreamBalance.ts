@@ -1,8 +1,11 @@
-import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token } from '@sushiswap/currency'
-import furoExports from '@sushiswap/furo/exports.json'
 import { JSBI } from '@sushiswap/math'
-import { getBentoBoxContractConfig, useBentoBoxContract, useFuroStreamContract } from '@sushiswap/wagmi'
+import {
+  getBentoBoxContractConfig,
+  getFuroStreamContractConfig,
+  useBentoBoxContract,
+  useFuroStreamContract,
+} from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
@@ -14,21 +17,12 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
-  } = useContractRead(
-    {
-      addressOrName:
-        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ?? AddressZero,
-      contractInterface:
-        furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? [],
-    },
-    'streamBalanceOf',
-    {
-      chainId,
-      enabled: !!streamId,
-      args: [streamId],
-      watch: true,
-    }
-  )
+  } = useContractRead(getFuroStreamContractConfig(chainId), 'streamBalanceOf', {
+    chainId,
+    enabled: !!chainId && !!streamId,
+    args: [streamId],
+    watch: true,
+  })
 
   const {
     data: rebase,
@@ -36,7 +30,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     isLoading: rebaseLoading,
   } = useContractRead(getBentoBoxContractConfig(chainId), 'totals', {
     chainId,
-    enabled: !!token?.address,
+    enabled: !!chainId && !!token?.address,
     args: [token?.address],
     watch: true,
   })

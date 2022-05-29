@@ -129,7 +129,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Value of Stream
                 </Typography>
                 <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
-                  {stream?.amount.toSignificant(2)}
+                  {stream?.amount.toSignificant(6)}
                 </Typography>
                 <Typography variant="xs" weight={700} as="span" className="mt-1 text-slate-400">
                   {stream?.withdrawnAmount.currency.symbol}
