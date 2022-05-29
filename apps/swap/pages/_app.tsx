@@ -6,9 +6,8 @@ import { App } from '@sushiswap/ui'
 import { client, getProviders } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
-import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
+import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
-import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
@@ -31,7 +30,6 @@ const SUPPORTED_CHAIN_IDS = [
 ]
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const router = useRouter()
   const [
     // providerEthereum,
     // providerBsc,
@@ -115,10 +113,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           {/* <MulticallUpdater chainId={ChainId.ROPSTEN} blockNumber={blockNumberRopsten} /> */}
           {/* <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumberGorli} /> */}
           {/* <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumberKovan} /> */}
-          {/* <TokenListsUpdater chainId={ChainId.POLYGON_TESTNET} /> */}
-          {/* <TokenListsUpdater chainId={ChainId.RINKEBY} /> */}
-          <TokenListsUpdater chainId={ChainId.ARBITRUM} />
-          <TokenListsUpdater chainId={ChainId.OPTIMISM} />
+          <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
           <Component {...pageProps} blockNumbers={blockNumbers} chainIds={SUPPORTED_CHAIN_IDS} />
           <App.Footer />
         </App.Shell>
