@@ -2,17 +2,17 @@ import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
+import { Rebase } from '@sushiswap/graph-client'
 import { Switch, Typography } from '@sushiswap/ui'
 import { useChain } from '@sushiswap/wagmi'
-import { useStreamBalances } from 'hooks'
 import { toToken } from 'lib'
+import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
 
 import { FuroTable, FuroTableType } from './FuroTable'
-import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)

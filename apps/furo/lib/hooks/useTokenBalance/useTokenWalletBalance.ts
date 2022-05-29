@@ -2,7 +2,7 @@ import { Interface } from '@ethersproject/abi'
 import { isAddress } from '@ethersproject/address'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks'
+import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'lib/hooks'
 import { useMemo } from 'react'
 import { erc20ABI } from 'wagmi'
 

@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -20,16 +21,13 @@ import {
   VestingChart,
   WithdrawModal,
 } from 'components/vesting'
-import { FuroStatus, Vesting } from 'lib'
-import { getRebase, getVesting, getVestingTransactions } from 'lib'
+import { FuroStatus, getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
-
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {

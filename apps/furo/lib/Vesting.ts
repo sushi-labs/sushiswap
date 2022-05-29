@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
+import { type Vesting as VestingDTO, Rebase } from '@sushiswap/graph-client'
 import { JSBI, minimum, Percent } from '@sushiswap/math'
 
 import { FuroStatus, VestingType } from './enums'
 import { Furo } from './Furo'
-import { type Vesting as VestingDTO, Rebase } from '.graphclient'
 
 export class Vesting extends Furo {
   public readonly steps: number

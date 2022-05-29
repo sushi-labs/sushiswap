@@ -1,9 +1,8 @@
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import { addYears, getUnixTime } from 'date-fns'
 import numeral from 'numeral'
-
-import { getBuiltGraphSDK } from '../.graphclient'
 
 const secondsPerBlock = 13.4
 

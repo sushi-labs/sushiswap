@@ -1,4 +1,5 @@
-import '../styles/index.css'
+import '@sushiswap/ui/index.css'
+import 'styles/index.css'
 
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'

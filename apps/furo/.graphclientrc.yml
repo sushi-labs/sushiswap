@@ -1,3 +1,0 @@
-sources: !includes ./graph/sources
-documents:
-  - './graph/queries/*.graphql'

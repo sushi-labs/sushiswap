@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
+import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -16,16 +17,13 @@ import {
   UpdateModal,
 } from 'components'
 import { BalanceChart, WithdrawModal } from 'components/stream'
-import { Stream } from 'lib'
-import { getRebase, getStream, getStreamTransactions } from 'lib'
+import { getRebase, getStream, getStreamTransactions, Stream } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
-
-import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   fallback?: {

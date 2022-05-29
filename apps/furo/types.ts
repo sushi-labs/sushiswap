@@ -1,4 +1,4 @@
-import type { Stream as StreamDTO, Vesting as VestingDTO } from '.graphclient'
+import type { Stream as StreamDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
 
 export type Vestings = { incomingVestings: VestingDTO[]; outgoingVestings: VestingDTO[] }
 

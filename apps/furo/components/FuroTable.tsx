@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '@sushiswap/graph-client'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { FuroStatus, Stream, Vesting } from 'lib'
@@ -9,8 +10,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
-
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,

@@ -1,11 +1,11 @@
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
-  '@sushiswap/ui',
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/stargate',
+  '@sushiswap/ui',
 ])
 
 export default withTranspileModules({

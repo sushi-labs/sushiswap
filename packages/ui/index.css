@@ -1,7 +1,6 @@
 @tailwind base;
 
 @import '@fontsource/inter/index.css';
-@import 'react-toastify/dist/ReactToastify.css'
 
 @tailwind components;
 @tailwind utilities;

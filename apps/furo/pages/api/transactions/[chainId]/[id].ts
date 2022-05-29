@@ -1,7 +1,6 @@
+import type { Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { getStreamTransactions } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-import type { Transaction as TransactionDTO } from '.graphclient'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query
