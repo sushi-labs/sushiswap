@@ -1,0 +1,11 @@
+name: bentobox-ethereum
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum
+transforms:
+  - prefix:
+      value: ETHEREUM_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_

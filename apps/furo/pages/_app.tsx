@@ -6,7 +6,7 @@ import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
 import { client, getProvider } from '@sushiswap/wagmi'
-import Header from 'features/Header'
+import { Header } from 'components'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
@@ -18,12 +18,6 @@ import { WagmiConfig } from 'wagmi'
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
 import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
 import store from '../store'
-
-declare global {
-  interface Window {
-    dataLayer: Record<string, any>[]
-  }
-}
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
@@ -42,8 +36,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
   const ethereumProvider = getProvider(ChainId.ETHEREUM)
   const ethereumBlockNumber = useLatestBlockNumber(ethereumProvider)
-  const kovanProvider = getProvider(ChainId.KOVAN)
-  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
+
   const goerliProvider = getProvider(ChainId.GÖRLI)
   const goerliBlockNumber = useLatestBlockNumber(goerliProvider)
 
@@ -55,8 +48,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <Header />
             <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={ethereumBlockNumber} />
             <TokenListUpdater chainId={ChainId.ETHEREUM} />
-            <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
-            <TokenListUpdater chainId={ChainId.KOVAN} />
             <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
             <TokenListUpdater chainId={ChainId.GÖRLI} />
             <Component {...pageProps} />

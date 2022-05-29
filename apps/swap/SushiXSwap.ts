@@ -5,7 +5,7 @@ import { AddressZero, Zero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
-import SUSHI_X_SWAP_ABI from 'abis/sushixswap.json'
+import sushiXSwapArficact from '@sushiswap/sushixswap/artifacts/contracts/SushiXSwap.sol/SushiXSwap.json'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { Contract, Signer } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
@@ -319,7 +319,7 @@ export class SushiXSwap {
       return
     }
 
-    const contract = new Contract(this.srcMasterContract, SUSHI_X_SWAP_ABI, this.signer)
+    const contract = new Contract(this.srcMasterContract, sushiXSwapArficact.abi, this.signer)
 
     console.log([this.actions, this.values, this.datas], this.teleporter)
 

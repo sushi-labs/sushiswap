@@ -1,10 +1,8 @@
 {
-  "extends": "@sushiswap/typescript-config/base.json",
+  "extends": "@sushiswap/typescript-config/node16.json",
   "include": ["index.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "lib": ["ES2019"],
-    "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": ".",
     "resolveJsonModule": true

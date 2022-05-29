@@ -1,8 +1,7 @@
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import log from '@sushiswap/log'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
-
-import { getBuiltGraphSDK } from './../.graphclient'
 
 export async function bar() {
   const sdk = getBuiltGraphSDK()

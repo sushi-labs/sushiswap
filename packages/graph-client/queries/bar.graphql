@@ -1,0 +1,27 @@
+query Bar($block: Block_height, $id: String = "0x8798249c2e607446efb7ad49ec89dd1865ff4272") {
+  bar(block: $block, id: $id) {
+    id
+    decimals
+    sushi
+    totalSupply
+    ratio
+    xSushiMinted
+    xSushiBurned
+    sushiStaked
+    sushiHarvested
+  }
+}
+
+query Bars($block: Block_height, $first: Int = 1000, $orderBy:  Bar_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: Bar_filter ) {
+  bars(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+    id
+    decimals
+    sushi
+    totalSupply
+    ratio
+    xSushiMinted
+    xSushiBurned
+    sushiStaked
+    sushiHarvested
+  }
+}

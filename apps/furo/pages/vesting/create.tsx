@@ -1,5 +1,5 @@
-import Layout from 'components/Layout'
-import { CreateForm } from 'features/vesting/CreateForm'
+import { Layout } from 'components'
+import { CreateForm } from 'components/vesting'
 
 const Create = () => {
   return (

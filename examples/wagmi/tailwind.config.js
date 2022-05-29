@@ -3,7 +3,8 @@ module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    'node_modules/@sushiswap/ui/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui/**/*.{js,ts,jsx,tsx}',
+    '../../packages/wagmi/{components,systems}/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {},

@@ -1,15 +1,13 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, USDC } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
-import { BackgroundVector } from 'components'
-import Layout from 'components/Layout'
-import { FuroStatus, FuroType, Stream } from 'features'
-import BalanceChart from 'features/stream/BalanceChart'
-import { getExplorerLink } from 'functions'
+import { BackgroundVector, Layout } from 'components'
+import { BalanceChart } from 'components/stream'
+import { FuroStatus, FuroType, Stream } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -18,19 +16,28 @@ import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { BalanceChartHoverEnum } from './stream/[id]'
 
 const now = new Date().getTime()
+
 const exampleStream = new Stream({
   chainId: ChainId.ETHEREUM,
-  stream: {
+  furo: {
     id: '0',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
     totalAmount: '119994000000',
     withdrawnAmount: '69308282750',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     recipient: { id: AddressZero },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     createdBy: { id: AddressZero },
     expiresAt: (new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     startedAt: (new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
     modifiedAtTimestamp: (new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     token: {
       name: 'USDC',
       decimals: '6',
@@ -39,7 +46,15 @@ const exampleStream = new Stream({
     },
     txHash: '',
   },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  rebase: {
+    base: '1',
+    elastic: '1',
+  },
 })
+
+exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
 export default function Index() {
   const router = useRouter()
@@ -59,8 +74,6 @@ export default function Index() {
       void router.push('/dashboard')
     },
   })
-
-  exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
   return (
     <Layout
@@ -83,40 +96,7 @@ export default function Index() {
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
-            {isMounted && account?.address ? (
-              <>
-                <div>
-                  <Link passHref={true} href="/stream/create">
-                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-                      Pay Someone
-                    </Button>
-                  </Link>
-                </div>
-                <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
-                  <Link passHref={true} href="/dashboard">
-                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-                      View My Earnings
-                    </Button>
-                  </Link>
-                  <div className="px-6">
-                    <Account.Name address={account?.address}>
-                      {({ name, isEns }) => (
-                        <Typography
-                          as="a"
-                          target="_blank"
-                          href={getExplorerLink(activeChain?.id, account?.address, 'address')}
-                          variant="sm"
-                          weight={700}
-                          className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
-                        >
-                          {isEns ? name : name ? shortenAddress(name) : ''}
-                        </Typography>
-                      )}
-                    </Account.Name>
-                  </div>
-                </div>
-              </>
-            ) : (
+            {!isMounted || !activeChain || !account ? (
               <>
                 <Wallet.Button
                   color="blue"
@@ -132,6 +112,39 @@ export default function Index() {
                 >
                   View My Earnings
                 </Wallet.Button>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Link passHref={true} href="/stream/create">
+                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                      Pay Someone
+                    </Button>
+                  </Link>
+                </div>
+                <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
+                  <Link passHref={true} href="/dashboard">
+                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                      View My Earnings
+                    </Button>
+                  </Link>
+                  <div className="px-6">
+                    <Account.Name address={account.address}>
+                      {({ name, isEns }) => (
+                        <Typography
+                          as="a"
+                          target="_blank"
+                          href={Chain.from(activeChain.id).getAccountUrl(account?.address ?? '')}
+                          variant="sm"
+                          weight={700}
+                          className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
+                        >
+                          {isEns ? name : name ? shortenAddress(name) : ''}
+                        </Typography>
+                      )}
+                    </Account.Name>
+                  </div>
+                </div>
               </>
             )}
           </div>

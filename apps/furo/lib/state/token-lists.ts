@@ -11,4 +11,5 @@ export const {
   useUnsupportedTokenList,
   useIsListActive,
   useFetchListCallback,
+  useTokens,
 } = tokenLists.hooks

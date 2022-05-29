@@ -1,28 +1,27 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import { BackgroundVector, ProgressBarCard } from 'components'
-import Layout from 'components/Layout'
-import { Overlay } from 'components/Overlay'
+import {
+  BackgroundVector,
+  CancelModal,
+  HistoryPopover,
+  Layout,
+  Overlay,
+  ProgressBarCard,
+  StreamDetailsPopover,
+  TransferModal,
+} from 'components'
 import {
   createScheduleRepresentation,
-  FuroStatus,
-  TransactionRepresentation,
-  Vesting,
-  VestingRepresentation,
-} from 'features'
-import CancelStreamModal from 'features/CancelStreamModal'
-import HistoryPopover from 'features/HistoryPopover'
-import StreamDetailsPopover from 'features/StreamDetailsPopover'
-import TransferStreamModal from 'features/TransferStreamModal'
-import NextPaymentTimer from 'features/vesting/NextPaymentTimer'
-import SchedulePopover from 'features/vesting/SchedulePopover'
-import { VestingChart } from 'features/vesting/VestingChart'
-import WithdrawModal from 'features/vesting/WithdrawModal'
-import { getVesting, getVestingTransactions } from 'graph/graph-client'
-import { useVestingBalance } from 'hooks'
+  NextPaymentTimer,
+  SchedulePopover,
+  VestingChart,
+  WithdrawModal,
+} from 'components/vesting'
+import { FuroStatus, getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -31,22 +30,28 @@ import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
 
 interface Props {
-  fallback?: Record<string, any>
+  fallback?: {
+    vesting?: VestingDTO
+    transactions?: TransactionDTO[]
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
+  const { chainId, id } = query
+  const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
   return {
     props: {
       fallback: {
-        [`/api/vesting/${query.chainId}/${query.id}`]: (await getVesting(
-          query.chainId,
-          query.id
-        )) as VestingRepresentation,
-        [`/api/transactions/${query.chainId}/${query.id}`]: (await getVestingTransactions(
-          query.chainId,
-          query.id
-        )) as TransactionRepresentation[],
+        [`/furo/api/vesting/${chainId}/${id}`]: vesting,
+        [`/furo/api/transactions/${chainId}/${id}`]: (await getVestingTransactions(
+          chainId as string,
+          id as string
+        )) as TransactionDTO[],
+        [`/furo/api/rebase/${query.chainId}/${vesting.token.id}`]: (await getRebase(
+          chainId as string,
+          vesting.token.id
+        )) as Rebase,
       },
     },
   }
@@ -68,12 +73,15 @@ const _VestingPage: FC = () => {
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
-  const { data: vestingRepresentation } = useSWR<VestingRepresentation>(`/api/vesting/${chainId}/${id}`)
-  const { data: transactions } = useSWR<TransactionRepresentation[]>(`/api/transactions/${chainId}/${id}`)
-
+  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`)
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`)
+  const { data: rebase } = useSWR<Rebase>(
+    () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
+    (url) => fetch(url).then((response) => response.json())
+  )
   const vesting = useMemo(
-    () => (vestingRepresentation ? new Vesting({ chainId, vesting: vestingRepresentation }) : undefined),
-    [chainId, vestingRepresentation]
+    () => (chainId && furo && rebase ? new Vesting({ chainId, furo, rebase }) : undefined),
+    [chainId, furo, rebase]
   )
 
   const schedule = vesting
@@ -89,12 +97,10 @@ const _VestingPage: FC = () => {
     : undefined
 
   // Sync balance to Vesting entity
-  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
-  if (vesting && balance) {
-    vesting.balance = balance
-  }
-
-  console.log({ balance: balance?.toExact(), balance2: vesting?.balance2.toExact() })
+  // const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
+  // if (vesting && balance) {
+  //   vesting.balance = balance
+  // }
 
   if (connecting || reconnecting) return <Overlay />
 
@@ -162,7 +168,7 @@ const _VestingPage: FC = () => {
           <div className="flex flex-col gap-2">
             <WithdrawModal vesting={vesting} />
             <div className="flex gap-2">
-              <TransferStreamModal
+              <TransferModal
                 stream={vesting}
                 abi={
                   furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
@@ -172,7 +178,7 @@ const _VestingPage: FC = () => {
                   AddressZero
                 }
               />
-              <CancelStreamModal
+              <CancelModal
                 stream={vesting}
                 abi={
                   furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
