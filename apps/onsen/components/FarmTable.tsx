@@ -1,19 +1,19 @@
-import { shortenAddress } from '@sushiswap/format'
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { Incentive, IncentiveRepresentation } from 'features'
+import { TokenRepresentation } from 'features'
+import { Farm } from 'features/onsen/context/Farm'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 interface IncentiveTableProps {
   chainId: number | undefined
-  incentives: IncentiveRepresentation[] | undefined
+  stakeTokens: TokenRepresentation[] | undefined
   placeholder: string
   loading: boolean
 }
 
-const table = createTable().setRowType<Incentive>()
+const table = createTable().setRowType<Farm>()
 
 const defaultColumns = (tableProps: IncentiveTableProps) => [
   table.createDisplayColumn({
@@ -23,7 +23,7 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.row.original?.liquidityStaked.currency.symbol}
+            {props.row.original?.incentives[0].liquidityStaked.currency.symbol}
           </Typography>
           <Typography variant="xxs" weight={500} className=" text-slate-200">
             {props.row.original?.tokenType}
@@ -32,35 +32,44 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       )
     },
   }),
-  table.createDataColumn('liquidityStaked', {
-    header: () => <div className="w-full text-right">TVL</div>,
+  table.createDisplayColumn({
+    id: 'TVL',
+    header: () => <div className="w-full text-left"> TVL </div>,
+    cell: () => 'TODO', // TODO: this needs pricing before we sum it up
+  }),
+  table.createDisplayColumn({
+    id: 'rewards_24h',
+    header: () => <div className="w-full text-right"> Rewards per 24h </div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
-          <Typography variant="sm" weight={700} className="text-right text-slate-200">
-            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
-          </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-slate-500">
-            {props.getValue().currency.symbol}
-          </Typography>
+          {props.row.original?.rewardsPerDay ? (
+            Object.values(props.row.original?.rewardsPerDay).map((reward) => (
+              <>
+                <Typography variant="sm" weight={700} className="text-right text-slate-200">
+                  {reward?.greaterThan('100000') ? reward?.toSignificant(6) : '< 0.01'}
+                </Typography>
+                <Typography variant="xs" weight={500} className="text-right text-slate-500">
+                  {reward?.currency.symbol}
+                </Typography>
+              </>
+            ))
+          ) : (
+            <></>
+          )}
         </div>
       )
     },
   }),
   table.createDisplayColumn({
-    id: 'rewards_24h',
-    header: () => <div className="w-full text-left"> Rewards per 24h </div>,
-    cell: () => '',
-  }),
-  table.createDisplayColumn({
     id: 'APR',
     header: () => <div className="w-full text-left"> APR </div>,
-    cell: () => '',
+    cell: () => 'TODO',
   }),
 ]
 
-export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
-  const { incentives, placeholder, loading } = props
+export const FarmTable: FC<IncentiveTableProps> = (props) => {
+  const { stakeTokens, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
@@ -70,9 +79,9 @@ export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
   const router = useRouter()
   const { activeChain } = useNetwork()
   const data = useMemo(() => {
-    if (!incentives) return []
-    return incentives.map((incentive) => new Incentive({ incentive }))
-  }, [incentives])
+    if (!stakeTokens) return []
+    return stakeTokens.map((stakeToken) => new Farm({ stakeToken }))
+  }, [stakeTokens])
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns({ ...props, chainId: activeChain?.id }),
@@ -128,4 +137,4 @@ export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
   )
 }
 
-export default IncentiveTable
+export default FarmTable

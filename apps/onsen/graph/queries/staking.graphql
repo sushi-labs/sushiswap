@@ -1,30 +1,36 @@
-query KovanStakingIncentives {
-  KOVAN_STAKING_incentives {
+query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
+  KOVAN_STAKING_tokens(where: $where) {
     id
-    lastRewardTime
-    rewardRemaining
-    liquidityStaked
-    stakeToken {
+    name
+    type
+    symbol
+    decimals
+    incentives(where: $where) {
       id
-      name
-      type
-      symbol
-      decimals
+      lastRewardTime
+      rewardRemaining
+      liquidityStaked
+      stakeToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      createdBy {
+        id
+      }
+      endTime
+      createdAtBlock
+      createdAtTimestamp
+      modifiedAtBlock
+      modifiedAtTimestamp
     }
-    rewardToken {
-      id
-      name
-      symbol
-      decimals
-    }
-    createdBy {
-      id
-    }
-    endTime
-    createdAtBlock
-    createdAtTimestamp
-    modifiedAtBlock
-    modifiedAtTimestamp
   }
 }
 
@@ -72,14 +78,13 @@ query KovanStakingIncentives {
 #   }
 # }
 
-
 # query KovanOnsenLegacyFarm($id: ID!) {
 #   KOVAN_ONSEN_incentive(id: $id) {
 #     id
 #     token {
 #       id
 #       name
-# 				token0 { 
+# 				token0 {
 # 					id
 # 				name
 # 				}
@@ -97,7 +102,6 @@ query KovanStakingIncentives {
 #     liquidityStaked
 #   }
 # }
-
 
 # query KovanOnsenKashiFarm($id: ID!) {
 #   KOVAN_ONSEN_incentive(id: $id) {

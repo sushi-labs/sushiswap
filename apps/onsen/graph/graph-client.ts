@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import { IncentiveRepresentation } from '../features/onsen/context/representations'
+import { TokenRepresentation } from '../features/onsen/context/representations'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 
@@ -16,12 +16,16 @@ const isNetworkSupported = (chainId: number) => SUPPORTED_CHAINS.includes(chainI
 //   }
 // }
 
-export const getFarms = async (chainId: string): Promise<IncentiveRepresentation[] | undefined> => {
+export const getFarms = async (chainId: string): Promise<TokenRepresentation[] | undefined> => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
+  // const now = Number((new Date().getTime() / 1000).toFixed())
+  // console.log({now})
   if (network === ChainId.KOVAN) {
-    return (await sdk.KovanStakingIncentives()).KOVAN_STAKING_incentives as IncentiveRepresentation[]
+    return (
+      await sdk.KovanStakingStakedTokens()
+    ).KOVAN_STAKING_tokens as TokenRepresentation[]
   }
 }
 

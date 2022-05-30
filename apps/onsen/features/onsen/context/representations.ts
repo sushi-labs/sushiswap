@@ -24,6 +24,7 @@ export interface TokenRepresentation {
   name: string
   decimals: string
   type?: string
+  incentives?: IncentiveRepresentation[]
 }
 
 export interface TridentPoolRepresentation {

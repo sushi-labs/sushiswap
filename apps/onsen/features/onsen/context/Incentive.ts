@@ -10,13 +10,9 @@ export class Incentive {
   public readonly tokenType: string
   public readonly rewardRemaining: Amount<Token>
   public readonly liquidityStaked: Amount<Token>
-  //   public readonly subscriptions?: Object
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly createdBy: UserRepresentation
-  //   public readonly modifiedAtTimestamp: Date
-  //   public readonly txHash: string
-
   public constructor({ incentive }: { incentive: IncentiveRepresentation }) {
     this.id = incentive.id
     this.rewardRemaining = Amount.fromRawAmount(
@@ -28,7 +24,6 @@ export class Incentive {
     this.startTime = new Date(Number(incentive.startTime) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
     this.createdBy = incentive.createdBy
-    // this.txHash = incentive.txHash
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {

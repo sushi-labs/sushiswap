@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import IncentiveTable from 'components/IncentiveTable'
+import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
@@ -8,8 +8,9 @@ import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { IncentiveRepresentation } from '../../features/onsen/context/representations'
+import { TokenRepresentation } from '../../features/onsen/context/representations'
 import { getFarms } from '../../graph/graph-client'
+
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -46,11 +47,12 @@ export const FarmsPage: FC = () => {
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const connect = useConnect()
-  const { data: incentiveRepresentations, isValidating } = useSWR<IncentiveRepresentation[]>(
+  const { data: stakeTokens, isValidating } = useSWR<TokenRepresentation[]>(
     `/onsen/api/farms/${chainId}`,
     fetcher
   )
 
+  console.log({stakeTokens})
   return (
     <Layout>
       <div>
@@ -60,8 +62,8 @@ export const FarmsPage: FC = () => {
           </Button>
         </Link>
       </div>
-      <IncentiveTable
-        incentives={incentiveRepresentations}
+      <FarmTable
+        stakeTokens={stakeTokens}
         chainId={activeChain?.id}
         loading={isValidating}
         placeholder="No incoming incentives found"
