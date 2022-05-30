@@ -1,6 +1,5 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
-import 'react-toastify/dist/ReactToastify.css'
 
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'

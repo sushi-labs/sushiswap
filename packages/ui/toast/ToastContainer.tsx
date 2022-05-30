@@ -1,3 +1,5 @@
+import 'react-toastify/dist/ReactToastify.css'
+
 import { ToastContainer as ToastifyContainer } from 'react-toastify'
 
 export const ToastContainer = () => {
