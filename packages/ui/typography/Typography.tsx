@@ -11,12 +11,12 @@ const WEIGHTS: Record<string, string> = {
 }
 
 const VARIANTS: Record<string, string> = {
-  hero: 'text-5xl leading-[4rem]',
+  hero: 'text-5xl ',
   h1: 'text-4xl',
-  h2: 'text-3xl tracking-[-0.02em]',
-  h3: 'text-2xl leading-7 tracking-[-0.01em]',
-  xl: 'text-xl leading-7 tracking-[-0.01em]',
-  lg: 'text-lg leading-6',
+  h2: 'text-3xl ',
+  h3: 'text-2xl ',
+  xl: 'text-xl  ',
+  lg: 'text-lg ',
   base: 'text-base leading-5',
   sm: 'text-sm leading-5',
   xs: 'text-xs leading-4',
