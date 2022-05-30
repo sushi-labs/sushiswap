@@ -2,14 +2,15 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { Chain } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
-import { createToast, CurrencyInput } from 'components'
+import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -39,7 +40,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   )
 
   const withdraw = useCallback(async () => {
-    if (!vesting || !amount) return
+    if (!vesting || !amount || !activeChain?.id) return
 
     setError(undefined)
 
@@ -49,11 +50,18 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       })
 
       createToast({
-        title: 'Withdraw from stream',
-        description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
-          amount.currency.symbol
-        } from your stream`,
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
+        summary: {
+          pending: (
+            <Dots>
+              Withdrawing {amount.toSignificant(6)} {amount.currency.symbol}
+            </Dots>
+          ),
+          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
+          failed: 'Something went wrong withdrawing from vesting schedule',
+        },
       })
     } catch (e: any) {
       setError(e.message)

@@ -1,10 +1,9 @@
 import { Amount } from '@sushiswap/currency'
 import { type Transaction as TransactionDTO } from '@sushiswap/graph-client'
-import { HistoryIcon, Popover, Typography } from '@sushiswap/ui'
+import { Button, HistoryIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { Stream,Transaction, Vesting } from 'lib'
+import { Stream, Transaction, Vesting } from 'lib'
 import { FC, memo, useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 interface Props {
   stream: Stream | Vesting | undefined
@@ -12,23 +11,21 @@ interface Props {
 }
 
 export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }) => {
-  const { data: account } = useAccount()
-
   const transactions = useMemo(
     () =>
       stream ? transactionRepresentations?.map((transaction) => new Transaction(transaction, stream.chainId)) : [],
-    [transactionRepresentations, account?.address]
+    [stream, transactionRepresentations]
   )
 
   return (
     <Popover
       button={
-        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
+        <Button color="gray">
           <HistoryIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             History
           </Typography>
-        </div>
+        </Button>
       }
       panel={
         <div className="z-10 flex flex-col overflow-hidden shadow-md rounded-xl bg-slate-800">

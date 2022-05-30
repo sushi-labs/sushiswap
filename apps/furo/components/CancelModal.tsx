@@ -1,12 +1,12 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { Chain } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import { createToast } from 'components'
+import { Button, classNames, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface CancelModalProps {
   stream?: Stream
@@ -17,6 +17,7 @@ interface CancelModalProps {
 
 export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) => {
   const [open, setOpen] = useState(false)
+  const { activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { data: account } = useAccount()
 
@@ -34,13 +35,18 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) 
   )
 
   const cancelStream = useCallback(async () => {
-    if (!stream || !account) return
+    if (!stream || !account || !activeChain?.id) return
     const data = await writeAsync({ args: [stream.id, fundSource === FundSource.BENTOBOX] })
 
     createToast({
-      title: 'Cancel stream',
-      description: `You have successfully cancelled your stream`,
+      txHash: data.hash,
+      href: Chain.from(activeChain.id).getTxUrl(data.hash),
       promise: data.wait(),
+      summary: {
+        pending: <Dots>Cancelling stream</Dots>,
+        completed: `Successfully cancelled stream`,
+        failed: 'Something went wrong cancelling the stream',
+      },
     })
   }, [account, fundSource, stream, writeAsync])
 

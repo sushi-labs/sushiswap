@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
-import { NotepadIcon, Popover, Typography } from '@sushiswap/ui'
+import { Button, NotepadIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import { FC, useState } from 'react'
@@ -38,12 +38,12 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   return (
     <Popover
       button={
-        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
+        <Button color="gray">
           <NotepadIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Details
           </Typography>
-        </div>
+        </Button>
       }
       panel={
         <div className="max-w-[530px] gap-4 z-10 shadow-md overflow-hidden rounded-xl flex flex-col bg-slate-800">

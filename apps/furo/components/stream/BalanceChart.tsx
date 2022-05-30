@@ -166,7 +166,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = BalanceChartHoverEnum.
               dx={2}
               className="text-slate-300"
             >
-              .{stream?.balance?.greaterThan(ZERO) ? stream?.balance.toSignificant(6).split('.')[1] : '000000'}
+              .{stream?.balance?.greaterThan(ZERO) ? stream?.balance.toFixed(6).split('.')[1] : '000000'}
             </tspan>
           </text>
           <text

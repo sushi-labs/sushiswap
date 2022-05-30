@@ -73,7 +73,7 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
           </div>
         </div>
         <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
-          {furo?.isStarted ? `REMAINING` : `STARTS IN`}
+          {furo?.isStarted ? `REMAINING` : `TILL STREAM STARTS`}
         </Typography>
       </div>
     )

@@ -94,7 +94,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             </Typography>
             <div className="flex items-center gap-3">
               <Typography variant="sm" className="text-slate-400">
-                Show active
+                Active Streams Only
               </Typography>
               <Switch
                 checked={showActiveIncoming}
@@ -126,7 +126,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             </Typography>
             <div className="flex items-center gap-3">
               <Typography variant="sm" className="text-slate-400">
-                Show active
+                Active Streams Only
               </Typography>
               <Switch
                 checked={showActiveOutgoing}

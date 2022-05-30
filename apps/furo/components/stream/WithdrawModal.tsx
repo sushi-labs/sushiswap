@@ -1,11 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { Chain } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, classNames, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
-import { createToast, CurrencyInput } from 'components'
+import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
 import { FC, useCallback, useState } from 'react'
@@ -36,7 +37,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   )
 
   const withdraw = useCallback(async () => {
-    if (!stream || !amount) return
+    if (!stream || !amount || !activeChain?.id) return
 
     setError(undefined)
 
@@ -52,18 +53,18 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       })
 
       createToast({
-        title: 'Withdraw from stream',
-        description: `You have successfully withdrawn ${amount.toSignificant(6)} ${
-          amount.currency.symbol
-        } from your stream`,
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
-      })
-
-      // Optimistic response (after 0 confirmation)
-      data.wait(1).then(() => {
-        if (stream && amount) {
-          stream.withdrawnAmount = stream.withdrawnAmount.add(amount)
-        }
+        summary: {
+          pending: (
+            <Dots>
+              Withdrawing {amount.toSignificant(6)} {amount.currency.symbol}
+            </Dots>
+          ),
+          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
+          failed: 'Something went wrong withdrawing from stream',
+        },
       })
     } catch (e: any) {
       setError(e.message)

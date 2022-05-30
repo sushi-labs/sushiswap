@@ -52,7 +52,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           showLabel={false}
           className="min-w-[100px] max-w-[100px] h-3"
           progress={Number(props.getValue()?.divide(100).toSignificant(4))}
-          color={ProgressColor.GRADIENT}
+          color={ProgressColor.BLUE}
         />
         <Typography variant="sm" weight={700} className="text-slate-200">
           {props.getValue()?.toSignificant(4)}%
