@@ -868,7 +868,7 @@ importers:
       ethereum-waffle: 3.x
       ethers: 5.x
       hardhat: 2.x
-      hardhat-deploy: ^0.11.4
+      hardhat-deploy: ^0.11.10
       hardhat-deploy-ethers: 0.3.0-beta.13
       tsup: 6.x
       typechain: 8.x
@@ -883,7 +883,7 @@ importers:
       '@typechain/hardhat': 6.0.0_3clkmflf5hrtprd7c3hbffme5a
       dotenv: 16.0.1
       ethereum-waffle: 3.4.4_typescript@4.6.4
-      hardhat-deploy: 0.11.5
+      hardhat-deploy: 0.11.10
       hardhat-deploy-ethers: 0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
       typechain: 8.0.0_typescript@4.6.4
     devDependencies:
@@ -1502,7 +1502,7 @@ importers:
       '@types/node': ^17.0.33
       ethers: ^5.0.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.4
+      hardhat-deploy: ^0.11.10
       hardhat-deploy-ethers: 0.3.0-beta.13
       ts-node: ^10.7.0
       typescript: ^4.0.0
@@ -1518,7 +1518,7 @@ importers:
       '@types/node': 17.0.35
       ethers: 5.6.6
       hardhat: 2.9.6
-      hardhat-deploy: 0.11.5
+      hardhat-deploy: 0.11.10
       hardhat-deploy-ethers: 0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
       typescript: 4.7.2
@@ -1543,7 +1543,7 @@ importers:
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.4
+      hardhat-deploy: ^0.11.10
       ts-node: ^10.7.0
       typescript: ^4.0.0
     devDependencies:
@@ -1565,7 +1565,7 @@ importers:
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
       '@types/node': 17.0.35
       hardhat: 2.9.6
-      hardhat-deploy: 0.11.5
+      hardhat-deploy: 0.11.10
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
       typescript: 4.7.2
 
@@ -1584,7 +1584,7 @@ importers:
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.4
+      hardhat-deploy: ^0.11.10
       ts-node: ^10.7.0
       typescript: ^4.0.0
     devDependencies:
@@ -1601,7 +1601,7 @@ importers:
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
       '@types/node': 17.0.35
       hardhat: 2.9.6
-      hardhat-deploy: 0.11.5
+      hardhat-deploy: 0.11.10
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
       typescript: 4.7.2
 
@@ -1624,7 +1624,7 @@ importers:
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.4
+      hardhat-deploy: ^0.11.10
       ts-node: ^10.7.0
       typescript: ^4.0.0
     devDependencies:
@@ -1645,7 +1645,7 @@ importers:
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
       '@types/node': 17.0.35
       hardhat: 2.9.6
-      hardhat-deploy: 0.11.5
+      hardhat-deploy: 0.11.10
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
       typescript: 4.7.2
 
@@ -9593,7 +9593,7 @@ packages:
     resolution: {integrity: sha512-Y2caI5+ZwS5c3RiNDJ6u53VhQHv+hHKwhkI1iHvceKUHw9Df6EK2zRLfjejRgMuCuxK7PfSWIMwWecceVvThjQ==}
 
   /delayed-stream/1.0.0:
-    resolution: {integrity: sha1-3zrhmayt+31ECqrgsp4icrJOxhk=}
+    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
   /denque/2.0.1:
@@ -11485,7 +11485,7 @@ packages:
     dev: false
 
   /fmix/0.1.0:
-    resolution: {integrity: sha1-x7vxJN7ELJ0ZHPuUfQqXeN2YbAw=}
+    resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
 
@@ -12094,8 +12094,8 @@ packages:
       hardhat: 2.9.6
     dev: true
 
-  /hardhat-deploy/0.11.5:
-    resolution: {integrity: sha512-3AZqbwNzM/CKqdMI5FNWkCm8bFO2BdKrTAdYiu19bg6DL0TIUbjfqS8xRY691tu595wd0s+k3ZRHgCB4eopWTg==}
+  /hardhat-deploy/0.11.10:
+    resolution: {integrity: sha512-Iby2WhDuAdaKXFkcrMbaA9YWOgDMBnuwixCk4TfBBu8+mBGI9muYsbU/pCMkKfXA4MwSHENweJlfDMyyz7zcNA==}
     dependencies:
       '@types/qs': 6.9.7
       axios: 0.21.4_debug@4.3.4
@@ -12484,7 +12484,7 @@ packages:
     dev: true
 
   /imul/1.0.1:
-    resolution: {integrity: sha1-nVhnFh6LPelsLDjV3HyxAvNeKsk=}
+    resolution: {integrity: sha512-WFAgfwPLAjU66EKt6vRdTlKj4nAgIDQzh29JonLa4Bqtl6D8JrIMvWjCnx7xEjVNmP3U0fM5o8ZObk7d0f62bA==}
     engines: {node: '>=0.10.0'}
 
   /imurmurhash/0.1.4:
@@ -13844,7 +13844,7 @@ packages:
       graceful-fs: 4.2.10
 
   /jsonfile/4.0.0:
-    resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
+    resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
     optionalDependencies:
       graceful-fs: 4.2.10
 
@@ -17656,7 +17656,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

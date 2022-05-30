@@ -30,11 +30,11 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
   addressOrName:
-    bentoBoxExports[chainId as unknown as keyof typeof bentoBoxExports]?.[0]?.contracts?.BentoBoxV1?.address ??
-    AddressZero,
+    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+      ?.address ?? AddressZero,
   contractInterface:
-    bentoBoxExports[chainId as unknown as keyof typeof bentoBoxExports]?.[0]?.contracts?.BentoBoxV1?.abi ??
-    bentoBoxArtifact.abi,
+    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+      ?.abi ?? bentoBoxArtifact.abi,
 })
 
 export function useBentoBoxContract(chainId: number | undefined) {
