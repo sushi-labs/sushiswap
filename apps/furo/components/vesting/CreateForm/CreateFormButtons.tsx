@@ -3,14 +3,14 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
-import { Button, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroVestingContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
-import { createToast } from 'components'
 import { CreateVestingFormDataTransformed } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { Chain } from '@sushiswap/chain'
 
 interface CreateFormButtons {
   onDismiss(): void
@@ -44,7 +44,11 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     const cliff = tryParseAmount(cliffAmount?.toString(), currency)
     const step = tryParseAmount(stepAmount.toString(), currency)
     const totalStep = tryParseAmount(stepAmount.toString(), currency)?.multiply(JSBI.BigInt(stepPayouts))
-    const totalAmount = cliff && totalStep ? cliff.add(totalStep) : undefined
+    let totalAmount = totalStep
+
+    if (cliff && totalStep) {
+      totalAmount = totalStep.add(cliff)
+    }
 
     return [
       totalAmount,
@@ -55,7 +59,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   const createVesting = useCallback(async () => {
-    if (!contract || !account?.address) return
+    if (!contract || !account?.address || !activeChain?.id) return
     if (
       !recipient ||
       !currency ||
@@ -97,9 +101,20 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       onDismiss()
 
       createToast({
-        title: 'Create vesting',
-        description: `You have successfully created a vested stream`,
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
+        summary: {
+          pending: (
+            <Dots>
+              Creating a {totalAmountAsEntity?.toSignificant(6)} {totalAmountAsEntity.currency.symbol} vesting schedule
+            </Dots>
+          ),
+          completed: `Successfully created a ${totalAmountAsEntity?.toSignificant(6)} ${
+            totalAmountAsEntity.currency.symbol
+          } vesting schedule`,
+          failed: 'Something went wrong creating a vesting schedule',
+        },
       })
     } catch (e: any) {
       log.tenderly({

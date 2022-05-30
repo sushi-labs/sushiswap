@@ -118,6 +118,7 @@ export class Vesting extends Furo {
 
   public get streamedPercentage(): Percent {
     if (!this.isStarted) return new Percent(0, 100)
-    return new Percent(this.streamedAmount.quotient, this.amount.quotient)
+    const percent = new Percent(this.streamedAmount.quotient, this.amount.quotient)
+    return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
   }
 }

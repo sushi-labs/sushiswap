@@ -10,7 +10,7 @@ export class Stream extends Furo {
     super({ chainId, furo, rebase })
   }
 
-  public get balance(): Amount<Token> {
+  public override get balance(): Amount<Token> {
     if (!this.isStarted) return this._balance
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
@@ -24,6 +24,7 @@ export class Stream extends Furo {
 
   public get streamedPercentage(): Percent | undefined {
     if (!this.isStarted) return new Percent(0, 100)
-    return new Percent(this._withdrawnAmount.add(this.balance).quotient, this.amount.quotient)
+    const percent = new Percent(this._withdrawnAmount.add(this.balance).quotient, this.amount.quotient)
+    return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
   }
 }

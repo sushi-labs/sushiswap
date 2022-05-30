@@ -10,6 +10,7 @@ export abstract class Furo {
   public _withdrawnAmount: Amount<Token>
 
   public readonly id: string
+  public readonly chainId: ChainId
   public readonly type: FuroType
   public readonly status: FuroStatus
   public readonly amount: Amount<Token>
@@ -28,6 +29,7 @@ export abstract class Furo {
       elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
     }
     this.id = furo.id
+    this.chainId = chainId
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.type = furo.__typename

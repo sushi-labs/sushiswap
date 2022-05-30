@@ -24,6 +24,7 @@ export * from './stepper'
 export * from './switch'
 export * from './table'
 export * from './ThemeProvider'
+export * from './toast'
 export * from './types'
 export * from './typography'
 

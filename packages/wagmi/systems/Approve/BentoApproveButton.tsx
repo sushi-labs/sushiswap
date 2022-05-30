@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
 import { Button } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
@@ -29,7 +30,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       setState(approvalState)
     }, [approvalState, setState])
 
-    if (approvalState === ApprovalState.APPROVED) return null
+    if (approvalState === ApprovalState.APPROVED || masterContract === AddressZero) return null
     if (render) return render({ approvalState, signature, onApprove })
 
     return (

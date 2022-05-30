@@ -3,7 +3,7 @@ import { HistoryIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Transaction, Vesting, Stream } from 'lib'
 import { FC, memo, useMemo } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { Amount } from '@sushiswap/currency'
 
 interface Props {
@@ -13,16 +13,11 @@ interface Props {
 
 export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }) => {
   const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
 
   const transactions = useMemo(
     () =>
-      activeChain?.id
-        ? transactionRepresentations
-            ?.filter((transaction) => transaction.to.id === account?.address?.toLocaleLowerCase())
-            .map((transaction) => new Transaction(transaction, activeChain?.id))
-        : [],
-    [activeChain?.id, transactionRepresentations, account?.address]
+      stream ? transactionRepresentations?.map((transaction) => new Transaction(transaction, stream.chainId)) : [],
+    [transactionRepresentations, account?.address]
   )
 
   return (

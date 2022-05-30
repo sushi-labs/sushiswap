@@ -24,7 +24,7 @@ export function useBentoBoxApproveCallback({
       args: [masterContract, account ? account.address : AddressZero],
       // This should probably always be true anyway...
       watch,
-      enabled: Boolean(account),
+      enabled: Boolean(account && masterContract !== AddressZero),
     }
   )
   const { error, refetch: getNonces } = useContractRead(getBentoBoxContractConfig(activeChain?.id), 'nonces', {

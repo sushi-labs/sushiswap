@@ -52,7 +52,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
               <TokenListUpdater chainId={ChainId.GÖRLI} />
               <Component {...pageProps} />
-              <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} />
+
               <App.Footer />
             </App.Shell>
           </ThemeProvider>

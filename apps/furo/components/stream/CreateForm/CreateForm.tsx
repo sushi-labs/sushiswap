@@ -5,10 +5,9 @@ import { Amount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
-import { Button, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroStreamContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
-import { createToast } from 'components'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
@@ -18,6 +17,7 @@ import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { createStreamSchema } from './schema'
 import { StreamAmountDetails } from './StreamAmountDetails'
 import { CreateStreamFormData, CreateStreamFormDataValidated } from './types'
+import { Chain, ChainId } from '@sushiswap/chain'
 
 export const CreateForm: FC = () => {
   const { data: account } = useAccount()
@@ -63,7 +63,7 @@ export const CreateForm: FC = () => {
 
   const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
     async (data) => {
-      if (!amountAsEntity || !contract || !account?.address) return
+      if (!amountAsEntity || !contract || !account?.address || !activeChain?.id) return
 
       // Can cast here safely since input must have been validated already
       const _data = data as CreateStreamFormDataValidated
@@ -94,9 +94,20 @@ export const CreateForm: FC = () => {
         })
 
         createToast({
-          title: 'Create stream',
-          description: `You have successfully created a stream`,
+          txHash: data.hash,
+          href: Chain.from(activeChain.id).getTxUrl(data.hash),
           promise: data.wait(),
+          summary: {
+            pending: (
+              <Dots>
+                Creating {amountAsEntity?.toSignificant(6)} {amountAsEntity.currency.symbol} stream
+              </Dots>
+            ),
+            completed: `Successfully created a ${amountAsEntity?.toSignificant(6)} ${
+              amountAsEntity.currency.symbol
+            } stream`,
+            failed: 'Something went wrong creating a new stream',
+          },
         })
       } catch (e: any) {
         setError(e.message)
