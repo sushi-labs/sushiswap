@@ -3,7 +3,7 @@ import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import React, { FC, ReactElement, ReactNode, useMemo } from 'react'
+import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { createScheduleRepresentation } from '../createScheduleRepresentation'

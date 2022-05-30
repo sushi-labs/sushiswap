@@ -1,6 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -17,7 +18,6 @@ import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { createStreamSchema } from './schema'
 import { StreamAmountDetails } from './StreamAmountDetails'
 import { CreateStreamFormData, CreateStreamFormDataValidated } from './types'
-import { Chain, ChainId } from '@sushiswap/chain'
 
 export const CreateForm: FC = () => {
   const { data: account } = useAccount()

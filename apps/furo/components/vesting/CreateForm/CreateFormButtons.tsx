@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -10,7 +11,6 @@ import { CreateVestingFormDataTransformed } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
-import { Chain } from '@sushiswap/chain'
 
 interface CreateFormButtons {
   onDismiss(): void

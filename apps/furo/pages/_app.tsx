@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { ToastContainer } from 'react-toastify'
 import { WagmiConfig } from 'wagmi'
 
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
