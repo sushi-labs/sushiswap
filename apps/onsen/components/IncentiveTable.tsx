@@ -19,7 +19,18 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
   table.createDisplayColumn({
     id: 'Token',
     header: () => <div className="w-full text-left"> Token </div>,
-    cell: (props) => shortenAddress(props.row.original?.liquidityStaked.currency.address as string),
+    cell: (props) => {
+      return (
+        <div className="flex flex-col w-full">
+          <Typography variant="sm" weight={700} className=" text-slate-200">
+            {props.row.original?.liquidityStaked.currency.symbol}
+          </Typography>
+          <Typography variant="xxs" weight={500} className=" text-slate-200">
+            {props.row.original?.tokenType}
+          </Typography>
+        </div>
+      )
+    },
   }),
   table.createDataColumn('liquidityStaked', {
     header: () => <div className="w-full text-right">TVL</div>,

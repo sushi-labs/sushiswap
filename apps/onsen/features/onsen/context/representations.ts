@@ -23,6 +23,7 @@ export interface TokenRepresentation {
   symbol: string
   name: string
   decimals: string
+  type?: string
 }
 
 export interface TridentPoolRepresentation {

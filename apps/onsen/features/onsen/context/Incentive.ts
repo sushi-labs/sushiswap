@@ -3,9 +3,11 @@ import { Amount, Token } from '@sushiswap/currency'
 
 import { toToken } from './mapper'
 import { IncentiveRepresentation, UserRepresentation } from './representations'
+import { TokenType } from './types'
 
 export class Incentive {
   public readonly id: string
+  public readonly tokenType: string
   public readonly rewardRemaining: Amount<Token>
   public readonly liquidityStaked: Amount<Token>
   //   public readonly subscriptions?: Object
@@ -22,6 +24,7 @@ export class Incentive {
       incentive.rewardRemaining
     ) // TODO: pass in active network to constructor
     this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
+    this.tokenType = incentive.stakeToken?.type ? (<any>TokenType)[incentive.stakeToken?.type] : TokenType.UNKNOWN // FIXME: any hack?
     this.startTime = new Date(Number(incentive.startTime) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
     this.createdBy = incentive.createdBy
