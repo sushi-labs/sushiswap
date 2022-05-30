@@ -8,49 +8,71 @@ https://pnpm.io/installation
 
 ### Install
 
+```bash
 pnpm install
+```
 
 ### Execute
 
-pnp exec
+```bash
+pnpm exec
+```
 
 ### Dev
 
-pnpn run dev
+```bash
+pnpm run dev
+```
 
 ### Beast Mode
 
 Runs dev for all apps and composes under localhost:3000
 
+```bash
 pnpm exec turbo run dev --filter=...{./apps/\*}
+```
 
 #### Single Repository
 
+```bash
 pnpm exec turbo run dev --scope=api/app/package/protocol
+```
 
 ### Build
 
+```bash
 pnpn run build
+```
 
 #### Single Repository
 
+```
 pnpm exec turbo run build --scope=api/app/package/protocol
+```
 
 ### Test
 
+```bash
 pnpn run test
+```
 
 #### Single Repository
 
+```bash
 pnpm exec turbo run test --scope=api/app/package/protocol
+```
 
 ### Test
 
+```bash
 pnpn run clean
+```
 
 #### Single Repository
 
+```bash
 pnpm exec turbo run clear --scope=api/app/package/protocol
+```
 
 ## APIs
 
