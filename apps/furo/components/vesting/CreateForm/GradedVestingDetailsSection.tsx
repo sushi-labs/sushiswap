@@ -42,9 +42,9 @@ export const GradedVestingDetailsSection = () => {
                       error.message
                     ) : (
                       <>
-                        The amount the recipient receives after every period. For a value of 6 and a{' '}
-                        {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {currency?.symbol}{' '}
-                        {stepConfig?.label.toLowerCase()}.
+                        The amount the recipient receives after every period. For a value of {stepPayouts} and a{' '}
+                        {stepConfig?.label.toLowerCase()} period length, the user will receive {stepPayouts}{' '}
+                        {currency?.symbol} {stepConfig?.label.toLowerCase()}.
                       </>
                     )
                   }

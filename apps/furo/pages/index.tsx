@@ -21,8 +21,6 @@ const exampleStream = new Stream({
   chainId: ChainId.ETHEREUM,
   furo: {
     id: '0',
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
     totalAmount: '119994000000',

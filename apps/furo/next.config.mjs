@@ -13,6 +13,6 @@ export default withTranspileModules({
   reactStrictMode: true,
   swcMinify: true,
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 })

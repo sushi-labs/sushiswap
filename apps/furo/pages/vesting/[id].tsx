@@ -161,7 +161,7 @@ const _VestingPage: FC = () => {
         </div>
         <div className="flex items-end justify-center gap-2">
           <StreamDetailsPopover stream={vesting} />
-          <HistoryPopover transactionRepresentations={transactions} />
+          <HistoryPopover stream={vesting} transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} schedule={schedule} />
         </div>
         {vesting?.status !== FuroStatus.CANCELLED && (

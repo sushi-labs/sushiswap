@@ -160,7 +160,7 @@ const _Streams: FC = () => {
         </div>
         <div className="flex items-end justify-center gap-2">
           <StreamDetailsPopover stream={stream} />
-          <HistoryPopover transactionRepresentations={transactions} />
+          <HistoryPopover stream={stream} transactionRepresentations={transactions} />
         </div>
         <div className="flex flex-col gap-2">
           <WithdrawModal stream={stream} />
