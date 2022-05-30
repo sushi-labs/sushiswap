@@ -10,7 +10,7 @@ interface Card {
 
 export const Card: FC<Card> = ({ title, subtitle, href }) => {
   return (
-    <div className="h-[480px] w-full rounded-2xl shadow-md bg-slate-800 overflow-hidden">
+    <div className="h-[480px] cursor-pointer w-full rounded-2xl shadow-md bg-slate-800 overflow-hidden hover:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
       <div className="relative h-[300px]">
         <Image src="/blog/image4.jpg" layout="fill" />
       </div>
