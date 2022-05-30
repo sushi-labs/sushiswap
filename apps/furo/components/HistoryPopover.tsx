@@ -20,7 +20,7 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
   return (
     <Popover
       button={
-        <Button color="gray">
+        <Button color="gray" as="div">
           <HistoryIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             History

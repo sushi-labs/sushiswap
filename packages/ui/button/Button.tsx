@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
 import { Loader } from '../loader'
+import { AnyTag, Polymorphic } from '../types'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
@@ -30,9 +31,7 @@ const SIZE: Record<ButtonSize, string> = {
   lg: 'btn-lg',
 }
 
-type Button = React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>
-
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface OwnProps {
   children?: ReactNode
   startIcon?: ReactNode
   endIcon?: ReactNode
@@ -44,9 +43,14 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   href?: string
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export type ButtonProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
+
+declare function ButtonFn<Tag extends AnyTag = 'button'>(props: ButtonProps<Tag>): JSX.Element
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>(
   (
     {
+      as = 'button',
       children,
       className = '',
       color = 'blue',
@@ -63,7 +67,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     return React.createElement(
-      href ? 'a' : 'button',
+      as,
       {
         ...rest,
         ref,
@@ -90,6 +94,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       )
     )
   }
-)
+) as typeof ButtonFn
 
 export default Button
