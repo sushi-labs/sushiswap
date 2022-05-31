@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@sushiswap/ui": "workspace:*",
+    "date-fns": "^2.28.0",
     "next": "^12.1.6",
+    "qs": "^6.10.3",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "react-markdown": "^8.0.3"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -20,6 +23,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "17.0.30",
+    "@types/qs": "^6.9.7",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
     "autoprefixer": "^10.4.5",

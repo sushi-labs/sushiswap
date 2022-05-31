@@ -1,72 +1,45 @@
-import { Button, Container, Typography } from '@sushiswap/ui'
-import { Card } from 'components/Card'
+import { Container } from '@sushiswap/ui'
+import { InferGetServerSidePropsType } from 'next'
+import { FC } from 'react'
 
-export default function Blog() {
+import { ArticleList, Categories, Hero } from '../components'
+import Seo from '../components/Seo'
+import { fetchAPI } from '../lib/api'
+
+export async function getStaticProps() {
+  const [articlesRes, categoriesRes] = await Promise.all([
+    fetchAPI('/articles', { populate: ['cover', 'category'] }),
+    fetchAPI('/categories', { populate: '*' }),
+  ])
+
+  return {
+    props: {
+      articles: articlesRes.data,
+      categories: categoriesRes.data,
+    },
+    revalidate: 1,
+  }
+}
+
+const Home: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ articles, categories }) => {
   return (
-    <div className="flex flex-col divide-y divide-slate-800">
-      <section className="bg-slate-900/80 ">
-        <Container maxWidth="5xl" className="mx-auto px-4 z-10">
-          <div className="flex flex-col py-20 gap-5 max-w-[500px]">
-            <Typography variant="sm" className="text-slate-500">
-              Latest From Sushi Blog <br />
-              May 24, 2022
-            </Typography>
-            <Typography weight={900} variant="h2" className="text-slate-100 tracking-wide">
-              Launching Sushi&apos;s Suite of Defi Products on ALL Chains!
-            </Typography>
-            <Typography variant="xl" className="text-slate-100">
-              Subheadings insert here. For example: If you don’t read this article, you are not gonna make it. If you
-              read this article, you are gonna make it.
-            </Typography>
-            <div>
-              <Button
-                color="blue"
-                className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-6 h-[44px] sm:!h-[44px]"
-              >
-                Read Article
-              </Button>
+    <>
+      <Seo />
+      <div className="flex flex-col divide-y divide-slate-800">
+        <Hero article={articles[0]} />
+        <section className="py-10 pb-60">
+          <Container maxWidth="5xl" className="mx-auto px-4 space-y-10">
+            <div className="flex gap-2">
+              <Categories categories={categories} />
             </div>
-          </div>
-        </Container>
-      </section>
-      <section className="py-10 pb-60">
-        <Container maxWidth="5xl" className="mx-auto px-4 space-y-10">
-          <div className="flex gap-2">
-            <Button size="sm" color="blue" variant="outlined">
-              All
-            </Button>
-            <Button size="sm" color="gray" variant="outlined">
-              Tutorial
-            </Button>
-            <Button size="sm" color="gray" variant="outlined">
-              Product
-            </Button>
-            <Button size="sm" color="gray" variant="outlined">
-              Announcement
-            </Button>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <Card
-              title="Launching Sushi’s Suite Of DeFi Products On ALL The Chains!"
-              subtitle="        Subheadings insert here. For example: If you don’t read this article, you are not gonna make it.
-"
-              href="https://google.com"
-            />
-            <Card
-              title="Launching Sushi’s Suite Of DeFi Products On ALL The Chains!"
-              subtitle="        Subheadings insert here. For example: If you don’t read this article, you are not gonna make it.
-"
-              href="https://google.com"
-            />
-            <Card
-              title="Launching Sushi’s Suite Of DeFi Products On ALL The Chains!"
-              subtitle="        Subheadings insert here. For example: If you don’t read this article, you are not gonna make it.
-"
-              href="https://google.com"
-            />
-          </div>
-        </Container>
-      </section>
-    </div>
+            <div className="grid grid-cols-3 gap-4">
+              <ArticleList articles={articles.slice(1)} />
+            </div>
+          </Container>
+        </section>
+      </div>
+    </>
   )
 }
+
+export default Home
