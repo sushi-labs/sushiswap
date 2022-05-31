@@ -93,6 +93,7 @@ const _Home: FC = () => {
                 <input
                   onChange={(e) => setQuery(e.target.value)}
                   className="w-full font-bold placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
+                  placeholder="Search Article"
                 />
               </div>
             </div>
