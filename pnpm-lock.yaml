@@ -207,6 +207,7 @@ importers:
 
   apps/blog:
     specifiers:
+      '@heroicons/react': ^1.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -237,6 +238,7 @@ importers:
       react-dom: 18.1.0_react@18.1.0
       react-markdown: 8.0.3_7cpxmzzodpxnolj5zcc5cr63ji
     devDependencies:
+      '@heroicons/react': 1.0.6_react@18.1.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -6077,7 +6079,6 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.1.0
-    dev: false
 
   /@hookform/resolvers/2.8.10_react-hook-form@7.31.1:
     resolution: {integrity: sha512-DDFtNlugsbwAhCJHYp3NcN5LvJrwSsCLPi41Wo5O8UAIbUFnBfY/jW+zKnlX57BZ4jE0j/g6R9rB3JlO89ad0g==}
@@ -10640,7 +10641,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_sfoxds7t5ydpegc3knd667wn6m
+      styled-components: 5.3.5_ef5jwxihqo6n7gxfmzogljlgcm
     dev: false
 
   /babel-plugin-syntax-async-functions/6.13.0:
@@ -16605,7 +16606,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.0_debug@4.3.2
+      follow-redirects: 1.15.0
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug

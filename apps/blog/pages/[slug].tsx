@@ -1,7 +1,7 @@
 import { Container } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ArticleAuthors, ArticleHeader, MediaBlock, RichTextBlock, Seo } from '../components'
+import { ArticleAuthors, ArticleHeader, ArticleLinks, MediaBlock, RichTextBlock, Seo } from '../components'
 import { fetchAPI } from '../lib/api'
 import { Article, Article as ArticleType, Category, Meta } from '../types'
 
@@ -68,6 +68,7 @@ const Article: FC<ArticlePage> = ({ article, categories }) => {
                 return <MediaBlock block={block} />
               }
             })}
+            <ArticleLinks article={article} />
           </article>
         </main>
       </Container>

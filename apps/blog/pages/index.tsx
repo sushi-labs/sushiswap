@@ -2,13 +2,12 @@ import { Container } from '@sushiswap/ui'
 import { InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 
-import { ArticleList, Categories, Hero } from '../components'
-import Seo from '../components/Seo'
+import { ArticleList, Categories, Hero, Seo } from '../components'
 import { fetchAPI } from '../lib/api'
 
 export async function getStaticProps() {
   const [articlesRes, categoriesRes] = await Promise.all([
-    fetchAPI('/articles', { populate: ['cover', 'category'] }),
+    fetchAPI('/articles', { populate: 'deep' }),
     fetchAPI('/categories', { populate: '*' }),
   ])
 
