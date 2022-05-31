@@ -1,3 +1,0 @@
-# Root
-
-Root application

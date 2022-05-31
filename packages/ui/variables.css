@@ -1,8 +1,0 @@
-:root,
-::before,
-::after {
-  --font-sans: "Inter", -apple-system, system-ui, BlinkMacSystemFont, 'Helvetica Neue',
-    'Helvetica', sans-serif;
-  --background-color: #0f172a;
-  --color: #ffffff;
-}

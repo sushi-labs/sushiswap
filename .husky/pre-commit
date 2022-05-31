@@ -1,7 +1,8 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+. "$(dirname "$0")/common.sh"
 
-pnpm sort
-pnpm format
-pnpm lint
-pnpm test
+yarn lint
+yarn lint-staged
+yarn lingui
+# yarn test

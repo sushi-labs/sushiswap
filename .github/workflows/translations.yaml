@@ -1,0 +1,65 @@
+name: Sync translations
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+
+jobs:
+  translations:
+    if: github.event.pull_request.merged == true
+    name: Sync translations with sushiswap/translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Installing dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Checkout sushiswap/translations repository
+        uses: actions/checkout@v2
+        with:
+          repository: sushiswap/translations
+          path: translations
+
+      - run: rm -rf locale
+      - run: mv translations/sushiswap locale
+
+      - name: Run LinguiJS
+        run: npm run lingui
+
+      - name: Remove compiled files
+        run: rm -rf locale/*.js
+
+      - name: Push translation files to translation repo
+        uses: cpina/github-action-push-to-another-repository@v1.4.1
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'locale'
+          destination-github-username: 'sushiswap'
+          destination-repository-name: 'translations'
+          user-email: ramin@sushi.com
+          target-branch: master
+          target-directory: sushiswap

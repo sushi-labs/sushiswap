@@ -1,7 +1,0 @@
-packages:
-  - "apis/*"
-  - "apps/*"
-  - "examples/*"
-  - "packages/**"
-  - "protocols/**"
-  - "subgraphs/*"

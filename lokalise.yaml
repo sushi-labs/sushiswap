@@ -1,0 +1,30 @@
+# Lokalise CLI v2 example config
+# Copy it to config.yml and modify to use
+
+# API token
+# You can create token at Personal profile page at https://lokalise.com/profile
+token: 036f7fa7f313dee2fb73caf35fd13ce0f6c67230
+
+# Default Project ID
+# If set, used for all endpoints requiring project-id flag.
+project-id: 7012984960a7b5fa85c295.58074118
+
+# Number of retries for API requests.
+# Default is 3.
+#retry-count: 5
+
+# Sleep time before retrying a request.
+# Default is 100 milliseconds.
+#retry-timeout: 500ms
+
+# Connection timeout for API requests.
+# Default is 1 min.
+#connection-timeout: 5s
+
+# Items to return per page.
+# Default is 5000 (max available in API).
+#page-limit: 1000
+
+# Debug API requests.
+# Default is false.
+debug: true

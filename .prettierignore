@@ -1,8 +1,7 @@
-.next
-dist
-
-.graphclient
-generated
-typechain
-
-node_modules
+# Ignore all CSS files:
+*.css
+*.json
+*.scss
+*.html
+*.svg
+*.min.js
