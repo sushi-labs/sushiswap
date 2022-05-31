@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { forwardRef, ReactNode } from 'react'
 
-import { AnyTag, Polymorphic } from '../types'
+import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
 const WEIGHTS: Record<string, string> = {
   400: 'font-normal',
@@ -27,7 +27,7 @@ export type TypographyWeight = 400 | 500 | 700 | 900
 export type TypographySelect = 'none' | 'text' | 'all' | 'auto'
 export type TypographyVariant = 'hero' | 'h1' | 'h2' | 'h3' | 'xl' | 'lg' | 'base' | 'sm' | 'xs' | 'xxs'
 
-type OwnProps = {
+type Props = {
   children: ReactNode | ReactNode[]
   variant?: TypographyVariant
   weight?: TypographyWeight
@@ -35,39 +35,31 @@ type OwnProps = {
   select?: TypographySelect
 }
 
-export type TypographyProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
+type TypographyProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
+type TypographyComponent = <C extends React.ElementType = 'div'>(props: TypographyProps<C>) => React.ReactElement | null
 
-declare function TypographyFn<Tag extends AnyTag = 'div'>(props: TypographyProps<Tag>): JSX.Element
-
-export const Typography = forwardRef<HTMLElement, TypographyProps<any>>(
-  (
-    {
-      variant = 'base',
-      weight = 400,
-      as = 'div',
-      className = 'text-slate-400',
-      children = [],
-      onClick = undefined,
-      select = 'auto',
-      ...rest
-    },
-    ref
+export const Typography: TypographyComponent = forwardRef(
+  <Tag extends React.ElementType = 'div'>(
+    { as, variant = 'base', weight = 400, className, children, onClick, select, ...rest }: TypographyProps<Tag>,
+    ref?: PolymorphicRef<Tag>
   ) => {
-    return React.createElement(
-      as,
-      {
-        className: classNames(
+    const Component = as || 'div'
+
+    return (
+      <Component
+        className={classNames(
           VARIANTS[variant],
           WEIGHTS[weight],
           select,
           onClick ? 'cursor-pointer select-none' : '',
           className
-        ),
-        onClick,
-        ...rest,
-        ref,
-      },
-      children
+        )}
+        onClick={onClick}
+        ref={ref}
+        {...rest}
+      >
+        {children}
+      </Component>
     )
   }
-) as typeof TypographyFn
+)

@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
 import { Loader } from '../loader'
-import { AnyTag, Polymorphic } from '../types'
+import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
 export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
@@ -31,7 +31,7 @@ const SIZE: Record<ButtonSize, string> = {
   lg: 'btn-lg',
 }
 
-interface OwnProps {
+interface Props {
   children?: ReactNode
   startIcon?: ReactNode
   endIcon?: ReactNode
@@ -43,16 +43,15 @@ interface OwnProps {
   href?: string
 }
 
-export type ButtonProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
+type ButtonProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
+type ButtonComponent = <C extends React.ElementType = 'button'>(props: ButtonProps<C>) => React.ReactElement | null
 
-declare function ButtonFn<Tag extends AnyTag = 'button'>(props: ButtonProps<Tag>): JSX.Element
-
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>(
-  (
+export const Button: ButtonComponent = React.forwardRef(
+  <Tag extends React.ElementType = 'button'>(
     {
-      as = 'button',
+      as,
       children,
-      className = '',
+      className,
       color = 'blue',
       size = 'default',
       variant = 'filled',
@@ -61,18 +60,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>
       fullWidth = false,
       loading,
       disabled,
-      href,
       ...rest
-    },
-    ref
+    }: ButtonProps<Tag>,
+    ref?: PolymorphicRef<Tag>
   ) => {
-    return React.createElement(
-      as,
-      {
-        ...rest,
-        ref,
-        disabled: disabled || loading,
-        className: classNames(
+    const Component = as || 'button'
+
+    return (
+      <Component
+        ref={ref}
+        disabled={disabled || loading}
+        className={classNames(
           'btn',
           fullWidth ? 'w-full' : '',
           VARIANT[variant],
@@ -80,20 +78,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>
           SIZE[size],
           className,
           disabled ? 'btn-disabled' : ''
-        ),
-        ...(href && { href }),
-      },
-      loading ? (
-        <Loader stroke="currentColor" />
-      ) : (
-        <>
-          {startIcon && startIcon}
-          {children}
-          {endIcon && endIcon}
-        </>
-      )
+        )}
+        {...rest}
+      >
+        {loading ? (
+          <Loader stroke="currentColor" />
+        ) : (
+          <>
+            {startIcon && startIcon}
+            {children}
+            {endIcon && endIcon}
+          </>
+        )}
+      </Component>
     )
   }
-) as typeof ButtonFn
+)
 
 export default Button
