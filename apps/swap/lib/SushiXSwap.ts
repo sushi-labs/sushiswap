@@ -1,11 +1,14 @@
+import { GetAccountResult } from '@wagmi/core'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
+import { BaseProvider } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
-import { Currency, Token } from '@sushiswap/currency'
+import { Amount, Currency, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import sushiXSwapArficact from '@sushiswap/sushixswap/artifacts/contracts/SushiXSwap.sol/SushiXSwap.json'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 import { Contract, Signer } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
@@ -16,14 +19,15 @@ export enum Action {
 
   // Src Actions
   SRC_DEPOSIT_TO_BENTOBOX = 1,
+  SRC_DEPOSIT = 11,
   SRC_TRANSFER_FROM_BENTOBOX = 2,
 
   // Dst Actions
   DST_DEPOSIT_TO_BENTOBOX = 3,
-  DST_WITHDRAW_TOKEN = 4,
+  DST_WITHDRAW = 4,
   DST_WITHDRAW_FROM_BENTOBOX = 5,
 
-  // Unwrap
+  // Unwrap (to native)
   UNWRAP_AND_TRANSFER = 6,
 
   // Legacy AMM
@@ -37,17 +41,38 @@ export enum Action {
   STARGATE_TELEPORT = 10,
 }
 
-// export abstract class SushiXSwapEncoder {
+export abstract class Swap {}
 
+export interface SushiXSwap {}
+
+export class StargateAdapter {}
+export class AnycallAdapter {}
+export class SocketAdapter {}
+
+// interface Recipe {
+//   readonly actions: Action[]
+//   readonly values: BigNumber[]
+//   readonly datas: string[]
 // }
 
 // SushiXSwap
-export class SushiXSwap {
+export class SushiXSwap implements SushiXSwap {
+  // private account: GetAccountResult<BaseProvider>
+
   private user: string
-  private signer: Signer | null
+  private contract: SushiXSwapContract
+
+  private crossChain: boolean
 
   private srcChainId: number
   private dstChainId: number
+
+  private srcToken: Currency
+  private dstToken: Currency
+
+  private srcUseBentoBox: boolean
+  private dstUseBentoBox: boolean
+
   private srcMasterContract: string
   private dstMasterContract: string
 
@@ -57,19 +82,87 @@ export class SushiXSwap {
 
   teleporter: Teleporter
 
-  constructor(
-    srcChainId: number = ChainId.ETHEREUM,
-    dstChainId: number = ChainId.ETHEREUM,
-    user: string,
-    signer: Signer | null
-  ) {
-    this.srcChainId = srcChainId
-    this.dstChainId = dstChainId
+  constructor({
+    srcToken,
+    dstToken,
+    srcUseBentoBox = false,
+    dstUseBentoBox = false,
+    user,
+    contract,
+    debug = false,
+  }: {
+    srcToken: Currency
+    dstToken: Currency
+    srcUseBentoBox: boolean
+    dstUseBentoBox: boolean
+    user: string
+    contract: SushiXSwapContract
+    debug?: boolean
+  }) {
+    // this.account = account
+    // this.user = account.address as string
+
+    this.srcToken = srcToken
+    this.dstToken = dstToken
+
+    this.srcUseBentoBox = srcUseBentoBox
+    this.dstUseBentoBox = dstUseBentoBox
+
+    this.srcChainId = this.srcToken.chainId
+    this.dstChainId = this.dstToken.chainId
+
+    this.crossChain = this.srcChainId !== this.dstChainId
+
     this.user = user
-    this.signer = signer
-    this.srcMasterContract = SUSHI_X_SWAP_ADDRESS[srcChainId]
-    this.dstMasterContract = SUSHI_X_SWAP_ADDRESS[dstChainId]
+    this.contract = contract
+
+    this.srcMasterContract = SUSHI_X_SWAP_ADDRESS[this.srcToken.chainId]
+    this.dstMasterContract = SUSHI_X_SWAP_ADDRESS[this.dstToken.chainId]
+
     this.teleporter = new Teleporter(user)
+  }
+
+  // Transfers Scenarios
+  // T1: BentoBox - Stargate - BentoBox
+  // T2: Wallet - Stargate - Wallet
+  // T3: Wallet - Stargate - BentoBox
+  // T4: BentoBox - Stargate - Wallet
+  stargateTransfer(amountIn: Amount<Currency>, shareIn: Amount<Currency>): void {
+    // T1-T4
+    if (this.srcUseBentoBox && this.dstUseBentoBox) {
+      // T1
+      console.log(`cook stargate transfer from bentobox on chain ${this.srcChainId} to bentobox on ${this.dstChainId}`)
+      this.srcTransferFromBentoBox(this.srcToken.wrapped.address, this.srcMasterContract, amountIn.quotient.toString())
+      this.teleporter.dstDepositToBentoBox(this.dstToken, this.user)
+    } else if (!this.srcUseBentoBox && !this.dstUseBentoBox) {
+      // T2
+      // Regular src transfer to pool instead? (this will requite approval of SushiXSwap contract)
+      console.log(`cook stargate transfer from wallet on chain ${this.srcChainId} to wallet on ${this.dstChainId}`)
+      this.srcDepositToBentoBox(this.srcToken, this.user, amountIn.quotient.toString())
+      this.srcTransferFromBentoBox(
+        this.srcToken.wrapped.address,
+        this.srcMasterContract,
+        0,
+        shareIn.quotient.toString()
+      )
+      this.teleporter.dstWithdraw(this.dstToken, this.user)
+    } else if (!this.srcUseBentoBox && this.dstUseBentoBox) {
+      // T3
+      console.log(`cook stargate transfer from wallet on chain ${this.srcChainId} to bentobox on ${this.dstChainId}`)
+      this.srcDepositToBentoBox(this.srcToken, this.user, amountIn.quotient.toString())
+      this.srcTransferFromBentoBox(
+        this.srcToken.wrapped.address,
+        this.srcMasterContract,
+        0,
+        shareIn.quotient.toString()
+      )
+      this.teleporter.dstDepositToBentoBox(this.dstToken, this.user)
+    } else if (this.srcUseBentoBox && !this.dstUseBentoBox) {
+      // T4
+      console.log(`cook stargate transfer from bentobox on chain ${this.srcChainId} to wallet on ${this.dstChainId}`)
+      this.srcTransferFromBentoBox(this.srcToken.wrapped.address, this.srcMasterContract, amountIn.quotient.toString())
+      this.teleporter.dstWithdraw(this.dstToken, this.user)
+    }
   }
 
   add(action: Action, data: string, value: BigNumberish = 0): void {
@@ -158,8 +251,8 @@ export class SushiXSwap {
     return defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, 0])
   }
 
-  dstWithdrawToken(token: Currency, to: string = this.user): void {
-    this.add(Action.DST_WITHDRAW_TOKEN, this.encodeWithdrawToken(token, to))
+  dstWithdraw(token: Currency, to: string = this.user): void {
+    this.add(Action.DST_WITHDRAW, this.encodeWithdrawToken(token, to))
   }
 
   encodeLegacyExactInput(
@@ -212,28 +305,27 @@ export class SushiXSwap {
   }
 
   tridentComplex(
-    // tokenIn: Currency,
-    // amountIn: BigNumberish,
-    // amountOutMin: BigNumberish,
-    initialPath: {
-      tokenIn: string
-      pool: string
-      native: boolean
-      amount: BigNumberish
-      data: string
-    }[],
-    percentagePath: {
-      tokenIn: string
-      pool: string
-      balancePercentage: BigNumberish
-      data: string
-    }[],
-    output: {
-      token: string
-      to: string
-      unwrapBento: boolean
-      minAmount: BigNumberish
-    }[]
+    params: [
+      {
+        tokenIn: string
+        pool: string
+        native: boolean
+        amount: BigNumberish
+        data: string
+      }[],
+      {
+        tokenIn: string
+        pool: string
+        balancePercentage: BigNumberish
+        data: string
+      }[],
+      {
+        token: string
+        to: string
+        unwrapBento: boolean
+        minAmount: BigNumberish
+      }[]
+    ]
   ): void {
     this.add(
       Action.TRIDENT_COMPLEX,
@@ -241,7 +333,7 @@ export class SushiXSwap {
         [
           'tuple(tuple(address tokenIn, address pool, bool native, uint256 amount, bytes data)[], tuple(address tokenIn, address pool, uint64 balancePercentage, bytes data)[], tuple(address token, address to, bool unwrapBento, uint256 minAmount)[])',
         ],
-        [[initialPath, percentagePath, output]]
+        [params]
       )
     )
   }
@@ -299,7 +391,7 @@ export class SushiXSwap {
     //   this.teleporter.datas,
     // ])
 
-    this.add(Action.STARGATE_TELEPORT, data, parseEther('0.01'))
+    this.add(Action.STARGATE_TELEPORT, data)
   }
 
   encodeUnwrapAndTransfer(token: Currency, to: string = this.user): string {
@@ -311,29 +403,52 @@ export class SushiXSwap {
   }
 
   async cook() {
-    if (!this.signer) {
+    if (!this.contract) {
       return
     }
 
-    const contract = new Contract(this.srcMasterContract, sushiXSwapArficact.abi, this.signer)
+    if (!this.actions.length) {
+      return
+    }
+
+    if (this.crossChain && !this.teleporter.actions.length) {
+      return
+    }
+
+    // Add more validation, e.g. if teleport action is given, ensure src & dst chain are different
 
     console.log([this.actions, this.values, this.datas], this.teleporter)
 
     try {
-      const tx = await contract.cook(this.actions, this.values, this.datas, {
-        value: this.values.reduce((a, b) => a.add(b), Zero),
-      })
-      console.log(`Successful Cook Transaction`, tx)
+      console.log('Before fee')
+      const [fee] = this.crossChain
+        ? await this.contract.getFee(
+            STARGATE_CHAIN_ID[this.dstChainId],
+            1,
+            this.dstMasterContract,
+            500000,
+            0,
+            defaultAbiCoder.encode(
+              ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
+              [this.user, this.teleporter.actions, this.teleporter.values, this.teleporter.datas]
+            )
+          )
+        : [Zero, Zero]
+      console.log(`Successful Fee`, fee)
+
+      try {
+        const tx = await this.contract.cook(this.actions, this.values, this.datas, {
+          value: this.values.reduce((a, b) => a.add(b), fee),
+        })
+        console.log(`Successful Cook Transaction`, tx)
+      } catch (error) {
+        console.error('SushiXSwap Cook Error', error)
+      }
     } catch (error) {
-      console.error('SushiXSwap Cook Error', error)
+      console.error('SushiXSwap Fee Error', error)
     }
   }
 }
-
-// export interface Teleporter
-//   extends Omit<SushiXSwap, 'setMasterContractApproval' | 'srcDepositToBentoBox' | 'srcTransferFromBentoBox' | 'cook'> {}
-
-// export class Teleporter implements Teleporter {}
 
 export class Teleporter {
   user: string
@@ -354,8 +469,8 @@ export class Teleporter {
       [token.wrapped.address, to, BigNumber.from(amount)]
     )
   }
-  dstWithdrawToken(token: Currency, to: string = this.user): void {
-    this.add(Action.DST_WITHDRAW_TOKEN, this.encodeWithdrawToken(token, to))
+  dstWithdraw(token: Currency, to: string = this.user): void {
+    this.add(Action.DST_WITHDRAW, this.encodeWithdrawToken(token, to))
   }
 
   encodeDepositToBentoBox(
@@ -430,25 +545,27 @@ export class Teleporter {
   }
 
   tridentComplex(
-    initialPath: {
-      tokenIn: string
-      pool: string
-      native: boolean
-      amount: BigNumberish
-      data: string
-    }[],
-    percentagePath: {
-      tokenIn: string
-      pool: string
-      balancePercentage: BigNumberish
-      data: string
-    }[],
-    output: {
-      token: string
-      to: string
-      unwrapBento: boolean
-      minAmount: BigNumberish
-    }[]
+    params: [
+      {
+        tokenIn: string
+        pool: string
+        native: boolean
+        amount: BigNumberish
+        data: string
+      }[],
+      {
+        tokenIn: string
+        pool: string
+        balancePercentage: BigNumberish
+        data: string
+      }[],
+      {
+        token: string
+        to: string
+        unwrapBento: boolean
+        minAmount: BigNumberish
+      }[]
+    ]
   ): void {
     this.add(
       Action.TRIDENT_COMPLEX,
@@ -456,16 +573,12 @@ export class Teleporter {
         [
           'tuple(tuple(address tokenIn, address pool, bool native, uint256 amount, bytes data)[], tuple(address tokenIn, address pool, uint64 balancePercentage, bytes data)[], tuple(address token, address to, bool unwrapBento, uint256 minAmount)[])',
         ],
-        [[initialPath, percentagePath, output]]
+        [params]
       )
     )
   }
 
-  encodeUnwrapAndTransfer(token: Currency, to: string = this.user): string {
-    return defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to])
-  }
-
   unwrapAndTransfer(token: Currency, to: string = this.user): void {
-    this.add(Action.UNWRAP_AND_TRANSFER, this.encodeUnwrapAndTransfer(token, to))
+    this.add(Action.UNWRAP_AND_TRANSFER, defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]))
   }
 }

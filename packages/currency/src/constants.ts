@@ -28,7 +28,7 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
 }
 
-export const USDC: TokenMap = {
+export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: new Token({
     chainId: ChainId.ETHEREUM,
     address: USDC_ADDRESS[ChainId.ETHEREUM],
@@ -185,7 +185,7 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
 }
 
-export const USDT: TokenMap = {
+export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: new Token({
     chainId: ChainId.ETHEREUM,
     address: USDT_ADDRESS[ChainId.ETHEREUM],
@@ -314,6 +314,54 @@ export const USDT: TokenMap = {
   }),
 }
 
+export const DAI_ADDRESS: AddressMap = {
+  [ChainId.ETHEREUM]: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  [ChainId.ROPSTEN]: '0xc2118d4d90b274016cB7a54c03EF52E6c537D957',
+  [ChainId.KOVAN]: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
+  [ChainId.POLYGON]: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+  [ChainId.FANTOM]: '0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E',
+  [ChainId.BSC]: '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3',
+  [ChainId.HARMONY]: '0xEf977d2f931C1978Db5F6747666fa1eACB0d0339',
+  [ChainId.HECO]: '0x3D760a45D0887DFD89A2F5385a236B29Cb46ED2a',
+  [ChainId.OKEX]: '0x21cDE7E32a6CAF4742d00d44B07279e7596d26B9',
+  [ChainId.GNOSIS]: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+  [ChainId.ARBITRUM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+  [ChainId.AVALANCHE]: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
+  [ChainId.CELO]: '0x90Ca507a5D4458a4C6C6249d186b6dCb02a5BCCd',
+  [ChainId.MOONRIVER]: '0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844',
+  // [ChainId.TELOS]: '',
+  [ChainId.FUSE]: '0x94Ba7A27c7A95863d1bdC7645AC2951E0cca06bA',
+  [ChainId.MOONBEAM]: '0xc234A67a4F840E61adE794be47de455361b52413',
+  [ChainId.OPTIMISM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+}
+
+export function addressMapToTokenMap(
+  { decimals, symbol, name }: { decimals: number; symbol?: string; name?: string },
+  map: AddressMap
+) {
+  return Object.fromEntries(
+    Object.entries(map).map(([chainId, address]) => [
+      chainId,
+      new Token({
+        chainId: Number(chainId),
+        address,
+        decimals,
+        symbol,
+        name,
+      }),
+    ])
+  )
+}
+
+export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'DAI',
+    name: 'Dai Stablecoin',
+  },
+  DAI_ADDRESS
+)
+
 export const WETH9_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   [ChainId.ROPSTEN]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
@@ -338,7 +386,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000006',
 }
 
-export const WETH9: TokenMap = {
+export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: new Token({
     chainId: ChainId.ETHEREUM,
     address: WETH9_ADDRESS[ChainId.ETHEREUM],
@@ -500,7 +548,7 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0xAcc15dC74880C9944775448304B263D191c6077F',
 }
 
-export const WNATIVE: TokenMap = {
+export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: WETH9[ChainId.ETHEREUM],
   [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
   [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],

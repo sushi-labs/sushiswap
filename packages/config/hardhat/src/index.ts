@@ -141,7 +141,6 @@ export const defaultConfig: HardhatUserConfig = {
       chainId: 250,
       live: true,
       saveDeployments: true,
-      gasPrice: 22000000000,
     },
     'fantom-testnet': {
       url: 'https://rpc.testnet.fantom.network',
@@ -320,6 +319,13 @@ export const defaultConfig: HardhatUserConfig = {
       url: 'https://rpc.api.moonbeam.network',
       accounts,
       chainId: 1284,
+      live: true,
+      saveDeployments: true,
+    },
+    optimism: {
+      url: 'https://mainnet.optimism.io',
+      accounts,
+      chainId: 10,
       live: true,
       saveDeployments: true,
     },

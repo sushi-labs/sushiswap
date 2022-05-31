@@ -19,3 +19,6 @@ export const _1e6 = JSBI.BigInt(1e6)
 
 export const MAX_SAFE_INTEGER = JSBI.BigInt(Number.MAX_SAFE_INTEGER)
 export const MAX_UINT256 = JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+
+// 2^128 - 1
+export const MAX_UINT128 = JSBI.subtract(JSBI.exponentiate(JSBI.BigInt('2'), JSBI.BigInt(128)), JSBI.BigInt(1))

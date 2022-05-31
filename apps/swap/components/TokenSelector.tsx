@@ -13,14 +13,14 @@ interface Props {
   chainId?: ChainId
   tokenMap: Record<string, Token>
   onClose(): void
-  onSelect(currency: Token): void
+  onSelect(currency: Type): void
   theme: Theme
 }
 
 export const TokenSelector: FC<Props> = ({ theme, currency, open, onClose, tokenMap, chainId, onSelect }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
-      onSelect(currency.wrapped)
+      onSelect(currency)
       onClose()
     },
     [onClose, onSelect]

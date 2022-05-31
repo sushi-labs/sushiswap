@@ -2,7 +2,9 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { WrappedTokenInfo } from '@sushiswap/redux-token-lists/token'
 import { classNames, Input, Typography } from '@sushiswap/ui'
+import Image from 'next/image'
 import { FC, useState } from 'react'
 
 import { Theme } from '../types'
@@ -78,6 +80,7 @@ const CurrencyInput: FC<CurrencyInput> = ({
               )}
               onClick={() => setNetworkSelectorOpen(true)}
             >
+              {network.icon ? <Image src={network.icon} width="16px" height="16px" /> : null}
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
@@ -130,9 +133,14 @@ const CurrencyInput: FC<CurrencyInput> = ({
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex items-center gap-1 py-1 text-lg font-bold '
+                'flex flex-row items-center gap-1 text-xl'
               )}
             >
+              {currency.isNative ? (
+                <></>
+              ) : currency instanceof WrappedTokenInfo && currency.logoURI ? (
+                <Image src={currency.logoURI} width="48px" height="48px" />
+              ) : null}
               {currency.symbol} <ChevronDownIcon width={16} height={16} />
             </button>
           </div>

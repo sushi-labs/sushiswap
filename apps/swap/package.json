@@ -6,7 +6,12 @@
     "build": "next build --profile",
     "dev": "next dev -p 3007",
     "lint": "eslint --fix . && next lint",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest --watch",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run",
+    "e2e": "start-server-and-test start http://localhost:3000/swap cypress",
+    "e2e:headless": "start-server-and-test start http://localhost:3000/swap cypress:headless"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.0.0",
@@ -42,7 +47,8 @@
     "react-redux": "^8.0.1",
     "swr": "^1.2.2",
     "typechain": "^8.0.0",
-    "wagmi": "^0.4.3"
+    "wagmi": "^0.4.4",
+    "@wagmi/core": "^0.3.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

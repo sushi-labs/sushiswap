@@ -6,18 +6,21 @@ import { RouteV1 } from '../Route'
 
 export function convertTinesSingleRouteToRouteV1<TInput extends Currency, TOutput extends Currency>(
   route: MultiRoute,
-  allPairs: Pair[],
+  pairs: Pair[],
   input: TInput,
   output: TOutput
 ): RouteV1<TInput, TOutput> {
   const pairHash = new Map<string, Pair>()
-  allPairs.forEach((p) => pairHash.set(p.liquidityToken.address, p))
-  const pairs = route.legs.map((l) => {
-    const pair = pairHash.get(l.poolAddress)
-    if (pair === undefined) {
-      throw new Error('Internal Error 119')
-    }
-    return pair
-  })
-  return new RouteV1(pairs, input, output)
+  pairs.forEach((pair) => pairHash.set(pair.liquidityToken.address, pair))
+  return new RouteV1(
+    route.legs.map((leg) => {
+      const pair = pairHash.get(leg.poolAddress)
+      if (pair === undefined) {
+        throw new Error('Internal Error 119')
+      }
+      return pair
+    }),
+    input,
+    output
+  )
 }

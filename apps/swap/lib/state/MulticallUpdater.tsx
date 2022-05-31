@@ -9,9 +9,10 @@ interface Props {
 }
 
 // Wagmi wrapper for redux multicall
-export function Updater({ chainId, isDebug = false }: Props) {
+export function Updater({ chainId, isDebug = true }: Props) {
   const contract = useMulticallContract(chainId)
   const { data: latestBlockNumber } = useBlockNumber({ chainId })
+
   return (
     <multicall.Updater chainId={chainId} latestBlockNumber={latestBlockNumber} contract={contract} isDebug={isDebug} />
   )

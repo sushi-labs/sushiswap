@@ -6,6 +6,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/wagmi',
   '@sushiswap/stargate',
   '@sushiswap/ui',
+  '@sushiswap/swap-widget',
 ])
 
 export default withTranspileModules({
@@ -15,5 +16,9 @@ export default withTranspileModules({
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,
+  },
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
 })

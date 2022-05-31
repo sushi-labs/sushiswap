@@ -13,6 +13,7 @@ import {
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
+import { useFeeData } from 'wagmi'
 
 import { PoolState, useGetAllExistedPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'
@@ -36,17 +37,10 @@ export function useTrade(
   mainCurrency?: Currency,
   otherCurrency?: Currency
 ): UseTradeOutput {
-  // const { data } = useFeeData({
+  // const { data: feeData } = useFeeData({
   //   chainId,
-  //   onError(error) {
-  //     console.log('Fee Data Error', error)
-  //   },
-  //   onSuccess(data) {
-  //     console.log('Fee Data', data)
-  //   },
   // })
-
-  // console.log('fee data')
+  // console.log('fee data', feeData)
 
   const data = useMemo(
     () => ({
@@ -64,6 +58,8 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   const pairs = usePairs(chainId, currencyCombinations)
+
+  // console.log('USE TRADE', chainId, pairs)
 
   const constantProductPools = useGetAllExistedPools(chainId, currencyCombinations)
 
@@ -126,18 +122,14 @@ export function useTrade(
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
-
-        if (chainId === ChainId.OPTIMISM) {
-          if (tridentRoute.status === RouteStatus.Success) {
-            // console.log('FOUND TRIDENT ROUTE!!!', tridentRoute)
-            // TODO: Switch to shares
-            return TradeV2.bestTradeExactIn(tridentRoute, amountSpecified, currencyOut)
-          }
+        if (tridentRoute.status === RouteStatus.Success) {
+          console.debug('Found trident route', tridentRoute)
+          return TradeV2.bestTradeExactIn(tridentRoute, amountSpecified, currencyOut)
         } else {
-          // console.log('NO TRIDENT ROUTE!!!', tridentRoute)
+          console.debug('No trident route', tridentRoute)
         }
 
-        const route = findSingleRouteExactIn(
+        const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
@@ -146,12 +138,12 @@ export function useTrade(
           data.gasPrice.toNumber()
         )
 
-        if (route.status === RouteStatus.Success) {
-          // console.log('FOUND LEGACY ROUTE!!!', route)
+        if (legacyRoute.status === RouteStatus.Success) {
+          console.debug('Found legacy route', legacyRoute)
           try {
             return TradeV1.exactIn(
               convertTinesSingleRouteToRouteV1(
-                route,
+                legacyRoute,
                 filteredPools.filter((pair) => pair instanceof Pair) as Pair[],
                 currencyIn,
                 currencyOut
@@ -159,15 +151,12 @@ export function useTrade(
               amountSpecified
             )
           } catch (error) {
-            console.error('TradeV1.exactIn', error)
-            return
+            console.debug('error converting tines single route to legacy route')
           }
         } else {
-          console.log('NO LEGACY ROUTE!!!', route)
+          console.debug('No legacy route', legacyRoute)
         }
-      }
-
-      if (tradeType === TradeType.EXACT_OUTPUT) {
+      } else if (tradeType === TradeType.EXACT_OUTPUT) {
         //
       }
     }

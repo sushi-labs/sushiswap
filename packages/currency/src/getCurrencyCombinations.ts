@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { USDC, WNATIVE } from './constants'
+import { DAI, USDC, USDT, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -9,8 +9,25 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
   [ChainId.POLYGON_TESTNET]: [WNATIVE[ChainId.POLYGON_TESTNET], USDC[ChainId.POLYGON_TESTNET]],
-  [ChainId.ARBITRUM]: [WNATIVE[ChainId.ARBITRUM], USDC[ChainId.ARBITRUM]],
-  [ChainId.OPTIMISM]: [WNATIVE[ChainId.OPTIMISM], USDC[ChainId.OPTIMISM]],
+  [ChainId.ARBITRUM]: [
+    WNATIVE[ChainId.ARBITRUM],
+    USDC[ChainId.ARBITRUM],
+    USDT[ChainId.ARBITRUM],
+    DAI[ChainId.ARBITRUM],
+  ],
+  [ChainId.OPTIMISM]: [
+    WNATIVE[ChainId.OPTIMISM],
+    USDC[ChainId.OPTIMISM],
+    USDT[ChainId.OPTIMISM],
+    DAI[ChainId.OPTIMISM],
+  ],
+  [ChainId.FANTOM]: [WNATIVE[ChainId.FANTOM], USDC[ChainId.FANTOM], USDT[ChainId.FANTOM], DAI[ChainId.FANTOM]],
+  [ChainId.AVALANCHE]: [
+    WNATIVE[ChainId.AVALANCHE],
+    USDC[ChainId.AVALANCHE],
+    USDT[ChainId.AVALANCHE],
+    DAI[ChainId.AVALANCHE],
+  ],
 }
 
 export const ADDITIONAL_BASES: {

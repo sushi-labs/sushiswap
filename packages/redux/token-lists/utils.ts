@@ -3,11 +3,13 @@ import { namehash } from '@ethersproject/hash'
 import { BaseProvider } from '@ethersproject/providers'
 import type { TokenInfo, TokenList } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
+// @ts-ignore
 import Ajv from 'ajv'
+// @ts-ignore
 import CID from 'cids'
-// @ts-ignore TYPE NEEDS FIXING
+// @ts-ignore
 import { getCodec, rmPrefix } from 'multicodec'
-// @ts-ignore TYPE NEEDS FIXING
+// @ts-ignore
 import { decode, toB58String } from 'multihashes'
 
 import { DEFAULT_LIST_OF_LISTS } from './constants'

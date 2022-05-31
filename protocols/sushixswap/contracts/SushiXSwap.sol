@@ -4,6 +4,9 @@ pragma solidity 0.8.11;
 
 import "./interfaces/ISushiXSwap.sol";
 
+/// @title SushiXSwap
+/// @notice Enables cross chain swap for sushiswap.
+/// @dev Supports both BentoBox and Wallet. Supports both Trident and Legacy AMM. Uses Stargate as bridge.
 contract SushiXSwap is
     ISushiXSwap,
     BentoAdapter,
@@ -18,31 +21,46 @@ contract SushiXSwap is
         address _factory,
         bytes32 _pairCodeHash
     ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash) {
+        // Register to BentoBox
         _bentoBox.registerProtocol();
     }
 
-    // ACTION_LIST
-    uint8 constant MASTER_CONTRACT_APPROVAL = 0;
-    uint8 constant SRC_DEPOSIT_TO_BENTOBOX = 1;
-    uint8 constant SRC_TRANSFER_FROM_BENTOBOX = 2;
-    uint8 constant DST_DEPOSIT_TO_BENTOBOX = 3;
-    uint8 constant DST_WITHDRAW_TOKEN = 4;
-    uint8 constant DST_WITHDRAW_FROM_BENTOBOX = 5;
-    uint8 constant UNWRAP_AND_TRANSFER = 6;
-    uint8 constant LEGACY_SWAP = 7;
-    uint8 constant TRIDENT_SWAP = 8;
-    uint8 constant TRIDENT_COMPLEX_PATH_SWAP = 9;
-    uint8 constant STARGATE_TELEPORT = 10;
+    /// @notice List of ACTIONS supported by the `cook()`.
 
+    // Bento and Token Operations
+    uint8 internal constant ACTION_MASTER_CONTRACT_APPROVAL = 0;
+    uint8 internal constant ACTION_SRC_DEPOSIT_TO_BENTOBOX = 1;
+    uint8 internal constant ACTION_SRC_TRANSFER_FROM_BENTOBOX = 2;
+    uint8 internal constant ACTION_DST_DEPOSIT_TO_BENTOBOX = 3;
+    uint8 internal constant ACTION_DST_WITHDRAW_TOKEN = 4;
+    uint8 internal constant ACTION_DST_WITHDRAW_FROM_BENTOBOX = 5;
+    uint8 internal constant ACTION_UNWRAP_AND_TRANSFER = 6;
+
+    // Swap Operations
+    uint8 internal constant ACTION_LEGACY_SWAP = 7;
+    uint8 internal constant ACTION_TRIDENT_SWAP = 8;
+    uint8 internal constant ACTION_TRIDENT_COMPLEX_PATH_SWAP = 9;
+
+    // Bridge Operations
+    uint8 internal constant ACTION_STARGATE_TELEPORT = 10;
+
+    uint8 internal constant ACTION_SRC_TOKEN_TRANSFER = 11;
+
+    /// @notice Executes a set of actions and allows composability (contract calls) to other contracts.
+    /// @param actions An array with a sequence of actions to execute (see ACTION_ declarations).
+    /// @param values A one-to-one mapped array to `actions`. Native token amount to send along action.
+    /// @param datas A one-to-one mapped array to `actions`. Contains abi encoded data of function arguments.
+    /// @dev The function gets invoked both at the src and dst chain.
     function cook(
         uint8[] memory actions,
         uint256[] memory values,
         bytes[] memory datas
     ) public payable override {
-        for (uint256 i = 0; i < actions.length; i++) {
+        uint256 actionLength = actions.length;
+        for (uint256 i; i < actionLength; i = _increment(i)) {
             uint8 action = actions[i];
             // update for total amounts in contract?
-            if (action == MASTER_CONTRACT_APPROVAL) {
+            if (action == ACTION_MASTER_CONTRACT_APPROVAL) {
                 (
                     address user,
                     bool approved,
@@ -62,7 +80,7 @@ contract SushiXSwap is
                     r,
                     s
                 );
-            } else if (action == SRC_DEPOSIT_TO_BENTOBOX) {
+            } else if (action == ACTION_SRC_DEPOSIT_TO_BENTOBOX) {
                 (address token, address to, uint256 amount, uint256 share) = abi
                     .decode(datas[i], (address, address, uint256, uint256));
                 _depositToBentoBox(
@@ -73,7 +91,7 @@ contract SushiXSwap is
                     share,
                     values[i]
                 );
-            } else if (action == SRC_TRANSFER_FROM_BENTOBOX) {
+            } else if (action == ACTION_SRC_TRANSFER_FROM_BENTOBOX) {
                 (
                     address token,
                     address to,
@@ -92,13 +110,21 @@ contract SushiXSwap is
                     share,
                     unwrapBento
                 );
-            } else if (action == DST_DEPOSIT_TO_BENTOBOX) {
+            } else if (action == ACTION_SRC_TOKEN_TRANSFER) {
+                (address token, address to, uint256 amount) = abi.decode(
+                    datas[i],
+                    (address, address, uint256)
+                );
+
+                _transferFromToken(IERC20(token), to, amount);
+            } else if (action == ACTION_DST_DEPOSIT_TO_BENTOBOX) {
                 (address token, address to, uint256 amount, uint256 share) = abi
                     .decode(datas[i], (address, address, uint256, uint256));
 
                 if (amount == 0) {
                     amount = IERC20(token).balanceOf(address(this));
-                    // left values not updates intentionally
+                    // Stargate Router doesn't support value? Should we update it anyway?
+                    // values[i] = address(this).balance;
                 }
 
                 _transferTokens(IERC20(token), address(bentoBox), amount);
@@ -111,7 +137,7 @@ contract SushiXSwap is
                     share,
                     values[i]
                 );
-            } else if (action == DST_WITHDRAW_TOKEN) {
+            } else if (action == ACTION_DST_WITHDRAW_TOKEN) {
                 (address token, address to, uint256 amount) = abi.decode(
                     datas[i],
                     (address, address, uint256)
@@ -124,7 +150,7 @@ contract SushiXSwap is
                     }
                 }
                 _transferTokens(IERC20(token), to, amount);
-            } else if (action == DST_WITHDRAW_FROM_BENTOBOX) {
+            } else if (action == ACTION_DST_WITHDRAW_FROM_BENTOBOX) {
                 (
                     address token,
                     address to,
@@ -146,14 +172,14 @@ contract SushiXSwap is
                     share,
                     unwrapBento
                 );
-            } else if (action == UNWRAP_AND_TRANSFER) {
+            } else if (action == ACTION_UNWRAP_AND_TRANSFER) {
                 (address token, address to) = abi.decode(
                     datas[i],
                     (address, address)
                 );
 
                 _unwrapTransfer(token, to);
-            } else if (action == LEGACY_SWAP) {
+            } else if (action == ACTION_LEGACY_SWAP) {
                 (
                     uint256 amountIn,
                     uint256 amountOutMin,
@@ -175,29 +201,29 @@ contract SushiXSwap is
                     to,
                     sendTokens
                 );
-            } else if (action == TRIDENT_SWAP) {
+            } else if (action == ACTION_TRIDENT_SWAP) {
                 ExactInputParams memory params = abi.decode(
                     datas[i],
                     (ExactInputParams)
                 );
 
                 _exactInput(params);
-            } else if (action == TRIDENT_COMPLEX_PATH_SWAP) {
+            } else if (action == ACTION_TRIDENT_COMPLEX_PATH_SWAP) {
                 ComplexPathParams memory params = abi.decode(
                     datas[i],
                     (ComplexPathParams)
                 );
 
                 _complexPath(params);
-            } else if (action == STARGATE_TELEPORT) {
+            } else if (action == ACTION_STARGATE_TELEPORT) {
                 (
-                    TeleportParams memory params,
+                    StargateTeleportParams memory params,
                     uint8[] memory actionsDST,
                     uint256[] memory valuesDST,
                     bytes[] memory datasDST
                 ) = abi.decode(
                         datas[i],
-                        (TeleportParams, uint8[], uint256[], bytes[])
+                        (StargateTeleportParams, uint8[], uint256[], bytes[])
                     );
 
                 _stargateTeleport(params, actionsDST, valuesDST, datasDST);
@@ -205,5 +231,6 @@ contract SushiXSwap is
         }
     }
 
+    /// @notice Allows the contract to receive Native tokens
     receive() external payable {}
 }

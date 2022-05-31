@@ -25,25 +25,39 @@ export function usePairs(
     [currencies]
   )
 
+  // const pairAddresses = useMemo(
+  //   () =>
+  //     tokens.reduce<(string | undefined)[]>((acc, [tokenA, tokenB]) => {
+  //       const address =
+  //         tokenA &&
+  //         tokenB &&
+  //         tokenA.chainId === tokenB.chainId &&
+  //         !tokenA.equals(tokenB) &&
+  //         FACTORY_ADDRESS[tokenA.chainId]
+  //           ? computePairAddress({
+  //               factoryAddress: FACTORY_ADDRESS[tokenA.chainId],
+  //               tokenA,
+  //               tokenB,
+  //             })
+  //           : undefined
+
+  //       acc.push(address && !acc.includes(address) ? address : undefined)
+  //       return acc
+  //     }, []),
+  //   [tokens]
+  // )
+
   const pairAddresses = useMemo(
     () =>
-      tokens.reduce<(string | undefined)[]>((acc, [tokenA, tokenB]) => {
-        const address =
-          tokenA &&
+      tokens.map(([tokenA, tokenB]) => {
+        return tokenA &&
           tokenB &&
           tokenA.chainId === tokenB.chainId &&
           !tokenA.equals(tokenB) &&
           FACTORY_ADDRESS[tokenA.chainId]
-            ? computePairAddress({
-                factoryAddress: FACTORY_ADDRESS[tokenA.chainId],
-                tokenA,
-                tokenB,
-              })
-            : undefined
-
-        acc.push(address && !acc.includes(address) ? address : undefined)
-        return acc
-      }, []),
+          ? computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
+          : undefined
+      }),
     [tokens]
   )
 
@@ -54,6 +68,8 @@ export function usePairs(
     PAIR_INTERFACE,
     'getReserves'
   )
+
+  // console.log('USE PAIRS', chainId, latestBlockNumber, pairAddresses, results)
 
   return useMemo(() => {
     return results.map((result, i) => {

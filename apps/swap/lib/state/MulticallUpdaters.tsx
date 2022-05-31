@@ -7,7 +7,7 @@ interface Props {
   isDebug?: boolean
 }
 
-export function Updaters({ chainIds, isDebug = false }: Props) {
+export function Updaters({ chainIds, isDebug = true }: Props) {
   return (
     <>
       {chainIds.map((chainId) => (

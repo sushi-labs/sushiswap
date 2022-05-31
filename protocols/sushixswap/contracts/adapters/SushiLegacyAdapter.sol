@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../libraries/UniswapV2Library.sol";
 import "../base/ImmutableState.sol";
 
+/// @title SushiLegacyAdapter
+/// @notice Adapter for functions used to swap using Sushiswap Legacy AMM.
 abstract contract SushiLegacyAdapter is ImmutableState {
     using SafeERC20 for IERC20;
 
@@ -26,6 +28,7 @@ abstract contract SushiLegacyAdapter is ImmutableState {
 
         require(amountOut >= amountOutMin, "insufficient-amount-out");
 
+        /// @dev force sends token to the first pair if not already sent
         if (sendTokens) {
             IERC20(path[0]).safeTransfer(
                 UniswapV2Library.pairFor(
@@ -40,7 +43,7 @@ abstract contract SushiLegacyAdapter is ImmutableState {
         _swap(amounts, path, to);
     }
 
-    // requires the initial amount to have already been sent to the first pair
+    /// @dev requires the initial amount to have already been sent to the first pair
     function _swap(
         uint256[] memory amounts,
         address[] memory path,

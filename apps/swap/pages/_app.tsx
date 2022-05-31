@@ -5,6 +5,7 @@ import { App } from '@sushiswap/ui'
 import { client, getProviders } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Updater } from 'lib/state/MulticallUpdater'
 import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
@@ -12,31 +13,19 @@ import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
+import { ChainId } from '@sushiswap/chain'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const [
-    // providerEthereum,
-    // providerBsc,
-    // providerAvalanche,
-    // providerPolygon,
-    providerArbitrum,
-    providerOptimism,
-    // providerFantom,
-    // providerPolygonTestnet,
-    // providerRinkeby,
-    // providerRopsten,
-    // providerGorli,
-    // providerKovan,
-  ] = getProviders(SUPPORTED_CHAIN_IDS)
+  const [providerArbitrum, providerOptimism, providerAvalanche, providerFantom] = getProviders(SUPPORTED_CHAIN_IDS)
 
   // const blockNumberEthereum = useLatestBlockNumber(providerEthereum)
   // const blockNumberBsc = useLatestBlockNumber(providerBsc)
-  // const blockNumberAvalanche = useLatestBlockNumber(providerAvalanche)
   // const blockNumberPolygon = useLatestBlockNumber(providerPolygon)
   const blockNumberArbitrum = useLatestBlockNumber(providerArbitrum)
   const blockNumberOptimism = useLatestBlockNumber(providerOptimism)
+  const blockNumberAvalanche = useLatestBlockNumber(providerAvalanche)
 
-  // const blockNumberFantom = useLatestBlockNumber(providerFantom)
+  const blockNumberFantom = useLatestBlockNumber(providerFantom)
   // const blockNumberPolygonTestnet = useLatestBlockNumber(providerPolygonTestnet)
   // const blockNumberRinkeby = useLatestBlockNumber(providerRinkeby)
   // const blockNumberRopsten = useLatestBlockNumber(providerRopsten)
@@ -48,6 +37,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       // blockNumberPolygon,
       blockNumberArbitrum,
       blockNumberOptimism,
+      blockNumberAvalanche,
+      blockNumberFantom,
       // blockNumberPolygonTestnet,
       // blockNumberRinkeby,
       // blockNumberRopsten,
@@ -59,6 +50,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       // blockNumberPolygon,
       blockNumberArbitrum,
       blockNumberOptimism,
+      blockNumberAvalanche,
+      blockNumberFantom,
       // blockNumberPolygonTestnet,
       // blockNumberRinkeby,
       // blockNumberRopsten,
