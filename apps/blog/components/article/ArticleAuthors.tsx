@@ -13,7 +13,7 @@ export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
       <ul className="flex flex-wrap text-sm leading-6 -mt-6 -mx-5">
         {article.attributes.authors.data.map((author) => (
           <li key={author.id} className="flex items-center font-medium whitespace-nowrap px-5 mt-6">
-            <div className="mr-3 w-9 h-9 rounded-full overflow-hidden bg-slate-800">
+            <div className="relative mr-3 w-9 h-9 rounded-full overflow-hidden bg-slate-800">
               <Image image={author.attributes.avatar} />
             </div>
             <div className="text-sm leading-4">

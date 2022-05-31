@@ -1,18 +1,12 @@
 export type Article = {
   id: number
   attributes: {
-    authors: {
-      data: Author[]
-    }
+    authors: Data<Author[]>
     title: string
     description: string
     slug: string
-    cover: {
-      data: Image
-    }
-    category: {
-      data: Category
-    }
+    cover: Data<Image>
+    categories: Data<Category[]>
     createdAt: string
     updatedAt: string
     publishedAt: string
@@ -35,7 +29,12 @@ export type MediaBlock = {
   }
 }
 
-export type Block = RichTextBlock | MediaBlock
+export type DividerBlock = {
+  id: number
+  __component: 'shared.divider'
+}
+
+export type Block = RichTextBlock | MediaBlock | DividerBlock
 
 export type Category = {
   id: number
@@ -84,21 +83,22 @@ export type Seo = {
   id: number
   metaDescription: string
   metaTitle: string
-  shareImage: {
-    data: Image
-  }
+  shareImage: Data<Image>
   article: boolean
 }
 
 export type Author = {
   id: number
   attributes: {
-    avatar: {
-      data: Image
-    }
+    avatar: Data<Image>
     name: string
     handle: string
     createdAt: string
     updatedAt: string
   }
+}
+
+export type Data<T> = {
+  data: T
+  meta: Meta
 }

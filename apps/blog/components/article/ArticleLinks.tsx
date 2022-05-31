@@ -10,10 +10,10 @@ interface ArticleLinks {
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
-  console.log(article)
   return (
-    <>
-      <h3 className="text-slate-200 font-bold text-lg mb-4 mt-12 group flex whitespace-pre-wrap">Share article</h3>
+    <section>
+      <hr className="border border-slate-200/5 my-12" />
+      <h2 className="text-base mb-6 font-semibold text-slate-200">Share article</h2>
       <div className="flex gap-5">
         <a
           target="_blank"
@@ -21,7 +21,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           href={`http://twitter.com/share?url=${getStrapiURL(`/blog/${article.attributes.slug}`)}`}
           rel="noreferrer"
         >
-          <TwitterIcon width={20} height={20} className="hover:text-blue text-slate-200 cursor-pointer" />
+          <TwitterIcon width={20} height={20} className="text-blue hover:text-blue-400 cursor-pointer" />
         </a>
         <a
           title="Share by Email"
@@ -31,15 +31,15 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
             getStrapiURL(`/blog/${article.attributes.slug}`)
           )}`}
         >
-          <MailIcon width={20} height={20} className="hover:text-blue text-slate-200 cursor-pointer" />
+          <MailIcon width={20} height={20} className="text-blue hover:text-blue-400 cursor-pointer" />
         </a>
         <LinkIcon
           width={20}
           height={20}
-          className="hover:text-blue text-slate-200 cursor-pointer"
+          className="text-blue hover:text-blue-400 cursor-pointer"
           onClick={() => navigator.clipboard.writeText(getStrapiURL(`/blog/${article.attributes.slug}`))}
         />
       </div>
-    </>
+    </section>
   )
 }

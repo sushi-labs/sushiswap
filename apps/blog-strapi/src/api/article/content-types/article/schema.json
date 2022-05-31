@@ -39,9 +39,9 @@
       "target": "api::author.author",
       "inversedBy": "articles"
     },
-    "category": {
+    "categories": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::category.category",
       "inversedBy": "articles"
     },
@@ -49,9 +49,9 @@
       "type": "dynamiczone",
       "components": [
         "shared.media",
-        "shared.quote",
         "shared.rich-text",
-        "shared.slider"
+        "shared.slider",
+        "shared.divider"
       ]
     }
   }
