@@ -20,11 +20,10 @@ export const getFarms = async (chainId: string): Promise<TokenRepresentation[] |
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
-  // const now = Number((new Date().getTime() / 1000).toFixed())
-  // console.log({now})
+  const now = (new Date().getTime() / 1000).toFixed()
   if (network === ChainId.KOVAN) {
     return (
-      await sdk.KovanStakingStakedTokens()
+      await sdk.KovanStakingStakedTokens({where: {endTime_gte: now}})
     ).KOVAN_STAKING_tokens as TokenRepresentation[]
   }
 }

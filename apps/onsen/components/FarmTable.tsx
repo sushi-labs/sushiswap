@@ -6,7 +6,9 @@ import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-interface IncentiveTableProps {
+import { StakeAndSubscribeModal } from './StakeAndSubscribeModal'
+
+interface FarmTableProps {
   chainId: number | undefined
   stakeTokens: TokenRepresentation[] | undefined
   placeholder: string
@@ -15,7 +17,7 @@ interface IncentiveTableProps {
 
 const table = createTable().setRowType<Farm>()
 
-const defaultColumns = (tableProps: IncentiveTableProps) => [
+const defaultColumns = (tableProps: FarmTableProps) => [
   table.createDisplayColumn({
     id: 'Token',
     header: () => <div className="w-full text-left"> Token </div>,
@@ -66,9 +68,15 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
     header: () => <div className="w-full text-left"> APR </div>,
     cell: () => 'TODO',
   }),
+  table.createDisplayColumn({
+    id: 'Subscribe',
+    header: () => <div className="w-full text-left"> Subscribe </div>,
+    cell: (props) => props.row.original ? <StakeAndSubscribeModal farm={props.row.original}/> : <></>,
+  }),
+
 ]
 
-export const FarmTable: FC<IncentiveTableProps> = (props) => {
+export const FarmTable: FC<FarmTableProps> = (props) => {
   const { stakeTokens, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
 

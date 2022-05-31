@@ -1,5 +1,5 @@
 query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
-  KOVAN_STAKING_tokens(where: $where) {
+  KOVAN_STAKING_tokens {
     id
     name
     type
@@ -33,6 +33,9 @@ query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
     }
   }
 }
+
+
+
 
 # query KovanOnsenFarm($id: ID!) {
 #   KOVAN_ONSEN_incentive(id: $id) {

@@ -8,7 +8,7 @@ export const GeneralDetailsSection = () => {
   const token = watch('token')
 
   return (
-    <Form.Section title="General Details">
+    <Form.Section title="General Details" description=''>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Form.Control label="Start date">
           <Controller
