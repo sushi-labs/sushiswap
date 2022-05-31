@@ -86,7 +86,7 @@ const _Archive = () => {
   return (
     <>
       <Seo />
-      <Container maxWidth="5xl" className="mx-auto px-4 h-[52px] flex items-center justify-between">
+      <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
         <Link href="/" passHref={true}>
           <a className="group flex gap-3 items-center">
             <ChevronLeftIcon width={18} className="text-slate-400 group-hover:text-slate-50" />
