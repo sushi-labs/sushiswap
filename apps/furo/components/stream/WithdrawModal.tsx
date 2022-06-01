@@ -101,7 +101,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             <CurrencyInput.Base
               currency={stream?.token}
               onChange={onInput}
-              value={amount?.toExact()}
+              value={amount?.toExact() || ''}
               error={amount && stream?.balance && amount.greaterThan(stream.balance)}
               bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
               helperTextPanel={

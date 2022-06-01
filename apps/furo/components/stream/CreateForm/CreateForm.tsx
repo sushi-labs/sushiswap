@@ -35,7 +35,7 @@ export const CreateForm: FC = () => {
       startDate: undefined,
       endDate: undefined,
       recipient: undefined,
-      amount: undefined,
+      amount: '',
     },
     mode: 'onChange',
   })

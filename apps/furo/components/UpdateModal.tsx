@@ -25,7 +25,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
-  const [amount, setAmount] = useState<string>()
+  const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<string>()
   const [fromBentoBox, setFromBentoBox] = useState(false)
   const [error, setError] = useState<string>()

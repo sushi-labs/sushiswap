@@ -24,7 +24,7 @@ export class Stream extends Furo {
 
   public get streamedPercentage(): Percent | undefined {
     if (!this.isStarted) return new Percent(0, 100)
-    const percent = new Percent(this._withdrawnAmount.add(this.balance).quotient, this.amount.quotient)
+    const percent = new Percent(this.balance.quotient, this.amount.quotient)
     return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
   }
 }

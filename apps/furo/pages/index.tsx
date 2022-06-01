@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, USDC } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
@@ -31,9 +30,9 @@ const exampleStream = new Stream({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     createdBy: { id: AddressZero },
-    expiresAt: (new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
-    startedAt: (new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
-    modifiedAtTimestamp: (new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    expiresAt: Math.floor(new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    startedAt: Math.floor(new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
+    modifiedAtTimestamp: Math.floor(new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     token: {
@@ -51,8 +50,6 @@ const exampleStream = new Stream({
     elastic: '1',
   },
 })
-
-exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
 
 export default function Index() {
   const router = useRouter()
@@ -148,7 +145,7 @@ export default function Index() {
           </div>
         </div>
         <div className="scale-[0.9] lg:block flex justify-center">
-          <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />
+          {isMounted && <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />}
         </div>
       </div>
     </Layout>
