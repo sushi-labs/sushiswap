@@ -6,15 +6,13 @@ import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
 import { FuroStatus, FuroType, Stream } from 'lib'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
+import { BalanceChart } from '../components/stream'
 import { BalanceChartHoverEnum } from './stream/[id]'
-
-const BalanceChart = dynamic(() => import('components/stream/BalanceChart'), { ssr: false })
 
 const now = new Date().getTime()
 
