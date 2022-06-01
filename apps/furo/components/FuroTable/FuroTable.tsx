@@ -11,6 +11,8 @@ import { useRouter } from 'next/router'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
+import { Placeholder } from './Placeholder'
+
 export enum FuroTableType {
   INCOMING,
   OUTGOING,
@@ -71,9 +73,9 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           props.getValue() === FuroStatus.CANCELLED
             ? 'red'
             : props.getValue() === FuroStatus.COMPLETED
-            ? 'blue'
-            : props.getValue() === FuroStatus.ACTIVE
             ? 'green'
+            : props.getValue() === FuroStatus.ACTIVE
+            ? 'blue'
             : props.getValue() === FuroStatus.UPCOMING
             ? 'yellow'
             : props.getValue() === FuroStatus.EXTENDED
@@ -89,10 +91,8 @@ const defaultColumns = (tableProps: FuroTableProps) => [
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
-            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}
-          </Typography>
-          <Typography variant="xs" weight={500} className="text-right text-slate-500">
-            {props.row.original?.token.symbol}
+            {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}{' '}
+            <span className="text-slate-500 font-medium">{props.row.original?.token.symbol}</span>
           </Typography>
         </div>
       )
@@ -147,7 +147,6 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   const router = useRouter()
   const { activeChain } = useNetwork()
   const data = useMemo(() => {
-    console.log(streams, vestings, rebases)
     if (!activeChain || !streams || !vestings || !rebases) return []
     return streams
       .map(
@@ -219,18 +218,39 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
           ))}
         </Table.thead>
         <Table.tbody>
-          {instance.getRowModel().rows.length === 0 && (
-            <Table.tr>
-              {!initialized ? (
-                <td colSpan={columns.length}>
-                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
-                </td>
-              ) : (
-                <Table.td colSpan={columns.length} className="!text-xs italic text-center text-slate-500">
-                  {placeholder}
+          {instance.getRowModel().rows.length === 0 &&
+            !initialized &&
+            Array.from(Array(4)).map((_, i) => (
+              <Table.tr key={i} className="flex">
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
                 </Table.td>
-              )}
-            </Table.tr>
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                </Table.td>
+              </Table.tr>
+            ))}
+          {instance.getRowModel().rows.length === 0 && initialized && (
+            <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
+              <div className="flex justify-center">
+                <div>
+                  <Placeholder height={140} />
+                </div>
+              </div>
+              {placeholder}
+            </Table.td>
           )}
           {instance.getRowModel().rows.map((row) => {
             return (
@@ -254,5 +274,3 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     </Table.container>
   )
 }
-
-export default FuroTable
