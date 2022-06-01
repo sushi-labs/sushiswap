@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import React, { FC, HTMLAttributes, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-
 interface IncentiveTableProps {
   chainId: number | undefined
   incentives: Incentive[]
@@ -14,6 +13,7 @@ interface IncentiveTableProps {
   loading: boolean
 }
 
+// from https://tanstack.com/table/v8/docs/examples/react/row-selection?from=reactTableV7&original=https://react-table-v7.tanstack.com/docs/examples/row-selection
 function IndeterminateCheckbox({
   indeterminate,
   className = '',
@@ -27,20 +27,12 @@ function IndeterminateCheckbox({
     }
   }, [ref, indeterminate])
 
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={className + ' cursor-pointer'}
-      {...rest}
-    />
-  )
+  return <input type="checkbox" ref={ref} className={className + ' cursor-pointer'} {...rest} />
 }
 
 const table = createTable().setRowType<Incentive>()
 
 const defaultColumns = (tableProps: IncentiveTableProps) => [
-
   table.createDisplayColumn({
     id: 'select',
     header: ({ instance }) => (
@@ -93,41 +85,6 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       )
     },
   }),
-  // table.createDisplayColumn({
-  //   id: 'TVL',
-  //   header: () => <div className="w-full text-left"> TVL </div>,
-  //   cell: () => 'TODO', // TODO: this needs pricing before we sum it up
-  // }),
-  // table.createDisplayColumn({
-  //   id: 'rewards_24h',
-  //   header: () => <div className="w-full text-right"> Rewards per 24h </div>,
-  //   cell: (props) => {
-  //     return (
-  //       <div className="flex flex-col w-full">
-  //         {props.row.original?.rewardsPerDay ? (
-  //           Object.values(props.row.original?.rewardsPerDay).map((reward) => (
-  //             <>
-  //               <Typography variant="sm" weight={700} className="text-right text-slate-200">
-  //                 {reward?.greaterThan('100000') ? reward?.toSignificant(6) : '< 0.01'}
-  //               </Typography>
-  //               <Typography variant="xs" weight={500} className="text-right text-slate-500">
-  //                 {reward?.currency.symbol}
-  //               </Typography>
-  //             </>
-  //           ))
-  //         ) : (
-  //           <></>
-  //         )}
-  //       </div>
-  //     )
-  //   },
-  // }),
-  // table.createDisplayColumn({
-  //   id: 'APR',
-  //   header: () => <div className="w-full text-left"> APR </div>,
-  //   cell: () => 'TODO',
-  // }),
-
 ]
 
 export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
@@ -141,10 +98,6 @@ export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
 
   const router = useRouter()
   const { activeChain } = useNetwork()
-  // const data = useMemo(() => {
-  //   if (!incentives) return []
-  //   return incentives.map((stakeToken) => new Farm({ stakeToken }))
-  // }, [incentives])
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns({ ...props, chainId: activeChain?.id }),
@@ -161,9 +114,9 @@ export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  useMemo( () => {
+  useMemo(() => {
     if (rowSelection) {
-      setSelectedRows(instance.getSelectedRowModel().flatRows.map(row => row.original))
+      setSelectedRows(instance.getSelectedRowModel().flatRows.map((row) => row.original))
     }
   }, [rowSelection, setSelectedRows, instance])
 

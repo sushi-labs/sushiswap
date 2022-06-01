@@ -33,7 +33,45 @@ query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
     }
   }
 }
+query KovanStakingSubscriptions($id: ID!) {
 
+  KOVAN_STAKING_user(id: $id) {
+    id
+    activeSubscriptionCount
+    subscriptions {
+      id
+      token {
+        id
+      }
+      incentive {
+         id
+      lastRewardTime
+      rewardRemaining
+      liquidityStaked
+      stakeToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      createdBy {
+        id
+      }
+      endTime
+      createdAtBlock
+      createdAtTimestamp
+      modifiedAtBlock
+      modifiedAtTimestamp
+      }
+    }
+  }
+}
 
 
 

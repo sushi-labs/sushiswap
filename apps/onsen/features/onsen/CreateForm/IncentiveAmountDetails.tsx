@@ -26,7 +26,7 @@ export const IncentiveAmountDetails = () => {
   const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
 
   return (
-    <Form.Section title="Reward Details" description=''>
+    <Form.Section title="Reward Details" description="">
       <Form.Control label="Reward Token">
         <Controller
           control={control}

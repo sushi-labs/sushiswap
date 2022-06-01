@@ -71,9 +71,8 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   table.createDisplayColumn({
     id: 'Subscribe',
     header: () => <div className="w-full text-left"> Subscribe </div>,
-    cell: (props) => props.row.original ? <StakeAndSubscribeModal farm={props.row.original}/> : <></>,
+    cell: (props) => (props.row.original ? <StakeAndSubscribeModal farm={props.row.original} /> : <></>),
   }),
-
 ]
 
 export const FarmTable: FC<FarmTableProps> = (props) => {

@@ -45,7 +45,12 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
   const stakeAndSubscribe = useCallback(async () => {
     if (!account) return
     const data = await writeAsync({
-      args: [stakeToken.address, amount?.quotient.toString(), selectedIncentives.map((incentive) => incentive.id), false],
+      args: [
+        stakeToken.address,
+        amount?.quotient.toString(),
+        selectedIncentives.map((incentive) => incentive.id),
+        false,
+      ],
     })
 
     createToast({
@@ -73,12 +78,7 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
 
   return (
     <>
-      <Button
-        variant="filled"
-        color="blue"
-        // startIcon={<TrashIcon className="text-red-900" width={24} height={24} />}
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="filled" color="blue" onClick={() => setOpen(true)}>
         Farm
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>

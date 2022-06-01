@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
+import type { KOVAN_STAKING_User as UserDTO } from '../.graphclient'
 import { getBuiltGraphSDK } from '../.graphclient'
 import { TokenRepresentation } from '../features/onsen/context/representations'
 
@@ -22,9 +23,18 @@ export const getFarms = async (chainId: string): Promise<TokenRepresentation[] |
   const sdk = getBuiltGraphSDK()
   const now = (new Date().getTime() / 1000).toFixed()
   if (network === ChainId.KOVAN) {
-    return (
-      await sdk.KovanStakingStakedTokens({where: {endTime_gte: now}})
-    ).KOVAN_STAKING_tokens as TokenRepresentation[]
+    return (await sdk.KovanStakingStakedTokens({ where: { endTime_gte: now } }))
+      .KOVAN_STAKING_tokens as TokenRepresentation[]
+  }
+}
+
+export const getSubscriptions = async (chainId: string, address: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  const now = (new Date().getTime() / 1000).toFixed()
+  if (network === ChainId.KOVAN) {
+    return (await sdk.KovanStakingSubscriptions({ id: address })).KOVAN_STAKING_user as UserDTO
   }
 }
 

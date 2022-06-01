@@ -1,6 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
+import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -8,9 +9,9 @@ import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
+import type { KOVAN_STAKING_User as UserSubscriptions } from '../../.graphclient'
 import { TokenRepresentation } from '../../features/onsen/context/representations'
 import { getFarms } from '../../graph/graph-client'
-
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -47,12 +48,15 @@ export const FarmsPage: FC = () => {
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const connect = useConnect()
-  const { data: stakeTokens, isValidating } = useSWR<TokenRepresentation[]>(
+  const { data: stakeTokens, isValidating: isValidatingStakeTokens } = useSWR<TokenRepresentation[]>(
     `/onsen/api/farms/${chainId}`,
     fetcher
   )
+  const { data: userSubscriptions, isValidating } = useSWR<UserSubscriptions>(
+    `/onsen/api/subscriptions/${chainId}/${account?.address?.toLowerCase()}`,
+    fetcher
+  )
 
-  console.log({stakeTokens})
   return (
     <Layout>
       <div>
@@ -62,10 +66,15 @@ export const FarmsPage: FC = () => {
           </Button>
         </Link>
       </div>
+      <RewardsAvailableModal
+        userSubscriptions={userSubscriptions}
+        chainId={activeChain?.id}
+        stakeTokens={stakeTokens}
+      />
       <FarmTable
         stakeTokens={stakeTokens}
         chainId={activeChain?.id}
-        loading={isValidating}
+        loading={isValidatingStakeTokens}
         placeholder="No incoming incentives found"
       />
     </Layout>
