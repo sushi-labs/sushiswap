@@ -223,22 +223,22 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             Array.from(Array(4)).map((_, i) => (
               <Table.tr key={i} className="flex">
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-5 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
                 </Table.td>
               </Table.tr>
             ))}
