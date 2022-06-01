@@ -5,14 +5,16 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
-import { BalanceChart } from 'components/stream'
 import { FuroStatus, FuroType, Stream } from 'lib'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 import { BalanceChartHoverEnum } from './stream/[id]'
+
+const BalanceChart = dynamic(() => import('components/stream/BalanceChart'), { ssr: false })
 
 const now = new Date().getTime()
 
@@ -145,7 +147,7 @@ export default function Index() {
           </div>
         </div>
         <div className="scale-[0.9] lg:block flex justify-center">
-          {isMounted && <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />}
+          <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />
         </div>
       </div>
     </Layout>

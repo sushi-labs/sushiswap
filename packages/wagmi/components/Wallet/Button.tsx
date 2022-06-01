@@ -11,7 +11,7 @@ import {
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 import { useWalletState } from '../../hooks'
@@ -24,11 +24,11 @@ const Icons: Record<string, ReactNode> = {
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
 }
 
-export type Props = ButtonProps & {
+export type Props<C extends React.ElementType> = ButtonProps<C> & {
   hack?: ReturnType<typeof useConnect>
 }
 
-export const Button: FC<Props> = ({ hack, children, ...rest }) => {
+export const Button = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
   const { data } = useAccount()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
@@ -117,10 +117,6 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
     )
   }
 
-  // Placeholder
-  if (isMounted) {
-    return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
-  }
-
-  return null
+  // Placeholder to avoid content jumping
+  return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
 }
