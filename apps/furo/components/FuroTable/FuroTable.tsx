@@ -195,14 +195,6 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
     onGlobalFilterChange: props.setGlobalFilter,
   })
 
-  // useMemo(() => {
-  //   data.forEach((stream) => {
-  //     if (stream instanceof Stream && !!props.balances?.[stream.id]) {
-  //       stream.balance = props.balances[stream.id]
-  //     }
-  //   }, [])
-  // }, [data, props.balances])
-
   return (
     <Table.container>
       <Table.table>

@@ -37,6 +37,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
 
   return (
     <Popover
+      hover
       button={
         <Button color="gray" as="div">
           <NotepadIcon width={18} height={18} />

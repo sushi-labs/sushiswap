@@ -1,8 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon, DotsVerticalIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '@sushiswap/graph-client'
-import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { Menu, ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
@@ -24,6 +24,8 @@ import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
+
+import { ChartHover } from '../../types'
 
 interface Props {
   fallback?: {
@@ -61,12 +63,6 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
-export enum BalanceChartHoverEnum {
-  NONE,
-  WITHDRAW,
-  STREAMED,
-}
-
 const _Streams: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
@@ -88,7 +84,7 @@ const _Streams: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
-  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const stream = useMemo(
     () => (chainId && furo && rebase ? new Stream({ chainId, furo, rebase }) : undefined),
@@ -119,7 +115,7 @@ const _Streams: FC = () => {
           Stream
         </Typography>
       </div>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />
         </div>
@@ -129,8 +125,8 @@ const _Streams: FC = () => {
               aria-hidden="true"
               label="Streamed"
               value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
-              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+              onMouseEnter={() => setHover(ChartHover.STREAMED)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={
@@ -144,8 +140,8 @@ const _Streams: FC = () => {
               aria-hidden="true"
               label="Withdrawn"
               value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
-              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+              onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={stream ? stream.withdrawnPercentage.divide(100).toSignificant(4) : 0}
@@ -162,35 +158,37 @@ const _Streams: FC = () => {
           <StreamDetailsPopover stream={stream} />
           <HistoryPopover stream={stream} transactionRepresentations={transactions} />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
           <WithdrawModal stream={stream} />
-          <div className="flex gap-2">
-            <TransferModal
-              stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
-              address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
-              }
-            />
-            <UpdateModal
-              stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
-              address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
-              }
-            />
-            <CancelModal
-              stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
-              address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
-              }
-              fn="cancelStream"
-            />
-          </div>
+          <Menu button={<Menu.Button color="gray" fullWidth startIcon={<DotsVerticalIcon width={18} />} as="div" />}>
+            <Menu.Items unmount={false} className="!min-w-0">
+              <TransferModal
+                stream={stream}
+                abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+                address={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                  AddressZero
+                }
+              />
+              <UpdateModal
+                stream={stream}
+                abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+                address={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                  AddressZero
+                }
+              />
+              <CancelModal
+                stream={stream}
+                abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+                address={
+                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
+                  AddressZero
+                }
+                fn="cancelStream"
+              />
+            </Menu.Items>
+          </Menu>
         </div>
       </div>
     </Layout>

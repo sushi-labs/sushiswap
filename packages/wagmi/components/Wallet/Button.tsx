@@ -1,4 +1,4 @@
-import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
@@ -12,7 +12,7 @@ import {
   WalletConnectIcon,
 } from '@sushiswap/ui'
 import React, { ReactNode } from 'react'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
 
 import { useWalletState } from '../../hooks'
 import { Account } from '..'
@@ -30,6 +30,7 @@ export type Props<C extends React.ElementType> = ButtonProps<C> & {
 
 export const Button = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
   const { data } = useAccount()
+  const { activeChain } = useNetwork()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
   const hook = hack || useConnect()
@@ -106,9 +107,20 @@ export const Button = <C extends React.ElementType>({ hack, children, ...rest }:
         >
           <Menu.Items>
             <div>
-              <Menu.Item className="flex items-center gap-3 group" onClick={() => disconnect()}>
-                <LogoutIcon width={16} height={16} />
+              {data?.address && activeChain?.id && (
+                <Menu.Item
+                  as="a"
+                  target="_blank"
+                  href={`https://app.sushi.com/account?account=${data.address}&chainId=${activeChain.id}`}
+                  className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
+                >
+                  View Portfolio
+                  <ExternalLinkIcon width={16} height={16} />
+                </Menu.Item>
+              )}
+              <Menu.Item className="flex items-center gap-3 group justify-between !pr-4" onClick={() => disconnect()}>
                 Disconnect
+                <LogoutIcon height={16} />
               </Menu.Item>
             </div>
           </Menu.Items>

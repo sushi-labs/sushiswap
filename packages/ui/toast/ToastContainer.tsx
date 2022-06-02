@@ -7,7 +7,7 @@ export const ToastContainer = () => {
     <ToastifyContainer
       newestOnTop
       bodyClassName={() =>
-        'flex flex-col bg-dark-800 ring-1 ring-black/10 bg-slate-800 shadow-md mt-2 rounded-xl overflow-hidden'
+        'flex flex-col bg-dark-700 ring-1 ring-black/20 bg-slate-800 shadow-md mt-2 rounded-xl overflow-hidden'
       }
       toastClassName={() => ''}
     />

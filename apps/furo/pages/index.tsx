@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 import { BalanceChart } from '../components/stream'
-import { BalanceChartHoverEnum } from './stream/[id]'
+import { ChartHover } from '../types'
 
 const now = new Date().getTime()
 
@@ -56,7 +56,7 @@ export default function Index() {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const paySomeone = useConnect({
     onConnect: () => {

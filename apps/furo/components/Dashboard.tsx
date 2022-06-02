@@ -1,15 +1,14 @@
 import { Tab } from '@headlessui/react'
-import { Menu as HeadlessMenu } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
-import { Native, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
 import { Rebase } from '@sushiswap/graph-client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
-import { useChain } from '@sushiswap/wagmi'
-import { toToken, useWalletBalance } from 'lib'
+import { toToken } from 'lib'
 import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
-import { FC, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
+import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
 import { useAccount, useConnect } from 'wagmi'
@@ -23,13 +22,12 @@ const fetcher = (params: any) =>
 
 export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
   const isMounted = useIsMounted()
+  const router = useRouter()
   const { data: account } = useAccount()
-  const chain = useChain(chainId)
   const { isConnected } = useConnect()
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
-  const { data: balance } = useWalletBalance(account?.address, Native.onChain(chainId), FundSource.WALLET)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
     `/furo/api/streams/${chainId}/${address}`,
@@ -71,6 +69,14 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
     blocksPerFetch: 3,
   })
 
+  // Prefetch stream/vesting pages
+  useEffect(() => {
+    void router.prefetch('/stream/[id]')
+    void router.prefetch('/vesting/[id]')
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="flex flex-col h-full gap-[80px] pt-20">
       <div className="flex justify-between">
@@ -85,13 +91,15 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={
-                  <HeadlessMenu.Button
-                    className="w-full !h-[36px] btn !bg-blue btn-blue btn-default !flex gap-1 px-6"
+                  <Menu.Button
+                    color="blue"
+                    fullWidth
+                    startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
+                    className="!h-[36px] px-6"
                     as="div"
                   >
-                    <PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />
                     Pay Someone
-                  </HeadlessMenu.Button>
+                  </Menu.Button>
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">
@@ -106,68 +114,6 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             )}
           </div>
         </div>
-        {/*{address && (*/}
-        {/*  <div className="flex flex-col gap-2">*/}
-        {/*    <div className="flex flex-col gap-2 bg-slate-800 rounded-2xl z-10">*/}
-        {/*      <div className="flex items-center gap-3 bg-slate-700 rounded-xl p-3">*/}
-        {/*        <div className="bg-green w-2 h-2 rounded-full" />*/}
-        {/*        <Link passHref={true} href={chain.getAccountUrl(address)}>*/}
-        {/*          <Typography*/}
-        {/*            variant="sm"*/}
-        {/*            weight={700}*/}
-        {/*            className="flex gap-1 cursor-pointer text-slate-200 hover:text-blue"*/}
-        {/*            as="a"*/}
-        {/*            target="_blank"*/}
-        {/*          >*/}
-        {/*            {shortenAddress(address)}*/}
-        {/*            <ExternalLinkIcon width={16} />*/}
-        {/*          </Typography>*/}
-        {/*        </Link>*/}
-        {/*      </div>*/}
-        {/*      <div className="flex items-center gap-5 pr-4 pl-3 p-2 pb-4">*/}
-        {/*        <div className="flex items-center gap-3">*/}
-        {/*          <WalletIcon width={18} />*/}
-        {/*          <Typography weight={700} variant="sm">*/}
-        {/*            {balance?.toSignificant(6)}{' '}*/}
-        {/*            <span className="text-slate-400 text-xs">{balance?.currency.symbol}</span>*/}
-        {/*          </Typography>*/}
-        {/*        </div>*/}
-        {/*        <Typography*/}
-        {/*          as="a"*/}
-        {/*          href={`https://app.sushi.com/account?account=${account?.address}&chainId=${chainId}`}*/}
-        {/*          target="_blank"*/}
-        {/*          weight={700}*/}
-        {/*          variant="xs"*/}
-        {/*          className="text-blue cursor-pointer hover:text-blue-400"*/}
-        {/*        >*/}
-        {/*          View All Tokens*/}
-        {/*        </Typography>*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*    {account?.address && isMounted && isConnected && (*/}
-        {/*      <Menu*/}
-        {/*        button={*/}
-        {/*          <HeadlessMenu.Button*/}
-        {/*            className="w-full !h-[36px] btn !bg-blue btn-blue btn-default !flex gap-1"*/}
-        {/*            as="div"*/}
-        {/*          >*/}
-        {/*            <PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />*/}
-        {/*            Pay Someone*/}
-        {/*          </HeadlessMenu.Button>*/}
-        {/*        }*/}
-        {/*      >*/}
-        {/*        <Menu.Items unmount={false} className="!min-w-0">*/}
-        {/*          <Link passHref={true} href="/stream/create">*/}
-        {/*            <Menu.Item as="a">Stream</Menu.Item>*/}
-        {/*          </Link>*/}
-        {/*          <Link passHref={true} href="/vesting/create">*/}
-        {/*            <Menu.Item as="a">Vesting</Menu.Item>*/}
-        {/*          </Link>*/}
-        {/*        </Menu.Items>*/}
-        {/*      </Menu>*/}
-        {/*    )}*/}
-        {/*  </div>*/}
-        {/*)}*/}
       </div>
       <Tab.Group as="div" className="space-y-6">
         <div className="flex justify-between px-2">

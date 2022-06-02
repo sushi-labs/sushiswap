@@ -19,6 +19,7 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
 
   return (
     <Popover
+      hover
       button={
         <Button color="gray" as="div">
           <HistoryIcon width={18} height={18} />
