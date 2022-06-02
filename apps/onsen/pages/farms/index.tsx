@@ -1,3 +1,4 @@
+import { Farm as FarmDTO } from '@sushiswap/graph-client'
 import { Button } from '@sushiswap/ui'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
@@ -9,8 +10,7 @@ import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { KOVAN_STAKING_Farm as FarmDTO } from '../../.graphclient'
-import { getFarms } from '../../graph/graph-client'
+import { getFarms } from '../../lib/graph'
 
 const fetcher = (params: any) =>
   fetch(params)

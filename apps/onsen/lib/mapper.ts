@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-
-import { KOVAN_STAKING_Token as TokenDTO } from '../../../.graphclient'
+import { Token as TokenDTO } from '@sushiswap/graph-client'
 
 export function toToken(token: TokenDTO, chainId: ChainId): Token {
   return new Token({

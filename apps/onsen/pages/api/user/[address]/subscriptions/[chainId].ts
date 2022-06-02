@@ -1,4 +1,4 @@
-import { getSubscribedIncentives } from 'graph/graph-client'
+import { getSubscribedIncentives } from 'lib/graph'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

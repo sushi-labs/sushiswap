@@ -1,6 +1,5 @@
+import { getFarms } from 'lib/graph'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-import { getFarms } from '../../../graph/graph-client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId } = req.query

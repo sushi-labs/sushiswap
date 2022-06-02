@@ -5,6 +5,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
+  '@sushiswap/graph-client',
 ])
 
 export default withTranspileModules({

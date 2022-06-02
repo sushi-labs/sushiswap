@@ -1,15 +1,14 @@
+import type { Farm as FarmDTO } from '@sushiswap/graph-client'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
 import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
-import { getSubscribedIncentives, getUserFarms } from 'graph/graph-client'
 import { Farm } from 'lib/Farm'
+import { getSubscribedIncentives, getUserFarms } from 'lib/graph'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
-
-import type { KOVAN_STAKING_Farm as FarmDTO } from '../../../.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)

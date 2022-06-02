@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-
-import type { KOVAN_STAKING_Farm as FarmDTO } from '../.graphclient'
-import { getBuiltGraphSDK } from '../.graphclient'
+import type { Farm as FarmDTO } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 

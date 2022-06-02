@@ -1,4 +1,4 @@
-query KovanStakingFarms($where: KOVAN_STAKING_Incentive_filter) {
+query KovanStakingFarms($where: Incentive_filter) {
   KOVAN_STAKING_farms {
     id
     stakeToken {
