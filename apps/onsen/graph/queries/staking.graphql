@@ -1,10 +1,12 @@
-query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
-  KOVAN_STAKING_tokens {
+query KovanStakingFarms($where: KOVAN_STAKING_Incentive_filter) {
+  KOVAN_STAKING_farms {
     id
-    name
-    type
-    symbol
-    decimals
+    stakeToken {
+      id
+      name
+      symbol
+      decimals
+    }
     incentives(where: $where) {
       id
       lastRewardTime
@@ -33,18 +35,77 @@ query KovanStakingStakedTokens($where: KOVAN_STAKING_Incentive_filter) {
     }
   }
 }
-query KovanStakingSubscriptions($id: ID!) {
 
+query KovanStakingSubscriptions($id: ID!) {
   KOVAN_STAKING_user(id: $id) {
     id
     activeSubscriptionCount
     subscriptions {
-      id
       token {
         id
+        name
+        symbol
+        decimals
+        incentives {
+          id
+          lastRewardTime
+          rewardRemaining
+          liquidityStaked
+          stakeToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          rewardToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          createdBy {
+            id
+          }
+          endTime
+          createdAtBlock
+          createdAtTimestamp
+          modifiedAtBlock
+          modifiedAtTimestamp
+        }
       }
       incentive {
-         id
+        id
+      }
+    }
+  }
+}
+
+query KovanStakingUserSubscriptions($id: ID!) {
+  KOVAN_STAKING_user(id: $id) {
+    subscriptions {
+      incentive {
+        id
+        farm {
+          id
+        }
+      }
+    }
+  }
+}
+
+query KovanStakingUserFarms($farmIds: [ID]!) {
+  KOVAN_STAKING_farms(where: { id_in: $farmIds }) {
+    id
+    stakeToken {
+      id
+      name
+      symbol
+      decimals
+      type
+      assets
+    }
+    incentives {
+      id
       lastRewardTime
       rewardRemaining
       liquidityStaked
@@ -68,13 +129,9 @@ query KovanStakingSubscriptions($id: ID!) {
       createdAtTimestamp
       modifiedAtBlock
       modifiedAtTimestamp
-      }
     }
   }
 }
-
-
-
 # query KovanOnsenFarm($id: ID!) {
 #   KOVAN_ONSEN_incentive(id: $id) {
 #     id

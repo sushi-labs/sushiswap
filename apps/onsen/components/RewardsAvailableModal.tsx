@@ -1,41 +1,35 @@
 import log from '@sushiswap/log'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Incentive, TokenRepresentation } from 'features'
+import { Incentive } from 'features'
+import { Farm } from 'features/onsen/context/Farm'
 import { useStakingContract } from 'hooks/useStakingContract'
 import { batchAction, subscribeAction } from 'lib/actions'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useSendTransaction } from 'wagmi'
 
-import type { KOVAN_STAKING_User as UserSubscriptions } from '../.graphclient'
 import IncentiveTable from './IncentiveTable'
 import { createToast } from './Toast'
 
 interface RewardsAvailableModalProps {
-  userSubscriptions: UserSubscriptions | undefined
-  stakeTokens: TokenRepresentation[] | undefined
+  farms: Farm[] | undefined
   chainId: number | undefined
-  // abi: ContractInterface
-  // address: string
-  // fn: string
 }
 
-export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ userSubscriptions, stakeTokens, chainId }) => {
+export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, chainId }) => {
   const [open, setOpen] = useState(false)
   const { data: account } = useAccount()
   const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
   const contract = useStakingContract(chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
-  const unsubscribedIncentives = useMemo(() => {
-    const subscribedFarms = userSubscriptions?.subscriptions?.map((sub) => sub.token.id)
-    const filteredFarms = stakeTokens?.filter((stakeToken) => subscribedFarms?.includes(stakeToken.id))
-    const subscribedIncentiveIds = userSubscriptions?.subscriptions?.map((sub) => sub.incentive.id)
-    const filteredIncentives = filteredFarms
-      ?.map((stakedToken) => stakedToken.incentives ?? [])
-      .flat()
-      .filter((incentive) => incentive != undefined && !subscribedIncentiveIds?.includes(incentive.id))
-    return filteredIncentives?.map((incentive) => new Incentive({ incentive })) ?? []
-  }, [userSubscriptions, stakeTokens])
+  const incentives = useMemo(() => {
+    return (
+      farms
+        ?.map((farm) => farm.incentives)
+        .flat()
+        .filter((incentive) => !incentive.isSubscribed) ?? []
+    )
+  }, [farms])
 
   const stakeAndSubscribe = useCallback(async () => {
     if (!account) return
@@ -71,7 +65,7 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ userSubs
   if (!account) return <></>
   return (
     <>
-      {unsubscribedIncentives.length ? (
+      {incentives.length ? (
         <div onClick={() => setOpen(true)}>
           You have new reward subscriptions available. Click to learn more and start earning more rewards!
         </div>
@@ -79,17 +73,18 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ userSubs
         <></>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-5 !max-w-m">
+        <Dialog.Content className="space-y-5">
           <Dialog.Header title={'New Rewards Available'} onClose={() => setOpen(false)} />
           <Typography>
             There are new reward tokens available for some of your farms. Select any or all of the following checkboxes
             and click ‘subscribe’ to start earning.
           </Typography>
 
-          <Typography>Subscriptions: {Number(userSubscriptions?.activeSubscriptionCount)} / 6</Typography>
+          {/* <Typography>Subscriptions: {Number(userSubscriptions?.activeSubscriptionCount)} / 6</Typography> */}
+          {/* // TODO: fix sub count, not correct. should be subscriptions to the current farm/stakeToken */}
 
           <IncentiveTable
-            incentives={unsubscribedIncentives}
+            incentives={incentives}
             chainId={chainId}
             loading={false}
             setSelectedRows={setSelectedIncentives}

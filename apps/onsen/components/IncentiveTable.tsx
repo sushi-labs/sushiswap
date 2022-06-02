@@ -70,13 +70,27 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
     },
   }),
 
+  table.createDisplayColumn({
+    id: 'farm',
+    header: () => <div className="w-full text-left"> Farm </div>,
+    cell: (props) => {
+      return (
+        <div className="flex flex-col w-full">
+          <Typography variant="sm" weight={700} className=" text-slate-200">
+            {props.row.original?.liquidityStaked.currency.symbol}
+          </Typography>
+        </div>
+      )
+    },
+  }),
+
   table.createDataColumn('rewardRemaining', {
     header: () => <div className="w-full text-left">Rewards remaining</div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.getValue().toExact()}
+            {props.getValue().greaterThan('100000') ? props.getValue().toSignificant(6) : '< 0.01'}
           </Typography>
           <Typography variant="xxs" weight={500} className=" text-slate-200">
             {props.getValue().currency.symbol}

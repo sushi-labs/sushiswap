@@ -1,16 +1,15 @@
 import { Button } from '@sushiswap/ui'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
-import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
+import { Farm } from 'features/onsen/context/Farm'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
-import type { KOVAN_STAKING_User as UserSubscriptions } from '../../.graphclient'
-import { TokenRepresentation } from '../../features/onsen/context/representations'
+import { KOVAN_STAKING_Farm as FarmDTO } from '../../.graphclient'
 import { getFarms } from '../../graph/graph-client'
 
 const fetcher = (params: any) =>
@@ -47,34 +46,39 @@ export const FarmsPage: FC = () => {
   const chainId = Number(router.query.chainId as string)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
-  const connect = useConnect()
-  const { data: stakeTokens, isValidating: isValidatingStakeTokens } = useSWR<TokenRepresentation[]>(
-    `/onsen/api/farms/${chainId}`,
-    fetcher
-  )
-  const { data: userSubscriptions, isValidating } = useSWR<UserSubscriptions>(
-    `/onsen/api/subscriptions/${chainId}/${account?.address?.toLowerCase()}`,
-    fetcher
-  )
+  const { data: farmsDTO, isValidating: isValidatingFarms } = useSWR<FarmDTO[]>(`/onsen/api/farms/${chainId}`, fetcher)
+
+  const farms = useMemo(() => {
+    if (!farmsDTO || isValidatingFarms) return []
+    return farmsDTO.map(
+      (farm) =>
+        new Farm({
+          token: farm.stakeToken,
+          incentives: farm.incentives,
+        })
+    )
+  }, [farmsDTO, isValidatingFarms])
 
   return (
     <Layout>
-      <div>
+      <div className="flex p-4 gap-7">
         <Link passHref={true} href="/farm/create">
-          <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-            create incentive
+          <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+            Create Farm
+          </Button>
+        </Link>
+
+        <Link passHref={true} href={`/users/${account?.address}?chainId=${chainId}`}>
+          <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+            My Farms
           </Button>
         </Link>
       </div>
-      <RewardsAvailableModal
-        userSubscriptions={userSubscriptions}
-        chainId={activeChain?.id}
-        stakeTokens={stakeTokens}
-      />
       <FarmTable
-        stakeTokens={stakeTokens}
+        farms={farms}
         chainId={activeChain?.id}
-        loading={isValidatingStakeTokens}
+        showSubscribeAction={true}
+        loading={isValidatingFarms}
         placeholder="No incoming incentives found"
       />
     </Layout>

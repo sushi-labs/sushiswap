@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 
+import { KOVAN_STAKING_Incentive as IncentiveDTO } from '../../../.graphclient'
 import { toToken } from './mapper'
-import { IncentiveRepresentation, UserRepresentation } from './representations'
 import { TokenType } from './types'
 
 export class Incentive {
@@ -12,18 +12,21 @@ export class Incentive {
   public readonly liquidityStaked: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
-  public readonly createdBy: UserRepresentation
-  public constructor({ incentive }: { incentive: IncentiveRepresentation }) {
+  public readonly createdBy: string
+  private _isSubscribed: boolean
+
+  public constructor({ incentive }: { incentive: IncentiveDTO }) {
     this.id = incentive.id
+    this._isSubscribed = false
     this.rewardRemaining = Amount.fromRawAmount(
       toToken(incentive.rewardToken, ChainId.KOVAN),
       incentive.rewardRemaining
     ) // TODO: pass in active network to constructor
     this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
     this.tokenType = incentive.stakeToken?.type ? (<any>TokenType)[incentive.stakeToken?.type] : TokenType.UNKNOWN // FIXME: any hack?
-    this.startTime = new Date(Number(incentive.startTime) * 1000)
+    this.startTime = new Date(Number(incentive.createdAtTimestamp) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
-    this.createdBy = incentive.createdBy
+    this.createdBy = incentive.createdBy.id
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
@@ -38,5 +41,12 @@ export class Incentive {
       return { days, hours, minutes, seconds }
     }
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
+
+  public get isSubscribed(): boolean {
+    return this._isSubscribed
+  }
+  public set isSubscribed(value: boolean) {
+    this._isSubscribed = value
   }
 }

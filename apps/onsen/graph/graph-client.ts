@@ -1,40 +1,54 @@
 import { ChainId } from '@sushiswap/chain'
 
-import type { KOVAN_STAKING_User as UserDTO } from '../.graphclient'
+import type { KOVAN_STAKING_Farm as FarmDTO } from '../.graphclient'
 import { getBuiltGraphSDK } from '../.graphclient'
-import { TokenRepresentation } from '../features/onsen/context/representations'
 
 const SUPPORTED_CHAINS = [ChainId.KOVAN]
 
 const isNetworkSupported = (chainId: number) => SUPPORTED_CHAINS.includes(chainId)
 
-// export const getFarm = async (chainId: string, id: string): Promise<FarmRepresentation | undefined> => {
-//   const network = Number(chainId)
-//   if (!isNetworkSupported(network)) return undefined
-//   const sdk = getBuiltGraphSDK()
-//   if (network === ChainId.KOVAN) {
-//     return (await sdk.KovanOnsenFarm({ id })).KOVAN_ONSEN_incentive as FarmRepresentation
-//   }
-// }
-
-export const getFarms = async (chainId: string): Promise<TokenRepresentation[] | undefined> => {
+export const getFarms = async (chainId: string) => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
   const now = (new Date().getTime() / 1000).toFixed()
   if (network === ChainId.KOVAN) {
-    return (await sdk.KovanStakingStakedTokens({ where: { endTime_gte: now } }))
-      .KOVAN_STAKING_tokens as TokenRepresentation[]
+    return (await sdk.KovanStakingFarms({ where: { endTime_gte: now } })).KOVAN_STAKING_farms as FarmDTO[]
   }
 }
 
-export const getSubscriptions = async (chainId: string, address: string) => {
+export const getSubscribedIncentives = async (chainId: string, address: string) => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
-  const now = (new Date().getTime() / 1000).toFixed()
   if (network === ChainId.KOVAN) {
-    return (await sdk.KovanStakingSubscriptions({ id: address })).KOVAN_STAKING_user as UserDTO
+    const subscribedIncentiveIds = (
+      await sdk.KovanStakingUserSubscriptions({ id: address.toLowerCase() })
+    ).KOVAN_STAKING_user?.subscriptions?.map((sub) => sub.incentive.id)
+    return Array.from(new Set(subscribedIncentiveIds))
+  }
+}
+
+export const getSubscribedFarms = async (chainId: string, address: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.KOVAN) {
+    const subscribedIncentiveIds = (
+      await sdk.KovanStakingUserSubscriptions({ id: address.toLowerCase() })
+    ).KOVAN_STAKING_user?.subscriptions?.map((sub) => sub.incentive.farm.id)
+    return Array.from(new Set(subscribedIncentiveIds))
+  }
+}
+
+export const getUserFarms = async (chainId: string, address: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.KOVAN) {
+    const subscribedFarmIds = await getSubscribedFarms(chainId, address)
+    if (!subscribedFarmIds) return {}
+    return (await sdk.KovanStakingUserFarms({ farmIds: subscribedFarmIds })).KOVAN_STAKING_farms
   }
 }
 

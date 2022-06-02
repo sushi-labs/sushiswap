@@ -1,16 +1,16 @@
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { TokenRepresentation } from 'features'
 import { Farm } from 'features/onsen/context/Farm'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { StakeAndSubscribeModal } from './StakeAndSubscribeModal'
 
 interface FarmTableProps {
   chainId: number | undefined
-  stakeTokens: TokenRepresentation[] | undefined
+  farms: Farm[] | undefined
+  showSubscribeAction: boolean
   placeholder: string
   loading: boolean
 }
@@ -25,10 +25,10 @@ const defaultColumns = (tableProps: FarmTableProps) => [
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.row.original?.incentives[0].liquidityStaked.currency.symbol}
+            {props.row.original?.stakeToken.symbol}
           </Typography>
           <Typography variant="xxs" weight={500} className=" text-slate-200">
-            {props.row.original?.tokenType}
+            {props.row.original?.farmType}
           </Typography>
         </div>
       )
@@ -41,20 +41,29 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   }),
   table.createDisplayColumn({
     id: 'rewards_24h',
-    header: () => <div className="w-full text-right"> Rewards per 24h </div>,
+    header: () => <div className="w-full text-left"> Rewards per 24h </div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
-          {props.row.original?.rewardsPerDay ? (
-            Object.values(props.row.original?.rewardsPerDay).map((reward) => (
-              <>
+          {props.row.original?.incentives ? (
+            Object.values(props.row.original?.incentives).map((incentive) => (
+              <div className="flex flex-row w-full" key={incentive.id}>
+                {incentive.isSubscribed ? (
+                  <Typography variant="sm" weight={700} className="text-right text-green-400">
+                    Y
+                  </Typography>
+                ) : (
+                  <></>
+                )}
                 <Typography variant="sm" weight={700} className="text-right text-slate-200">
-                  {reward?.greaterThan('100000') ? reward?.toSignificant(6) : '< 0.01'}
+                  {incentive.rewardRemaining?.greaterThan('100000')
+                    ? incentive?.rewardRemaining.toSignificant(6)
+                    : '< 0.01'}
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-right text-slate-500">
-                  {reward?.currency.symbol}
+                  {incentive?.rewardRemaining.currency.symbol}
                 </Typography>
-              </>
+              </div>
             ))
           ) : (
             <></>
@@ -70,13 +79,22 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   }),
   table.createDisplayColumn({
     id: 'Subscribe',
-    header: () => <div className="w-full text-left"> Subscribe </div>,
-    cell: (props) => (props.row.original ? <StakeAndSubscribeModal farm={props.row.original} /> : <></>),
+    header: () => (tableProps.showSubscribeAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
+    cell: (props) =>
+      tableProps.showSubscribeAction ? (
+        props.row.original ? (
+          <StakeAndSubscribeModal farm={props.row.original} />
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      ),
   }),
 ]
 
 export const FarmTable: FC<FarmTableProps> = (props) => {
-  const { stakeTokens, placeholder, loading } = props
+  const { farms, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
@@ -85,17 +103,13 @@ export const FarmTable: FC<FarmTableProps> = (props) => {
 
   const router = useRouter()
   const { activeChain } = useNetwork()
-  const data = useMemo(() => {
-    if (!stakeTokens) return []
-    return stakeTokens.map((stakeToken) => new Farm({ stakeToken }))
-  }, [stakeTokens])
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns({ ...props, chainId: activeChain?.id }),
   ])
 
   const instance = useTableInstance(table, {
-    data,
+    data: farms ?? [],
     // @ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
