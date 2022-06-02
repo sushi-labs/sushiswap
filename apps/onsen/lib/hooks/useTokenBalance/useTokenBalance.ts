@@ -1,12 +1,8 @@
 import { FundSource } from '@sushiswap/hooks'
-import {
-  UseTokenBalance,
-  UseTokenBalances,
-  useTokenBentoboxBalance,
-  useTokenBentoboxBalances,
-  useTokenWalletBalance,
-  useTokenWalletBalances,
-} from 'hooks'
+
+import { type UseTokenBalance, type UseTokenBalances } from './types'
+import { useTokenBentoboxBalance, useTokenBentoboxBalances } from './useTokenBentoboxBalance'
+import { useTokenWalletBalance, useTokenWalletBalances } from './useTokenWalletBalance'
 
 export const useTokenBalances: UseTokenBalances = (account, tokens, fundSource) => {
   const walletBalance = useTokenWalletBalances(account, tokens)

@@ -2,11 +2,12 @@ import { Interface } from '@ethersproject/abi'
 import { isAddress } from '@ethersproject/address'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'hooks'
+import { UseTokenBalance, UseTokenBalances } from 'lib/hooks'
+import { ErrorState, LoadingState, SuccessState } from 'lib/hooks/types'
 import { useMemo } from 'react'
 import { erc20ABI } from 'wagmi'
 
-import { useMultipleContractSingleData } from '../../lib/hooks/multicall'
+import { useMultipleContractSingleData } from '../multicall'
 
 const tokenBalancesGasRequirement = { gasRequired: 125_000 }
 const ERC20Interface = new Interface(erc20ABI)

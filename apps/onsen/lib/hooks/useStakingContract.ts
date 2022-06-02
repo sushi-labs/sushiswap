@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { useContract, useProvider } from 'wagmi'
 
-import STAKING_ABI from '../abis/Staking.json'
+import STAKING_ABI from '../../abis/Staking.json'
 
 export function useStakingContract(chainId: number | undefined) {
   return useContract({

@@ -1,11 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { Button, Dialog, Dots, Form } from '@sushiswap/ui'
 import { Incentive } from 'features'
-// import { createToast } from 'components'
-// import { Stream } from 'lib'
 import { Farm } from 'features/onsen/context/Farm'
-import { FundSource, useWalletBalance } from 'hooks'
+import { useWalletBalance } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite } from 'wagmi'
 

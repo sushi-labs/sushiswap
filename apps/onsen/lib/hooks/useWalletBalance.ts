@@ -25,10 +25,10 @@ export const useWalletBalance = (
   if (currency instanceof Native) {
     return {
       isLoading: isBalanceLoading,
-      data: nativeBalance?.value ? Amount.fromRawAmount(currency, nativeBalance.value.toString()) : undefined,
-      isError: isBalanceError,
-    }
+      data: nativeBalance ? Amount.fromRawAmount(currency, nativeBalance.value.toString()) : null,
+      isError: !isBalanceError,
+    } as SuccessState<Amount<Currency>>
+  } else {
+    return balance
   }
-
-  return balance
 }
