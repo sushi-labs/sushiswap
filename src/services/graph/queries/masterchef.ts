@@ -92,3 +92,33 @@ export const masterChefV1PoolsQuery = gql`
     }
   }
 `
+
+export const masterChefV1PoolHistoriesQuery = gql`
+  query masterChefV1PoolHistories(
+    $first: Int! = 1000
+    $skip: Int! = 0
+    $where: PoolHistory_filter!
+    $orderBy: String! = "timestamp"
+    $orderDirection: String! = "desc"
+  ) {
+    poolHistories(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
+      id
+      slpBalance
+      userCount
+      timestamp
+      pool {
+        id
+        allocPoint
+        accSushiPerShare
+        pair
+        balance
+        userCount
+        owner {
+          id
+          sushiPerBlock
+          totalAllocPoint
+        }
+      }
+    }
+  }
+`

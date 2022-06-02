@@ -3,6 +3,7 @@ import { GRAPH_HOST } from 'app/services/graph/constants'
 import { getTokenSubset } from 'app/services/graph/fetchers/exchange'
 import {
   masterChefV1PairAddressesQuery,
+  masterChefV1PoolHistoriesQuery,
   masterChefV1PoolsQuery,
   masterChefV1SushiPerBlockQuery,
   masterChefV1TotalAllocPointQuery,
@@ -153,4 +154,9 @@ export const getMasterChefV1Pools = async (chainId = ChainId.ETHEREUM, variables
 export const getMasterChefV2Pools = async (chainId = ChainId.ETHEREUM, variables: any) => {
   const { pools } = await masterChefV2(masterChefV2PoolsQuery, chainId, variables)
   return pools
+}
+
+export const getMasterChefV1PoolHistories = async (chainId = ChainId.ETHEREUM, variables: any) => {
+  const { poolHistories } = await masterChefV1(masterChefV1PoolHistoriesQuery, chainId, variables)
+  return poolHistories
 }

@@ -178,7 +178,6 @@ export const useTableConfig = (chainId: number) => {
         minWidth: 150,
         // @ts-ignore
         Cell: (props) => {
-          console.log({ props })
           return (
             <>
               {props.value}{' '}

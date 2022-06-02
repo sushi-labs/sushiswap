@@ -52,7 +52,7 @@ export const useTableConfig = (chainId: number, users: any) => {
         columns,
         data: data ?? [],
         initialState: {
-          sortBy: [{ id: 'apr.annual', desc: true }],
+          sortBy: [{ id: 'amountUSD', desc: true }],
         },
         autoResetFilters: false,
       },

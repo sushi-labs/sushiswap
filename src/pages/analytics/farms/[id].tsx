@@ -3,56 +3,91 @@ import { ChainId, Token } from '@sushiswap/core-sdk'
 import { CurrencyLogo } from 'app/components/CurrencyLogo'
 import DoubleCurrencyLogo from 'app/components/DoubleLogo'
 import Typography from 'app/components/Typography'
+import FormattedChartCard from 'app/features/analytics/FormattedChartCard'
 import UserTable from 'app/features/user/UserTable'
 import { formatNumber, formatPercent } from 'app/functions'
-import useFarmRewards from 'app/hooks/useFarmRewards'
+import useFarmRewardHistories from 'app/hooks/useFarmRewardHistories'
 import useFarmRewardsWithUsers from 'app/hooks/useFarmRewardsWithUsers'
 import { TridentBody, TridentHeader } from 'app/layouts/Trident'
-import useActiveWeb3React from 'app/lib/hooks/useActiveWeb3React'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
+
+const chartTimespans = [
+  {
+    text: '1W',
+    length: 604800,
+  },
+  {
+    text: '1M',
+    length: 2629746,
+  },
+  {
+    text: '1Y',
+    length: 31556952,
+  },
+  {
+    text: 'ALL',
+    length: Infinity,
+  },
+]
 
 export default function Pool() {
   const router = useRouter()
   const id = (router.query.id as string).toLowerCase()
-  const [farm, setFarm] = useState<any>(null)
-  const [token0, setToken0] = useState<any>(null)
-  const [token1, setToken1] = useState<any>(null)
-  const { chainId } = useActiveWeb3React()
-  const pools = useFarmRewardsWithUsers({ chainId: chainId || ChainId.ETHEREUM, variables: { where: { pair: id } } })
-  console.log('pools', pools)
-  const rewards = useFarmRewards({
+  const chainId = Number(router.query.chainId)
+
+  const farms = useFarmRewardsWithUsers({ chainId, variables: { where: { pair: id } } })
+
+  const farm = farms.find((reward) => reward.pair.id === id)
+  const farmHistories = useFarmRewardHistories({ chainId, variables: { where: { pool: farm?.id } } }).sort(
+    (a, b) => a.timestamp - b.timeestamp
+  )
+
+  // For the charts
+  const chartData = useMemo(
+    () => ({
+      rewardAprPerYear: farm?.rewardAprPerYear,
+      rewardAprPerYearChange:
+        farmHistories.length > 1
+          ? farmHistories[farmHistories.length - 1].rewardAprPerYear -
+            farmHistories[farmHistories.length - 2].rewardAprPerYear
+          : 0,
+      rewardAprPerYearChart: farmHistories
+        // @ts-ignore TYPE NEEDS FIXING
+        .map((day) => ({ x: new Date(day.timestamp * 1000), y: Number(day.rewardAprPerYear) })),
+
+      userCount: farm?.userCount,
+      userCountChange:
+        farmHistories.length > 1 && farmHistories[farmHistories.length - 1].userCount > 0
+          ? ((farmHistories[farmHistories.length - 1].userCount - farmHistories[farmHistories.length - 2].userCount) /
+              farmHistories[farmHistories.length - 1].userCount) *
+            100
+          : 0,
+      userCountChart: farmHistories
+        // @ts-ignore TYPE NEEDS FIXING
+        .map((day) => ({ x: new Date(day.timestamp * 1000), y: Number(day.userCount) })),
+    }),
+    [farmHistories, farm]
+  )
+
+  if (!farm) return <></>
+
+  const token0 = new Token(
     chainId,
-  })
+    getAddress(farm?.pair?.token0?.id),
+    Number(farm?.pair?.token0?.decimals) || 18,
+    farm?.pair?.token0?.symbol,
+    farm?.pair?.token0?.name
+  )
 
-  useEffect(() => {
-    const reward = rewards.find((reward) => reward.pair.id === id)
-    console.log(reward)
-    setFarm(reward)
-  }, [id, rewards])
-
-  useEffect(() => {
-    if (farm) {
-      const token0 = new Token(
-        chainId || ChainId.ETHEREUM,
-        getAddress(farm?.pair?.token0?.id),
-        Number(farm?.pair?.token0?.decimals) || 18,
-        farm?.pair?.token0?.symbol,
-        farm?.pair?.token0?.name
-      )
-
-      const token1 = new Token(
-        chainId || ChainId.ETHEREUM,
-        getAddress(farm?.pair?.token1?.id),
-        Number(farm?.pair?.token1?.decimals) || 18,
-        farm?.pair?.token1?.symbol,
-        farm?.pair?.token0?.name
-      )
-      setToken0(token0)
-      setToken1(token1)
-    }
-  }, [chainId, farm])
+  const token1 = new Token(
+    chainId,
+    getAddress(farm?.pair?.token1?.id),
+    Number(farm?.pair?.token1?.decimals) || 18,
+    farm?.pair?.token1?.symbol,
+    farm?.pair?.token0?.name
+  )
 
   return (
     <>
@@ -62,11 +97,19 @@ export default function Pool() {
           <div className="flex items-center space-x-4">
             <DoubleCurrencyLogo className="rounded-full" currency0={token0} currency1={token1} size={60} />
             <Typography variant="h2" className="text-high-emphesis" weight={700}>
-              {token0?.symbol}/{token1?.symbol}
+              {token0 && token1 && (
+                <>
+                  {token0?.symbol}/{token1?.symbol}
+                </>
+              )}
             </Typography>
           </div>
           <Typography variant="sm" weight={400}>
-            Dive deeper in the analytics of {token0?.symbol}/{token1?.symbol}.
+            {token0 && token1 && (
+              <>
+                Dive deeper in the analytics of {token0?.symbol}/{token1?.symbol}.
+              </>
+            )}
           </Typography>
         </div>
         <div className="flex flex-row space-x-8">
@@ -102,10 +145,31 @@ export default function Pool() {
         </div>
       </TridentHeader>
       <TridentBody>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormattedChartCard
+            format={formatPercent}
+            header="APR"
+            subheader={`${token0?.symbol}/${token1?.symbol}`}
+            figure={chartData.rewardAprPerYear}
+            change={chartData.rewardAprPerYearChange}
+            chart={chartData.rewardAprPerYearChart}
+            defaultTimespan="1M"
+            timespans={chartTimespans}
+          />
+          <FormattedChartCard
+            header="Users"
+            subheader={`${token0?.symbol}/${token1?.symbol}`}
+            figure={chartData.userCount}
+            change={chartData.userCountChange}
+            chart={chartData.userCountChart}
+            defaultTimespan="1M"
+            timespans={chartTimespans}
+          />
+        </div>
         <Typography variant="h3" weight={700}>
           Liquidity Providers
         </Typography>
-        <UserTable chainId={chainId || ChainId.ETHEREUM} users={pools && pools.length > 0 ? pools[0].users : []} />
+        <UserTable chainId={chainId || ChainId.ETHEREUM} users={farm ? farm.users : []} />
       </TridentBody>
     </>
   )
