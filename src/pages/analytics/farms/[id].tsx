@@ -143,8 +143,8 @@ export default function Pool() {
         </div>
       </TridentHeader>
       <TridentBody>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormattedChartCard
+        <div className="grid grid-cols-1 gap-4">
+          {/* <FormattedChartCard
             format={formatPercent}
             header="APR"
             subheader={`${token0?.symbol}/${token1?.symbol}`}
@@ -153,7 +153,7 @@ export default function Pool() {
             chart={chartData.rewardAprPerYearChart}
             defaultTimespan="1M"
             timespans={chartTimespans}
-          />
+          /> */}
           <FormattedChartCard
             header="Users"
             subheader={`${token0?.symbol}/${token1?.symbol}`}
