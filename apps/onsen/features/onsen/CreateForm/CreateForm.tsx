@@ -3,18 +3,12 @@ import { AddressZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Amount } from '@sushiswap/currency'
-// import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
-// import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
-// import { Approve } from '@sushiswap/wagmi/systems'
 import { createToast } from 'components'
-// import { approveBentoBoxAction, batchAction, streamCreationAction } from 'features/actions'
 import { IncentiveAmountDetails } from 'features/onsen/CreateForm/IncentiveAmountDetails'
 import { createIncentiveSchema } from 'features/onsen/CreateForm/schema'
 import { CreateIncentiveFormData, CreateIncentiveFormDataValidated } from 'features/onsen/CreateForm/types'
-// import { useStakingContract } from 'hooks/useStakingContract'
-// import { useFuroStreamContract } from 'hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -26,7 +20,6 @@ export const CreateForm: FC = () => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const [error, setError] = useState<string>()
-  // const contract = useStakingContract(activeChain?.id)
   const { isLoading: isWritePending, write: writeCreateIncentive } = useContractWrite(
     {
       addressOrName: '0x1CeD9B90aa573849b42ADAC7204860823c290dAc' ?? AddressZero,
@@ -34,7 +27,6 @@ export const CreateForm: FC = () => {
     },
     'createIncentive'
   )
-  // const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const [signature, setSignature] = useState<Signature>()
 
@@ -120,27 +112,6 @@ export const CreateForm: FC = () => {
           <GeneralDetailsSection />
           <IncentiveAmountDetails />
           <Form.Buttons>
-            {/* <Approve
-              components={
-                <Approve.Components>
-                  <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
-                  <Approve.Token
-                    amount={amountAsEntity}
-                    address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
-                  />
-                </Approve.Components>
-              }
-              render={({ approved }) => (
-                <Button
-                  type="submit"
-                  variant="filled"
-                  color="gradient"
-                  disabled={isWritePending || !approved || !isValid || isValidating}
-                >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create incentive'}
-                </Button>
-              )}
-            /> */}
             <Button
               type="submit"
               variant="filled"

@@ -23,28 +23,6 @@ const Header: FC = () => {
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
             <Wallet.Button className="!h-[36px]" />
-            {/* {account?.address && isMounted && isConnected && (
-              <Menu
-                button={
-                  <HeadlessMenu.Button
-                    className="w-full !h-[36px] btn !bg-blue btn-blue btn-default !flex gap-1"
-                    as="div"
-                  >
-                    <PlusIcon width={18} />
-                    Create
-                  </HeadlessMenu.Button>
-                }
-              >
-                <Menu.Items unmount={false} className="!min-w-0">
-                  <Link passHref={true} href="/stream/create">
-                    <Menu.Item as="a">Stream</Menu.Item>
-                  </Link>
-                  <Link passHref={true} href="/vesting/create">
-                    <Menu.Item as="a">Vesting</Menu.Item>
-                  </Link>
-                </Menu.Items>
-              </Menu>
-            )} */}
           </div>
         </App.Header>
       </Container>

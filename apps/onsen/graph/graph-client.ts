@@ -51,23 +51,3 @@ export const getUserFarms = async (chainId: string, address: string) => {
     return (await sdk.KovanStakingUserFarms({ farmIds: subscribedFarmIds })).KOVAN_STAKING_farms
   }
 }
-
-// export const getFarmToken = async (chainId: string, id: string, type: FarmType): Promise<TridentPoolRepresentation | undefined> => {
-//   const network = Number(chainId)
-//   if (!isNetworkSupported(network)) return undefined
-//   const sdk = getBuiltGraphSDK()
-//   if (network === ChainId.KOVAN) {
-//     if (type === FarmType.TRIDENT) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
-//     // if (type === FarmType.LEGACY) return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool as TridentPoolRepresentation
-//     else return undefined
-//   }
-// }
-
-// export const getTridentPool = async (chainId: string, id: string) => {
-//   const network = Number(chainId)
-//   if (!isNetworkSupported(network)) return {}
-//   const sdk = await getBuiltGraphSDK()
-//   if (network === ChainId.KOVAN) {
-//     return (await sdk.KovanTridentPool({ id })).KOVAN_TRIDENT_pool ?? {}
-//   }
-// }

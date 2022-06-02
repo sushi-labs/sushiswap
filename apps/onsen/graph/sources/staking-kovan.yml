@@ -8,9 +8,3 @@ transforms:
       includeRootOperations: true
       ignore: 
         - _SubgraphErrorPolicy_
-  #       - Token # Keep Token as-is because we need it for Type Merging
-  # - typeMerging:
-  #     queryFields:
-  #       - queryFieldName: KOVAN_ONSEN_token
-  #         keyField: id
-  #         keyArg: id

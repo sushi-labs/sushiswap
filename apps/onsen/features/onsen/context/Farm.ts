@@ -12,14 +12,8 @@ export class Farm {
   public readonly rewardsPerDay: Record<string, Amount<Token>> = {}
 
   public constructor({ token, incentives }: { token: TokenDTO; incentives: IncentiveDTO[] }) {
-    ;(this.stakeToken = toToken(token, ChainId.KOVAN)), // TODO: activeChain
-      (this.farmType = token.type)
+    this.stakeToken = toToken(token, ChainId.KOVAN) // TODO: activeChain
+    this.farmType = token.type
     this.incentives = incentives.map((incentive) => new Incentive({ incentive }))
-    // this.incentives?.forEach((incentive) => {
-    //   const address = incentive.rewardRemaining.currency.address
-    //   this.rewardsPerDay[address]
-    //     ? this.rewardsPerDay[address].add(incentive.rewardRemaining)
-    //     : (this.rewardsPerDay[address] = incentive.rewardRemaining)
-    // }) // TODO: getter?
   }
 }
