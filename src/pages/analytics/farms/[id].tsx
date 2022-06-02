@@ -40,9 +40,7 @@ export default function Pool() {
   const farms = useFarmRewardsWithUsers({ chainId, variables: { where: { pair: id } } })
 
   const farm = farms.find((reward) => reward.pair.id === id)
-  const farmHistories = useFarmRewardHistories({ chainId, variables: { where: { pool: farm?.id } } }).sort(
-    (a, b) => a.timestamp - b.timeestamp
-  )
+  const farmHistories = useFarmRewardHistories({ chainId, variables: { where: { pool: farm?.id } } })
 
   // For the charts
   const chartData = useMemo(
@@ -61,7 +59,7 @@ export default function Pool() {
       userCountChange:
         farmHistories.length > 1 && farmHistories[farmHistories.length - 1].userCount > 0
           ? ((farmHistories[farmHistories.length - 1].userCount - farmHistories[farmHistories.length - 2].userCount) /
-              farmHistories[farmHistories.length - 1].userCount) *
+              farmHistories[farmHistories.length - 2].userCount) *
             100
           : 0,
       userCountChart: farmHistories

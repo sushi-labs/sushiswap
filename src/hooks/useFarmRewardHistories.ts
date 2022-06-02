@@ -448,5 +448,12 @@ export default function useFarmRewardHistories({
     [kashiPairs, swapPairs]
   )
 
-  return useMemo(() => farmHistories.filter(filter).map(map), [farmHistories, filter, map])
+  return useMemo(
+    () =>
+      farmHistories
+        .filter(filter)
+        .map(map)
+        .sort((a, b) => a.timestamp - b.timestamp),
+    [farmHistories, filter, map]
+  )
 }
