@@ -1,5 +1,4 @@
-import { Menu as HeadlessMenu } from '@headlessui/react'
-import { PlusIcon } from '@heroicons/react/solid'
+import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
@@ -29,13 +28,15 @@ export const Header: FC = () => {
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={
-                  <HeadlessMenu.Button
-                    className="w-full !h-[36px] btn !bg-blue btn-blue btn-default !flex gap-1"
+                  <Menu.Button
+                    color="blue"
+                    fullWidth
+                    startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
+                    className="!h-[36px]"
                     as="div"
                   >
-                    <PlusIcon width={18} />
-                    Create
-                  </HeadlessMenu.Button>
+                    Pay Someone
+                  </Menu.Button>
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">

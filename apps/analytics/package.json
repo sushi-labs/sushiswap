@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
     "graphql": "^16.5.0",
     "isomorphic-fetch": "^3.0.0",
     "next": "^12.1.6",

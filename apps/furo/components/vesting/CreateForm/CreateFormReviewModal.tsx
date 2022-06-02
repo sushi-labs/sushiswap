@@ -12,7 +12,7 @@ import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string
-  value: any
+  value: ReactNode | Array<ReactNode>
   className?: string
 }
 

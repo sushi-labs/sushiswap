@@ -9,3 +9,20 @@ transforms:
       includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_
+  # - blockTracking:
+  #     validateSchema: true
+  - autoPagination:
+      validateSchema: true
+serve:
+  browser: false
+# - name: bentobox-goreli
+#   handler:
+#     graphql:
+#       endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+#   transforms:
+#     - prefix:
+#         value: GOERLI_BENTOBOX_
+#         includeRootOperations: false
+#         includeTypes: false
+#         ignore: 
+#           - _SubgraphErrorPolicy_

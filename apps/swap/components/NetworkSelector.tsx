@@ -2,6 +2,7 @@ import { CheckIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Input, Loader, SlideIn, Typography } from '@sushiswap/ui'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
 
 import { Theme } from '../types'
@@ -18,7 +19,9 @@ interface NetworkSelector {
 }
 
 export const NetworkSelector: FC<NetworkSelector> = ({
-  networks = chains,
+  networks = Object.fromEntries(
+    Object.entries(chains).filter(([chainId]) => SUPPORTED_CHAIN_IDS.includes(Number(chainId)))
+  ),
   open,
   onClose,
   onSelect,

@@ -1,37 +1,19 @@
 import '@sushiswap/ui/index.css'
 
-import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App } from '@sushiswap/ui'
 import { client, getProviders } from '@sushiswap/wagmi'
 import { Header } from 'components'
-import { Updater as MulticallUpdater } from 'lib/state/MulticallUpdater'
-import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
+import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
-import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
 
-const SUPPORTED_CHAIN_IDS = [
-  // ChainId.ETHEREUM,
-  // ChainId.BSC,
-  // ChainId.AVALANCHE,
-  // ChainId.POLYGON,
-  ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
-  // ChainId.FANTOM,
-  // TESTNETS
-  // ChainId.POLYGON_TESTNET,
-  // ChainId.RINKEBY,
-  // ChainId.ROPSTEN,
-  // ChainId.GÖRLI,
-  // ChainId.KOVAN,
-]
-
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const router = useRouter()
   const [
     // providerEthereum,
     // providerBsc,
@@ -100,25 +82,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <Provider store={store}>
         <App.Shell>
           <Header />
-          {/* <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={blockNumberEthereum} />/ */}
-          {/* <MulticallUpdater chainId={ChainId.BSC} blockNumber={blockNumberBsc} /> */}
-          {/* <MulticallUpdater chainId={ChainId.AVALANCHE} blockNumber={blockNumberAvalanche} /> */}
-          {/* <MulticallUpdater chainId={ChainId.POLYGON} blockNumber={blockNumberPolygon} /> */}
-          {/* <MulticallUpdater chainId={ChainId.ARBITRUM} blockNumber={blockNumberArbitrum} /> */}
-          {/* <MulticallUpdater chainId={ChainId.OPTIMISM} blockNumber={blockNumberOptimism} /> */}
-          {/* <MulticallUpdater chainId={ChainId.FANTOM} blockNumber={blockNumberFantom} /> */}
-          {/* <MulticallUpdater chainId={ChainId.POLYGON_TESTNET} blockNumber={blockNumberPolygonTestnet} /> */}
-          {/* <MulticallUpdater chainId={ChainId.RINKEBY} blockNumber={blockNumberRinkeby} /> */}
-          <MulticallUpdater chainId={ChainId.ARBITRUM} />
-          <MulticallUpdater chainId={ChainId.OPTIMISM} />
-
-          {/* <MulticallUpdater chainId={ChainId.ROPSTEN} blockNumber={blockNumberRopsten} /> */}
-          {/* <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={blockNumberGorli} /> */}
-          {/* <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={blockNumberKovan} /> */}
-          {/* <TokenListsUpdater chainId={ChainId.POLYGON_TESTNET} /> */}
-          {/* <TokenListsUpdater chainId={ChainId.RINKEBY} /> */}
-          <TokenListsUpdater chainId={ChainId.ARBITRUM} />
-          <TokenListsUpdater chainId={ChainId.OPTIMISM} />
+          <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+          <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
           <Component {...pageProps} blockNumbers={blockNumbers} chainIds={SUPPORTED_CHAIN_IDS} />
           <App.Footer />
         </App.Shell>

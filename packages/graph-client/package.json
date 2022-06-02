@@ -15,17 +15,14 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "main": ".graphclient/index.ts",
+  "source": ".graphclient/index.ts",
+  "typings": ".graphclient/index.ts",
   "files": [
-    "dist/**"
+    ".graphclient/**"
   ],
   "scripts": {
-    "build": "tsup .graphclient/index.ts --format esm,cjs --dts --external graphql",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup .graphclient/index.ts --format esm,cjs --watch --dts --external graphql",
     "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint . --fix",
@@ -36,8 +33,9 @@
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
-  "devDependencies": {
-    "@graphprotocol/client-cli": "0.0.11",
+  "dependencies": {
+    "@graphprotocol/client-auto-pagination": "0.0.6",
+    "@graphprotocol/client-block-tracking": "0.0.4",
     "@graphql-mesh/cache-localforage": "0.6.6",
     "@graphql-mesh/cross-helpers": "0.1.5",
     "@graphql-mesh/graphql": "0.26.0",
@@ -47,7 +45,10 @@
     "@graphql-mesh/transform-prefix": "0.11.45",
     "@graphql-mesh/transform-rename": "0.12.46",
     "@graphql-mesh/transform-type-merging": "0.4.0",
-    "@graphql-mesh/utils": "0.35.0",
+    "@graphql-mesh/utils": "0.35.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/client-cli": "0.0.11",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -58,5 +59,8 @@
     "jest": "^28.1.0",
     "tsup": "^6.0.1",
     "typescript": "^4.0.0"
+  },
+  "peerDependencies": {
+    "graphql": "^16.5.0"
   }
 }

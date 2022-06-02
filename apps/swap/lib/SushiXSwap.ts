@@ -67,10 +67,6 @@ export class SushiXSwap {
     this.dstChainId = dstChainId
     this.user = user
     this.signer = signer
-
-    // Drop user?
-    // signer?.getAddress().then((address) => this.user = address)
-
     this.srcMasterContract = SUSHI_X_SWAP_ADDRESS[srcChainId]
     this.dstMasterContract = SUSHI_X_SWAP_ADDRESS[dstChainId]
     this.teleporter = new Teleporter(user)

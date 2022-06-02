@@ -5,6 +5,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
+  '@sushiswap/graph-client',
 ])
 
 export default withTranspileModules({
@@ -13,8 +14,5 @@ export default withTranspileModules({
   swcMinify: true,
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    dirs: ['components', 'hooks', 'lib', 'pages'],
   },
 })

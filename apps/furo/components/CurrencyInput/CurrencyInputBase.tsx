@@ -3,7 +3,7 @@ import { classNames, ERROR_INPUT_CLASSNAME, Typography } from '@sushiswap/ui'
 import React, { FC, useRef } from 'react'
 
 export type CurrencyInputBase = {
-  value: string | number | undefined
+  value: string | number
   onChange(value: string): void
   currency: Type | undefined
   className?: string
@@ -37,7 +37,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
         <div className="flex items-center justify-between gap-1">
           <input
             ref={amountInputRef}
-            value={value || ''}
+            value={value}
             type="text"
             placeholder="0.00"
             className="px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"

@@ -24,3 +24,9 @@ transforms:
           to:
             type:   Pool
             field:  slpBalance
+  # - blockTracking:
+  #     validateSchema: true
+  - autoPagination:
+      validateSchema: true
+serve:
+  browser: false

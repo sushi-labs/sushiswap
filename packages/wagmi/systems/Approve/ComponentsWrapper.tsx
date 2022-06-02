@@ -1,4 +1,4 @@
-import { AnyTag, Polymorphic } from '@sushiswap/ui'
+import { PolymorphicComponentProps } from '@sushiswap/ui'
 import React, { createElement, ReactElement } from 'react'
 
 import { BentoApproveButton } from './BentoApproveButton'
@@ -10,9 +10,12 @@ type OwnProps = {
     | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>[]
 }
 
-export type ComponentsWrapper<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
+type ComponentsWrapperProps<C extends React.ElementType> = PolymorphicComponentProps<C, OwnProps>
+type ComponentsWrapperComponent = <C extends React.ElementType = 'div'>(
+  props: ComponentsWrapperProps<C>
+) => React.ReactElement | null
 
-export function ComponentsWrapper<Tag extends AnyTag = 'div'>({ as, children, ...props }: ComponentsWrapper<Tag>) {
+export const ComponentsWrapper: ComponentsWrapperComponent = ({ as, children, ...props }) => {
   if (as) return createElement(as, props, children)
   return <>{children}</>
 }

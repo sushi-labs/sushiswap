@@ -5,9 +5,10 @@ import { useContract, useProvider } from 'wagmi'
 
 export const getFuroStreamContractConfig = (chainId: number | undefined) => ({
   addressOrName:
-    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ?? AddressZero,
+    furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream?.address ??
+    AddressZero,
   contractInterface:
-    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ??
+    furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream?.abi ??
     furoStreamArtifact.abi,
 })
 

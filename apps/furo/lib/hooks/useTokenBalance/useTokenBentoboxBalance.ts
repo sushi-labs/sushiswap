@@ -1,21 +1,16 @@
 import { isAddress } from '@ethersproject/address'
-import { AddressZero } from '@ethersproject/constants'
-import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'
-import { BENTOBOX_ADDRESS } from '@sushiswap/wagmi'
+import { useBentoBoxContract } from '@sushiswap/wagmi'
 import { ErrorState, LoadingState, SuccessState, UseTokenBalance, UseTokenBalances } from 'lib/hooks'
 import { useMemo } from 'react'
-import { useContract, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 import { useSingleContractMultipleData } from '../multicall'
 
 export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
   const { activeChain } = useNetwork()
-  const contract = useContract({
-    addressOrName: activeChain ? BENTOBOX_ADDRESS[activeChain.id] : AddressZero,
-    contractInterface: bentoBoxArtifact.abi,
-  })
+  const contract = useBentoBoxContract(activeChain?.id)
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>

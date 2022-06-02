@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { CalendarIcon, Popover, Typography } from '@sushiswap/ui'
+import { Button, CalendarIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { PeriodType, Vesting, VestingType } from 'lib'
 import { FC, memo } from 'react'
@@ -18,13 +18,14 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
 
   return (
     <Popover
+      hover
       button={
-        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
+        <Button color="gray">
           <CalendarIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Schedule
           </Typography>
-        </div>
+        </Button>
       }
       panel={
         <div className="z-10 shadow-md overflow-hidden rounded-xl flex flex-col max-w-[530px] bg-slate-800">
@@ -124,7 +125,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
       </Typography>
       <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
         <span>
-          {period?.amount.toSignificant(6)} <span className="text-slate-500">/ {vesting?.amount.toSignificant(6)}</span>
+          {period?.total.toSignificant(6)} <span className="text-slate-500">/ {vesting?.amount.toSignificant(6)}</span>
         </span>
         <Typography as="span" variant="xxs" className="text-slate-500">
           {period?.amount.currency?.symbol}
