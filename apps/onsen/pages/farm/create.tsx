@@ -1,5 +1,5 @@
+import { CreateForm } from 'components/CreateForm'
 import Layout from 'components/Layout'
-import { CreateForm } from 'features/onsen/CreateForm'
 
 const Create = () => {
   return (

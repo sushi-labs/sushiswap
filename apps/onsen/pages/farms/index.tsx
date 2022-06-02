@@ -1,7 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
-import { Farm } from 'features/onsen/context/Farm'
+import { Farm } from 'lib/Farm'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

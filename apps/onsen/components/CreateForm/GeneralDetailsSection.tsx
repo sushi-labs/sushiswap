@@ -1,5 +1,5 @@
 import { Form, Input } from '@sushiswap/ui'
-import { CreateIncentiveFormData } from 'features/onsen/CreateForm/types'
+import { CreateIncentiveFormData } from 'components/CreateForm/types'
 import { Controller, useFormContext } from 'react-hook-form'
 
 export const GeneralDetailsSection = () => {

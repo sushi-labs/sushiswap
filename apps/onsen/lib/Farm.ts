@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 
-import { KOVAN_STAKING_Incentive as IncentiveDTO, KOVAN_STAKING_Token as TokenDTO } from '../../../.graphclient'
+import { KOVAN_STAKING_Incentive as IncentiveDTO, KOVAN_STAKING_Token as TokenDTO } from '../.graphclient'
 import { Incentive } from './Incentive'
 import { toToken } from './mapper'
 

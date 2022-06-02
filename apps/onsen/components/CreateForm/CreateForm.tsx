@@ -6,14 +6,14 @@ import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { createToast } from 'components'
-import { IncentiveAmountDetails } from 'features/onsen/CreateForm/IncentiveAmountDetails'
-import { createIncentiveSchema } from 'features/onsen/CreateForm/schema'
-import { CreateIncentiveFormData, CreateIncentiveFormDataValidated } from 'features/onsen/CreateForm/types'
+import { IncentiveAmountDetails } from 'components/CreateForm/IncentiveAmountDetails'
+import { createIncentiveSchema } from 'components/CreateForm/schema'
+import { CreateIncentiveFormData, CreateIncentiveFormDataValidated } from 'components/CreateForm/types'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
-import STAKING_ABI from '../../../abis/Staking.json'
+import STAKING_ABI from '../../abis/Staking.json'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 
 export const CreateForm: FC = () => {
