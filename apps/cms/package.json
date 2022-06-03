@@ -10,7 +10,7 @@
     "sqlite3": "5.0.2",
     "strapi-plugin-populate-deep": "^0.1.2"
   },
-  "name": "blog-strapi",
+  "name": "cms",
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
