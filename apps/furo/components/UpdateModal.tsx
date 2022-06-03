@@ -152,7 +152,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 checked={topUp}
                 onChange={() => setTopUp((prevState) => !prevState)}
                 size="sm"
-                color="gradient"
                 uncheckedIcon={<XIcon />}
                 checkedIcon={<CheckIcon />}
               />
@@ -175,7 +174,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 checked={changeEndDate}
                 onChange={() => setChangeEndDate((prevState) => !prevState)}
                 size="sm"
-                color="gradient"
                 uncheckedIcon={<XIcon />}
                 checkedIcon={<CheckIcon />}
               />

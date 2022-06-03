@@ -1,8 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { DotsVerticalIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
-import { Menu, ProgressBar, ProgressColor } from '@sushiswap/ui'
+import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
@@ -16,7 +15,7 @@ import {
   TransferModal,
 } from 'components'
 import { createScheduleRepresentation, NextPaymentTimer, SchedulePopover, WithdrawModal } from 'components/vesting'
-import { FuroStatus, getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
+import { getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
@@ -153,36 +152,28 @@ const _VestingPage: FC = () => {
           <HistoryPopover stream={vesting} transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} schedule={schedule} />
         </div>
-        {vesting?.status !== FuroStatus.CANCELLED && (
+        <div className="flex flex-col gap-2">
+          <WithdrawModal vesting={vesting} />
           <div className="flex gap-2">
-            <WithdrawModal vesting={vesting} />
-            <Menu button={<Menu.Button color="gray" fullWidth startIcon={<DotsVerticalIcon width={18} />} as="div" />}>
-              <Menu.Items unmount={false} className="!min-w-0">
-                <TransferModal
-                  stream={vesting}
-                  abi={
-                    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
-                  }
-                  address={
-                    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                    AddressZero
-                  }
-                />
-                <CancelModal
-                  stream={vesting}
-                  abi={
-                    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
-                  }
-                  address={
-                    furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                    AddressZero
-                  }
-                  fn="stopVesting"
-                />
-              </Menu.Items>
-            </Menu>
+            <TransferModal
+              stream={vesting}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                AddressZero
+              }
+            />
+            <CancelModal
+              stream={vesting}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                AddressZero
+              }
+              fn="stopVesting"
+            />
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   )

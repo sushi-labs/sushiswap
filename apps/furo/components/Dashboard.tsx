@@ -159,7 +159,6 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               checked={showActiveIncoming}
               onChange={() => setShowActiveIncoming((prevState) => !prevState)}
               size="sm"
-              color="gradient"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
             />

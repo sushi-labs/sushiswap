@@ -30,7 +30,6 @@ export const CliffDetailsSection: FC = () => {
                 }
               }}
               size="sm"
-              color="gradient"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
             />
