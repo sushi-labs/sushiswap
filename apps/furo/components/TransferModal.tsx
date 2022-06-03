@@ -3,7 +3,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots, Form, Menu, Typography } from '@sushiswap/ui'
+import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
@@ -64,15 +64,19 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
     setRecipient(undefined)
   }, [account, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
 
+  if (!stream || stream?.isEnded) return null
+
   return (
     <>
-      <Menu.Item
+      <Button
+        color="gray"
+        fullWidth
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
         disabled={!account || !stream?.canTransfer(account.address) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
         Transfer
-      </Menu.Item>
+      </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />

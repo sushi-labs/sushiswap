@@ -69,7 +69,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     } catch (e: any) {
       setError(e.message)
     }
-  }, [amount, fundSource, stream, writeAsync])
+  }, [activeChain?.id, amount, fundSource, stream, writeAsync])
 
   const onInput = useCallback(
     (val: string) => {
@@ -88,7 +88,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account?.address) || !stream?.balance?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canWithdraw(account?.address) || !balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}

@@ -1,7 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Form } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useAccount, useNetwork } from 'wagmi'
 
 import { CliffDetailsSection } from './CliffDetailsSection'
 import CreateFormReviewModal from './CreateFormReviewModal'
@@ -12,6 +13,8 @@ import { transformVestingFormData } from './transformVestingFormData'
 import { CreateVestingFormData, CreateVestingFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
+  const { activeChain } = useNetwork()
+  const { data: account } = useAccount()
   const [review, setReview] = useState(false)
 
   const methods = useForm<CreateVestingFormData>({
@@ -28,6 +31,7 @@ export const CreateForm: FC = () => {
       stepAmount: undefined,
       stepConfig: stepConfigurations[0],
       fundSource: undefined,
+      insufficientBalance: false,
     },
     mode: 'onChange',
   })
@@ -35,11 +39,18 @@ export const CreateForm: FC = () => {
   const {
     formState: { isValid, isValidating },
     watch,
+    reset,
   } = methods
 
   const formData = watch()
   const validatedData =
     isValid && !isValidating ? transformVestingFormData(formData as CreateVestingFormDataValidated) : undefined
+
+  useEffect(() => {
+    reset()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChain?.id, account?.address])
 
   return (
     <>

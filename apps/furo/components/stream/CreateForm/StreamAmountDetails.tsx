@@ -150,27 +150,25 @@ export const StreamAmountDetails = () => {
           control={control}
           name="amount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <>
-              <CurrencyInput
-                onChange={onChange}
-                account={account?.address}
-                value={value}
-                currency={currency}
-                fundSource={fundSource}
-                onError={(message) => setError('amount', { type: 'custom', message })}
-                errorMessage={error?.message}
-                helperTextPanel={({ errorMessage }) => (
-                  <CurrencyInput.HelperTextPanel
-                    text={
-                      errorMessage
-                        ? errorMessage
-                        : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
-                    }
-                    isError={!!errorMessage}
-                  />
-                )}
-              />
-            </>
+            <CurrencyInput
+              onChange={onChange}
+              account={account?.address}
+              value={value}
+              currency={currency}
+              fundSource={fundSource}
+              onError={(message) => setError('amount', { type: 'typeError', message })}
+              errorMessage={error?.message}
+              helperTextPanel={({ errorMessage }) => (
+                <CurrencyInput.HelperTextPanel
+                  text={
+                    errorMessage
+                      ? errorMessage
+                      : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
+                  }
+                  isError={!!errorMessage}
+                />
+              )}
+            />
           )}
         />
       </Form.Control>

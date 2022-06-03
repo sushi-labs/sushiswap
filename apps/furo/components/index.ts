@@ -1,5 +1,6 @@
 export * from './BackgroundVector'
 export * from './Balance'
+export * from './Breadcrumb'
 export * from './CancelModal'
 export * from './CurrencyInput'
 export * from './Dashboard'

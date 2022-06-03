@@ -14,7 +14,8 @@ export class Stream extends Furo {
     if (!this.isStarted) return this._balance
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
-    return Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))
+    const balance = Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))
+    return balance.lessThan(this.amount) ? balance : this.amount
   }
 
   public get streamedAmount(): Amount<Token> | undefined {

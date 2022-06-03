@@ -7,7 +7,7 @@ import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, createToast, Dialog, Dots, Menu, Switch, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -95,13 +95,15 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
 
   return (
     <>
-      <Menu.Item
+      <Button
+        color="gray"
+        fullWidth
         startIcon={<PencilIcon width={18} height={18} />}
         onClick={() => setOpen(true)}
         disabled={!account || !stream?.canUpdate(account.address)}
       >
         Update
-      </Menu.Item>
+      </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="!space-y-6 !max-w-sm">
           <Dialog.Header title="Update Stream" onClose={() => setOpen(false)} />

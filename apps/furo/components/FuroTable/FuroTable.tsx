@@ -8,7 +8,7 @@ import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableIn
 import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Placeholder } from './Placeholder'
@@ -27,7 +27,7 @@ interface FuroTableProps {
   vestings: VestingDTO[]
   rebases: RebaseDTO[] | undefined
   type: FuroTableType
-  placeholder: string
+  placeholder: ReactNode
   loading: boolean
 }
 

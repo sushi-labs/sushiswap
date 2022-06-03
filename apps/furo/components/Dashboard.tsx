@@ -71,8 +71,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   // Prefetch stream/vesting pages
   useEffect(() => {
-    void router.prefetch('/stream/[id]')
-    void router.prefetch('/vesting/[id]')
+    void router.prefetch('/furo/stream/[id]')
+    void router.prefetch('/furo/vesting/[id]')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -177,7 +177,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               vestings={vestings?.incomingVestings ?? []}
               rebases={rebases}
               type={FuroTableType.INCOMING}
-              placeholder="No incoming streams found"
+              placeholder={
+                <>
+                  No <b>earning</b> streams found
+                </>
+              }
             />
           </Tab.Panel>
           <Tab.Panel>
@@ -191,7 +195,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               vestings={vestings?.outgoingVestings ?? []}
               rebases={rebases}
               type={FuroTableType.OUTGOING}
-              placeholder="No outgoing streams found"
+              placeholder={
+                <>
+                  No <b>payment</b> streams found
+                </>
+              }
             />
           </Tab.Panel>
         </Tab.Panels>

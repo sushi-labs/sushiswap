@@ -15,12 +15,12 @@ import { CreateVestingFormData } from './types'
 export const GeneralDetailsSection = () => {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
   const { activeChain } = useNetwork()
+
   const tokenMap = useTokens(activeChain?.id)
 
-  const [dialogOpen, setDialogOpen] = useState(false)
-
-  const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const currency = watch('currency')
 
@@ -175,7 +175,7 @@ export const GeneralDetailsSection = () => {
               <Form.Error message={error?.message} />
             </div>
           )}
-        ></Controller>
+        />
       </Form.Control>
     </Form.Section>
   )
