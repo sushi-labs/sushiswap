@@ -19,7 +19,7 @@ export const StreamAmountDetails = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch, setValue } = useFormContext<CreateStreamFormData>()
+  const { control, watch, setValue, setError } = useFormContext<CreateStreamFormData>()
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
@@ -157,6 +157,7 @@ export const StreamAmountDetails = () => {
                 value={value}
                 currency={currency}
                 fundSource={fundSource}
+                onError={(message) => setError('amount', { type: 'custom', message })}
                 errorMessage={error?.message}
                 helperTextPanel={({ errorMessage }) => (
                   <CurrencyInput.HelperTextPanel

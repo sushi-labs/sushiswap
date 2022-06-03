@@ -4,7 +4,7 @@ import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 type BottomPanelRenderProps = {
   onChange(value: string): void
@@ -17,6 +17,7 @@ type HelperTextPanelRenderProps = {
 }
 
 type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel'> & {
+  onError?(message: string): void
   fundSource: FundSource | undefined
   account: string | undefined
   errorMessage?: string
@@ -35,10 +36,17 @@ const Component: FC<CurrencyInput> = ({
   currency,
   errorMessage: errorMessageProp,
   onChange,
+  onError,
   helperTextPanel,
   bottomPanel,
   ...props
 }) => {
+  const [error, setError] = useState<string>()
+
+  useEffect(() => {
+    if (error && onError) onError(error)
+  }, [error, onError])
+
   return (
     <BalanceController fundSource={fundSource} currency={currency} account={account}>
       {({ isLoading: loading, data: balance }) => {
@@ -46,6 +54,12 @@ const Component: FC<CurrencyInput> = ({
         const insufficientBalanceError =
           amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
         const errorMessage = errorMessageProp || insufficientBalanceError
+
+        if (insufficientBalanceError) {
+          setError(insufficientBalanceError)
+        } else {
+          setError(undefined)
+        }
 
         return (
           <CurrencyInput.Base

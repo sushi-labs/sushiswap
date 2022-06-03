@@ -1,6 +1,6 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { Form, Input, Switch } from '@sushiswap/ui'
-import { CurrencyInput, HelperTextPanel } from 'components'
+import { CurrencyInput } from 'components'
 import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -9,7 +9,7 @@ import { CreateVestingFormData } from './types'
 
 export const CliffDetailsSection: FC = () => {
   const { data: account } = useAccount()
-  const { control, watch, resetField } = useFormContext<CreateVestingFormData>()
+  const { control, watch, resetField, setError } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const [currency, cliff, fundSource] = watch(['currency', 'cliff', 'fundSource'])
 
@@ -58,12 +58,13 @@ export const CliffDetailsSection: FC = () => {
             <CurrencyInput
               fundSource={fundSource}
               account={account?.address}
+              onError={(message) => setError('cliffAmount', { type: 'custom', message })}
               errorMessage={validationError?.message}
               value={value}
               onChange={onChange}
               currency={currency}
               helperTextPanel={({ errorMessage }) => (
-                <HelperTextPanel
+                <CurrencyInput.HelperTextPanel
                   isError={!!errorMessage}
                   text={errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
                 />

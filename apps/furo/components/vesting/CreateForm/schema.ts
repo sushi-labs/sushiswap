@@ -71,7 +71,7 @@ export const createVestingSchema = yup.object({
       }
       return schema
     })
-    .min(new Date(), 'Start date must be in the future')
+    .min(new Date(Date.now() + 5 * 60 * 1000), 'Start date must be at least 5 minutes from now')
     .required('This field is required'),
   // @ts-ignore
   recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
