@@ -53,7 +53,7 @@ export const createStreamSchema = yup.object({
   currency: yup.mixed<Token>().currency().required('This field is required'),
   // @ts-ignore
   recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
-  startDate: yup.date().min(new Date(), 'Date is be due already').required('This field is required'),
+  startDate: yup.date().min(new Date(), 'Start date must be in the future').required('This field is required'),
   endDate: yup
     .date()
     .when('startDate', (startDate, schema) => {
@@ -63,7 +63,7 @@ export const createStreamSchema = yup.object({
       }
       return schema
     })
-    .min(new Date(), 'Date is be due already')
+    .min(new Date(), 'End date must be in the future')
     .required('This field is required'),
   amount: yup
     .number()

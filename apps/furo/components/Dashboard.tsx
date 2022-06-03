@@ -95,7 +95,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                     color="blue"
                     fullWidth
                     startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
-                    className="!h-[36px] px-6"
+                    className="px-6"
                     as="div"
                   >
                     Pay Someone

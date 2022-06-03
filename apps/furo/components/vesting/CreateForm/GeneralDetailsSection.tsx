@@ -2,6 +2,7 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi'
 import { TokenSelector } from 'components'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
@@ -88,14 +89,17 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="recipient"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
-            return (
-              <>
-                <Input.Address placeholder="0x..." onChange={onChange} value={value} error={!!error?.message} />
-                <Form.Error message={error?.message} />
-              </>
-            )
-          }}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <>
+              <Web3Input.Ens
+                value={value}
+                onChange={onChange}
+                error={!!error?.message}
+                placeholder="Address or ENS Name"
+              />
+              <Form.Error message={error?.message} />
+            </>
+          )}
         />
       </Form.Control>
       <Form.Control label="Change Funds Source">

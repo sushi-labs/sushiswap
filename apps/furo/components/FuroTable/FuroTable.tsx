@@ -235,14 +235,16 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
               </Table.tr>
             ))}
           {instance.getRowModel().rows.length === 0 && initialized && (
-            <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
-              <div className="flex justify-center">
-                <div>
-                  <Placeholder height={140} />
+            <Table.tr>
+              <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
+                <div className="flex justify-center">
+                  <div>
+                    <Placeholder height={140} />
+                  </div>
                 </div>
-              </div>
-              {placeholder}
-            </Table.td>
+                {placeholder}
+              </Table.td>
+            </Table.tr>
           )}
           {instance.getRowModel().rows.map((row) => {
             return (

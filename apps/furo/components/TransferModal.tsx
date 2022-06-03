@@ -3,7 +3,8 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots, Form, Input, Menu, Typography } from '@sushiswap/ui'
+import { Button, createToast, Dialog, Dots, Form, Menu, Typography } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
@@ -87,7 +88,7 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
             </p>
           </Typography>
           <Form.Control label="Recipient">
-            <Input.Address className="w-full" value={recipient} onChange={setRecipient} />
+            <Web3Input.Ens value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
           </Form.Control>
 
           <Button

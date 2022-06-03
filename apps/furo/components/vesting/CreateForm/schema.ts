@@ -71,7 +71,7 @@ export const createVestingSchema = yup.object({
       }
       return schema
     })
-    .min(new Date(), 'Date is be due already')
+    .min(new Date(), 'Start date must be in the future')
     .required('This field is required'),
   // @ts-ignore
   recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
@@ -79,7 +79,7 @@ export const createVestingSchema = yup.object({
     is: (value: boolean) => value,
     then: yup
       .date()
-      .min(new Date(), 'Date is be due already')
+      .min(new Date(), 'Cliff end date must be in the future')
       .when('startDate', (startDate, schema) => {
         if (startDate) {
           const dayAfter = new Date(startDate.getTime() + 1)

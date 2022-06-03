@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Typography } from '../typography'
+import { FormHelperText } from './FormHelperText'
 
 interface FormError {
   message?: string
@@ -9,9 +9,5 @@ interface FormError {
 export const FormError: FC<FormError> = ({ message }) => {
   if (!message) return null
 
-  return (
-    <Typography variant="xs" className="text-red">
-      {message}
-    </Typography>
-  )
+  return <FormHelperText isError={true} message={message} />
 }

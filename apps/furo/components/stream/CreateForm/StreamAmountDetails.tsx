@@ -29,7 +29,7 @@ export const StreamAmountDetails = () => {
   return (
     <Form.Section
       title="Stream Details"
-      description="Furo allows for creating a vested stream using your Bentobox balance."
+      description="Furo allows you to create a stream from BentoBox to allow the recipient to gain yield whilst receiving the stream if the token that's being used has a BentoBox strategy set on it."
     >
       <Form.Control label="Token">
         <Controller

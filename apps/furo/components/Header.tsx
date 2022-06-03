@@ -10,8 +10,15 @@ import { useAccount, useConnect } from 'wagmi'
 export const Header: FC = () => {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
-  const { isConnected } = useConnect()
   const router = useRouter()
+
+  const connect = useConnect({
+    onConnect: () => {
+      void router.push('/dashboard')
+    },
+  })
+
+  const { isConnected } = connect
 
   return (
     <div
@@ -20,11 +27,17 @@ export const Header: FC = () => {
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <App.Header
           className="h-[54px] z-10"
-          brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
+          brand={
+            <Link href={isConnected ? '/dashboard' : '/'} passHref={true}>
+              <a>
+                <SushiIcon width={32} height={32} className="cursor-pointer" />
+              </a>
+            </Link>
+          }
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <Wallet.Button className="!h-[36px]" />
+            <Wallet.Button className="!h-[36px]" hack={connect} />
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={

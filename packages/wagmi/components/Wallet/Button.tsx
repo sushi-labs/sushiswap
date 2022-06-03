@@ -95,13 +95,13 @@ export const Button = <C extends React.ElementType>({ hack, children, ...rest }:
           button={
             <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
               {/* <Account.Avatar address={data?.address} /> */}
-              <Account.Name address={data?.address}>
-                {({ name, isEns }) => (
+              <Account.AddressToEnsResolver address={data?.address}>
+                {({ data: ens }) => (
                   <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                    {isEns ? name : name ? shortenAddress(name) : ''}
+                    {ens ? ens : data?.address ? shortenAddress(data?.address) : ''}
                   </Typography>
                 )}
-              </Account.Name>
+              </Account.AddressToEnsResolver>
             </Menu.Button>
           }
         >
