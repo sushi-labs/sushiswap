@@ -7,7 +7,7 @@ import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/curr
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
-import { STARGATE_BRIDGE_TOKENS, STARGATE_BRIDGE_TOKEN_ADDRESSES, isStargateBridgeToken } from '@sushiswap/stargate'
+import { STARGATE_BRIDGE_TOKENS, isStargateBridgeToken } from '@sushiswap/stargate'
 import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, Wallet, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { Caption, Rate, WidgetSettings } from 'components'
@@ -39,99 +39,6 @@ export function getBigNumber(value: number): BigNumber {
   return value > 0 ? res : res.mul(-1)
 }
 
-type Complex = [
-  {
-    tokenIn: string
-    pool: string
-    native: boolean
-    amount: BigNumberish
-    data: string
-  }[],
-  {
-    tokenIn: string
-    pool: string
-    balancePercentage: BigNumberish
-    data: string
-  }[],
-  {
-    token: string
-    to: string
-    unwrapBento: boolean
-    minAmount: BigNumberish
-  }[]
-]
-
-const getComplexParams = (
-  trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>,
-  user: string,
-  useBentoBox = false
-) => {
-  const initialPathCount = trade.route.legs.filter(
-    (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-  ).length
-  return trade.route.legs.reduce<Complex>(
-    ([initialPath, percentagePath, output], leg, i) => {
-      const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-      if (isInitialPath) {
-        return [
-          [
-            ...initialPath,
-            {
-              tokenIn: leg.tokenFrom.address,
-              pool: leg.poolAddress,
-              amount:
-                initialPathCount > 1 && i === initialPathCount - 1
-                  ? getBigNumber(trade.route.amountIn).sub(
-                      initialPath.reduce((previousValue, currentValue) => previousValue.add(currentValue.amount), Zero)
-                    )
-                  : getBigNumber(trade.route.amountIn * leg.absolutePortion),
-              native: false,
-              data: defaultAbiCoder.encode(
-                ['address', 'address', 'bool'],
-                [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
-              ),
-            },
-          ],
-          percentagePath,
-          output,
-        ]
-      } else {
-        return [
-          initialPath,
-          [
-            ...percentagePath,
-            {
-              tokenIn: leg.tokenFrom.address,
-              pool: leg.poolAddress,
-              balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-              data: defaultAbiCoder.encode(
-                ['address', 'address', 'bool'],
-                [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
-              ),
-            },
-          ],
-          output,
-        ]
-      }
-    },
-    [
-      [],
-      [],
-      [
-        {
-          token: trade.outputAmount.currency.wrapped.address,
-          to:
-            trade.outputAmount.currency.isNative && !useBentoBox
-              ? SUSHI_X_SWAP_ADDRESS[trade.outputAmount.currency.chainId]
-              : user,
-          unwrapBento: !useBentoBox,
-          minAmount: trade.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE).quotient.toString(),
-        },
-      ],
-    ]
-  )
-}
-
 interface Swap {
   width?: number | string
   theme?: Theme
@@ -139,7 +46,6 @@ interface Swap {
 
 const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
   const { data: account } = useAccount()
-  const { data: signer } = useSigner()
   const { activeChain, switchNetwork } = useNetwork()
 
   const [isWritePending, setIsWritePending] = useState<boolean>()
@@ -221,12 +127,12 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
-  console.log('SRC AMOUNT IN', srcAmount?.toFixed())
-  console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+  // console.log('SRC AMOUNT IN', srcAmount?.toFixed())
+  // console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
   // console.log('SG FEE', sgFee?.toFixed())
   // console.log('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusFee?.toFixed())
-  console.log('DST AMOUNT IN', dstAmountIn?.toFixed())
-  console.log('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+  // console.log('DST AMOUNT IN', dstAmountIn?.toFixed())
+  // console.log('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
 
   // console.log('src trade', srcTrade, 'dst trade', dstTrade)
 
@@ -253,7 +159,6 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
       !dstMinimumAmountOut ||
       !account ||
       !account.address ||
-      !signer ||
       !srcTokenRebase ||
       !contract
     ) {
@@ -610,7 +515,6 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
     dstTrade,
     dstUseBentoBox,
     signature,
-    signer,
     srcAmount,
     srcTokenRebase,
     srcBridgeToken,
@@ -675,7 +579,7 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
           theme={theme}
         />
 
-        <Rate loading={!!srcAmount && !dstTrade} price={price} theme={theme} />
+        <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
 
         <div className="flex gap-2">
           {!account && isMounted ? (
