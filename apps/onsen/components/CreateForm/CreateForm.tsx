@@ -9,6 +9,7 @@ import { createToast } from 'components'
 import { IncentiveAmountDetails } from 'components/CreateForm/IncentiveAmountDetails'
 import { createIncentiveSchema } from 'components/CreateForm/schema'
 import { CreateIncentiveFormData, CreateIncentiveFormDataValidated } from 'components/CreateForm/types'
+import { networks } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -22,7 +23,7 @@ export const CreateForm: FC = () => {
   const [error, setError] = useState<string>()
   const { isLoading: isWritePending, write: writeCreateIncentive } = useContractWrite(
     {
-      addressOrName: '0x1CeD9B90aa573849b42ADAC7204860823c290dAc' ?? AddressZero,
+      addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
       contractInterface: STAKING_ABI ?? [],
     },
     'createIncentive'

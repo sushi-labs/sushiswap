@@ -41,6 +41,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const kovanProvider = getProvider(ChainId.KOVAN)
   const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
 
+  const arbitrumProvider = getProvider(ChainId.ARBITRUM)
+  const arbitrumBlockNumber = useLatestBlockNumber(arbitrumProvider)
+
   return (
     <>
       <WagmiConfig client={client}>
@@ -49,6 +52,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <Header />
             <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
             <TokenListUpdater chainId={ChainId.KOVAN} />
+            <MulticallUpdater chainId={ChainId.ARBITRUM} blockNumber={arbitrumBlockNumber} />
+            <TokenListUpdater chainId={ChainId.ARBITRUM} />
 
             <Component {...pageProps} />
             {/* <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} /> */}

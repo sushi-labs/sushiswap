@@ -1,12 +1,13 @@
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dialog, Dots, Form } from '@sushiswap/ui'
 import { Farm } from 'lib/Farm'
-import { useWalletBalance } from 'lib/hooks'
+import { networks, useWalletBalance } from 'lib/hooks'
 import { Incentive } from 'lib/Incentive'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 import STAKING_ABI from '../abis/Staking.json'
 import { CurrencyInput } from './CurrencyInput'
@@ -23,6 +24,7 @@ interface StakeAndSubscribeModalProps {
 export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }) => {
   const [open, setOpen] = useState(false)
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
   const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
   const stakeToken = useMemo(() => farm.incentives[0].liquidityStaked.currency, [farm])
   const { data: balance } = useWalletBalance(account?.address, stakeToken, FundSource.WALLET)
@@ -30,7 +32,7 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
   const [amount, setAmount] = useState<Amount<Token>>()
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
-      addressOrName: '0x1CeD9B90aa573849b42ADAC7204860823c290dAc',
+      addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
       contractInterface: STAKING_ABI,
     },
     'stakeAndSubscribeToIncentives',
