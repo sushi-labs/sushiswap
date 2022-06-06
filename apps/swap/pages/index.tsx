@@ -6,7 +6,7 @@ import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent, ZERO } from '@sushiswap/math'
+import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS, isStargateBridgeToken } from '@sushiswap/stargate'
 import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, Wallet, useSushiXSwapContract } from '@sushiswap/wagmi'
@@ -104,11 +104,13 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
   const STARGATE_FEE = new Percent(5, 10_000) // .05%
 
   const srcMinimumAmountOut =
-    crossChain && !isStargateBridgeToken(srcToken) ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
+    (crossChain && !isStargateBridgeToken(srcToken)) || !crossChain
+      ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
+      : srcAmount
 
-  const stargateFee =
-    crossChain && srcMinimumAmountOut ? srcMinimumAmountOut.multiply(STARGATE_FEE) : Amount.fromRawAmount(srcToken, 0)
-  const srcAmountOutMinusStargateFee = srcMinimumAmountOut?.subtract(stargateFee)
+  const srcAmountOutMinusStargateFee = crossChain
+    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOut.multiply(STARGATE_FEE))
+    : srcMinimumAmountOut
 
   const dstAmountIn = useMemo(() => {
     return tryParseAmount(srcAmountOutMinusStargateFee?.toFixed(), dstBridgeToken)
