@@ -124,8 +124,8 @@ export default function Index() {
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.Name address={account.address}>
-                      {({ name, isEns }) => (
+                    <Account.AddressToEnsResolver address={account.address}>
+                      {({ data }) => (
                         <Typography
                           as="a"
                           target="_blank"
@@ -134,10 +134,10 @@ export default function Index() {
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {isEns ? name : name ? shortenAddress(name) : ''}
+                          {data ? data : account.address ? shortenAddress(account.address) : ''}
                         </Typography>
                       )}
-                    </Account.Name>
+                    </Account.AddressToEnsResolver>
                   </div>
                 </div>
               </>

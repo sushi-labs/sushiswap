@@ -3,7 +3,7 @@ import '../index.css'
 
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client, getProvider } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import type { AppProps } from 'next/app'
@@ -53,6 +53,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
 
               <App.Footer />
             </App.Shell>
+            <ToastContainer className="mt-[50px]" />
           </ThemeProvider>
         </ReduxProvider>
       </WagmiConfig>

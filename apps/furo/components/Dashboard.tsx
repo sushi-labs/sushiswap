@@ -71,8 +71,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   // Prefetch stream/vesting pages
   useEffect(() => {
-    void router.prefetch('/stream/[id]')
-    void router.prefetch('/vesting/[id]')
+    void router.prefetch('/furo/stream/[id]')
+    void router.prefetch('/furo/vesting/[id]')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -95,7 +95,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                     color="blue"
                     fullWidth
                     startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
-                    className="!h-[36px] px-6"
+                    className="px-6"
                     as="div"
                   >
                     Pay Someone
@@ -159,7 +159,6 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               checked={showActiveIncoming}
               onChange={() => setShowActiveIncoming((prevState) => !prevState)}
               size="sm"
-              color="gradient"
               uncheckedIcon={<XIcon />}
               checkedIcon={<CheckIcon />}
             />
@@ -177,7 +176,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               vestings={vestings?.incomingVestings ?? []}
               rebases={rebases}
               type={FuroTableType.INCOMING}
-              placeholder="No incoming streams found"
+              placeholder={
+                <>
+                  No <b>earning</b> streams found
+                </>
+              }
             />
           </Tab.Panel>
           <Tab.Panel>
@@ -191,7 +194,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               vestings={vestings?.outgoingVestings ?? []}
               rebases={rebases}
               type={FuroTableType.OUTGOING}
-              placeholder="No outgoing streams found"
+              placeholder={
+                <>
+                  No <b>payment</b> streams found
+                </>
+              }
             />
           </Tab.Panel>
         </Tab.Panels>

@@ -1,15 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
@@ -19,12 +20,17 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [amount, setAmount] = useState<Amount<Token>>()
+  const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
+
+  const amount = useMemo(() => {
+    if (!stream?.token) return undefined
+    console.log(input)
+    return tryParseAmount(input, stream.token)
+  }, [input])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroStreamContractConfig(activeChain?.id),
@@ -69,18 +75,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     } catch (e: any) {
       setError(e.message)
     }
-  }, [amount, fundSource, stream, writeAsync])
-
-  const onInput = useCallback(
-    (val: string) => {
-      if (isNaN(Number(val)) || Number(val) <= 0 || !stream?.token) {
-        setAmount(undefined)
-      } else {
-        setAmount(tryParseAmount(val, stream.token))
-      }
-    },
-    [stream?.token]
-  )
+  }, [activeChain?.id, amount, fundSource, stream, writeAsync])
 
   return (
     <>
@@ -88,7 +83,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account?.address) || !stream?.balance?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canWithdraw(account?.address) || !balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -98,20 +93,22 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <CurrencyInput.Base
-            currency={stream?.token}
-            onChange={onInput}
-            value={amount?.toExact() || ''}
-            error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-            helperTextPanel={
-              amount && stream?.balance && amount.greaterThan(stream.balance) ? (
-                <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
-              ) : (
-                <></>
-              )
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInput.Base
+              currency={stream?.token}
+              onChange={setInput}
+              value={input}
+              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              helperTextPanel={
+                amount && stream?.balance && amount.greaterThan(stream.balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
+              }
+            />
+          </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}

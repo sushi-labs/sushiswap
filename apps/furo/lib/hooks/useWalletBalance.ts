@@ -1,5 +1,6 @@
 import { Amount, Currency, Native } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { useMemo } from 'react'
 import { useBalance } from 'wagmi'
 
 import { ErrorState, LoadingState, SuccessState } from './types'
@@ -18,17 +19,19 @@ export const useWalletBalance = (
 
   const balance = useTokenBalance(account, currency?.wrapped, fundSource)
 
-  if (fundSource === FundSource.BENTOBOX) {
-    return balance
-  }
+  return useMemo(() => {
+    if (fundSource === FundSource.BENTOBOX) {
+      return balance
+    }
 
-  if (currency instanceof Native) {
-    return {
-      isLoading: isBalanceLoading,
-      data: nativeBalance ? Amount.fromRawAmount(currency, nativeBalance.value.toString()) : null,
-      isError: !isBalanceError,
-    } as SuccessState<Amount<Currency>>
-  } else {
-    return balance
-  }
+    if (currency instanceof Native) {
+      return {
+        isLoading: isBalanceLoading,
+        data: nativeBalance ? Amount.fromRawAmount(currency, nativeBalance.value.toString()) : null,
+        isError: !isBalanceError,
+      } as SuccessState<Amount<Currency>>
+    } else {
+      return balance
+    }
+  }, [balance, currency, fundSource, isBalanceError, isBalanceLoading, nativeBalance])
 }

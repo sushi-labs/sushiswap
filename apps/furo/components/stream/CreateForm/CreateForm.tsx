@@ -10,7 +10,7 @@ import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroStreamContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
@@ -43,6 +43,7 @@ export const CreateForm: FC = () => {
   const {
     formState: { isValid, isValidating },
     watch,
+    reset,
   } = methods
 
   // @ts-ignore
@@ -123,6 +124,12 @@ export const CreateForm: FC = () => {
     },
     [account?.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
   )
+
+  useEffect(() => {
+    reset()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChain?.id, account?.address])
 
   return (
     <>

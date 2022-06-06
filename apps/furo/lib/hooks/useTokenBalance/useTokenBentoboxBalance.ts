@@ -113,14 +113,17 @@ export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
 }
 
 export const useTokenBentoboxBalance: UseTokenBalance = (account, token) => {
-  const { isError, isLoading, data } = useTokenBentoboxBalances(account, [token])
+  const tokens = useMemo(() => [token], [token])
+  const { isError, isLoading, data } = useTokenBentoboxBalances(account, tokens)
 
-  if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
-  if (!isLoading && isError) return { isLoading: false, isError: true, data: undefined } as ErrorState<Amount<Token>>
+  return useMemo(() => {
+    if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
+    if (!isLoading && isError) return { isLoading: false, isError: true, data: undefined } as ErrorState<Amount<Token>>
 
-  return {
-    isLoading: false,
-    isError: false,
-    data: token ? data[token.address] : undefined,
-  } as SuccessState<Amount<Token>>
+    return {
+      isLoading: false,
+      isError: false,
+      data: token ? data[token.address] : undefined,
+    } as SuccessState<Amount<Token>>
+  }, [data, isError, isLoading, token])
 }

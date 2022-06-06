@@ -5,6 +5,7 @@ import { Typography } from '../typography'
 import { FormButtons } from './FormButtons'
 import { FormControl } from './FormControl'
 import { FormError } from './FormError'
+import { FormHelperText } from './FormHelperText'
 import { FormSection } from './FormSection'
 
 type Props = {
@@ -35,9 +36,11 @@ export const Form: typeof FormRoot & {
   Control: typeof FormControl
   Section: typeof FormSection
   Error: typeof FormError
+  HelperText: typeof FormHelperText
 } = Object.assign(FormRoot, {
   Buttons: FormButtons,
   Control: FormControl,
   Section: FormSection,
   Error: FormError,
+  HelperText: FormHelperText,
 })

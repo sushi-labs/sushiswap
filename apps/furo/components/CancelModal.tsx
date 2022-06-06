@@ -3,7 +3,7 @@ import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, createToast, Dialog, Dots, Menu, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -48,19 +48,18 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) 
         failed: 'Something went wrong cancelling the stream',
       },
     })
-  }, [account, fundSource, stream, writeAsync])
+  }, [account, activeChain?.id, fundSource, stream, writeAsync])
 
   if (!account || !stream?.canCancel(account?.address)) return <></>
 
   return (
     <>
-      <Menu.Item
+      <Button
+        fullWidth
+        color="gray"
         startIcon={<TrashIcon className="text-red-400" width={18} height={18} />}
         onClick={() => setOpen(true)}
-        className="text-red"
-      >
-        Cancel
-      </Menu.Item>
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />

@@ -8,7 +8,7 @@ import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableIn
 import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Placeholder } from './Placeholder'
@@ -27,7 +27,7 @@ interface FuroTableProps {
   vestings: VestingDTO[]
   rebases: RebaseDTO[] | undefined
   type: FuroTableType
-  placeholder: string
+  placeholder: ReactNode
   loading: boolean
 }
 
@@ -235,14 +235,16 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
               </Table.tr>
             ))}
           {instance.getRowModel().rows.length === 0 && initialized && (
-            <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
-              <div className="flex justify-center">
-                <div>
-                  <Placeholder height={140} />
+            <Table.tr>
+              <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
+                <div className="flex justify-center">
+                  <div>
+                    <Placeholder height={140} />
+                  </div>
                 </div>
-              </div>
-              {placeholder}
-            </Table.td>
+                {placeholder}
+              </Table.td>
+            </Table.tr>
           )}
           {instance.getRowModel().rows.map((row) => {
             return (
