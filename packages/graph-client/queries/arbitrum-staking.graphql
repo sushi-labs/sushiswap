@@ -1,0 +1,134 @@
+query ArbitrumStakingFarms($where: Incentive_filter) {
+  ARBITRUM_STAKING_farms {
+    id
+    stakeToken {
+      id
+      name
+      symbol
+      decimals
+    }
+    incentives(where: $where) {
+      id
+      lastRewardTime
+      rewardAmount
+      liquidityStaked
+      stakeToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      createdBy {
+        id
+      }
+      endTime
+      createdAtBlock
+      createdAtTimestamp
+      modifiedAtBlock
+      modifiedAtTimestamp
+    }
+  }
+}
+
+query ArbitrumStakingSubscriptions($id: ID!) {
+  ARBITRUM_STAKING_user(id: $id) {
+    id
+    activeSubscriptionCount
+    subscriptions {
+      token {
+        id
+        name
+        symbol
+        decimals
+        incentives {
+          id
+          lastRewardTime
+          rewardAmount
+          liquidityStaked
+          stakeToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          rewardToken {
+            id
+            name
+            symbol
+            decimals
+          }
+          createdBy {
+            id
+          }
+          endTime
+          createdAtBlock
+          createdAtTimestamp
+          modifiedAtBlock
+          modifiedAtTimestamp
+        }
+      }
+      incentive {
+        id
+      }
+    }
+  }
+}
+
+query ArbitrumStakingUserSubscriptions($id: ID!) {
+  ARBITRUM_STAKING_user(id: $id) {
+    subscriptions {
+      incentive {
+        id
+        farm {
+          id
+        }
+      }
+    }
+  }
+}
+
+query ArbitrumStakingUserFarms($farmIds: [ID]!) {
+  ARBITRUM_STAKING_farms(where: { id_in: $farmIds }) {
+    id
+    stakeToken {
+      id
+      name
+      symbol
+      decimals
+      type
+      assets
+    }
+    incentives {
+      id
+      lastRewardTime
+      rewardAmount
+      liquidityStaked
+      stakeToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      rewardToken {
+        id
+        name
+        symbol
+        decimals
+      }
+      createdBy {
+        id
+      }
+      endTime
+      createdAtBlock
+      createdAtTimestamp
+      modifiedAtBlock
+      modifiedAtTimestamp
+    }
+  }
+}

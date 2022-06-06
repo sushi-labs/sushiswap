@@ -1,0 +1,15 @@
+name: staking-arbitrum
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/staking-arbitrum
+transforms:
+  - prefix:
+      value: ARBITRUM_STAKING_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_
+  - autoPagination:
+      validateSchema: true
+serve:
+  browser: false
