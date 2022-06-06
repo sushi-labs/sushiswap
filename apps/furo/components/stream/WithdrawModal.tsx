@@ -3,14 +3,15 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { parseUnits } from '@ethersproject/units'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -19,12 +20,16 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [amount, setAmount] = useState<Amount<Token>>()
+  const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
+
+  const amount = useMemo(() => {
+    if (isNaN(Number(input)) || Number(input) <= 0 || !stream?.token) return undefined
+    return Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(input, stream.token.decimals).toString()))
+  }, [])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroStreamContractConfig(activeChain?.id),
@@ -71,17 +76,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     }
   }, [activeChain?.id, amount, fundSource, stream, writeAsync])
 
-  const onInput = useCallback(
-    (val: string) => {
-      if (isNaN(Number(val)) || Number(val) <= 0 || !stream?.token) {
-        setAmount(undefined)
-      } else {
-        setAmount(tryParseAmount(val, stream.token))
-      }
-    },
-    [stream?.token]
-  )
-
   return (
     <>
       <Button
@@ -100,8 +94,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <CurrencyInput.Base
             currency={stream?.token}
-            onChange={onInput}
-            value={amount?.toExact() || ''}
+            onChange={setInput}
+            value={input}
             error={amount && stream?.balance && amount.greaterThan(stream.balance)}
             bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
             helperTextPanel={

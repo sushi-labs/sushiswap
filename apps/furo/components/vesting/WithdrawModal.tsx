@@ -12,7 +12,7 @@ import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sush
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
@@ -22,12 +22,17 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [amount, setAmount] = useState<Amount<Token>>()
+  const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(activeChain?.id)
+
+  const amount = useMemo(() => {
+    if (isNaN(Number(input)) || Number(input) <= 0 || !vesting?.token) return undefined
+    return Amount.fromRawAmount(vesting.token, JSBI.BigInt(parseUnits(input, vesting.token.decimals).toString()))
+  }, [])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroVestingContractConfig(activeChain?.id),
@@ -81,17 +86,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     }
   }, [account?.address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
 
-  const onInput = useCallback(
-    (val: string) => {
-      if (isNaN(Number(val)) || Number(val) <= 0 || !vesting?.token) {
-        setAmount(undefined)
-      } else {
-        setAmount(Amount.fromRawAmount(vesting.token, JSBI.BigInt(parseUnits(val, vesting.token.decimals).toString())))
-      }
-    },
-    [vesting?.token]
-  )
-
   return (
     <>
       <Button
@@ -110,8 +104,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <CurrencyInput.Base
             currency={vesting?.token}
-            onChange={onInput}
-            value={amount?.toExact() || ''}
+            onChange={setInput}
+            value={input}
             error={amount && balance && amount.greaterThan(balance)}
             bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
             helperTextPanel={
