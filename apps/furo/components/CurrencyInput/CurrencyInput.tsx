@@ -1,10 +1,11 @@
 import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { BalanceController } from 'components'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
-import { FC } from 'react'
+import { FC, useEffect, useMemo } from 'react'
+
+import { useWalletBalance } from '../../lib'
 
 type BottomPanelRenderProps = {
   onChange(value: string): void
@@ -17,6 +18,7 @@ type HelperTextPanelRenderProps = {
 }
 
 type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel'> & {
+  onError?(message: string): void
   fundSource: FundSource | undefined
   account: string | undefined
   errorMessage?: string
@@ -35,53 +37,56 @@ const Component: FC<CurrencyInput> = ({
   currency,
   errorMessage: errorMessageProp,
   onChange,
+  onError,
   helperTextPanel,
   bottomPanel,
   ...props
 }) => {
-  return (
-    <BalanceController fundSource={fundSource} currency={currency} account={account}>
-      {({ isLoading: loading, data: balance }) => {
-        const amountAsEntity = currency && value ? tryParseAmount(value.toString(), currency) : undefined
-        const insufficientBalanceError =
-          amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
-        const errorMessage = errorMessageProp || insufficientBalanceError
+  const { data: balance, isLoading: loading } = useWalletBalance(account, currency, fundSource)
 
-        return (
-          <CurrencyInput.Base
-            {...props}
-            error={!!errorMessage}
-            value={value}
-            onChange={onChange}
-            currency={currency}
-            bottomPanel={
-              bottomPanel ? (
-                typeof bottomPanel === 'function' ? (
-                  bottomPanel({ onChange, loading, amount: balance })
-                ) : (
-                  bottomPanel
-                )
-              ) : (
-                <CurrencyInput.BottomPanel onChange={onChange} loading={loading} label="Balance" amount={balance} />
-              )
-            }
-            helperTextPanel={
-              helperTextPanel ? (
-                typeof helperTextPanel === 'function' ? (
-                  helperTextPanel({ errorMessage })
-                ) : (
-                  helperTextPanel
-                )
-              ) : errorMessage ? (
-                <CurrencyInput.HelperTextPanel text={errorMessage} isError={true} />
-              ) : (
-                <></>
-              )
-            }
-          />
+  const insufficientBalanceError = useMemo(() => {
+    const amountAsEntity = currency && value ? tryParseAmount(value.toString(), currency) : undefined
+    return amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
+  }, [balance, currency, value])
+
+  const errorMessage = errorMessageProp || insufficientBalanceError
+
+  useEffect(() => {
+    if (onError && insufficientBalanceError) onError(insufficientBalanceError)
+  }, [onError, insufficientBalanceError])
+
+  return (
+    <CurrencyInput.Base
+      {...props}
+      error={!!errorMessage}
+      value={value}
+      onChange={onChange}
+      currency={currency}
+      bottomPanel={
+        bottomPanel ? (
+          typeof bottomPanel === 'function' ? (
+            bottomPanel({ onChange, loading, amount: balance })
+          ) : (
+            bottomPanel
+          )
+        ) : (
+          <CurrencyInput.BottomPanel onChange={onChange} loading={loading} label="Balance" amount={balance} />
         )
-      }}
-    </BalanceController>
+      }
+      helperTextPanel={
+        helperTextPanel ? (
+          typeof helperTextPanel === 'function' ? (
+            helperTextPanel({ errorMessage })
+          ) : (
+            helperTextPanel
+          )
+        ) : errorMessage ? (
+          <CurrencyInput.HelperTextPanel text={errorMessage} isError={true} />
+        ) : (
+          <></>
+        )
+      }
+    />
   )
 }
 

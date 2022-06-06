@@ -23,7 +23,10 @@ export * from './select'
 export * from './stepper'
 export * from './switch'
 export * from './table'
+export * from './ThemeProvider'
+export * from './toast'
 export * from './types'
 export * from './typography'
+
 // Re-export classnames for convenience
 export { default as classNames } from 'classnames'

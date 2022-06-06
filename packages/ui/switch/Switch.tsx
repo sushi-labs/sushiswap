@@ -48,7 +48,8 @@ export const Switch: FC<SwitchProps> = ({
       checked={checked}
       onChange={onChange}
       className={classNames(
-        `flex items-center bg-slate-800 border border-slate-700 relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
+        checked ? 'bg-blue border border-blue' : 'bg-slate-700 border border-[rgba(255,255,255,0.12)]',
+        `flex items-center relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
       )}
       style={{ height, width }}
     >

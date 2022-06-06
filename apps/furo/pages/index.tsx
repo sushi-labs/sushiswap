@@ -1,19 +1,18 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, USDC } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
-import { BalanceChart } from 'components/stream'
 import { FuroStatus, FuroType, Stream } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { BalanceChartHoverEnum } from './stream/[id]'
+import { BalanceChart } from '../components/stream'
+import { ChartHover } from '../types'
 
 const now = new Date().getTime()
 
@@ -21,8 +20,6 @@ const exampleStream = new Stream({
   chainId: ChainId.ETHEREUM,
   furo: {
     id: '0',
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
     totalAmount: '119994000000',
@@ -33,9 +30,9 @@ const exampleStream = new Stream({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     createdBy: { id: AddressZero },
-    expiresAt: (new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
-    startedAt: (new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
-    modifiedAtTimestamp: (new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    expiresAt: Math.floor(new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    startedAt: Math.floor(new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
+    modifiedAtTimestamp: Math.floor(new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     token: {
@@ -54,14 +51,12 @@ const exampleStream = new Stream({
   },
 })
 
-exampleStream._balance = Amount.fromRawAmount(USDC[ChainId.ETHEREUM], '14687517250')
-
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
-  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const paySomeone = useConnect({
     onConnect: () => {
@@ -129,8 +124,8 @@ export default function Index() {
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.Name address={account.address}>
-                      {({ name, isEns }) => (
+                    <Account.AddressToEnsResolver address={account.address}>
+                      {({ data }) => (
                         <Typography
                           as="a"
                           target="_blank"
@@ -139,10 +134,10 @@ export default function Index() {
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {isEns ? name : name ? shortenAddress(name) : ''}
+                          {data ? data : account.address ? shortenAddress(account.address) : ''}
                         </Typography>
                       )}
-                    </Account.Name>
+                    </Account.AddressToEnsResolver>
                   </div>
                 </div>
               </>

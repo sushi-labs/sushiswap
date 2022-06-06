@@ -2,15 +2,16 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ContractInterface } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
-import { createToast, CurrencyInput } from 'components'
+import { Button, classNames, createToast, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
+import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -20,10 +21,11 @@ interface UpdateModalProps {
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
-  const [amount, setAmount] = useState<string>()
+  const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<string>()
   const [fromBentoBox, setFromBentoBox] = useState(false)
   const [error, setError] = useState<string>()
@@ -55,7 +57,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
   )
 
   const updateStream = useCallback(async () => {
-    if (!stream) return
+    if (!stream || !activeChain?.id) return
     if (topUp && !amount) return
     if (changeEndDate && !endDate) return
 
@@ -75,23 +77,28 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
       })
 
       createToast({
-        title: 'Update stream',
-        description: `You have successfully updated your stream`,
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
+        summary: {
+          pending: <Dots>Updating stream</Dots>,
+          completed: `Successfully updated stream`,
+          failed: 'Something went wrong updating the stream',
+        },
       })
     } catch (e: any) {
       setError(e.message)
     }
-  }, [amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
+  }, [activeChain?.id, amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream) return null
+  if (!stream || stream?.isEnded) return null
 
   return (
     <>
       <Button
-        startIcon={<PencilIcon width={18} height={18} />}
-        fullWidth
         color="gray"
+        fullWidth
+        startIcon={<PencilIcon width={18} height={18} />}
         onClick={() => setOpen(true)}
         disabled={!account || !stream?.canUpdate(account.address)}
       >
@@ -145,7 +152,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 checked={topUp}
                 onChange={() => setTopUp((prevState) => !prevState)}
                 size="sm"
-                color="gradient"
                 uncheckedIcon={<XIcon />}
                 checkedIcon={<CheckIcon />}
               />
@@ -168,7 +174,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 checked={changeEndDate}
                 onChange={() => setChangeEndDate((prevState) => !prevState)}
                 size="sm"
-                color="gradient"
                 uncheckedIcon={<XIcon />}
                 checkedIcon={<CheckIcon />}
               />

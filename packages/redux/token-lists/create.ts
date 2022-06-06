@@ -1,3 +1,5 @@
+import { AnyAction, CaseReducerActions, Reducer, SliceCaseReducers } from '@reduxjs/toolkit'
+
 import type { TokenListsContext } from './context'
 import {
   useActiveListUrls as _useActiveListUrls,
@@ -10,7 +12,8 @@ import {
   useUnsupportedTokenList as _useUnsupportedTokenList,
 } from './hooks'
 import { createTokenListsSlice } from './slice'
-import { createUpdater } from './updater'
+import { TokenListsState } from './types'
+import { createUpdater, UpdaterProps } from './updater'
 
 type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
   ? undefined
@@ -44,7 +47,13 @@ export type TokenListHooks = {
 }
 
 // Inspired by RTK Query's createApi
-export function createTokenLists(options?: TokenListsOptions) {
+export function createTokenLists(options?: TokenListsOptions): {
+  reducerPath: string
+  reducer: Reducer<TokenListsState, AnyAction>
+  actions: CaseReducerActions<SliceCaseReducers<any>>
+  hooks: TokenListHooks
+  Updater(props: Omit<UpdaterProps, 'context'>): JSX.Element
+} {
   const reducerPath = options?.reducerPath ?? 'token-lists'
   const slice = createTokenListsSlice(reducerPath)
   const { actions, reducer } = slice

@@ -77,13 +77,17 @@ export const useTokenWalletBalances: UseTokenBalances = (account, tokens) => {
 }
 
 export const useTokenWalletBalance: UseTokenBalance = (account, token) => {
-  const { isError, isLoading, data } = useTokenWalletBalances(account, [token])
-  if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
-  if (!isLoading && isError) return { isLoading: false, isError: true, data: undefined } as ErrorState<Amount<Token>>
+  const tokens = useMemo(() => [token], [token])
+  const { isError, isLoading, data } = useTokenWalletBalances(account, tokens)
 
-  return {
-    isLoading: false,
-    isError: false,
-    data: token ? data[token.address] : undefined,
-  } as SuccessState<Amount<Token>>
+  return useMemo(() => {
+    if (isLoading) return { isLoading: true, isError: false, data: undefined } as LoadingState<Amount<Token>>
+    if (!isLoading && isError) return { isLoading: false, isError: true, data: undefined } as ErrorState<Amount<Token>>
+
+    return {
+      isLoading: false,
+      isError: false,
+      data: token ? data[token.address] : undefined,
+    } as SuccessState<Amount<Token>>
+  }, [data, isError, isLoading, token])
 }

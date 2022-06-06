@@ -12,7 +12,7 @@ import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string
-  value: any
+  value: ReactNode | Array<ReactNode>
   className?: string
 }
 
@@ -164,6 +164,15 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <div className="flex flex-col gap-2">
           <Table title="Details">
             <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
+            <Item
+              title="Total Amount"
+              value={
+                <>
+                  {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
+                </>
+              }
+            />
+            <Item title="End Date" value={format(endDate, 'dd MMM yyyy')} />
           </Table>
           <Table title="Cliff Details" className={cliff ? '' : 'opacity-40'}>
             {cliff && cliffEndDate ? (

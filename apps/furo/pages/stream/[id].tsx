@@ -1,11 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '@sushiswap/graph-client'
-import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
+  Breadcrumb,
   CancelModal,
   FuroTimer,
   HistoryPopover,
@@ -19,11 +19,12 @@ import {
 import { BalanceChart, WithdrawModal } from 'components/stream'
 import { getRebase, getStream, getStreamTransactions, Stream } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
+
+import { ChartHover } from '../../types'
 
 interface Props {
   fallback?: {
@@ -61,12 +62,6 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
-export enum BalanceChartHoverEnum {
-  NONE,
-  WITHDRAW,
-  STREAMED,
-}
-
 const _Streams: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
@@ -88,7 +83,7 @@ const _Streams: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
-  const [hover, setHover] = useState<BalanceChartHoverEnum>(BalanceChartHoverEnum.NONE)
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const stream = useMemo(
     () => (chainId && furo && rebase ? new Stream({ chainId, furo, rebase }) : undefined),
@@ -105,21 +100,8 @@ const _Streams: FC = () => {
         </div>
       }
     >
-      <div className="flex items-center gap-3 mt-4">
-        <Link href="/dashboard" passHref={true}>
-          <a className="flex items-center gap-2 group">
-            <HomeIcon width={16} className="cursor-pointer group-hover:text-slate-50 text-slate-400" />
-            <Typography variant="sm" weight={700} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
-              Dashboard
-            </Typography>
-          </a>
-        </Link>
-        <ChevronRightIcon width={24} className="text-slate-400" />
-        <Typography variant="sm" weight={700} className="text-slate-600">
-          Stream
-        </Typography>
-      </div>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
+      <Breadcrumb title="Stream" />
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />
         </div>
@@ -129,8 +111,8 @@ const _Streams: FC = () => {
               aria-hidden="true"
               label="Streamed"
               value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(BalanceChartHoverEnum.STREAMED)}
-              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+              onMouseEnter={() => setHover(ChartHover.STREAMED)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={
@@ -144,8 +126,8 @@ const _Streams: FC = () => {
               aria-hidden="true"
               label="Withdrawn"
               value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(BalanceChartHoverEnum.WITHDRAW)}
-              onMouseLeave={() => setHover(BalanceChartHoverEnum.NONE)}
+              onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={stream ? stream.withdrawnPercentage.divide(100).toSignificant(4) : 0}
@@ -160,7 +142,7 @@ const _Streams: FC = () => {
         </div>
         <div className="flex items-end justify-center gap-2">
           <StreamDetailsPopover stream={stream} />
-          <HistoryPopover transactionRepresentations={transactions} />
+          <HistoryPopover stream={stream} transactionRepresentations={transactions} />
         </div>
         <div className="flex flex-col gap-2">
           <WithdrawModal stream={stream} />

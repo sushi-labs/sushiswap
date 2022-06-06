@@ -1,16 +1,16 @@
 import { Signature } from '@ethersproject/bytes'
 import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
-import { Button, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroStreamContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
-import { createToast } from 'components'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
@@ -35,7 +35,7 @@ export const CreateForm: FC = () => {
       startDate: undefined,
       endDate: undefined,
       recipient: undefined,
-      amount: undefined,
+      amount: '',
     },
     mode: 'onChange',
   })
@@ -43,6 +43,7 @@ export const CreateForm: FC = () => {
   const {
     formState: { isValid, isValidating },
     watch,
+    reset,
   } = methods
 
   // @ts-ignore
@@ -63,7 +64,7 @@ export const CreateForm: FC = () => {
 
   const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
     async (data) => {
-      if (!amountAsEntity || !contract || !account?.address) return
+      if (!amountAsEntity || !contract || !account?.address || !activeChain?.id) return
 
       // Can cast here safely since input must have been validated already
       const _data = data as CreateStreamFormDataValidated
@@ -94,9 +95,20 @@ export const CreateForm: FC = () => {
         })
 
         createToast({
-          title: 'Create stream',
-          description: `You have successfully created a stream`,
+          txHash: data.hash,
+          href: Chain.from(activeChain.id).getTxUrl(data.hash),
           promise: data.wait(),
+          summary: {
+            pending: (
+              <Dots>
+                Creating {amountAsEntity?.toSignificant(6)} {amountAsEntity.currency.symbol} stream
+              </Dots>
+            ),
+            completed: `Successfully created a ${amountAsEntity?.toSignificant(6)} ${
+              amountAsEntity.currency.symbol
+            } stream`,
+            failed: 'Something went wrong creating a new stream',
+          },
         })
       } catch (e: any) {
         setError(e.message)
@@ -112,6 +124,12 @@ export const CreateForm: FC = () => {
     },
     [account?.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
   )
+
+  useEffect(() => {
+    reset()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChain?.id, account?.address])
 
   return (
     <>

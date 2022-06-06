@@ -10,9 +10,6 @@ module.exports = {
     extend: {
       display: ['group-hover'],
       visibility: ['group-hover'],
-      backgroundImage: () => ({
-        circuit: "url('/furo/images/circuit.png')",
-      }),
       keyframes: {
         dash: {
           to: {

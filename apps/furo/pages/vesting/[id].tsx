@@ -1,11 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
 import furoExports from '@sushiswap/furo/exports.json'
 import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
-import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
+  Breadcrumb,
   CancelModal,
   HistoryPopover,
   Layout,
@@ -14,20 +14,16 @@ import {
   StreamDetailsPopover,
   TransferModal,
 } from 'components'
-import {
-  createScheduleRepresentation,
-  NextPaymentTimer,
-  SchedulePopover,
-  VestingChart,
-  WithdrawModal,
-} from 'components/vesting'
-import { FuroStatus, getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
+import { createScheduleRepresentation, NextPaymentTimer, SchedulePopover, WithdrawModal } from 'components/vesting'
+import { getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
+
+import VestingChart2 from '../../components/vesting/VestingChart2'
+import { ChartHover } from '../../types'
 
 interface Props {
   fallback?: {
@@ -72,6 +68,7 @@ const _VestingPage: FC = () => {
   const connect = useConnect()
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`)
   const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`)
@@ -112,23 +109,10 @@ const _VestingPage: FC = () => {
         </div>
       }
     >
-      <div className="flex items-center gap-3 mt-4">
-        <Link href="/dashboard" passHref={true}>
-          <a className="flex items-center gap-2 group">
-            <HomeIcon width={16} className="cursor-pointer group-hover:text-slate-50 text-slate-400" />
-            <Typography variant="sm" weight={700} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
-              Dashboard
-            </Typography>
-          </a>
-        </Link>
-        <ChevronRightIcon width={24} className="text-slate-400" />
-        <Typography variant="sm" weight={700} className="text-slate-600">
-          Vesting
-        </Typography>
-      </div>
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-0 pt-6 md:pt-24">
+      <Breadcrumb title="Vesting" />
+      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
         <div className="flex justify-center">
-          <VestingChart vesting={vesting} schedule={schedule} />
+          <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />
         </div>
         <div>
           <div className="flex flex-col justify-center gap-5">
@@ -136,6 +120,8 @@ const _VestingPage: FC = () => {
               aria-hidden="true"
               label="Streamed"
               value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
+              onMouseEnter={() => setHover(ChartHover.STREAMED)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={vesting ? vesting.streamedPercentage.divide(100).toSignificant(4) : 0}
@@ -147,6 +133,8 @@ const _VestingPage: FC = () => {
               aria-hidden="true"
               label="Withdrawn"
               value={`${vesting?.withdrawnPercentage?.toSignificant(4)}%`}
+              onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
+              onMouseLeave={() => setHover(ChartHover.NONE)}
             >
               <ProgressBar
                 progress={vesting ? vesting.withdrawnPercentage.divide(100).toSignificant(4) : 0}
@@ -161,37 +149,31 @@ const _VestingPage: FC = () => {
         </div>
         <div className="flex items-end justify-center gap-2">
           <StreamDetailsPopover stream={vesting} />
-          <HistoryPopover transactionRepresentations={transactions} />
+          <HistoryPopover stream={vesting} transactionRepresentations={transactions} />
           <SchedulePopover vesting={vesting} schedule={schedule} />
         </div>
-        {vesting?.status !== FuroStatus.CANCELLED && (
-          <div className="flex flex-col gap-2">
-            <WithdrawModal vesting={vesting} />
-            <div className="flex gap-2">
-              <TransferModal
-                stream={vesting}
-                abi={
-                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
-                }
-                address={
-                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                  AddressZero
-                }
-              />
-              <CancelModal
-                stream={vesting}
-                abi={
-                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []
-                }
-                address={
-                  furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                  AddressZero
-                }
-                fn="stopVesting"
-              />
-            </div>
+        <div className="flex flex-col gap-2">
+          <WithdrawModal vesting={vesting} />
+          <div className="flex gap-2">
+            <TransferModal
+              stream={vesting}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                AddressZero
+              }
+            />
+            <CancelModal
+              stream={vesting}
+              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              address={
+                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
+                AddressZero
+              }
+              fn="stopVesting"
+            />
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   )

@@ -1,12 +1,13 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Button, Dialog, Dots, Form, Input, Typography } from '@sushiswap/ui'
-import { createToast } from 'components'
+import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress } from 'wagmi'
+import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
 
 interface TransferModalProps {
   stream?: Stream
@@ -17,6 +18,7 @@ interface TransferModalProps {
 
 export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn = 'transferFrom' }) => {
   const { data: account } = useAccount()
+  const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
   const [error, setError] = useState<string>()
@@ -39,30 +41,37 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
   )
 
   const transferStream = useCallback(async () => {
-    if (!stream || !account || !recipient || !resolvedAddress) return
+    if (!stream || !account || !recipient || !resolvedAddress || !activeChain?.id) return
     setError(undefined)
 
     try {
       const data = await writeAsync({ args: [account?.address, resolvedAddress, stream?.id] })
 
       createToast({
-        title: 'Transfer stream',
-        description: `You have successfully transferred your stream to ${recipient}`,
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
+        summary: {
+          pending: <Dots>Transferring stream</Dots>,
+          completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
+          failed: 'Something went wrong transferring the stream',
+        },
       })
     } catch (e: any) {
       setError(e.message)
     }
 
     setRecipient(undefined)
-  }, [account, recipient, resolvedAddress, stream, writeAsync])
+  }, [account, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
+
+  if (!stream || stream?.isEnded) return null
 
   return (
     <>
       <Button
-        startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px]" />}
-        fullWidth
         color="gray"
+        fullWidth
+        startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
         disabled={!account || !stream?.canTransfer(account.address) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
@@ -83,7 +92,7 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
             </p>
           </Typography>
           <Form.Control label="Recipient">
-            <Input.Address className="w-full" value={recipient} onChange={setRecipient} />
+            <Web3Input.Ens value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
           </Form.Control>
 
           <Button

@@ -17,30 +17,6 @@ module.exports = {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
       },
       colors: {
-        // primary: {
-        //   50: colors.pink[50],
-        //   100: colors.pink[100],
-        //   200: colors.pink[200],
-        //   300: colors.pink[300],
-        //   400: colors.pink[400],
-        //   500: colors.pink[500],
-        //   600: colors.pink[600],
-        //   700: colors.pink[700],
-        //   800: colors.pink[800],
-        //   900: colors.pink[900],
-        // },
-        // neutral: {
-        //   50: colors.slate[50],
-        //   100: colors.slate[100],
-        //   200: colors.slate[200],
-        //   300: colors.slate[300],
-        //   400: colors.slate[400],
-        //   500: colors.slate[500],
-        //   600: colors.slate[600],
-        //   700: colors.slate[700],
-        //   800: colors.slate[800],
-        //   900: colors.slate[900],
-        // },
         purple: {
           DEFAULT: '#A755DD',
           50: '#F6EEFC',
@@ -119,11 +95,6 @@ module.exports = {
           800: '#BD8400',
           900: '#855D00',
         },
-
-        'opaque-blue': '#0993ec80',
-        'transparent-blue': '#0993EC2A',
-        'transparent-pink': '#FE5A752A',
-        'opaque-pink': '#f338c380',
         'pink-red': {
           DEFAULT: '#FE5A75',
           50: '#FFFFFF',
@@ -150,8 +121,6 @@ module.exports = {
           800: '#B97301',
           900: '#815101',
         },
-        'dark-pink': '#221825',
-        'dark-blue': '#0F182A',
       },
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',

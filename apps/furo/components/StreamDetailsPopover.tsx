@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
-import { NotepadIcon, Popover, Typography } from '@sushiswap/ui'
+import { Button, NotepadIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import { FC, useState } from 'react'
@@ -37,13 +37,14 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
 
   return (
     <Popover
+      hover
       button={
-        <div className="flex items-center gap-2 px-5 shadow-md cursor-pointer hover:ring-2 active:bg-slate-500 focus:bg-slate-500 hover:bg-slate-600 ring-slate-600 bg-slate-700 rounded-xl h-11">
+        <Button color="gray" as="div">
           <NotepadIcon width={18} height={18} />
           <Typography variant="sm" weight={700} className="text-slate-200">
             Details
           </Typography>
-        </div>
+        </Button>
       }
       panel={
         <div className="max-w-[530px] gap-4 z-10 shadow-md overflow-hidden rounded-xl flex flex-col bg-slate-800">
@@ -119,8 +120,8 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
               </>
             )}
           </div>
-          <div className="grid grid-cols-3 gap-4 px-4 pb-4">
-            <div className="flex flex-col gap-4 p-4 bg-slate-700 rounded-xl">
+          <div className="grid grid-cols-4 sm:grid-cols-3 gap-4 px-4 pb-4">
+            <div className="col-span-4 sm:col-span-1 flex flex-col gap-4 p-4 bg-slate-700 rounded-xl">
               <div className="flex flex-col">
                 <Typography variant="lg" className="text-slate-200" weight={700}>
                   Total
@@ -128,7 +129,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 <Typography variant="xs" className="text-slate-400" weight={500}>
                   Value of Stream
                 </Typography>
-                <Typography variant="h2" className="flex items-center mt-3 text-slate-200" weight={700}>
+                <Typography variant="h3" className="flex items-center mt-3 text-slate-200 truncate" weight={700}>
                   {stream?.amount.toSignificant(6)}
                 </Typography>
                 <Typography variant="xs" weight={700} as="span" className="mt-1 text-slate-400">
@@ -136,7 +137,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 </Typography>
               </div>
             </div>
-            <div className="flex flex-col gap-4 p-4 bg-blue/30 rounded-xl">
+            <div className="col-span-2 sm:col-span-1 flex flex-col gap-4 p-4 bg-blue/30 rounded-xl">
               <div className="flex flex-col">
                 <Typography variant="lg" className="text-blue-200" weight={700}>
                   Streamed
@@ -144,7 +145,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 <Typography variant="xs" weight={500} className="text-blue-300">
                   {stream?.streamedPercentage?.toSignificant(4)}% of total
                 </Typography>
-                <Typography variant="h2" className="flex items-center mt-3 text-blue-200" weight={700}>
+                <Typography variant="h3" className="flex items-center mt-3 text-blue-200 truncate" weight={700}>
                   {stream?.streamedAmount?.toSignificant(6)}
                 </Typography>
                 <Typography variant="xs" weight={700} as="span" className="mt-1 text-blue-300/80">
@@ -152,7 +153,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 </Typography>
               </div>
             </div>
-            <div className="flex flex-col gap-4 p-4 shadow-md bg-pink/30 rounded-xl">
+            <div className="col-span-2 sm:col-span-1 flex flex-col gap-4 p-4 shadow-md bg-pink/30 rounded-xl">
               <div className="flex flex-col">
                 <Typography variant="lg" className="text-pink-200" weight={700}>
                   Withdrawn
@@ -160,8 +161,8 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 <Typography variant="xs" weight={500} className="text-pink-300">
                   {stream?.withdrawnPercentage.toSignificant(4)}% of total
                 </Typography>
-                <Typography variant="h2" className="flex items-center mt-3 text-pink-200" weight={700}>
-                  {stream?.withdrawnAmount.toSignificant(2)}
+                <Typography variant="h3" className="flex items-center mt-3 text-pink-200 truncate" weight={700}>
+                  {stream?.withdrawnAmount.toSignificant(6)}
                 </Typography>
                 <Typography variant="xs" weight={700} as="span" className="mt-1 text-pink-300/80">
                   {stream?.withdrawnAmount.currency.symbol}

@@ -1,5 +1,4 @@
-import { Menu as HeadlessMenu } from '@headlessui/react'
-import { PlusIcon } from '@heroicons/react/solid'
+import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
@@ -11,8 +10,15 @@ import { useAccount, useConnect } from 'wagmi'
 export const Header: FC = () => {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
-  const { isConnected } = useConnect()
   const router = useRouter()
+
+  const connect = useConnect({
+    onConnect: () => {
+      void router.push('/dashboard')
+    },
+  })
+
+  const { isConnected } = connect
 
   return (
     <div
@@ -21,21 +27,29 @@ export const Header: FC = () => {
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <App.Header
           className="h-[54px] z-10"
-          brand={<SushiIcon width={32} height={32} onClick={() => router.push('/')} className="cursor-pointer" />}
+          brand={
+            <Link href={isConnected ? '/dashboard' : '/'} passHref={true}>
+              <a>
+                <SushiIcon width={32} height={32} className="cursor-pointer" />
+              </a>
+            </Link>
+          }
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <Wallet.Button className="!h-[36px]" />
+            <Wallet.Button className="!h-[36px]" hack={connect} />
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={
-                  <HeadlessMenu.Button
-                    className="w-full !h-[36px] btn !bg-blue btn-blue btn-default !flex gap-1"
+                  <Menu.Button
+                    color="blue"
+                    fullWidth
+                    startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
+                    className="!h-[36px]"
                     as="div"
                   >
-                    <PlusIcon width={18} />
-                    Create
-                  </HeadlessMenu.Button>
+                    Pay Someone
+                  </Menu.Button>
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">

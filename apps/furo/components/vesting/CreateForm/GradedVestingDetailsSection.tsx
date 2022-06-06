@@ -1,20 +1,34 @@
+import { tryParseAmount } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
 import { CreateVestingFormData, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
+import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useAccount } from 'wagmi'
+
+import { useWalletBalance } from '../../../lib'
 
 export const GradedVestingDetailsSection = () => {
-  const { control, watch } = useFormContext<CreateVestingFormData>()
-  // @ts-ignore
-  const [currency, stepConfig, cliff, cliffEndDate, startDate, stepPayouts] = watch([
-    'currency',
-    'stepConfig',
-    'cliff',
-    'cliffEndDate',
-    'startDate',
-    'stepPayouts',
-  ])
+  const { data: account } = useAccount()
+  const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormData>()
+
+  const [currency, stepConfig, cliff, cliffAmount, cliffEndDate, startDate, stepPayouts, stepAmount, fundSource] =
+    // @ts-ignore
+    watch([
+      'currency',
+      'stepConfig',
+      'cliff',
+      'cliffAmount',
+      'cliffEndDate',
+      'startDate',
+      'stepPayouts',
+      'stepAmount',
+      'fundSource',
+    ])
+
+  const { data: balance } = useWalletBalance(account?.address, currency, fundSource)
 
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts
@@ -22,6 +36,28 @@ export const GradedVestingDetailsSection = () => {
           new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
         )
       : undefined
+
+  const totalAmount = useMemo(() => {
+    if (!currency || !stepPayouts) return undefined
+
+    const cliff = tryParseAmount(cliffAmount?.toString(), currency)
+    const totalStep = tryParseAmount(stepAmount?.toString(), currency)?.multiply(JSBI.BigInt(stepPayouts))
+
+    if (cliff && !totalStep) return cliff
+    if (!cliff && totalStep) return totalStep
+    if (cliff && totalStep) return totalStep.add(cliff)
+
+    return undefined
+  }, [cliffAmount, stepAmount, stepPayouts, currency])
+
+  useEffect(() => {
+    if (!totalAmount || !balance) return
+    if (totalAmount.greaterThan(balance)) {
+      setError('insufficientBalance', { type: 'custom', message: 'Insufficient Balance' })
+    } else {
+      clearErrors('insufficientBalance')
+    }
+  }, [balance, clearErrors, setError, totalAmount])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
@@ -42,9 +78,9 @@ export const GradedVestingDetailsSection = () => {
                       error.message
                     ) : (
                       <>
-                        The amount the recipient receives after every period. For a value of 6 and a{' '}
-                        {stepConfig?.label.toLowerCase()} period length, the user will receive 6 {currency?.symbol}{' '}
-                        {stepConfig?.label.toLowerCase()}.
+                        The amount the recipient receives after every period. For a value of {value} and a{' '}
+                        {stepConfig?.label.toLowerCase()} period length, the user will receive {value}{' '}
+                        {currency?.symbol} {stepConfig?.label.toLowerCase()}.
                       </>
                     )
                   }
@@ -94,6 +130,30 @@ export const GradedVestingDetailsSection = () => {
           />
         </Form.Control>
       </div>
+      <Form.Control label="Total Amount">
+        <Controller
+          control={control}
+          name="insufficientBalance"
+          render={({ fieldState: { error } }) => (
+            <>
+              <Typography
+                variant="sm"
+                className={
+                  balance && totalAmount?.greaterThan(balance)
+                    ? 'text-red'
+                    : totalAmount
+                    ? 'text-slate-50'
+                    : 'text-slate-500'
+                }
+                weight={totalAmount ? 700 : 400}
+              >
+                {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
+              </Typography>
+              <Form.Error message={error?.message} />
+            </>
+          )}
+        />
+      </Form.Control>
       <Form.Control label="End Date">
         {endDate ? (
           <Typography variant="sm" className="text-slate-50" weight={700}>

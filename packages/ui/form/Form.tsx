@@ -1,29 +1,33 @@
 import React from 'react'
 
-import { AnyTag, Polymorphic } from '../types'
+import { PolymorphicComponentProps } from '../types'
 import { Typography } from '../typography'
 import { FormButtons } from './FormButtons'
 import { FormControl } from './FormControl'
 import { FormError } from './FormError'
+import { FormHelperText } from './FormHelperText'
 import { FormSection } from './FormSection'
 
-type OwnProps = {
+type Props = {
   header: string
   children: React.ReactElement<typeof FormSection> | React.ReactElement<typeof FormSection>[]
 }
 
-export type FormRootProps<Tag extends AnyTag> = Polymorphic<OwnProps, Tag>
+type FormRootProps<C extends React.ElementType> = PolymorphicComponentProps<C, Props>
+type FormRootComponent = <C extends React.ElementType = 'form'>(props: FormRootProps<C>) => React.ReactElement | null
 
-function FormRoot<Tag extends AnyTag = 'form'>({ header, children, as, ...rest }: FormRootProps<Tag>) {
-  return React.createElement(
-    as || 'form',
-    { className: 'gap-x-10 divide-y divide-slate-800', ...rest },
-    <>
-      <Typography variant="h3" className="text-slate-50 py-6">
-        {header}
-      </Typography>
-      <div className="divide-y divide-slate-800">{children}</div>
-    </>
+const FormRoot: FormRootComponent = ({ header, children, as, ...rest }) => {
+  const Component = as || 'form'
+
+  return (
+    <Component className="gap-x-10 divide-y divide-slate-800" {...rest}>
+      <>
+        <Typography variant="h3" className="text-slate-50 py-6">
+          {header}
+        </Typography>
+        <div className="divide-y divide-slate-800">{children}</div>
+      </>
+    </Component>
   )
 }
 
@@ -32,9 +36,11 @@ export const Form: typeof FormRoot & {
   Control: typeof FormControl
   Section: typeof FormSection
   Error: typeof FormError
+  HelperText: typeof FormHelperText
 } = Object.assign(FormRoot, {
   Buttons: FormButtons,
   Control: FormControl,
   Section: FormSection,
   Error: FormError,
+  HelperText: FormHelperText,
 })

@@ -1,4 +1,4 @@
-import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
@@ -11,8 +11,8 @@ import {
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import React, { ReactNode } from 'react'
+import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
 
 import { useWalletState } from '../../hooks'
 import { Account } from '..'
@@ -24,12 +24,13 @@ const Icons: Record<string, ReactNode> = {
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
 }
 
-export type Props = ButtonProps & {
+export type Props<C extends React.ElementType> = ButtonProps<C> & {
   hack?: ReturnType<typeof useConnect>
 }
 
-export const Button: FC<Props> = ({ hack, children, ...rest }) => {
+export const Button = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
   const { data } = useAccount()
+  const { activeChain } = useNetwork()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
   const hook = hack || useConnect()
@@ -94,21 +95,32 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
           button={
             <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
               {/* <Account.Avatar address={data?.address} /> */}
-              <Account.Name address={data?.address}>
-                {({ name, isEns }) => (
+              <Account.AddressToEnsResolver address={data?.address}>
+                {({ data: ens }) => (
                   <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                    {isEns ? name : name ? shortenAddress(name) : ''}
+                    {ens ? ens : data?.address ? shortenAddress(data?.address) : ''}
                   </Typography>
                 )}
-              </Account.Name>
+              </Account.AddressToEnsResolver>
             </Menu.Button>
           }
         >
           <Menu.Items>
             <div>
-              <Menu.Item className="flex items-center gap-3 group" onClick={() => disconnect()}>
-                <LogoutIcon width={16} height={16} />
+              {data?.address && activeChain?.id && (
+                <Menu.Item
+                  as="a"
+                  target="_blank"
+                  href={`https://app.sushi.com/account?account=${data.address}&chainId=${activeChain.id}`}
+                  className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
+                >
+                  View Portfolio
+                  <ExternalLinkIcon width={16} height={16} />
+                </Menu.Item>
+              )}
+              <Menu.Item className="flex items-center gap-3 group justify-between !pr-4" onClick={() => disconnect()}>
                 Disconnect
+                <LogoutIcon height={16} />
               </Menu.Item>
             </div>
           </Menu.Items>
@@ -117,10 +129,6 @@ export const Button: FC<Props> = ({ hack, children, ...rest }) => {
     )
   }
 
-  // Placeholder
-  if (isMounted) {
-    return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
-  }
-
-  return null
+  // Placeholder to avoid content jumping
+  return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
 }

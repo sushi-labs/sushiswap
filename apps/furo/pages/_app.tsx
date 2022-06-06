@@ -1,10 +1,9 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
-import 'react-toastify/dist/ReactToastify.css'
 
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App } from '@sushiswap/ui'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client, getProvider } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import type { AppProps } from 'next/app'
@@ -12,7 +11,6 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { ToastContainer } from 'react-toastify'
 import { WagmiConfig } from 'wagmi'
 
 import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
@@ -44,16 +42,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     <>
       <WagmiConfig client={client}>
         <ReduxProvider store={store}>
-          <App.Shell>
-            <Header />
-            <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={ethereumBlockNumber} />
-            <TokenListUpdater chainId={ChainId.ETHEREUM} />
-            <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
-            <TokenListUpdater chainId={ChainId.GÖRLI} />
-            <Component {...pageProps} />
-            <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} />
-            <App.Footer />
-          </App.Shell>
+          <ThemeProvider>
+            <App.Shell>
+              <Header />
+              <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={ethereumBlockNumber} />
+              <TokenListUpdater chainId={ChainId.ETHEREUM} />
+              <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
+              <TokenListUpdater chainId={ChainId.GÖRLI} />
+              <Component {...pageProps} />
+
+              <App.Footer />
+            </App.Shell>
+            <ToastContainer className="mt-[50px]" />
+          </ThemeProvider>
         </ReduxProvider>
       </WagmiConfig>
       <Script

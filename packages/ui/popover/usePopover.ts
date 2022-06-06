@@ -17,12 +17,6 @@ export const usePopover: UsePopover = () => {
     modifiers: [
       { name: 'arrow', options: { element: arrowElement, padding: 8 } },
       { name: 'flip', enabled: true, options: { padding: 8 } },
-      {
-        name: 'preventOverflow',
-        options: {
-          padding: 8,
-        },
-      },
       { name: 'offset', options: { offset: [0, 14] } },
     ],
   })

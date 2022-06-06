@@ -10,6 +10,7 @@ export abstract class Furo {
   public _withdrawnAmount: Amount<Token>
 
   public readonly id: string
+  public readonly chainId: ChainId
   public readonly type: FuroType
   public readonly status: FuroStatus
   public readonly amount: Amount<Token>
@@ -28,6 +29,7 @@ export abstract class Furo {
       elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
     }
     this.id = furo.id
+    this.chainId = chainId
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.type = furo.__typename
@@ -118,8 +120,11 @@ export abstract class Furo {
     return this.startTime.getTime() <= Date.now()
   }
 
+  public get isCancelled(): boolean {
+    return this.status === FuroStatus.CANCELLED
+  }
   public get isEnded(): boolean {
-    return this.status === FuroStatus.CANCELLED || this.endTime.getTime() <= Date.now()
+    return this.isCancelled || this.endTime.getTime() <= Date.now()
   }
 
   private setStatus(status: FuroStatus): FuroStatus {
@@ -131,21 +136,26 @@ export abstract class Furo {
   }
 
   public canCancel(account: string | undefined): boolean {
+    if (this.isCancelled) return false
+    if (this.isEnded) return false
     if (!account) return false
-    return this.createdBy.id.toLowerCase() === account.toLowerCase() && !this.isEnded
+    return this.createdBy.id.toLowerCase() === account.toLowerCase()
   }
 
   public canTransfer(account: string | undefined): boolean {
+    if (this.isCancelled) return false
     if (!account) return false
     return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
   }
 
   public canWithdraw(account: string | undefined): boolean {
+    if (this.isCancelled) return false
     if (!account) return false
     return this.recipient.id.toLowerCase() === account.toLowerCase() && this.isStarted
   }
 
   public canUpdate(account: string | undefined): boolean {
+    if (this.isCancelled) return false
     if (!account) return false
     return this.createdBy.id.toLowerCase() === account.toLowerCase()
   }
