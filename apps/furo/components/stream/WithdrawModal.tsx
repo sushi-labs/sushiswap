@@ -1,7 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
@@ -11,7 +12,6 @@ import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
-import { parseUnits } from '@ethersproject/units'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -27,9 +27,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
 
   const amount = useMemo(() => {
-    if (isNaN(Number(input)) || Number(input) <= 0 || !stream?.token) return undefined
-    return Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(input, stream.token.decimals).toString()))
-  }, [])
+    if (!stream?.token) return undefined
+    console.log(input)
+    return tryParseAmount(input, stream.token)
+  }, [input])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroStreamContractConfig(activeChain?.id),
@@ -92,20 +93,22 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <CurrencyInput.Base
-            currency={stream?.token}
-            onChange={setInput}
-            value={input}
-            error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-            helperTextPanel={
-              amount && stream?.balance && amount.greaterThan(stream.balance) ? (
-                <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
-              ) : (
-                <></>
-              )
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInput.Base
+              currency={stream?.token}
+              onChange={setInput}
+              value={input}
+              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              helperTextPanel={
+                amount && stream?.balance && amount.greaterThan(stream.balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
+              }
+            />
+          </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 

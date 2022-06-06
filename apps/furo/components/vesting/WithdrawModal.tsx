@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, tryParseAmount } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -30,9 +30,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const contract = useFuroVestingContract(activeChain?.id)
 
   const amount = useMemo(() => {
-    if (isNaN(Number(input)) || Number(input) <= 0 || !vesting?.token) return undefined
-    return Amount.fromRawAmount(vesting.token, JSBI.BigInt(parseUnits(input, vesting.token.decimals).toString()))
-  }, [])
+    if (!vesting?.token) return undefined
+    return tryParseAmount(input, vesting.token)
+  }, [input])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroVestingContractConfig(activeChain?.id),
@@ -102,20 +102,22 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <CurrencyInput.Base
-            currency={vesting?.token}
-            onChange={setInput}
-            value={input}
-            error={amount && balance && amount.greaterThan(balance)}
-            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-            helperTextPanel={
-              amount && balance && amount.greaterThan(balance) ? (
-                <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
-              ) : (
-                <></>
-              )
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInput.Base
+              currency={vesting?.token}
+              onChange={setInput}
+              value={input}
+              error={amount && balance && amount.greaterThan(balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              helperTextPanel={
+                amount && balance && amount.greaterThan(balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
+              }
+            />
+          </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
