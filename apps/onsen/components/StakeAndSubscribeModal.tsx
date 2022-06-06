@@ -44,7 +44,7 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
   )
 
   const stakeAndSubscribe = useCallback(async () => {
-    if (!account) return
+    if (!account || !selectedIncentives || !stakeToken || !amount) return
     const data = await writeAsync({
       args: [
         stakeToken.address,
@@ -97,7 +97,7 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
             <CurrencyInput.Base
               currency={stakeToken}
               onChange={onInput}
-              value={amount?.toExact()}
+              value={amount?.toExact() || ''}
               // error={!amount}
               bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
               helperTextPanel={

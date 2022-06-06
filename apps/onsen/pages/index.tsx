@@ -32,7 +32,7 @@ export default function Index() {
             {activeChain ? (
               <Link passHref={true} href={`/farms?chainId=${activeChain?.id}`}>
                 <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-                  My Farms
+                  View farms
                 </Button>
               </Link>
             ) : (

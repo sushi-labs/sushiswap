@@ -5,11 +5,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Amount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
+import { Approve } from '@sushiswap/wagmi'
 import { createToast } from 'components'
 import { IncentiveAmountDetails } from 'components/CreateForm/IncentiveAmountDetails'
 import { createIncentiveSchema } from 'components/CreateForm/schema'
 import { CreateIncentiveFormData, CreateIncentiveFormDataValidated } from 'components/CreateForm/types'
-import { networks } from 'lib/hooks'
+import { networks, useStakingContract } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -21,6 +22,7 @@ export const CreateForm: FC = () => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const [error, setError] = useState<string>()
+  const contract = useStakingContract(activeChain?.id)
   const { isLoading: isWritePending, write: writeCreateIncentive } = useContractWrite(
     {
       addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
@@ -113,14 +115,24 @@ export const CreateForm: FC = () => {
           <GeneralDetailsSection />
           <IncentiveAmountDetails />
           <Form.Buttons>
-            <Button
-              type="submit"
-              variant="filled"
-              color="gradient"
-              disabled={isWritePending || !isValid || isValidating}
-            >
-              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create incentive'}
-            </Button>
+            <Approve
+              components={
+                <Approve.Components>
+                  {/* <Approve.Bentobox address={contract?.address} onSignature={setSignature} /> */}
+                  <Approve.Token amount={amountAsEntity} address={activeChain?.id ? contract.address : undefined} />
+                </Approve.Components>
+              }
+              render={({ approved }) => (
+                <Button
+                  type="submit"
+                  variant="filled"
+                  color="gradient"
+                  disabled={isWritePending || !approved || !isValid || isValidating}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create incentive'}
+                </Button>
+              )}
+            />
           </Form.Buttons>
         </Form>
       </FormProvider>
