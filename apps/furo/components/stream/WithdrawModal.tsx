@@ -27,9 +27,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
 
   const amount = useMemo(() => {
     if (!stream?.token) return undefined
-    console.log(input)
     return tryParseAmount(input, stream.token)
-  }, [input])
+  }, [input, stream?.token])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroStreamContractConfig(activeChain?.id),

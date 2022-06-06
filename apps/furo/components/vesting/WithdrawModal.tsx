@@ -30,7 +30,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const amount = useMemo(() => {
     if (!vesting?.token) return undefined
     return tryParseAmount(input, vesting.token)
-  }, [input])
+  }, [input, vesting?.token])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroVestingContractConfig(activeChain?.id),
