@@ -97,6 +97,7 @@ export enum ChainId {
   MOONBEAM = 1284,
   OPTIMISM = 10,
   OPTIMISM_KOVAN_TESTNET = 69,
+  KAVA = 2222,
 }
 
 export type AddressMap = { [chainId: number]: string }

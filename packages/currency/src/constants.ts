@@ -546,6 +546,7 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x0BE9e53fd7EDaC9F859882AfdDa116645287C629',
   [ChainId.TELOS]: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
   [ChainId.MOONBEAM]: '0xAcc15dC74880C9944775448304B263D191c6077F',
+  [ChainId.KAVA]: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
 }
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -660,5 +661,12 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     decimals: 18,
     symbol: 'WGLMR',
     name: 'Wrapped Glimmer',
+  }),
+  [ChainId.KAVA]: new Token({
+    chainId: ChainId.KAVA,
+    address: WNATIVE_ADDRESS[ChainId.KAVA],
+    decimals: 18,
+    symbol: 'WKAVA',
+    name: 'Wrapped Kava',
   }),
 }
