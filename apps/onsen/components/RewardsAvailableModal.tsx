@@ -1,9 +1,9 @@
 import log from '@sushiswap/log'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Incentive } from 'features'
-import { Farm } from 'features/onsen/context/Farm'
 import { batchAction, subscribeAction } from 'lib/actions'
+import { Farm } from 'lib/Farm'
 import { useStakingContract } from 'lib/hooks/useStakingContract'
+import { Incentive } from 'lib/Incentive'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useSendTransaction } from 'wagmi'
 

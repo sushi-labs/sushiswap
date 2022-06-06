@@ -1,6 +1,6 @@
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { Farm } from 'features/onsen/context/Farm'
+import { Farm } from 'lib/Farm'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
 import { useNetwork } from 'wagmi'
@@ -39,14 +39,14 @@ const defaultColumns = (tableProps: FarmTableProps) => [
     header: () => <div className="w-full text-left"> TVL </div>,
     cell: () => 'TODO', // TODO: this needs pricing before we sum it up
   }),
-  table.createDisplayColumn({
-    id: 'rewards_24h',
-    header: () => <div className="w-full text-left"> Rewards per 24h </div>,
+
+  table.createDataColumn('incentives', {
+    header: () => <div className="w-full text-left"> Rewards per day</div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
-          {props.row.original?.incentives ? (
-            Object.values(props.row.original?.incentives).map((incentive) => (
+          {props.getValue() ? (
+            Object.values(props.getValue()).map((incentive) => (
               <div className="flex flex-row w-full" key={incentive.id}>
                 {incentive.isSubscribed ? (
                   <Typography variant="sm" weight={700} className="text-right text-green-400">
@@ -56,12 +56,12 @@ const defaultColumns = (tableProps: FarmTableProps) => [
                   <></>
                 )}
                 <Typography variant="sm" weight={700} className="text-right text-slate-200">
-                  {incentive.rewardRemaining?.greaterThan('100000')
-                    ? incentive?.rewardRemaining.toSignificant(6)
+                  {incentive.rewardsPerDay?.greaterThan('100000')
+                    ? incentive?.rewardsPerDay.toSignificant(3)
                     : '< 0.01'}
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-right text-slate-500">
-                  {incentive?.rewardRemaining.currency.symbol}
+                  {incentive?.rewardsPerDay.currency.symbol}
                 </Typography>
               </div>
             ))
@@ -72,6 +72,7 @@ const defaultColumns = (tableProps: FarmTableProps) => [
       )
     },
   }),
+
   table.createDisplayColumn({
     id: 'APR',
     header: () => <div className="w-full text-left"> APR </div>,

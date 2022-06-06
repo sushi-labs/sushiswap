@@ -1,6 +1,6 @@
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
-import { Incentive } from 'features'
+import { Incentive } from 'lib/Incentive'
 import { useRouter } from 'next/router'
 import React, { FC, HTMLAttributes, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
@@ -63,7 +63,7 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.row.original?.rewardRemaining.currency.name}
+            {props.row.original?.rewardAmount.currency.name}
           </Typography>
         </div>
       )
@@ -84,13 +84,13 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
     },
   }),
 
-  table.createDataColumn('rewardRemaining', {
-    header: () => <div className="w-full text-left">Rewards remaining</div>,
+  table.createDataColumn('rewardsPerDay', {
+    header: () => <div className="w-full text-left">Rewards per day</div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.getValue().greaterThan('100000') ? props.getValue().toSignificant(6) : '< 0.01'}
+            {props.getValue().greaterThan('100000') ? props.getValue().toSignificant(3) : '< 0.01'}
           </Typography>
           <Typography variant="xxs" weight={500} className=" text-slate-200">
             {props.getValue().currency.symbol}
