@@ -10,7 +10,8 @@ import { StakeAndSubscribeModal } from './StakeAndSubscribeModal'
 interface FarmTableProps {
   chainId: number | undefined
   farms: Farm[] | undefined
-  showSubscribeAction: boolean
+  showSubscribeAction?: boolean
+  showIsSubscribed?: boolean
   placeholder: string
   loading: boolean
 }
@@ -48,14 +49,16 @@ const defaultColumns = (tableProps: FarmTableProps) => [
           {props.getValue() ? (
             Object.values(props.getValue()).map((incentive) => (
               <div className="flex space-x-2" key={incentive.id}>
-                {incentive.isSubscribed ? (
-                  <Typography variant="sm" weight={700} className="text-right text-green-400">
-                    ✓
-                  </Typography>
-                ) : incentive.isSubscribed === false ? (
-                  <Typography variant="sm" weight={700} className="text-right text-yellow-400">
-                    ○
-                  </Typography>
+                {tableProps.showIsSubscribed ? (
+                  incentive.isSubscribed ? (
+                    <Typography variant="sm" weight={700} className="text-right text-green-400">
+                      ✓
+                    </Typography>
+                  ) : (
+                    <Typography variant="sm" weight={700} className="text-right text-yellow-400">
+                      ○
+                    </Typography>
+                  )
                 ) : (
                   <></>
                 )}
@@ -83,7 +86,7 @@ const defaultColumns = (tableProps: FarmTableProps) => [
     cell: () => 'TODO',
   }),
   table.createDisplayColumn({
-    id: 'Subscribe',
+    id: 'Action',
     header: () => (tableProps.showSubscribeAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
     cell: (props) =>
       tableProps.showSubscribeAction ? (

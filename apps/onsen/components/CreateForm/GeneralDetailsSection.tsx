@@ -5,8 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 export const GeneralDetailsSection = () => {
   const { control, watch } = useFormContext<CreateIncentiveFormData>()
   // @ts-ignore
-  const token = watch('token')
-
+  const [startDate, endDate, stakeTokenAddress] = watch(['startDate', 'endDate', 'stakeTokenAddress'])
   return (
     <Form.Section title="General Details" description="">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

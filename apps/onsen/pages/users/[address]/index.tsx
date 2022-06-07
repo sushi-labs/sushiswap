@@ -89,7 +89,7 @@ export const FarmsPage: FC = () => {
       <FarmTable
         farms={farms}
         chainId={activeChain?.id}
-        showSubscribeAction={false}
+        showIsSubscribed={true}
         loading={isValidatingSubscriptions || isValidatingFarms}
         placeholder="No incoming incentives found"
       />

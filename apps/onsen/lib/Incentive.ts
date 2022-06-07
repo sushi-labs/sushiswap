@@ -3,6 +3,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { Incentive as IncentiveDTO } from '@sushiswap/graph-client'
 import { JSBI } from '@sushiswap/math'
 
+import { IncentiveStatus } from './enums'
 import { toToken } from './mapper'
 import { TokenType } from './types'
 
@@ -11,10 +12,10 @@ export class Incentive {
   public readonly tokenType: string
   public readonly rewardAmount: Amount<Token>
   public readonly liquidityStaked: Amount<Token>
-  private lastRewardTime: Date
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly createdBy: string
+  public readonly status: IncentiveStatus
   private _isSubscribed: boolean
 
   public constructor({ incentive }: { incentive: IncentiveDTO }) {
@@ -24,9 +25,9 @@ export class Incentive {
     this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
     this.tokenType = incentive.stakeToken?.type ? (<any>TokenType)[incentive.stakeToken?.type] : TokenType.UNKNOWN // FIXME: any hack?
     this.startTime = new Date(Number(incentive.createdAtTimestamp) * 1000)
-    this.lastRewardTime = new Date(Number(incentive.lastRewardTime) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
     this.createdBy = incentive.createdBy.id
+    this.status = this.initStatus()
   }
 
   public get remainingTime(): { days: number; hours: number; minutes: number; seconds: number } | undefined {
@@ -82,5 +83,16 @@ export class Incentive {
 
   public isStarted(): boolean {
     return this.startTime.getTime() < new Date().getTime()
+  }
+
+  private initStatus(): IncentiveStatus {
+    const now = Date.now()
+    if (now > this.endTime.getTime()) {
+      return IncentiveStatus.COMPLETED
+    }
+    if (this.startTime.getTime() <= now) {
+      return IncentiveStatus.ACTIVE
+    }
+    return IncentiveStatus.UPCOMING
   }
 }

@@ -147,26 +147,24 @@ export const IncentiveAmountDetails = () => {
           control={control}
           name="amount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <>
-              <CurrencyInput
-                onChange={onChange}
-                account={account?.address}
-                value={value}
-                currency={currency}
-                fundSource={fundSource}
-                errorMessage={error?.message}
-                helperTextPanel={({ errorMessage }) => (
-                  <CurrencyInput.HelperTextPanel
-                    text={
-                      errorMessage
-                        ? errorMessage
-                        : 'The total reward amount the stakeholders can withdraw when the incentive passes its end date.'
-                    }
-                    isError={!!errorMessage}
-                  />
-                )}
-              />
-            </>
+            <CurrencyInput
+              onChange={onChange}
+              account={account?.address}
+              value={value || ''}
+              currency={currency}
+              fundSource={fundSource}
+              errorMessage={error?.message}
+              helperTextPanel={({ errorMessage }) => (
+                <CurrencyInput.HelperTextPanel
+                  text={
+                    errorMessage
+                      ? errorMessage
+                      : 'The total reward amount the stakeholders can withdraw when the incentive passes its end date.'
+                  }
+                  isError={!!errorMessage}
+                />
+              )}
+            />
           )}
         />
       </Form.Control>
