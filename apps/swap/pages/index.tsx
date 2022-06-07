@@ -2,22 +2,33 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
+import { ChevronRightIcon } from '@heroicons/react/outline'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent, ZERO } from '@sushiswap/math'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import { Caption, ConfirmationOverlay, CurrencyInput, Rate, WidgetSettingsOverlay } from 'components'
+import {
+  Caption,
+  ConfirmationOverlay,
+  CurrencyInput,
+  OverlayContent,
+  OverlayHeader,
+  Rate,
+  WidgetSettingsOverlay,
+} from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useFeeData, useNetwork } from 'wagmi'
+
+import { Route } from '../components/Route'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
 
@@ -52,6 +63,10 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
 
   const [srcChainId, setSrcChainId] = useState(ChainId.AVALANCHE)
   const [dstChainId, setDstChainId] = useState(ChainId.FANTOM)
+
+  const feeData = useFeeData({
+    chainId: srcChainId,
+  })
 
   const [srcToken, setSrcToken] = useState<Currency>(Native.onChain(srcChainId))
   const [dstToken, setDstToken] = useState<Currency>(Native.onChain(dstChainId))
@@ -608,8 +623,8 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
                   </Approve.Components>
                 }
                 render={({ approved }) => (
-                  <ConfirmationOverlay theme={theme} onConfirm={execute}>
-                    {({ setOpen }) => (
+                  <ConfirmationOverlay
+                    trigger={({ setOpen }) => (
                       <Button
                         fullWidth
                         variant="filled"
@@ -619,6 +634,95 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
                       </Button>
+                    )}
+                  >
+                    {({ setOpen }) => (
+                      <OverlayContent theme={theme} className="flex flex-col flex-grow !bg-slate-800">
+                        <OverlayHeader
+                          arrowDirection="bottom"
+                          onClose={() => setOpen(false)}
+                          title="Confirm Swap"
+                          theme={theme}
+                        />
+                        <div className="h-px bg-slate-200/5 w-full px-0.5" />
+                        <div className="!my-0 p-2 rounded-xl grid grid-cols-[150px_auto_150px]">
+                          <div className="flex flex-col">
+                            <Typography variant="lg" weight={700}>
+                              {srcAmount?.toSignificant(6)}{' '}
+                              <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-400">
+                              $0.00
+                            </Typography>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <ChevronRightIcon width={18} height={18} className="text-slate-500" />
+                          </div>
+                          <div className="flex flex-col w-full">
+                            <Typography variant="lg" weight={700} className="text-right">
+                              {dstMinimumAmountOut?.toSignificant(6)}{' '}
+                              <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-400 text-right">
+                              $0.00 <span className="text-[10px] text-green">(+0.00%)</span>
+                            </Typography>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1 px-3 py-2 bg-slate-700 rounded-xl">
+                          <div className="flex gap-2 justify-between items-center">
+                            <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme}>
+                              {({ toggleInvert, content }) => (
+                                <Typography
+                                  as="button"
+                                  onClick={() => toggleInvert()}
+                                  variant="xs"
+                                  weight={700}
+                                  className="flex items-center gap-1 text-slate-200"
+                                >
+                                  {content}
+                                </Typography>
+                              )}
+                            </Rate>
+                            <Chip
+                              label={
+                                <div className="flex items-center gap-1">
+                                  <GasIcon width={10} />
+                                  <Typography variant="xs" weight={700}>
+                                    {feeData.data?.formatted.gasPrice &&
+                                      JSBI.divide(
+                                        JSBI.BigInt(feeData.data?.formatted.gasPrice),
+                                        JSBI.BigInt(1e9)
+                                      ).toString()}{' '}
+                                    Gwei
+                                  </Typography>
+                                </div>
+                              }
+                              color="gray"
+                            />
+                          </div>
+                          <div className="h-px bg-slate-200/5 w-full my-1" />
+                          <div className="flex gap-2 justify-between">
+                            <Typography variant="xs" className="text-slate-400">
+                              Minimum Received After Slippage
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-200">
+                              {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+                            </Typography>
+                          </div>
+                          <div className="flex gap-2 justify-between">
+                            <Typography variant="xs" className="text-slate-400">
+                              Estimated Processing Time
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-300">
+                              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId] / 60)} minutes
+                            </Typography>
+                          </div>
+                          <Route srcTrade={srcTrade} dstTrade={dstTrade} />
+                        </div>
+                        <Button fullWidth color="gradient" onClick={execute}>
+                          Swap
+                        </Button>
+                      </OverlayContent>
                     )}
                   </ConfirmationOverlay>
                 )}

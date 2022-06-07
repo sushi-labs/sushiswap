@@ -372,8 +372,6 @@ importers:
       '@ethersproject/solidity': ^5.0.0
       '@ethersproject/strings': ^5.0.0
       '@ethersproject/units': ^5.0.0
-      '@graphprotocol/client-add-source-name': 1.0.1
-      '@graphprotocol/client-cli': 1.0.1
       '@headlessui/react': ^1.6.1
       '@heroicons/react': ^1.0.0
       '@hookform/resolvers': ^2.8.10
@@ -490,8 +488,6 @@ importers:
       wagmi: 0.4.9_psvhf2bcekgpduwaw7lrstqk6m
       yup: 0.32.11
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.1_graphql@16.5.0
-      '@graphprotocol/client-cli': 1.0.1_5oakmjw4u6xo53ovhbwqqaekie
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -3273,33 +3269,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphprotocol/client-cli/1.0.1_5oakmjw4u6xo53ovhbwqqaekie:
-    resolution: {integrity: sha512-bw+hCCZFv6EtiJFhM8jMq8LxhyhzP8YbD3VSeQ6ZmUx5zxk0QAPRDAKgRdsK3HnOG2HIObcbB9W4ZikufABFxQ==}
-    hasBin: true
-    peerDependencies:
-      graphql: ^15.2.0 || ^16.0.0
-    dependencies:
-      '@graphprotocol/client-add-source-name': 1.0.1_graphql@16.5.0
-      '@graphprotocol/client-auto-pagination': 1.0.1_graphql@16.5.0
-      '@graphprotocol/client-block-tracking': 1.0.1_graphql@16.5.0
-      '@graphql-mesh/cli': 0.71.2_5oakmjw4u6xo53ovhbwqqaekie
-      '@graphql-mesh/graphql': 0.26.2_5oakmjw4u6xo53ovhbwqqaekie
-      graphql: 16.5.0
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - '@graphql-mesh/types'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: true
-
   /@graphprotocol/client-cli/1.0.1_graphql@16.5.0:
     resolution: {integrity: sha512-bw+hCCZFv6EtiJFhM8jMq8LxhyhzP8YbD3VSeQ6ZmUx5zxk0QAPRDAKgRdsK3HnOG2HIObcbB9W4ZikufABFxQ==}
     hasBin: true
@@ -3567,67 +3536,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-mesh/cli/0.71.2_5oakmjw4u6xo53ovhbwqqaekie:
-    resolution: {integrity: sha512-BxzENvVesRVP/ROR6pO5v+Fnb2xagTcEM1Oj7QaPrMXgVzZ4dYCBD9+jE1UbvHzYC1CnGexHWMM/6DQdv4jh9g==}
-    hasBin: true
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-codegen/core': 2.5.1_graphql@16.5.0
-      '@graphql-codegen/typed-document-node': 2.2.11_graphql@16.5.0
-      '@graphql-codegen/typescript': 2.4.11_graphql@16.5.0
-      '@graphql-codegen/typescript-generic-sdk': 2.3.10_graphql@16.5.0
-      '@graphql-codegen/typescript-operations': 2.4.0_graphql@16.5.0
-      '@graphql-codegen/typescript-resolvers': 2.6.4_graphql@16.5.0
-      '@graphql-mesh/config': 0.37.2_graphql@16.5.0
-      '@graphql-mesh/cross-helpers': 0.1.6_graphql@16.5.0
-      '@graphql-mesh/runtime': 0.35.2_graphql@16.5.0
-      '@graphql-mesh/store': 0.8.11_graphql@16.5.0
-      '@graphql-mesh/string-interpolation': 0.2.0_graphql@16.5.0
-      '@graphql-mesh/types': 0.73.2_graphql@16.5.0
-      '@graphql-mesh/utils': 0.35.2_graphql@16.5.0
-      '@graphql-tools/code-file-loader': 7.2.17_graphql@16.5.0
-      '@graphql-tools/graphql-file-loader': 7.3.14_graphql@16.5.0
-      '@graphql-tools/load': 7.5.13_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
-      '@graphql-tools/wrap': 8.4.19_graphql@16.5.0
-      '@graphql-yoga/node': 2.6.0_graphql@16.5.0
-      ajv: 8.11.0
-      change-case: 4.1.2
-      cookie-parser: 1.4.6
-      cors: 2.8.5
-      cosmiconfig: 7.0.1
-      dnscache: 1.0.2
-      dotenv: 16.0.1
-      express: 4.18.1
-      graphql: 16.5.0
-      graphql-import-node: 0.0.5_graphql@16.5.0
-      graphql-ws: 5.8.2_graphql@16.5.0
-      json-bigint-patch: 0.0.8
-      lodash.get: 4.4.2
-      mkdirp: 1.0.4
-      open: 7.4.2
-      pascal-case: 3.1.2
-      rimraf: 3.0.2
-      ts-node: 10.8.0_3n3xdo2363g57i76tv7o7s26wm
-      tsconfig-paths: 4.0.0
-      tslib: 2.4.0
-      typescript: 4.7.2
-      ws: 8.7.0
-      yargs: 17.5.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: true
-
   /@graphql-mesh/cli/0.71.2_graphql@16.5.0:
     resolution: {integrity: sha512-BxzENvVesRVP/ROR6pO5v+Fnb2xagTcEM1Oj7QaPrMXgVzZ4dYCBD9+jE1UbvHzYC1CnGexHWMM/6DQdv4jh9g==}
     hasBin: true
@@ -3801,32 +3709,6 @@ packages:
       '@graphql-tools/wrap': 8.4.17_graphql@16.5.0
       graphql: 16.5.0
       lodash: 4.17.21
-      tslib: 2.4.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - react-native
-      - react-native-windows
-      - utf-8-validate
-    dev: true
-
-  /@graphql-mesh/graphql/0.26.2_5oakmjw4u6xo53ovhbwqqaekie:
-    resolution: {integrity: sha512-BcUZa14x4rOJqF46xEXb1SNfzZOGcfF0lfEjtZoaDnMMaqFMLt/thQJDXYgIFjPQAWsRi1Fkwz58jugPly9eww==}
-    peerDependencies:
-      graphql: '*'
-    dependencies:
-      '@graphql-mesh/cross-helpers': 0.1.6_graphql@16.5.0
-      '@graphql-mesh/store': 0.8.11_graphql@16.5.0
-      '@graphql-mesh/string-interpolation': 0.2.0_graphql@16.5.0
-      '@graphql-mesh/types': 0.73.2_graphql@16.5.0
-      '@graphql-mesh/utils': 0.35.2_graphql@16.5.0
-      '@graphql-tools/delegate': 8.7.10_graphql@16.5.0
-      '@graphql-tools/url-loader': 7.9.23_5oakmjw4u6xo53ovhbwqqaekie
-      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
-      '@graphql-tools/wrap': 8.4.19_graphql@16.5.0
-      graphql: 16.5.0
-      lodash.get: 4.4.2
       tslib: 2.4.0
     transitivePeerDependencies:
       - '@types/node'
@@ -4671,34 +4553,6 @@ packages:
       graphql-ws: 5.8.2_graphql@16.5.0
       isomorphic-ws: 4.0.1_ws@8.6.0
       meros: 1.2.0_@types+node@17.0.35
-      sync-fetch: 0.3.1
-      tslib: 2.4.0
-      value-or-promise: 1.0.11
-      ws: 8.6.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: true
-
-  /@graphql-tools/url-loader/7.9.23_5oakmjw4u6xo53ovhbwqqaekie:
-    resolution: {integrity: sha512-6IYn5bIaqlWHQksvuPCEPqr8pIuuXBaF8/XbcVdT7otPkyGIQjTxoOkLiWIQj5682aEgZ9Ky21KKcp7qOTWmDQ==}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-    dependencies:
-      '@graphql-tools/delegate': 8.7.10_graphql@16.5.0
-      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
-      '@graphql-tools/wrap': 8.4.19_graphql@16.5.0
-      '@n1ru4l/graphql-live-query': 0.9.0_graphql@16.5.0
-      '@types/ws': 8.5.3
-      cross-undici-fetch: 0.4.3
-      dset: 3.1.2
-      extract-files: 11.0.0
-      graphql: 16.5.0
-      graphql-ws: 5.8.2_graphql@16.5.0
-      isomorphic-ws: 4.0.1_ws@8.6.0
-      meros: 1.2.0_@types+node@17.0.30
       sync-fetch: 0.3.1
       tslib: 2.4.0
       value-or-promise: 1.0.11
@@ -14834,18 +14688,6 @@ packages:
       '@types/node':
         optional: true
 
-  /meros/1.2.0_@types+node@17.0.30:
-    resolution: {integrity: sha512-3QRZIS707pZQnijHdhbttXRWwrHhZJ/gzolneoxKVz9N/xmsvY/7Ls8lpnI9gxbgxjcHsAVEW3mgwiZCo6kkJQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@types/node': '>=12'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-    dependencies:
-      '@types/node': 17.0.30
-    dev: true
-
   /meros/1.2.0_@types+node@17.0.35:
     resolution: {integrity: sha512-3QRZIS707pZQnijHdhbttXRWwrHhZJ/gzolneoxKVz9N/xmsvY/7Ls8lpnI9gxbgxjcHsAVEW3mgwiZCo6kkJQ==}
     engines: {node: '>=12'}
@@ -18838,37 +18680,6 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 17.0.35
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.7.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-
-  /ts-node/10.8.0_3n3xdo2363g57i76tv7o7s26wm:
-    resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.30
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3

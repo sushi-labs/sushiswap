@@ -3,7 +3,7 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { WrappedTokenInfo } from '@sushiswap/redux-token-lists/token'
-import { classNames, Input, Typography } from '@sushiswap/ui'
+import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { NetworkSelectorOverlay, TokenSelectorOverlay } from 'components'
 import Image from 'next/image'
 import { FC, useState } from 'react'
@@ -77,7 +77,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               )}
               onClick={() => setNetworkSelectorOpen(true)}
             >
-              {network.icon ? <Image src={network.icon} width="16px" height="16px" /> : null}
+              <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
