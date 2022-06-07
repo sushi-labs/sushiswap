@@ -64,7 +64,9 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
 
     createToast({
       title: 'Stake and subscribe',
-      description: `You have successfully staked ${stakeToken.symbol} and subscribed to ${selectedIncentives
+      description: `You have successfully staked ${
+        stakeToken.symbol
+      } and subscribed to the following rewards: ${selectedIncentives
         .map((incentive) => incentive.rewardAmount.currency.symbol)
         .join(', ')}`,
       promise: data.wait(),

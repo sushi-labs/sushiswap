@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import { ChainId } from '@sushiswap/chain'
 import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App } from '@sushiswap/ui'
+import { App, ToastContainer } from '@sushiswap/ui'
 import { client, getProvider } from '@sushiswap/wagmi'
 import Header from 'components/Header'
 import type { AppProps } from 'next/app'
@@ -56,7 +56,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <TokenListUpdater chainId={ChainId.ARBITRUM} />
 
             <Component {...pageProps} />
-            {/* <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} /> */}
+            <ToastContainer className="mt-[50px]" />
             <App.Footer />
           </App.Shell>
         </ReduxProvider>

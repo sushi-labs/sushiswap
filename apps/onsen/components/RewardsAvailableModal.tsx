@@ -46,8 +46,10 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, c
       })
 
       createToast({
-        title: 'Create stream',
-        description: `You have successfully created a stream`,
+        title: 'Subscribe',
+        description: `You have successfully subscribed to the following rewards: ${selectedIncentives
+          .map((incentive) => incentive.rewardAmount.currency.symbol)
+          .join(', ')}`,
         promise: data.wait(),
       })
     } catch (e: any) {
