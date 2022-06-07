@@ -1,7 +1,7 @@
 import { CheckIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Input, Loader, SlideIn, Typography } from '@sushiswap/ui'
+import { classNames, Input, Loader, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
 
@@ -90,12 +90,18 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 variant="sm"
                 className={classNames(
                   selected === chain.chainId
-                    ? classNames(theme.primary.default, theme.primary.hover, 'pl-1.5 !font-bold ')
-                    : classNames(theme.secondary.default, theme.secondary.hover, 'pl-8 !font-medium '),
-                  'flex gap-1.5 cursor-pointer py-2 pr-3'
+                    ? classNames(theme.primary.default, theme.primary.hover, '!font-bold ')
+                    : classNames(theme.secondary.default, theme.secondary.hover, '!font-medium '),
+                  'flex items-center gap-1.5 cursor-pointer py-2 pr-3 pl-1.5'
                 )}
               >
-                {selected === chain.chainId && <CheckIcon width={20} height={20} className="text-blue" />}
+                {selected === chain.chainId ? (
+                  <CheckIcon width={20} height={20} className="text-blue" />
+                ) : (
+                  <div className="h-5 w-5 flex justify-center items-center">
+                    <NetworkIcon type="naked" chainId={chain.chainId} width={18} height={18} />
+                  </div>
+                )}
                 {chain.name}
               </Typography>
             ))}
