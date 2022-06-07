@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 
 import { Theme } from './types'
 

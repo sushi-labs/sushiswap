@@ -1,25 +1,23 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Fraction, ONE, Percent, ZERO } from '@sushiswap/math'
-import { STARGATE_BRIDGE_TOKENS, isStargateBridgeToken } from '@sushiswap/stargate'
+import { Percent, ZERO } from '@sushiswap/math'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, Wallet, useSushiXSwapContract } from '@sushiswap/wagmi'
-import { Caption, Rate, WidgetSettings } from 'components'
-import CurrencyInput from 'components/CurrencyInput'
+import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
+import { Caption, ConfirmationOverlay, CurrencyInput, Rate, WidgetSettingsOverlay } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
-import { Widget } from '@sushiswap/swap-widget'
+import { useAccount, useNetwork } from 'wagmi'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
 
@@ -547,12 +545,11 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
         </Typography>
         <Caption className="flex justify-center col-span-4" theme={theme} />
         <div className="flex justify-end">
-          <WidgetSettings theme={theme} />
+          <WidgetSettingsOverlay theme={theme} />
         </div>
       </div>
-      <div className="p-3 border-2 border-transparent">
+      <div className="p-3 pb-0 border-2 border-transparent">
         <CurrencyInput
-          type="AMOUNT_IN"
           value={srcTypedAmount}
           onChange={setSrcTypedAmount}
           onCurrencySelect={setSrcToken}
@@ -567,7 +564,6 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
       </div>
       <div className={classNames(theme.background.secondary, 'p-3 m-0.5 rounded-2xl')}>
         <CurrencyInput
-          type="AMOUNT_OUT"
           disabled={true}
           value={dstTypedAmount}
           onChange={setDstTypedAmount}
@@ -612,15 +608,19 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
                   </Approve.Components>
                 }
                 render={({ approved }) => (
-                  <Button
-                    fullWidth
-                    variant="filled"
-                    color="gradient"
-                    disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
-                    onClick={execute}
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
-                  </Button>
+                  <ConfirmationOverlay theme={theme} onConfirm={execute}>
+                    {({ setOpen }) => (
+                      <Button
+                        fullWidth
+                        variant="filled"
+                        color="gradient"
+                        disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                        onClick={() => setOpen(true)}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                      </Button>
+                    )}
+                  </ConfirmationOverlay>
                 )}
               />
             </>
