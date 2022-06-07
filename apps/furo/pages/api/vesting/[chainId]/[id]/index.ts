@@ -1,6 +1,7 @@
-import type { Stream } from '@sushiswap/graph-client'
 import { getVesting } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import type { Stream } from '.graphclient'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query
