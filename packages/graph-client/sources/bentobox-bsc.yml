@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: bentobox-bsc
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-bsc
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: BSC_BENTOBOX_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

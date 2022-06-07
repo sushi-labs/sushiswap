@@ -1,0 +1,14 @@
+query MoonbeamBentoBoxRebase($id: ID!) {
+  MOONBEAM_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query MoonbeamBentoBoxRebases($where: Rebase_filter) {
+  MOONBEAM_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

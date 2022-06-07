@@ -1,0 +1,14 @@
+query PolygonBentoBoxRebase($id: ID!) {
+  POLYGON_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query PolygonBentoBoxRebases($where: Rebase_filter) {
+  POLYGON_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

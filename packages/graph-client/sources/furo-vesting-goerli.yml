@@ -3,15 +3,10 @@ handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-goerli
 transforms:
+  - addSourceName: true
   - prefix:
       value: GOERLI_VESTING_
       includeRootOperations: true
       includeTypes: false
-      ignore:
-        - _SubgraphErrorPolicy_
-  # - blockTracking:
-  #     validateSchema: true
   - autoPagination:
       validateSchema: true
-serve:
-  browser: false

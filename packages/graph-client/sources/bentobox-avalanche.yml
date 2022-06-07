@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: bentobox-avalanche
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-avalanche
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: AVALANCHE_BENTOBOX_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

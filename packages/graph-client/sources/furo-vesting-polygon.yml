@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: furo-vesting-polygon
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-polygon
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: POLYGON_VESTING_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

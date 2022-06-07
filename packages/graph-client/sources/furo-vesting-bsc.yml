@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: furo-vesting-bsc
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-bsc
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: BSC_VESTING_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

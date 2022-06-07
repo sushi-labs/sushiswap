@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: bentobox-arbitrum
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-arbitrum
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: ARBITRUM_BENTOBOX_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

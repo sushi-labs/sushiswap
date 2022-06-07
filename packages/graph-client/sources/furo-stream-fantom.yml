@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: furo-stream-fantom
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-fantom
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: FANTOM_STREAM_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:

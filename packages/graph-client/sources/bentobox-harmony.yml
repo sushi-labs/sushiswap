@@ -1,11 +1,11 @@
-name: bentobox-goerli
+name: bentobox-harmony
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-goerli
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-harmony
 transforms:
   - addSourceName: true
   - prefix:
-      value: GOERLI_BENTOBOX_
+      value: HARMONY_BENTOBOX_
       includeRootOperations: true
       includeTypes: false
   - autoPagination:
