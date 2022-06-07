@@ -47,10 +47,14 @@ const defaultColumns = (tableProps: FarmTableProps) => [
         <div className="flex flex-col w-full">
           {props.getValue() ? (
             Object.values(props.getValue()).map((incentive) => (
-              <div className="flex flex-row w-full" key={incentive.id}>
+              <div className="flex space-x-2" key={incentive.id}>
                 {incentive.isSubscribed ? (
                   <Typography variant="sm" weight={700} className="text-right text-green-400">
-                    Y
+                    ✓
+                  </Typography>
+                ) : incentive.isSubscribed === false ? (
+                  <Typography variant="sm" weight={700} className="text-right text-yellow-400">
+                    ○
                   </Typography>
                 ) : (
                   <></>

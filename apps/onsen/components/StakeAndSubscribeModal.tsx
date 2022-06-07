@@ -1,10 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dialog, Dots, Form } from '@sushiswap/ui'
+import { Approve } from '@sushiswap/wagmi'
 import { Farm } from 'lib/Farm'
-import { networks, useWalletBalance } from 'lib/hooks'
+import { networks, useStakingContract, useWalletBalance } from 'lib/hooks'
 import { Incentive } from 'lib/Incentive'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
@@ -28,8 +29,9 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
   const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
   const stakeToken = useMemo(() => farm.incentives[0].liquidityStaked.currency, [farm])
   const { data: balance } = useWalletBalance(account?.address, stakeToken, FundSource.WALLET)
+  const contract = useStakingContract(activeChain?.id)
 
-  const [amount, setAmount] = useState<Amount<Token>>()
+  const [input, setInput] = useState<string>('')
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     {
       addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
@@ -42,15 +44,21 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
       },
     }
   )
+  const amount = useMemo(() => {
+    if (!stakeToken) return undefined
+    console.log(input)
+    return tryParseAmount(input, stakeToken)
+  }, [input, stakeToken])
 
   const stakeAndSubscribe = useCallback(async () => {
     if (!account || !selectedIncentives || !stakeToken || !amount) return
+
     const data = await writeAsync({
       args: [
         stakeToken.address,
         amount?.quotient.toString(),
         selectedIncentives.map((incentive) => incentive.id),
-        false,
+        false, // TODO: add input field for this arg
       ],
     })
 
@@ -62,18 +70,6 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
       promise: data.wait(),
     })
   }, [account, amount, selectedIncentives, stakeToken, writeAsync])
-
-  const onInput = useCallback(
-    (val: string) => {
-      console.log(val)
-      if (isNaN(Number(val)) || Number(val) < 0 || !stakeToken) {
-        setAmount(undefined)
-      } else {
-        setAmount(tryParseAmount(val, stakeToken))
-      }
-    },
-    [stakeToken]
-  )
 
   if (!account) return <></>
 
@@ -96,8 +92,8 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
           <Form.Control label="Amount to stake">
             <CurrencyInput.Base
               currency={stakeToken}
-              onChange={onInput}
-              value={amount?.toExact() || ''}
+              onChange={setInput}
+              value={input}
               // error={!amount}
               bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
               helperTextPanel={
@@ -109,16 +105,25 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
               }
             />
           </Form.Control>
-
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || selectedIncentives.length == 0 || !amount?.greaterThan(0)}
-            onClick={stakeAndSubscribe}
-          >
-            {isWritePending ? <Dots>{`Staking & Subscribing`}</Dots> : 'Stake & Subscribe'}
-          </Button>
+          <Approve
+            components={
+              <Approve.Components>
+                {/* <Approve.Bentobox address={contract?.address} onSignature={setSignature} /> */}
+                <Approve.Token amount={amount} address={activeChain?.id ? contract.address : undefined} />
+              </Approve.Components>
+            }
+            render={({ approved }) => (
+              <Button
+                type="submit"
+                variant="filled"
+                color="gradient"
+                disabled={isWritePending || !approved || selectedIncentives.length == 0 || !amount?.greaterThan(0)}
+                onClick={stakeAndSubscribe}
+              >
+                {isWritePending ? <Dots>{`Staking & Subscribing`}</Dots> : 'Stake & Subscribe'}
+              </Button>
+            )}
+          />
         </Dialog.Content>
       </Dialog>
     </>

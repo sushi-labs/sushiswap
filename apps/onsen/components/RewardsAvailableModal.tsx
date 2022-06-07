@@ -66,7 +66,7 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, c
   return (
     <>
       {incentives.length ? (
-        <div onClick={() => setOpen(true)}>
+        <div className={'rounded-lg bg-blue-800 p-4'} onClick={() => setOpen(true)}>
           You have new reward subscriptions available. Click to learn more and start earning more rewards!
         </div>
       ) : (
