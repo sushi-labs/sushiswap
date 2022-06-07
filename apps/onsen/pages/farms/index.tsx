@@ -6,11 +6,11 @@ import { Farm } from 'lib/Farm'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { getFarms } from '../../lib/graph'
+import { getFarms, getPrice } from '../../lib/graph'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -28,6 +28,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     props: {
       fallback: {
         [`/api/farms/${query.chainId}`]: await getFarms(query.chainId),
+        [`/api/price/${query.chainId}`]: await getPrice(query.chainId),
       },
     },
   }
@@ -47,7 +48,13 @@ export const FarmsPage: FC = () => {
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const { data: farmsDTO, isValidating: isValidatingFarms } = useSWR<FarmDTO[]>(`/onsen/api/farms/${chainId}`, fetcher)
+  const { data: prices, isValidating: isValidatingPrices } = useSWR<{ [key: string]: number }[]>(
+    `/onsen/api/price/${chainId}`,
+    fetcher
+  )
 
+  const [isMapping, setIsMapping] = useState<boolean>(false)
+  const isValidating = useMemo(() => isValidatingFarms || isValidatingPrices, [isValidatingFarms, isValidatingPrices])
   const farms = useMemo(() => {
     if (!farmsDTO || isValidatingFarms) return []
     return farmsDTO.map(
@@ -58,6 +65,21 @@ export const FarmsPage: FC = () => {
         })
     )
   }, [farmsDTO, isValidatingFarms])
+
+  useMemo(() => {
+    if (isValidatingPrices || isValidatingFarms || !prices) {
+      return
+    }
+    const parsedPrices = prices.reduce((r, c) => ({ ...r, ...c }), {})
+    farms.forEach((farm) =>
+      farm.incentives.forEach((incentive) => {
+        const price = parsedPrices[incentive.rewardAmount.currency.address.toLowerCase()]
+        if (price) {
+          incentive.price = price
+        }
+      })
+    )
+  }, [farms, prices, isValidatingPrices, isValidatingFarms])
 
   return (
     <Layout>
@@ -78,7 +100,7 @@ export const FarmsPage: FC = () => {
         farms={farms}
         chainId={activeChain?.id}
         showSubscribeAction={true}
-        loading={isValidatingFarms}
+        loading={isValidating}
         placeholder="No incoming incentives found"
       />
     </Layout>

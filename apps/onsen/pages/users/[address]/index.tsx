@@ -72,7 +72,7 @@ export const FarmsPage: FC = () => {
               incentives: farm.incentives.filter((incentive) => incentive.endTime >= now),
             })
         )
-        .filter((farm) => farm.incentives.length) ?? [] // TODO: move filtering logic to api? can't do at query level, no Or operator (need to filter out expired incentives)
+        .filter((farm) => farm.incentives.length) ?? []
     mappedFarms.forEach((farm) =>
       farm.incentives.forEach((incentive) => {
         if (subscriptions?.includes(incentive.id)) {

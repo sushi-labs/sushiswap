@@ -16,6 +16,7 @@ export class Incentive {
   public readonly endTime: Date
   public readonly createdBy: string
   public readonly status: IncentiveStatus
+  private _price?: number
   private _isSubscribed: boolean
 
   public constructor({ incentive }: { incentive: IncentiveDTO }) {
@@ -79,6 +80,14 @@ export class Incentive {
   }
   public set isSubscribed(value: boolean) {
     this._isSubscribed = value
+  }
+
+  public get price(): number | undefined {
+    return this._price
+  }
+
+  public set price(value: number | undefined) {
+    this._price = value
   }
 
   public isStarted(): boolean {

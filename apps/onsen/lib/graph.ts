@@ -66,3 +66,18 @@ export const getUserFarms = async (chainId: string, address: string) => {
     return (await sdk.ArbitrumStakingUserFarms({ farmIds: subscribedFarmIds })).ARBITRUM_STAKING_farms
   }
 }
+
+export const getPrice = async (chainId: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.ARBITRUM) {
+    const response = await sdk.ArbitrumTokenPrices()
+    const ethPrice = response.ARBITRUM_EXCHANGE_bundle?.ethPrice
+    return response.ARBITRUM_EXCHANGE_tokens.filter((token) => token.derivedETH > 0).map((token) => {
+      const id = token.id
+      const usdPrice = token.derivedETH * ethPrice
+      return { [id]: usdPrice }
+    })
+  }
+}
