@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import { classNames, ERROR_INPUT_CLASSNAME, Typography } from '@sushiswap/ui'
+import { classNames, ERROR_INPUT_CLASSNAME, Input, Typography } from '@sushiswap/ui'
 import React, { FC, useRef } from 'react'
 
 export type CurrencyInputBase = {
@@ -35,13 +35,13 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
         )}
       >
         <div className="flex items-center justify-between gap-1">
-          <input
+          <Input.Numeric
             ref={amountInputRef}
-            value={value || ''}
+            value={value}
             type="text"
             placeholder="0.00"
-            className="px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
-            onChange={(e) => onChange(e.target.value)}
+            className="!px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
+            onUserInput={(val) => onChange(val)}
           />
           <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
             {currency?.symbol}

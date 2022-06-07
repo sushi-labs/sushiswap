@@ -151,7 +151,7 @@ export const defaultConfig: HardhatUserConfig = {
       tags: ['staging'],
       gasMultiplier: 2,
     },
-    matic: {
+    polygon: {
       url: 'https://rpc-mainnet.maticvigil.com',
       accounts,
       chainId: 137,
@@ -167,7 +167,7 @@ export const defaultConfig: HardhatUserConfig = {
       tags: ['staging'],
       gasMultiplier: 2,
     },
-    xdai: {
+    gnosis: {
       url: 'https://rpc.xdaichain.com',
       accounts,
       chainId: 100,

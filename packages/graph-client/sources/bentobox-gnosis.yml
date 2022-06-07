@@ -1,0 +1,12 @@
+name: bentobox-gnosis
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-gnosis
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: GNOSIS_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

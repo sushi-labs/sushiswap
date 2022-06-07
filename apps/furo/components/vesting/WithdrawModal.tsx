@@ -1,18 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
-import { parseUnits } from '@ethersproject/units'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { tryParseAmount } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
-import { JSBI } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
@@ -22,12 +20,17 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [amount, setAmount] = useState<Amount<Token>>()
+  const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(activeChain?.id)
+
+  const amount = useMemo(() => {
+    if (!vesting?.token) return undefined
+    return tryParseAmount(input, vesting.token)
+  }, [input, vesting?.token])
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite(
     getFuroVestingContractConfig(activeChain?.id),
@@ -81,17 +84,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     }
   }, [account?.address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
 
-  const onInput = useCallback(
-    (val: string) => {
-      if (isNaN(Number(val)) || Number(val) <= 0 || !vesting?.token) {
-        setAmount(undefined)
-      } else {
-        setAmount(Amount.fromRawAmount(vesting.token, JSBI.BigInt(parseUnits(val, vesting.token.decimals).toString())))
-      }
-    },
-    [vesting?.token]
-  )
-
   return (
     <>
       <Button
@@ -108,20 +100,22 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-6 !max-w-sm">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <CurrencyInput.Base
-            currency={vesting?.token}
-            onChange={onInput}
-            value={amount?.toExact() || ''}
-            error={amount && balance && amount.greaterThan(balance)}
-            bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-            helperTextPanel={
-              amount && balance && amount.greaterThan(balance) ? (
-                <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
-              ) : (
-                <></>
-              )
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInput.Base
+              currency={vesting?.token}
+              onChange={setInput}
+              value={input}
+              error={amount && balance && amount.greaterThan(balance)}
+              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              helperTextPanel={
+                amount && balance && amount.greaterThan(balance) ? (
+                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
+                ) : (
+                  <></>
+                )
+              }
+            />
+          </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}

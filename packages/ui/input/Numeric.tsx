@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
@@ -9,14 +9,14 @@ const escapeRegExp = (string: string): string => {
 
 const defaultClassName = 'w-0 p-0 text-2xl bg-transparent'
 
-export interface NumericProps extends Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'> {
+export type NumericProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 'as'> & {
   onUserInput?: (input: string) => void
   error?: boolean
   fontSize?: string
   align?: 'right' | 'left'
 }
 
-export const Input: FC<NumericProps> = forwardRef<HTMLInputElement, NumericProps>(
+export const Input = forwardRef<HTMLInputElement, NumericProps>(
   (
     {
       value,

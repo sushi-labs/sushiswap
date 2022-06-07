@@ -1,0 +1,14 @@
+query GnosisBentoBoxRebase($id: ID!) {
+  GNOSIS_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query GnosisBentoBoxRebases($where: Rebase_filter) {
+  GNOSIS_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

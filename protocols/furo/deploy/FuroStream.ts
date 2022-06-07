@@ -20,27 +20,31 @@ const func: DeployFunction = async ({
   const { address } = await deploy('FuroStream', {
     from: deployer,
     args,
-    waitConfirmations: 5,
+    waitConfirmations: 10,
   })
 
-  await run('verify:verify', {
-    address,
-    constructorArguments: args,
-  })
-
-  await tenderly.persistArtifacts([
-    {
-      name: 'FuroStream',
+  try {
+    await run('verify:verify', {
       address,
-    },
-  ])
+      constructorArguments: args,
+    })
 
-  await tenderly.verify([
-    {
-      name: 'FuroStream',
-      address,
-    },
-  ])
+    await tenderly.persistArtifacts([
+      {
+        name: 'FuroStream',
+        address,
+      },
+    ])
+
+    await tenderly.verify([
+      {
+        name: 'FuroStream',
+        address,
+      },
+    ])
+  } catch (error) {
+    console.error(error)
+  }
 
   console.log(`Furo Stream deployed to ${address}`)
 }

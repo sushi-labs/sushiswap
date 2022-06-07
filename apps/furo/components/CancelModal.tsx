@@ -59,9 +59,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) 
         color="gray"
         startIcon={<TrashIcon className="text-red-400" width={18} height={18} />}
         onClick={() => setOpen(true)}
-      >
-        Cancel
-      </Button>
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5 !max-w-sm">
           <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />

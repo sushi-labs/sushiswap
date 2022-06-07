@@ -1,0 +1,12 @@
+name: bentobox-bsc
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-bsc
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: BSC_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

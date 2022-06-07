@@ -1,0 +1,12 @@
+name: bentobox-polygon
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-polygon
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: POLYGON_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

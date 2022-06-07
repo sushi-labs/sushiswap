@@ -1,0 +1,12 @@
+name: furo-vesting-moonbeam
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-moonbeam
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: MOONBEAM_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true
