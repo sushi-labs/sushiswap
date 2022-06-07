@@ -109,7 +109,7 @@ export const getStreamTransactions = async (chainId: string, id: string) => {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_STREAM_SUBGRAPH_NAME[chainId] })
-  return (await sdk.streamTransactions({ where: { stream: id } })).furo_stream_transactions ?? {}
+  return (await sdk.streamTransactions({ where: { stream: id } })).furo_stream_transactions ?? []
 }
 
 export const getVesting = async (chainId: string, id: string) => {
@@ -125,5 +125,5 @@ export const getVestingTransactions = async (chainId: string, id: string) => {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_VESTING_SUBGRAPH_NAME[chainId] })
-  return (await sdk.vestingTransactions({ where: { vesting: id } })).furo_vesting_transactions ?? {}
+  return (await sdk.vestingTransactions({ where: { vesting: id } })).furo_vesting_transactions ?? []
 }
