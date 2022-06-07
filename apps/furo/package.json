@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "generate": "graphclient build",
     "dev": "next dev -p 3005",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
@@ -67,6 +68,8 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@graphprotocol/client-add-source-name": "1.0.1",
+    "@graphprotocol/client-cli": "1.0.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
