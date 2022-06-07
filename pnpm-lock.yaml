@@ -1354,6 +1354,7 @@ importers:
       '@headlessui/react': ^1.6.1
       '@heroicons/react': ^1.0.6
       '@popperjs/core': ^2.11.5
+      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -1384,6 +1385,7 @@ importers:
       '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@popperjs/core': 2.11.5
+      '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/hooks': link:../hooks
       '@tailwindcss/aspect-ratio': 0.4.0
