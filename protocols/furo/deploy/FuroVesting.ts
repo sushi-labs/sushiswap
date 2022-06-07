@@ -19,27 +19,30 @@ const func: DeployFunction = async ({
   const { address } = await deploy('FuroVesting', {
     from: deployer,
     args,
-    waitConfirmations: 5,
+    waitConfirmations: 10,
   })
 
-  await run('verify:verify', {
-    address,
-    constructorArguments: args,
-  })
-
-  await tenderly.persistArtifacts([
-    {
-      name: 'FuroVesting',
+  try {
+    await run('verify:verify', {
       address,
-    },
-  ])
+      constructorArguments: args,
+    })
+    await tenderly.persistArtifacts([
+      {
+        name: 'FuroVesting',
+        address,
+      },
+    ])
 
-  await tenderly.verify([
-    {
-      name: 'FuroVesting',
-      address,
-    },
-  ])
+    await tenderly.verify([
+      {
+        name: 'FuroVesting',
+        address,
+      },
+    ])
+  } catch (error) {
+    console.error(error)
+  }
 
   console.log(`Furo Vesting deployed to ${address}`)
 }
