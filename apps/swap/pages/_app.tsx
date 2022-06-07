@@ -1,11 +1,10 @@
 import '@sushiswap/ui/index.css'
 
 import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App } from '@sushiswap/ui'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client, getProviders } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { Updater } from 'lib/state/MulticallUpdater'
 import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
@@ -13,7 +12,6 @@ import { FC, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
-import { ChainId } from '@sushiswap/chain'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const [providerArbitrum, providerOptimism, providerAvalanche, providerFantom] = getProviders(SUPPORTED_CHAIN_IDS)
@@ -73,13 +71,16 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={client}>
       <Provider store={store}>
-        <App.Shell>
-          <Header />
-          <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-          <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-          <Component {...pageProps} blockNumbers={blockNumbers} chainIds={SUPPORTED_CHAIN_IDS} />
-          <App.Footer />
-        </App.Shell>
+        <ThemeProvider>
+          <App.Shell>
+            <Header />
+            <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+            <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+            <Component {...pageProps} blockNumbers={blockNumbers} chainIds={SUPPORTED_CHAIN_IDS} />
+            <App.Footer />
+            <ToastContainer className="mt-[50px]" />
+          </App.Shell>
+        </ThemeProvider>
       </Provider>
     </WagmiConfig>
   )

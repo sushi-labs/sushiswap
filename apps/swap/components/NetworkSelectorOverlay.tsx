@@ -8,7 +8,7 @@ import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { Theme } from '../types'
 import { OverlayContent, OverlayHeader } from './Overlay'
 
-interface NetworkSelector {
+interface NetworkSelectorOverlay {
   open: boolean
   onClose(): void
   onSelect(network: ChainId): void
@@ -18,7 +18,7 @@ interface NetworkSelector {
   theme: Theme
 }
 
-export const NetworkSelector: FC<NetworkSelector> = ({
+export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   networks = Object.fromEntries(
     Object.entries(chains).filter(([chainId]) => SUPPORTED_CHAIN_IDS.includes(Number(chainId)))
   ),

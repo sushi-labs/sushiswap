@@ -17,7 +17,7 @@ interface Props {
   theme: Theme
 }
 
-export const TokenSelector: FC<Props> = ({ theme, currency, open, onClose, tokenMap, chainId, onSelect }) => {
+export const TokenSelectorOverlay: FC<Props> = ({ theme, currency, open, onClose, tokenMap, chainId, onSelect }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
       onSelect(currency)

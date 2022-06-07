@@ -13,7 +13,6 @@ import {
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useFeeData } from 'wagmi'
 
 import { PoolState, useGetAllExistedPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'

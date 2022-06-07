@@ -1,17 +1,11 @@
-import { GetAccountResult } from '@wagmi/core'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
-import { BaseProvider } from '@ethersproject/providers'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
-import sushiXSwapArficact from '@sushiswap/sushixswap/artifacts/contracts/SushiXSwap.sol/SushiXSwap.json'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
-import { Contract, Signer } from 'ethers'
-import { parseEther } from 'ethers/lib/utils'
 
 export enum Action {
   // Master contract approval
@@ -43,7 +37,7 @@ export enum Action {
 
 export abstract class Swap {}
 
-export interface SushiXSwap {}
+// export interface SushiXSwap {}
 
 export class StargateAdapter {}
 export class AnycallAdapter {}
@@ -56,7 +50,7 @@ export class SocketAdapter {}
 // }
 
 // SushiXSwap
-export class SushiXSwap implements SushiXSwap {
+export class SushiXSwap {
   // private account: GetAccountResult<BaseProvider>
 
   private user: string
