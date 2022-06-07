@@ -1,0 +1,10 @@
+query ArbitrumTokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  ARBITRUM_EXCHANGE_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    derivedETH
+  }
+
+  ARBITRUM_EXCHANGE_bundle(id: 1, block: $block) {
+    ethPrice
+  }
+}
