@@ -156,14 +156,16 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 checkedIcon={<CheckIcon />}
               />
             </div>
-            <CurrencyInput
-              fundSource={FundSource.WALLET}
-              className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
-              onChange={setAmount}
-              currency={stream.token}
-              value={amount}
-              account={account?.address}
-            />
+            <div className="flex flex-col gap-2">
+              <CurrencyInput
+                fundSource={FundSource.WALLET}
+                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
+                onChange={setAmount}
+                currency={stream.token}
+                value={amount}
+                account={account?.address}
+              />
+            </div>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center justify-between gap-3 py-2">
