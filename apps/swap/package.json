@@ -6,12 +6,7 @@
     "build": "next build --profile",
     "dev": "next dev -p 3007",
     "lint": "eslint --fix . && next lint",
-    "start": "next start",
-    "test": "jest --watch",
-    "cypress": "cypress open",
-    "cypress:headless": "cypress run",
-    "e2e": "start-server-and-test start http://localhost:3000/swap cypress",
-    "e2e:headless": "start-server-and-test start http://localhost:3000/swap cypress:headless"
+    "start": "next start"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.0.0",
