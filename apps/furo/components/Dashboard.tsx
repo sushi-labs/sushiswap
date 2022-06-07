@@ -1,7 +1,6 @@
 import { Tab } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
-import { Rebase } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import { toToken } from 'lib'
@@ -14,6 +13,7 @@ import { Streams, Vestings } from 'types'
 import { useAccount, useConnect } from 'wagmi'
 
 import { FuroTable, FuroTableType } from './FuroTable'
+import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)

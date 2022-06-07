@@ -1,4 +1,3 @@
-import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { Dashboard } from 'components'
 import { getUserStreams, getUserVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -6,6 +5,8 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
 import { Streams, Vestings } from 'types'
+
+import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
