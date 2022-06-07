@@ -1,7 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-// import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 
 import { getBuiltGraphSDK } from '.graphclient'
 
