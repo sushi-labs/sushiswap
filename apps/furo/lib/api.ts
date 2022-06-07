@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { SUPPORTED_CHAINS } from 'config'
 
 import { getBuiltGraphSDK } from '.graphclient'
 
@@ -51,87 +52,78 @@ const FURO_VESTING_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.POLYGON]: 'sushiswap/furo-vesting-polygon',
 }
 
-const SUPPORTED_CHAINS = [
-  ChainId.ETHEREUM,
-  ChainId.GÖRLI,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
-  ChainId.FANTOM,
-  ChainId.GNOSIS,
-  ChainId.HARMONY,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
-]
-
-const isNetworkSupported = (chainId: number) => SUPPORTED_CHAINS.includes(chainId)
-
 export const getRebase = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return []
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: BENTOBOX_SUBGRAPH_NAME[chainId] })
   return (
-    (await sdk.bentoBoxRebase({ id: id === AddressZero ? WNATIVE_ADDRESS[network].toLowerCase() : id }))
+    (await sdk.bentoBoxRebase({ id: id === AddressZero ? WNATIVE_ADDRESS[chainId].toLowerCase() : id }))
       .bentobox_rebase ?? []
   )
 }
 
 export const getRebases = async (chainId: string | number, tokens: string[]) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return []
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: BENTOBOX_SUBGRAPH_NAME[chainId] })
   return (
     (
       await sdk.bentoBoxRebases({
         where: {
-          token_in: tokens.map((token) => (token === AddressZero ? WNATIVE_ADDRESS[network].toLowerCase() : token)),
+          token_in: tokens.map((token) => (token === AddressZero ? WNATIVE_ADDRESS[chainId].toLowerCase() : token)),
         },
       })
     ).bentobox_rebases ?? []
   )
 }
 
-export const getStreams = async (chainId: string | number, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
+export const getUserStreams = async (chainId: string | number, id: string) => {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_STREAM_SUBGRAPH_NAME[chainId] })
 
   return (await sdk.userStreams({ id })).furo_stream_user ?? {}
 }
 
-export const getVestings = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
+export const getUserVestings = async (chainId: string, id: string) => {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_VESTING_SUBGRAPH_NAME[chainId] })
   return (await sdk.userVestings({ id })).furo_vesting_user ?? {}
 }
 
 export const getStream = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_STREAM_SUBGRAPH_NAME[chainId] })
   return (await sdk.stream({ id })).furo_stream_stream ?? {}
 }
 
 export const getStreamTransactions = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return []
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_STREAM_SUBGRAPH_NAME[chainId] })
-  return (await sdk.streamTransactions({ id })).furo_stream_transactions ?? {}
+  return (await sdk.streamTransactions({ where: { stream: id } })).furo_stream_transactions ?? {}
 }
 
 export const getVesting = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return {}
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_VESTING_SUBGRAPH_NAME[chainId] })
   return (await sdk.vesting({ id })).furo_vesting_vesting ?? {}
 }
 
 export const getVestingTransactions = async (chainId: string, id: string) => {
-  const network = Number(chainId)
-  if (!isNetworkSupported(network)) return []
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
+    throw Error(`Unsupported Chain ${chainId}`)
+  }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_VESTING_SUBGRAPH_NAME[chainId] })
-  return (await sdk.vestingTransactions({ id })).furo_vesting_transactions ?? {}
+  return (await sdk.vestingTransactions({ where: { vesting: id } })).furo_vesting_transactions ?? {}
 }

@@ -6,7 +6,7 @@ import { TradeV2, Type as TradeType } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 
-type Complex = [
+export type Complex = [
   {
     tokenIn: string
     pool: string

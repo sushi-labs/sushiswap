@@ -30,11 +30,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
-    `/furo/api/streams/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/streams`,
     fetcher
   )
   const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
-    `/furo/api/vestings/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/vestings`,
     fetcher
   )
   const [ids, tokens] = useMemo(() => {

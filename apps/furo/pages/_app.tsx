@@ -1,11 +1,10 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
 
-import { ChainId } from '@sushiswap/chain'
-import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
-import { client, getProvider } from '@sushiswap/wagmi'
+import { client } from '@sushiswap/wagmi'
 import { Header } from 'components'
+import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
@@ -13,8 +12,8 @@ import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
-import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
-import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
+import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
+import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import store from '../store'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
@@ -32,12 +31,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  const ethereumProvider = getProvider(ChainId.ETHEREUM)
-  const ethereumBlockNumber = useLatestBlockNumber(ethereumProvider)
-
-  const goerliProvider = getProvider(ChainId.GÖRLI)
-  const goerliBlockNumber = useLatestBlockNumber(goerliProvider)
-
   return (
     <>
       <WagmiConfig client={client}>
@@ -45,12 +38,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <ThemeProvider>
             <App.Shell>
               <Header />
-              <MulticallUpdater chainId={ChainId.ETHEREUM} blockNumber={ethereumBlockNumber} />
-              <TokenListUpdater chainId={ChainId.ETHEREUM} />
-              <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
-              <TokenListUpdater chainId={ChainId.GÖRLI} />
+              <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
+              <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
               <Component {...pageProps} />
-
               <App.Footer />
             </App.Shell>
             <ToastContainer className="mt-[50px]" />

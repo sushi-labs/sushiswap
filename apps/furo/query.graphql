@@ -1,5 +1,5 @@
-query userStreams($id: ID!) {
-  furo_stream_user(id: $id) {
+query userStreams($block: Block_height, $id: ID!) {
+  furo_stream_user(block: $block, id: $id) {
     incomingStreams(orderBy: startedAt) {
       id
       __typename
@@ -47,8 +47,8 @@ query userStreams($id: ID!) {
   }
 }
 
-query stream($id: ID!) {
-  furo_stream_stream(id: $id) {
+query stream($block: Block_height, $id: ID!) {
+  furo_stream_stream(block: $block, id: $id) {
     id
     __typename
     status
@@ -73,8 +73,8 @@ query stream($id: ID!) {
   }
 }
 
-query streamTransactions($id: String) {
-  furo_stream_transactions(where: { stream: $id }, orderBy: createdAtTimestamp, orderDirection: desc) {
+query streamTransactions($block: Block_height, $first: Int = 1000, $orderBy:  Transaction_orderBy = createdAtTimestamp, $orderDirection:  OrderDirection = desc, $skip: Int, $where: Transactions_filter) {
+  furo_stream_transactions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     type
     amount
@@ -94,8 +94,8 @@ query streamTransactions($id: String) {
   }
 }
 
-query userVestings($id: ID!) {
-  furo_vesting_user(id: $id) {
+query userVestings($block: Block_height, $id: ID!) {
+  furo_vesting_user(block: $block, id: $id) {
     incomingVestings {
       id
       __typename
@@ -155,8 +155,8 @@ query userVestings($id: ID!) {
   }
 }
 
-query vesting($id: ID!) {
-  furo_vesting_vesting(id: $id) {
+query vesting($block: Block_height, $id: ID!) {
+  furo_vesting_vesting(block: $block, id: $id) {
     id
     __typename
     status
@@ -188,8 +188,8 @@ query vesting($id: ID!) {
   }
 }
 
-query vestingTransactions($id: String) {
-  furo_vesting_transactions(where: { vesting: $id }) {
+query vestingTransactions($block: Block_height, $first: Int = 1000, $orderBy:  Transaction_orderBy = createdAtTimestamp, $orderDirection:  OrderDirection = desc, $skip: Int, $where: Transactions_filter) {
+  furo_vesting_transactions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     type
     amount
@@ -209,15 +209,15 @@ query vestingTransactions($id: String) {
   }
 }
 
-query bentoBoxRebase($id: ID!) {
-  bentobox_rebase(id: $id) {
+query bentoBoxRebase($block: Block_height, $id: ID!) {
+  bentobox_rebase(block: $block, id: $id) {
     id
     base
     elastic
   }
 }
-query bentoBoxRebases($where: Rebase_filter) {
-  bentobox_rebases(where: $where) {
+query bentoBoxRebases($block: Block_height, $first: Int = 1000, $orderBy:  Rebase_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: Rebase_filter) {
+  bentobox_rebases(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     base
     elastic

@@ -1,6 +1,6 @@
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { Dashboard } from 'components'
-import { getStreams, getVestings } from 'lib'
+import { getUserStreams, getUserVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -19,8 +19,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   return {
     props: {
       fallback: {
-        [`/api/streams/${query.chainId}/${query.address}`]: (await getStreams(query.chainId, query.address)) as Streams,
-        [`/api/vestings/${query.chainId}/${query.address}`]: (await getVestings(
+        [`/api/user/${query.chainId}/${query.address}/streams`]: (await getUserStreams(
+          query.chainId,
+          query.address
+        )) as Streams,
+        [`/api/user/${query.chainId}/${query.address}/vestings`]: (await getUserVestings(
           query.chainId,
           query.address
         )) as Vestings,

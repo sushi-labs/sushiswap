@@ -2,8 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 
 import { Token } from './Token'
 
-export type TokenMap = Record<number, Token>
-export type AddressMap = Record<number, string>
+export type TokenMap = Record<number | string, Token>
+export type AddressMap = Record<number | string, string>
 
 export const USDC_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',

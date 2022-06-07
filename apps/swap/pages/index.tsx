@@ -12,7 +12,8 @@ import { Button, classNames, Dots, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
 import { Caption, ConfirmationOverlay, CurrencyInput, Rate, WidgetSettingsOverlay } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
-import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTrade } from 'lib/hooks'
+import { Complex } from 'lib/getComplexParams'
+import { useBentoBoxRebase, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -635,19 +636,10 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
   )
 }
 
-export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; blockNumbers: number[] }) {
-  const chainNames = Object.entries(chain)
-    .filter(([chainId1]) => chainIds.find((chainId2) => Number(chainId1) === Number(chainId2)))
-    .map(([, chain]) => {
-      return chain.name
-    })
-  const blockTimestamps = useCurrentBlockTimestampMultichain(chainIds, blockNumbers)
-  const isReady = blockTimestamps.filter((b) => !!b).length >= 2
-
+export default function Swap({ chainIds }: { chainIds: number[] }) {
   return (
     <div className="mt-40 space-y-12 mb-60">
       <_Swap theme={theme} />
-
       {/* <Widget header={<>Swap</>} /> */}
     </div>
   )
