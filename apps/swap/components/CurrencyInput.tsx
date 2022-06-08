@@ -81,7 +81,8 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
-          <div
+          <button
+            type="button"
             className={classNames(
               theme.secondary.default,
               theme.primary.hover,
@@ -92,7 +93,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
             }
           >
             {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
-          </div>
+          </button>
         </div>
         <div className="flex flex-col">
           <div className="relative flex items-center">
