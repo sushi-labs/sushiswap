@@ -111,8 +111,8 @@ export const FarmsPage: FC = () => {
         farms={farms}
         chainId={activeChain?.id}
         showIsSubscribed={true}
-        loading={isValidatingSubscriptions || isValidatingFarms}
-        placeholder="No incoming incentives found"
+        loading={isValidating}
+        placeholder="No farms found"
       />
     </Layout>
   )

@@ -1,5 +1,6 @@
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
+import { Placeholder } from 'components/Placeholder'
 import { Farm } from 'lib/Farm'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
@@ -20,7 +21,7 @@ const table = createTable().setRowType<Farm>()
 
 const defaultColumns = (tableProps: FarmTableProps) => [
   table.createDisplayColumn({
-    id: 'Token',
+    id: 'Farm',
     header: () => <div className="w-full text-left"> Token </div>,
     cell: (props) => {
       return (
@@ -160,22 +161,50 @@ export const FarmTable: FC<FarmTableProps> = (props) => {
           ))}
         </Table.thead>
         <Table.tbody>
-          {instance.getRowModel().rows.length === 0 && (
-            <Table.tr>
-              {!initialized ? (
-                <td colSpan={columns.length}>
-                  <div className="w-full h-12 animate-pulse bg-slate-800/30" />
-                </td>
-              ) : (
-                <Table.td colSpan={columns.length} className="!text-xs italic text-center text-slate-500">
-                  {placeholder}
+          {instance.getRowModel().rows.length === 0 &&
+            !initialized &&
+            Array.from(Array(4)).map((_, i) => (
+              <Table.tr key={i} className="flex">
+                <Table.td className="h-12">
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                 </Table.td>
-              )}
+                <Table.td className="h-12">
+                  <div className="h-4 rounded-full animate-pulse bg-slate-800" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-4 rounded-full animate-pulse bg-slate-800" />
+                </Table.td>
+                <Table.td className="h-12">
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
+                </Table.td>
+              </Table.tr>
+            ))}
+          {instance.getRowModel().rows.length === 0 && initialized && (
+            <Table.tr>
+              <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
+                <div className="flex justify-center">
+                  <div>
+                    <Placeholder height={140} />
+                  </div>
+                </div>
+                {placeholder}
+              </Table.td>
             </Table.tr>
           )}
           {instance.getRowModel().rows.map((row) => {
             return (
-              <Table.tr key={row.id}>
+              <Table.tr
+                key={row.id}
+                // onClick={() =>
+                //   router.push({
+                //     pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
+                //     query: { chainId: activeChain?.id },
+                //   })
+                // }
+              >
                 {row.getVisibleCells().map((cell) => {
                   return <Table.td key={cell.id}>{cell.renderCell()}</Table.td>
                 })}
