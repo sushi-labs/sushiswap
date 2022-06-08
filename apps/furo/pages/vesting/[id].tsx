@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -24,6 +23,7 @@ import { useAccount, useConnect } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     props: {
       fallback: {
         [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/transactions/${chainId}/${id}`]: (await getVestingTransactions(
+        [`/furo/api/vesting/${chainId}/${id}/transactions`]: (await getVestingTransactions(
           chainId as string,
           id as string
         )) as TransactionDTO[],
@@ -70,8 +70,12 @@ const _VestingPage: FC = () => {
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
-  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`)
-  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`)
+  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/vesting/${chainId}/${id}/transactions`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
   const { data: rebase } = useSWR<Rebase>(
     () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
     (url) => fetch(url).then((response) => response.json())

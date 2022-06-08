@@ -1,7 +1,6 @@
 import { Tab } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
-import { Rebase } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import { toToken } from 'lib'
@@ -14,6 +13,7 @@ import { Streams, Vestings } from 'types'
 import { useAccount, useConnect } from 'wagmi'
 
 import { FuroTable, FuroTableType } from './FuroTable'
+import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -30,11 +30,11 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
   const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
-    `/furo/api/streams/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/streams`,
     fetcher
   )
   const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
-    `/furo/api/vestings/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/vestings`,
     fetcher
   )
   const [ids, tokens] = useMemo(() => {
@@ -71,8 +71,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   // Prefetch stream/vesting pages
   useEffect(() => {
-    void router.prefetch('/furo/stream/[id]')
-    void router.prefetch('/furo/vesting/[id]')
+    void router.prefetch('/stream/[id]')
+    void router.prefetch('/vesting/[id]')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

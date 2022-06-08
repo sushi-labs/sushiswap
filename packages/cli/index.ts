@@ -1,6 +1,7 @@
 import { program } from 'commander'
 
-import { bar, chef } from './actions'
+import { bar, chef, maker } from './actions'
+import { MAKER_CONFIG } from './config'
 
 program.version('0.0.0').description('Sushi CLI')
 
@@ -12,6 +13,13 @@ program
   .option('-v,--version <version>', 'version', '1')
   .option('-a,--all', 'all', false)
   .action(chef)
+
+program
+  .command('maker')
+  .description('get maker LPs for all available networks or a specific network')
+  .option('-n,--network <NETWORK>', 'network available: '.concat(Object.keys(MAKER_CONFIG).join(', ')))
+  .option('-v,--verbose', 'includes table data')
+  .action(maker)
 
 program.parse(process.argv)
 

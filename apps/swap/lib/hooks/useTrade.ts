@@ -6,13 +6,14 @@ import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
+  TradeType,
   TradeV1,
   TradeV2,
-  Type as TradeType,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
+import { useFeeData } from 'wagmi'
 
 import { PoolState, useGetAllExistedPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'
@@ -36,18 +37,17 @@ export function useTrade(
   mainCurrency?: Currency,
   otherCurrency?: Currency
 ): UseTradeOutput {
-  // const { data: feeData } = useFeeData({
-  //   chainId,
-  // })
-  // console.log('fee data', feeData)
+  const { data } = useFeeData({
+    chainId,
+  })
 
-  const data = useMemo(
-    () => ({
-      gasPrice: BigNumber.from(1000000),
-      // gasPrice: parseUnits('1', 'wei'),
-    }),
-    []
-  )
+  // const data = useMemo(
+  //   () => ({
+  //     gasPrice: BigNumber.from(1000000),
+  //     // gasPrice: parseUnits('1', 'wei'),
+  //   }),
+  //   []
+  // )
 
   const [currencyIn, currencyOut] = useMemo(
     () => (tradeType === TradeType.EXACT_INPUT ? [mainCurrency, otherCurrency] : [otherCurrency, mainCurrency]),

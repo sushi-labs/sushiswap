@@ -3,7 +3,7 @@ import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
 import { MultiRoute, RToken } from '@sushiswap/tines'
 import invariant from 'tiny-invariant'
 
-import { Type } from './Type'
+import { TradeType as Type } from './TradeType'
 
 /**
  * Represents a trade executed against a list of pools.
@@ -127,6 +127,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
     }
   }
 
+  // TODO: These make no sense
   public static bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
     route: MultiRoute,
     currencyAmountIn: Amount<TInput>,

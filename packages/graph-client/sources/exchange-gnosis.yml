@@ -1,0 +1,11 @@
+name: exchange-gnosis
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/xdai-exchange
+transforms:
+  - prefix:
+      value: XDAI_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

@@ -2,7 +2,6 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '@sushiswap/graph-client'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { FuroStatus, Stream, Vesting } from 'lib'
@@ -12,6 +11,7 @@ import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Placeholder } from './Placeholder'
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,
@@ -92,7 +92,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
             {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}{' '}
-            <span className="text-slate-500 font-medium">{props.row.original?.token.symbol}</span>
+            <span className="font-medium text-slate-500">{props.row.original?.token.symbol}</span>
           </Typography>
         </div>
       )
@@ -215,22 +215,22 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             Array.from(Array(4)).map((_, i) => (
               <Table.tr key={i} className="flex">
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-800" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-800" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                 </Table.td>
                 <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
+                  <div className="h-4 rounded-full animate-pulse bg-slate-800" />
                 </Table.td>
               </Table.tr>
             ))}

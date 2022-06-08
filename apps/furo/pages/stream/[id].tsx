@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -25,6 +24,7 @@ import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
 
 import { ChartHover } from '../../types'
+import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { c
     props: {
       fallback: {
         [`/furo/api/stream/${chainId}/${id}`]: stream,
-        [`/furo/api/transactions/${chainId}/${id}`]: (await getStreamTransactions(
+        [`/furo/api/stream/${chainId}/${id}/transactions`]: (await getStreamTransactions(
           chainId as string,
           id as string
         )) as TransactionDTO[],
@@ -70,7 +70,7 @@ const _Streams: FC = () => {
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
-  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`, (url) =>
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
