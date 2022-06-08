@@ -1,7 +1,7 @@
 import { FallbackProvider, StaticJsonRpcProvider, WebSocketProvider } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { QueryClient } from 'react-query'
-import { Client, configureChains, createClient, defaultChains, defaultL2Chains } from 'wagmi'
+import { allChains, Client, configureChains, createClient } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -32,6 +32,25 @@ const otherChains = [
     },
   },
   {
+    id: ChainId.BSC,
+    name: 'Binance Smart Chain',
+    network: 'bsc',
+    nativeCurrency: { name: 'Binance Chain Native Token', symbol: 'BNB', decimals: 18 },
+    rpcUrls: {
+      default: 'https://bsc-dataseed1.binance.org',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Bscscan',
+        url: 'https://bscscan.com',
+      },
+      default: {
+        name: 'Bscscan',
+        url: 'https://bscscan.com',
+      },
+    },
+  },
+  {
     id: ChainId.FANTOM,
     name: 'Fantom',
     network: 'fantom',
@@ -50,10 +69,86 @@ const otherChains = [
       },
     },
   },
+  {
+    id: ChainId.GNOSIS,
+    name: 'Gnosis Chain',
+    network: 'gnosis',
+    nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.gnosischain.com',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Gnosis Blockchain Explorer',
+        url: 'https://blockscout.com/xdai/mainnet',
+      },
+      default: {
+        name: 'Gnosis Blockchain Explorer',
+        url: 'https://blockscout.com/xdai/mainnet',
+      },
+    },
+  },
+  {
+    id: ChainId.HARMONY,
+    name: 'Gnosis Chain',
+    network: 'gnosis',
+    nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
+    rpcUrls: {
+      default: 'https://s1.api.harmony.one',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Harmony Blockchain Explorer',
+        url: 'https://explorer.harmony.one',
+      },
+      default: {
+        name: 'Harmony Blockchain Explorer',
+        url: 'https://explorer.harmony.one',
+      },
+    },
+  },
+  {
+    id: ChainId.MOONBEAM,
+    name: 'Moonbeam',
+    network: 'moonbeam',
+    nativeCurrency: { name: 'Glimmer', symbol: 'GLMR', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.api.moonbeam.network',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Moonscan',
+        url: 'https://moonbeam.moonscan.io',
+      },
+      default: {
+        name: 'Moonscan',
+        url: 'https://moonbeam.moonscan.io',
+      },
+    },
+  },
+  {
+    id: ChainId.MOONRIVER,
+    name: 'Moonriver',
+    network: 'moonriver',
+    nativeCurrency: { name: 'Moonriver', symbol: 'MOVR', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.api.moonriver.moonbeam.network',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Moonscan',
+        url: 'https://moonriver.moonscan.io',
+      },
+      default: {
+        name: 'Moonscan',
+        url: 'https://moonriver.moonscan.io',
+      },
+    },
+  },
 ]
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [...defaultChains, ...defaultL2Chains, ...otherChains],
+  [...allChains, ...otherChains],
   [
     alchemyProvider({ alchemyId }),
     // infuraProvider({ infuraId }),
