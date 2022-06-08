@@ -46,8 +46,10 @@ export abstract class Cooker {
   readonly values: BigNumber[] = []
   readonly datas: string[] = []
   readonly user: string
-  constructor(user: string) {
+  readonly debug: boolean
+  constructor({ user, debug = false }: { user: string; debug?: boolean }) {
     this.user = user
+    this.debug = debug
   }
   add(action: Action, data: string, value: BigNumberish = Zero): void {
     this.actions.push(action)
@@ -93,9 +95,7 @@ export class SushiXSwap extends Cooker {
     contract: SushiXSwapContract
     debug?: boolean
   }) {
-    super(user)
-    // this.account = account
-    // this.user = account.address as string
+    super({ user, debug })
 
     this.srcToken = srcToken
     this.dstToken = dstToken
@@ -319,21 +319,23 @@ export class SushiXSwap extends Cooker {
       ]
     )
 
-    // console.log('cook teleport', [
-    //   STARGATE_CHAIN_ID[this.dstChainId],
-    //   STARGATE_USDC_ADDRESS[this.srcChainId],
-    //   STARGATE_POOL_ID[this.srcChainId][STARGATE_USDC_ADDRESS[this.srcChainId]],
-    //   STARGATE_POOL_ID[this.dstChainId][STARGATE_USDT_ADDRESS[this.dstChainId]],
-    //   0,
-    //   0,
-    //   0,
-    //   this.dstMasterContract,
-    //   this.user,
-    //   500000,
-    //   this.teleporter.actions,
-    //   this.teleporter.values.map((value) => BigNumber.from(value)),
-    //   this.teleporter.datas,
-    // ])
+    if (this.debug) {
+      console.debug('cook teleport', [
+        STARGATE_CHAIN_ID[this.dstChainId],
+        srcBridgeToken.address,
+        STARGATE_POOL_ID[this.srcChainId][srcBridgeToken.address],
+        STARGATE_POOL_ID[this.dstChainId][dstBridgeToken.address],
+        0,
+        0,
+        0,
+        this.dstMasterContract,
+        this.user,
+        500000,
+        this.teleporter.actions,
+        this.teleporter.values.map((value) => BigNumber.from(value)),
+        this.teleporter.datas,
+      ])
+    }
 
     this.add(Action.STARGATE_TELEPORT, data)
   }
@@ -361,10 +363,13 @@ export class SushiXSwap extends Cooker {
 
     // Add more validation, e.g. if teleport action is given, ensure src & dst chain are different
 
-    console.log([this.actions, this.values, this.datas], this.teleporter)
+    if (this.debug) {
+      console.debug([this.actions, this.values, this.datas], this.teleporter)
+    }
 
     try {
       console.log('Before fee')
+
       const [fee] = this.crossChain
         ? await this.contract.getFee(
             STARGATE_CHAIN_ID[this.dstChainId],
