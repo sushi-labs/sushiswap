@@ -1,4 +1,4 @@
-import { Dashboard } from 'components'
+import { BackgroundVector, Dashboard, Layout } from 'components'
 import { getUserStreams, getUserVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -7,6 +7,7 @@ import { SWRConfig } from 'swr'
 import { Streams, Vestings } from 'types'
 
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
+import { ChainId } from '@sushiswap/chain'
 
 interface Props {
   fallback?: {
@@ -35,12 +36,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
 
 const UserDashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   const router = useRouter()
-  const chainId = Number(router.query.chainId)
+  const chainId = Number(router.query.chainId) || ChainId.ETHEREUM
   const address = router.query.address as string
+  const show = router.query.show
 
   return (
     <SWRConfig value={{ fallback }}>
-      <Dashboard chainId={chainId} address={address} />
+      <Layout
+        backdrop={
+          <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
+            <BackgroundVector width="100%" preserveAspectRatio="none" />
+          </div>
+        }
+      >
+        <Dashboard chainId={chainId} address={address} showOutgoing={show === 'outgoing'} />
+      </Layout>
     </SWRConfig>
   )
 }
