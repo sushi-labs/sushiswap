@@ -113,7 +113,7 @@ export class SushiXSwap extends Cooker {
     this.srcMasterContract = SUSHI_X_SWAP_ADDRESS[this.srcToken.chainId]
     this.dstMasterContract = SUSHI_X_SWAP_ADDRESS[this.dstToken.chainId]
 
-    this.teleporter = new Teleporter(user)
+    this.teleporter = new Teleporter({ user, debug })
   }
 
   // Transfers Scenarios
@@ -401,8 +401,8 @@ export class SushiXSwap extends Cooker {
 }
 
 export class Teleporter extends Cooker {
-  constructor(user: string) {
-    super(user)
+  constructor({ user, debug = false }: { user: string; debug?: boolean }) {
+    super({ user, debug })
   }
   dstWithdraw(token: Currency, to: string = this.user, amount: BigNumberish = Zero): void {
     this.add(
