@@ -6,6 +6,8 @@ query ArbitrumStakingFarms($where: Incentive_filter) {
       name
       symbol
       decimals
+      type
+      assets
     }
     incentives(where: $where) {
       id
@@ -17,12 +19,15 @@ query ArbitrumStakingFarms($where: Incentive_filter) {
         name
         symbol
         decimals
+        type
+        assets
       }
       rewardToken {
         id
         name
         symbol
         decimals
+        type
       }
       createdBy {
         id
@@ -56,12 +61,15 @@ query ArbitrumStakingSubscriptions($id: ID!) {
             name
             symbol
             decimals
+            type
+            assets
           }
           rewardToken {
             id
             name
             symbol
             decimals
+            type
           }
           createdBy {
             id
@@ -114,12 +122,15 @@ query ArbitrumStakingUserFarms($farmIds: [ID]!) {
         name
         symbol
         decimals
+        type
+        assets
       }
       rewardToken {
         id
         name
         symbol
         decimals
+        type
       }
       createdBy {
         id
