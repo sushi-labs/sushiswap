@@ -1,11 +1,11 @@
-import { Interface } from '@ethersproject/abi'
+import { AddressZero } from '@ethersproject/constants'
 import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
-import { BentoBox } from '@sushiswap/bentobox/typechain'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
 import { useContract, useProvider } from 'wagmi'
 
-export const BENTOBOX_INTERFACE = new Interface(bentoBoxArtifact.abi)
-
+// TODO: Move to deployments
 export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
   [ChainId.ROPSTEN]: '0x6BdD85290001C8Aef74f35A7606065FA15aD5ACF',
@@ -26,12 +26,21 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.MOONBEAM]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
   [ChainId.MOONRIVER]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
   [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  [ChainId.KAVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
 
-export function useBentoBoxContract(chainId: ChainId) {
-  return useContract<BentoBox>({
-    addressOrName: BENTOBOX_ADDRESS[chainId],
-    contractInterface: BENTOBOX_INTERFACE,
+export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
+  addressOrName:
+    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+      ?.address ?? AddressZero,
+  contractInterface:
+    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+      ?.abi ?? bentoBoxArtifact.abi,
+})
+
+export function useBentoBoxContract(chainId: number | undefined) {
+  return useContract<BentoBoxV1>({
+    ...getBentoBoxContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })
 }

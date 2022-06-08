@@ -97,46 +97,61 @@ export enum ChainId {
   MOONBEAM = 1284,
   OPTIMISM = 10,
   OPTIMISM_KOVAN_TESTNET = 69,
+  KAVA = 2222,
 }
 
 export type AddressMap = { [chainId: number]: string }
 
 export class Chain implements Chain {
-  etTxUrl(txHash: string) {
-    if (!this.explorers) return
+  public static from(chainId: number) {
+    return chains[chainId]
+  }
+  constructor(data: Chain) {
+    Object.assign(this, data)
+  }
+  getTxUrl(txHash: string): string {
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
         return `${explorer.url}/tx/${txHash}`
       }
     }
+    return ''
   }
-  getBlockUrl(blockHashOrHeight: string) {
-    if (!this.explorers) return
+  getBlockUrl(blockHashOrHeight: string): string {
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
         return `${explorer.url}/block/${blockHashOrHeight}`
       }
     }
+    return ''
   }
-  getTokenUrl(tokenAddress: string) {
-    if (!this.explorers) return
+  getTokenUrl(tokenAddress: string): string {
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
         return `${explorer.url}/token/${tokenAddress}`
       }
     }
+    return ''
   }
-  getAccountUrl(accountAddress: string) {
-    if (!this.explorers) return
+  getAccountUrl(accountAddress: string): string {
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
-        return `${explorer.url}/account/${accountAddress}`
+        return `${explorer.url}/address/${accountAddress}`
       }
     }
+    return ''
   }
 }
 
+export const chainIds = json.map((chain) => chain.chainId)
+
 // Chain Id => Chain mapping
-export const chains = Object.fromEntries((json as Chain[]).map((data): [number, Chain] => [data.chainId, data]))
+export const chains = Object.fromEntries(
+  (json as Chain[]).map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+)
 
 export default chains

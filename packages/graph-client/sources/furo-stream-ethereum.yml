@@ -1,0 +1,14 @@
+name: furo-stream-ethereum
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-ethereum
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: ETHEREUM_STREAM_
+      includeRootOperations: true
+      includeTypes: false
+  # - blockTracking:
+  #     validateSchema: true
+  - autoPagination:
+      validateSchema: true

@@ -1,0 +1,114 @@
+query ArbitrumUserVestings($id: ID!) {
+  ARBITRUM_VESTING_user(id: $id) {
+    incomingVestings {
+      id
+      __typename
+      status
+      steps
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      cliffDuration
+      stepDuration
+      stepAmount
+      cliffAmount
+      totalAmount
+      withdrawnAmount
+      fromBentoBox
+      token {
+        id
+        name
+        symbol
+        decimals
+      }
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+    }
+    outgoingVestings {
+      id
+      __typename
+      status
+      steps
+      startedAt
+      expiresAt
+      modifiedAtTimestamp
+      cliffDuration
+      stepDuration
+      stepAmount
+      cliffAmount
+      totalAmount
+      withdrawnAmount
+      fromBentoBox
+      token {
+        id
+        name
+        symbol
+        decimals
+      }
+      recipient {
+        id
+      }
+      createdBy {
+        id
+      }
+    }
+  }
+}
+
+query ArbitrumVesting($id: ID!) {
+  ARBITRUM_VESTING_vesting(id: $id) {
+    id
+    __typename
+    status
+    steps
+    startedAt
+    expiresAt
+    modifiedAtTimestamp
+    cliffDuration
+    stepDuration
+    stepAmount
+    cliffAmount
+    totalAmount
+    withdrawnAmount
+    fromBentoBox
+    txHash
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    status
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+  }
+}
+
+query ArbitrumVestingTransactions($id: String) {
+  ARBITRUM_VESTING_transactions(where: { vesting: $id }) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    txHash
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    to {
+      id
+    }
+  }
+}

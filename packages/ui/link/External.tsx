@@ -50,7 +50,7 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
         // })
       }
     },
-    [href, target]
+    [target]
   )
   return (
     <a

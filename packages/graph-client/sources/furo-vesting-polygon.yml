@@ -1,0 +1,12 @@
+name: furo-vesting-polygon
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-polygon
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: POLYGON_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

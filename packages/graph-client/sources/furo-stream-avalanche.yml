@@ -1,0 +1,12 @@
+name: furo-stream-avalanche
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-avalanche
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: AVALANCHE_STREAM_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

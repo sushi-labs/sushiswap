@@ -1,3 +1,46 @@
-sources: !includes ./graph/sources
+sources:
+  - name: FuroStream
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/furo-stream-ethereum}
+    transforms:
+      - prefix:
+          value: furo_stream_
+          includeRootOperations: true
+          includeTypes: false
+      - autoPagination:
+          validateSchema: true
+  - name: FuroVesting
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushiswap/furo-vesting-ethereum}
+    transforms:
+      - prefix:
+          value: furo_vesting_
+          includeRootOperations: true
+          includeTypes: false
+      - autoPagination:
+          validateSchema: true
+  - name: BentoBox
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:matthewlilley/bentobox-ethereum}
+    transforms:
+      - addSourceName: true
+      - prefix:
+          value: bentobox_
+          includeRootOperations: true
+          includeTypes: false
+      - autoPagination:
+          validateSchema: true
+
+# additionalTypeDefs: |
+#   extend type Pair {
+#     chainId: ID!
+#   }
+
+# additionalResolvers:
+#   - ./resolvers.ts
+
 documents:
-  - './graph/queries/*.graphql'
+  - ./query.graphql

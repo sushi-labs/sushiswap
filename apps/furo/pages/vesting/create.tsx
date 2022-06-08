@@ -1,10 +1,13 @@
-import Layout from 'components/Layout'
-import { CreateForm } from 'features/vesting/CreateForm'
+import { Breadcrumb, Layout } from 'components'
+import { CreateForm } from 'components/vesting'
 
 const Create = () => {
   return (
     <Layout>
-      <CreateForm />
+      <Breadcrumb title="Create Vesting" />
+      <div className="mt-6">
+        <CreateForm />
+      </div>
     </Layout>
   )
 }

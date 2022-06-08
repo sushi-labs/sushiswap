@@ -90,6 +90,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
 
     // this.priceImpact = computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount)
 
+    // this.route.priceImpact * 10000
     this.priceImpact = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
   }
 

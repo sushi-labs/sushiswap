@@ -1,11 +1,11 @@
 import React, { Children, cloneElement, FC, isValidElement } from 'react'
 
-import { StepContent } from './StepContent'
-import { StepLabel } from './StepLabel'
+import { StepContentInterface } from './StepContent'
+import { StepLabelInterface } from './StepLabel'
 import { StepDetails } from './Stepper'
 
-interface StepInterface extends StepDetails {
-  children: [React.ReactElement<typeof StepLabel>, React.ReactElement<typeof StepContent>]
+export interface StepInterface extends StepDetails {
+  children: Array<React.ReactElement<StepLabelInterface | StepContentInterface>>
 }
 
 export const Step: FC<StepInterface> = ({ _index, _active, _last, children }) => {

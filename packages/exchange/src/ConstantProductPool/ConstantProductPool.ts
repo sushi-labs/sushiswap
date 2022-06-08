@@ -17,7 +17,7 @@ export class ConstantProductPool implements Pool {
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
   private readonly MAX_FEE = JSBI.BigInt(10000)
 
-  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee = Fee.DEFAULT, twap: boolean = true): string {
+  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee = Fee.DEFAULT, twap = true): string {
     return computeConstantProductPoolAddress({
       factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.ConstantProductPoolFactory.address,
       tokenA,
@@ -27,7 +27,7 @@ export class ConstantProductPool implements Pool {
     })
   }
 
-  public constructor(AmountA: Amount<Token>, AmountB: Amount<Token>, fee: Fee = Fee.DEFAULT, twap: boolean = true) {
+  public constructor(AmountA: Amount<Token>, AmountB: Amount<Token>, fee: Fee = Fee.DEFAULT, twap = true) {
     const Amounts = AmountA.currency.sortsBefore(AmountB.currency) // does safety checks
       ? [AmountA, AmountB]
       : [AmountB, AmountA]
@@ -286,12 +286,12 @@ export class ConstantProductPool implements Pool {
     invariant(liquidity.currency.equals(this.liquidityToken), 'LIQUIDITY')
     invariant(JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient), 'LIQUIDITY')
 
-    let _totalSupply = JSBI.add(
+    const _totalSupply = JSBI.add(
       totalSupply.quotient,
       this.getMintFee(this.reserve0.quotient, this.reserve1.quotient, totalSupply.quotient)
     )
-    let amount0 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve0.quotient), _totalSupply)
-    let amount1 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve1.quotient), _totalSupply)
+    const amount0 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve0.quotient), _totalSupply)
+    const amount1 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve1.quotient), _totalSupply)
 
     if (token === this.token1) {
       return Amount.fromRawAmount(

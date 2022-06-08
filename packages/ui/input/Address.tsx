@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 
 import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
 
@@ -11,7 +11,7 @@ export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'as' | 'onCha
 
 const matchSpaces = /\s+/g
 
-export const Address: FC<AddressProps> = forwardRef<HTMLInputElement, AddressProps>(
+export const Address = forwardRef<HTMLInputElement, AddressProps>(
   (
     {
       value,

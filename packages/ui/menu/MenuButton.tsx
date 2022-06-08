@@ -11,14 +11,9 @@ export type MenuButton = ExtractProps<typeof HeadlessMenu.Button> & {
 export const MenuButton: FC<MenuButton> = ({ className, children, ...props }) => {
   return (
     <HeadlessMenu.Button as={React.Fragment}>
-      {React.createElement(
-        Button,
-        {
-          ...props,
-          className: className,
-        },
-        children
-      )}
+      <Button {...props} className={className}>
+        {children}
+      </Button>
     </HeadlessMenu.Button>
   )
 }

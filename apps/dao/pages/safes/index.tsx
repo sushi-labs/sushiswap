@@ -42,6 +42,7 @@ const SafeTable = () => {
         accessor: 'address',
         width: 120,
         Cell: (props) => {
+          // eslint-disable-next-line no-unsafe-optional-chaining
           const { explorers } = chain?.[props.row.original.chainId]
           return (
             <ExternalLink href={`${explorers?.[0]?.url}/address/${props.value?.value}`}>
@@ -94,6 +95,7 @@ const SafeTable = () => {
         accessor: 'owners',
         minWidth: 300,
         Cell: (props) => {
+          // eslint-disable-next-line no-unsafe-optional-chaining
           const { explorers } = chain?.[props.row.original.chainId]
           return (
             <div className="flex space-x-2">
@@ -195,14 +197,17 @@ const SafeTable = () => {
               <Table.thr {...headerGroup.getHeaderGroupProps()} key={`thr-${i}`}>
                 {headerGroup.headers.map((column, i) => (
                   <Table.th
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore TYPE NEEDS FIXING
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                     key={`th-${i}`}
                   >
                     {column.render('Header')}
                     <span className="inline-block ml-1 align-middle">
+                      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                       {/*@ts-ignore TYPE NEEDS FIXING*/}
                       {column.isSorted ? (
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore TYPE NEEDS FIXING
                         column.isSortedDesc ? (
                           <ArrowDownIcon width={12} />

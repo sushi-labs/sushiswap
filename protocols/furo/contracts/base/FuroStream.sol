@@ -7,7 +7,7 @@ import "../interfaces/IFuroStream.sol";
 contract FuroStream is
     IFuroStream,
     ERC721("Furo Stream", "FUROSTREAM"),
-    BoringBatchable,
+    Multicall,
     BoringOwnable
 {
     IBentoBoxMinimal public immutable bentoBox;
@@ -48,7 +48,7 @@ contract FuroStream is
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override {
+    ) external payable override {
         bentoBox.setMasterContractApproval(
             user,
             address(this),

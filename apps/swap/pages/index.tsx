@@ -1,45 +1,40 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { Zero } from '@ethersproject/constants'
-import { CogIcon } from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronRightIcon } from '@heroicons/react/outline'
 import chain, { ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, Price, tryParseAmount, USDT } from '@sushiswap/currency'
+import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeV1, TradeV2, Type as TradeType } from '@sushiswap/exchange'
-import { useIsMounted } from '@sushiswap/hooks'
-import { Percent, ZERO } from '@sushiswap/math'
-import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button, classNames, Dots, Input, Loader, SushiIcon, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, NetworkSelector, TokenSelector, Wallet } from '@sushiswap/wagmi'
-import { SUSHI_X_SWAP_ADDRESS } from 'config'
-import { BigNumber, BigNumberish } from 'ethers'
-import { useBentoBoxRebase, useCurrentBlockTimestampMultichain, useTokens, useTrade } from 'hooks'
-import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { SushiXSwap } from 'SushiXSwap'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
+import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
+import {
+  Caption,
+  ConfirmationOverlay,
+  CurrencyInput,
+  OverlayContent,
+  OverlayHeader,
+  Rate,
+  WidgetSettingsOverlay,
+} from 'components'
+import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
+import { Complex } from 'lib/getComplexParams'
+import { useBentoBoxRebase, useTrade } from 'lib/hooks'
+import { useTokens } from 'lib/state/token-lists'
+import { SushiXSwap } from 'lib/SushiXSwap'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { Theme } from 'types'
+import { useAccount, useFeeData, useNetwork } from 'wagmi'
 
-import { Caption, Rate } from '../components'
+import { Route } from '../components/Route'
 
-const defaultConfig = {
-  styles: {
-    root: undefined,
-    title: undefined,
-  },
-  classes: {
-    root: 'flex flex-col max-w-sm mx-auto bg-slate-700 rounded-xl relative shadow-md shadow-black/10 overflow-hidden',
-    title: '',
-  },
-}
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
 
-interface Config {
-  styles: {
-    root: CSSProperties | undefined
-    title: CSSProperties | undefined
-  }
-  classes: {
-    root: string
-    title: string
-  }
+const theme: Theme = {
+  ...defaultTheme,
 }
 
 export function getBigNumber(value: number): BigNumber {
@@ -54,52 +49,57 @@ export function getBigNumber(value: number): BigNumber {
   return value > 0 ? res : res.mul(-1)
 }
 
-function _Swap({ config = defaultConfig }: { config?: Config }) {
+interface Swap {
+  width?: number | string
+  theme?: Theme
+}
+
+const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
   const { data: account } = useAccount()
-  const { data: signer } = useSigner()
   const { activeChain, switchNetwork } = useNetwork()
-  const isMounted = useIsMounted()
-  const inputRef = useRef<HTMLInputElement>()
 
   const [isWritePending, setIsWritePending] = useState<boolean>()
+
   const [signature, setSignature] = useState<Signature>()
-  const [srcChainId, setSrcChainId] = useState(ChainId.ARBITRUM)
-  const [dstChainId, setDstChainId] = useState(ChainId.OPTIMISM)
 
-  const [srcTokenSelectorOpen, setSrcTokenSelectorOpen] = useState(false)
-  const [dstTokenSelectorOpen, setDstTokenSelectorOpen] = useState(false)
-  const srcTokens = useTokens(srcChainId)
-  const dstTokens = useTokens(dstChainId)
+  const [srcChainId, setSrcChainId] = useState(ChainId.AVALANCHE)
+  const [dstChainId, setDstChainId] = useState(ChainId.FANTOM)
 
-  const crossChain = srcChainId !== dstChainId
+  const feeData = useFeeData({
+    chainId: srcChainId,
+  })
+
   const [srcToken, setSrcToken] = useState<Currency>(Native.onChain(srcChainId))
-  const [dstToken, setDstToken] = useState<Currency>(USDT[dstChainId])
+  const [dstToken, setDstToken] = useState<Currency>(Native.onChain(dstChainId))
 
-  // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
-  // else take first stargate bridge token as srcBridgeToken
-  const srcBridgeToken = STARGATE_BRIDGE_TOKENS[srcChainId].includes(srcToken.wrapped)
-    ? srcToken.wrapped
-    : STARGATE_BRIDGE_TOKENS[srcChainId][0]
-
-  // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
-  // else take first stargate bridge token as dstBridgeToken
-  const dstBridgeToken = STARGATE_BRIDGE_TOKENS[dstChainId].includes(dstToken.wrapped)
-    ? dstToken.wrapped
-    : STARGATE_BRIDGE_TOKENS[dstChainId][0]
+  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
+  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>('')
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
 
-  // const [amountIn, setAmountIn] = useState<Amount<Type>>()
-  // const [amountOut, setAmountOut] = useState<Amount<Type>>()
-
   const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
   const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
 
-  const [srcSelectorOpen, setSrcSelectorOpen] = useState(false)
-  const [dstSelectorOpen, setDstSelectorOpen] = useState(false)
+  const srcTokens = useTokens(srcChainId)
+  const dstTokens = useTokens(dstChainId)
 
-  const { rebase: srcBentoBoxRebase } = useBentoBoxRebase(srcChainId, srcToken)
+  const { rebase: srcTokenRebase } = useBentoBoxRebase(srcChainId, srcToken)
+
+  const contract = useSushiXSwapContract(srcChainId)
+
+  // Computed
+  const crossChain = srcChainId !== dstChainId
+
+  // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
+  // else take first stargate bridge token as srcBridgeToken
+  const srcBridgeToken =
+    srcToken.isToken && isStargateBridgeToken(srcToken) ? srcToken : STARGATE_BRIDGE_TOKENS[srcChainId][0]
+
+  // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
+  // else take first stargate bridge token as dstBridgeToken
+  const dstBridgeToken =
+    dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
 
   const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
@@ -114,13 +114,17 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     crossChain ? srcBridgeToken : dstToken
   )
 
-  const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
-  const srcMinimumAmountOut = srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
-
   // 5bps sg fee
-  // const STARGATE_FEE = new Percent(5, 10_000) // .05%
-  // const sgFee = srcMinimumAmountOut?.multiply(STARGATE_FEE)
-  const srcAmountOutMinusStargateFee = srcMinimumAmountOut?.multiply(new Percent(9_995, 10_000)) // 99.95%
+  const STARGATE_FEE = new Percent(5, 10_000) // .05%
+
+  const srcMinimumAmountOut =
+    (crossChain && !isStargateBridgeToken(srcToken)) || !crossChain
+      ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
+      : srcAmount
+
+  const srcAmountOutMinusStargateFee = crossChain
+    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOut.multiply(STARGATE_FEE))
+    : srcMinimumAmountOut
 
   const dstAmountIn = useMemo(() => {
     return tryParseAmount(srcAmountOutMinusStargateFee?.toFixed(), dstBridgeToken)
@@ -129,10 +133,18 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
   // dstTrade
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
 
-  const dstMinimumAmountOut = crossChain ? dstTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcMinimumAmountOut
+  const dstMinimumAmountOut =
+    crossChain && !isStargateBridgeToken(dstToken)
+      ? dstTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
+      : srcMinimumAmountOut
 
-  console.log('SRC AMOUNT IN', srcAmount?.toFixed())
-  console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+  const price =
+    srcAmount && dstMinimumAmountOut
+      ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
+      : undefined
+
+  // console.log('SRC AMOUNT IN', srcAmount?.toFixed())
+  // console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
   // console.log('SG FEE', sgFee?.toFixed())
   // console.log('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusFee?.toFixed())
   // console.log('DST AMOUNT IN', dstAmountIn?.toFixed())
@@ -140,20 +152,41 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
 
   // console.log('src trade', srcTrade, 'dst trade', dstTrade)
 
-  console.log('src trade', srcTrade)
+  // console.log({
+  //   srcToken,
+  //   srcTrade,
+  //   dstTrade,
+  //   dstBridgeToken,
+  //   dstToken,
+  //   srcChainId,
+  //   dstChainId,
+  // })
 
   useEffect(() => {
-    setDstTypedAmount(dstMinimumAmountOut?.toFixed() ?? '')
+    setDstTypedAmount(dstMinimumAmountOut?.toSignificant(6) ?? '')
   }, [dstMinimumAmountOut])
 
-  console.log({ crossChain, srcMinimumAmountOut })
-
   const execute = useCallback(() => {
-    if (!srcChainId || !srcAmount || !dstChainId || !account || !account.address || !signer || !srcBentoBoxRebase) {
+    if (
+      !srcChainId ||
+      !srcAmount ||
+      !srcMinimumAmountOut ||
+      !dstChainId ||
+      !dstMinimumAmountOut ||
+      !account ||
+      !account.address ||
+      !srcTokenRebase ||
+      !contract
+    ) {
       return
     }
 
+    const srcShare = srcAmount.toShare(srcTokenRebase)
+
+    const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+
     setIsWritePending(true)
+
     // Transfers Scenarios
     // T1: BentoBox - Stargate - BentoBox
     // T2: Wallet - Stargate - Wallet
@@ -161,68 +194,44 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     // T4: BentoBox - Stargate - Wallet
 
     // Cross Chain Swap Scenarios
-    // S1: BentoBox - Swap - Stargate - Swap - BentoBox
-    // S2: Wallet - Swap - Stargate - Swap - Wallet
-    // S3: Wallet - Swap - Stargate - Swap - BentoBox
-    // S4: BentoBox - Swap - Stargate - Swap - Wallet
+    // X1: BentoBox - Swap - Stargate - Swap - BentoBox
+    // X2: Wallet - Swap - Stargate - Swap - Wallet
+    // X3: Wallet - Swap - Stargate - Swap - BentoBox
+    // X4: BentoBox - Swap - Stargate - Swap - Wallet
 
-    const cooker = new SushiXSwap(srcChainId, dstChainId, account.address, signer)
+    // Non Cross Chain Swap Scenarios
+    // S1: BentoBox - Swap - BentoBox
+    // S2: Wallet - Swap - Wallet
+    // S3: Wallet - Swap - BentoBox
+    // S4: BentoBox - Swap - Wallet
+
+    const cooker = new SushiXSwap({
+      contract,
+      srcToken,
+      dstToken,
+      srcUseBentoBox,
+      dstUseBentoBox,
+      user: account.address,
+    })
 
     if (signature) {
       console.log('cook set master contract address', signature)
       cooker.setMasterContractApproval(signature)
     }
 
-    if (
-      crossChain &&
-      STARGATE_BRIDGE_TOKENS[srcChainId].includes(srcToken.wrapped) &&
-      STARGATE_BRIDGE_TOKENS[dstChainId].includes(dstToken.wrapped)
-    ) {
+    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+      // Cross-chain transfer operations
       // T1-T4
-      if (srcUseBentoBox && dstUseBentoBox) {
-        // T1
-        cooker.srcTransferFromBentoBox(
-          srcToken.wrapped.address,
-          SUSHI_X_SWAP_ADDRESS[srcChainId],
-          srcAmount.quotient.toString()
-        )
-        cooker.teleporter.dstDepositToBentoBox(dstToken, account.address)
-      } else if (!srcUseBentoBox && !dstUseBentoBox) {
-        // T2
-        // Regular src transfer to pool instead? (this will requite approval of SushiXSwap contract)
-        cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-        cooker.srcTransferFromBentoBox(
-          srcToken.wrapped.address,
-          SUSHI_X_SWAP_ADDRESS[srcChainId],
-          0,
-          srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
-        )
-        cooker.teleporter.dstWithdrawToken(dstToken, account.address)
-      } else if (!srcUseBentoBox && dstUseBentoBox) {
-        // T3
-        cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-        cooker.srcTransferFromBentoBox(
-          srcToken.wrapped.address,
-          SUSHI_X_SWAP_ADDRESS[srcChainId],
-          0,
-          srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
-        )
-        cooker.teleporter.dstDepositToBentoBox(dstToken, account.address)
-      } else if (srcUseBentoBox && !dstUseBentoBox) {
-        // T4
-        cooker.srcTransferFromBentoBox(
-          srcToken.wrapped.address,
-          SUSHI_X_SWAP_ADDRESS[srcChainId],
-          srcAmount.quotient.toString()
-        )
-        cooker.teleporter.dstWithdrawToken(dstToken, account.address)
-      }
+      cooker.stargateTransfer(srcAmount, srcShare)
     } else {
-      // S1-S4
+      // Cross-chain swap operations (and non cross-chain operations for now)
 
-      // Source Trades...
+      // TODO: Refactor for readability... else if (crossChain) { cross-chain operations } else { non cross-chain chain operations }
 
-      if (srcMinimumAmountOut && srcTrade instanceof TradeV1 && srcTrade?.route?.path?.length) {
+      // S1-S4 & X1-X4
+
+      // Source operations...
+      if (srcTrade instanceof TradeV1 && srcTrade.route.path.length) {
         if (!srcUseBentoBox) {
           console.log('cook src depoit to bentobox')
           cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
@@ -231,15 +240,15 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
         console.log('cook src transfer from bentobox')
         cooker.srcTransferFromBentoBox(
           srcToken.wrapped.address,
-          String(srcTrade?.route?.pairs?.[0]?.liquidityToken?.address),
+          srcTrade.route.pairs[0].liquidityToken.address,
           0,
-          srcAmount.toShare(srcBentoBoxRebase).quotient.toString()
+          srcShare.quotient.toString()
         )
 
         console.log('cook src legacy swap', [srcAmount.quotient.toString(), srcMinimumAmountOut.quotient.toString()])
         cooker.legacyExactInput(
-          srcAmount.toShare(srcBentoBoxRebase).quotient.toString(),
-          srcMinimumAmountOut.toShare(srcBentoBoxRebase).quotient.toString(),
+          srcShare.quotient.toString(),
+          srcMinimumAmountOut.toShare(srcTokenRebase).quotient.toString(),
           srcTrade.route.path.map((token) => token.address),
           crossChain || dstToken.isNative || !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address
         )
@@ -251,14 +260,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
         }
       }
 
-      if (
-        srcChainId &&
-        dstChainId &&
-        srcAmount &&
-        srcMinimumAmountOut &&
-        srcTrade instanceof TradeV2 &&
-        srcTrade?.route?.legs?.length
-      ) {
+      if (srcTrade instanceof TradeV2 && srcTrade?.route?.legs?.length) {
         const inputTokens = srcTrade.route.legs.map((leg) => leg.tokenFrom.address)
 
         if (new Set(inputTokens).size === inputTokens.length) {
@@ -268,12 +270,12 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             srcToken.wrapped.address,
             srcTrade.route.legs[0].poolAddress,
             0,
-            srcAmount.toShare(srcBentoBoxRebase).quotient.toString(),
+            srcAmount.toShare(srcTokenRebase).quotient.toString(),
             false
           )
           cooker.tridentExactInput(
             srcToken,
-            srcAmount.toShare(srcBentoBoxRebase).quotient.toString(),
+            srcAmount.toShare(srcTokenRebase).quotient.toString(),
             srcMinimumAmountOut.quotient.toString(),
             srcTrade.route.legs.map((leg, i) => {
               const isLastLeg = i === srcTrade.route.legs.length - 1
@@ -282,7 +284,6 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                   ? SUSHI_X_SWAP_ADDRESS[srcChainId]
                   : account.address
                 : leg.poolAddress
-              console.log(recipientAddress)
               return {
                 pool: leg.poolAddress,
                 data: defaultAbiCoder.encode(
@@ -298,24 +299,8 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           const initialPathCount = srcTrade.route.legs.filter(
             (leg) => leg.tokenFrom.address === srcToken.wrapped.address
           ).length
-          const [initialPath, percentagePath] = srcTrade.route.legs.reduce<
-            [
-              {
-                tokenIn: string
-                pool: string
-                native: boolean
-                amount: BigNumberish
-                data: string
-              }[],
-              {
-                tokenIn: string
-                pool: string
-                balancePercentage: BigNumberish
-                data: string
-              }[]
-            ]
-          >(
-            ([initialPath, percentagePath], leg, i) => {
+          const params = srcTrade.route.legs.reduce<Complex>(
+            ([initialPath, percentagePath, output], leg, i) => {
               const isInitialPath = leg.tokenFrom.address === srcToken.wrapped.address
               if (isInitialPath) {
                 return [
@@ -341,6 +326,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                     },
                   ],
                   percentagePath,
+                  output,
                 ]
               } else {
                 return [
@@ -357,41 +343,39 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                       ),
                     },
                   ],
+                  output,
                 ]
               }
             },
-            [[], []]
+            [
+              [],
+              [],
+              [
+                {
+                  token: (srcTrade.route.toToken as Currency).wrapped.address,
+                  to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
+                  unwrapBento: crossChain ? crossChain : dstUseBentoBox,
+                  minAmount: srcMinimumAmountOut.quotient.toString(),
+                },
+              ],
+            ]
           )
-          const output = [
-            {
-              token: (srcTrade.route.toToken as Currency).wrapped.address,
-              to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
-              unwrapBento: crossChain ? crossChain : dstUseBentoBox,
-              minAmount: srcMinimumAmountOut.quotient.toString(),
-            },
-          ]
-          cooker.tridentComplex(initialPath, percentagePath, output)
+          cooker.tridentComplex(params)
         }
       }
 
-      if (crossChain && STARGATE_BRIDGE_TOKENS[dstChainId].includes(dstToken.wrapped)) {
+      // Destination operations...
+      if (crossChain && isStargateBridgeToken(dstToken)) {
         // If dst token is stargate bridge token, just do a withdraw
-        cooker.teleporter.dstWithdrawToken(dstToken)
+        cooker.teleporter.dstWithdraw(dstToken)
       } else if (crossChain) {
         // Else dst token is not one of the stargate bridge tokens
 
         // Dst trades...
-        if (
-          srcChainId &&
-          dstChainId &&
-          srcMinimumAmountOut &&
-          dstMinimumAmountOut &&
-          dstTrade instanceof TradeV1 &&
-          dstTrade?.route?.path?.length
-        ) {
+        if (dstTrade instanceof TradeV1 && dstTrade.route.path.length) {
           console.log('cook teleport legacy exact in')
 
-          cooker.teleporter.dstWithdrawToken(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
+          cooker.teleporter.dstWithdraw(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
 
           cooker.teleporter.legacyExactInput(
             srcMinimumAmountOut.quotient.toString(),
@@ -403,14 +387,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
           if (dstToken.isNative && !dstUseBentoBox) {
             cooker.teleporter.unwrapAndTransfer(dstToken)
           }
-        } else if (
-          srcChainId &&
-          dstChainId &&
-          srcMinimumAmountOut &&
-          dstTrade instanceof TradeV2 &&
-          dstTrade?.route?.legs?.length &&
-          dstMinimumAmountOut
-        ) {
+        } else if (dstTrade instanceof TradeV2 && dstTrade?.route?.legs?.length && dstMinimumAmountOut) {
           const inputTokens = dstTrade.route.legs.map((leg) => leg.tokenFrom.address)
 
           if (new Set(inputTokens).size === inputTokens.length) {
@@ -453,24 +430,8 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
             const initialPathCount = dstTrade.route.legs.filter(
               (leg) => leg.tokenFrom.address === dstBridgeToken.wrapped.address
             ).length
-            const [initialPath, percentagePath] = dstTrade.route.legs.reduce<
-              [
-                {
-                  tokenIn: string
-                  pool: string
-                  native: boolean
-                  amount: BigNumberish
-                  data: string
-                }[],
-                {
-                  tokenIn: string
-                  pool: string
-                  balancePercentage: BigNumberish
-                  data: string
-                }[]
-              ]
-            >(
-              ([initialPath, percentagePath], leg, i) => {
+            const params = dstTrade.route.legs.reduce<Complex>(
+              ([initialPath, percentagePath, output], leg, i) => {
                 const isInitialPath = leg.tokenFrom.address === dstBridgeToken.wrapped.address
                 if (isInitialPath) {
                   return [
@@ -496,6 +457,7 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                       },
                     ],
                     percentagePath,
+                    output,
                   ]
                 } else {
                   return [
@@ -512,20 +474,25 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
                         ),
                       },
                     ],
+                    output,
                   ]
                 }
               },
-              [[], []]
+              [
+                [],
+                [],
+                [
+                  {
+                    token: dstToken.wrapped.address,
+                    to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
+                    unwrapBento: !dstUseBentoBox,
+                    minAmount: dstMinimumAmountOut.quotient.toString(),
+                  },
+                ],
+              ]
             )
-            const output = [
-              {
-                token: dstToken.wrapped.address,
-                to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
-                unwrapBento: !dstUseBentoBox,
-                minAmount: dstMinimumAmountOut.quotient.toString(),
-              },
-            ]
-            cooker.teleporter.tridentComplex(initialPath, percentagePath, output)
+
+            cooker.teleporter.tridentComplex(params)
 
             if (dstToken.isNative && !dstUseBentoBox) {
               cooker.teleporter.unwrapAndTransfer(dstToken)
@@ -534,6 +501,9 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
         }
       }
     }
+    // else {
+    //   // same chain operations...
+    // }
 
     if (crossChain) {
       cooker.teleport(srcBridgeToken, dstBridgeToken)
@@ -561,9 +531,8 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     dstTrade,
     dstUseBentoBox,
     signature,
-    signer,
     srcAmount,
-    srcBentoBoxRebase,
+    srcTokenRebase,
     srcBridgeToken,
     srcChainId,
     srcMinimumAmountOut,
@@ -572,227 +541,210 @@ function _Swap({ config = defaultConfig }: { config?: Config }) {
     srcUseBentoBox,
   ])
 
-  const price =
-    srcAmount && dstMinimumAmountOut
-      ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
-      : undefined
+  const isMounted = useIsMounted()
 
   return (
-    <div className="mt-20 mb-60">
-      <div className={config.classes.root} style={config.styles.root}>
-        <div className="p-3" onClick={() => inputRef.current?.focus()}>
-          <div className="flex justify-between pb-4 font-medium">
-            <Typography weight={900} className="flex items-center gap-2">
-              <SushiIcon width={20} height={20} /> Swap
-            </Typography>
-            <button className="hover:animate-spin-slow">
-              <CogIcon width={20} height={20} />
-            </button>
-          </div>
-          <div aria-hidden className="flex flex-col">
-            <div className="flex flex-row justify-between">
-              <button
-                className="flex items-center gap-1 py-1 text-xs font-bold text-slate-400 hover:text-slate-300"
-                onClick={() => setSrcSelectorOpen(true)}
-              >
-                {chain[srcChainId].name} <ChevronDownIcon width={16} height={16} />
-              </button>
-              <button className="flex items-center gap-2 text-xs text-slate-400">
-                Pay from
-                <div className="flex gap-2 px-2 py-1 rounded-full bg-black/20">
-                  <span
-                    onClick={() => setSrcUseBentoBox(false)}
-                    className={classNames(srcUseBentoBox ? '' : 'text-white font-bold')}
-                  >
-                    Wallet
-                  </span>
-                  <span
-                    onClick={() => setSrcUseBentoBox(true)}
-                    className={classNames(srcUseBentoBox ? 'text-white font-bold' : '')}
-                  >
-                    BentoBox
-                  </span>{' '}
-                </div>
-              </button>
-            </div>
-
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <Input.Numeric
-                  ref={inputRef}
-                  className="flex-auto w-full px-0 py-2 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
-                  value={srcTypedAmount}
-                  title="Amount In"
-                  onUserInput={(value) => setSrcTypedAmount(value)}
-                />
-                <button
-                  onClick={() => setSrcTokenSelectorOpen(true)}
-                  className="flex items-center gap-1 py-1 text-xl font-bold text-slate-300 hover:text-slate-100"
-                >
-                  {srcToken.symbol} <ChevronDownIcon width={24} height={24} />
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-row justify-between">
-              <Typography variant="xs" className="py-1 select-none text-slate-400">
-                $0.00
-              </Typography>
-              <button className="py-1 text-xs text-slate-400 hover:text-slate-300">MAX</button>
-            </div>
-          </div>
+    <article
+      id="sushixswap"
+      className={classNames(
+        theme.background.primary,
+        'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px]'
+      )}
+      style={{ width }}
+    >
+      <div className="p-3 mx-[2px] grid grid-cols-6 items-center pb-4 font-medium">
+        <Typography
+          weight={900}
+          className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
+        >
+          Swap
+        </Typography>
+        <Caption className="flex justify-center col-span-4" theme={theme} />
+        <div className="flex justify-end">
+          <WidgetSettingsOverlay theme={theme} />
         </div>
-        <div className="p-3 pb-2 border-2 bg-slate-800 rounded-xl border-slate-700">
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between">
-              <button
-                className="flex items-center gap-1 py-1 text-xs font-bold text-slate-500 hover:text-slate-300"
-                onClick={() => setSrcSelectorOpen(true)}
-              >
-                {chain[dstChainId].name} <ChevronDownIcon width={16} height={16} />
-              </button>
-              <button className="flex items-center gap-2 text-xs text-slate-400">
-                Receive in
-                <div className="flex gap-2 px-2 py-1 rounded-full bg-slate-700">
-                  <span
-                    onClick={() => setDstUseBentoBox(false)}
-                    className={classNames(dstUseBentoBox ? '' : 'text-white font-bold')}
-                  >
-                    Wallet
-                  </span>
-                  <span
-                    onClick={() => setDstUseBentoBox(true)}
-                    className={classNames(dstUseBentoBox ? 'text-white font-bold' : '')}
-                  >
-                    BentoBox
-                  </span>{' '}
-                </div>
-              </button>
-            </div>
-            <div className="flex flex-col">
-              <div className="relative flex items-center">
-                <Input.Numeric
-                  className="flex-auto w-full px-0 py-2 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed"
-                  value={dstTypedAmount}
-                  title="Amount Out"
-                  readOnly
-                />
-                <button
-                  onClick={() => setDstTokenSelectorOpen(true)}
-                  className="flex items-center gap-1 py-1 text-lg font-bold text-slate-300 hover:text-slate-100"
-                >
-                  {dstToken.symbol} <ChevronDownIcon width={16} height={16} />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-row justify-between pb-3">
-            <Typography variant="xs" className="py-1 select-none text-slate-500">
-              $0.00
-            </Typography>
-            <button className="py-1 text-xs text-slate-500 hover:text-slate-300">MAX</button>
-          </div>
-
-          <Rate loading={!!srcAmount && !dstTrade} price={price} />
-
-          <div className="flex gap-2">
-            {!account && isMounted ? (
-              <Wallet.Button fullWidth color="blue">
-                Connect Wallet
-              </Wallet.Button>
-            ) : activeChain?.id !== srcChainId && isMounted ? (
-              <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                Switch to {chain[srcChainId].name}
-              </Button>
-            ) : activeChain?.id == srcChainId && isMounted ? (
-              <>
-                <Approve
-                  components={
-                    <Approve.Components className="flex gap-4">
-                      <Approve.Bentobox
-                        className="whitespace-nowrap"
-                        fullWidth
-                        token={srcAmount?.currency}
-                        address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                        onSignature={setSignature}
-                      />
-                      <Approve.Token
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={srcAmount}
-                        address={BENTOBOX_ADDRESS[srcChainId]}
-                      />
-                    </Approve.Components>
-                  }
-                  render={({ approved }) => (
-                    <Button
-                      fullWidth
-                      variant="filled"
-                      color="gradient"
-                      disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
-                      onClick={execute}
-                    >
-                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
-                    </Button>
-                  )}
-                />
-              </>
-            ) : (
-              <Button fullWidth color="blue">
-                <Loader size="16px" />
-              </Button>
-            )}
-          </div>
-          <Caption className="mt-2" />
-        </div>
-        <NetworkSelector
-          className="rounded-2xl !bg-slate-700"
-          open={srcSelectorOpen}
-          onClose={() => setSrcSelectorOpen(false)}
-          onSelect={(chainId) => setSrcChainId(chainId)}
-          selected={srcChainId}
-        />
-        <NetworkSelector
-          className="rounded-2xl !bg-slate-700"
-          open={dstSelectorOpen}
-          onClose={() => setDstSelectorOpen(false)}
-          onSelect={(chainId) => setDstChainId(chainId)}
-          selected={dstChainId}
-        />
-        <TokenSelector
-          className="rounded-2xl !bg-slate-700"
-          tokenMap={srcTokens}
-          onClose={() => setSrcTokenSelectorOpen(false)}
-          chainId={srcChainId}
-          open={srcTokenSelectorOpen}
+      </div>
+      <div className="p-3 pb-0 border-2 border-transparent">
+        <CurrencyInput
+          value={srcTypedAmount}
+          onChange={setSrcTypedAmount}
+          onCurrencySelect={setSrcToken}
+          onFundSourceSelect={(source) => setSrcUseBentoBox(source === FundSource.BENTOBOX)}
+          fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
-          onSelect={setSrcToken}
-        />
-        <TokenSelector
-          className="rounded-2xl !bg-slate-700"
-          tokenMap={dstTokens}
-          onClose={() => setDstTokenSelectorOpen(false)}
-          chainId={dstChainId}
-          open={dstTokenSelectorOpen}
-          currency={dstToken}
-          onSelect={setDstToken}
+          network={chain[srcChainId]}
+          onNetworkSelect={setSrcChainId}
+          tokenList={srcTokens}
+          theme={theme}
         />
       </div>
-    </div>
+      <div className={classNames(theme.background.secondary, 'p-3 m-0.5 rounded-2xl')}>
+        <CurrencyInput
+          disabled={true}
+          value={dstTypedAmount}
+          onChange={setDstTypedAmount}
+          onCurrencySelect={setDstToken}
+          onFundSourceSelect={(source) => setDstUseBentoBox(source === FundSource.BENTOBOX)}
+          fundSource={dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
+          currency={dstToken}
+          network={chain[dstChainId]}
+          onNetworkSelect={setDstChainId}
+          tokenList={dstTokens}
+          theme={theme}
+        />
+
+        <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
+
+        <div className="flex gap-2">
+          {!account && isMounted ? (
+            <Wallet.Button fullWidth color="blue">
+              Connect Wallet
+            </Wallet.Button>
+          ) : activeChain?.id !== srcChainId && isMounted ? (
+            <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+              Switch to {chain[srcChainId].name}
+            </Button>
+          ) : activeChain?.id == srcChainId && isMounted ? (
+            <>
+              <Approve
+                components={
+                  <Approve.Components className="flex gap-4">
+                    <Approve.Bentobox
+                      className="whitespace-nowrap"
+                      fullWidth
+                      address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                      onSignature={setSignature}
+                    />
+                    <Approve.Token
+                      className="whitespace-nowrap"
+                      fullWidth
+                      amount={srcAmount}
+                      address={BENTOBOX_ADDRESS[srcChainId]}
+                    />
+                  </Approve.Components>
+                }
+                render={({ approved }) => (
+                  <ConfirmationOverlay
+                    trigger={({ setOpen }) => (
+                      <Button
+                        fullWidth
+                        variant="filled"
+                        color="gradient"
+                        disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                        onClick={() => setOpen(true)}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                      </Button>
+                    )}
+                  >
+                    {({ setOpen }) => (
+                      <OverlayContent theme={theme} className="flex flex-col flex-grow !bg-slate-800">
+                        <OverlayHeader
+                          arrowDirection="bottom"
+                          onClose={() => setOpen(false)}
+                          title="Confirm Swap"
+                          theme={theme}
+                        />
+                        <div className="h-px bg-slate-200/5 w-full px-0.5" />
+                        <div className="!my-0 p-2 rounded-xl grid grid-cols-[150px_auto_150px]">
+                          <div className="flex flex-col">
+                            <Typography variant="lg" weight={700}>
+                              {srcAmount?.toSignificant(6)}{' '}
+                              <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-400">
+                              $0.00
+                            </Typography>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <ChevronRightIcon width={18} height={18} className="text-slate-500" />
+                          </div>
+                          <div className="flex flex-col w-full">
+                            <Typography variant="lg" weight={700} className="text-right">
+                              {dstMinimumAmountOut?.toSignificant(6)}{' '}
+                              <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-400 text-right">
+                              $0.00 <span className="text-[10px] text-green">(+0.00%)</span>
+                            </Typography>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1 px-3 py-2 bg-slate-700 rounded-xl">
+                          <div className="flex gap-2 justify-between items-center">
+                            <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme}>
+                              {({ toggleInvert, content }) => (
+                                <Typography
+                                  as="button"
+                                  onClick={() => toggleInvert()}
+                                  variant="xs"
+                                  weight={700}
+                                  className="flex items-center gap-1 text-slate-200"
+                                >
+                                  {content}
+                                </Typography>
+                              )}
+                            </Rate>
+                            <Chip
+                              label={
+                                <div className="flex items-center gap-1">
+                                  <GasIcon width={10} />
+                                  <Typography variant="xs" weight={700}>
+                                    {feeData.data?.formatted.gasPrice &&
+                                      JSBI.divide(
+                                        JSBI.BigInt(feeData.data?.formatted.gasPrice),
+                                        JSBI.BigInt(1e9)
+                                      ).toString()}{' '}
+                                    Gwei
+                                  </Typography>
+                                </div>
+                              }
+                              color="gray"
+                            />
+                          </div>
+                          <div className="h-px bg-slate-200/5 w-full my-1" />
+                          <div className="flex gap-2 justify-between">
+                            <Typography variant="xs" className="text-slate-400">
+                              Minimum Received After Slippage
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-200">
+                              {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+                            </Typography>
+                          </div>
+                          <div className="flex gap-2 justify-between">
+                            <Typography variant="xs" className="text-slate-400">
+                              Estimated Processing Time
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-300">
+                              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId] / 60)} minutes
+                            </Typography>
+                          </div>
+                          <Route srcTrade={srcTrade} dstTrade={dstTrade} />
+                        </div>
+                        <Button fullWidth color="gradient" onClick={execute}>
+                          Swap
+                        </Button>
+                      </OverlayContent>
+                    )}
+                  </ConfirmationOverlay>
+                )}
+              />
+            </>
+          ) : (
+            <Button fullWidth color="blue">
+              <Loader size="16px" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </article>
   )
 }
 
-export default function Swap({ chainIds, blockNumbers }: { chainIds: number[]; blockNumbers: number[] }) {
-  const chainNames = Object.entries(chain)
-    .filter(([chainId1]) => chainIds.find((chainId2) => Number(chainId1) === Number(chainId2)))
-    .map(([, chain]) => {
-      return chain.name
-    })
-  const blockTimestamps = useCurrentBlockTimestampMultichain(chainIds, blockNumbers)
-  const isReady = blockTimestamps.filter((b) => !!b).length >= 2
-
+export default function Swap({ chainIds }: { chainIds: number[] }) {
   return (
-    <div className="mt-24 space-y-12">
-      <_Swap />
+    <div className="mt-40 space-y-12 mb-60">
+      <_Swap theme={theme} />
+      {/* <Widget header={<>Swap</>} /> */}
     </div>
   )
 }

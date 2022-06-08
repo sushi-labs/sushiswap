@@ -1,0 +1,28 @@
+{
+  "name": "@sushiswap/nextjs-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Next.js Config",
+  "keywords": [
+    "sushi",
+    "nextjs",
+    "config"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/nextjs"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "next": "12.x"
+  },
+  "peerDependencies": {
+    "next": "12.x"
+  }
+}

@@ -3,7 +3,7 @@ import { FC, forwardRef } from 'react'
 
 import { ExtractProps } from '../types'
 
-export type SelectOptionsProps = ExtractProps<typeof Listbox.Options> & {}
+export type SelectOptionsProps = ExtractProps<typeof Listbox.Options>
 
 const SelectOptions: FC<SelectOptionsProps> = forwardRef(({ className, ...props }, ref) => {
   return (

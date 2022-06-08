@@ -5,6 +5,7 @@ export enum ProgressColor {
   PINK,
   BLUE,
   GRADIENT,
+  GREEN,
 }
 
 interface ProgressBarProps {
@@ -26,6 +27,9 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
   } else if (color === ProgressColor.GRADIENT) {
     fromColor = 'from-blue'
     toColor = 'to-pink'
+  } else if (color === ProgressColor.GREEN) {
+    fromColor = 'from-green-200'
+    toColor = 'to-green'
   }
 
   return (

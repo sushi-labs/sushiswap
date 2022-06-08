@@ -1,30 +1,20 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
-import 'react-toastify/dist/ReactToastify.css'
 
-import { ChainId } from '@sushiswap/chain'
-import { useLatestBlockNumber } from '@sushiswap/hooks'
-import { App } from '@sushiswap/ui'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
-import Header from 'features/Header'
-import { getProvider } from 'functions'
+import { Header } from 'components'
+import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { ToastContainer } from 'react-toastify'
 import { WagmiConfig } from 'wagmi'
 
-import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
-import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
+import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
+import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import store from '../store'
-
-declare global {
-  interface Window {
-    dataLayer: Record<string, any>[]
-  }
-}
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
@@ -41,25 +31,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  const kovanProvider = getProvider(ChainId.KOVAN)
-  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
-  const goerliProvider = getProvider(ChainId.GÖRLI)
-  const goerliBlockNumber = useLatestBlockNumber(goerliProvider)
-
   return (
     <>
       <WagmiConfig client={client}>
         <ReduxProvider store={store}>
-          <App.Shell>
-            <Header />
-            <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
-            <TokenListUpdater chainId={ChainId.KOVAN} />
-            <MulticallUpdater chainId={ChainId.GÖRLI} blockNumber={goerliBlockNumber} />
-            <TokenListUpdater chainId={ChainId.GÖRLI} />
-            <Component {...pageProps} />
-            <ToastContainer toastClassName={() => 'bg-slate-800 rounded-xl shadow-md p-3 mt-2'} />
-            <App.Footer />
-          </App.Shell>
+          <ThemeProvider>
+            <App.Shell>
+              <Header />
+              <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
+              <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
+              <Component {...pageProps} />
+              <App.Footer />
+            </App.Shell>
+            <ToastContainer className="mt-[50px]" />
+          </ThemeProvider>
         </ReduxProvider>
       </WagmiConfig>
       <Script

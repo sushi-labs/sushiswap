@@ -13,11 +13,11 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/abi": "^5.6.1",
-    "@ethersproject/bignumber": "^5.6.0",
-    "@ethersproject/contracts": "^5.6.0",
-    "@ethersproject/experimental": "^5.6.0",
-    "@ethersproject/providers": "^5.6.5",
+    "@ethersproject/abi": "^5.0.0",
+    "@ethersproject/bignumber": "^5.0.0",
+    "@ethersproject/contracts": "^5.0.0",
+    "@ethersproject/experimental": "^5.0.0",
+    "@ethersproject/providers": "^5.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/ui": "workspace:*",
@@ -42,6 +42,6 @@
     "eslint": "^8.15.0",
     "ethers": "^5.6.5",
     "next-transpile-modules": "9.0.0",
-    "typescript": "^4.7.2"
+    "typescript": "^4.0.0"
   }
 }

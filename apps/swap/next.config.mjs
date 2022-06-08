@@ -1,11 +1,12 @@
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
-  '@sushiswap/ui',
   '@sushiswap/redux-token-lists',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/stargate',
+  '@sushiswap/ui',
+  '@sushiswap/swap-widget',
 ])
 
 export default withTranspileModules({
@@ -15,5 +16,9 @@ export default withTranspileModules({
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,
+  },
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
 })

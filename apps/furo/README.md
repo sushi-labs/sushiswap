@@ -19,3 +19,8 @@ Run
 ```sh
 pnpm exec turbo run dev --scope=furo
 ```
+
+## API
+
+/furo/api/stream/[chainId]/[streamId]
+/furo/api/vesting/[chainId]/[vestingId]

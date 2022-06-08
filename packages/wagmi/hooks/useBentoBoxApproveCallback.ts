@@ -1,11 +1,10 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
 
-import { ApprovalState } from './useApproveCallback'
-import { BENTOBOX_ADDRESS } from './useBentoBoxContract'
+import { BENTOBOX_ADDRESS, getBentoBoxContractConfig } from './useBentoBoxContract'
+import { ApprovalState } from './useERC20ApproveCallback'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({
@@ -19,29 +18,19 @@ export function useBentoBoxApproveCallback({
   const { activeChain } = useNetwork()
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead(
-    {
-      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
-      contractInterface: bentoBoxArtifact.abi,
-    },
+    getBentoBoxContractConfig(activeChain?.id),
     'masterContractApproved',
     {
       args: [masterContract, account ? account.address : AddressZero],
       // This should probably always be true anyway...
       watch,
-      enabled: Boolean(account),
+      enabled: Boolean(account && masterContract !== AddressZero),
     }
   )
-  const { error, refetch: getNonces } = useContractRead(
-    {
-      addressOrName: activeChain?.id ? BENTOBOX_ADDRESS[activeChain?.id] : AddressZero,
-      contractInterface: bentoBoxArtifact.abi,
-    },
-    'nonces',
-    {
-      args: [account ? account.address : AddressZero],
-      enabled: false,
-    }
-  )
+  const { error, refetch: getNonces } = useContractRead(getBentoBoxContractConfig(activeChain?.id), 'nonces', {
+    args: [account ? account.address : AddressZero],
+    enabled: false,
+  })
 
   const [signature, setSignature] = useState<Signature>()
 

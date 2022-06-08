@@ -74,14 +74,14 @@ export const defaultConfig: HardhatUserConfig = {
   networks: {
     localhost: {
       live: false,
-      saveDeployments: true,
+      saveDeployments: false,
       tags: ['local'],
     },
     hardhat: {
       chainId: 31337,
       accounts,
       live: false,
-      saveDeployments: true,
+      saveDeployments: false,
       tags: ['test', 'local'],
       // Solidity-coverage overrides gasPrice to 1 which is not compatible with EIP1559
       hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
@@ -108,7 +108,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 4,
       live: true,
@@ -127,7 +127,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 42,
       live: true,
@@ -141,7 +141,6 @@ export const defaultConfig: HardhatUserConfig = {
       chainId: 250,
       live: true,
       saveDeployments: true,
-      gasPrice: 22000000000,
     },
     'fantom-testnet': {
       url: 'https://rpc.testnet.fantom.network',
@@ -152,7 +151,7 @@ export const defaultConfig: HardhatUserConfig = {
       tags: ['staging'],
       gasMultiplier: 2,
     },
-    matic: {
+    polygon: {
       url: 'https://rpc-mainnet.maticvigil.com',
       accounts,
       chainId: 137,
@@ -168,7 +167,7 @@ export const defaultConfig: HardhatUserConfig = {
       tags: ['staging'],
       gasMultiplier: 2,
     },
-    xdai: {
+    gnosis: {
       url: 'https://rpc.xdaichain.com',
       accounts,
       chainId: 100,
@@ -323,11 +322,24 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    optimism: {
+      url: 'https://mainnet.optimism.io',
+      accounts,
+      chainId: 10,
+      live: true,
+      saveDeployments: true,
+    },
+    kava: {
+      url: 'https://evm.kava.io',
+      accounts,
+      chainId: 2222,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
-    deployer: {
-      default: 0,
-    },
+    // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
+    deployer: process.env.LEDGER || { default: 0 },
     alice: {
       default: 1,
     },

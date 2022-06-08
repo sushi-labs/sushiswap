@@ -9,7 +9,7 @@ import {
   Typography,
 } from '..'
 
-export interface FooterProps extends React.HTMLProps<HTMLDivElement> {}
+export type FooterProps = React.HTMLProps<HTMLDivElement>
 
 const config: Record<string, Record<string, string>> = {
   Services: {
@@ -43,9 +43,9 @@ const config: Record<string, Record<string, string>> = {
   },
 }
 
-export function Footer({}: FooterProps): JSX.Element {
+export function Footer(props: FooterProps): JSX.Element {
   return (
-    <footer className="flex border-t border-slate-800 py-[72px]">
+    <footer className="flex border-t border-slate-800 py-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3">
@@ -79,7 +79,7 @@ export function Footer({}: FooterProps): JSX.Element {
                 {title}
               </Typography>
               {Object.entries(items).map(([item, href]) => (
-                <a key={item} href={href} className="text-sm sm:text-xs text-slate-400 hover:underline cursor-pointer">
+                <a key={item} href={href} className="text-sm cursor-pointer sm:text-xs text-slate-400 hover:underline">
                   {item}
                 </a>
               ))}

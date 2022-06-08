@@ -4,6 +4,7 @@ import {
   BaseProvider,
   InfuraProvider,
   InfuraWebSocketProvider,
+  JsonRpcProvider,
   WebSocketProvider,
 } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
@@ -48,12 +49,17 @@ const ALCHEMY_API_KEY: Record<number, string | undefined> = {
   [ChainId.GÖRLI]: process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID,
 }
 
+const PUBLIC_RPC: Record<number, string> = {
+  [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
+  [ChainId.AVALANCHE]: 'https://api.avax.network/ext/bc/C/rpc',
+}
+
 export function getProvider(chainId: ChainId) {
   if (providerCache[chainId]) return providerCache[chainId]!
 
   if (ALCHEMY_ENABLED_CHAINS.includes(chainId)) {
     const alchemyKey = ALCHEMY_API_KEY[chainId]
-    if (!alchemyKey) throw new Error('ALCHEMY_API_KEY || NEXT_PUBLIC_ALCHEMY_API_KEY is required for provider')
+    if (!alchemyKey) throw new Error('ALCHEMY_ID || NEXT_PUBLIC_ALCHEMY_ID is required for provider')
     const name = getAlchemyChainName(chainId)
     providerCache[chainId] = new AlchemyProvider(name, ALCHEMY_API_KEY[chainId])
   } else if (INFURA_ENABLED_CHAINS.includes(chainId)) {
@@ -66,6 +72,8 @@ export function getProvider(chainId: ChainId) {
     if (!ankrKey) throw new Error('PUBLIC_ANKR_ID || NEXT_PUBLIC_ANKR_ID is required for provider')
     // const name = getAnkrChainName(chainId)
     // providerCache[chainId] = new AnkrProvider(name, ankrKey)
+  } else if (chainId in PUBLIC_RPC) {
+    providerCache[chainId] = new JsonRpcProvider(PUBLIC_RPC[chainId])
   }
 
   return providerCache[chainId]!

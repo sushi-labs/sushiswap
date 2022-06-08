@@ -3,17 +3,13 @@ module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './features/**/*.{js,ts,jsx,tsx}',
-    '../../packages/wagmi/**/*.tsx',
+    '../../packages/wagmi/{components,systems}/**/*.tsx',
     '../../packages/ui/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
       display: ['group-hover'],
       visibility: ['group-hover'],
-      backgroundImage: () => ({
-        circuit: "url('/furo/images/circuit.png')",
-      }),
       keyframes: {
         dash: {
           to: {

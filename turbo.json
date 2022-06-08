@@ -14,7 +14,7 @@
         "^build",
         ".graphclient/**"
       ],
-      "cache": false
+      "cache": true
     },
     "export": {
       "dependsOn": [

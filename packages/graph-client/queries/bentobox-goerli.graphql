@@ -1,0 +1,14 @@
+query GoerliBentoBoxRebase($id: ID!) {
+  GOERLI_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query GoerliBentoBoxRebases($where: Rebase_filter) {
+  GOERLI_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

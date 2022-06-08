@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 
 import { ExtractProps } from '../types'
 
-export type DialogDescriptionProps = ExtractProps<typeof HeadlessDialog.Description> & {}
+export type DialogDescriptionProps = ExtractProps<typeof HeadlessDialog.Description>
 
 const DialogDescription: FC<DialogDescriptionProps> = ({ className, ...props }) => {
   return (

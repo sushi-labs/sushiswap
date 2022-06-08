@@ -18,7 +18,8 @@
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "useUnknownInCatchVariables": true
+    "useUnknownInCatchVariables": true,
+    "sourceMap": true
   },
   "exclude": ["node_modules"]
 }

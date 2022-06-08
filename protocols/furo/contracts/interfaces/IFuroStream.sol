@@ -5,7 +5,7 @@ pragma solidity 0.8.10;
 import "./ITasker.sol";
 import "./ITokenURIFetcher.sol";
 import "./IBentoBoxMinimal.sol";
-import "../utils/BoringBatchable.sol";
+import "../utils/Multicall.sol";
 import "../utils/BoringOwnable.sol";
 import "@rari-capital/solmate/src/tokens/ERC721.sol";
 
@@ -16,7 +16,7 @@ interface IFuroStream {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external;
+    ) external payable;
 
     function createStream(
         address recipient,

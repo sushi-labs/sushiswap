@@ -1,14 +1,14 @@
-// From https://stackoverflow.com/a/67605309/1345206
-// Used for slicing tuples (e.g. picking some subset of a param type)
+import type { Stream as StreamDTO, Vesting as VestingDTO } from '.graphclient'
 
-export type TupleSplit<T, N extends number, O extends readonly any[] = readonly []> = O['length'] extends N
-  ? [O, T]
-  : T extends readonly [infer F, ...infer R]
-  ? TupleSplit<readonly [...R], N, readonly [...O, F]>
-  : [O, T]
+export type Vestings = { incomingVestings: VestingDTO[]; outgoingVestings: VestingDTO[] }
+export type Streams = { incomingStreams: StreamDTO[]; outgoingStreams: StreamDTO[] }
 
-export type TakeFirst<T extends readonly any[], N extends number> = TupleSplit<T, N>[0]
+export type LoadingState<T> = { isLoading: true; isError: boolean; data?: T }
+export type SuccessState<T> = { isLoading: false; isError: boolean; data: T }
+export type ErrorState<T> = { isLoading: false; isError: true; data?: T }
 
-export type SkipFirst<T extends readonly any[], N extends number> = TupleSplit<T, N>[1]
-
-export type NonNullable<T> = T extends null | undefined ? never : T
+export enum ChartHover {
+  NONE,
+  WITHDRAW,
+  STREAMED,
+}

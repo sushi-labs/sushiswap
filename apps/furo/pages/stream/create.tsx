@@ -1,10 +1,13 @@
-import Layout from 'components/Layout'
-import { CreateForm } from 'features/stream/CreateForm'
+import { Breadcrumb, Layout } from 'components'
+import { CreateForm } from 'components/stream'
 
 const Create = () => {
   return (
     <Layout>
-      <CreateForm />
+      <Breadcrumb title="Create Stream" />
+      <div className="mt-6">
+        <CreateForm />
+      </div>
     </Layout>
   )
 }

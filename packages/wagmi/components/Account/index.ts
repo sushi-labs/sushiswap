@@ -1,6 +1,13 @@
+import { AddressToEnsResolver } from './AddressToEnsResolver'
 import { Avatar } from './Avatar'
 import { Balance } from './Balance'
 import { Disconnect } from './Disconnect'
-import { Name } from './Name'
+import { EnsToAddressResolver } from './EnsToAddressResolver'
 
-export const Account = { Balance, Name, Disconnect, Avatar }
+export const Account = {
+  EnsToAddressResolver,
+  Balance,
+  AddressToEnsResolver,
+  Disconnect,
+  Avatar,
+}
