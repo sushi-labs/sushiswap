@@ -87,7 +87,7 @@ pnpm exec turbo run clear --scope=api/app/package/protocol
 
 ### Creating a new package
 
-`git checkout -b feature/example-packakge`
+`git checkout -b feature/example-package`
 
 ## Protocols
 
