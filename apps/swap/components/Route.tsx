@@ -16,18 +16,18 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
 
   return (
     <>
-      <Typography variant="xs" className="text-slate-400 mt-2">
+      <Typography variant="xs" className="mt-2 text-slate-400">
         Optimized Route
       </Typography>
-      <div className="flex items-center relative">
+      <div className="relative flex items-center">
         <div className="flex flex-grow items-center gap-3 z-[1]">
-          <div className="h-6 w-6 flex items-center">
+          <div className="flex items-center w-6 h-6">
             <Popover
               hover
               button={
                 <Badge
                   badgeContent={
-                    <div className="ring-1 ring-black/20 shadow-md rounded-full">
+                    <div className="rounded-full shadow-md ring-1 ring-black/20">
                       <NetworkIcon chainId={srcTrade.inputAmount.currency.chainId} width={16} height={16} />
                     </div>
                   }
@@ -48,7 +48,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
               }
             />
           </div>
-          <div className="bg-slate-700 rounded-full flex items-center">
+          <div className="flex items-center rounded-full bg-slate-700">
             <Chip
               color={srcTrade instanceof TradeV1 ? 'blue' : 'green'}
               label={srcTrade instanceof TradeV1 ? 'Legacy' : 'Trident'}
@@ -59,7 +59,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
           <div className="bg-slate-700 px-2 py-2.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600">
             <Badge
               badgeContent={
-                <div className="ring-1 ring-black/20 shadow-md rounded-full">
+                <div className="rounded-full shadow-md ring-1 ring-black/20">
                   <NetworkIcon chainId={srcTrade.inputAmount.currency.chainId} width={14} height={14} />
                 </div>
               }
@@ -71,7 +71,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
             <DotsHorizontalIcon width={12} className="text-slate-600" />
             <Badge
               badgeContent={
-                <div className="ring-1 ring-black/20 shadow-md rounded-full">
+                <div className="rounded-full shadow-md ring-1 ring-black/20">
                   <NetworkIcon chainId={dstTrade.outputAmount.currency.chainId} width={14} height={14} />
                 </div>
               }
@@ -79,7 +79,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
               <NetworkIcon chainId={dstTrade.outputAmount.currency.chainId} width={18} height={18} />
             </Badge>
           </div>
-          <div className="bg-slate-700 rounded-full flex items-center">
+          <div className="flex items-center rounded-full bg-slate-700">
             <Chip
               color={dstTrade instanceof TradeV1 ? 'blue' : 'green'}
               label={dstTrade instanceof TradeV1 ? 'Legacy' : 'Trident'}
@@ -87,13 +87,13 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
               className="!px-2"
             />
           </div>
-          <div className="h-6 w-6 flex items-center">
+          <div className="flex items-center w-6 h-6">
             <Popover
               hover
               button={
                 <Badge
                   badgeContent={
-                    <div className="ring-1 ring-black/20 shadow-md rounded-full">
+                    <div className="rounded-full shadow-md ring-1 ring-black/20">
                       <NetworkIcon chainId={dstTrade.inputAmount.currency.chainId} width={16} height={16} />
                     </div>
                   }
@@ -115,7 +115,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
             />
           </div>
         </div>
-        <div className="border-dashed border border-slate-600 w-full absolute pointer-events-none z-0" />
+        <div className="absolute z-0 w-full border border-dashed pointer-events-none border-slate-600" />
       </div>
     </>
   )

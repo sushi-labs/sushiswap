@@ -7,7 +7,7 @@ import { Pair } from '../Pair'
 import { RouteV1 as Route } from '../Route'
 import { computePriceImpact } from './computePriceImpact'
 import { sortedInsert } from './sortedInsert'
-import { Type } from './Type'
+import { TradeType as Type } from './TradeType'
 
 // minimal interface so the input output comparator may be shared across types
 interface InputOutput<TInput extends Currency, TOutput extends Currency> {
