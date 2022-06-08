@@ -16,7 +16,7 @@ export const Route: FC<Route> = ({ srcTrade, dstTrade }) => {
 
   return (
     <>
-      <Typography variant="xs" className="text-slate-400 mt-2">
+      <Typography variant="xs" className="text-slate-400">
         Optimized Route
       </Typography>
       <div className="flex items-center relative">
