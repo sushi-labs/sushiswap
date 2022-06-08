@@ -54,10 +54,10 @@ export const isTradeV2 = (
     | TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
 ) => trade instanceof TradeV2
 
-export const isExactInput = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT>) =>
+export const isExactInput = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>) =>
   new Set(trade.route.legs.map((leg) => leg.tokenFrom.address)).size === trade.route.legs.length
 
-export const isComplex = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT>) =>
+export const isComplex = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>) =>
   new Set(trade.route.legs.map((leg) => leg.tokenFrom.address)).size !== trade.route.legs.length
 
 export const getComplexParams = (
