@@ -1,7 +1,8 @@
-import { Farm as FarmDTO } from '@sushiswap/graph-client'
+import { Farm as FarmDTO, Pair as PairDTO } from '@sushiswap/graph-client'
 import { Button } from '@sushiswap/ui'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
+import { TokenType } from 'lib/'
 import { Farm } from 'lib/Farm'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
@@ -10,7 +11,7 @@ import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { getFarms, getPrice } from '../../lib/graph'
+import { getFarms, getLegacyPairs, getPrice } from '../../lib/graph'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -29,6 +30,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
       fallback: {
         [`/api/farms/${query.chainId}`]: await getFarms(query.chainId),
         [`/api/price/${query.chainId}`]: await getPrice(query.chainId),
+        [`/api/legacy/${query.chainId}`]: await getLegacyPairs(query.chainId),
       },
     },
   }
@@ -52,9 +54,15 @@ export const FarmsPage: FC = () => {
     `/onsen/api/price/${chainId}`,
     fetcher
   )
-
-  const [isMapping, setIsMapping] = useState<boolean>(false)
-  const isValidating = useMemo(() => isValidatingFarms || isValidatingPrices, [isValidatingFarms, isValidatingPrices])
+  const { data: legacyPairs, isValidating: isValidatingLegacyPairs } = useSWR<PairDTO[]>(
+    `/onsen/api/legacy/${chainId}`,
+    fetcher
+  )
+  const [isMapping, setIsMapping] = useState<boolean>(true)
+  const isValidating = useMemo(
+    () => isValidatingFarms || isValidatingPrices || isValidatingLegacyPairs,
+    [isValidatingFarms, isValidatingPrices, isValidatingLegacyPairs]
+  )
   const farms = useMemo(() => {
     if (!farmsDTO || isValidatingFarms) return []
     return farmsDTO.map(
@@ -67,19 +75,41 @@ export const FarmsPage: FC = () => {
   }, [farmsDTO, isValidatingFarms])
 
   useMemo(() => {
-    if (isValidatingPrices || isValidatingFarms || !prices) {
+    if (isValidating) {
       return
     }
-    const parsedPrices = prices.reduce((r, c) => ({ ...r, ...c }), {})
+    setIsMapping(true)
+    const parsedPrices = prices?.reduce((r, c) => ({ ...r, ...c }), {}) ?? {}
+    const parsedLegacyPairs = legacyPairs?.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {} as Record<string, PairDTO>)
     farms.forEach((farm) =>
       farm.incentives.forEach((incentive) => {
         const price = parsedPrices[incentive.rewardAmount.currency.address.toLowerCase()]
         if (price) {
           incentive.price = price
         }
+        if (farm.farmType === TokenType.LEGACY) {
+          const pair = parsedLegacyPairs
+            ? parsedLegacyPairs[incentive.liquidityStaked.currency.address.toLocaleLowerCase()]
+            : undefined
+          // TODO: change number to JSBI
+          if (pair?.reserveUSD && pair?.totalSupply) {
+            incentive.tvl =
+              (Number(incentive.liquidityStaked.toExact()) / Number(pair.totalSupply)) * Number(pair.reserveUSD)
+            console.log('legacy', incentive.tvl)
+          }
+        } else if (farm.farmType === TokenType.TOKEN) {
+          const price = parsedPrices[incentive.liquidityStaked.currency.address.toLowerCase()]
+          incentive.tvl = Number(price) * Number(incentive.liquidityStaked.toExact())
+        }
+        console.log('tvl', incentive.tvl)
       })
     )
-  }, [farms, prices, isValidatingPrices, isValidatingFarms])
+    setIsMapping(false)
+    console.log(isMapping)
+  }, [farms, prices, isValidating, legacyPairs, isMapping])
 
   return (
     <Layout>
@@ -100,7 +130,7 @@ export const FarmsPage: FC = () => {
         farms={farms}
         chainId={activeChain?.id}
         showSubscribeAction={true}
-        loading={isValidating}
+        loading={isValidating || isMapping}
         placeholder="No incoming incentives found"
       />
     </Layout>

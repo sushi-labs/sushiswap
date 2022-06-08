@@ -81,3 +81,14 @@ export const getPrice = async (chainId: string) => {
     })
   }
 }
+
+export const getLegacyPairs = async (chainId: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.ARBITRUM) {
+    return await (
+      await sdk.ArbitrumPairs()
+    ).ARBITRUM_EXCHANGE_pairs
+  }
+}

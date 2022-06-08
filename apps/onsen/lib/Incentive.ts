@@ -3,9 +3,8 @@ import { Amount, Token } from '@sushiswap/currency'
 import { Incentive as IncentiveDTO } from '@sushiswap/graph-client'
 import { JSBI } from '@sushiswap/math'
 
-import { IncentiveStatus } from './enums'
+import { IncentiveStatus, TokenType } from './enums'
 import { toToken } from './mapper'
-import { TokenType } from './types'
 
 export class Incentive {
   public readonly id: string
@@ -16,7 +15,8 @@ export class Incentive {
   public readonly endTime: Date
   public readonly createdBy: string
   public readonly status: IncentiveStatus
-  private _price?: number
+  private _tvl?: number
+  private _rewardUsdPrice?: number
   private _isSubscribed: boolean
 
   public constructor({ incentive }: { incentive: IncentiveDTO }) {
@@ -83,11 +83,19 @@ export class Incentive {
   }
 
   public get price(): number | undefined {
-    return this._price
+    return this._rewardUsdPrice
   }
 
   public set price(value: number | undefined) {
-    this._price = value
+    this._rewardUsdPrice = value
+  }
+
+  public get tvl(): number | undefined {
+    return this._tvl
+  }
+
+  public set tvl(value: number | undefined) {
+    this._tvl = value
   }
 
   public isStarted(): boolean {

@@ -38,7 +38,22 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   table.createDisplayColumn({
     id: 'TVL',
     header: () => <div className="w-full text-left"> TVL </div>,
-    cell: () => 'TODO', // TODO: this needs pricing before we sum it up
+    cell: (props) => {
+      const tvl = props.row.original?.incentives.reduce((acc, cur) => (cur.tvl ? acc + cur.tvl : acc), 0)
+      return (
+        <>
+          {tvl && tvl > 0 ? (
+            <Typography variant="sm" weight={700} className=" text-slate-200">
+              ${tvl.toPrecision(2)}
+            </Typography>
+          ) : (
+            <Typography variant="xxs" weight={500} className=" text-slate-200">
+              --
+            </Typography>
+          )}
+        </>
+      )
+    },
   }),
 
   table.createDataColumn('incentives', {

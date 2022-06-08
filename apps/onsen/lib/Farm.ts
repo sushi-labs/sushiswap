@@ -1,19 +1,22 @@
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
 import { Incentive as IncentiveDTO, Token as TokenDTO } from '@sushiswap/graph-client'
 
+import { TokenType } from './enums'
 import { Incentive } from './Incentive'
 import { toToken } from './mapper'
 
 export class Farm {
   public readonly stakeToken: Token
-  public readonly farmType: string
+  public readonly farmType: TokenType
   public readonly incentives: Incentive[]
-  public readonly rewardsPerDay: Record<string, Amount<Token>> = {}
 
   public constructor({ token, incentives }: { token: TokenDTO; incentives: IncentiveDTO[] }) {
     this.stakeToken = toToken(token, ChainId.KOVAN) // TODO: activeChain
-    this.farmType = token.type
+    this.farmType = incentives[0].stakeToken?.type
+      ? (<any>TokenType)[incentives[0].stakeToken?.type]
+      : TokenType.UNKNOWN // FIXME: any hack?
+    console.log(this.farmType)
     this.incentives = incentives.map((incentive) => new Incentive({ incentive }))
   }
 }
