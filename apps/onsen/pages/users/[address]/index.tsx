@@ -1,14 +1,15 @@
-import type { Farm as FarmDTO } from '@sushiswap/graph-client'
+import type { Farm as FarmDTO, Pair as PairDTO } from '@sushiswap/graph-client'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
 import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
+import { updateIncentivePricing } from 'lib'
 import { Farm } from 'lib/Farm'
-import { getSubscribedIncentives, getUserFarms } from 'lib/graph'
+import { getLegacyPairs, getPrice, getSubscribedIncentives, getUserFarms } from 'lib/graph'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -30,6 +31,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
           query.chainId,
           query.address
         ),
+        [`/api/price/${query.chainId}`]: await getPrice(query.chainId),
+        [`/api/legacy/${query.chainId}`]: await getLegacyPairs(query.chainId),
       },
     },
   }
@@ -48,20 +51,31 @@ export const FarmsPage: FC = () => {
   const chainId = Number(router.query.chainId as string)
   const { activeChain } = useNetwork()
   const { data: account } = useAccount()
-  const connect = useConnect()
+  // const connect = useConnect()
 
   const { data: subscriptions, isValidating: isValidatingSubscriptions } = useSWR<string[]>(
     `/onsen/api/user/${account?.address}/subscriptions/${chainId}`,
     fetcher
   )
-
   const { data: userFarms, isValidating: isValidatingFarms } = useSWR<FarmDTO[]>(
     `/onsen/api/user/${account?.address}/farms/${chainId}`,
     fetcher
   )
+  const { data: prices, isValidating: isValidatingPrices } = useSWR<{ [key: string]: number }[]>(
+    `/onsen/api/price/${chainId}`,
+    fetcher
+  )
+  const { data: legacyPairs, isValidating: isValidatingLegacyPairs } = useSWR<PairDTO[]>(
+    `/onsen/api/legacy/${chainId}`,
+    fetcher
+  )
+  const isValidating = useMemo(
+    () => isValidatingFarms || isValidatingSubscriptions || isValidatingPrices || isValidatingLegacyPairs,
+    [isValidatingFarms, isValidatingSubscriptions, isValidatingPrices, isValidatingLegacyPairs]
+  )
 
   const farms = useMemo(() => {
-    if (isValidatingFarms || isValidatingSubscriptions) return []
+    if (isValidating) return []
     const now = new Date().getTime() / 1000
     const mappedFarms =
       userFarms
@@ -73,15 +87,22 @@ export const FarmsPage: FC = () => {
             })
         )
         .filter((farm) => farm.incentives.length) ?? []
-    mappedFarms.forEach((farm) =>
+
+    const parsedPrices = prices?.reduce((r, c) => ({ ...r, ...c }), {}) ?? {}
+    const parsedLegacyPairs = legacyPairs?.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {} as Record<string, PairDTO>)
+    mappedFarms.forEach((farm) => {
       farm.incentives.forEach((incentive) => {
         if (subscriptions?.includes(incentive.id)) {
           incentive.isSubscribed = true
         }
+        updateIncentivePricing(incentive, parsedPrices, parsedLegacyPairs)
       })
-    )
+    })
     return mappedFarms
-  }, [userFarms, subscriptions, isValidatingFarms, isValidatingSubscriptions])
+  }, [userFarms, subscriptions, isValidating, legacyPairs, prices])
 
   return (
     <Layout>

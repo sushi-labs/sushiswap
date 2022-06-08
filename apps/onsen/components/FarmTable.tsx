@@ -35,19 +35,17 @@ const defaultColumns = (tableProps: FarmTableProps) => [
       )
     },
   }),
-  table.createDisplayColumn({
-    id: 'TVL',
+  table.createDataColumn('tvl', {
     header: () => <div className="w-full text-left"> TVL </div>,
     cell: (props) => {
-      const tvl = props.row.original?.incentives.reduce((acc, cur) => (cur.tvl ? acc + cur.tvl : acc), 0)
       return (
         <>
-          {tvl && tvl > 0 ? (
+          {props.getValue() && props.getValue() > 0 ? (
             <Typography variant="sm" weight={700} className=" text-slate-200">
-              ${tvl.toPrecision(2)}
+              ${props.getValue().toPrecision(2)}
             </Typography>
           ) : (
-            <Typography variant="xxs" weight={500} className=" text-slate-200">
+            <Typography variant="xxs" weight={500} className=" text-slate-500">
               --
             </Typography>
           )}
@@ -95,10 +93,19 @@ const defaultColumns = (tableProps: FarmTableProps) => [
     },
   }),
 
-  table.createDisplayColumn({
-    id: 'APR',
-    header: () => <div className="w-full text-left"> APR </div>,
-    cell: () => 'TODO',
+  table.createDataColumn('apr', {
+    header: () => <div className="w-full text-right"> APR </div>,
+    cell: (props) => {
+      return props.getValue() ? (
+        <Typography variant="sm" weight={700} className="text-right text-slate-200">
+          {Number(props.getValue()).toFixed(2)}%
+        </Typography>
+      ) : (
+        <Typography variant="xxs" weight={500} className="text-right text-slate-500">
+          --
+        </Typography>
+      )
+    },
   }),
   table.createDisplayColumn({
     id: 'Action',
