@@ -7,7 +7,7 @@ import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType, TradeV1, TradeV2 } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
@@ -66,6 +66,7 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
 
   const feeData = useFeeData({
     chainId: srcChainId,
+    formatUnits: 'gwei',
   })
 
   const [srcToken, setSrcToken] = useState<Currency>(Native.onChain(srcChainId))
@@ -685,12 +686,7 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
                                 <div className="flex items-center gap-1">
                                   <GasIcon width={10} />
                                   <Typography variant="xs" weight={700}>
-                                    {feeData.data?.formatted.gasPrice &&
-                                      JSBI.divide(
-                                        JSBI.BigInt(feeData.data?.formatted.gasPrice),
-                                        JSBI.BigInt(1e9)
-                                      ).toString()}{' '}
-                                    Gwei
+                                    {feeData.data?.formatted.gasPrice} Gwei
                                   </Typography>
                                 </div>
                               }
