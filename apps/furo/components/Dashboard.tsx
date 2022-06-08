@@ -71,8 +71,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   // Prefetch stream/vesting pages
   useEffect(() => {
-    void router.prefetch('/furo/stream/[id]')
-    void router.prefetch('/furo/vesting/[id]')
+    void router.prefetch('/stream/[id]')
+    void router.prefetch('/vesting/[id]')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
