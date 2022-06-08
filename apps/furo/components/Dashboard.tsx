@@ -20,7 +20,11 @@ const fetcher = (params: any) =>
     .then((res) => res.json())
     .catch((e) => console.log(JSON.stringify(e)))
 
-export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boolean }> = ({
+  chainId,
+  address,
+  showOutgoing,
+}) => {
   const isMounted = useIsMounted()
   const router = useRouter()
   const { data: account } = useAccount()
@@ -115,7 +119,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
           </div>
         </div>
       </div>
-      <Tab.Group as="div" className="space-y-6">
+      <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
         <div className="flex justify-between px-2">
           <Tab.List className="flex gap-10">
             <Tab
@@ -128,7 +132,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                 )
               }
             >
-              Earning{' '}
+              Incoming{' '}
               <Chip
                 color="blue"
                 label={((streams?.incomingStreams?.length || 0) + (vestings?.incomingVestings?.length || 0)).toString()}
@@ -144,7 +148,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                 )
               }
             >
-              Payment{' '}
+              Outgoing{' '}
               <Chip
                 color="pink"
                 label={((streams?.outgoingStreams?.length || 0) + (vestings?.outgoingVestings?.length || 0)).toString()}
@@ -178,7 +182,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               type={FuroTableType.INCOMING}
               placeholder={
                 <>
-                  No <b>earning</b> streams found
+                  No <b>incoming</b> streams found
                 </>
               }
             />
@@ -196,7 +200,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               type={FuroTableType.OUTGOING}
               placeholder={
                 <>
-                  No <b>payment</b> streams found
+                  No <b>outgoing</b> streams found
                 </>
               }
             />
