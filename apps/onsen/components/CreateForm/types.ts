@@ -6,7 +6,7 @@ export type CreateIncentiveFormData = {
   startDate: string | undefined
   endDate: string | undefined
   stakeTokenAddress: string | undefined
-  amount: string | undefined
+  amount: string
   fundSource: FundSource | undefined
 }
 

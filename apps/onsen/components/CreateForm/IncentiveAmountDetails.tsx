@@ -150,7 +150,7 @@ export const IncentiveAmountDetails = () => {
             <CurrencyInput
               onChange={onChange}
               account={account?.address}
-              value={value || ''}
+              value={value}
               currency={currency}
               fundSource={fundSource}
               errorMessage={error?.message}
