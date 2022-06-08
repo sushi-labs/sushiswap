@@ -24,6 +24,26 @@ export default withTranspileModules({
         permanent: true,
         destination: 'https://discord.gg/SDPH8SNVZW',
       },
+      {
+        source: '/github{/}?',
+        permanent: true,
+        destination: 'https://github.com/sushiswap',
+      },
+      {
+        source: '/twitter{/}?',
+        permanent: true,
+        destination: 'https://twitter.com/sushiswap',
+      },
+      {
+        source: '/instagram{/}?',
+        permanent: true,
+        destination: 'https://instagram.com/instasushiswap',
+      },
+      {
+        source: '/medium{/}?',
+        permanent: true,
+        destination: 'https://medium.com/sushiswap-org',
+      },
     ]
   },
   async rewrites() {
