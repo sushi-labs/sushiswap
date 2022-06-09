@@ -43,9 +43,9 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     }),
   ])
 
-  const filteredLatest = latestArticlesRes.data.filter(
-    (el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title
-  )
+  const filteredLatest = articlesRes.data[0]
+    ? latestArticlesRes.data.filter((el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title)
+    : []
 
   if (filteredLatest.length > 2) filteredLatest.pop()
 
