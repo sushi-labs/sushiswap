@@ -3,10 +3,9 @@ import { Button } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { Article } from '../../types'
-
+import { ArticleEntity } from '../../.graphclient'
 interface ArticleFooter {
-  articles: Article[]
+  articles: ArticleEntity[]
 }
 
 export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
@@ -16,16 +15,16 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
         {articles.map((article) => (
           <article key={article.id} className="flex flex-col items-start">
-            <h3 className="order-1 text-lg text-slate-200 font-semibold">{article.attributes.title}</h3>
-            <time dateTime={article.attributes.publishedAt} className="text-sm leading-7 text-slate-400">
-              {format(new Date(article.attributes.publishedAt), 'dd MMM yyyy')}
+            <h3 className="order-1 text-lg text-slate-200 font-semibold">{article.attributes?.title}</h3>
+            <time dateTime={article.attributes?.publishedAt} className="text-sm leading-7 text-slate-400">
+              {format(new Date(article.attributes?.publishedAt), 'dd MMM yyyy')}
             </time>
             <Button
               as="a"
               size="sm"
               color="gray"
               endIcon={<ChevronRightIcon width={16} height={16} />}
-              href={`/blog/${article.attributes.slug}`}
+              href={`/blog/${article.attributes?.slug}`}
               className="order-1 mt-6 text-sm"
             >
               Read more

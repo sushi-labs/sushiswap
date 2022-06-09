@@ -6,12 +6,12 @@ import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { createContext, useContext } from 'react'
 
+import { ComponentSharedSeo } from '../.graphclient'
 import { Header } from '../components'
-import { fetchAPI } from '../lib/api'
-import { Seo } from '../types'
+import { getGlobalPage } from '../lib/api'
 
 interface GlobalContext {
-  defaultSeo: Seo
+  defaultSeo: ComponentSharedSeo
   siteName: string
 }
 
@@ -49,16 +49,10 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await NextApp.getInitialProps(ctx)
   // Fetch global site settings from Strapi
-  const globalRes = await fetchAPI('/global', {
-    populate: {
-      favicon: '*',
-      defaultSeo: {
-        populate: '*',
-      },
-    },
-  })
+  const globalRes = await getGlobalPage()
+
   // Pass the data to our page via props
-  return { ...appProps, pageProps: { global: globalRes.data } }
+  return { ...appProps, pageProps: { global: globalRes.global?.data } }
 }
 
 export default MyApp

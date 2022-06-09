@@ -1,6 +1,9 @@
 import { Container } from '@sushiswap/ui'
+import ErrorPage from 'next/error'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
 
+import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText, ComponentSharedSeo } from '../.graphclient'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -8,74 +11,68 @@ import {
   ArticleLinks,
   Breadcrumb,
   MediaBlock,
+  PreviewBanner,
   RichTextBlock,
   Seo,
 } from '../components'
-import { fetchAPI } from '../lib/api'
-import { Article, Article as ArticleType, Category, Meta } from '../types'
+import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
-  const articlesRes = await fetchAPI('/articles', { fields: ['slug'] })
-
+  const allArticles = await getAllArticlesBySlug()
   return {
-    paths: articlesRes.data.map((article: Article) => ({
-      params: {
-        slug: article.attributes.slug,
-      },
-    })),
-    fallback: false,
+    paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
+      if (article?.attributes?.slug) acc.push(`/${article.attributes.slug}`)
+
+      console.log(acc)
+      return acc
+    }, []),
+    fallback: true,
   }
 }
 
-export async function getStaticProps({ params }: { params: { slug: string } }) {
-  const [articlesRes, latestArticlesRes] = await Promise.all([
-    fetchAPI('/articles', {
-      filters: {
-        slug: params.slug,
-      },
-      populate: 'deep',
-    }),
-    fetchAPI('/articles', {
-      sort: ['publishedAt'],
-      pagination: {
-        limit: 3,
-      },
-    }),
-  ])
-
-  const filteredLatest = articlesRes.data[0]
-    ? latestArticlesRes.data.filter((el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title)
-    : []
-
-  if (filteredLatest.length > 2) filteredLatest.pop()
+export async function getStaticProps({
+  params,
+  preview = null,
+}: {
+  params: { slug: string }
+  preview: Record<string, unknown> | null
+}) {
+  const data = await getArticleAndMoreArticles(params.slug, preview)
 
   return {
-    props: { article: articlesRes.data[0], latestArticles: filteredLatest },
+    props: {
+      article: data?.articles?.data?.[0],
+      latestArticles: data?.moreArticles?.data,
+      preview: !!preview,
+    },
     revalidate: 1,
   }
 }
 
 interface ArticlePage {
-  article: ArticleType
-  latestArticles: ArticleType[]
-  categories: {
-    data: Category[]
-    meta: Meta
-  }
+  article: ArticleEntity
+  latestArticles: ArticleEntity[]
+  preview: boolean
 }
 
-const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
+const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
+  const router = useRouter()
+  if (!router.isFallback && !article?.attributes?.slug) {
+    return <ErrorPage statusCode={404} />
+  }
+
   const seo = {
     id: article.id,
-    metaTitle: article.attributes.title,
-    metaDescription: article.attributes.description,
-    shareImage: article.attributes.cover,
+    metaTitle: article.attributes?.title,
+    metaDescription: article.attributes?.description,
+    shareImage: article.attributes?.cover,
     article: true,
-  }
+  } as ComponentSharedSeo & { article: boolean }
 
   return (
     <>
       <Seo seo={seo} />
+      <PreviewBanner show={preview} />
       <Breadcrumb />
       <Container maxWidth="2xl" className="mx-auto px-4 my-16">
         <main>
@@ -83,16 +80,19 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
             <div className="mt-12 prose !prose-invert prose-slate">
-              {article.attributes.blocks.map((block, i) => {
-                if (block.__component === 'shared.rich-text') {
-                  return <RichTextBlock block={block} key={i} />
+              {article.attributes?.blocks?.map((block, i) => {
+                // @ts-ignore
+                if (block?.__typename === 'ComponentSharedRichText') {
+                  return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
                 }
 
-                if (block.__component === 'shared.media') {
-                  return <MediaBlock block={block} key={i} />
+                // @ts-ignore
+                if (block?.__typename === 'ComponentSharedMedia') {
+                  return <MediaBlock block={block as ComponentSharedMedia} key={i} />
                 }
 
-                if (block.__component === 'shared.divider') {
+                // @ts-ignore
+                if (block?.__typename === 'ComponentSharedDivider') {
                   return <hr key={i} className="border border-slate-200/5 my-12" />
                 }
               })}
@@ -106,4 +106,4 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
   )
 }
 
-export default Article
+export default ArticlePage

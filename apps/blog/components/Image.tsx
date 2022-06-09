@@ -1,9 +1,9 @@
+import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/image'
 import { FC } from 'react'
 
+import { UploadFileEntity } from '../.graphclient'
 import { getStrapiMedia } from '../lib/media'
-import { Image as ImageType } from '../types'
-import { classNames } from '@sushiswap/ui'
 
 interface ImageProps {
   quality?: number
@@ -12,9 +12,7 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: {
-    data: ImageType
-  }
+  image: UploadFileEntity
 }
 
 export const Image: FC<ImageProps> = ({
@@ -26,9 +24,13 @@ export const Image: FC<ImageProps> = ({
   layout = 'fill',
   objectFit = 'cover',
 }) => {
-  const { alternativeText, width: _width, height: _height } = image.data.attributes
+  if (!image.attributes || !image.attributes.url) {
+    return <></>
+  }
 
-  if (image.data.attributes.url.includes('.mp4') || image.data.attributes.url.includes('.webm')) {
+  const { alternativeText, width: _width, height: _height } = image.attributes
+
+  if (image.attributes.url.includes('.mp4') || image.attributes.url.includes('.webm')) {
     return (
       <video
         autoPlay={true}
@@ -38,7 +40,7 @@ export const Image: FC<ImageProps> = ({
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
       >
-        <source src={getStrapiMedia(image.data.attributes.url)} />
+        <source src={getStrapiMedia(image.attributes.url)} />
       </video>
     )
   }
@@ -51,7 +53,7 @@ export const Image: FC<ImageProps> = ({
       width={width || _width || '640'}
       height={height || _height || '400'}
       objectFit={objectFit}
-      src={getStrapiMedia(image.data.attributes.url)}
+      src={getStrapiMedia(image.attributes.url)}
       alt={alternativeText || ''}
     />
   )

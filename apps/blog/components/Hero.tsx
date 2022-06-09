@@ -1,11 +1,11 @@
 import { Button, Container } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { Article } from '../types'
+import { ArticleEntity } from '../.graphclient'
 import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {
-  article: Article
+  article: ArticleEntity
 }
 
 export const Hero: FC<Hero> = ({ article }) => {
@@ -17,7 +17,7 @@ export const Hero: FC<Hero> = ({ article }) => {
           <ArticleAuthors article={article} />
           <Button
             as="a"
-            href={`/blog/${article.attributes.slug}`}
+            href={`/blog/${article.attributes?.slug}`}
             color="blue"
             className="mt-8 inline-flex transition-all hover:ring-4 focus:ring-4 text-sm text-slate-50 px-6 h-[40px] sm:!h-[40px]"
           >
