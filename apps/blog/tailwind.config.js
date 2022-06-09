@@ -1,4 +1,5 @@
 module.exports = {
+  darkMode: 'media',
   presets: [require('@sushiswap/ui/tailwind')],
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',

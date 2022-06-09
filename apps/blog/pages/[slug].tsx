@@ -82,7 +82,7 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
           <article className="relative pt-10">
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
-            <div className="mt-12 prose dark:prose-invert prose-slate">
+            <div className="mt-12 prose !prose-invert prose-slate">
               {article.attributes.blocks.map((block, i) => {
                 if (block.__component === 'shared.rich-text') {
                   return <RichTextBlock block={block} key={i} />
@@ -93,7 +93,7 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
                 }
 
                 if (block.__component === 'shared.divider') {
-                  return <hr className="border border-slate-200/5 my-12" />
+                  return <hr key={i} className="border border-slate-200/5 my-12" />
                 }
               })}
             </div>
