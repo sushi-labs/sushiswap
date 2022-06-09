@@ -37,6 +37,16 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
     console.error(response.statusText)
     throw new Error(`An error occured please try again`)
   }
+
   const data = await response.json()
+  return data
+}
+
+export async function getPreviewPostBySlug(slug: string) {
+  const data = await fetchAPI('/articles', {
+    filters: {
+      slug: slug,
+    },
+  })
   return data
 }

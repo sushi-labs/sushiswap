@@ -43,9 +43,9 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     }),
   ])
 
-  const filteredLatest = latestArticlesRes.data.filter(
-    (el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title
-  )
+  const filteredLatest = articlesRes.data[0]
+    ? latestArticlesRes.data.filter((el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title)
+    : []
 
   if (filteredLatest.length > 2) filteredLatest.pop()
 
@@ -82,7 +82,7 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
           <article className="relative pt-10">
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
-            <div className="mt-12 prose dark:prose-invert prose-slate">
+            <div className="mt-12 prose !prose-invert prose-slate">
               {article.attributes.blocks.map((block, i) => {
                 if (block.__component === 'shared.rich-text') {
                   return <RichTextBlock block={block} key={i} />
@@ -93,7 +93,7 @@ const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
                 }
 
                 if (block.__component === 'shared.divider') {
-                  return <hr className="border border-slate-200/5 my-12" />
+                  return <hr key={i} className="border border-slate-200/5 my-12" />
                 }
               })}
             </div>

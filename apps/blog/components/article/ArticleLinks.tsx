@@ -2,7 +2,6 @@ import { LinkIcon, MailIcon } from '@heroicons/react/outline'
 import { TwitterIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { getStrapiURL } from '../../lib/api'
 import { Article } from '../../types'
 
 interface ArticleLinks {
@@ -18,7 +17,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         <a
           target="_blank"
           title="Share on Twitter"
-          href={`http://twitter.com/share?url=${getStrapiURL(`/blog/${article.attributes.slug}`)}`}
+          href={`http://twitter.com/share?url=https://sushi.com/blog/${article.attributes.slug}`}
           rel="noreferrer"
         >
           <TwitterIcon width={20} height={20} className="text-blue hover:text-blue-400 cursor-pointer" />
@@ -28,7 +27,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           href={`mailto:?subject=${encodeURI(
             article.attributes.title
           )}&body=Checkout this new SushiSwap Blog article ${encodeURI(
-            getStrapiURL(`/blog/${article.attributes.slug}`)
+            `https://sushi.com/blog/${article.attributes.slug}`
           )}`}
         >
           <MailIcon width={20} height={20} className="text-blue hover:text-blue-400 cursor-pointer" />
@@ -37,7 +36,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           width={20}
           height={20}
           className="text-blue hover:text-blue-400 cursor-pointer"
-          onClick={() => navigator.clipboard.writeText(getStrapiURL(`/blog/${article.attributes.slug}`))}
+          onClick={() => navigator.clipboard.writeText(`https://sushi.com/blog/${article.attributes.slug}`)}
         />
       </div>
     </section>
