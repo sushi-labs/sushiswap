@@ -10,8 +10,8 @@ type OwnProps = {
     | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>[]
 }
 
-type ComponentsWrapperProps<C extends React.ElementType> = PolymorphicComponentProps<C, OwnProps>
-type ComponentsWrapperComponent = <C extends React.ElementType = 'div'>(
+export type ComponentsWrapperProps<C extends React.ElementType> = PolymorphicComponentProps<C, OwnProps>
+export type ComponentsWrapperComponent = <C extends React.ElementType = 'div'>(
   props: ComponentsWrapperProps<C>
 ) => React.ReactElement | null
 

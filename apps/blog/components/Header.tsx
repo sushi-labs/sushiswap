@@ -1,4 +1,4 @@
-import { App, Button, classNames, Container, SushiIcon } from '@sushiswap/ui'
+import { App, classNames, Container, SushiIcon } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 

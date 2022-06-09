@@ -156,16 +156,18 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
             />
           </Approve.Components>
         }
-        render={({ approved }) => (
-          <Button
-            variant="filled"
-            color="gradient"
-            disabled={isWritePending || !approved || !totalAmountAsEntity?.greaterThan(ZERO)}
-            onClick={createVesting}
-          >
-            {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
-          </Button>
-        )}
+        render={({ approved }) => {
+          return (
+            <Button
+              variant="filled"
+              color="gradient"
+              disabled={isWritePending || !approved || !totalAmountAsEntity?.greaterThan(ZERO)}
+              onClick={createVesting}
+            >
+              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
+            </Button>
+          )
+        }}
       />
     </Form.Buttons>
   )
