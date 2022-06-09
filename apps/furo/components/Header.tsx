@@ -39,7 +39,7 @@ export const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            {activeChain && activeChain.id in SUPPORTED_CHAINS && (
+            {(!account || activeChain?.id in SUPPORTED_CHAINS) && (
               <Wallet.Button className="!h-[36px]" hack={connect} />
             )}
             {account?.address && isMounted && isConnected && (
