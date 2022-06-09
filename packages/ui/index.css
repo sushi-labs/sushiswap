@@ -15,7 +15,6 @@
   box-sizing: inherit;
 }
 
-
 html {
   height: 100%;
   box-sizing: border-box;
@@ -26,10 +25,6 @@ body {
   position: relative;
   min-height: 100%;
   margin: 0;
-}
-
-li {
-  list-style: none;
 }
 
 html,
