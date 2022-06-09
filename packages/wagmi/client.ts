@@ -94,7 +94,7 @@ const otherChains = [
     network: 'gnosis',
     nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
     rpcUrls: {
-      default: 'https://s1.api.harmony.one',
+      default: 'https://api.harmony.one',
     },
     blockExplorers: {
       etherscan: {
