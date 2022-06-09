@@ -5,7 +5,7 @@ import { getStrapiMedia } from '../lib/media'
 import { Image as ImageType } from '../types'
 
 interface ImageProps {
-  quality: number
+  quality?: number
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string

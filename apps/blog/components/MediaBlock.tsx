@@ -11,11 +11,11 @@ export const MediaBlock: FC<MediaBlock> = ({ block }) => {
   return (
     <div className="flex flex-col gap-4 my-10">
       {block.file && (
-        <div className="relative rounded-xl overflow-hidden">
+        <div className="relative overflow-hidden rounded-xl">
           <Image layout="responsive" objectFit="contain" image={block.file} />
         </div>
       )}
-      {block.caption && <span className="text-xs text-slate-400 font-bold">{block.caption}</span>}
+      {block.caption && <span className="text-xs font-bold text-slate-400">{block.caption}</span>}
     </div>
   )
 }
