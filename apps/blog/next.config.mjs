@@ -4,7 +4,8 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
 export default withTranspileModules({
   images: {
-    domains: ['localhost'],
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   basePath: '/blog',
   reactStrictMode: true,
