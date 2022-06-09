@@ -91,7 +91,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
     }
   }, [activeChain?.id, amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream || stream?.isEnded) return null
+  if (!stream || !account || stream?.canUpdate(account.address)) return null
 
   return (
     <>

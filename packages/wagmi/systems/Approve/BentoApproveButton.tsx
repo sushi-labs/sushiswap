@@ -21,6 +21,14 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract })
 
     useEffect(() => {
+      if (masterContract === AddressZero) {
+        throw new Error(
+          `Provided master contract address is ${AddressZero}, this is probably not right and is a good indication this master contract is not deployed on the connected network`
+        )
+      }
+    }, [masterContract])
+
+    useEffect(() => {
       onSignature(signature)
     }, [onSignature, signature])
 

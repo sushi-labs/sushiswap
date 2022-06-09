@@ -1,4 +1,4 @@
-import { App, Button, classNames, Container, SushiIcon } from '@sushiswap/ui'
+import { App, classNames, Container, SushiIcon } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
@@ -16,9 +16,9 @@ export const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-9 whitespace-nowrap">
-            <Button color="gradient" size="sm" className="rounded-full text-slate-50">
-              Enter App
-            </Button>
+            {/*<Button color="gradient" size="sm" className="rounded-full text-slate-50">*/}
+            {/*  Enter App*/}
+            {/*</Button>*/}
           </div>
         </App.Header>
       </Container>

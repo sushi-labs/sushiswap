@@ -31,7 +31,6 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
   const { isConnected } = useConnect()
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
-  const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
     `/furo/api/user/${chainId}/${address}/streams`,
@@ -191,8 +190,8 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             <FuroTable
               chainId={chainId}
               balances={balancesData}
-              globalFilter={showActiveOutgoing}
-              setGlobalFilter={setShowActiveOutgoing}
+              globalFilter={showActiveIncoming}
+              setGlobalFilter={setShowActiveIncoming}
               loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
               streams={streams?.outgoingStreams ?? []}
               vestings={vestings?.outgoingVestings ?? []}

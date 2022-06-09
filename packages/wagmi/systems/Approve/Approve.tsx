@@ -14,9 +14,10 @@ import { ApprovalState } from '../../hooks'
 import { BentoApproveButton } from './BentoApproveButton'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { TokenApproveButton } from './TokenApproveButton'
+import { ApproveButton } from './types'
 
 interface Props {
-  components: ReactElement<ComponentsWrapper<any>>
+  components: ReactElement<ApproveButton<'button'>>
   render({ approved, isUnknown }: { approved: boolean; isUnknown: boolean }): ReactNode
 }
 
@@ -43,8 +44,12 @@ const Controller: FC<Props> = ({ components, render }) => {
     )
   }, [components, handleUpdate])
 
-  const isUnknown = refs.current.some((el) => el === ApprovalState.UNKNOWN)
-  const approved = refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING)
+  const isUnknown =
+    refs.current.some((el) => el === ApprovalState.UNKNOWN) &&
+    Children.count(components.props.children) === refs.current.length
+  const approved =
+    refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
+    Children.count(components.props.children) === refs.current.length
 
   return (
     <>
