@@ -26,7 +26,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
               color="gray"
               endIcon={<ChevronRightIcon width={16} height={16} />}
               href={`/blog/${article.attributes.slug}`}
-              className="order-1 mt-6 rounded-full text-sm"
+              className="order-1 mt-6 text-sm"
             >
               Read more
             </Button>
