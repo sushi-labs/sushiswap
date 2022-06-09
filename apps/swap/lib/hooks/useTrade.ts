@@ -140,15 +140,13 @@ export function useTrade(
         if (legacyRoute.status === RouteStatus.Success) {
           console.debug('Found legacy route', legacyRoute)
           try {
-            return TradeV1.exactIn(
-              convertTinesSingleRouteToRouteV1(
-                legacyRoute,
-                filteredPools.filter((pair) => pair instanceof Pair) as Pair[],
-                currencyIn,
-                currencyOut
-              ),
-              amountSpecified
+            const route = convertTinesSingleRouteToRouteV1(
+              legacyRoute,
+              filteredPools.filter((pair) => pair instanceof Pair) as Pair[],
+              currencyIn,
+              currencyOut
             )
+            return TradeV1.exactIn(route, amountSpecified)
           } catch (error) {
             console.debug('error converting tines single route to legacy route')
           }
