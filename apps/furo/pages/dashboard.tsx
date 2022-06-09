@@ -3,8 +3,8 @@ import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { useWalletState, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Dashboard, Layout, Overlay } from 'components'
 import Link from 'next/link'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { useRouter } from 'next/router'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 export default function DashboardPage() {
   const router = useRouter()

@@ -88,7 +88,7 @@ const _Archive = () => {
       <Seo />
       <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
         <Link href="/" passHref={true}>
-          <a className="group flex gap-3 items-center">
+          <a className="flex items-center gap-3 group">
             <ChevronLeftIcon width={18} className="text-slate-400 group-hover:text-slate-50" />
             <Typography variant="lg" weight={700} className="text-lg group-hover:text-slate-50 text-slate-200">
               Archive
@@ -98,13 +98,13 @@ const _Archive = () => {
       </Container>
       <div className="flex flex-col divide-y divide-slate-800">
         <section className="py-4 pb-60">
-          <Container maxWidth="5xl" className="mx-auto px-4 space-y-8">
-            <div className="flex flex-col gap-y-8 md:flex-row items-center justify-between">
-              <div className="order-2 md:order-1 flex items-center gap-3">
-                <div className="text-sm font-bold text-slate-400 mr-2">Categories</div>
+          <Container maxWidth="5xl" className="px-4 mx-auto space-y-8">
+            <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
+              <div className="flex items-center order-2 gap-3 md:order-1">
+                <div className="mr-2 text-sm font-bold text-slate-400">Categories</div>
                 <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
               </div>
-              <div className="w-full md:w-auto order-1 md:order-2 flex items-center gap-3 rounded-xl bg-slate-800 px-3 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
+              <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
                 <input
                   onChange={(e) => setQuery(e.target.value)}
                   className="w-full font-bold placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
@@ -113,7 +113,7 @@ const _Archive = () => {
                 <SearchIcon width={24} height={24} className="text-slate-500" />
               </div>
             </div>
-            <div className="divide-y divide-slate-200/5 border-t border-slate-200/5 border-b">
+            <div className="border-t border-b divide-y divide-slate-200/5 border-slate-200/5">
               <ArticleList
                 articles={articleList}
                 loading={loading}
