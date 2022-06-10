@@ -22,8 +22,8 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
 
     useEffect(() => {
       if (masterContract === AddressZero) {
-        throw new Error(
-          `Provided master contract address is ${AddressZero}, this is probably not right and is a good indication this master contract is not deployed on the connected network`
+        console.error(
+          `Provided master contract address is ${AddressZero}, this is probably not right and is a good indication this master contract is not deployed on this network`
         )
       }
     }, [masterContract])
