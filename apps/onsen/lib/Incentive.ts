@@ -9,24 +9,26 @@ import { toToken } from './mapper'
 export class Incentive {
   public readonly id: string
   public readonly tokenType: string
-  public readonly rewardAmount: Amount<Token>
+  private readonly rewardAmount: Amount<Token>
   public readonly liquidityStaked: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly createdBy: string
   public readonly status: IncentiveStatus
+  private readonly rewardLastUpdated: Date
   private _tvl?: number
   private _rewardUsdPrice?: number
   private _isSubscribed: boolean
 
-  public constructor({ incentive }: { incentive: IncentiveDTO }) {
+  public constructor({ chainId, incentive }: { chainId: ChainId; incentive: IncentiveDTO }) {
     this.id = incentive.id
     this._isSubscribed = false
-    this.rewardAmount = Amount.fromRawAmount(toToken(incentive.rewardToken, ChainId.KOVAN), incentive.rewardAmount) // TODO: pass in active network to constructor
-    this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, ChainId.KOVAN), incentive.liquidityStaked) // TODO: pass in active network to constructor
+    this.rewardAmount = Amount.fromRawAmount(toToken(incentive.rewardToken, chainId), incentive.rewardsRemaining)
+    this.liquidityStaked = Amount.fromRawAmount(toToken(incentive.stakeToken, chainId), incentive.liquidityStaked)
     this.tokenType = incentive.stakeToken?.type ? (<any>TokenType)[incentive.stakeToken?.type] : TokenType.UNKNOWN // FIXME: any hack?
-    this.startTime = new Date(Number(incentive.createdAtTimestamp) * 1000)
+    this.startTime = new Date(Number(incentive.startTime) * 1000)
     this.endTime = new Date(Number(incentive.endTime) * 1000)
+    this.rewardLastUpdated = new Date(Number(incentive.rewardsUpdatedAtTimestamp) * 1000)
     this.createdBy = incentive.createdBy.id
     this.status = this.initStatus()
   }
@@ -60,7 +62,7 @@ export class Incentive {
 
   public get rewardsRemaining(): Amount<Token> {
     const now = Date.now()
-    const startTime = JSBI.BigInt(this.startTime.getTime())
+    const startTime = JSBI.BigInt(this.rewardLastUpdated.getTime())
     const endTime = JSBI.BigInt(this.endTime.getTime())
 
     if (this.liquidityStaked.greaterThan(0) && now > this.startTime.getTime()) {
@@ -73,6 +75,10 @@ export class Incentive {
       return this.rewardAmount.subtract(rewardsCollected)
     }
     return this.rewardAmount
+  }
+
+  public get rewardToken(): Token {
+    return this.rewardAmount.currency
   }
 
   public get isSubscribed(): boolean {

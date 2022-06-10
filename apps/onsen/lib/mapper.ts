@@ -20,7 +20,7 @@ export function updateIncentivePricing(
   prices: { [key: string]: number },
   legacyPairs: Record<string, PairDTO> | undefined
 ): void {
-  const price = prices[incentive.rewardAmount.currency.address.toLowerCase()]
+  const price = prices[incentive.rewardToken.address.toLowerCase()]
   if (price) {
     incentive.price = price
   }

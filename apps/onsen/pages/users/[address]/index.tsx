@@ -82,6 +82,7 @@ export const FarmsPage: FC = () => {
         ?.map(
           (farm) =>
             new Farm({
+              chainId,
               token: farm.stakeToken,
               incentives: farm.incentives.filter((incentive) => incentive.endTime >= now),
             })

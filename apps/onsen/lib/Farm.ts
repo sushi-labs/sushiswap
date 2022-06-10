@@ -11,16 +11,22 @@ export class Farm {
   public readonly farmType: TokenType
   public readonly incentives: Incentive[]
 
-  public constructor({ token, incentives }: { token: TokenDTO; incentives: IncentiveDTO[] }) {
-    this.stakeToken = toToken(token, ChainId.KOVAN) // TODO: activeChain
-    this.farmType = incentives[0].stakeToken?.type
-      ? (<any>TokenType)[incentives[0].stakeToken?.type]
-      : TokenType.UNKNOWN // FIXME: any hack?
-    this.incentives = incentives.map((incentive) => new Incentive({ incentive }))
+  public constructor({
+    chainId,
+    token,
+    incentives,
+  }: {
+    chainId: ChainId
+    token: TokenDTO
+    incentives: IncentiveDTO[]
+  }) {
+    this.stakeToken = toToken(token, chainId)
+    this.farmType = token.type ? (<any>TokenType)[token.type] : TokenType.UNKNOWN // FIXME: any hack?
+    this.incentives = incentives.map((incentive) => new Incentive({ chainId, incentive }))
   }
 
   public get tvl(): number {
-    return this.incentives.reduce((acc, cur) => (acc += cur.tvl ?? 0), 0)
+    return Math.max(...this.incentives.map((incentive) => incentive.tvl ?? 0))
   }
 
   public get totalRewardInUsd(): number {

@@ -56,20 +56,18 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       </div>
     ),
   }),
-  table.createDisplayColumn({
-    id: 'rewardToken',
-    header: () => <div className="w-full text-left"> Reward Token </div>,
+  table.createDataColumn('rewardToken', {
+    header: () => <div className="w-full text-left">Reward Token</div>,
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.row.original?.rewardAmount.currency.name}
+            {props.getValue().address}
           </Typography>
         </div>
       )
     },
   }),
-
   table.createDisplayColumn({
     id: 'farm',
     header: () => <div className="w-full text-left"> Farm </div>,

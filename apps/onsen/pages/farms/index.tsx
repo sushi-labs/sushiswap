@@ -70,6 +70,7 @@ export const FarmsPage: FC = () => {
     const mappedFarms = farmsDTO.map(
       (farm) =>
         new Farm({
+          chainId,
           token: farm.stakeToken,
           incentives: farm.incentives,
         })
