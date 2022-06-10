@@ -45,12 +45,12 @@ export const Seo: FC<Seo> = ({ seo }) => {
       <meta property="og:locale" content="en_US" />
       <meta property="og:title" content={fullSeo.metaTitle} />
       <meta property="og:description" content={fullSeo.metaDescription} />
+      <meta property="og:image:alt" content={`${fullSeo.metaDescription}`} />
 
       {!isMediaVideo(seoWithDefaults.shareImage.data.attributes.provider_metadata) && (
         <>
           <meta name="image" content={fullSeo.shareMedia} />
           <meta property="og:image" content={fullSeo.shareMedia} />
-          <meta property="og:image:alt" content={`${fullSeo.metaDescription}`} />
           <meta property="og:image:type" content="image/jpeg" />
           <meta property="og:image:width" content={`${fullSeo.shareMediaWidth}`} />
           <meta property="og:image:height" content={`${fullSeo.shareMediaHeight}`} />
@@ -72,12 +72,11 @@ export const Seo: FC<Seo> = ({ seo }) => {
           <meta name="twitter:player:height" content={`${fullSeo.shareMediaHeight}`} />
 
           <meta property="og:video" content={fullSeo.shareMedia} />
-          <meta property="og:video:alt" content={fullSeo.metaDescription} />
           <meta property="og:video:type" content="video/webm" />
           <meta property="og:video:width" content={`${fullSeo.shareMediaWidth}`} />
           <meta property="og:video:height" content={`${fullSeo.shareMediaHeight}`} />
           {fullSeo.tags.map((tag, i) => (
-            <meta key={i} property="og:video:tag" content={tag} />
+            <meta key={i} property="og:video:tag" content={tag.toLowerCase()} />
           ))}
         </>
       )}
