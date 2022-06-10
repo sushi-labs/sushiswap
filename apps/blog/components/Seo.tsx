@@ -35,7 +35,6 @@ export const Seo: FC<Seo> = ({ seo }) => {
       : 'summary_large_image',
   }
 
-  console.log(seoWithDefaults.shareImage)
   return (
     <Head>
       <title>{fullSeo.metaTitle}</title>
@@ -54,7 +53,7 @@ export const Seo: FC<Seo> = ({ seo }) => {
           <meta property="og:image:type" content="image/jpeg" />
           <meta property="og:image:width" content={`${fullSeo.shareMediaWidth}`} />
           <meta property="og:image:height" content={`${fullSeo.shareMediaHeight}`} />
-          <meta property="og:image:alt" content={`${fullSeo.shareMediaAlt}`} />
+          <meta property="og:image:alt" content={`${fullSeo.metaDescription}`} />
         </>
       )}
 
