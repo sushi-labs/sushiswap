@@ -1,7 +1,9 @@
 import { Transformation } from '@cloudinary/url-gen'
+import { edit } from '@cloudinary/url-gen/actions/animated'
 import { ifCondition } from '@cloudinary/url-gen/actions/conditional'
 import { quality } from '@cloudinary/url-gen/actions/delivery'
-import { fill } from '@cloudinary/url-gen/actions/resize'
+import { fill, scale } from '@cloudinary/url-gen/actions/resize'
+import { toAnimated } from '@cloudinary/url-gen/actions/transcode'
 
 import { cld } from '../pages/_app'
 
@@ -30,7 +32,19 @@ export function getOptimizedMedia({
   height?: number
   asImage?: boolean
 }) {
-  if (isMediaVideo(metadata) && !asImage) {
+  if (isMediaVideo(metadata) && asImage) {
+    return cld
+      .video(metadata.public_id)
+      .resize(scale().height(240))
+      .animated(edit().loop())
+      .transcode(toAnimated().sampling(40))
+      .animated(edit().delay(200))
+      .format('gif')
+      .delivery(quality(50))
+      .toURL()
+  }
+
+  if (isMediaVideo(metadata)) {
     return cld
       .video(metadata.public_id)
       .format('webm')

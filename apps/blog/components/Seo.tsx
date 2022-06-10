@@ -35,11 +35,11 @@ export const Seo: FC<Seo> = ({ seo }) => {
       : 'summary_large_image',
   }
 
+  console.log(seoWithDefaults.shareImage)
   return (
     <Head>
       <title>{fullSeo.metaTitle}</title>
       <meta name="description" content={fullSeo.metaDescription} />
-      <meta name="image" content={fullSeo.shareMediaAsImage} />
 
       {fullSeo.article && <meta property="og:type" content="article" />}
       <meta property="og:site_name" content={siteName} />
@@ -47,11 +47,16 @@ export const Seo: FC<Seo> = ({ seo }) => {
       <meta property="og:title" content={fullSeo.metaTitle} />
       <meta property="og:description" content={fullSeo.metaDescription} />
 
-      <meta property="og:image" content={fullSeo.shareMediaAsImage} />
-      <meta property="og:image:type" content="image/jpeg" />
-      <meta property="og:image:width" content={`${fullSeo.shareMediaWidth}`} />
-      <meta property="og:image:height" content={`${fullSeo.shareMediaHeight}`} />
-      <meta property="og:image:alt" content={`${fullSeo.shareMediaAlt}`} />
+      {!isMediaVideo(seoWithDefaults.shareImage.data.attributes.provider_metadata) && (
+        <>
+          <meta name="image" content={fullSeo.shareMedia} />
+          <meta property="og:image" content={fullSeo.shareMedia} />
+          <meta property="og:image:type" content="image/jpeg" />
+          <meta property="og:image:width" content={`${fullSeo.shareMediaWidth}`} />
+          <meta property="og:image:height" content={`${fullSeo.shareMediaHeight}`} />
+          <meta property="og:image:alt" content={`${fullSeo.shareMediaAlt}`} />
+        </>
+      )}
 
       <meta name="twitter:title" content={fullSeo.metaTitle} />
       <meta name="twitter:site" content="@sushiswap" />
