@@ -86,7 +86,7 @@ export const FarmsPage: FC = () => {
       })
     })
     return mappedFarms
-  }, [prices, isValidating, legacyPairs, farmsDTO])
+  }, [prices, isValidating, legacyPairs, farmsDTO, chainId])
 
   return (
     <Layout>
