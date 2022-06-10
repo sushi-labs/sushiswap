@@ -25,8 +25,8 @@ export abstract class Furo {
 
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: Rebase }) {
     this.rebase = {
-      base: JSBI.BigInt(Math.round(Math.floor(rebase.base * 1e5)) || '1'),
-      elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5)) || '1'),
+      base: JSBI.BigInt(Math.round(Math.floor(rebase.base * 1e5))),
+      elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
     }
     this.id = furo.id
     this.chainId = chainId
