@@ -11,8 +11,8 @@ query KovanStakingFarms($where: Incentive_filter) {
     }
     incentives(where: $where) {
       id
-      lastRewardTime
-      rewardAmount
+      rewardsAccrued
+      rewardsRemaining
       liquidityStaked
       stakeToken {
         id
@@ -32,11 +32,14 @@ query KovanStakingFarms($where: Incentive_filter) {
       createdBy {
         id
       }
+      startTime
       endTime
       createdAtBlock
       createdAtTimestamp
       modifiedAtBlock
       modifiedAtTimestamp
+      rewardsUpdatedAtBlock
+      rewardsUpdatedAtTimestamp
     }
   }
 }
@@ -53,8 +56,8 @@ query KovanStakingSubscriptions($id: ID!) {
         decimals
         incentives {
           id
-          lastRewardTime
-          rewardAmount
+          rewardsAccrued
+          rewardsRemaining
           liquidityStaked
           stakeToken {
             id
@@ -74,11 +77,14 @@ query KovanStakingSubscriptions($id: ID!) {
           createdBy {
             id
           }
+          startTime
           endTime
           createdAtBlock
           createdAtTimestamp
           modifiedAtBlock
           modifiedAtTimestamp
+          rewardsUpdatedAtBlock
+          rewardsUpdatedAtTimestamp
         }
       }
       incentive {
@@ -114,8 +120,8 @@ query KovanStakingUserFarms($farmIds: [ID]!) {
     }
     incentives {
       id
-      lastRewardTime
-      rewardAmount
+      rewardsAccrued
+      rewardsRemaining
       liquidityStaked
       stakeToken {
         id
@@ -135,11 +141,14 @@ query KovanStakingUserFarms($farmIds: [ID]!) {
       createdBy {
         id
       }
+      startTime
       endTime
       createdAtBlock
       createdAtTimestamp
       modifiedAtBlock
       modifiedAtTimestamp
+      rewardsUpdatedAtBlock
+      rewardsUpdatedAtTimestamp
     }
   }
 }
