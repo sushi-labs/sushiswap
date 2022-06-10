@@ -19,8 +19,6 @@ interface GlobalContext {
 export const cld = new Cloudinary({
   cloud: {
     cloudName: 'sushi-cdn',
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
 })
 
