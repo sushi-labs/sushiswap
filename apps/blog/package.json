@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.8.0",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.2",

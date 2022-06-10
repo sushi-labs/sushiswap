@@ -3,6 +3,7 @@ import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
+import { isMediaVideo } from '../../lib/media'
 import { ArticleEntity } from '../../.graphclient'
 import { Image } from '../Image'
 
@@ -15,19 +16,16 @@ export const Card: FC<Card> = ({ article }) => {
     <a href={`/blog/${article.attributes?.slug}`} className="group">
       <div className="transition duration-[400ms] relative h-[400px] cursor-pointer w-full rounded-xl shadow-md bg-slate-800 overflow-hidden hover:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
         <div className="relative h-[240px]">
-          {article.attributes?.cover?.data && (
-            <Image
-              height={240}
-              quality={5}
-              image={article.attributes.cover.data}
-              className={classNames(
-                article.attributes.cover.data.attributes?.url.includes('.mp4') ||
-                  article.attributes.cover.data.attributes?.url.includes('.webm')
-                  ? ''
-                  : 'group-hover:scale-105 transition duration-[400ms]'
-              )}
-            />
-          )}
+          {article.attributes?.cover?.data && (<Image
+            height={240}
+            quality={5}
+            image={article.attributes.cover.data}
+            className={classNames(
+              isMediaVideo(article.attributes.cover.data.attributes.provider_metadata)
+                ? ''
+                : 'group-hover:scale-105 transition duration-[400ms]'
+            )}
+          />)}
         </div>
         <div className="flex flex-col gap-3 px-4">
           {(article.attributes?.categories?.data || []).length > 0 && (

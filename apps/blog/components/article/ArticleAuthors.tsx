@@ -14,7 +14,7 @@ export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
         {article.attributes?.authors?.data.map((author, index) => (
           <li key={index} className="flex items-center px-5 mt-6 font-medium whitespace-nowrap">
             <div className="relative mr-3 overflow-hidden rounded-full w-9 h-9 bg-slate-800">
-              {author.attributes?.avatar.data && <Image image={author.attributes.avatar.data} />}
+              {author.attributes?.avatar.data && <Image image={author.attributes.avatar.data} width={64} height={64} />}
             </div>
             <div className="text-sm leading-4">
               <div className="font-medium text-slate-200">{author.attributes?.name}</div>

@@ -63,10 +63,12 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
 
   const seo = {
     id: article.id,
+    slug: article.attributes.slug,
     metaTitle: article.attributes?.title,
     metaDescription: article.attributes?.description,
     shareImage: article.attributes?.cover,
     article: true,
+    tags: article.attributes.categories.data.map((el) => el.attributes.name),
   } as ComponentSharedSeo & { article: boolean }
 
   return (
