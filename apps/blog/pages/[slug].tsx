@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText, ComponentSharedSeo } from '../.graphclient'
+import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.graphclient'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -14,6 +14,7 @@ import {
   PreviewBanner,
   RichTextBlock,
   Seo,
+  SeoType,
 } from '../components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
@@ -61,15 +62,21 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
     return <ErrorPage statusCode={404} />
   }
 
-  const seo = {
-    id: article.id,
-    slug: article.attributes.slug,
-    metaTitle: article.attributes?.title,
-    metaDescription: article.attributes?.description,
-    shareImage: article.attributes?.cover,
-    article: true,
-    tags: article.attributes.categories.data.map((el) => el.attributes.name),
-  } as ComponentSharedSeo & { article: boolean }
+  const seo: SeoType =
+    article?.attributes && article?.id
+      ? {
+          id: article.id,
+          slug: article.attributes.slug,
+          metaTitle: article.attributes.title,
+          metaDescription: article.attributes.description,
+          shareImage: article.attributes.cover,
+          article: true,
+          tags: article.attributes.categories?.data.reduce<string[]>((acc, el) => {
+            if (el?.attributes?.name) acc.push(el.attributes.name)
+            return acc
+          }, []),
+        }
+      : undefined
 
   return (
     <>

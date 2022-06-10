@@ -2,9 +2,8 @@ import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/image'
 import { FC } from 'react'
 
-import { getOptimizedMedia, isMediaVideo } from '../lib/media'
-import { Image as ImageType } from '../types'
 import { UploadFileEntity } from '../.graphclient'
+import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 interface ImageProps {
   quality?: number
@@ -29,7 +28,7 @@ export const Image: FC<ImageProps> = ({
     return <></>
   }
 
-  if (isMediaVideo(image.data.attributes.provider_metadata)) {
+  if (isMediaVideo(image.attributes.provider_metadata)) {
     return (
       <video
         autoPlay={true}
@@ -43,6 +42,8 @@ export const Image: FC<ImageProps> = ({
       </video>
     )
   }
+
+  const { width: _width, height: _height, alternativeText } = image.attributes
 
   return (
     <NextImage
