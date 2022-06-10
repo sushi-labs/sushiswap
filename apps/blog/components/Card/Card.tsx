@@ -3,6 +3,7 @@ import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
+import { isMediaVideo } from '../../lib/media'
 import { Article } from '../../types'
 import { Image } from '../Image'
 
@@ -20,8 +21,7 @@ export const Card: FC<Card> = ({ article }) => {
             quality={5}
             image={article.attributes.cover}
             className={classNames(
-              article.attributes.cover.data.attributes.url.includes('.mp4') ||
-                article.attributes.cover.data.attributes.url.includes('.webm')
+              isMediaVideo(article.attributes.cover.data.attributes.provider_metadata)
                 ? ''
                 : 'group-hover:scale-105 transition duration-[400ms]'
             )}

@@ -62,7 +62,7 @@ export type Image = {
     url: string
     previewUrl: string | null
     provider: string
-    provider_metadata: string | null
+    provider_metadata: { public_id: string; resource_type: string }
     createdAt: string
     updatedAt: string
   }
@@ -85,6 +85,8 @@ export type Seo = {
   metaTitle: string
   shareImage: Data<Image>
   article: boolean
+  slug: string
+  tags: string[]
 }
 
 export type Author = {

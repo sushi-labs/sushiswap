@@ -1,9 +1,9 @@
+import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/image'
 import { FC } from 'react'
 
-import { getStrapiMedia } from '../lib/media'
+import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 import { Image as ImageType } from '../types'
-import { classNames } from '@sushiswap/ui'
 
 interface ImageProps {
   quality?: number
@@ -28,7 +28,7 @@ export const Image: FC<ImageProps> = ({
 }) => {
   const { alternativeText, width: _width, height: _height } = image.data.attributes
 
-  if (image.data.attributes.url.includes('.mp4') || image.data.attributes.url.includes('.webm')) {
+  if (isMediaVideo(image.data.attributes.provider_metadata)) {
     return (
       <video
         autoPlay={true}
@@ -38,7 +38,7 @@ export const Image: FC<ImageProps> = ({
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
       >
-        <source src={getStrapiMedia(image.data.attributes.url)} />
+        <source src={getOptimizedMedia({ metadata: image.data.attributes.provider_metadata })} />
       </video>
     )
   }
@@ -51,7 +51,7 @@ export const Image: FC<ImageProps> = ({
       width={width || _width || '640'}
       height={height || _height || '400'}
       objectFit={objectFit}
-      src={getStrapiMedia(image.data.attributes.url)}
+      src={getOptimizedMedia({ metadata: image.data.attributes.provider_metadata, width, height })}
       alt={alternativeText || ''}
     />
   )

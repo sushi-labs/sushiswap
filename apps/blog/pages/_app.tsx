@@ -1,6 +1,7 @@
 import '@sushiswap/ui/index.css'
 import '../index.css'
 
+import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
@@ -14,6 +15,14 @@ interface GlobalContext {
   defaultSeo: Seo
   siteName: string
 }
+
+export const cld = new Cloudinary({
+  cloud: {
+    cloudName: 'sushi-cdn',
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
+})
 
 export const GlobalContext = createContext<GlobalContext | undefined>(undefined)
 export const useGlobalContext = () => {
