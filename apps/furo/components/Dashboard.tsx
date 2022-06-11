@@ -54,8 +54,22 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
       tokens.push(toToken(stream.token, chainId))
     })
 
+    vestings?.incomingVestings?.forEach((vesting) => {
+      tokens.push(toToken(vesting.token, chainId))
+    })
+
+    vestings?.outgoingVestings?.forEach((vesting) => {
+      tokens.push(toToken(vesting.token, chainId))
+    })
+
     return [ids, tokens]
-  }, [chainId, streams?.incomingStreams, streams?.outgoingStreams])
+  }, [
+    chainId,
+    streams?.incomingStreams,
+    streams?.outgoingStreams,
+    vestings?.incomingVestings,
+    vestings?.outgoingVestings,
+  ])
 
   const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
     () =>
