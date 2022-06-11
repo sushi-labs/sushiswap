@@ -4,7 +4,7 @@ import { useInterval } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { classNames, Popover, ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { PeriodType, Vesting } from 'lib'
+import { FuroStatus, PeriodType, Vesting } from 'lib'
 import { FC, useState } from 'react'
 
 import { ChartHover } from '../../types'
@@ -75,11 +75,15 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
   )
 }
 
-const Block: FC<{ period: Period; length: number; className: string }> = ({ period, length, className }) => {
-  const unlocked = period.date.getTime() < Date.now()
+const Block: FC<{ vesting: Vesting; period: Period; length: number; className: string }> = ({
+  vesting,
+  period,
+  length,
+}) => {
+  const now = vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp.getTime() : Date.now()
+  const unlocked = period.date.getTime() < now
   const end = period.date.getTime()
   const start = end - length
-  const now = Date.now()
 
   const progress = Math.min(Math.max(now - start, 0) / (end - start), 1)
 
@@ -115,9 +119,13 @@ const Block: FC<{ period: Period; length: number; className: string }> = ({ peri
       panel={
         <div className="flex flex-col bg-slate-700 p-3 gap-3">
           <Typography variant="xxs" weight={700} className="text-slate-300">
-            Unlocks In
+            {vesting.status === FuroStatus.CANCELLED ? 'Cancelled' : 'Unlocks In'}
           </Typography>
-          <Timer date={new Date(period.date.getTime())} />
+          <Timer
+            date={
+              vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp : new Date(period.date.getTime())
+            }
+          />
         </div>
       }
     />
@@ -188,15 +196,17 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
           </div>
         )}
         <div className="order-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-          {schedule &&
+          {vesting &&
+            schedule &&
             schedule.length > 1 &&
             schedule
               .slice(index + 1, index + 4)
-              .map((period, index) => (
+              .map((period, _index) => (
                 <Block
+                  vesting={vesting}
                   period={period}
-                  key={index}
-                  length={period.date.getTime() - schedule[index].date.getTime()}
+                  key={_index}
+                  length={period.date.getTime() - schedule[index + _index].date.getTime()}
                   className="translate"
                 />
               ))}

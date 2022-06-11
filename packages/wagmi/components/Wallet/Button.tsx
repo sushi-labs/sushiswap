@@ -1,4 +1,5 @@
 import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
@@ -26,9 +27,10 @@ const Icons: Record<string, ReactNode> = {
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {
   hack?: ReturnType<typeof useConnect>
+  supportedNetworks?: ChainId[]
 }
 
-export const Button = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
+export const Button = <C extends React.ElementType>({ hack, children, supportedNetworks, ...rest }: Props<C>) => {
   const { data } = useAccount()
   const { activeChain } = useNetwork()
   const isMounted = useIsMounted()
@@ -89,7 +91,7 @@ export const Button = <C extends React.ElementType>({ hack, children, ...rest }:
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
         <div className="hidden px-3 sm:block">
-          <Account.Balance address={data?.address} />
+          <Account.Balance supportedNetworks={supportedNetworks} address={data?.address} />
         </div>
         <Menu
           button={

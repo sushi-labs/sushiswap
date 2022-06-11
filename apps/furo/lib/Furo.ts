@@ -145,7 +145,7 @@ export abstract class Furo {
   public canTransfer(account: string | undefined): boolean {
     if (this.isCancelled) return false
     if (!account) return false
-    return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
+    return this.recipient.id.toLowerCase() === account.toLowerCase()
   }
 
   public canWithdraw(account: string | undefined): boolean {

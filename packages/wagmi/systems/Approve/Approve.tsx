@@ -1,3 +1,4 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import React, {
   Children,
   cloneElement,
@@ -14,14 +15,16 @@ import { ApprovalState } from '../../hooks'
 import { BentoApproveButton } from './BentoApproveButton'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { TokenApproveButton } from './TokenApproveButton'
+import { ApproveButton } from './types'
 
 interface Props {
-  components: ReactElement<ComponentsWrapper<any>>
+  components: ReactElement<ApproveButton<'button'>>
   render({ approved, isUnknown }: { approved: boolean; isUnknown: boolean }): ReactNode
 }
 
 const Controller: FC<Props> = ({ components, render }) => {
   const refs = useRef<ApprovalState[]>([])
+  const isMounted = useIsMounted()
 
   const handleUpdate = useCallback((value: ApprovalState, index: number) => {
     const state = [...refs.current]
@@ -43,8 +46,23 @@ const Controller: FC<Props> = ({ components, render }) => {
     )
   }, [components, handleUpdate])
 
-  const isUnknown = refs.current.some((el) => el === ApprovalState.UNKNOWN)
-  const approved = refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING)
+  const isUnknown =
+    refs.current.some((el) => el === ApprovalState.UNKNOWN) &&
+    Children.count(components.props.children) === refs.current.length
+  const approved =
+    refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
+    Children.count(components.props.children) === refs.current.length
+
+  // Only render renderProp since we can't get approval states on the server anyway
+  if (!isMounted)
+    return (
+      <>
+        {render({
+          isUnknown: true,
+          approved: false,
+        })}
+      </>
+    )
 
   return (
     <>

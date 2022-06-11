@@ -2,6 +2,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, Menu, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
+import { SUPPORTED_CHAINS } from 'config'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -37,7 +38,7 @@ export const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <Wallet.Button className="!h-[36px]" hack={connect} />
+            <Wallet.Button className="!h-[36px]" hack={connect} supportedNetworks={SUPPORTED_CHAINS} />
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={

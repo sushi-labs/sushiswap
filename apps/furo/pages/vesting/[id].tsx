@@ -168,6 +168,7 @@ const _VestingPage: FC = () => {
               }
             />
             <CancelModal
+              title="Cancel Vesting"
               stream={vesting}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
               address={
