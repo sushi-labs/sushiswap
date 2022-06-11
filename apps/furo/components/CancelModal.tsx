@@ -9,13 +9,14 @@ import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface CancelModalProps {
+  title: string
   stream?: Stream
   abi: ContractInterface
   address: string
   fn: string
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) => {
+export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, title }) => {
   const [open, setOpen] = useState(false)
   const { activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
@@ -62,7 +63,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) 
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5 !max-w-sm">
-          <Dialog.Header title="Cancel Stream" onClose={() => setOpen(false)} />
+          <Dialog.Header title={title} onClose={() => setOpen(false)} />
           <div className="grid items-center grid-cols-2 gap-5">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
@@ -124,7 +125,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn }) 
             disabled={isWritePending || stream?.isEnded}
             onClick={cancelStream}
           >
-            {isWritePending ? <Dots>Confirm Cancel</Dots> : 'Cancel Stream'}
+            {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
           </Button>
         </Dialog.Content>
       </Dialog>

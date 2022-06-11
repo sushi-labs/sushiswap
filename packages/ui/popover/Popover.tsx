@@ -26,6 +26,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
       {({ open }) => (
         <>
           <HeadlessPopover.Button
+            as="div"
             ref={setReferenceElement}
             {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
           >

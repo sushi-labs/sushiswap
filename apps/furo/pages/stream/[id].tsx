@@ -164,6 +164,7 @@ const _Streams: FC = () => {
               }
             />
             <CancelModal
+              title="Cancel Stream"
               stream={stream}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
               address={

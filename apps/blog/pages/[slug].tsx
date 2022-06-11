@@ -67,10 +67,12 @@ interface ArticlePage {
 const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
   const seo = {
     id: article.id,
+    slug: article.attributes.slug,
     metaTitle: article.attributes.title,
     metaDescription: article.attributes.description,
     shareImage: article.attributes.cover,
     article: true,
+    tags: article.attributes.categories.data.map((el) => el.attributes.name),
   }
 
   return (

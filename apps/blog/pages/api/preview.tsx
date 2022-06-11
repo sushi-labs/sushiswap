@@ -1,5 +1,6 @@
-import { getPreviewPostBySlug } from '../../lib/api'
 import { NextApiRequest, NextApiResponse } from 'next'
+
+import { getPreviewPostBySlug } from '../../lib/api'
 
 export default async function preview(req: NextApiRequest, res: NextApiResponse) {
   // Check the secret and next parameters

@@ -19,7 +19,7 @@ export const Hero: FC<Hero> = ({ article }) => {
             as="a"
             href={`/blog/${article.attributes.slug}`}
             color="blue"
-            className="rounded-full mt-8 inline-flex transition-all hover:ring-4 focus:ring-4 text-sm text-slate-50 px-6 h-[40px] sm:!h-[40px]"
+            className="mt-8 inline-flex transition-all hover:ring-4 focus:ring-4 text-sm text-slate-50 px-6 h-[40px] sm:!h-[40px]"
           >
             Read Article
           </Button>

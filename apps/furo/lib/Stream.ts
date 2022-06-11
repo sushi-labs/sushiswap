@@ -12,6 +12,8 @@ export class Stream extends Furo {
 
   public override get balance(): Amount<Token> {
     if (!this.isStarted) return this._balance
+    if (this.isCancelled) return this.withdrawnAmount
+
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
     const balance = Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))

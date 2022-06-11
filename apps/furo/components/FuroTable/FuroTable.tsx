@@ -8,7 +8,6 @@ import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
-import { useNetwork } from 'wagmi'
 
 import { Placeholder } from './Placeholder'
 import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
@@ -137,7 +136,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
 ]
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
-  const { streams, vestings, rebases, placeholder, loading } = props
+  const { chainId, streams, vestings, rebases, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
 
   useEffect(() => {
@@ -145,18 +144,17 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   }, [loading])
 
   const router = useRouter()
-  const { activeChain } = useNetwork()
   const data = useMemo(() => {
-    if (!activeChain || !streams || !vestings || !rebases) return []
+    if (!chainId || !streams || !vestings || !rebases) return []
     return streams
       .map(
         (stream) =>
           new Stream({
-            chainId: activeChain.id,
+            chainId,
             furo: stream,
             rebase: rebases.find((rebase) =>
               stream.token.id === AddressZero
-                ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
                 : rebase.id === stream.token.id
             ) as RebaseDTO,
           })
@@ -166,21 +164,19 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
           (vesting) =>
             new Vesting({
               furo: vesting,
-              chainId: activeChain.id,
+              chainId,
               rebase: rebases.find((rebase) =>
                 vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
                   : rebase.id === vesting.token.id
               ) as RebaseDTO,
             })
         )
       )
     //rebase: rebases.find(rebase => rebase.id === vesting.token) as { base: string; elastic: string }
-  }, [activeChain, streams, vestings, rebases])
+  }, [chainId, streams, vestings, rebases])
 
-  const [columns] = React.useState<typeof defaultColumns>(() => [
-    ...defaultColumns({ ...props, chainId: activeChain?.id }),
-  ])
+  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns({ ...props, chainId })])
 
   const instance = useTableInstance(table, {
     data,
@@ -253,7 +249,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
                 onClick={() =>
                   router.push({
                     pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
-                    query: { chainId: activeChain?.id },
+                    query: { chainId },
                   })
                 }
               >

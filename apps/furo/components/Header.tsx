@@ -6,12 +6,11 @@ import { SUPPORTED_CHAINS } from 'config'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 export const Header: FC = () => {
   const isMounted = useIsMounted()
   const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
   const router = useRouter()
 
   const connect = useConnect({
@@ -39,9 +38,7 @@ export const Header: FC = () => {
           nav={<></>}
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
-            {(!account || activeChain?.id in SUPPORTED_CHAINS) && (
-              <Wallet.Button className="!h-[36px]" hack={connect} />
-            )}
+            <Wallet.Button className="!h-[36px]" hack={connect} supportedNetworks={SUPPORTED_CHAINS} />
             {account?.address && isMounted && isConnected && (
               <Menu
                 button={

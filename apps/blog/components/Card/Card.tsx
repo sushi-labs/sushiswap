@@ -1,8 +1,9 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Chip, Typography } from '@sushiswap/ui'
+import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
+import { isMediaVideo } from '../../lib/media'
 import { Article } from '../../types'
 import { Image } from '../Image'
 
@@ -16,9 +17,14 @@ export const Card: FC<Card> = ({ article }) => {
       <div className="transition duration-[400ms] relative h-[400px] cursor-pointer w-full rounded-xl shadow-md bg-slate-800 overflow-hidden hover:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
         <div className="relative h-[240px]">
           <Image
+            height={240}
             quality={5}
             image={article.attributes.cover}
-            className="group-hover:scale-105 transition duration-[400ms]"
+            className={classNames(
+              isMediaVideo(article.attributes.cover.data.attributes.provider_metadata)
+                ? ''
+                : 'group-hover:scale-105 transition duration-[400ms]'
+            )}
           />
         </div>
         <div className="flex flex-col gap-3 px-4">
