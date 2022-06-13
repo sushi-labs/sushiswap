@@ -10,4 +10,10 @@ query TokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $blo
   legacy_exchange_bundle(id: 1, block: $block) {
     ethPrice
   }
+
+  legacy_exchange__meta {
+    block {
+      number
+    }
+  }
 }

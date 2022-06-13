@@ -1,7 +1,5 @@
 import { getPrices } from './graph'
 
-// const meta = (chainId: string, block: number, )
-
 export const prices = async (chainId: string) => {
   const data = await getPrices(chainId)
   const ethPrice = data.legacy_exchange_bundle?.ethPrice
@@ -19,5 +17,6 @@ export const prices = async (chainId: string) => {
         },
       }
     })
-  return { tokens, meta: {} }
+
+  return { tokens: tokens ? tokens : [], meta: { block: data.legacy_exchange__meta?.block.number } }
 }
