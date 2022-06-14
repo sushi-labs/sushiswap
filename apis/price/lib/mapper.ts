@@ -3,7 +3,8 @@ import { getPrices } from './graph'
 export const prices = async (chainId: string) => {
   const data = await getPrices(chainId)
   const ethPrice = data.legacy_exchange_bundle?.ethPrice
-  const block = data.legacy_exchange__meta?.block.number 
+  const fetchedAtBlock = data.legacy_exchange__meta?.block.number
+  const fetchedAtTimestamp = Number((Date.now() / 1000).toFixed())
   const tokens = data.legacy_exchange_tokens
     .filter((token) => token.derivedETH != 0)
     .map((token) => {
@@ -19,5 +20,5 @@ export const prices = async (chainId: string) => {
       }
     })
 
-  return { tokens: tokens ? tokens : [], meta: { block } }
+  return { tokens: tokens ? tokens : [], meta: { fetchedAtBlock, fetchedAtTimestamp } }
 }
