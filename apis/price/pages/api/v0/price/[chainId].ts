@@ -15,7 +15,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     return response.status(204)
   }
   const json = JSON.parse(data)
-  const fetchedSecondsAgo = Number((Date.now() / 1000).toFixed()) - json.meta.fetchedAtTimestamp
-  json.meta.fetchedSecondsAgo = fetchedSecondsAgo
+  const updatedSecondsAgo = Number((Date.now() / 1000).toFixed()) - json.meta.updatedAtTimestamp
+  json.meta.updatedSecondsAgo = updatedSecondsAgo
   return response.status(200).json(json)
 }

@@ -2,8 +2,8 @@ import { TokenPricesQuery } from '../.graphclient'
 
 export const pricesToJson = (chainId: string, data: TokenPricesQuery) => {
   const ethPrice = data.legacy_exchange_bundle?.ethPrice
-  const fetchedAtBlock = data.legacy_exchange__meta?.block.number
-  const fetchedAtTimestamp = Number((Date.now() / 1000).toFixed())
+  const updatedAtBlock = data.legacy_exchange__meta?.block.number
+  const updatedAtTimestamp = Number((Date.now() / 1000).toFixed())
 
   const tokens = data.legacy_exchange_tokens
     ?.filter((token) => token.derivedETH != 0)
@@ -20,5 +20,5 @@ export const pricesToJson = (chainId: string, data: TokenPricesQuery) => {
       }
     })
 
-  return { tokens: tokens ? tokens : [], meta: { fetchedAtBlock, fetchedAtTimestamp, chainId } }
+  return { tokens: tokens ? tokens : [], meta: { chainId, updatedAtBlock, updatedAtTimestamp } }
 }
