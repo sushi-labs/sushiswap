@@ -8,5 +8,5 @@ export const getPrices = async (chainId: string) => {
     throw Error(`Unsupported Chain ${chainId}`)
   }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: LEGACY_SUBGRAPH_NAME[chainId] })
-  return await sdk.TokenPrices()
+  return { chainId, data: await sdk.TokenPrices() }
 }

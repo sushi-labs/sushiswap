@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 import { SUPPORTED_CHAINS } from '../../../../config'
-import { prices } from '../../../../lib/mapper'
+import redis from '../../../../lib/redis'
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   const { chainId } = request.query
@@ -10,6 +10,12 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       .status(400)
       .json({ message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')) })
   }
-
-  return response.status(200).send(await prices(chainId as string))
+  const data = await redis.hget('prices', chainId as string)
+  if (!data) {
+    return response.status(204)
+  }
+  const json = JSON.parse(data)
+  const fetchedSecondsAgo = Number((Date.now() / 1000).toFixed()) - json.meta.fetchedAtTimestamp
+  json.meta.fetchedSecondsAgo = fetchedSecondsAgo
+  return response.status(200).json(json)
 }

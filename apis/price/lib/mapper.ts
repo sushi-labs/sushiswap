@@ -1,12 +1,12 @@
-import { getPrices } from './graph'
+import { TokenPricesQuery } from '../.graphclient'
 
-export const prices = async (chainId: string) => {
-  const data = await getPrices(chainId)
+export const pricesToJson = (chainId: string, data: TokenPricesQuery) => {
   const ethPrice = data.legacy_exchange_bundle?.ethPrice
   const fetchedAtBlock = data.legacy_exchange__meta?.block.number
   const fetchedAtTimestamp = Number((Date.now() / 1000).toFixed())
+
   const tokens = data.legacy_exchange_tokens
-    .filter((token) => token.derivedETH != 0)
+    ?.filter((token) => token.derivedETH != 0)
     .map((token) => {
       const price = Number(token.derivedETH) * Number(ethPrice)
       return {
@@ -20,5 +20,5 @@ export const prices = async (chainId: string) => {
       }
     })
 
-  return { tokens: tokens ? tokens : [], meta: { fetchedAtBlock, fetchedAtTimestamp } }
+  return { tokens: tokens ? tokens : [], meta: { fetchedAtBlock, fetchedAtTimestamp, chainId } }
 }
