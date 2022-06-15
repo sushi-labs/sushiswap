@@ -23,7 +23,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useFeeData, useNetwork } from 'wagmi'
 
-const SWAP_DEFAULT_SLIPPAGE = new Percent(5000, 10_000) // 0.50%
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 const theme: Theme = {
   ...defaultTheme,
