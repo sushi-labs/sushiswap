@@ -1,14 +1,13 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { WrappedTokenInfo } from '@sushiswap/redux-token-lists/token'
 import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { NetworkSelectorOverlay, TokenSelectorOverlay } from 'components'
-import Image from 'next/image'
 import { FC, useState } from 'react'
 
 import { Theme } from '../types'
+import { CurrencyIcon } from './CurrencyIcon'
 
 interface CurrencyInputBase {
   value: string
@@ -20,6 +19,18 @@ interface CurrencyInputBase {
   network: Chain
   tokenList: Record<string, Token>
   theme: Theme
+}
+
+type CurrencyInputDisableMaxButton = {
+  disableMaxButton: true
+  onMax?(value: string): void
+  balance?: Amount<Currency>
+}
+
+type CurrencyInputEnableMaxButton = {
+  disableMaxButton?: false
+  onMax(value: string): void
+  balance?: Amount<Currency>
 }
 
 type CurrencyInputEnableTokenSelect = {
@@ -42,9 +53,10 @@ type CurrencyInputSingleChain = {
   onNetworkSelect?(network: ChainId): void
 }
 
+type CurrencyInputBalance = CurrencyInputDisableMaxButton | CurrencyInputEnableMaxButton
 type CurrencyInputChain = CurrencyInputSingleChain | CurrencyInputMultiChain
 type CurrencyInputTokenSelect = CurrencyInputEnableTokenSelect | CurrencyInputDisableTokenSelect
-type CurrencyInput = CurrencyInputBase & CurrencyInputChain & CurrencyInputTokenSelect
+type CurrencyInput = CurrencyInputBase & CurrencyInputChain & CurrencyInputTokenSelect & CurrencyInputBalance
 
 export const CurrencyInput: FC<CurrencyInput> = ({
   disabled,
@@ -59,17 +71,20 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   tokenList,
   disableNetworkSelect = false,
   disableCurrencySelect = false,
+  disableMaxButton = false,
+  onMax,
+  balance,
   theme,
 }) => {
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
-
   return (
     <>
       <div className="flex flex-col">
         <div className="flex flex-row justify-between">
           {!disableNetworkSelect && (
             <button
+              type="button"
               className={classNames(
                 theme.secondary.default,
                 theme.secondary.hover,
@@ -116,11 +131,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 'flex flex-row items-center gap-1 text-xl font-bold'
               )}
             >
-              {currency.isNative ? (
-                <></>
-              ) : currency instanceof WrappedTokenInfo && currency.logoURI ? (
-                <Image src={currency.logoURI} width="48px" height="48px" />
-              ) : null}
+              <CurrencyIcon currency={currency} width={48} height={48} />
               {currency.symbol} <ChevronDownIcon width={16} height={16} />
             </button>
           </div>
@@ -131,9 +142,22 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           variant="xs"
           className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 select-none ')}
         >
-          {value && '$0.00'}
+          {value ? '$0.00' : '-'}
         </Typography>
-        <button className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}>MAX</button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (onMax && balance) {
+              onMax(balance.greaterThan(0) ? balance.toFixed() : '')
+            }
+          }}
+          className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}
+          disabled={disableMaxButton}
+        >
+          Balance: {balance ? balance.toSignificant(6) : '-'}{' '}
+          {!disableMaxButton && <span className="text-blue">MAX</span>}
+        </button>
       </div>
       {!disableNetworkSelect && onNetworkSelect && (
         <NetworkSelectorOverlay
