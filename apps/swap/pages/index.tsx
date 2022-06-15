@@ -1,36 +1,29 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
-import { Zero } from '@ethersproject/constants'
 import { ChevronRightIcon } from '@heroicons/react/outline'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { TradeType, TradeV1, TradeV2 } from '@sushiswap/exchange'
+import { getComplexParams,TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent, ZERO } from '@sushiswap/math'
+import { _9995, _10000, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import {
-  Caption,
-  ConfirmationOverlay,
-  CurrencyInput,
-  OverlayContent,
-  OverlayHeader,
-  Rate,
-  WidgetSettingsOverlay,
-} from 'components'
-import { Route } from 'components'
+import { Caption, ConfirmationOverlay, CurrencyInput, Overlay, Rate, SettingsOverlay } from 'components'
+import { CrossChainRoute, SameChainRoute } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
-import { Complex, isComplex, isExactInput } from 'lib/getComplexParams'
+import { getComplexParams } from 'lib/getComplexParams'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
+import { useTokenBalance } from 'lib/hooks/useTokenBalance'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
+import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useFeeData, useNetwork } from 'wagmi'
 
-const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
+const SWAP_DEFAULT_SLIPPAGE = new Percent(5000, 10_000) // 0.50%
 
 const theme: Theme = {
   ...defaultTheme,
@@ -48,22 +41,78 @@ export function getBigNumber(value: number): BigNumber {
   return value > 0 ? res : res.mul(-1)
 }
 
+type SwapCache = {
+  srcChainId: number
+  dstChainId: number
+}
+
+// export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {}
+
+export default function Swap({ chainIds }: { chainIds: number[] }) {
+  const router = useRouter()
+  // TODO: Sync from local storage if no query params
+
+  // const { data } = useSWR<SwapCache>('swap-cache', storage, {
+  //   fallbackData: { srcChainId: ChainId.AVALANCHE, dstChainId: ChainId.FANTOM },
+  // })
+  // function mutateSwapCache(value: SwapCache) {
+  //   localStorage.setItem('swap-cache', JSON.stringify(value))
+  //   mutate('swap-cache', value)
+  // }
+
+  const defaultSrcChainId = ChainId.AVALANCHE
+  const defaultDstChainId = ChainId.OPTIMISM
+
+  // query is empty __/^-_-^/_
+  const srcChainId = Number(router.query.srcChainId) || defaultSrcChainId
+  const dstChainId = Number(router.query.dstChainId) || defaultDstChainId
+
+  // console.log({ router, defaultSrcChainId, defaultDstChainId, srcChainId, dstChainId })
+
+  return (
+    <div className="mt-40 space-y-12 mb-60">
+      <Widget
+        theme={theme}
+        initialState={{
+          srcChainId,
+          dstChainId,
+          srcToken: Native.onChain(srcChainId),
+          dstToken: Native.onChain(dstChainId),
+        }}
+        // swapCache={data}
+        // mutateSwapCache={mutateSwapCache}
+      />
+      {/* <Widget header={<>Swap</>} /> */}
+    </div>
+  )
+}
+
 interface Swap {
   width?: number | string
   theme?: Theme
-  initialSrcChainId: number
-  initialDstChainId: number
-  initialSrcToken: Currency
-  initialDstToken: Currency
+  initialState?: {
+    srcChainId: number
+    dstChainId: number
+    srcToken: Currency
+    dstToken: Currency
+  }
+  caption?: boolean
+  // swapCache: SwapCache
+  // mutateSwapCache: (cache: SwapCache) => void
 }
 
-const _Swap: FC<Swap> = ({
+const Widget: FC<Swap> = ({
   width = 360,
   theme = defaultTheme,
-  initialSrcChainId = ChainId.AVALANCHE,
-  initialDstChainId = ChainId.FANTOM,
-  initialSrcToken = Native.onChain(initialSrcChainId),
-  initialDstToken = Native.onChain(initialDstChainId),
+  initialState = {
+    srcChainId: ChainId.AVALANCHE,
+    dstChainId: ChainId.FANTOM,
+    srcToken: Native.onChain(ChainId.AVALANCHE),
+    dstToken: Native.onChain(ChainId.FANTOM),
+  },
+  caption = false,
+  // swapCache,
+  // mutateSwapCache,
 }) => {
   const { data: account } = useAccount()
   const { activeChain, switchNetwork } = useNetwork()
@@ -72,11 +121,16 @@ const _Swap: FC<Swap> = ({
 
   const [signature, setSignature] = useState<Signature>()
 
-  const [srcChainId, setSrcChainId] = useState(initialSrcChainId)
-  const [dstChainId, setDstChainId] = useState(initialDstChainId)
+  const router = useRouter()
 
-  const [srcToken, setSrcToken] = useState<Currency>(initialSrcToken)
-  const [dstToken, setDstToken] = useState<Currency>(initialDstToken)
+  const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
+  const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
+
+  const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
+  const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+
+  useEffect(() => setSrcChainId(srcChainId), [srcChainId])
+  useEffect(() => setDstChainId(dstChainId), [dstChainId])
 
   useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
   useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
@@ -96,11 +150,84 @@ const _Swap: FC<Swap> = ({
   const dstTokens = useTokens(dstChainId)
 
   const { rebase: srcTokenRebase } = useBentoBoxRebase(srcChainId, srcToken)
+  // const { rebase: dstTokenRebase } = useBentoBoxRebase(dstChainId, dstToken)
+
+  // This effect is responsible for encoding the swap state into the URL, to add statefullness
+  // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
+  useEffect(() => {
+    // Escape hatch if already synced (could probably pull something like this out to generic...)
+    // console.debug([
+    //   srcChainId === Number(router.query.srcChainId),
+    //   dstChainId === Number(router.query.dstChainId),
+    //   srcToken.wrapped.address === router.query.srcToken,
+    //   dstToken.wrapped.address === router.query.dstToken,
+    //   srcTypedAmount === router.query.srcTypedAmount,
+    //   dstTypedAmount === router.query.dstTypedAmount,
+    //   srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false'),
+    //   dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false'),
+    // ])
+    if (
+      srcChainId === Number(router.query.srcChainId) &&
+      dstChainId === Number(router.query.dstChainId) &&
+      srcToken.wrapped.address === router.query.srcToken &&
+      dstToken.wrapped.address === router.query.dstToken &&
+      srcTypedAmount === router.query.srcTypedAmount &&
+      dstTypedAmount === router.query.dstTypedAmount &&
+      srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false') &&
+      dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false')
+    ) {
+      console.log('ESCAPE')
+      return
+    }
+
+    router.replace({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        srcChainId,
+        dstChainId,
+        // TODO: currencyId to handle native currencyId
+        srcToken: srcToken.wrapped.address,
+        dstToken: dstToken.wrapped.address,
+        srcTypedAmount,
+        dstTypedAmount,
+        srcUseBentoBox,
+        dstUseBentoBox,
+      },
+    })
+  }, [
+    dstChainId,
+    dstToken.wrapped.address,
+    dstTypedAmount,
+    dstUseBentoBox,
+    router,
+    srcChainId,
+    srcToken.wrapped.address,
+    srcTypedAmount,
+    srcUseBentoBox,
+  ])
 
   const contract = useSushiXSwapContract(srcChainId)
 
   // Computed
   const crossChain = srcChainId !== dstChainId
+
+  // useContractEvent(
+  //   {
+  //     addressOrName: STARGATE_ROUTER_ADDRESS[dstChainId],
+  //     contractInterface: STARGATE_ROUTER_ABI,
+  //   },
+  //   'CreditChainPath',
+  //   (event) => {
+  //     console.log(event)
+  //     if (event.to === account?.address) {
+  //       console.log('GOT EVENT!!!', event)
+  //     }
+  //   },
+  //   {
+  //     chainId: dstChainId,
+  //   }
+  // )
 
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
@@ -112,6 +239,7 @@ const _Swap: FC<Swap> = ({
   const dstBridgeToken =
     dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
 
+  // Parse the srcTypedAmount into a srcAmount
   const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
   }, [srcToken, srcTypedAmount])
@@ -125,24 +253,37 @@ const _Swap: FC<Swap> = ({
     crossChain ? srcBridgeToken : dstToken
   )
 
-  // 5bps sg fee
-  const STARGATE_FEE = new Percent(5, 10_000) // .05%
-
   const srcMinimumAmountOut =
     (crossChain && !isStargateBridgeToken(srcToken)) || !crossChain
       ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
       : srcAmount
 
-  const srcAmountOutMinusStargateFee = crossChain
-    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOut.multiply(STARGATE_FEE))
-    : srcMinimumAmountOut
+  const srcAmountOutMinusStargateFee = useMemo(() => {
+    return crossChain ? srcMinimumAmountOut?.multiply(_10000)?.divide(_9995) : srcMinimumAmountOut
+  }, [crossChain, srcMinimumAmountOut])
+
+  const stargateFee = srcAmountOutMinusStargateFee
+    ? srcMinimumAmountOut?.subtract(srcAmountOutMinusStargateFee)
+    : undefined
 
   const dstAmountIn = useMemo(() => {
-    return tryParseAmount(srcAmountOutMinusStargateFee?.toFixed(), dstBridgeToken)
-  }, [dstBridgeToken, srcAmountOutMinusStargateFee])
+    return tryParseAmount(
+      crossChain ? srcAmountOutMinusStargateFee?.toFixed() : srcMinimumAmountOut?.toFixed(),
+      crossChain ? dstBridgeToken : dstToken
+    )
+  }, [crossChain, dstBridgeToken, dstToken, srcAmountOutMinusStargateFee, srcMinimumAmountOut])
 
   // dstTrade
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
+
+  const priceImpact = useMemo(() => {
+    if (crossChain && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken) && srcTrade && dstTrade) {
+      // Stargate fee % ???
+      return srcTrade.priceImpact.add(dstTrade.priceImpact)
+    } else if (!crossChain && srcTrade) {
+      return srcTrade.priceImpact
+    }
+  }, [crossChain, dstToken, dstTrade, srcToken, srcTrade])
 
   const dstMinimumAmountOut =
     crossChain && !isStargateBridgeToken(dstToken)
@@ -154,39 +295,60 @@ const _Swap: FC<Swap> = ({
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
-  // console.log('SRC AMOUNT IN', srcAmount?.toFixed())
-  // console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-  // console.log('SG FEE', sgFee?.toFixed())
-  // console.log('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusFee?.toFixed())
-  // console.log('DST AMOUNT IN', dstAmountIn?.toFixed())
-  // console.log('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-
-  // console.log('src trade', srcTrade, 'dst trade', dstTrade)
-
-  // console.log({
-  //   srcToken,
-  //   srcTrade,
-  //   dstTrade,
-  //   dstBridgeToken,
-  //   dstToken,
-  //   srcChainId,
-  //   dstChainId,
-  // })
+  // DEBUG
+  useEffect(() => {
+    console.debug('SRC TRADE', srcTrade)
+    console.debug('DST TRADE', dstTrade)
+    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+    console.debug('STARGATE FEE', stargateFee?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusStargateFee?.toFixed())
+    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+  }, [
+    srcTrade,
+    dstTrade,
+    srcAmount,
+    srcMinimumAmountOut,
+    stargateFee,
+    srcAmountOutMinusStargateFee,
+    dstAmountIn,
+    dstMinimumAmountOut,
+    priceImpact,
+  ])
 
   useEffect(() => {
     setDstTypedAmount(dstMinimumAmountOut?.toSignificant(6) ?? '')
   }, [dstMinimumAmountOut])
 
   const execute = useCallback(() => {
+    console.log([
+      !srcChainId,
+      !srcAmount,
+      !srcMinimumAmountOut,
+      !srcAmountOutMinusStargateFee,
+      !dstChainId,
+      !dstMinimumAmountOut,
+      !account,
+      !account?.address,
+      !srcTokenRebase,
+      // !dstTokenRebase,
+      !contract,
+    ])
     if (
       !srcChainId ||
       !srcAmount ||
       !srcMinimumAmountOut ||
+      !srcAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
       !account ||
       !account.address ||
       !srcTokenRebase ||
+      // !dstTokenRebase ||
       !contract
     ) {
       return
@@ -195,6 +357,7 @@ const _Swap: FC<Swap> = ({
     const srcShare = srcAmount.toShare(srcTokenRebase)
 
     const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+    // const dstMinimumShareOut = dstMinimumAmountOut.toShare(dstTokenRebase)
 
     setIsWritePending(true)
 
@@ -223,6 +386,7 @@ const _Swap: FC<Swap> = ({
       srcUseBentoBox,
       dstUseBentoBox,
       user: account.address,
+      debug: true,
     })
 
     if (signature) {
@@ -232,298 +396,250 @@ const _Swap: FC<Swap> = ({
 
     if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
       // Cross-chain transfer operations
+      // These are cross chain transfers without swaps, but with BentoBox support
       // T1-T4
       cooker.stargateTransfer(srcAmount, srcShare)
-    } else {
-      // Cross-chain swap operations (and non cross-chain operations for now)
+    }
 
-      // TODO: Refactor for readability... else if (crossChain) { cross-chain operations } else { non cross-chain chain operations }
+    // S1-S4 & X1-X4
 
-      // S1-S4 & X1-X4
+    // S1-S4
 
-      // Source operations...
-      if (srcTrade instanceof TradeV1 && srcTrade.route.path.length) {
-        if (!srcUseBentoBox) {
-          console.log('cook src depoit to bentobox')
-          cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-        }
+    // TODO: Refactor to this structure for readability...
 
-        console.log('cook src transfer from bentobox')
+    if (!crossChain && srcTrade && srcTrade.isV1() && srcTrade.route.legs.length) {
+      // single chain v1 trade (src only)
+    }
+
+    if (!crossChain && srcTrade && srcTrade.isV2() && srcTrade.route.legs.length) {
+      // single chain v2 trade (src only)
+    }
+
+    // X1-X4
+
+    // If cross chain & src token is stargate bridge token, there's no need for a trade
+    // so deposit to bentobox (if neccasasry) and transfer shares to SushiXSwap Router
+    if (crossChain && isStargateBridgeToken(srcToken)) {
+      if (!srcUseBentoBox) {
+        cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
+      }
+      cooker.srcTransferFromBentoBox(
+        srcToken.wrapped.address,
+        SUSHI_X_SWAP_ADDRESS[srcChainId],
+        0,
+        srcShare.quotient.toString()
+      )
+    }
+
+    if (crossChain && !isStargateBridgeToken(srcToken) && srcTrade && srcTrade.isV1() && srcTrade.route.legs.length) {
+      // cross chain src v1 trade
+    }
+
+    if (crossChain && !isStargateBridgeToken(srcToken) && srcTrade && srcTrade.isV2() && srcTrade.route.legs.length) {
+      // cross chain src v2 trade
+    }
+
+    if (crossChain && !isStargateBridgeToken(dstToken) && dstTrade && dstTrade.isV1() && dstTrade.route.legs.length) {
+      // cross chain dst v1 trade
+    }
+
+    if (crossChain && !isStargateBridgeToken(dstToken) && dstTrade && dstTrade.isV2() && dstTrade.route.legs.length) {
+      // cross chain dst v2 trade
+    }
+
+    // If cross chain & dst token is stargate bridge token, there's no need for a trade
+    // so either deposit to the users bentboxbox or withdraw to users wallet
+    if (crossChain && isStargateBridgeToken(dstToken)) {
+      cooker.teleporter[srcUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](dstToken)
+    }
+
+    // Cross-chain swap operations (and non cross-chain operations for now)
+
+    // ONGOING: Refactor
+
+    // Source operations...
+    if (
+      (crossChain && !isStargateBridgeToken(srcToken) && srcTrade && srcTrade.isV1() && srcTrade.route.legs.length) ||
+      (!crossChain && srcTrade && srcTrade.isV1() && srcTrade.route.legs.length)
+    ) {
+      if (!srcUseBentoBox) {
+        console.debug('cook src depoit to bentobox')
+        cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
+      }
+
+      console.debug('cook src transfer from bentobox')
+      cooker.srcTransferFromBentoBox(
+        srcToken.wrapped.address,
+        srcTrade.route.legs[0].poolAddress,
+        0,
+        srcShare.quotient.toString()
+      )
+
+      console.debug('cook src legacy swap', [srcAmount.quotient.toString(), srcMinimumAmountOut.quotient.toString()])
+      cooker.legacyExactInput(
+        srcAmount.quotient.toString(),
+        srcMinimumAmountOut.quotient.toString(),
+        // [srcTrade.route.fromToken.address, ...srcTrade.route.legs.map((leg) => leg.tokenTo.address)],
+        srcTrade.route.legs.reduce<string[]>(
+          (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
+          [srcTrade.route.legs[0].tokenFrom.address]
+        ),
+        // srcTrade.route.path.map((token) => token.address),
+        crossChain || dstToken.isNative || !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address
+      )
+
+      if (!crossChain && dstToken.isNative && !dstUseBentoBox) {
+        cooker.unwrapAndTransfer(dstToken)
+      } else if (!crossChain && dstUseBentoBox) {
+        cooker.srcDepositToBentoBox(dstToken)
+      }
+    }
+
+    if (
+      (crossChain && !isStargateBridgeToken(srcToken) && srcTrade && srcTrade.isV2() && srcTrade.route.legs.length) ||
+      (!crossChain && srcTrade && srcTrade.isV2() && srcTrade.route.legs.length)
+    ) {
+      if (srcTrade.isSingle()) {
+        console.debug('cook trident exact input')
+        cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
         cooker.srcTransferFromBentoBox(
           srcToken.wrapped.address,
-          srcTrade.route.pairs[0].liquidityToken.address,
+          srcTrade.route.legs[0].poolAddress,
           0,
-          srcShare.quotient.toString()
-        )
-
-        console.log('cook src legacy swap', [srcAmount.quotient.toString(), srcMinimumAmountOut.quotient.toString()])
-        cooker.legacyExactInput(
           srcShare.quotient.toString(),
-          srcMinimumAmountOut.toShare(srcTokenRebase).quotient.toString(),
-          srcTrade.route.path.map((token) => token.address),
-          crossChain || dstToken.isNative || !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address
+          false
+        )
+        cooker.tridentExactInput(
+          srcToken,
+          srcShare.quotient.toString(),
+          srcMinimumShareOut.quotient.toString(),
+          srcTrade.route.legs.map((leg, i) => {
+            const isLastLeg = i === srcTrade.route.legs.length - 1
+            const recipientAddress = isLastLeg
+              ? crossChain
+                ? SUSHI_X_SWAP_ADDRESS[srcChainId]
+                : account.address
+              : leg.poolAddress
+            return {
+              pool: leg.poolAddress,
+              data: defaultAbiCoder.encode(
+                ['address', 'address', 'bool'],
+                [leg.tokenFrom.address, recipientAddress, crossChain ? isLastLeg : isLastLeg && dstUseBentoBox]
+              ),
+            }
+          })
+        )
+      } else if (srcTrade.isComplex()) {
+        console.debug('cook trident complex')
+        cooker.srcDepositToBentoBox(srcToken, SUSHI_X_SWAP_ADDRESS[srcChainId], srcAmount.quotient.toString())
+        cooker.tridentComplex(
+          getComplexParams({
+            trade: srcTrade,
+            to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
+            unwrapBento: crossChain || dstUseBentoBox,
+            minAmount: srcMinimumAmountOut.quotient.toString(),
+          })
+        )
+      }
+    }
+
+    // Dst trades...
+    if (
+      (crossChain && !isStargateBridgeToken(dstToken) && dstTrade && dstTrade.isV1() && dstTrade.route.legs.length) ||
+      (!crossChain && dstTrade && dstTrade.isV1() && dstTrade.route.legs.length)
+    ) {
+      console.debug('cook teleport legacy exact in')
+
+      // cooker.teleporter.dstWithdraw(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
+
+      cooker.teleporter.legacyExactInput(
+        0,
+        // TODO: We can save gas if we give amountIn, but need accurate stargate fee or will get errors
+        // srcMinimumAmountOut.quotient.toString(),
+        // srcAmountOutMinusStargateFee.quotient.toString(),
+        dstMinimumAmountOut.quotient.toString(),
+        // dstTrade.route.legs.map((leg) => leg.tokenFrom.address),
+        dstTrade.route.legs.reduce<string[]>(
+          (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
+          [dstTrade.route.legs[0].tokenFrom.address]
+        ),
+        dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address
+      )
+
+      if (dstToken.isNative && !dstUseBentoBox) {
+        cooker.teleporter.unwrapAndTransfer(dstToken)
+      }
+    }
+
+    if (
+      (crossChain && !isStargateBridgeToken(dstToken) && dstTrade && dstTrade.isV2() && dstTrade.route.legs.length) ||
+      (!crossChain && dstTrade && dstTrade.isV2() && dstTrade.route.legs.length)
+    ) {
+      if (dstTrade.isSingle()) {
+        cooker.teleporter.dstDepositToBentoBox(
+          dstBridgeToken,
+          dstTrade.route.legs[0].poolAddress,
+          srcMinimumAmountOut.quotient.toString()
+        )
+        console.debug('cook teleport trident exact input')
+        cooker.teleporter.tridentExactInput(
+          dstBridgeToken,
+          srcMinimumAmountOut.quotient.toString(),
+          dstMinimumAmountOut.quotient.toString(),
+          dstTrade.route.legs.map((leg, i) => {
+            const isLastLeg = i === dstTrade.route.legs.length - 1
+            const recipientAddress = isLastLeg
+              ? dstToken.isNative && !dstUseBentoBox
+                ? SUSHI_X_SWAP_ADDRESS[dstChainId]
+                : account.address
+              : leg.poolAddress
+            return {
+              pool: leg.poolAddress,
+              data: defaultAbiCoder.encode(
+                ['address', 'address', 'bool'],
+                [leg.tokenFrom.address, recipientAddress, isLastLeg && !dstUseBentoBox]
+              ),
+            }
+          })
+        )
+        if (dstToken.isNative && !dstUseBentoBox) {
+          cooker.teleporter.unwrapAndTransfer(dstToken)
+        }
+      } else if (dstTrade.isComplex()) {
+        console.debug('cook teleport trident complex')
+        cooker.teleporter.dstDepositToBentoBox(
+          dstBridgeToken,
+          SUSHI_X_SWAP_ADDRESS[dstChainId],
+          srcMinimumAmountOut.quotient.toString()
         )
 
-        if (!crossChain && dstToken.isNative && !dstUseBentoBox) {
-          cooker.unwrapAndTransfer(dstToken)
-        } else if (!crossChain && dstUseBentoBox) {
-          cooker.srcDepositToBentoBox(dstToken)
-        }
-      }
+        cooker.teleporter.tridentComplex(
+          getComplexParams({
+            trade: dstTrade,
+            to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
+            unwrapBento: !dstUseBentoBox,
+            minAmount: dstMinimumAmountOut.quotient.toString(),
+          })
+        )
 
-      if (srcTrade instanceof TradeV2 && srcTrade?.route?.legs?.length) {
-        if (isExactInput(srcTrade)) {
-          console.log('cook trident exact input')
-          cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-          cooker.srcTransferFromBentoBox(
-            srcToken.wrapped.address,
-            srcTrade.route.legs[0].poolAddress,
-            0,
-            srcAmount.toShare(srcTokenRebase).quotient.toString(),
-            false
-          )
-          cooker.tridentExactInput(
-            srcToken,
-            srcAmount.toShare(srcTokenRebase).quotient.toString(),
-            srcMinimumAmountOut.quotient.toString(),
-            srcTrade.route.legs.map((leg, i) => {
-              const isLastLeg = i === srcTrade.route.legs.length - 1
-              const recipientAddress = isLastLeg
-                ? crossChain
-                  ? SUSHI_X_SWAP_ADDRESS[srcChainId]
-                  : account.address
-                : leg.poolAddress
-              return {
-                pool: leg.poolAddress,
-                data: defaultAbiCoder.encode(
-                  ['address', 'address', 'bool'],
-                  [leg.tokenFrom.address, recipientAddress, crossChain ? isLastLeg : isLastLeg && dstUseBentoBox]
-                ),
-              }
-            })
-          )
-        } else if (isComplex(srcTrade)) {
-          console.log('cook trident complex')
-          cooker.srcDepositToBentoBox(srcToken, SUSHI_X_SWAP_ADDRESS[srcChainId], srcAmount.quotient.toString())
-          const initialPathCount = srcTrade.route.legs.filter(
-            (leg) => leg.tokenFrom.address === srcToken.wrapped.address
-          ).length
-          const params = srcTrade.route.legs.reduce<Complex>(
-            ([initialPath, percentagePath, output], leg, i) => {
-              const isInitialPath = leg.tokenFrom.address === srcToken.wrapped.address
-              if (isInitialPath) {
-                return [
-                  [
-                    ...initialPath,
-                    {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
-                      amount:
-                        initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(srcTrade.route.amountIn).sub(
-                              initialPath.reduce(
-                                (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                Zero
-                              )
-                            )
-                          : getBigNumber(srcTrade.route.amountIn * leg.absolutePortion),
-                      native: false,
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[srcChainId], false]
-                      ),
-                    },
-                  ],
-                  percentagePath,
-                  output,
-                ]
-              } else {
-                return [
-                  initialPath,
-                  [
-                    ...percentagePath,
-                    {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
-                      balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[srcChainId], false]
-                      ),
-                    },
-                  ],
-                  output,
-                ]
-              }
-            },
-            [
-              [],
-              [],
-              [
-                {
-                  token: (srcTrade.route.toToken as Currency).wrapped.address,
-                  to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
-                  unwrapBento: crossChain ? crossChain : dstUseBentoBox,
-                  minAmount: srcMinimumAmountOut.quotient.toString(),
-                },
-              ],
-            ]
-          )
-          cooker.tridentComplex(params)
-        }
-      }
-
-      // Destination operations...
-      if (crossChain && isStargateBridgeToken(dstToken)) {
-        // If dst token is stargate bridge token, just do a withdraw
-        cooker.teleporter.dstWithdraw(dstToken)
-      } else if (crossChain) {
-        // Else dst token is not one of the stargate bridge tokens
-
-        // Dst trades...
-        if (dstTrade instanceof TradeV1 && dstTrade.route.path.length) {
-          console.log('cook teleport legacy exact in')
-
-          cooker.teleporter.dstWithdraw(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
-
-          cooker.teleporter.legacyExactInput(
-            srcMinimumAmountOut.quotient.toString(),
-            dstMinimumAmountOut.quotient.toString(),
-            dstTrade.route.path.map((token) => token.address),
-            dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address
-          )
-
-          if (dstToken.isNative && !dstUseBentoBox) {
-            cooker.teleporter.unwrapAndTransfer(dstToken)
-          }
-        } else if (dstTrade instanceof TradeV2 && dstTrade?.route?.legs?.length && dstMinimumAmountOut) {
-          if (isExactInput(dstTrade)) {
-            cooker.teleporter.dstDepositToBentoBox(
-              dstBridgeToken,
-              dstTrade.route.legs[0].poolAddress,
-              srcMinimumAmountOut.quotient.toString()
-            )
-            console.log('cook teleport trident exact input')
-            cooker.teleporter.tridentExactInput(
-              dstBridgeToken,
-              srcMinimumAmountOut.quotient.toString(),
-              dstMinimumAmountOut.quotient.toString(),
-              dstTrade.route.legs.map((leg, i) => {
-                const isLastLeg = i === dstTrade.route.legs.length - 1
-                const recipientAddress = isLastLeg
-                  ? dstToken.isNative && !dstUseBentoBox
-                    ? SUSHI_X_SWAP_ADDRESS[dstChainId]
-                    : account.address
-                  : leg.poolAddress
-                return {
-                  pool: leg.poolAddress,
-                  data: defaultAbiCoder.encode(
-                    ['address', 'address', 'bool'],
-                    [leg.tokenFrom.address, recipientAddress, isLastLeg && !dstUseBentoBox]
-                  ),
-                }
-              })
-            )
-            if (dstToken.isNative && !dstUseBentoBox) {
-              cooker.teleporter.unwrapAndTransfer(dstToken)
-            }
-          } else if (isComplex(dstTrade)) {
-            console.log('cook teleport trident complex')
-            cooker.teleporter.dstDepositToBentoBox(
-              dstBridgeToken,
-              SUSHI_X_SWAP_ADDRESS[dstChainId],
-              srcMinimumAmountOut.quotient.toString()
-            )
-            const initialPathCount = dstTrade.route.legs.filter(
-              (leg) => leg.tokenFrom.address === dstBridgeToken.wrapped.address
-            ).length
-            const params = dstTrade.route.legs.reduce<Complex>(
-              ([initialPath, percentagePath, output], leg, i) => {
-                const isInitialPath = leg.tokenFrom.address === dstBridgeToken.wrapped.address
-                if (isInitialPath) {
-                  return [
-                    [
-                      ...initialPath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        amount:
-                          initialPathCount > 1 && i === initialPathCount - 1
-                            ? getBigNumber(dstTrade.route.amountIn).sub(
-                                initialPath.reduce(
-                                  (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                  Zero
-                                )
-                              )
-                            : getBigNumber(dstTrade.route.amountIn * leg.absolutePortion),
-                        native: false,
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], false]
-                        ),
-                      },
-                    ],
-                    percentagePath,
-                    output,
-                  ]
-                } else {
-                  return [
-                    initialPath,
-                    [
-                      ...percentagePath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], false]
-                        ),
-                      },
-                    ],
-                    output,
-                  ]
-                }
-              },
-              [
-                [],
-                [],
-                [
-                  {
-                    token: dstToken.wrapped.address,
-                    to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
-                    unwrapBento: !dstUseBentoBox,
-                    minAmount: dstMinimumAmountOut.quotient.toString(),
-                  },
-                ],
-              ]
-            )
-
-            cooker.teleporter.tridentComplex(params)
-
-            if (dstToken.isNative && !dstUseBentoBox) {
-              cooker.teleporter.unwrapAndTransfer(dstToken)
-            }
-          }
+        if (dstToken.isNative && !dstUseBentoBox) {
+          cooker.teleporter.unwrapAndTransfer(dstToken)
         }
       }
     }
-    // else {
-    //   // same chain operations...
-    // }
 
     if (crossChain) {
       cooker.teleport(srcBridgeToken, dstBridgeToken)
     }
 
-    console.log('attempt cook')
+    console.debug('attempt cook')
     cooker
       .cook()
       .then((res) => {
-        console.log('then cooked', res)
+        console.debug('then cooked', res)
       })
       .catch((err) => {
-        console.log('catch err', err)
+        console.error('catch err', err)
       })
       .finally(() => {
         setIsWritePending(false)
@@ -536,6 +652,7 @@ const _Swap: FC<Swap> = ({
     dstChainId,
     dstMinimumAmountOut,
     dstToken,
+    // dstTokenRebase,
     dstTrade,
     dstUseBentoBox,
     signature,
@@ -544,12 +661,29 @@ const _Swap: FC<Swap> = ({
     srcBridgeToken,
     srcChainId,
     srcMinimumAmountOut,
+    srcAmountOutMinusStargateFee,
     srcToken,
     srcTrade,
     srcUseBentoBox,
   ])
 
   const isMounted = useIsMounted()
+
+  const { data: srcBalance } = useTokenBalance(
+    srcChainId,
+    account?.address,
+    srcToken.wrapped,
+    srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
+  )
+
+  const { data: dstBalance } = useTokenBalance(
+    dstChainId,
+    account?.address,
+    dstToken.wrapped,
+    dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
+  )
+
+  console.log({ srcBalance: srcBalance?.toFixed(), dstBalance: dstBalance?.toFixed() })
 
   return (
     <article
@@ -560,16 +694,15 @@ const _Swap: FC<Swap> = ({
       )}
       style={{ width }}
     >
-      <div className="p-3 mx-[2px] grid grid-cols-6 items-center pb-4 font-medium">
+      <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
         <Typography
           weight={900}
           className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
         >
           Swap
         </Typography>
-        <Caption className="flex justify-center col-span-4" theme={theme} />
         <div className="flex justify-end">
-          <WidgetSettingsOverlay theme={theme} />
+          <SettingsOverlay theme={theme} />
         </div>
       </div>
       <div className="p-3 pb-0 border-2 border-transparent">
@@ -581,9 +714,17 @@ const _Swap: FC<Swap> = ({
           fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
           network={chain[srcChainId]}
-          onNetworkSelect={setSrcChainId}
+          onNetworkSelect={(chainId) => {
+            setSrcChainId(chainId)
+            // mutateSwapCache({
+            //   ...swapCache,
+            //   srcChainId: chainId,
+            // })
+          }}
           tokenList={srcTokens}
           theme={theme}
+          balance={srcBalance}
+          onMax={(value) => setSrcTypedAmount(value)}
         />
       </div>
       <div className={classNames(theme.background.secondary, 'p-3 m-0.5 rounded-2xl')}>
@@ -599,6 +740,8 @@ const _Swap: FC<Swap> = ({
           onNetworkSelect={setDstChainId}
           tokenList={dstTokens}
           theme={theme}
+          disableMaxButton
+          balance={dstBalance}
         />
 
         <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
@@ -646,8 +789,8 @@ const _Swap: FC<Swap> = ({
                     )}
                   >
                     {({ setOpen }) => (
-                      <OverlayContent theme={theme} className="flex flex-col flex-grow !bg-slate-800">
-                        <OverlayHeader
+                      <Overlay.Content theme={theme} className="flex flex-col flex-grow !bg-slate-800">
+                        <Overlay.Header
                           arrowDirection="bottom"
                           onClose={() => setOpen(false)}
                           title="Confirm Swap"
@@ -713,6 +856,14 @@ const _Swap: FC<Swap> = ({
                               {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
                             </Typography>
                           </div>
+                          {/* <div className="flex justify-between gap-2">
+                            <Typography variant="xs" className="text-slate-400">
+                              Price Impact
+                            </Typography>
+                            <Typography variant="xs" weight={700} className="text-slate-200">
+                              {priceImpact?.multiply(-1).toFixed(2)}%
+                            </Typography>
+                          </div> */}
                           <div className="flex justify-between gap-2">
                             <Typography variant="xs" className="text-slate-400">
                               Estimated Processing Time
@@ -721,12 +872,16 @@ const _Swap: FC<Swap> = ({
                               ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId] / 60)} minutes
                             </Typography>
                           </div>
-                          <Route srcTrade={srcTrade} dstTrade={dstTrade} />
+                          {crossChain ? (
+                            <CrossChainRoute srcTrade={srcTrade} dstTrade={dstTrade} />
+                          ) : (
+                            <SameChainRoute trade={srcTrade} />
+                          )}
                         </div>
                         <Button fullWidth color="gradient" onClick={execute}>
                           Swap
                         </Button>
-                      </OverlayContent>
+                      </Overlay.Content>
                     )}
                   </ConfirmationOverlay>
                 )}
@@ -738,16 +893,8 @@ const _Swap: FC<Swap> = ({
             </Button>
           )}
         </div>
+        {caption && <Caption theme={theme} />}
       </div>
     </article>
-  )
-}
-
-export default function Swap({ chainIds }: { chainIds: number[] }) {
-  return (
-    <div className="mt-40 space-y-12 mb-60">
-      <_Swap theme={theme} />
-      {/* <Widget header={<>Swap</>} /> */}
-    </div>
   )
 }
