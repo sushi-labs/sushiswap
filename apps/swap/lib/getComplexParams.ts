@@ -2,7 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Zero } from '@ethersproject/constants'
 import { Currency } from '@sushiswap/currency'
-import { TradeType, TradeV1, TradeV2 } from '@sushiswap/exchange'
+import { TradeType, TradeV2 } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 
@@ -42,29 +42,17 @@ export function getBigNumber(value: number): BigNumber {
   return value > 0 ? res : res.mul(-1)
 }
 
-export const isTradeV1 = (
-  trade:
-    | TradeV1<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
-    | TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
-) => trade instanceof TradeV1
-
-export const isTradeV2 = (
-  trade:
-    | TradeV1<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
-    | TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
-) => trade instanceof TradeV2
-
-export const isExactInput = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>) =>
-  new Set(trade.route.legs.map((leg) => leg.tokenFrom.address)).size === trade.route.legs.length
-
-export const isComplex = (trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>) =>
-  new Set(trade.route.legs.map((leg) => leg.tokenFrom.address)).size !== trade.route.legs.length
-
-export const getComplexParams = (
-  trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>,
-  user: string,
-  useBentoBox = false
-) => {
+export const getComplexParams = ({
+  trade,
+  to,
+  minAmount,
+  unwrapBento = false,
+}: {
+  trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
+  to: string
+  minAmount: BigNumberish
+  unwrapBento: boolean
+}) => {
   const initialPathCount = trade.route.legs.filter(
     (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
   ).length
@@ -119,12 +107,9 @@ export const getComplexParams = (
       [
         {
           token: trade.outputAmount.currency.wrapped.address,
-          to:
-            trade.outputAmount.currency.isNative && !useBentoBox
-              ? SUSHI_X_SWAP_ADDRESS[trade.outputAmount.currency.chainId]
-              : user,
-          unwrapBento: !useBentoBox,
-          minAmount: trade.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE).quotient.toString(),
+          to,
+          unwrapBento,
+          minAmount,
         },
       ],
     ]
