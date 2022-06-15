@@ -1,21 +1,20 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, XIcon } from '@heroicons/react/outline'
 import { classNames, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
+import { Theme } from 'types'
 
-import { Theme } from '../../types'
-
-interface OverlayHeader {
+export interface Header {
   title: string
   theme: Theme
   onClose(): void
   arrowDirection?: 'top' | 'bottom' | 'left' | 'right'
 }
 
-export const OverlayHeader: FC<OverlayHeader> = ({ theme, title, onClose, arrowDirection = 'left' }) => {
+export const Header: FC<Header> = ({ theme, title, onClose, arrowDirection = 'left' }) => {
   return (
     <div className="flex items-start justify-between">
-      <div aria-hidden="true" className="cursor-pointer flex gap-2 items-center" onClick={onClose}>
-        <div className="rounded-full flex items-center justify-center cursor-pointer">
+      <button type="button" className="flex items-center gap-2 cursor-pointer" onClick={onClose}>
+        <div className="flex items-center justify-center rounded-full cursor-pointer">
           {arrowDirection === 'left' && (
             <ChevronLeftIcon
               width={24}
@@ -45,21 +44,17 @@ export const OverlayHeader: FC<OverlayHeader> = ({ theme, title, onClose, arrowD
             />
           )}
         </div>
-        <Typography
-          weight={700}
-          as="h3"
-          className={classNames(theme.primary.default, theme.primary.hover, 'flex gap-4 text-lg font-bold leading-6 ')}
-        >
-          {title}
-        </Typography>
-      </div>
-      {onClose ? (
-        <div aria-hidden="true" className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-          <XIcon width={24} height={24} className={classNames(theme.primary.default, theme.primary.hover, '')} />
-        </div>
-      ) : (
-        <span />
-      )}
+      </button>
+      <Typography
+        weight={700}
+        as="h3"
+        className={classNames(theme.primary.default, theme.primary.hover, 'flex gap-4 text-lg font-bold leading-6 ')}
+      >
+        {title}
+      </Typography>
+      <button type="button" className="flex items-center justify-center cursor-pointer" onClick={onClose}>
+        <XIcon width={24} height={24} className={classNames(theme.primary.default, theme.primary.hover, '')} />
+      </button>
     </div>
   )
 }

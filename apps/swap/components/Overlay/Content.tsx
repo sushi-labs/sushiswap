@@ -1,15 +1,14 @@
 import { classNames } from '@sushiswap/ui'
 import { forwardRef, ReactNode } from 'react'
+import { Theme } from 'types'
 
-import { Theme } from '../../types'
-
-interface OverlayContent {
+export interface Content {
   className?: string
   children: ReactNode | ReactNode[]
   theme: Theme
 }
 
-export const OverlayContent = forwardRef<HTMLDivElement, OverlayContent>(({ className, children, theme }, ref) => {
+export const Content = forwardRef<HTMLDivElement, Content>(({ className, children, theme }, ref) => {
   return (
     <div
       ref={ref}
