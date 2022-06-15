@@ -37,9 +37,17 @@ export enum Action {
   STARGATE_TELEPORT = 10,
 }
 
-export class StargateAdapter {}
-export class AnycallAdapter {}
-export class SocketAdapter {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Adapter {}
+export class StargateAdapter implements Adapter {}
+export class AnycallAdapter implements Adapter {}
+export class SocketAdapter implements Adapter {}
+
+export type Recipe = {
+  readonly actions: Action[]
+  readonly values: BigNumber[]
+  readonly datas: string[]
+}
 
 export abstract class Cooker {
   readonly actions: Action[] = []
@@ -58,8 +66,27 @@ export abstract class Cooker {
   }
 }
 
+export class SrcCooker extends Cooker {}
+
+export class DstCooker extends Cooker {}
+
 // SushiXSwap
 export class SushiXSwap extends Cooker {
+  readonly adapter: Adapter = new StargateAdapter()
+
+  // readonly srcCooker: Cooker
+  // readonly dstCooker: Cooker
+  // readonly srcRecipe: Recipe = {
+  //   actions: [],
+  //   values: [],
+  //   datas: [],
+  // }
+  // readonly dstRecipe: Recipe = {
+  //   actions: [],
+  //   values: [],
+  //   datas: [],
+  // }
+
   readonly contract: SushiXSwapContract
 
   readonly crossChain: boolean
