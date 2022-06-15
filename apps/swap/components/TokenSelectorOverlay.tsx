@@ -3,9 +3,9 @@ import { Token, Type } from '@sushiswap/currency'
 import { classNames, Currency, Input, Loader, SlideIn } from '@sushiswap/ui'
 import { TokenListFilterByQuery } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
+import { Theme } from 'types'
 
-import { Theme } from '../types'
-import { OverlayContent, OverlayHeader } from './Overlay'
+import { Overlay } from './Overlay'
 
 interface Props {
   currency?: Type
@@ -30,16 +30,17 @@ export const TokenSelectorOverlay: FC<Props> = ({ theme, currency, open, onClose
     <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
       {({ currencies, inputRef, query, onInput, searching }) => (
         <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-          <OverlayContent theme={theme}>
-            <OverlayHeader onClose={onClose} title="Select Token" theme={theme} />
+          <Overlay.Content theme={theme}>
+            <Overlay.Header onClose={onClose} title="Select Token" theme={theme} />
             <div
               className={classNames(
                 theme.background.secondary,
-                'w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2 text-primary'
+                'w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary'
               )}
               style={{ '--tw-ring-color': theme.accent }}
             >
               <Input.Address
+                id="token-search"
                 ref={inputRef}
                 placeholder="Search token by address"
                 value={query}
@@ -58,7 +59,7 @@ export const TokenSelectorOverlay: FC<Props> = ({ theme, currency, open, onClose
               onCurrency={handleSelect}
               currencies={currencies}
             />
-          </OverlayContent>
+          </Overlay.Content>
         </SlideIn.FromLeft>
       )}
     </TokenListFilterByQuery>
