@@ -36,7 +36,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         {approvalState === ApprovalState.PENDING ? (
           <Dots>Approving {amount.currency.symbol}</Dots>
         ) : (
-          `Approve ${amount.currency.symbol}`
+          `Approve ${amount.currency.symbol}` // TODO: Add tooltip here!
         )}
       </Button>
     )
