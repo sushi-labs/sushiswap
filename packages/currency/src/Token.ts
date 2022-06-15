@@ -15,7 +15,13 @@ export class Token extends Currency {
    */
   public readonly address: string
 
-  public constructor(token: { chainId: number; address: string; decimals: number; symbol?: string; name?: string }) {
+  public constructor(token: {
+    chainId: number | string
+    address: string
+    decimals: number
+    symbol?: string
+    name?: string
+  }) {
     super(token)
     try {
       this.address = getAddress(token.address)
