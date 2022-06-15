@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react'
 import { Loader } from '../loader'
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
-export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
+export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray' | 'transparent'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
 
@@ -21,6 +21,7 @@ const COLOR: Record<ButtonColor, string> = {
   purple: 'btn-purple',
   gradient: 'btn-gradient',
   gray: 'btn-gray',
+  transparent: 'btn-transparent',
 }
 
 const SIZE: Record<ButtonSize, string> = {
