@@ -4,12 +4,18 @@ import { MultiRoute, RToken } from '@sushiswap/tines'
 import invariant from 'tiny-invariant'
 
 import { TradeType as Type } from './TradeType'
+import { Version } from './Version'
 
 /**
  * Represents a trade executed against a list of pools.
  * Does not account for slippage, i.e. trades that front run this trade and move the price.
  */
-export class Trade<TInput extends Currency, TOutput extends Currency, TradeType extends Type> {
+export class Trade<
+  TInput extends Currency,
+  TOutput extends Currency,
+  TradeType extends Type,
+  TradeVersion extends Version
+> {
   /**
    * The route of the trade, i.e. which pools the trade goes through and the input/output currencies.
    */
@@ -19,6 +25,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
    * The type of the trade, either exact in or exact out.
    */
   public readonly tradeType: TradeType
+
+  /**
+   * The version of the trade, either v1 or v2.
+   */
+  public readonly tradeVersion: TradeVersion
 
   /**
    * The input amount for the trade assuming no slippage.
@@ -35,39 +46,52 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
   public readonly executionPrice: Price<TInput, TOutput>
 
   /**
+   * The percent difference between the mid price before the trade and the trade execution price.
+   */
+  public readonly priceImpact: Percent = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+
+  /**
    * Constructs an exact in trade with the given amount in and route
    * @param route route of the exact in trade
    * @param amountIn the amount being passed in
+   * @param currencyOut the output currency
    */
-  public static exactIn<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute
-  ): Trade<TInput, TOutput, Type.EXACT_INPUT> {
-    return new Trade(route, Type.EXACT_INPUT)
+  public static exactIn<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
+    route: MultiRoute,
+    amountIn: Amount<TInput>,
+    currencyOut: TOutput,
+    version: TVersion
+  ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
+    return new Trade(
+      { ...route, fromToken: amountIn.currency as RToken, toToken: currencyOut as RToken },
+      Type.EXACT_INPUT,
+      version
+    )
   }
 
   /**
    * Constructs an exact out trade with the given amount out and route
    * @param route route of the exact out trade
    * @param amountOut the amount returned by the trade
+   * @param currencyIn the output currency
    */
-  public static exactOut<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute
-  ): Trade<TInput, TOutput, Type.EXACT_OUTPUT> {
-    return new Trade(route, Type.EXACT_OUTPUT)
+  public static exactOut<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
+    route: MultiRoute,
+    currencyIn: TInput,
+    amountOut: Amount<TOutput>,
+    version: TVersion
+  ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
+    return new Trade(
+      { ...route, fromToken: currencyIn as RToken, toToken: amountOut.currency as RToken },
+      Type.EXACT_OUTPUT,
+      version
+    )
   }
 
-  /**
-   * The percent difference between the mid price before the trade and the trade execution price.
-   */
-  public readonly priceImpact: Percent
-
-  public constructor(
-    route: MultiRoute,
-    // amount: TTradeType extends TradeType.EXACT_INPUT ? CurrencyAmount<TInput> : CurrencyAmount<TOutput>,
-    tradeType: TradeType
-  ) {
+  public constructor(route: MultiRoute, tradeType: TradeType, tradeVersion: TradeVersion) {
     this.route = route
     this.tradeType = tradeType
+    this.tradeVersion = tradeVersion
 
     const amountIn = Amount.fromRawAmount(route.fromToken as TInput, route.amountInBN.toString())
 
@@ -88,10 +112,10 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
       this.outputAmount.quotient
     )
 
-    // this.priceImpact = computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount)
-
-    // this.route.priceImpact * 10000
-    this.priceImpact = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+    // Shouldn't really have to check this, but tines makes us
+    if (this.route.priceImpact) {
+      this.priceImpact = new Percent(JSBI.BigInt(Math.round(this.route.priceImpact * 10000)), JSBI.BigInt(10000))
+    }
   }
 
   /**
@@ -127,26 +151,32 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TradeType 
     }
   }
 
-  // TODO: These make no sense
-  public static bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute,
-    currencyAmountIn: Amount<TInput>,
-    currencyOut: TOutput
-  ): Trade<TInput, TOutput, Type.EXACT_INPUT> {
-    return new Trade(
-      { ...route, fromToken: currencyAmountIn.currency as RToken, toToken: currencyOut as RToken },
-      Type.EXACT_INPUT
+  /**
+   * Return the execution price after accounting for slippage tolerance
+   * @param slippageTolerance the allowed tolerated slippage
+   */
+  public worstExecutionPrice(slippageTolerance: Percent): Price<TInput, TOutput> {
+    return new Price(
+      this.inputAmount.currency,
+      this.outputAmount.currency,
+      this.maximumAmountIn(slippageTolerance).quotient,
+      this.minimumAmountOut(slippageTolerance).quotient
     )
   }
 
-  public static bestTradeExactOut<TInput extends Currency, TOutput extends Currency>(
-    route: MultiRoute,
-    currencyIn: TInput,
-    currencyAmountOut: Amount<TOutput>
-  ): Trade<TInput, TOutput, Type.EXACT_OUTPUT> {
-    return new Trade(
-      { ...route, fromToken: currencyIn as RToken, toToken: currencyAmountOut.currency as RToken },
-      Type.EXACT_OUTPUT
-    )
+  public isV1(): boolean {
+    return this.tradeVersion === Version.V1
+  }
+
+  public isV2(): boolean {
+    return this.tradeVersion === Version.V2
+  }
+
+  public isComplex(): boolean {
+    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !== this.route.legs.length
+  }
+
+  public isSingle(): boolean {
+    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size === this.route.legs.length
   }
 }
