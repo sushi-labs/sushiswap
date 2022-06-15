@@ -10,6 +10,7 @@ export const TEN = JSBI.BigInt(10)
 export const _100 = JSBI.BigInt(100)
 export const _997 = JSBI.BigInt(997)
 export const _1000 = JSBI.BigInt(1000)
+export const _9995 = JSBI.BigInt(9995)
 export const _10000 = JSBI.BigInt(10000)
 
 export const _1e18 = JSBI.BigInt(1e18)
