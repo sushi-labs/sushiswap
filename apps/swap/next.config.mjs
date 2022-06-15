@@ -13,7 +13,6 @@ export default withTranspileModules({
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: true,
-  // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,
   },
