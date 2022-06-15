@@ -36,20 +36,22 @@ const CurrencyRow: FC<{
     <button
       type="button"
       onClick={() => onCurrency(currency)}
-      className={classNames(`group flex items-center w-full hover:bg-blue-600 px-4 py-2 token-${currency?.symbol}`)}
+      className={classNames(
+        `group flex items-center w-full hover:bg-blue-600 pr-4 pl-3 py-4 token-${currency?.symbol}`
+      )}
       style={style}
     >
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-        <div className="flex flex-row items-center flex-grow gap-1">
-          <div className="w-6 h-6">
-            <Icon currency={currency} width={24} height={24} />
+        <div className="flex flex-row items-center flex-grow gap-2">
+          <div className="w-7 h-7">
+            <Icon currency={currency} width={28} height={28} />
           </div>
           <div className="flex flex-col items-start">
-            <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
-              {currency.name}
-            </Typography>
             <Typography variant="xs" weight={700} className="text-slate-200 group-hover:text-slate-50">
               {currency.symbol}
+            </Typography>
+            <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
+              {currency.name}
             </Typography>
           </div>
         </div>
@@ -115,7 +117,7 @@ export const List = withContext(({ className }) => {
             height={height}
             width={width}
             itemCount={currencies.length}
-            itemSize={42}
+            itemSize={48}
             className="h-full divide-y hide-scrollbar divide-slate-700"
           >
             {Row}

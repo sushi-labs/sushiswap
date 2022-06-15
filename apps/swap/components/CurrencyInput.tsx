@@ -131,8 +131,13 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 'flex flex-row items-center gap-1 text-xl font-bold'
               )}
             >
-              <CurrencyIcon currency={currency} width={48} height={48} />
-              {currency.symbol} <ChevronDownIcon width={16} height={16} />
+              <div className="w-5 h-5">
+                <CurrencyIcon layout="responsive" currency={currency} width={20} height={20} />
+              </div>
+              <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
+              <div className="w-5 h-5">
+                <ChevronDownIcon width={20} height={20} />
+              </div>
             </button>
           </div>
         </div>
