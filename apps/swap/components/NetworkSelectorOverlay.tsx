@@ -4,9 +4,9 @@ import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Input, Loader, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { Theme } from 'types'
 
-import { Theme } from '../types'
-import { OverlayContent, OverlayHeader } from './Overlay'
+import { Overlay } from './Overlay'
 
 interface NetworkSelectorOverlay {
   open: boolean
@@ -56,18 +56,19 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-      <OverlayContent theme={theme}>
-        <OverlayHeader onClose={onClose} title="Select Network" theme={theme} />
+      <Overlay.Content theme={theme}>
+        <Overlay.Header onClose={onClose} title="Select Network" theme={theme} />
         <div
           className={classNames(
             theme.background.secondary,
-            'w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2'
+            'w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2'
           )}
           style={{ '--tw-ring-color': theme.accent }}
         >
           <Input.Address
+            id="network-search"
             ref={inputRef}
-            placeholder="Search token by address"
+            placeholder="Search network by name"
             value={query}
             onChange={(val: string) => {
               searching.current = true
@@ -98,7 +99,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 {selected === chain.chainId ? (
                   <CheckIcon width={20} height={20} className="text-blue" />
                 ) : (
-                  <div className="h-5 w-5 flex justify-center items-center">
+                  <div className="flex items-center justify-center w-5 h-5">
                     <NetworkIcon type="naked" chainId={chain.chainId} width={18} height={18} />
                   </div>
                 )}
@@ -107,7 +108,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
             ))}
           </div>
         </div>
-      </OverlayContent>
+      </Overlay.Content>
     </SlideIn.FromLeft>
   )
 }
