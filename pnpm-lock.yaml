@@ -62,6 +62,7 @@ importers:
   apis/price:
     specifiers:
       '@graphprotocol/client-add-source-name': 1.0.1
+      '@graphprotocol/client-auto-pagination': 1.0.2-canary-3327a10.0
       '@graphprotocol/client-cli': 1.0.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -79,6 +80,7 @@ importers:
       ioredis: 5.0.6
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.1_graphql@16.5.0
+      '@graphprotocol/client-auto-pagination': 1.0.2-canary-3327a10.0_graphql@16.5.0
       '@graphprotocol/client-cli': 1.0.1_graphql@16.5.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -3263,6 +3265,20 @@ packages:
       graphql: 16.5.0
       lodash: 4.17.21
       tslib: 2.4.0
+
+  /@graphprotocol/client-auto-pagination/1.0.2-canary-3327a10.0_graphql@16.5.0:
+    resolution: {integrity: sha512-INVZu6UquV5fRY2e+g3dh8c1TRlDhtB+fBhdxCooB1J+b8fpCbGmFZjY/x1gwrpHYgA+806dOuZJgyBGdZSe1A==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.73.0
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/delegate': 8.7.10_graphql@16.5.0
+      '@graphql-tools/utils': 8.6.12_graphql@16.5.0
+      '@graphql-tools/wrap': 8.4.19_graphql@16.5.0
+      graphql: 16.5.0
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
 
   /@graphprotocol/client-block-tracking/0.0.3_graphql@16.5.0:
     resolution: {integrity: sha512-ajRdLOv04noUXb7mxjNYFq3hDQ8p64FM8+mp6uPNV1HqjzQMeQ/LsxR1MCZuVCu5ykrRbk8aLzmRoRZWf4RbYQ==}

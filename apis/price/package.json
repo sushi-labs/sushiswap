@@ -17,6 +17,7 @@
   "devDependencies": {
     "next": "^12.1.6",
     "@graphprotocol/client-add-source-name": "1.0.1",
+    "@graphprotocol/client-auto-pagination": "1.0.2-canary-3327a10.0",
     "@graphprotocol/client-cli": "1.0.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
