@@ -1,7 +1,7 @@
-import { Edge, Graph, Vertice } from '../src'
-
 import { BigNumber } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
+
+import { Edge, Graph, Vertice } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
@@ -9,7 +9,7 @@ type Topology = [number, number[][]]
 function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i })
+    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i })
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {
@@ -32,7 +32,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
 function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i })
+    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i })
   }
   const bn = BigNumber.from(1e6)
   const pools = t[1].map((e, i) => {
@@ -51,7 +51,7 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
 function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>): Edge[] | undefined {
   if (from === to) return []
   used.add(from)
-  let edges = from.edges.filter((e) => !used.has(from.getNeibour(e) as Vertice))
+  const edges = from.edges.filter((e) => !used.has(from.getNeibour(e) as Vertice))
   while (edges.length) {
     const r = Math.floor(rnd() * from.edges.length)
     const edge = from.edges[r]
