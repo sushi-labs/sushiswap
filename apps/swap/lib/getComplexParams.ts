@@ -2,7 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Zero } from '@ethersproject/constants'
 import { Currency } from '@sushiswap/currency'
-import { TradeType, TradeV2 } from '@sushiswap/exchange'
+import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { SUSHI_X_SWAP_ADDRESS } from 'config'
 
@@ -48,7 +48,7 @@ export const getComplexParams = ({
   minAmount,
   unwrapBento = false,
 }: {
-  trade: TradeV2<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT>
+  trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V2>
   to: string
   minAmount: BigNumberish
   unwrapBento: boolean
