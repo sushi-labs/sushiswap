@@ -5,6 +5,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
 import { Typography } from '../typography'
+import { Icon } from './Icon'
 
 export interface WithCurrencyList {
   className?: string
@@ -32,15 +33,18 @@ const CurrencyRow: FC<{
   const { onCurrency } = useCurrencyListContext()
 
   return (
-    <div
-      aria-hidden="true"
+    <button
+      type="button"
       onClick={() => onCurrency(currency)}
       className={classNames(`group flex items-center w-full hover:bg-blue-600 px-4 py-2 token-${currency?.symbol}`)}
       style={style}
     >
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-        <div className="flex flex-row items-center flex-grow gap-3">
-          <div className="flex flex-col">
+        <div className="flex flex-row items-center flex-grow gap-1">
+          <div className="w-6 h-6">
+            <Icon currency={currency} width={24} height={24} />
+          </div>
+          <div className="flex flex-col items-start">
             <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
               {currency.name}
             </Typography>
@@ -50,7 +54,7 @@ const CurrencyRow: FC<{
           </div>
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 
