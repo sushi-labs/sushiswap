@@ -2,8 +2,8 @@ import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/image'
 import { FC } from 'react'
 
+import { UploadFileEntity } from '../.graphclient'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
-import { Image as ImageType } from '../types'
 
 interface ImageProps {
   quality?: number
@@ -12,9 +12,7 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: {
-    data: ImageType
-  }
+  image: UploadFileEntity
 }
 
 export const Image: FC<ImageProps> = ({
@@ -26,9 +24,11 @@ export const Image: FC<ImageProps> = ({
   layout = 'fill',
   objectFit = 'cover',
 }) => {
-  const { alternativeText, width: _width, height: _height } = image.data.attributes
+  if (!image?.attributes || !image?.attributes.url) {
+    return <></>
+  }
 
-  if (isMediaVideo(image.data.attributes.provider_metadata)) {
+  if (isMediaVideo(image.attributes.provider_metadata)) {
     return (
       <video
         autoPlay={true}
@@ -38,10 +38,12 @@ export const Image: FC<ImageProps> = ({
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
       >
-        <source src={getOptimizedMedia({ metadata: image.data.attributes.provider_metadata })} />
+        <source src={getOptimizedMedia({ metadata: image.attributes.provider_metadata })} />
       </video>
     )
   }
+
+  const { width: _width, height: _height, alternativeText } = image.attributes
 
   return (
     <NextImage
@@ -51,7 +53,7 @@ export const Image: FC<ImageProps> = ({
       width={width || _width || '640'}
       height={height || _height || '400'}
       objectFit={objectFit}
-      src={getOptimizedMedia({ metadata: image.data.attributes.provider_metadata, width, height })}
+      src={getOptimizedMedia({ metadata: image.attributes.provider_metadata, width, height })}
       alt={alternativeText || ''}
     />
   )
