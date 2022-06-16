@@ -32,22 +32,19 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
-  const { chainId, id } = query
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
   const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+  const [transactions, rebases] = await Promise.all([
+    getVestingTransactions(chainId as string, id as string),
+    getRebase(chainId as string, vesting.token.id),
+  ])
+
   return {
     props: {
       fallback: {
         [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/vesting/${chainId}/${id}/transactions`]: (await getVestingTransactions(
-          chainId as string,
-          id as string
-        )) as TransactionDTO[],
-        [`/furo/api/rebase/${query.chainId}/${vesting.token.id}`]: (await getRebase(
-          chainId as string,
-          vesting.token.id
-        )) as Rebase,
+        [`/furo/api/vesting/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${vesting.token.id}`]: rebases as Rebase,
       },
     },
   }
