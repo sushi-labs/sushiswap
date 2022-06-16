@@ -7,73 +7,75 @@ import Link from 'next/link'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import {
-  ArticleEntity,
-  ArticleEntityResponseCollection,
-  CategoryEntityResponseCollection,
-  CmsTypes,
-} from '../.graphclient'
 import { ArticleList, ArticleListItem, Categories, Pagination, Seo } from '../components'
-import { getArticles, getCategories } from '../lib/api'
-import GlobalEntity = CmsTypes.GlobalEntity
+import { fetchAPI } from '../lib/api'
+import { Article, Category, Data } from '../types'
 
 export async function getStaticProps() {
-  const articles = await getArticles()
-  const categories = await getCategories()
+  const [articles, categories] = await Promise.all([
+    fetchAPI('/articles', {
+      populate: 'deep',
+      sort: ['publishedAt:desc'],
+      pagination: {
+        limit: 12,
+      },
+    }),
+    fetchAPI('/categories', { populate: '*' }),
+  ])
 
   return {
     props: {
       fallback: {
-        ['/articles']: articles?.articles || [],
-        ['/categories']: categories?.categories || [],
+        ['/articles']: articles,
+        ['/categories']: categories,
       },
     },
     revalidate: 1,
   }
 }
 
-const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps> & { global: GlobalEntity }> = ({
-  global,
-  fallback,
-}) => {
+const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Archive global={global} />
+      <_Archive />
     </SWRConfig>
   )
 }
 
-const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
+const _Archive = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
 
-  const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
-  const { data: filterData, isValidating } = useSWR(
+  const [selected, setSelected] = useState<number[]>([])
+  const { data: articlesData } = useSWR<Data<Article[]>>('/articles', (url) =>
+    fetchAPI(url, { populate: 'deep', sort: ['publishedAt:desc'] })
+  )
+  const { data: categoriesData } = useSWR<Data<Category[]>>('/categories', (url) => fetchAPI(url, { populate: '*' }))
+  const { data: filterData, isValidating } = useSWR<Data<Article[]>>(
     [`/articles`, selected, debouncedQuery, page],
-    async (url, selected, debouncedQuery, page) => {
-      return (
-        await getArticles({
-          filters: {
-            ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
-            ...(selected.length > 0 && {
-              categories: {
-                id: {
-                  in: selected,
-                },
-              },
-            }),
+    (url, selected, debouncedQuery, page) => {
+      return fetchAPI(url, {
+        populate: 'deep',
+        sort: ['publishedAt:desc'],
+        pagination: {
+          page,
+          pageSize: 10,
+        },
+        filters: {
+          ...(debouncedQuery && { title: { $containsi: debouncedQuery } }),
+          categories: {
+            id: {
+              $in: selected,
+            },
           },
-          pagination: { page, pageSize: 10 },
-        })
-      )?.articles
+        },
+      })
     },
     { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
   )
 
-  const loading = useDebounce(isValidating, 300)
+  const loading = useDebounce(isValidating, 400)
 
   const articles = articlesData?.data
   const categories = categoriesData?.data
@@ -83,7 +85,7 @@ const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
 
   return (
     <>
-      <Seo global={global} />
+      <Seo />
       <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
         <Link href="/" passHref={true}>
           <a className="flex items-center gap-3 group">
@@ -112,15 +114,13 @@ const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
               </div>
             </div>
             <div className="border-t border-b divide-y divide-slate-200/5 border-slate-200/5">
-              {articleList && (
-                <ArticleList
-                  articles={articleList as ArticleEntity[]}
-                  loading={loading}
-                  render={(article) => (
-                    <ArticleListItem article={article} key={`article__left__${article?.attributes?.slug}`} />
-                  )}
-                />
-              )}
+              <ArticleList
+                articles={articleList}
+                loading={loading}
+                render={(article) => (
+                  <ArticleListItem article={article} key={`article__left__${article.attributes.slug}`} />
+                )}
+              />
             </div>
             <div className="flex justify-center">
               {articlesMeta && (
