@@ -34,6 +34,7 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/swap-widget": "workspace:*",
+    "@builder.io/partytown": "^0.6.1",
     "@typechain/ethers-v5": "^10.0.0",
     "@uniswap/redux-multicall": "^1.1.1",
     "@uniswap/v2-core": "^1.0.1",

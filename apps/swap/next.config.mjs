@@ -20,4 +20,7 @@ export default withTranspileModules({
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  experimental: {
+    nextScriptWorkers: true,
+  },
 })

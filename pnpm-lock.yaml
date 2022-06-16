@@ -527,6 +527,7 @@ importers:
 
   apps/swap:
     specifiers:
+      '@builder.io/partytown': ^0.6.1
       '@ethersproject/abi': ^5.0.0
       '@ethersproject/address': ^5.0.0
       '@ethersproject/bignumber': ^5.0.0
@@ -578,6 +579,7 @@ importers:
       typescript: ^4.0.0
       wagmi: ^0.4.4
     dependencies:
+      '@builder.io/partytown': 0.6.1
       '@ethersproject/abi': 5.6.2
       '@ethersproject/address': 5.6.0
       '@ethersproject/bignumber': 5.6.1
@@ -2510,6 +2512,11 @@ packages:
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@builder.io/partytown/0.6.1:
+    resolution: {integrity: sha512-B8LKn01yBHazSdvELpkM+xAZlw2Nxon9ozp9C6/gbbKzAIWOMFsvZY9NxP9OpTxKL9L4SgKh4ynvz+TsTM+SyQ==}
+    hasBin: true
+    dev: false
 
   /@cloudinary/url-gen/1.8.0:
     resolution: {integrity: sha512-sSbLY3i/FZ+yHAinVbTzUjIzFGsnpYajWTLG+dc/80GbSfODuxZ0OyXp2kOxtf7MUyx5y998BIa8ketnVr7chA==}
