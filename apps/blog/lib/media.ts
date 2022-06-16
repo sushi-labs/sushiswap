@@ -9,8 +9,8 @@ import { cld } from '../pages/_app'
 
 type Metadata =
   | {
-      public_id?: string
-      resource_type?: string
+      public_id: string
+      resource_type: string
     }
   | undefined
 
@@ -24,13 +24,14 @@ export function getOptimizedMedia({
   height,
   asImage = false,
 }: {
-  metadata: Metadata
+  metadata: {
+    public_id: string
+    resource_type: string
+  }
   width?: number
   height?: number
   asImage?: boolean
 }) {
-  if (!metadata?.public_id) return ''
-
   if (isMediaVideo(metadata) && asImage) {
     return cld
       .video(metadata.public_id)

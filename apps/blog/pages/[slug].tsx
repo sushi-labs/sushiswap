@@ -1,9 +1,6 @@
 import { Container } from '@sushiswap/ui'
-import ErrorPage from 'next/error'
-import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, CmsTypes, ComponentSharedMedia, ComponentSharedRichText } from '../.graphclient'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -11,79 +8,76 @@ import {
   ArticleLinks,
   Breadcrumb,
   MediaBlock,
-  PreviewBanner,
   RichTextBlock,
   Seo,
-  SeoType,
 } from '../components'
-import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
-import GlobalEntity = CmsTypes.GlobalEntity
+import { fetchAPI } from '../lib/api'
+import { Article, Article as ArticleType, Category, Meta } from '../types'
 
 export async function getStaticPaths() {
-  const allArticles = await getAllArticlesBySlug()
-  return {
-    paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
+  const articlesRes = await fetchAPI('/articles', { fields: ['slug'] })
 
-      console.log(acc)
-      return acc
-    }, []),
-    fallback: true,
+  return {
+    paths: articlesRes.data.map((article: Article) => ({
+      params: {
+        slug: article.attributes.slug,
+      },
+    })),
+    fallback: false,
   }
 }
 
-export async function getStaticProps({
-  params,
-  preview = null,
-}: {
-  params: { slug: string }
-  preview: Record<string, unknown> | null
-}) {
-  const data = await getArticleAndMoreArticles(params.slug, preview)
+export async function getStaticProps({ params }: { params: { slug: string } }) {
+  const [articlesRes, latestArticlesRes] = await Promise.all([
+    fetchAPI('/articles', {
+      filters: {
+        slug: params.slug,
+      },
+      populate: 'deep',
+    }),
+    fetchAPI('/articles', {
+      sort: ['publishedAt'],
+      pagination: {
+        limit: 3,
+      },
+    }),
+  ])
+
+  const filteredLatest = articlesRes.data[0]
+    ? latestArticlesRes.data.filter((el: Article) => el.attributes.title !== articlesRes.data[0].attributes.title)
+    : []
+
+  if (filteredLatest.length > 2) filteredLatest.pop()
 
   return {
-    props: {
-      article: data?.articles?.data?.[0],
-      latestArticles: data?.moreArticles?.data,
-      preview: !!preview,
-    },
+    props: { article: articlesRes.data[0], latestArticles: filteredLatest },
     revalidate: 1,
   }
 }
 
 interface ArticlePage {
-  global: GlobalEntity
-  article?: ArticleEntity
-  latestArticles?: ArticleEntity[]
-  preview: boolean
+  article: ArticleType
+  latestArticles: ArticleType[]
+  categories: {
+    data: Category[]
+    meta: Meta
+  }
 }
 
-const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview }) => {
-  const router = useRouter()
-  if (!router.isFallback && !article?.attributes?.slug) {
-    return <ErrorPage statusCode={404} />
+const Article: FC<ArticlePage> = ({ article, latestArticles }) => {
+  const seo = {
+    id: article.id,
+    slug: article.attributes.slug,
+    metaTitle: article.attributes.title,
+    metaDescription: article.attributes.description,
+    shareImage: article.attributes.cover,
+    article: true,
+    tags: article.attributes.categories.data.map((el) => el.attributes.name),
   }
-
-  const seo: SeoType =
-    article?.attributes && article?.id
-      ? {
-          id: article.id,
-          slug: article?.attributes.slug,
-          metaTitle: article?.attributes.title,
-          metaDescription: article?.attributes.description,
-          shareImage: article?.attributes.cover,
-          article: true,
-          tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
-            if (el?.attributes?.name) acc.push(el?.attributes.name)
-            return acc
-          }, []),
-        }
-      : undefined
 
   return (
     <>
-      <Seo global={global} seo={seo} />
-      <PreviewBanner show={preview} />
+      <Seo seo={seo} />
       <Breadcrumb />
       <Container maxWidth="2xl" className="mx-auto px-4 my-16">
         <main>
@@ -91,19 +85,16 @@ const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
             <div className="mt-12 prose !prose-invert prose-slate">
-              {article?.attributes?.blocks?.map((block, i) => {
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedRichText') {
-                  return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
+              {article.attributes.blocks.map((block, i) => {
+                if (block.__component === 'shared.rich-text') {
+                  return <RichTextBlock block={block} key={i} />
                 }
 
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedMedia') {
-                  return <MediaBlock block={block as ComponentSharedMedia} key={i} />
+                if (block.__component === 'shared.media') {
+                  return <MediaBlock block={block} key={i} />
                 }
 
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedDivider') {
+                if (block.__component === 'shared.divider') {
                   return <hr key={i} className="border border-slate-200/5 my-12" />
                 }
               })}
@@ -117,4 +108,4 @@ const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview
   )
 }
 
-export default ArticlePage
+export default Article

@@ -5,9 +5,16 @@ import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
+import { createContext, useContext } from 'react'
 
 import { Header } from '../components'
-import { getGlobalPage } from '../lib/api'
+import { fetchAPI } from '../lib/api'
+import { Seo } from '../types'
+
+interface GlobalContext {
+  defaultSeo: Seo
+  siteName: string
+}
 
 export const cld = new Cloudinary({
   cloud: {
@@ -15,14 +22,28 @@ export const cld = new Cloudinary({
   },
 })
 
+export const GlobalContext = createContext<GlobalContext | undefined>(undefined)
+export const useGlobalContext = () => {
+  const context = useContext(GlobalContext)
+  if (!context) {
+    throw new Error('Hook can only be used inside Global Context')
+  }
+
+  return context
+}
+
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  const { global } = pageProps
+
   return (
     <ThemeProvider>
-      <App.Shell>
-        <Header />
-        <Component {...pageProps} />
-        <App.Footer />
-      </App.Shell>
+      <GlobalContext.Provider value={global.attributes}>
+        <App.Shell>
+          <Header />
+          <Component {...pageProps} />
+          <App.Footer />
+        </App.Shell>
+      </GlobalContext.Provider>
     </ThemeProvider>
   )
 }
@@ -35,9 +56,16 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await NextApp.getInitialProps(ctx)
   // Fetch global site settings from Strapi
-  const globalRes = await getGlobalPage()
+  const globalRes = await fetchAPI('/global', {
+    populate: {
+      favicon: '*',
+      defaultSeo: {
+        populate: '*',
+      },
+    },
+  })
   // Pass the data to our page via props
-  return { ...appProps, pageProps: { global: globalRes.global?.data } }
+  return { ...appProps, pageProps: { global: globalRes.data } }
 }
 
 export default MyApp
