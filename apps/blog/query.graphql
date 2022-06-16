@@ -172,7 +172,7 @@ query getGlobalPage {
         data {
             id
             attributes {
-                 siteName
+                siteName
                 siteDescription
                 favicon {
                     data {

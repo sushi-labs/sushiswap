@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.graphclient'
+import { ArticleEntity, CmsTypes, ComponentSharedMedia, ComponentSharedRichText } from '../.graphclient'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -17,12 +17,13 @@ import {
   SeoType,
 } from '../components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
+import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/${article.attributes.slug}`)
+      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
 
       console.log(acc)
       return acc
@@ -51,12 +52,13 @@ export async function getStaticProps({
 }
 
 interface ArticlePage {
-  article: ArticleEntity
-  latestArticles: ArticleEntity[]
+  global: GlobalEntity
+  article?: ArticleEntity
+  latestArticles?: ArticleEntity[]
   preview: boolean
 }
 
-const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
+const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview }) => {
   const router = useRouter()
   if (!router.isFallback && !article?.attributes?.slug) {
     return <ErrorPage statusCode={404} />
@@ -66,13 +68,13 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
     article?.attributes && article?.id
       ? {
           id: article.id,
-          slug: article.attributes.slug,
-          metaTitle: article.attributes.title,
-          metaDescription: article.attributes.description,
-          shareImage: article.attributes.cover,
+          slug: article?.attributes.slug,
+          metaTitle: article?.attributes.title,
+          metaDescription: article?.attributes.description,
+          shareImage: article?.attributes.cover,
           article: true,
-          tags: article.attributes.categories?.data.reduce<string[]>((acc, el) => {
-            if (el?.attributes?.name) acc.push(el.attributes.name)
+          tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
+            if (el?.attributes?.name) acc.push(el?.attributes.name)
             return acc
           }, []),
         }
@@ -80,7 +82,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
 
   return (
     <>
-      <Seo seo={seo} />
+      <Seo global={global} seo={seo} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
       <Container maxWidth="2xl" className="mx-auto px-4 my-16">
@@ -89,7 +91,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
             <div className="mt-12 prose !prose-invert prose-slate">
-              {article.attributes?.blocks?.map((block, i) => {
+              {article?.attributes?.blocks?.map((block, i) => {
                 // @ts-ignore
                 if (block?.__typename === 'ComponentSharedRichText') {
                   return <RichTextBlock block={block as ComponentSharedRichText} key={i} />

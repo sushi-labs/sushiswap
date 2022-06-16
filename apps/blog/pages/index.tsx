@@ -5,9 +5,15 @@ import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection } from '../.graphclient'
+import {
+  ArticleEntity,
+  ArticleEntityResponseCollection,
+  CategoryEntityResponseCollection,
+  CmsTypes,
+} from '../.graphclient'
 import { ArticleList, Card, Categories, Hero, Seo } from '../components'
 import { getArticles, getCategories } from '../lib/api'
+import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 10 } })
@@ -24,15 +30,18 @@ export async function getStaticProps() {
   }
 }
 
-const Home: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
+const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { global: GlobalEntity }> = ({
+  global,
+  fallback,
+}) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Home />
+      <_Home global={global} />
     </SWRConfig>
   )
 }
 
-const _Home: FC = () => {
+const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 200)
 
@@ -68,7 +77,7 @@ const _Home: FC = () => {
 
   return (
     <>
-      <Seo />
+      <Seo global={global} />
       <div className="flex flex-col divide-y divide-slate-800">
         {articles?.[0] && <Hero article={articles[0]} />}
         <section className="py-10 pb-60">
@@ -92,7 +101,7 @@ const _Home: FC = () => {
                 <ArticleList
                   articles={articleList as ArticleEntity[]}
                   loading={loading}
-                  render={(article) => <Card article={article} key={`article__left__${article.attributes?.slug}`} />}
+                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
                 />
               </div>
             )}

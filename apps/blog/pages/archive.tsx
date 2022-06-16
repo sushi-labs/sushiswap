@@ -7,9 +7,15 @@ import Link from 'next/link'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection } from '../.graphclient'
+import {
+  ArticleEntity,
+  ArticleEntityResponseCollection,
+  CategoryEntityResponseCollection,
+  CmsTypes,
+} from '../.graphclient'
 import { ArticleList, ArticleListItem, Categories, Pagination, Seo } from '../components'
 import { getArticles, getCategories } from '../lib/api'
+import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticProps() {
   const articles = await getArticles()
@@ -26,15 +32,18 @@ export async function getStaticProps() {
   }
 }
 
-const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
+const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps> & { global: GlobalEntity }> = ({
+  global,
+  fallback,
+}) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Archive />
+      <_Archive global={global} />
     </SWRConfig>
   )
 }
 
-const _Archive = () => {
+const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
@@ -74,7 +83,7 @@ const _Archive = () => {
 
   return (
     <>
-      <Seo />
+      <Seo global={global} />
       <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
         <Link href="/" passHref={true}>
           <a className="flex items-center gap-3 group">
@@ -108,7 +117,7 @@ const _Archive = () => {
                   articles={articleList as ArticleEntity[]}
                   loading={loading}
                   render={(article) => (
-                    <ArticleListItem article={article} key={`article__left__${article.attributes?.slug}`} />
+                    <ArticleListItem article={article} key={`article__left__${article?.attributes?.slug}`} />
                   )}
                 />
               )}

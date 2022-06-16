@@ -24,7 +24,7 @@ export const Image: FC<ImageProps> = ({
   layout = 'fill',
   objectFit = 'cover',
 }) => {
-  if (!image.attributes || !image.attributes.url) {
+  if (!image?.attributes || !image?.attributes.url) {
     return <></>
   }
 

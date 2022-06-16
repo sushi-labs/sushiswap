@@ -34,7 +34,7 @@ export const Categories: FC<Categories> = ({ categories, selected, onSelect }) =
             key={category.id}
             className="!text-xs capitalize"
           >
-            {category.attributes?.name}
+            {category?.attributes?.name}
           </Button>
         )
       })}

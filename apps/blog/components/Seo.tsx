@@ -1,25 +1,24 @@
 import Head from 'next/head'
 import { FC } from 'react'
 
-import { ComponentSharedSeo } from '../.graphclient'
+import { ComponentSharedSeo, GlobalEntity } from '../.graphclient'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
-import { useGlobalContext } from '../pages/_app'
 
 export type SeoType = (ComponentSharedSeo & { slug: string; article: boolean; tags: string[] | undefined }) | undefined
 interface Seo {
+  global: GlobalEntity
   seo?: SeoType
 }
 
-export const Seo: FC<Seo> = ({ seo }) => {
-  const { defaultSeo, siteName } = useGlobalContext()
+export const Seo: FC<Seo> = ({ global, seo }) => {
   const seoWithDefaults = {
-    ...defaultSeo,
+    ...global?.attributes?.defaultSeo,
     ...seo,
   }
 
   const fullSeo = {
     ...seoWithDefaults,
-    metaTitle: `${seoWithDefaults.metaTitle} | ${siteName}`,
+    metaTitle: `${seoWithDefaults.metaTitle} | ${global?.attributes?.siteName}`,
     shareMedia: getOptimizedMedia({ metadata: seoWithDefaults?.shareImage?.data?.attributes?.provider_metadata }),
     shareMediaAsImage: getOptimizedMedia({
       metadata: seoWithDefaults?.shareImage?.data?.attributes?.provider_metadata,
@@ -42,7 +41,7 @@ export const Seo: FC<Seo> = ({ seo }) => {
       <meta name="description" content={fullSeo.metaDescription} />
 
       {fullSeo.article && <meta property="og:type" content="article" />}
-      <meta property="og:site_name" content={siteName} />
+      <meta property="og:site_name" content={global?.attributes?.siteName} />
       <meta property="og:locale" content="en_US" />
       <meta property="og:title" content={fullSeo.metaTitle} />
       <meta property="og:description" content={fullSeo.metaDescription} />
