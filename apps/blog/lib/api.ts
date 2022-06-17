@@ -1,52 +1,44 @@
-import qs from 'qs'
+import { ArticleFiltersInput, CategoryFiltersInput, getBuiltGraphSDK, PaginationArg } from '../.graphclient'
 
-/**
- * Get full Strapi URL from path
- * @param {string} path Path of the URL
- * @returns {string} Full Strapi URL
- */
-export function getStrapiURL(path = '') {
-  return `${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'}${path}`
+export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
+  const sdk = getBuiltGraphSDK()
+
+  try {
+    return (
+      (await sdk.articleAndMoreArticles({
+        filters: {
+          slug: { eq: slug },
+        },
+        filters_ne: { slug: { not: { eq: slug } } },
+        publicationState: preview ? 'PREVIEW' : 'LIVE',
+      })) ?? []
+    )
+  } catch (e) {
+    console.error(e)
+  }
 }
 
-/**
- * Helper to make GET requests to Strapi API endpoints
- * @param {string} path Path of the API route
- * @param {Object} urlParamsObject URL params object, will be stringified
- * @param {Object} options Options passed to fetch
- * @returns Parsed API call response
- */
-export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
-  // Merge default and user options
-  const mergedOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...options,
-  }
-
-  // Build request URL
-  const queryString = qs.stringify(urlParamsObject)
-  const requestUrl = `${getStrapiURL(`/api${path}${queryString ? `?${queryString}` : ''}`)}`
-
-  // Trigger API call
-  const response = await fetch(requestUrl, mergedOptions)
-
-  // Handle response
-  if (!response.ok) {
-    console.error(response.statusText)
-    throw new Error(`An error occured please try again`)
-  }
-
-  const data = await response.json()
-  return data
+export const getAllArticlesBySlug = async () => {
+  const sdk = getBuiltGraphSDK()
+  return await sdk.getAllArticlesWithSlug()
 }
 
-export async function getPreviewPostBySlug(slug: string) {
-  const data = await fetchAPI('/articles', {
-    filters: {
-      slug: slug,
-    },
-  })
-  return data
+export const getGlobalPage = async () => {
+  const sdk = getBuiltGraphSDK()
+  return await sdk.getGlobalPage()
+}
+
+export const getPreviewPostBySlug = async (slug: string) => {
+  const sdk = getBuiltGraphSDK()
+  return await sdk.getPreviewPostBySlug({ slug })
+}
+
+export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
+  const sdk = getBuiltGraphSDK()
+  return await sdk.getArticles(variables)
+}
+
+export const getCategories = async (filters?: CategoryFiltersInput) => {
+  const sdk = getBuiltGraphSDK()
+  return await sdk.getCategories({ filters })
 }
