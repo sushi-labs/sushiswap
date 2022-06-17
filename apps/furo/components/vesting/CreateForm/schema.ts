@@ -29,7 +29,7 @@ yup.addMethod(
       params: { address },
       test(value: Maybe<Type>) {
         if (value instanceof Native) return true
-        if (value?.address.length === 0) return true
+        if (value?.address?.length === 0) return true
 
         try {
           return !!(value && getAddress(value.address))
@@ -58,54 +58,54 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
   })
 })
 
-export const createVestingSchema = yup.object({
-  // @ts-ignore
-  currency: yup.mixed<Token>().currency().required('This field is required'),
-  cliff: yup.boolean().required('This field is required'),
-  startDate: yup
-    .date()
-    .when('cliffEndDate', (cliffEndDate, schema) => {
-      if (cliffEndDate) {
-        const dayAfter = new Date(cliffEndDate.getTime() - 1)
-        return schema.max(dayAfter, 'Date must be earlier than cliff end date')
-      }
-      return schema
-    })
-    .min(new Date(Date.now() + 5 * 60 * 1000), 'Start date must be at least 5 minutes from now')
-    .required('This field is required'),
-  // @ts-ignore
-  recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
-  cliffEndDate: yup.date().when('cliff', {
-    is: (value: boolean) => value,
-    then: yup
+export const createVestingSchema = yup.object().shape(
+  {
+    // @ts-ignore
+    currency: yup.mixed<Token>().currency().required('This field is required'),
+    startDate: yup
       .date()
-      .min(new Date(), 'Cliff end date must be in the future')
-      .when('startDate', (startDate, schema) => {
-        if (startDate) {
-          const dayAfter = new Date(startDate.getTime() + 1)
-          return schema.min(dayAfter, 'Date must be later than start date')
+      // @ts-ignore
+      .when(['cliff', 'cliffEndDate'], (cliff, cliffEndDate, schema) => {
+        if (cliff && cliffEndDate) {
+          const dayAfter = new Date(cliffEndDate.getTime() - 1)
+          return schema.max(dayAfter, 'Date must be earlier than cliff end date')
         }
         return schema
       })
+      .min(new Date(Date.now() + 5 * 60 * 1000), 'Start date must be at least 5 minutes from now')
       .required('This field is required'),
-    otherwise: yup.date().nullable().notRequired(),
-  }),
-  cliffAmount: yup.number().when('cliff', {
-    is: (value: boolean) => value,
-    then: yup.number().typeError('Target must be a number').min(0, 'Must be greater than zero'),
-    otherwise: yup.number().nullable(),
-  }),
-  stepPayouts: yup
-    .number()
-    .min(1, 'Must be more than 1')
-    .integer('Must be a whole number')
-    .typeError('This field is required')
-    .required('This field is required'),
-  stepAmount: yup
-    .number()
-    .typeError('Target must be a number')
-    .min(0, 'Must be greater than zero')
-    .required('This field is required'),
-  stepConfig: yup.mixed<StepConfig>().required('This field is required'),
-  fundSource: yup.mixed<FundSource>().required('This field is required'),
-})
+    // @ts-ignore
+    recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
+    cliff: yup.boolean().required('This field is required'),
+    // @ts-ignore
+    cliffEndDate: yup.date().when(['cliff', 'startDate'], (cliff, startDate, schema) => {
+      if (cliff && !!startDate) {
+        const dayAfter = new Date(startDate.getTime() + 1)
+        return schema.min(dayAfter, 'Date must be later than start date').required('This field is required')
+      }
+
+      return schema.notRequired()
+    }),
+    cliffAmount: yup.string().when('cliff', (cliff, schema) => {
+      if (cliff) {
+        return schema.matches(/^(0*[1-9]\d*(\.\d+)?|0+\.\d*[1-9]\d*)$/, 'Target must be a number')
+      }
+
+      return schema.notRequired()
+    }),
+    stepPayouts: yup
+      .number()
+      .min(1, 'Must be more than 1')
+      .integer('Must be a whole number')
+      .typeError('This field is required')
+      .required('This field is required'),
+    stepAmount: yup
+      .number()
+      .typeError('Target must be a number')
+      .moreThan(0, 'Must be greater than zero')
+      .required('This field is required'),
+    stepConfig: yup.mixed<StepConfig>().required('This field is required'),
+    fundSource: yup.mixed<FundSource>().required('This field is required'),
+  },
+  [['startDate', 'cliffEndDate']]
+)
