@@ -17,32 +17,6 @@ export enum PoolState {
 
 const POOL_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_ABI)
 
-export type PoolWithStateExists<T> = {
-  state: PoolState.EXISTS
-  pool: T
-}
-
-export type PoolWithStateLoading = {
-  state: PoolState.LOADING
-  pool?: undefined
-}
-
-export type PoolWithStateNotExists = {
-  state: PoolState.NOT_EXISTS
-  pool?: undefined
-}
-
-export type PoolWithStateInvalid = {
-  state: PoolState.INVALID
-  pool?: undefined
-}
-
-export type PoolWithState<T> =
-  | PoolWithStateExists<T>
-  | PoolWithStateLoading
-  | PoolWithStateNotExists
-  | PoolWithStateInvalid
-
 interface PoolData {
   address: string
   token0: Token
@@ -52,7 +26,7 @@ interface PoolData {
 export function useConstantProductPools(
   chainId: number,
   currencies: [Currency | undefined, Currency | undefined][]
-): PoolWithState<ConstantProductPool>[] {
+): [PoolState, ConstantProductPool | null][] {
   const { data: latestBlockNumber } = useBlockNumber({ chainId })
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
@@ -84,6 +58,7 @@ export function useConstantProductPools(
       .filter(([_n, length]) => length)
       .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length])
   }, [callStatePoolsCount, pairsUniqueAddr])
+  
   const pairsUniqueProcessed = useMemo(() => {
     return callStatePoolsCount
       .map((s, i) => [i, s.result ? parseInt(s.result.count.toString()) : 0] as [number, number])
@@ -130,51 +105,44 @@ export function useConstantProductPools(
     'swapFee'
   )
 
-  const constantProductPools = useMemo(
+  return useMemo(
     () =>
       pools.map((p, i) => {
-        if (!resultsReserves[i].valid || !resultsReserves[i].result)
-          return { state: PoolState.LOADING } as PoolWithState<ConstantProductPool>
-        if (!resultsFee[i].valid || !resultsFee[i].result)
-          return { state: PoolState.LOADING } as PoolWithState<ConstantProductPool>
-        return {
-          state: PoolState.EXISTS,
-          pool: new ConstantProductPool(
+        if (!resultsReserves[i].valid || !resultsReserves[i].result) return [PoolState.LOADING, null]
+        if (!resultsFee[i].valid || !resultsFee[i].result) return [PoolState.LOADING, null]
+        return [
+          PoolState.EXISTS,
+          new ConstantProductPool(
             Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()),
             Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()),
             parseInt(resultsFee[i].result![0].toString()),
             resultsReserves[i].result!._blockTimestampLast !== 0
           ),
-        } as PoolWithState<ConstantProductPool>
+        ]
       }),
     [pools, resultsReserves, resultsFee]
   )
-  return constantProductPools
 }
 
 // Just for testing purposes
 export function poolListCompare(
-  list1: PoolWithState<ConstantProductPool>[],
-  list2: PoolWithState<ConstantProductPool>[]
+  list1: [PoolState, ConstantProductPool | null][],
+  list2: [PoolState, ConstantProductPool | null][]
 ): boolean | number {
   const l1 = list1
-    .filter((p) => p.state == PoolState.EXISTS)
-    .sort(
-      (p1, p2) => parseInt(p1.pool?.liquidityToken.address || '1') - parseInt(p2.pool?.liquidityToken.address || '1')
-    )
+    .filter((p) => p[0] == PoolState.EXISTS)
+    .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
   const l2 = list2
-    .filter((p) => p.state == PoolState.EXISTS)
-    .sort(
-      (p1, p2) => parseInt(p1.pool?.liquidityToken.address || '1') - parseInt(p2.pool?.liquidityToken.address || '1')
-    )
+    .filter((p) => p[0] == PoolState.EXISTS)
+    .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
   if (l1.length !== l2.length) {
     console.log(l1.length, '-', l2.length)
     return 2
   }
   for (let i = 0; i < l1.length; ++i) {
-    const p1 = l1[i].pool
-    const p2 = l2[i].pool
-    if (p1 === undefined || p2 === undefined) return 3
+    const p1 = l1[i][1]
+    const p2 = l2[i][1]
+    if (p1 === null || p2 === null) return 3
     if (p1.twap !== p2.twap) return 4
     if (p1.fee !== p2.fee) return 5
     if (p1.token0.address !== p2.token0.address) return 6
