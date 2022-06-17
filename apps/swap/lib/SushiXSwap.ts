@@ -414,7 +414,7 @@ export class SushiXSwap {
     this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
-  async cook() {
+  async cook(gasSpent = 500000) {
     if (!this.contract) {
       return
     }
@@ -444,7 +444,7 @@ export class SushiXSwap {
             STARGATE_CHAIN_ID[this.dstCooker.chainId],
             1,
             this.dstCooker.masterContract,
-            500000,
+            gasSpent,
             0,
             defaultAbiCoder.encode(
               ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
