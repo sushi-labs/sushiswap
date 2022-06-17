@@ -1,0 +1,26 @@
+{
+  "name": "price",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "generate": "graphclient build",
+    "dev": "next dev -p 3011",
+    "lint": "eslint --fix . && next lint"
+  },
+  "dependencies": {
+    "graphql": "^16.5.0",
+    "ioredis": "^5.0.6",
+    "@sushiswap/chain": "workspace:*"
+  },
+  "devDependencies": {
+    "next": "^12.1.6",
+    "@graphprotocol/client-add-source-name": "1.0.1",
+    "@graphprotocol/client-auto-pagination": "1.0.2-canary-3327a10.0",
+    "@graphprotocol/client-cli": "1.0.1",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*"
+  }
+}
