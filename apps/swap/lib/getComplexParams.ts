@@ -48,7 +48,7 @@ export const getComplexParams = ({
   minAmount,
   unwrapBento = false,
 }: {
-  trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V2>
+  trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
   to: string
   minAmount: BigNumberish
   unwrapBento: boolean
