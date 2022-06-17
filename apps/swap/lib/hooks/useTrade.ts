@@ -53,39 +53,22 @@ export function useTrade(
   // Trident constant product pools
   const constantProductPools = useConstantProductPools(chainId, currencyCombinations)
 
-  // const filteredPairs = useMemo(
-  //   () =>
-  //     Object.values(
-  //       pairs
-  //         // filter out invalid pairs
-  //         .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-  //         .map(([, pair]) => pair),
-  //     ),
-  //   [pairs],
-  // )
-
-  // console.log('filteredPairs', filteredPairs, pairs)
-
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
 
   // Filter legacy and trident pools by existance
   const filteredPools = useMemo(
-    () => [
-      ...Object.values(
-        pools.reduce<(ConstantProductPool | Pair)[]>((acc, result) => {
-          if (!Array.isArray(result) && result.state === PoolState.EXISTS && result.pool) {
-            acc.push(result.pool)
-          }
-
-          if (Array.isArray(result) && result[0] === PairState.EXISTS && result[1]) {
-            acc.push(result[1])
-          }
-
-          return acc
-        }, [])
+    () =>
+      Object.values(
+        pools
+          // filter out invalid pools
+          .filter(
+            (result): result is [PairState.EXISTS, Pair] | [PoolState.EXISTS, ConstantProductPool] =>
+              Boolean(result[0] === PairState.EXISTS && result[1]) ||
+              Boolean(result[0] === PoolState.EXISTS && result[1])
+          )
+          .map(([, pair]) => pair)
       ),
-    ],
     [pools]
   )
 
@@ -107,7 +90,7 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool) => pool instanceof Pair) as Pair[],
+          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
@@ -124,7 +107,7 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool) => pool instanceof ConstantProductPool) as ConstantProductPool[],
+          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
