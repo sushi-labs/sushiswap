@@ -379,7 +379,7 @@ const Widget: FC<Swap> = ({
     // S3: Wallet - Swap - BentoBox
     // S4: BentoBox - Swap - Wallet
 
-    const cooker = new SushiXSwap({
+    const sushiXSwap = new SushiXSwap({
       contract,
       srcToken,
       dstToken,
@@ -391,7 +391,7 @@ const Widget: FC<Swap> = ({
 
     if (signature) {
       console.log('cook set master contract address', signature)
-      cooker.srcCooker.setMasterContractApproval(signature)
+      sushiXSwap.srcCooker.setMasterContractApproval(signature)
     }
 
     const directTransfer = crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)
@@ -400,7 +400,7 @@ const Widget: FC<Swap> = ({
       // Cross-chain transfer operations
       // These are cross chain transfers without swaps, but with BentoBox support
       // T1-T4
-      cooker.stargateTransfer(srcAmount, srcShare)
+      sushiXSwap.stargateTransfer(srcAmount, srcShare)
     }
 
     // S1-S4 & X1-X4
@@ -423,9 +423,9 @@ const Widget: FC<Swap> = ({
     // so deposit to bentobox (if neccasasry) and transfer shares to SushiXSwap Router
     if (crossChain && isStargateBridgeToken(srcToken) && !directTransfer) {
       if (!srcUseBentoBox) {
-        cooker.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
+        sushiXSwap.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
       }
-      cooker.srcCooker.srcTransferFromBentoBox(
+      sushiXSwap.srcCooker.srcTransferFromBentoBox(
         srcToken.wrapped.address,
         SUSHI_X_SWAP_ADDRESS[srcChainId],
         0,
@@ -452,7 +452,7 @@ const Widget: FC<Swap> = ({
     // If cross chain & dst token is stargate bridge token, there's no need for a trade
     // so either deposit to the users bentboxbox or withdraw to users wallet
     if (crossChain && isStargateBridgeToken(dstToken) && !directTransfer) {
-      cooker.dstCooker[dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](dstToken)
+      sushiXSwap.dstCooker[dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](dstToken)
     }
 
     // Cross-chain swap operations (and non cross-chain operations for now)
@@ -466,11 +466,11 @@ const Widget: FC<Swap> = ({
     ) {
       if (!srcUseBentoBox) {
         console.debug('cook src depoit to bentobox')
-        cooker.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
+        sushiXSwap.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
       }
 
       console.debug('cook src transfer from bentobox')
-      cooker.srcCooker.srcTransferFromBentoBox(
+      sushiXSwap.srcCooker.srcTransferFromBentoBox(
         srcToken.wrapped.address,
         srcTrade.route.legs[0].poolAddress,
         0,
@@ -478,7 +478,7 @@ const Widget: FC<Swap> = ({
       )
 
       console.debug('cook src legacy swap', [srcAmount.quotient.toString(), srcMinimumAmountOut.quotient.toString()])
-      cooker.srcCooker.legacyExactInput(
+      sushiXSwap.srcCooker.legacyExactInput(
         srcAmount.quotient.toString(),
         srcMinimumAmountOut.quotient.toString(),
         // [srcTrade.route.fromToken.address, ...srcTrade.route.legs.map((leg) => leg.tokenTo.address)],
@@ -491,9 +491,9 @@ const Widget: FC<Swap> = ({
       )
 
       if (!crossChain && dstToken.isNative && !dstUseBentoBox) {
-        cooker.srcCooker.unwrapAndTransfer(dstToken)
+        sushiXSwap.srcCooker.unwrapAndTransfer(dstToken)
       } else if (!crossChain && dstUseBentoBox) {
-        cooker.srcCooker.srcDepositToBentoBox(dstToken)
+        sushiXSwap.srcCooker.srcDepositToBentoBox(dstToken)
       }
     }
 
@@ -503,15 +503,15 @@ const Widget: FC<Swap> = ({
     ) {
       if (srcTrade.isSingle()) {
         console.debug('cook trident exact input')
-        cooker.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-        cooker.srcCooker.srcTransferFromBentoBox(
+        sushiXSwap.srcCooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
+        sushiXSwap.srcCooker.srcTransferFromBentoBox(
           srcToken.wrapped.address,
           srcTrade.route.legs[0].poolAddress,
           0,
           srcShare.quotient.toString(),
           false
         )
-        cooker.srcCooker.tridentExactInput(
+        sushiXSwap.srcCooker.tridentExactInput(
           srcToken,
           srcShare.quotient.toString(),
           srcMinimumShareOut.quotient.toString(),
@@ -533,8 +533,12 @@ const Widget: FC<Swap> = ({
         )
       } else if (srcTrade.isComplex()) {
         console.debug('cook trident complex')
-        cooker.srcCooker.srcDepositToBentoBox(srcToken, SUSHI_X_SWAP_ADDRESS[srcChainId], srcAmount.quotient.toString())
-        cooker.srcCooker.tridentComplex(
+        sushiXSwap.srcCooker.srcDepositToBentoBox(
+          srcToken,
+          SUSHI_X_SWAP_ADDRESS[srcChainId],
+          srcAmount.quotient.toString()
+        )
+        sushiXSwap.srcCooker.tridentComplex(
           getComplexParams({
             trade: srcTrade,
             to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
@@ -554,7 +558,7 @@ const Widget: FC<Swap> = ({
 
       // cooker.teleporter.dstWithdraw(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
 
-      cooker.dstCooker.legacyExactInput(
+      sushiXSwap.dstCooker.legacyExactInput(
         0,
         // TODO: We can save gas if we give amountIn, but need accurate stargate fee or will get errors
         // srcMinimumAmountOut.quotient.toString(),
@@ -569,7 +573,7 @@ const Widget: FC<Swap> = ({
       )
 
       if (dstToken.isNative && !dstUseBentoBox) {
-        cooker.dstCooker.unwrapAndTransfer(dstToken)
+        sushiXSwap.dstCooker.unwrapAndTransfer(dstToken)
       }
     }
 
@@ -578,15 +582,17 @@ const Widget: FC<Swap> = ({
       (!crossChain && dstTrade && dstTrade.isV2() && dstTrade.route.legs.length)
     ) {
       if (dstTrade.isSingle()) {
-        cooker.dstCooker.dstDepositToBentoBox(
+        sushiXSwap.dstCooker.dstDepositToBentoBox(
           dstBridgeToken,
           dstTrade.route.legs[0].poolAddress,
-          srcMinimumAmountOut.quotient.toString()
+          0
+          // srcMinimumAmountOut.quotient.toString()
         )
         console.debug('cook teleport trident exact input')
-        cooker.dstCooker.tridentExactInput(
+        sushiXSwap.dstCooker.tridentExactInput(
           dstBridgeToken,
-          srcMinimumAmountOut.quotient.toString(),
+          0,
+          // srcMinimumAmountOut.quotient.toString(),
           dstMinimumAmountOut.quotient.toString(),
           dstTrade.route.legs.map((leg, i) => {
             const isLastLeg = i === dstTrade.route.legs.length - 1
@@ -605,17 +611,18 @@ const Widget: FC<Swap> = ({
           })
         )
         if (dstToken.isNative && !dstUseBentoBox) {
-          cooker.dstCooker.unwrapAndTransfer(dstToken)
+          sushiXSwap.dstCooker.unwrapAndTransfer(dstToken)
         }
       } else if (dstTrade.isComplex()) {
         console.debug('cook teleport trident complex')
-        cooker.dstCooker.dstDepositToBentoBox(
+        sushiXSwap.dstCooker.dstDepositToBentoBox(
           dstBridgeToken,
           SUSHI_X_SWAP_ADDRESS[dstChainId],
-          srcMinimumAmountOut.quotient.toString()
+          0
+          // srcMinimumAmountOut.quotient.toString()
         )
 
-        cooker.dstCooker.tridentComplex(
+        sushiXSwap.dstCooker.tridentComplex(
           getComplexParams({
             trade: dstTrade,
             to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
@@ -625,18 +632,18 @@ const Widget: FC<Swap> = ({
         )
 
         if (dstToken.isNative && !dstUseBentoBox) {
-          cooker.dstCooker.unwrapAndTransfer(dstToken)
+          sushiXSwap.dstCooker.unwrapAndTransfer(dstToken)
         }
       }
     }
 
     if (crossChain) {
-      cooker.teleport(srcBridgeToken, dstBridgeToken, dstTrade ? dstTrade.route.gasSpent : undefined)
+      sushiXSwap.teleport(srcBridgeToken, dstBridgeToken, dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
     }
 
     console.debug('attempt cook')
-    cooker
-      .cook()
+    sushiXSwap
+      .cook(dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
       .then((res) => {
         console.debug('then cooked', res)
       })
