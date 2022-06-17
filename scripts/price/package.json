@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "generate": "graphclient build",
-    "dev": "next dev -p 3011",
+    "dev": "",
     "lint": "eslint --fix . && next lint"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*"
+    "@sushiswap/typescript-config": "workspace:*",
+    "typescript": "^4.0.0"
   }
 }

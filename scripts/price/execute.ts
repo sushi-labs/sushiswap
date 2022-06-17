@@ -5,7 +5,7 @@ import redis from './lib/redis'
 
 const pollInterval = 60000 // TODO: decide how often we should fetch new price data
 
-export async function execute(delay: number) {
+export async function execute() {
   const chainPrices: ReturnType<typeof getPrices>[] = []
   console.debug('Updating prices for chains: '.concat(SUPPORTED_CHAINS.join(', ')))
   for (const chainId of SUPPORTED_CHAINS as unknown as string[]) {
@@ -20,5 +20,5 @@ export async function execute(delay: number) {
   })
 
   console.debug(`Done updating prices, next update in ${(pollInterval / 1000).toString()} seconds.`)
-  setTimeout(() => execute(delay), delay)
+  // setTimeout(() => execute(delay), delay)
 }
