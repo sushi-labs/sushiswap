@@ -7,6 +7,7 @@ import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
+import { AddressInput } from 'components/AddressInput'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -21,6 +22,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [error, setError] = useState<string>()
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
+  const [withdrawTo, setWithdrawTo] = useState<string | null>()
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
@@ -50,7 +52,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         args: [
           BigNumber.from(stream.id),
           BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
-          stream.recipient.id,
+          withdrawTo ?? stream.recipient.id,
           fundSource === FundSource.BENTOBOX,
           '0x',
         ],
@@ -73,7 +75,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     } catch (e: any) {
       setError(e.message)
     }
-  }, [activeChain?.id, amount, fundSource, stream, writeAsync])
+  }, [activeChain?.id, amount, fundSource, stream, writeAsync, withdrawTo])
 
   return (
     <>
@@ -106,6 +108,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                 )
               }
             />
+          </div>
+          <div className="flex flex-col">
+            <AddressInput onChange={setWithdrawTo} />
           </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
