@@ -1,6 +1,0 @@
-name: "Price API Maintainer"
-description: ""
-
-runs: 
-  using: 'node16'
-  main: 'index.ts'

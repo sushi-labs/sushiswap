@@ -1,9 +1,6 @@
 query TokenPrices($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   legacy_exchange_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
-    symbol
-    name
-    decimals
     derivedETH
   }
 

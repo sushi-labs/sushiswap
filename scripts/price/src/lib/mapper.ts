@@ -1,4 +1,4 @@
-import { TokenPricesQuery } from '../.graphclient'
+import { TokenPricesQuery } from '../../.graphclient'
 
 export const pricesToJson = (chainId: string, data: TokenPricesQuery) => {
   const ethPrice = data.legacy_exchange_bundle?.ethPrice
@@ -10,13 +10,7 @@ export const pricesToJson = (chainId: string, data: TokenPricesQuery) => {
     .map((token) => {
       const price = Number(token.derivedETH) * Number(ethPrice)
       return {
-        [token.id]: {
-          id: token.id,
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-          price,
-        },
+        [token.id]: price,
       }
     })
 

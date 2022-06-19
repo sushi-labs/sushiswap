@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from '../.graphclient'
+import { getBuiltGraphSDK } from '../../.graphclient'
 import { LEGACY_SUBGRAPH_NAME, SUPPORTED_CHAINS } from '../config'
 
 const GRAPH_HOST = 'api.thegraph.com'
