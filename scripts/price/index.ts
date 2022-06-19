@@ -22,3 +22,5 @@ export async function execute() {
   console.debug(`Done updating prices, next update in ${(pollInterval / 1000).toString()} seconds.`)
   // setTimeout(() => execute(delay), delay)
 }
+
+execute()

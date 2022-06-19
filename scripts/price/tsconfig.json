@@ -3,9 +3,7 @@
     "node_modules"
   ],
   "extends": "@sushiswap/typescript-config/base.json",
-  "include": [
-    "."
-  ],
+  "include": ["index.ts"],
   "compilerOptions": {
     "target": "es5",
     "lib": [

@@ -2,12 +2,9 @@
   "name": "price",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
-    "build": "next build",
-    "generate": "graphclient build",
-    "dev": "",
-    "lint": "eslint --fix . && next lint"
+    "generate": "graphclient build"
   },
   "dependencies": {
     "graphql": "^16.5.0",
@@ -19,6 +16,7 @@
     "@graphprotocol/client-add-source-name": "1.0.1",
     "@graphprotocol/client-auto-pagination": "1.0.2-canary-3327a10.0",
     "@graphprotocol/client-cli": "1.0.1",
+    "@vercel/ncc": "^0.34.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
