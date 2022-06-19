@@ -13,10 +13,15 @@ export async function execute() {
   await (
     await Promise.all(chainPrices)
   ).forEach(async (result) => {
-    const json = pricesToJson(result.chainId, result.data)
-    await redis.hset('prices', result.chainId, JSON.stringify(json))
+    if (result?.chainId) {
+      const json = pricesToJson(result.chainId, result.data)
+      await redis.hset('prices', result.chainId, JSON.stringify(json))
+    } else {
+      console.log(`no result, ignore.`)
+    }
   })
 
   console.log(`Finished updating prices.`)
+  process.exit()
 }
 execute()
