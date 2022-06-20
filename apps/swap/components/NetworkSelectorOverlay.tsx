@@ -4,7 +4,6 @@ import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
-import { Theme } from 'types'
 
 interface NetworkSelectorOverlay {
   open: boolean
@@ -13,7 +12,6 @@ interface NetworkSelectorOverlay {
   selected: ChainId
   className?: string
   networks?: { [k: string]: Chain }
-  theme: Theme
 }
 
 export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
@@ -24,7 +22,6 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   onClose,
   onSelect,
   selected,
-  theme,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState<string>()
@@ -53,11 +50,10 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-      <Overlay.Content>
+      <Overlay.Content className="bg-slate-700">
         <Overlay.Header onClose={onClose} title="Select Network" />
         <div
           className={classNames(
-            theme.background.secondary,
             'w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2'
           )}
         >
@@ -71,14 +67,12 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
               setQuery(val)
             }}
             className={classNames(
-              theme.primary.default,
-              theme.primary.hover,
               '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
             )}
           />
           {searching.current && <Loader size="16px" />}
         </div>
-        <div className={classNames(theme.background.secondary, 'rounded-xl overflow-hidden h-[calc(100%-92px)]')}>
+        <div className={classNames('rounded-xl overflow-hidden h-[calc(100%-92px)] bg-slate-800')}>
           <div className="h-full overflow-auto hide-scrollbar">
             {filteredChains.map(([k, chain]) => (
               <Typography
@@ -86,9 +80,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 key={chain.chainId}
                 variant="sm"
                 className={classNames(
-                  selected === chain.chainId
-                    ? classNames(theme.primary.default, theme.primary.hover, '!font-bold ')
-                    : classNames(theme.secondary.default, theme.secondary.hover, '!font-medium '),
+                  selected === chain.chainId ? classNames('!font-bold ') : classNames('!font-medium '),
                   'flex items-center gap-1.5 cursor-pointer py-2 pr-3 pl-1.5'
                 )}
               >

@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Badge, Chip, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { FC } from 'react'
 
 import { UseTradeOutput } from '../lib/hooks'
@@ -30,8 +31,9 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                     </div>
                   }
                 >
-                  {/*TODO change to currencyLogo*/}
-                  <NetworkIcon chainId={srcTrade.inputAmount.currency.chainId} width={20} height={20} />
+                  <div className="w-5 h-5">
+                    <Icon currency={srcTrade.inputAmount.currency} width={20} height={20} />
+                  </div>
                 </Badge>
               }
               panel={
@@ -72,7 +74,9 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 </div>
               }
             >
-              <NetworkIcon chainId={srcTrade.outputAmount.currency.chainId} width={18} height={18} />
+              <div className="w-[18px] h-[18px]">
+                <Icon currency={srcTrade.outputAmount.currency} width={18} height={18} />
+              </div>
             </Badge>
             <DotsHorizontalIcon width={12} className="text-slate-600" />
             <NetworkIcon chainId={ChainId.ETHEREUM} width={18} height={18} />
@@ -84,7 +88,9 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 </div>
               }
             >
-              <NetworkIcon chainId={dstTrade.outputAmount.currency.chainId} width={18} height={18} />
+              <div className="w-[18px] h-[18px]">
+                <Icon currency={dstTrade.outputAmount.currency} width={18} height={18} />
+              </div>
             </Badge>
           </div>
           <div className="flex items-center rounded-full bg-slate-700">
@@ -116,11 +122,9 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                     </div>
                   }
                 >
-                  {/*TODO change to currencyLogo*/}
-                  {/* <div className="w-5 h-5">
-                    <CurrencyIcon currency={dstTrade.outputAmount.currency} width={20} height={20} className="w-5 h-5" />
-                  </div> */}
-                  <NetworkIcon chainId={dstTrade.inputAmount.currency.chainId} width={20} height={20} />
+                  <div className="w-5 h-5">
+                    <Icon currency={dstTrade.inputAmount.currency} width={20} height={20} />
+                  </div>
                 </Badge>
               }
               panel={

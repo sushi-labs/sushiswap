@@ -3,12 +3,12 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
 import { NetworkSelectorOverlay } from 'components'
 import { FC, useState } from 'react'
 
 import { Theme } from '../types'
-import { CurrencyIcon } from './CurrencyIcon'
 
 interface CurrencyInputBase {
   value: string
@@ -133,7 +133,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               )}
             >
               <div className="w-5 h-5">
-                <CurrencyIcon layout="responsive" currency={currency} width={20} height={20} />
+                <Icon layout="responsive" currency={currency} width={20} height={20} />
               </div>
               <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
               <div className="w-5 h-5">
@@ -171,7 +171,6 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           onClose={() => setNetworkSelectorOpen(false)}
           onSelect={onNetworkSelect}
           selected={network.chainId}
-          theme={theme}
         />
       )}
       {!disableCurrencySelect && onCurrencySelect && (
