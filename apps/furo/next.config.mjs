@@ -12,6 +12,10 @@ export default withTranspileModules({
   basePath: '/furo',
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

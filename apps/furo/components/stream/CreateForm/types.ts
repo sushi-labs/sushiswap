@@ -1,8 +1,8 @@
-import { Currency } from '@sushiswap/currency'
+import { Currency, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 
 export type CreateStreamFormData = {
-  currency: Currency | undefined
+  currency: Type | undefined
   startDate: string | undefined
   endDate: string | undefined
   recipient: string | undefined

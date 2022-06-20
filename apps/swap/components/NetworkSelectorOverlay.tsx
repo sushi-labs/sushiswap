@@ -1,12 +1,10 @@
 import { CheckIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Input, Loader, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
+import { classNames, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
-
-import { Overlay } from './Overlay'
 
 interface NetworkSelectorOverlay {
   open: boolean
@@ -26,7 +24,6 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   onClose,
   onSelect,
   selected,
-  className,
   theme,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -56,14 +53,13 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-      <Overlay.Content theme={theme}>
-        <Overlay.Header onClose={onClose} title="Select Network" theme={theme} />
+      <Overlay.Content>
+        <Overlay.Header onClose={onClose} title="Select Network" />
         <div
           className={classNames(
             theme.background.secondary,
             'w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2'
           )}
-          style={{ '--tw-ring-color': theme.accent }}
         >
           <Input.Address
             id="network-search"

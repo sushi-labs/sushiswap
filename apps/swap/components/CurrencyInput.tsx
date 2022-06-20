@@ -3,7 +3,8 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
-import { NetworkSelectorOverlay, TokenSelectorOverlay } from 'components'
+import { TokenSelector } from '@sushiswap/wagmi'
+import { NetworkSelectorOverlay } from 'components'
 import { FC, useState } from 'react'
 
 import { Theme } from '../types'
@@ -174,14 +175,14 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         />
       )}
       {!disableCurrencySelect && onCurrencySelect && (
-        <TokenSelectorOverlay
+        <TokenSelector
+          variant="dialog"
           tokenMap={tokenList}
           onClose={() => setTokenSelectorOpen(false)}
           chainId={network.chainId}
           open={tokenSelectorOpen}
           currency={currency}
           onSelect={onCurrencySelect}
-          theme={theme}
         />
       )}
     </>

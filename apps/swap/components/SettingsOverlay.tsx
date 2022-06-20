@@ -1,15 +1,8 @@
 import { CogIcon } from '@heroicons/react/outline'
-import { SlideIn } from '@sushiswap/ui'
+import { Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
-import { Theme } from 'types'
 
-import { Overlay } from './Overlay'
-
-interface SettingsOverlay {
-  theme: Theme
-}
-
-export const SettingsOverlay: FC<SettingsOverlay> = ({ theme }) => {
+export const SettingsOverlay: FC = () => {
   const [open, setOpen] = useState(false)
   const [state, setState] = useState<string>()
   const [auto, setAuto] = useState<boolean>(false)
@@ -20,8 +13,8 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ theme }) => {
         <CogIcon width={20} height={20} />
       </button>
       <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
-        <Overlay.Content theme={theme} className="!bg-slate-800">
-          <Overlay.Header onClose={() => setOpen(false)} title="Settings" theme={theme} />
+        <Overlay.Content className="!bg-slate-800">
+          <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
 
           {/* <Form.Control label="Gas price">
             <div className="flex flex-row p-1 bg-slate-900 rounded-xl">

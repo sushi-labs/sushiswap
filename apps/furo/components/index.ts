@@ -13,7 +13,6 @@ export * from './Main'
 export * from './Overlay'
 export * from './ProgressBarCard'
 export * from './StreamDetailsPopover'
-export * from './TokenSelector'
 export * from './TransferModal'
 export * from './UpdateModal'
 

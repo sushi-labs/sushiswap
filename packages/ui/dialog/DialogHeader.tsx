@@ -8,11 +8,12 @@ export interface DialogHeaderProps {
   title: string | ReactNode
   onClose?(): void
   onBack?(): void
+  className?: string
 }
 
-const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose }) => {
+const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className }) => {
   return (
-    <div className="flex items-start justify-between">
+    <div className={classNames(className, 'flex items-start justify-between')}>
       <div
         aria-hidden="true"
         className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-2 items-center')}

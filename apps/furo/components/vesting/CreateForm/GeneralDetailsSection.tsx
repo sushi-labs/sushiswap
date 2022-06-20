@@ -1,9 +1,7 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { Token } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Dialog, Form, Input, Select, Typography } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
-import { TokenSelector } from 'components'
+import { classNames, Form, Input, Select, Typography } from '@sushiswap/ui'
+import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { useState } from 'react'
@@ -36,7 +34,7 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="currency"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange }, fieldState: { error } }) => {
             return (
               <>
                 <Select.Button
@@ -45,27 +43,24 @@ export const GeneralDetailsSection = () => {
                   className="!cursor-pointer"
                   onClick={() => setDialogOpen(true)}
                 >
-                  {value?.symbol || <span className="text-slate-500">Select a currency</span>}
+                  {currency?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
-                <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                  <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector
-                      chainId={activeChain?.id}
-                      tokenMap={tokenMap}
-                      onSelect={(currency) => {
-                        if (currency.isNative) {
-                          setValue('fundSource', FundSource.WALLET)
-                        }
-
-                        onChange(currency)
-                        setDialogOpen(false)
-                      }}
-                      currency={value as Token}
-                      onClose={() => setDialogOpen(false)}
-                    />
-                  </Dialog.Content>
-                </Dialog>
+                <TokenSelector
+                  open={dialogOpen}
+                  variant="dialog"
+                  chainId={activeChain?.id}
+                  tokenMap={tokenMap}
+                  onSelect={(currency) => {
+                    if (currency.isNative) {
+                      setValue('fundSource', FundSource.WALLET)
+                    }
+                    onChange(currency)
+                    setDialogOpen(false)
+                  }}
+                  currency={currency}
+                  onClose={() => setDialogOpen(false)}
+                />
               </>
             )
           }}
@@ -92,6 +87,7 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <Web3Input.Ens
+                id="ensInput"
                 value={value}
                 onChange={onChange}
                 error={!!error?.message}

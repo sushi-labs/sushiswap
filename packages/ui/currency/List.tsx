@@ -9,6 +9,7 @@ import { Icon } from './Icon'
 
 export interface WithCurrencyList {
   className?: string
+  rowClassName?: string
   currencies: Type[]
   currency?: Type
   onCurrency(x: Type): void
@@ -29,7 +30,8 @@ const useCurrencyListContext = () => {
 const CurrencyRow: FC<{
   currency: Type
   style: CSSProperties
-}> = ({ currency, style }) => {
+  className?: string
+}> = ({ currency, style, className }) => {
   const { onCurrency } = useCurrencyListContext()
 
   return (
@@ -37,6 +39,7 @@ const CurrencyRow: FC<{
       type="button"
       onClick={() => onCurrency(currency)}
       className={classNames(
+        className,
         `group flex items-center w-full hover:bg-blue-600 pr-4 pl-3 py-4 token-${currency?.symbol}`
       )}
       style={style}
@@ -82,17 +85,21 @@ const BreakLineComponent: FC<{ style: CSSProperties }> = ({ style }) => {
 }
 
 const withContext =
-  (Component: React.ComponentType<{ children?: ReactNode; className?: string }>): React.FC<WithCurrencyList> =>
-  ({ currencies, currency, onCurrency, children, className }) =>
+  (
+    Component: React.ComponentType<{ children?: ReactNode; className?: string; rowClassName?: string }>
+  ): React.FC<WithCurrencyList> =>
+  ({ currencies, currency, onCurrency, children, className, rowClassName }) =>
     (
       <CurrencyListContext.Provider
         value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
       >
-        <Component className={className}>{children}</Component>
+        <Component className={className} rowClassName={rowClassName}>
+          {children}
+        </Component>
       </CurrencyListContext.Provider>
     )
 
-export const List = withContext(({ className }) => {
+export const List = withContext(({ className, rowClassName }) => {
   const { currencies } = useCurrencyListContext()
 
   const Row = useCallback(
@@ -102,15 +109,13 @@ export const List = withContext(({ className }) => {
         return <BreakLineComponent style={style} />
       }
 
-      return <CurrencyRow currency={currency} style={style} />
+      return <CurrencyRow currency={currency} style={style} className={rowClassName} />
     },
-    [currencies]
+    [currencies, rowClassName]
   )
 
   return (
-    <div
-      className={classNames(className, 'lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full bg-slate-800')}
-    >
+    <div className={classNames(className, 'lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full')}>
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <FixedSizeList
