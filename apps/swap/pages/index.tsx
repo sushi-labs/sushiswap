@@ -180,7 +180,7 @@ const Widget: FC<Swap> = ({
       return
     }
 
-    router.replace({
+    void router.replace({
       pathname: router.pathname,
       query: {
         ...router.query,
@@ -692,8 +692,6 @@ const Widget: FC<Swap> = ({
     dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
   )
 
-  console.log({ srcBalance: srcBalance?.toFixed(), dstBalance: dstBalance?.toFixed() })
-
   return (
     <article
       id="sushixswap"
@@ -711,7 +709,7 @@ const Widget: FC<Swap> = ({
           Swap
         </Typography>
         <div className="flex justify-end">
-          <SettingsOverlay />
+          <SettingsOverlay chainId={srcChainId} />
         </div>
       </div>
       <div className="p-3 pb-0 border-2 border-transparent">

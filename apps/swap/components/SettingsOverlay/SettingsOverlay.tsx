@@ -1,8 +1,23 @@
 import { CogIcon } from '@heroicons/react/outline'
+import { ChainId } from '@sushiswap/chain'
 import { Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
+import { useFeeData } from 'wagmi'
 
-export const SettingsOverlay: FC = () => {
+import { GasSettingsOverlay } from './GasSettingsOverlay'
+import { SlippageToleranceOverlay } from './SlippageToleranceOverlay'
+
+interface SettingsOverlay {
+  chainId: ChainId | undefined
+}
+
+export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
+  const { data } = useFeeData({
+    formatUnits: 'gwei',
+    chainId,
+    watch: true,
+  })
+
   const [open, setOpen] = useState(false)
   const [state, setState] = useState<string>()
   const [auto, setAuto] = useState<boolean>(false)
@@ -15,64 +30,10 @@ export const SettingsOverlay: FC = () => {
       <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
-
-          {/* <Form.Control label="Gas price">
-            <div className="flex flex-row p-1 bg-slate-900 rounded-xl">
-              <Button variant="filled" className="w-1/2">
-                Basic
-              </Button>
-              <Button variant="outlined" color="transparent" className="w-1/2">
-                Advanced
-              </Button>
-            </div>
-
-            <div className="flex flex-col bg-slate-900 rounded-xl ">
-              <Button
-                onClick={() => {
-                  //
-                }}
-                size="sm"
-                color="gray"
-                variant="empty"
-                className="text-left rounded-xl"
-              >
-                Instant
-              </Button>
-              <Button
-                onClick={() => {
-                  //
-                }}
-                size="sm"
-                color="gray"
-                variant="empty"
-                className="text-left rounded-xl"
-              >
-                High
-              </Button>
-              <Button
-                onClick={() => {
-                  //
-                }}
-                size="sm"
-                color="gray"
-                variant="empty"
-                className="text-left rounded-xl"
-              >
-                Medium
-              </Button>
-              <Button
-                onClick={() => {
-                  //
-                }}
-                size="sm"
-                color="gray"
-                variant="empty"
-                className="text-left rounded-xl"
-              >
-                Low
-              </Button>
-            </div>
-          </Form.Control> */}
+          <div className="bg-slate-700 rounded-xl py-1 px-3">
+            <GasSettingsOverlay chainId={chainId} />
+            <SlippageToleranceOverlay />
+          </div>
           {/* <Form.Control label="Slippage Tolerance">
             <div className="flex items-center gap-2">
               <Button onClick={() => setAuto(true)} color={auto ? 'blue' : 'gray'} size="sm" className="rounded-xl">

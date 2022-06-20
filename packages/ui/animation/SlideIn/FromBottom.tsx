@@ -11,6 +11,7 @@ type FromBottom = {
   beforeLeave?(): void
   afterLeave?(): void
   children: ReactElement
+  className?: string
 }
 
 export const FromBottom: FC<FromBottom> = ({
@@ -22,10 +23,11 @@ export const FromBottom: FC<FromBottom> = ({
   afterLeave,
   onClose,
   children,
+  className,
 }) => {
   return (
     <Transition.Root show={show} unmount={unmount} as={Fragment}>
-      <div className={classNames('absolute inset-0 translate-y-[100%] z-50')}>
+      <div className={classNames(className, 'absolute inset-0 translate-y-[100%] z-50')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
