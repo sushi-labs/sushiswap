@@ -15,26 +15,20 @@ export interface DialogHeaderProps {
 const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className }) => {
   return (
     <div className={classNames(className, 'flex items-start justify-between')}>
-      <div
-        aria-hidden="true"
-        className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-2 items-center')}
-        {...(onBack && { onClick: onBack })}
-      >
+      <div aria-hidden="true" className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-2 items-center')}>
         {onBack && (
-          <div className="rounded-full flex items-center justify-center cursor-pointer">
+          <IconButton onClick={onBack} className="rounded-full flex items-center justify-center cursor-pointer">
             <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
-          </div>
+          </IconButton>
         )}
         <Typography weight={700} as="h3" className="flex gap-4 text-lg font-bold leading-6 text-slate-100">
           {title}
         </Typography>
       </div>
       {onClose ? (
-        <div aria-hidden="true" className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-          <IconButton>
-            <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
-          </IconButton>
-        </div>
+        <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
+          <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
+        </IconButton>
       ) : (
         <span />
       )}
