@@ -5,9 +5,8 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
+import { getFuroStreamContractConfig, Web3Input } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
-import { AddressInput } from 'components/AddressInput'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -22,7 +21,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [error, setError] = useState<string>()
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const [withdrawTo, setWithdrawTo] = useState<string | null>()
+  const [withdrawTo, setWithdrawTo] = useState<string>()
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
@@ -110,7 +109,12 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             />
           </div>
           <div className="flex flex-col">
-            <AddressInput onChange={setWithdrawTo} />
+            <Web3Input.Ens
+              value={withdrawTo}
+              onChange={setWithdrawTo}
+              className="!text-[0.73rem]"
+              placeholder="Recipient (optional)"
+            />
           </div>
           <div className="grid items-center grid-cols-2 gap-5">
             <div
