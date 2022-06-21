@@ -11,6 +11,7 @@ type UseSettingsReturn = [
     updateMaxFeePerGas(updateMaxFeePerGas: number): void
     updateMaxPriorityFeePerGas(maxPriorityFeePerGas: number): void
     updateGasPrice(gasPrice: GasPrice): void
+    updateGasType(gasType: 'preset' | 'custom'): void
   }
 ]
 
@@ -49,5 +50,15 @@ export const useSettings: UseSettings = (context) => {
     [actions, dispatch]
   )
 
-  return [settings, { updateSlippageTolerance, updateMaxFeePerGas, updateMaxPriorityFeePerGas, updateGasPrice }]
+  const updateGasType = useCallback(
+    (gasType: 'preset' | 'custom') => {
+      dispatch(actions.updateGasType({ gasType }))
+    },
+    [actions, dispatch]
+  )
+
+  return [
+    settings,
+    { updateSlippageTolerance, updateMaxFeePerGas, updateMaxPriorityFeePerGas, updateGasPrice, updateGasType },
+  ]
 }

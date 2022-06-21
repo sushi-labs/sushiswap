@@ -14,6 +14,7 @@ export type SettingsState = {
   gasPrice: GasPrice
   maxFeePerGas: undefined | number
   maxPriorityFeePerGas: undefined | number
+  gasType: 'custom' | 'preset'
 }
 
 export interface UpdateSlippageTolerancePayload {
@@ -30,4 +31,8 @@ export interface UpdateMaxPriorityFeePerGas {
 
 export interface UpdateMaxFeePerGas {
   maxFeePerGas: number | undefined
+}
+
+export interface UpdateGasType {
+  gasType: 'custom' | 'preset'
 }

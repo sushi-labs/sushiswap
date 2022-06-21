@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
+import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { GasSettingsOverlay } from './GasSettingsOverlay'
 import { SlippageToleranceOverlay } from './SlippageToleranceOverlay'
 
@@ -21,9 +22,10 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
       <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
-          <div className="bg-slate-700 rounded-xl py-1 px-3">
+          <div className="py-1 px-1">
             <GasSettingsOverlay chainId={chainId} />
             <SlippageToleranceOverlay />
+            <CustomTokensOverlay />
           </div>
           {/* <Form.Control label="Slippage Tolerance">
             <div className="flex items-center gap-2">
