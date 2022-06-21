@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import React, { FC, ReactNode } from 'react'
 
 import { Typography } from '..'
+import { IconButton } from '../iconbutton'
 
 export interface DialogHeaderProps {
   title: string | ReactNode
@@ -30,7 +31,9 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className
       </div>
       {onClose ? (
         <div aria-hidden="true" className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-          <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
+          <IconButton>
+            <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
+          </IconButton>
         </div>
       ) : (
         <span />

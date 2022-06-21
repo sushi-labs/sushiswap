@@ -221,7 +221,7 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
       </button>
       <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={handleClose} title="Gas Settings" />
+          <Overlay.Header onClose={() => setOpen(false)} title="Gas Settings" />
           <RadioGroup
             value={gasType === 'preset' ? gasPrice : undefined}
             onChange={updateGasPrice}

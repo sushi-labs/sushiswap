@@ -103,7 +103,7 @@ export const SlippageToleranceOverlay = () => {
       </button>
       <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={handleClose} title="Slippage Tolerance" />
+          <Overlay.Header onClose={() => setOpen(false)} title="Slippage Tolerance" />
           <Typography variant="xs" className="text-slate-400 text-center">
             Your transaction will revert if the prices change unfavorably by more than this percentage
           </Typography>
