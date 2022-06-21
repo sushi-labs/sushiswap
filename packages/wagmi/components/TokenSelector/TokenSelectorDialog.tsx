@@ -1,3 +1,5 @@
+import { SearchIcon } from '@heroicons/react/outline'
+import { XCircleIcon } from '@heroicons/react/solid'
 import { Type } from '@sushiswap/currency'
 import { classNames, Currency, Dialog, Input, Loader } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
@@ -30,7 +32,7 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
             <div className="px-6 pb-5">
               <div
                 className={classNames(
-                  'w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary'
+                  'ring-offset-2 ring-offset-slate-900 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
                 )}
               >
                 <Input.Address
@@ -40,10 +42,23 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                   value={query}
                   onChange={onInput}
                   className={classNames(
-                    '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
+                    '!pr-0 !border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
                   )}
                 />
-                {searching && <Loader size="16px" />}
+                {searching ? (
+                  <div className="relative left-[-2px]">
+                    <Loader size="14px" strokeWidth={3} className="animate-spin-slow text-slate-500" />
+                  </div>
+                ) : query ? (
+                  <XCircleIcon
+                    width={20}
+                    height={20}
+                    className="cursor-pointer text-slate-500 hover:text-slate-300"
+                    onClick={() => onInput('')}
+                  />
+                ) : (
+                  <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
+                )}
               </div>
             </div>
             <Currency.List
