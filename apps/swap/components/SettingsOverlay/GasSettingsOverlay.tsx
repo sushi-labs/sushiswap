@@ -7,22 +7,18 @@ import { CircleIcon, classNames, GasIcon, Overlay, SlideIn, Typography } from '@
 import { FC, useState } from 'react'
 import { useFeeData } from 'wagmi'
 
-enum GasPrice {
-  INSTANT,
-  HIGH,
-  MEDIUM,
-  LOW,
-}
+import { GasPrice, useSettings } from '../../lib/state/settings'
 
 interface GasSettingsOverlay {
   chainId: ChainId | undefined
 }
 
-export const GasSettingOption: FC<{ value: GasPrice; label: string; data: string }> = ({ value, label, data }) => {
+export const GasSettingOption: FC<{ onClick?(): void; value: GasPrice; data: string }> = ({ onClick, value, data }) => {
   const [hover, setHover] = useState<boolean>(false)
 
   return (
     <RadioGroup.Option
+      onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       value={value}
@@ -56,7 +52,7 @@ export const GasSettingOption: FC<{ value: GasPrice; label: string; data: string
           </div>
           <div className="flex flex-col">
             <Typography variant="sm" weight={700}>
-              {label}
+              {value}
             </Typography>
             <Typography variant="xs" className="text-slate-400">
               {data}
@@ -77,7 +73,7 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
     watch: true,
   })
 
-  const [gas, setGas] = useState<GasPrice>(GasPrice.HIGH)
+  const [{ gasPrice }, { updateGasPrice }] = useSettings()
 
   if (!isMounted) return <></>
 
@@ -96,7 +92,7 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
           </Typography>
           <div className="flex gap-1">
             <Typography variant="sm" className="group-hover:text-slate-200 text-slate-300">
-              Instant
+              {gasPrice}
             </Typography>
             <div className="w-5 h-5 -mr-1.5 flex items-center">
               <ChevronRightIcon width={16} height={16} className="group-hover:text-slate-200 text-slate-300" />
@@ -107,11 +103,27 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
       <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Gas Settings" />
-          <RadioGroup value={gas} onChange={setGas} className="space-y-3">
-            <GasSettingOption value={GasPrice.INSTANT} label="Instant" data={`${data?.formatted.gasPrice} Gwei`} />
-            <GasSettingOption value={GasPrice.HIGH} label="High" data={`${data?.formatted.gasPrice} Gwei`} />
-            <GasSettingOption value={GasPrice.MEDIUM} label="Medium" data={`${data?.formatted.gasPrice} Gwei`} />
-            <GasSettingOption value={GasPrice.LOW} label="Low" data={`${data?.formatted.gasPrice} Gwei`} />
+          <RadioGroup value={gasPrice} onChange={updateGasPrice} className="space-y-3">
+            <GasSettingOption
+              onClick={() => setOpen(false)}
+              value={GasPrice.INSTANT}
+              data={`${data?.formatted.gasPrice} Gwei`}
+            />
+            <GasSettingOption
+              onClick={() => setOpen(false)}
+              value={GasPrice.HIGH}
+              data={`${data?.formatted.gasPrice} Gwei`}
+            />
+            <GasSettingOption
+              onClick={() => setOpen(false)}
+              value={GasPrice.MEDIUM}
+              data={`${data?.formatted.gasPrice} Gwei`}
+            />
+            <GasSettingOption
+              onClick={() => setOpen(false)}
+              value={GasPrice.LOW}
+              data={`${data?.formatted.gasPrice} Gwei`}
+            />
           </RadioGroup>
         </Overlay.Content>
       </SlideIn.FromLeft>

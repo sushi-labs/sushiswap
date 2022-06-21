@@ -2,7 +2,6 @@ import { CogIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
-import { useFeeData } from 'wagmi'
 
 import { GasSettingsOverlay } from './GasSettingsOverlay'
 import { SlippageToleranceOverlay } from './SlippageToleranceOverlay'
@@ -12,15 +11,7 @@ interface SettingsOverlay {
 }
 
 export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
-  const { data } = useFeeData({
-    formatUnits: 'gwei',
-    chainId,
-    watch: true,
-  })
-
   const [open, setOpen] = useState(false)
-  const [state, setState] = useState<string>()
-  const [auto, setAuto] = useState<boolean>(false)
 
   return (
     <>
