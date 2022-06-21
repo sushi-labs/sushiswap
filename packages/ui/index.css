@@ -54,5 +54,8 @@ body {
     -webkit-appearance: none;
     margin: 0;
   }
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
 }
 

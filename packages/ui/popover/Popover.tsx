@@ -47,7 +47,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'shadow-md ring-1 ring-black/10 rounded-2xl overflow-hidden'
+                      'rounded-2xl overflow-hidden shadow-[rgba(0,_0,_0,_0.3)_0_4px_20px]'
                     ),
                   },
                   panel.props.children

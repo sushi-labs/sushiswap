@@ -2,7 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { filterTokens, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
-import { FC, RefObject, useMemo, useRef, useState } from 'react'
+import { FC, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useToken } from 'wagmi'
 
 interface RenderProps {
@@ -31,7 +31,14 @@ export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap,
     chainId &&
     (!debouncedQuery || debouncedQuery.toLowerCase().includes(Native.onChain(chainId).symbol.toLowerCase()))
 
-  const { data: searchTokenResult } = useToken({ address: isAddress(debouncedQuery) ? debouncedQuery : undefined })
+  useEffect(() => {
+    searching.current = true
+  }, [query])
+
+  const { data: searchTokenResult, isLoading } = useToken({
+    address: isAddress(debouncedQuery) ? debouncedQuery : undefined,
+  })
+
   const searchToken = useMemo(() => {
     if (!searchTokenResult || !chainId) return undefined
     const { decimals, address, symbol } = searchTokenResult
@@ -61,6 +68,6 @@ export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap,
     inputRef,
     query,
     onInput: setQuery,
-    searching: searching.current,
+    searching: isLoading || searching.current,
   })
 }
