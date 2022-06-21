@@ -4,7 +4,7 @@ import { CheckCircleIcon, StarIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { CircleIcon, classNames, GasIcon, Input, Overlay, Popover, SlideIn, Typography } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { useFeeData } from 'wagmi'
 
 import { GasPrice, useSettings } from '../../lib/state/settings'
@@ -190,6 +190,10 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
 
   const [{ gasPrice, gasType }, { updateGasPrice, updateGasType }] = useSettings()
 
+  const handleClose = useCallback(() => {
+    setTimeout(() => setOpen(false), 300)
+  }, [])
+
   if (!isMounted) return <></>
 
   return (
@@ -215,35 +219,27 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
           </div>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)} className="!mt-0">
+      <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={() => setOpen(false)} title="Gas Settings" />
+          <Overlay.Header onClose={handleClose} title="Gas Settings" />
           <RadioGroup
             value={gasType === 'preset' ? gasPrice : undefined}
             onChange={updateGasPrice}
             className="gap-3 grid grid-cols-2"
           >
             <GasSettingOption
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               value={GasPrice.INSTANT}
               data={`${data?.formatted.gasPrice} Gwei`}
             />
             <GasSettingOption
               recommended
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               value={GasPrice.HIGH}
               data={`${data?.formatted.gasPrice} Gwei`}
             />
-            <GasSettingOption
-              onClick={() => setOpen(false)}
-              value={GasPrice.MEDIUM}
-              data={`${data?.formatted.gasPrice} Gwei`}
-            />
-            <GasSettingOption
-              onClick={() => setOpen(false)}
-              value={GasPrice.LOW}
-              data={`${data?.formatted.gasPrice} Gwei`}
-            />
+            <GasSettingOption onClick={handleClose} value={GasPrice.MEDIUM} data={`${data?.formatted.gasPrice} Gwei`} />
+            <GasSettingOption onClick={handleClose} value={GasPrice.LOW} data={`${data?.formatted.gasPrice} Gwei`} />
           </RadioGroup>
           <AdvancedGasSettings
             onClick={() => {

@@ -3,7 +3,7 @@ import { AdjustmentsIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon, StarIcon } from '@heroicons/react/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import { CircleIcon, classNames, Input, Overlay, SlideIn, Typography } from '@sushiswap/ui'
-import { FC, useRef, useState } from 'react'
+import { FC, useCallback, useRef, useState } from 'react'
 
 import { useSettings } from '../../lib/state/settings'
 
@@ -70,6 +70,10 @@ export const SlippageToleranceOverlay = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [{ slippageTolerance }, { updateSlippageTolerance }] = useSettings()
 
+  const handleClose = useCallback(() => {
+    setTimeout(() => setOpen(false), 300)
+  }, [])
+
   if (!isMounted) return <></>
 
   const custom = ![0.1, 0.5, 1, 3].includes(slippageTolerance)
@@ -97,30 +101,21 @@ export const SlippageToleranceOverlay = () => {
           </div>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)} className="!mt-0">
+      <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={() => setOpen(false)} title="Slippage Tolerance" />
+          <Overlay.Header onClose={handleClose} title="Slippage Tolerance" />
           <Typography variant="xs" className="text-slate-400 text-center">
             Your transaction will revert if the prices change unfavorably by more than this percentage
           </Typography>
           <RadioGroup value={slippageTolerance} onChange={updateSlippageTolerance} className="gap-3 grid grid-cols-2">
             <SlippageSettingOption
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               value={0.1}
               data="Good for highly liquid pairs with low volatility"
             />
-            <SlippageSettingOption onClick={() => setOpen(false)} value={0.5} data="Good for highly liquid pairs" />
-            <SlippageSettingOption
-              recommended
-              onClick={() => setOpen(false)}
-              value={1}
-              data="Recommended for most pairs"
-            />
-            <SlippageSettingOption
-              onClick={() => setOpen(false)}
-              value={3}
-              data="Recommended for low liquidity pairs"
-            />
+            <SlippageSettingOption onClick={handleClose} value={0.5} data="Good for highly liquid pairs" />
+            <SlippageSettingOption recommended onClick={handleClose} value={1} data="Recommended for most pairs" />
+            <SlippageSettingOption onClick={handleClose} value={3} data="Recommended for low liquidity pairs" />
           </RadioGroup>
           <div
             onClick={() => inputRef.current?.focus()}
@@ -147,7 +142,7 @@ export const SlippageToleranceOverlay = () => {
                       className="cursor-pointer text-blue hover:scale-[1.10] transform-all"
                       width={24}
                       height={24}
-                      onClick={() => setOpen(false)}
+                      onClick={handleClose}
                     />
                   ) : (
                     <div
