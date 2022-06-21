@@ -19,12 +19,12 @@ export const Card: FC<Card> = ({ article }) => {
           {article?.attributes?.cover?.data && (
             <Image
               height={240}
-              quality={5}
+              quality={100}
               image={article?.attributes.cover.data}
               className={classNames(
                 isMediaVideo(article?.attributes.cover.data?.attributes?.provider_metadata)
                   ? ''
-                  : 'group-hover:scale-105 transition duration-[400ms]'
+                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]'
               )}
             />
           )}
