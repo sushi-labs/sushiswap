@@ -175,7 +175,7 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
 }
 
 // Can render a tines multi route
-export const MultiRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
+export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   if (!trade) return <></>
   // TODO: Figure out what would make sense here...
   return <></>
@@ -191,17 +191,8 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
         <Typography variant="xs" className="text-slate-400">
           Optimized Route
         </Typography>
-        <div className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
-          <Typography variant="xs" weight={700}>
-            {trade.route.fromToken.symbol}
-          </Typography>
-
-          <DotsHorizontalIcon width={12} className="text-slate-600" />
-
-          <Typography variant="xs" weight={700}>
-            {trade.route.toToken.symbol}
-          </Typography>
-        </div>
+        {trade.isSingle() && <SingleRoute trade={trade} />}
+        {trade.isComplex() && <ComplexRoute trade={trade} />}
       </div>
     </>
   )
