@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { DAI, USDC, USDT, WNATIVE } from './constants'
+import { DAI, FRAX, MIM, USDC, USDT, WETH9, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -14,6 +14,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
+    MIM[ChainId.ARBITRUM],
+    FRAX[ChainId.ARBITRUM],
   ],
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
@@ -21,12 +23,23 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],
   ],
-  [ChainId.FANTOM]: [WNATIVE[ChainId.FANTOM], USDC[ChainId.FANTOM], USDT[ChainId.FANTOM], DAI[ChainId.FANTOM]],
+  [ChainId.FANTOM]: [
+    WNATIVE[ChainId.FANTOM],
+    WETH9[ChainId.FANTOM],
+    USDC[ChainId.FANTOM],
+    USDT[ChainId.FANTOM],
+    DAI[ChainId.FANTOM],
+    MIM[ChainId.FANTOM],
+    FRAX[ChainId.FANTOM],
+  ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
+    WETH9[ChainId.FANTOM],
     USDC[ChainId.AVALANCHE],
     USDT[ChainId.AVALANCHE],
     DAI[ChainId.AVALANCHE],
+    MIM[ChainId.AVALANCHE],
+    FRAX[ChainId.AVALANCHE],
   ],
 }
 
