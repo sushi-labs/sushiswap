@@ -123,7 +123,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                 fundSource === FundSource.WALLET
                   ? 'border-green/70 ring-green/70'
                   : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                'ring-1 ring-offset-2 ring-offset-slate-900 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
               <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
@@ -144,7 +144,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
                 fundSource === FundSource.BENTOBOX
                   ? 'border-green/70 ring-green/70'
                   : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                'ring-1 ring-offset-2 ring-offset-slate-900 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
               <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
