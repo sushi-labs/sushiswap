@@ -1,5 +1,5 @@
 import { isAddress } from '@ethersproject/address'
-import { classNames, ERROR_INPUT_CLASSNAME, Input, Typography } from '@sushiswap/ui'
+import { classNames, ERROR_INPUT_CLASSNAME, Input, Loader, Typography } from '@sushiswap/ui'
 import { AddressProps } from '@sushiswap/ui/input/Address'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -56,6 +56,11 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
                 )}
                 {...rest}
               />
+              {isLoading && (
+                <div className="mr-3">
+                  <Loader width={24} />
+                </div>
+              )}
             </div>
             {showEns && (
               <Typography
