@@ -1,10 +1,10 @@
-import type { Farm as FarmDTO, Pair as PairDTO } from '@sushiswap/graph-client'
+import type { Pair as PairDTO, Stake as StakeDTO } from '@sushiswap/graph-client'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
 import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
 import { updateIncentivePricing } from 'lib'
 import { Farm } from 'lib/Farm'
-import { getLegacyPairs, getPrice, getSubscribedIncentives, getUserFarms } from 'lib/graph'
+import { getLegacyPairs, getPrice, getSubscribedIncentives, getUserStakes } from 'lib/graph'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   return {
     props: {
       fallback: {
-        [`/api/user/${query.address}/farms/${query.chainId}`]: await getUserFarms(query.chainId, query.address),
+        [`/api/user/${query.address}/farms/${query.chainId}`]: await getUserStakes(query.chainId, query.address),
         [`/api/user/${query.address}/subscriptions/${query.chainId}`]: await getSubscribedIncentives(
           query.chainId,
           query.address
@@ -54,11 +54,11 @@ export const FarmsPage: FC = () => {
   // const connect = useConnect()
 
   const { data: subscriptions, isValidating: isValidatingSubscriptions } = useSWR<string[]>(
-    `/onsen/api/user/${account?.address}/subscriptions/${chainId}`,
+    `/onsen/api/user/${chainId}/${account?.address}/subscriptions`,
     fetcher
   )
-  const { data: userFarms, isValidating: isValidatingFarms } = useSWR<FarmDTO[]>(
-    `/onsen/api/user/${account?.address}/farms/${chainId}`,
+  const { data: userStakes, isValidating: isValidatingStakes } = useSWR<StakeDTO[]>(
+    `/onsen/api/user/${chainId}/${account?.address}/farms`,
     fetcher
   )
   const { data: prices, isValidating: isValidatingPrices } = useSWR<{ [key: string]: number }[]>(
@@ -70,21 +70,21 @@ export const FarmsPage: FC = () => {
     fetcher
   )
   const isValidating = useMemo(
-    () => isValidatingFarms || isValidatingSubscriptions || isValidatingPrices || isValidatingLegacyPairs,
-    [isValidatingFarms, isValidatingSubscriptions, isValidatingPrices, isValidatingLegacyPairs]
+    () => isValidatingStakes || isValidatingSubscriptions || isValidatingPrices || isValidatingLegacyPairs,
+    [isValidatingStakes, isValidatingSubscriptions, isValidatingPrices, isValidatingLegacyPairs]
   )
 
   const farms = useMemo(() => {
     if (isValidating) return []
     const now = new Date().getTime() / 1000
     const mappedFarms =
-      userFarms
+      userStakes
         ?.map(
-          (farm) =>
+          (stake) =>
             new Farm({
               chainId,
-              token: farm.stakeToken,
-              incentives: farm.incentives.filter((incentive) => incentive.endTime >= now),
+              token: stake.token,
+              incentives: stake.farm.incentives.filter((incentive) => incentive.endTime >= now),
             })
         )
         .filter((farm) => farm.incentives.length) ?? []
@@ -103,7 +103,7 @@ export const FarmsPage: FC = () => {
       })
     })
     return mappedFarms
-  }, [userFarms, subscriptions, isValidating, legacyPairs, prices, chainId])
+  }, [userStakes, subscriptions, isValidating, legacyPairs, prices, chainId])
 
   return (
     <Layout>

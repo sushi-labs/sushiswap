@@ -38,9 +38,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  const kovanProvider = getProvider(ChainId.KOVAN)
-  const kovanBlockNumber = useLatestBlockNumber(kovanProvider)
-
   const arbitrumProvider = getProvider(ChainId.ARBITRUM)
   const arbitrumBlockNumber = useLatestBlockNumber(arbitrumProvider)
 
@@ -50,8 +47,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ReduxProvider store={store}>
           <App.Shell>
             <Header />
-            <MulticallUpdater chainId={ChainId.KOVAN} blockNumber={kovanBlockNumber} />
-            <TokenListUpdater chainId={ChainId.KOVAN} />
             <MulticallUpdater chainId={ChainId.ARBITRUM} blockNumber={arbitrumBlockNumber} />
             <TokenListUpdater chainId={ChainId.ARBITRUM} />
 

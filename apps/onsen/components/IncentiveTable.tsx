@@ -62,7 +62,7 @@ const defaultColumns = (tableProps: IncentiveTableProps) => [
       return (
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className=" text-slate-200">
-            {props.getValue().address}
+            {props.getValue().symbol}
           </Typography>
         </div>
       )
