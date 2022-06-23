@@ -107,48 +107,69 @@ query ArbitrumStakingUserSubscriptions($id: ID!) {
   }
 }
 
-query ArbitrumStakingUserFarms($farmIds: [ID]!) {
-  ARBITRUM_STAKING_farms(where: { id_in: $farmIds }) {
+
+query ArbitrumStakingUserFarms($id: ID!) {
+  ARBITRUM_STAKING_user(id: $id) {
     id
-    stakeToken {
+    stakes {
+      id
+      token {
       id
       name
       symbol
       decimals
       type
       assets
-    }
-    incentives {
-      id
-      rewardsAccrued
-      rewardsRemaining
-      liquidityStaked
-      stakeToken {
-        id
-        name
-        symbol
-        decimals
-        type
-        assets
       }
-      rewardToken {
-        id
-        name
-        symbol
-        decimals
-        type
-      }
-      createdBy {
+      liquidity
+      user {
         id
       }
-      startTime
-      endTime
+      farm {
+        stakeToken {
+          id
+          name
+          symbol
+          decimals
+          type
+          assets
+        }
+        incentives {
+          id
+          rewardsAccrued
+          rewardsRemaining
+          liquidityStaked
+          stakeToken {
+            id
+            name
+            symbol
+            decimals
+            type
+            assets
+          }
+          rewardToken {
+            id
+            name
+            symbol
+            decimals
+            type
+          }
+          createdBy {
+            id
+          }
+          startTime
+          endTime
+          createdAtBlock
+          createdAtTimestamp
+          modifiedAtBlock
+          modifiedAtTimestamp
+          rewardsUpdatedAtBlock
+          rewardsUpdatedAtTimestamp
+        }
+      }
       createdAtBlock
       createdAtTimestamp
-      modifiedAtBlock
-      modifiedAtTimestamp
-      rewardsUpdatedAtBlock
-      rewardsUpdatedAtTimestamp
     }
+    
   }
 }
