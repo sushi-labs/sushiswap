@@ -67,7 +67,7 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
       description: `You have successfully staked ${
         stakeToken.symbol
       } and subscribed to the following rewards: ${selectedIncentives
-        .map((incentive) => incentive.rewardAmount.currency.symbol)
+        .map((incentive) => incentive.rewardsRemaining.currency.symbol)
         .join(', ')}`,
       promise: data.wait(),
     })

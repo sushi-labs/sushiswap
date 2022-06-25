@@ -4,7 +4,7 @@ import Layout from 'components/Layout'
 import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
 import { updateIncentivePricing } from 'lib'
 import { Farm } from 'lib/Farm'
-import { getLegacyPairs, getPrice, getSubscribedIncentives, getUserStakes } from 'lib/graph'
+import { getLegacyPairs, getPrice, getSubscribedIncentives, getUserFarms } from 'lib/graph'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   return {
     props: {
       fallback: {
-        [`/api/user/${query.address}/farms/${query.chainId}`]: await getUserStakes(query.chainId, query.address),
+        [`/api/user/${query.address}/farms/${query.chainId}`]: await getUserFarms(query.chainId, query.address),
         [`/api/user/${query.address}/subscriptions/${query.chainId}`]: await getSubscribedIncentives(
           query.chainId,
           query.address

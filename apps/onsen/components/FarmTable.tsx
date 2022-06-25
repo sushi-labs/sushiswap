@@ -6,12 +6,12 @@ import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-import { StakeAndSubscribeModal } from './StakeAndSubscribeModal'
+import { ManageFarmModal } from './ManageFarmModal'
 
 interface FarmTableProps {
   chainId: number | undefined
   farms: Farm[] | undefined
-  showSubscribeAction?: boolean
+  showManageFarmAction?: boolean
   showIsSubscribed?: boolean
   placeholder: string
   loading: boolean
@@ -110,11 +110,11 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   }),
   table.createDisplayColumn({
     id: 'Action',
-    header: () => (tableProps.showSubscribeAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
+    header: () => (tableProps.showManageFarmAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
     cell: (props) =>
-      tableProps.showSubscribeAction ? (
+      tableProps.showManageFarmAction ? (
         props.row.original ? (
-          <StakeAndSubscribeModal farm={props.row.original} />
+          <ManageFarmModal farm={props.row.original} chainId={tableProps.chainId} />
         ) : (
           <></>
         )
@@ -122,6 +122,14 @@ const defaultColumns = (tableProps: FarmTableProps) => [
         <></>
       ),
   }),
+
+  // table.createDisplayColumn({
+  //   id: 'Manage',
+  //   header: () => (tableProps.showSubscribeAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
+  //   cell: (props) => (
+  //         <ManageFarmModal farm={props.row.original} chainId={tableProps.chainId}/>
+  //       )
+  // }),
 ]
 
 export const FarmTable: FC<FarmTableProps> = (props) => {
@@ -199,10 +207,6 @@ export const FarmTable: FC<FarmTableProps> = (props) => {
               <Table.tr
                 key={row.id}
                 // onClick={() =>
-                //   router.push({
-                //     pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
-                //     query: { chainId: activeChain?.id },
-                //   })
                 // }
               >
                 {row.getVisibleCells().map((cell) => {

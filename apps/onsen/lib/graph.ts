@@ -40,12 +40,22 @@ export const getSubscribedFarms = async (chainId: string, address: string) => {
   }
 }
 
-export const getUserStakes = async (chainId: string, address: string) => {
+export const getUserFarms = async (chainId: string, address: string) => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
   if (network === ChainId.ARBITRUM) {
     return (await sdk.ArbitrumStakingUserFarms({ id: address.toLocaleLowerCase() })).ARBITRUM_STAKING_user?.stakes
+  }
+}
+
+export const getUserStakePositions = async (chainId: string, address: string, farmId: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  const id = address.toLocaleLowerCase().concat(':').concat(farmId)
+  if (network === ChainId.ARBITRUM) {
+    return (await sdk.ArbitrumStakingStakePosition({ id })).ARBITRUM_STAKING_stake
   }
 }
 

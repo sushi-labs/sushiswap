@@ -106,7 +106,7 @@ export const FarmsPage: FC = () => {
       <FarmTable
         farms={farms}
         chainId={activeChain?.id}
-        showSubscribeAction={true}
+        showManageFarmAction={true}
         loading={isValidating}
         placeholder="No farms found"
       />

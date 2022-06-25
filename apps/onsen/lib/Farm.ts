@@ -7,6 +7,7 @@ import { Incentive } from './Incentive'
 import { toToken } from './mapper'
 
 export class Farm {
+  public readonly id: string
   public readonly stakeToken: Token
   public readonly farmType: TokenType
   public readonly incentives: Incentive[]
@@ -20,6 +21,7 @@ export class Farm {
     token: TokenDTO
     incentives: IncentiveDTO[]
   }) {
+    this.id = token.id
     this.stakeToken = toToken(token, chainId)
     this.farmType = token.type ? (<any>TokenType)[token.type] : TokenType.UNKNOWN // FIXME: any hack?
     this.incentives = incentives.map((incentive) => new Incentive({ chainId, incentive }))
