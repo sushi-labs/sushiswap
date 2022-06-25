@@ -173,3 +173,24 @@ query ArbitrumStakingUserFarms($id: ID!) {
     
   }
 }
+
+
+query ArbitrumStakingStakePosition($id: ID!) {
+  ARBITRUM_STAKING_stake(id: $id) {
+    id
+    token {
+    id
+    name
+    symbol
+    decimals
+    type
+    assets
+    }
+    liquidity
+    user {
+      id
+    }
+    createdAtBlock
+    createdAtTimestamp
+  }
+}
