@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { SUPPORTED_CHAINS } from '../../../../config'
-import redis from '../../../../lib/redis'
+import { SUPPORTED_CHAINS } from '../../config'
+import redis from '../../lib/redis'
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   const { chainId } = request.query
