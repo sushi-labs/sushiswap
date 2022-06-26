@@ -10,7 +10,7 @@ import {
   UpdateSlippageTolerancePayload,
 } from './types'
 
-const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('settings') || '') : {}
+const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('settings') || '{}') : {}
 const initialState: SettingsState = {
   slippageTolerance: parsedState?.slippageTolerance || 1,
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
