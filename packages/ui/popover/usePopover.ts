@@ -13,11 +13,11 @@ export const usePopover: UsePopover = () => {
   const [arrowElement, setArrowElement] = useState(null)
 
   const popper = usePopper(referenceElement, popperElement, {
-    placement: 'bottom-start',
+    placement: 'auto-start',
     modifiers: [
       { name: 'arrow', options: { element: arrowElement, padding: 8 } },
       { name: 'flip', enabled: true, options: { padding: 8 } },
-      { name: 'offset', options: { offset: [0, 14] } },
+      { name: 'offset', options: { offset: [-12, 14] } },
     ],
   })
 

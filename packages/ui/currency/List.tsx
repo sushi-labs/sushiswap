@@ -14,6 +14,7 @@ export interface WithCurrencyList {
   currency?: Type
   onCurrency(x: Type): void
   children?: ReactNode
+  onImportCurrency?(x: Type): void
 }
 
 const CurrencyListContext = createContext<WithCurrencyList | undefined>(undefined)
@@ -32,7 +33,7 @@ const CurrencyRow: FC<{
   style: CSSProperties
   className?: string
 }> = ({ currency, style, className }) => {
-  const { onCurrency } = useCurrencyListContext()
+  const { onCurrency, onImportCurrency } = useCurrencyListContext()
 
   return (
     <button
@@ -88,10 +89,13 @@ const withContext =
   (
     Component: React.ComponentType<{ children?: ReactNode; className?: string; rowClassName?: string }>
   ): React.FC<WithCurrencyList> =>
-  ({ currencies, currency, onCurrency, children, className, rowClassName }) =>
+  ({ currencies, currency, onCurrency, children, className, rowClassName, onImportCurrency }) =>
     (
       <CurrencyListContext.Provider
-        value={useMemo(() => ({ currency, onCurrency, currencies }), [currencies, currency, onCurrency])}
+        value={useMemo(
+          () => ({ currency, onCurrency, currencies, onImportCurrency }),
+          [currencies, currency, onCurrency, onImportCurrency]
+        )}
       >
         <Component className={className} rowClassName={rowClassName}>
           {children}

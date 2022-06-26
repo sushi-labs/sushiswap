@@ -1,3 +1,4 @@
+import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
@@ -42,8 +43,18 @@ export function Icon({ currency, ...rest }: { currency: Currency } & Omit<ImageP
     // e.g.
     // https://currency.sushi.com/1/native.png - ETH
     // https://currency.sushi.com/1/0x...png - WETH
-    return 'https://'
+    return undefined
   }, [currency])
+
+  if (!src) {
+    return (
+      <QuestionMarkCircleIcon
+        width={rest.width}
+        height={rest.height}
+        className="rounded-full bg-white bg-opacity-[0.12] text-slate-600"
+      />
+    )
+  }
 
   return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
 }
