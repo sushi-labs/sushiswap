@@ -1,5 +1,6 @@
 name: price-cron
 on:
+  workflow_dispatch:
   schedule:
     - cron: '* * * * *'
 jobs:
