@@ -108,9 +108,6 @@ const Widget: FC<Swap> = ({
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
 
-  // useEffect(() => setSrcChainId(srcChainId), [srcChainId])
-  // useEffect(() => setDstChainId(dstChainId), [dstChainId])
-
   useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
   useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
@@ -395,12 +392,12 @@ const Widget: FC<Swap> = ({
     }
 
     if (crossChain) {
-      sushiXSwap.teleport(srcBridgeToken, dstBridgeToken, dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
+      sushiXSwap.teleport(srcBridgeToken, dstBridgeToken, dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
     }
 
     console.debug('attempt cook')
     sushiXSwap
-      .cook(dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
+      .cook(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
       .then((res) => {
         console.debug('then cooked', res)
       })
