@@ -52,6 +52,17 @@ export const CreateForm: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, account?.address])
 
+  // createVestingSchema
+  //   .validate(formData, { abortEarly: false })
+  //   .then(function () {
+  //     // Success
+  //   })
+  //   .catch(function (err) {
+  //     err?.inner?.forEach((e) => {
+  //       console.log(e.message, e.path)
+  //     })
+  //   })
+
   return (
     <>
       <FormProvider {...methods}>

@@ -9,5 +9,5 @@ export default withTranspileModules({
   },
   basePath: '/blog',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
 })
