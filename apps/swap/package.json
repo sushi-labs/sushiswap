@@ -25,6 +25,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/exchange": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/stargate": "workspace:*",

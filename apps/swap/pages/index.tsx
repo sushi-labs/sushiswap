@@ -8,7 +8,7 @@ import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import { Caption, ConfirmationComponentController, CurrencyInput, Rate, SettingsOverlay } from 'components'
+import { Caption, ConfirmationComponentController, CurrencyInput, Rate } from 'components'
 import { CrossChainRoute, SameChainRoute } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
@@ -17,6 +17,7 @@ import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import useSWR from 'swr'
 import { Theme } from 'types'
 import { useAccount, useFeeData, useNetwork } from 'wagmi'
 
@@ -437,6 +438,18 @@ const Widget: FC<Swap> = ({
     dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
   )
 
+  const { data: srcPrices } = useSWR(
+    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${srcChainId}`,
+    (url) => fetch(url).then((response) => response.json())
+  )
+
+  const { data: dstPrices } = useSWR(
+    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${dstChainId}`,
+    (url) => fetch(url).then((response) => response.json())
+  )
+
+  console.log({ srcPrices, dstPrices })
+
   return (
     <article
       id="sushixswap"
@@ -453,9 +466,7 @@ const Widget: FC<Swap> = ({
         >
           Swap
         </Typography>
-        <div className="flex justify-end">
-          <SettingsOverlay chainId={srcChainId} />
-        </div>
+        <div className="flex justify-end">{/* <SettingsOverlay chainId={srcChainId} /> */}</div>
       </div>
       <div className="p-3 pb-0 border-2 border-transparent">
         <CurrencyInput
