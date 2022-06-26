@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "@vercel/node": "^2.2.0",
-    "ioredis": "^5.0.6",
+    "ioredis": "5.x",
+    "date-fns": "2.x",
     "@sushiswap/chain": "workspace:*"
   },
   "devDependencies": {

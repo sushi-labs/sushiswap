@@ -67,10 +67,12 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': ^2.2.0
-      ioredis: ^5.0.6
+      date-fns: 2.x
+      ioredis: 5.x
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
       '@vercel/node': 2.2.0
+      date-fns: 2.28.0
       ioredis: 5.0.6
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -1723,11 +1725,12 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      date-fns: ^2.x
       dotenv: 16.x
       eslint: 8.x
       graphql: ^16.5.0
       hardhat: 2.x
-      ioredis: ^5.0.6
+      ioredis: 5.x
       prettier: 2.x
       tsup: 6.x
       typescript: 4.x
@@ -1746,6 +1749,7 @@ importers:
       '@graphql-mesh/transform-rename': 0.12.48_graphql@16.5.0
       '@graphql-mesh/transform-type-merging': 0.4.2_graphql@16.5.0
       '@graphql-mesh/utils': 0.35.2_graphql@16.5.0
+      date-fns: 2.28.0
       dotenv: 16.0.1
       graphql: 16.5.0
     devDependencies:
