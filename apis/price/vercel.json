@@ -8,5 +8,5 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/", "destination": "/api/v0/:chainId" }]
+  "rewrites": [{ "source": "/v0", "destination": "/api/v0/:chainId" }]
 }
