@@ -3,11 +3,12 @@ import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outlin
 import { CheckCircleIcon, StarIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
+import { GasPrice } from '@sushiswap/redux-localstorage'
 import { CircleIcon, classNames, GasIcon, Input, Overlay, Popover, SlideIn, Typography } from '@sushiswap/ui'
 import { FC, useCallback, useState } from 'react'
 import { useFeeData } from 'wagmi'
 
-import { GasPrice, useSettings } from '../../lib/state/settings'
+import { useSettings } from '../../lib/state/storage'
 
 interface GasSettingsOverlay {
   chainId: ChainId | undefined

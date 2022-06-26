@@ -1,19 +1,26 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
-import { Type } from '@sushiswap/currency'
-import { classNames, Currency, Dialog, Input, Loader } from '@sushiswap/ui'
-import { FC, useCallback } from 'react'
+import chain from '@sushiswap/chain'
+import { Token, Type } from '@sushiswap/currency'
+import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
+import React, { FC, useCallback } from 'react'
 
 import { TokenListFilterByQuery } from '../TokenListFilterByQuery'
 import { TokenSelectorProps } from './TokenSelector'
+import { TokenSelectorImportRow } from './TokenSelectorImportRow'
+import { TokenSelectorRow } from './TokenSelectorRow'
+import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
   currency,
   open,
   onClose,
   tokenMap,
+  customTokenMap,
   chainId,
   onSelect,
+  onAddToken,
+  onRemoveToken,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -23,12 +30,20 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
     [onClose, onSelect]
   )
 
+  const handleImport = useCallback((currency: Token) => {
+    onAddToken(currency)
+    onSelect(currency)
+    onClose()
+  }, [])
+
   return (
     <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
-      {({ currencies, inputRef, query, onInput, searching }) => (
-        <Dialog open={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-          <Dialog.Content className="!max-w-sm !p-0 !space-y-0">
-            <Dialog.Header onClose={onClose} title="Select Token" className="p-6 pb-5" />
+      {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
+        <Dialog open={open} unmount={false} onClose={onClose} initialFocus={inputRef}>
+          <Dialog.Content className="!max-w-sm !p-0 !space-y-0 overflow-hidden">
+            <Dialog.Header onClose={onClose} title="Select Token" className="p-6 pb-5">
+              <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
+            </Dialog.Header>
             <div className="px-6 pb-5">
               <div
                 className={classNames(
@@ -61,13 +76,37 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                 )}
               </div>
             </div>
-            <Currency.List
-              rowClassName="!px-5"
-              className="min-h-[320px] rounded-t-none border-t border-slate-200/5"
-              currency={currency}
-              onCurrency={handleSelect}
-              currencies={currencies}
-            />
+            <div className="w-full border-t border-slate-200/5" />
+            <div className={classNames(queryToken ? '' : 'relative', 'min-h-[320px] rounded-t-none rounded-xl h-full')}>
+              {queryToken && <TokenSelectorImportRow currency={queryToken} onImport={() => handleImport(queryToken)} />}
+              <div
+                className={classNames(
+                  queryToken
+                    ? 'min-h-[272px] max-h-[calc(100%-156px)]'
+                    : 'relative min-h-[320px] max-h-[calc(100%-108px)]'
+                )}
+              >
+                <Currency.List
+                  className="h-full divide-y hide-scrollbar divide-slate-700"
+                  currencies={currencies}
+                  rowRenderer={({ currency, style }) => (
+                    <TokenSelectorRow currency={currency} style={style} onCurrency={handleSelect} />
+                  )}
+                />
+              </div>
+              {currencies.length === 0 && !queryToken && chainId && (
+                <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
+                  <div className="flex flex-col gap-1 justify-center items-center">
+                    <Typography variant="xs" className="flex italic text-slate-500">
+                      No tokens found on
+                    </Typography>
+                    <Typography variant="xs" weight={700} className="flex gap-1 italic text-slate-500">
+                      <NetworkIcon width={14} height={14} chainId={chainId} /> {chain[chainId].name}
+                    </Typography>
+                  </div>
+                </div>
+              )}
+            </div>
           </Dialog.Content>
         </Dialog>
       )}

@@ -5,7 +5,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { CircleIcon, classNames, Input, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { FC, useCallback, useRef, useState } from 'react'
 
-import { useSettings } from '../../lib/state/settings'
+import { useSettings } from '../../lib/state/storage'
 
 export const SlippageSettingOption: FC<{ recommended?: boolean; onClick?(): void; value: number; data: string }> = ({
   onClick,

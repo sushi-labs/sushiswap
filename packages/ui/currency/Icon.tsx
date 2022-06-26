@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
-import { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 
 const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ETHEREUM]: 'ethereum',
@@ -76,7 +76,11 @@ const LOGO: Record<number, string> = {
   [ChainId.OPTIMISM]: EthereumLogo,
 }
 
-export function Icon({ currency, ...rest }: { currency: Currency } & Omit<ImageProps, 'src'>) {
+export interface IconProps extends Omit<ImageProps, 'src'> {
+  currency: Currency
+}
+
+export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
   const src = useMemo(() => {
     if (currency.isNative) {
       return LOGO[currency.chainId]
@@ -101,7 +105,7 @@ export function Icon({ currency, ...rest }: { currency: Currency } & Omit<ImageP
       <QuestionMarkCircleIcon
         width={rest.width}
         height={rest.height}
-        className="rounded-full bg-white bg-opacity-[0.12] text-slate-600"
+        className="rounded-full bg-white bg-opacity-[0.12]"
       />
     )
   }

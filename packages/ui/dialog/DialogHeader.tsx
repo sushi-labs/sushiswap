@@ -10,9 +10,10 @@ export interface DialogHeaderProps {
   onClose?(): void
   onBack?(): void
   className?: string
+  children?: ReactNode | Array<ReactNode>
 }
 
-const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className }) => {
+const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className, children }) => {
   return (
     <div className={classNames(className, 'flex items-start justify-between')}>
       <div aria-hidden="true" className={classNames(onBack ? 'cursor-pointer' : '', 'flex gap-2 items-center')}>
@@ -25,13 +26,16 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className
           {title}
         </Typography>
       </div>
-      {onClose ? (
-        <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-          <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
-        </IconButton>
-      ) : (
-        <span />
-      )}
+      <div className="flex gap-3 items-center">
+        {children}
+        {onClose ? (
+          <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
+            <XIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
+          </IconButton>
+        ) : (
+          <span />
+        )}
+      </div>
     </div>
   )
 }

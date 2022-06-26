@@ -8,6 +8,7 @@ import { TokenSelector } from '@sushiswap/wagmi'
 import { NetworkSelectorOverlay } from 'components'
 import { FC, useState } from 'react'
 
+import { useCustomTokens } from '../lib/state/storage'
 import { Theme } from '../types'
 
 interface CurrencyInputBase {
@@ -77,8 +78,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   balance,
   theme,
 }) => {
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(network.chainId)
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
+
   return (
     <>
       <div className="flex flex-col">
@@ -177,11 +180,14 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <TokenSelector
           variant="dialog"
           tokenMap={tokenList}
+          customTokenMap={customTokenMap}
           onClose={() => setTokenSelectorOpen(false)}
           chainId={network.chainId}
           open={tokenSelectorOpen}
           currency={currency}
           onSelect={onCurrencySelect}
+          onAddToken={addCustomToken}
+          onRemoveToken={removeCustomToken}
         />
       )}
     </>

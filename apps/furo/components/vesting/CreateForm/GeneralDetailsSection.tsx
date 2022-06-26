@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { useCustomTokens } from '../../../lib/state/storage'
 import { CreateVestingFormData } from './types'
 
 export const GeneralDetailsSection = () => {
@@ -16,8 +17,8 @@ export const GeneralDetailsSection = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
   const { activeChain } = useNetwork()
-
   const tokenMap = useTokens(activeChain?.id)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
   // @ts-ignore
   const currency = watch('currency')
@@ -51,6 +52,7 @@ export const GeneralDetailsSection = () => {
                   variant="dialog"
                   chainId={activeChain?.id}
                   tokenMap={tokenMap}
+                  customTokenMap={customTokenMap}
                   onSelect={(currency) => {
                     if (currency.isNative) {
                       setValue('fundSource', FundSource.WALLET)
@@ -60,6 +62,10 @@ export const GeneralDetailsSection = () => {
                   }}
                   currency={currency}
                   onClose={() => setDialogOpen(false)}
+                  onAddToken={({ address, chainId, name, symbol, decimals }) =>
+                    addCustomToken({ address, name, chainId, symbol, decimals })
+                  }
+                  onRemoveToken={removeCustomToken}
                 />
               </>
             )

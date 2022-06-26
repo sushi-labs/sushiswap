@@ -1,8 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
+  AddCustomToken,
   GasPrice,
-  SettingsState,
+  RemoveCustomToken,
+  StorageState,
   UpdateGasPrice,
   UpdateGasType,
   UpdateMaxFeePerGas,
@@ -10,16 +12,17 @@ import {
   UpdateSlippageTolerancePayload,
 } from './types'
 
-const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('settings') || '{}') : {}
-const initialState: SettingsState = {
+const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
+const initialState: StorageState = {
   slippageTolerance: parsedState?.slippageTolerance || 1,
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
   maxFeePerGas: parsedState?.maxFeePerGas || undefined,
   maxPriorityFeePerGas: parsedState?.maxPriorityFeePerGas || undefined,
   gasType: parsedState?.gasType || 'preset',
+  customTokens: parsedState?.customTokens || {},
 }
 
-export function createSettingsSlice(reducerPath: string) {
+export function createStorageSlice(reducerPath: string): Slice<StorageState> {
   return createSlice({
     name: reducerPath,
     initialState,
@@ -51,8 +54,24 @@ export function createSettingsSlice(reducerPath: string) {
         const { gasType } = action.payload
         state.gasType = gasType
       },
+      addCustomToken: (state, action: PayloadAction<AddCustomToken>) => {
+        const { address, symbol, name, chainId, decimals } = action.payload
+
+        if (!state.customTokens[chainId]) {
+          state.customTokens[chainId] = {}
+        }
+
+        state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+      },
+      removeCustomToken: (state, action: PayloadAction<RemoveCustomToken>) => {
+        const { address, chainId } = action.payload
+
+        if (state.customTokens[chainId] && state.customTokens[chainId][address.toLowerCase()]) {
+          delete state.customTokens[chainId][address.toLowerCase()]
+        }
+      },
     },
   })
 }
 
-export type SettingsActions = ReturnType<typeof createSettingsSlice>['actions']
+export type StorageActions = ReturnType<typeof createStorageSlice>['actions']

@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { useCustomTokens } from '../../../lib/state/storage'
 import { CreateStreamFormData } from './types'
 
 export const StreamAmountDetails = () => {
@@ -16,6 +17,7 @@ export const StreamAmountDetails = () => {
   const { data: account } = useAccount()
   const { activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -52,6 +54,7 @@ export const StreamAmountDetails = () => {
                   variant="dialog"
                   chainId={activeChain?.id}
                   tokenMap={tokenMap}
+                  customTokenMap={customTokenMap}
                   onSelect={(currency) => {
                     if (currency.isNative) {
                       setValue('fundSource', FundSource.WALLET)
@@ -62,6 +65,10 @@ export const StreamAmountDetails = () => {
                   }}
                   currency={currency}
                   onClose={() => setDialogOpen(false)}
+                  onAddToken={({ address, chainId, name, symbol, decimals }) =>
+                    addCustomToken({ address, name, chainId, symbol, decimals })
+                  }
+                  onRemoveToken={removeCustomToken}
                 />
               </>
             )

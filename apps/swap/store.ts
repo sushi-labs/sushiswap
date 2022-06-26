@@ -2,13 +2,13 @@ import { configureStore } from '@reduxjs/toolkit'
 import { tokenLists } from 'lib/state/token-lists'
 
 import { multicall } from './lib/state/multicall'
-import { settings } from './lib/state/settings'
+import { storage, storageMiddleware } from './lib/state/storage'
 
 export const store = configureStore({
   reducer: {
     [multicall.reducerPath]: multicall.reducer,
     [tokenLists.reducerPath]: tokenLists.reducer,
-    [settings.reducerPath]: settings.reducer,
+    [storage.reducerPath]: storage.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(...settings.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(storageMiddleware),
 })

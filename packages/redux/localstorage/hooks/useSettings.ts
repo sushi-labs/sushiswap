@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { SettingsContext } from './context'
-import { GasPrice, SettingsState, WithSettingsState } from './types'
+import { StorageContext } from '../context'
+import { GasPrice, StorageState, WithStorageState } from '../types'
 
 type UseSettingsReturn = [
-  SettingsState,
+  Omit<StorageState, 'customTokens'>,
   {
     updateSlippageTolerance(slippageTolerance: number): void
     updateMaxFeePerGas(updateMaxFeePerGas: number): void
@@ -15,11 +15,11 @@ type UseSettingsReturn = [
   }
 ]
 
-type UseSettings = (context: SettingsContext) => UseSettingsReturn
+type UseSettings = (context: StorageContext) => UseSettingsReturn
 
 export const useSettings: UseSettings = (context) => {
   const { reducerPath, actions } = context
-  const settings = useSelector((state: WithSettingsState) => state[reducerPath])
+  const { customTokens, ...settings } = useSelector((state: WithStorageState) => state[reducerPath])
   const dispatch = useDispatch()
 
   const updateSlippageTolerance = useCallback(
@@ -59,6 +59,12 @@ export const useSettings: UseSettings = (context) => {
 
   return [
     settings,
-    { updateSlippageTolerance, updateMaxFeePerGas, updateMaxPriorityFeePerGas, updateGasPrice, updateGasType },
+    {
+      updateSlippageTolerance,
+      updateMaxFeePerGas,
+      updateMaxPriorityFeePerGas,
+      updateGasPrice,
+      updateGasType,
+    },
   ]
 }

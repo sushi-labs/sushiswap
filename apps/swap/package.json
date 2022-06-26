@@ -30,6 +30,7 @@
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
+    "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",

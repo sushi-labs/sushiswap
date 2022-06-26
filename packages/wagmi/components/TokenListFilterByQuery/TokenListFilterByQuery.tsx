@@ -11,6 +11,7 @@ interface RenderProps {
   query: string
   onInput(query: string): void
   searching: boolean
+  queryToken?: Token
 }
 
 interface Props {
@@ -36,24 +37,19 @@ export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap,
   }, [query])
 
   const { data: searchTokenResult, isLoading } = useToken({
-    address: isAddress(debouncedQuery) ? debouncedQuery : undefined,
+    address: isAddress(debouncedQuery) && !tokenMap[debouncedQuery.toLowerCase()] ? debouncedQuery : undefined,
+    chainId,
   })
 
   const searchToken = useMemo(() => {
     if (!searchTokenResult || !chainId) return undefined
     const { decimals, address, symbol } = searchTokenResult
-    return new Token({ chainId, decimals, address, symbol })
+    return new Token({ chainId, decimals, address, symbol, name: symbol })
   }, [chainId, searchTokenResult])
 
   const filteredTokens: Token[] = useMemo(() => {
     const filtered = filterTokens(tokenMapValues, debouncedQuery)
     searching.current = false
-
-    if (searchToken && chainId) {
-      const { decimals, address, symbol } = searchToken
-      const _searchToken = new Token({ chainId, decimals, address, symbol })
-      return [_searchToken, ...filtered]
-    }
     return filtered
   }, [tokenMapValues, debouncedQuery, searchToken, chainId])
 
@@ -69,5 +65,6 @@ export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap,
     query,
     onInput: setQuery,
     searching: isLoading || searching.current,
+    queryToken: searchToken,
   })
 }
