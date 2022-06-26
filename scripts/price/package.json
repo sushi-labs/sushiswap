@@ -49,7 +49,8 @@
     "@graphql-mesh/transform-type-merging": "0.4.2",
     "@graphql-mesh/utils": "0.35.2",
     "dotenv": "16.x",
-    "graphql": "^16.5.0"
+    "graphql": "^16.5.0",
+    "date-fns": "^2.x"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "1.0.1",
@@ -60,7 +61,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "eslint": "8.x",
     "hardhat": "2.x",
-    "ioredis": "^5.0.6",
+    "ioredis": "5.x",
     "prettier": "2.x",
     "tsup": "6.x",
     "typescript": "4.x"
