@@ -4,7 +4,7 @@ import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { _9995, _10000, Percent, ZERO } from '@sushiswap/math'
+import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
@@ -255,12 +255,24 @@ const Widget: FC<Swap> = ({
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
 
   const priceImpact = useMemo(() => {
-    if (crossChain && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken) && srcTrade && dstTrade) {
-      // Stargate fee % ???
+    if (!crossChain && srcTrade) {
+      return srcTrade.priceImpact
+    } else if (
+      crossChain &&
+      srcTrade &&
+      dstTrade &&
+      !isStargateBridgeToken(srcToken) &&
+      !isStargateBridgeToken(dstToken)
+    ) {
       return srcTrade.priceImpact.add(dstTrade.priceImpact)
-    } else if (!crossChain && srcTrade) {
+    } else if (crossChain && !srcTrade && dstTrade && !isStargateBridgeToken(dstToken)) {
+      return dstTrade.priceImpact
+    } else if (crossChain && srcTrade && !dstTrade && !isStargateBridgeToken(srcToken)) {
       return srcTrade.priceImpact
     }
+
+    // Return zero percent
+    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
   }, [crossChain, dstToken, dstTrade, srcToken, srcTrade])
 
   const dstMinimumAmountOut =
@@ -339,24 +351,6 @@ const Widget: FC<Swap> = ({
 
     setIsWritePending(true)
 
-    // Transfers Scenarios
-    // T1: BentoBox - Stargate - BentoBox
-    // T2: Wallet - Stargate - Wallet
-    // T3: Wallet - Stargate - BentoBox
-    // T4: BentoBox - Stargate - Wallet
-
-    // Cross Chain Swap Scenarios
-    // X1: BentoBox - Swap - Stargate - Swap - BentoBox
-    // X2: Wallet - Swap - Stargate - Swap - Wallet
-    // X3: Wallet - Swap - Stargate - Swap - BentoBox
-    // X4: BentoBox - Swap - Stargate - Swap - Wallet
-
-    // Non Cross Chain Swap Scenarios
-    // S1: BentoBox - Swap - BentoBox
-    // S2: Wallet - Swap - Wallet
-    // S3: Wallet - Swap - BentoBox
-    // S4: BentoBox - Swap - Wallet
-
     const sushiXSwap = new SushiXSwap({
       contract,
       srcToken,
@@ -374,13 +368,10 @@ const Widget: FC<Swap> = ({
     }
 
     if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
-      // T1-T4
       sushiXSwap.transfer(srcAmount, srcShare)
     } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
-      // S1-S4
       sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
     } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
-      // X1-X4
       sushiXSwap.crossChainSwap(
         srcAmount,
         srcShare,
