@@ -61,7 +61,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
               panel={
                 <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
-                  {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <>Complex</>}
+                  {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
                 </div>
               }
             />
@@ -106,7 +106,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
               panel={
                 <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
-                  {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <>Complex</>}
+                  {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
                 </div>
               }
             />
@@ -177,8 +177,50 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
 // Can render a tines multi route
 export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   if (!trade) return <></>
+  const initialPaths = trade.route.legs.filter(
+    (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+  )
+  const percentPaths = trade.route.legs.filter(
+    (leg) => leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address
+  )
+  console.log('initial paths length', initialPaths.length)
+
+  console.log('remaining paths length', trade.route.legs.length - initialPaths.length)
   // TODO: Figure out what would make sense here...
-  return <></>
+  return (
+    <>
+      {initialPaths.map((initialPath, i) => (
+        <div key={i} className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
+          {Number(initialPath.absolutePortion * 100).toFixed(2)}%
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          <Typography variant="xs" weight={700}>
+            {initialPath.tokenFrom.symbol}
+          </Typography>
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          {initialPath.poolFee * 100}%
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          <Typography variant="xs" weight={700}>
+            {initialPath.tokenTo.symbol}
+          </Typography>
+        </div>
+      ))}
+      {percentPaths.map((percentPath, i) => (
+        <div key={i} className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
+          {Number(percentPath.absolutePortion * 100).toFixed(2)}%
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          <Typography variant="xs" weight={700}>
+            {percentPath.tokenFrom.symbol}
+          </Typography>
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          {percentPath.poolFee * 100}%
+          <DotsHorizontalIcon width={12} className="text-slate-600" />
+          <Typography variant="xs" weight={700}>
+            {percentPath.tokenTo.symbol}
+          </Typography>
+        </div>
+      ))}
+    </>
+  )
 }
 
 export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
