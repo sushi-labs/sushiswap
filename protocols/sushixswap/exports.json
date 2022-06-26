@@ -5,7 +5,7 @@
       "chainId": "10",
       "contracts": {
         "SushiXSwap": {
-          "address": "0x67468E6c4418d58B1b41bc0A795BaCB824F70792",
+          "address": "0x8f54301F315C56c112D492D9443047D4745dbe9e",
           "abi": [
             {
               "inputs": [
