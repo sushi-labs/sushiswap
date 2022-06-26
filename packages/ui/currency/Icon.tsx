@@ -5,6 +5,27 @@ import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
 import { useMemo } from 'react'
 
+const BLOCKCHAIN: Record<number, string> = {
+  [ChainId.ETHEREUM]: 'ethereum',
+  [ChainId.BSC]: 'binance',
+  [ChainId.CELO]: 'celo',
+  [ChainId.FANTOM]: 'fantom',
+  [ChainId.AVALANCHE_TESTNET]: 'fuji',
+  [ChainId.FUSE]: 'fuse',
+  [ChainId.HARMONY]: 'harmony',
+  [ChainId.HECO]: 'heco',
+  [ChainId.POLYGON]: 'matic',
+  [ChainId.MOONRIVER]: 'moonriver',
+  [ChainId.OKEX]: 'okex',
+  [ChainId.PALM]: 'palm',
+  [ChainId.TELOS]: 'telos',
+  [ChainId.GNOSIS]: 'xdai',
+  [ChainId.ARBITRUM]: 'arbitrum',
+  [ChainId.AVALANCHE]: 'avalanche',
+  [ChainId.MOONBEAM]: 'moonbeam',
+  [ChainId.OPTIMISM]: 'optimism',
+}
+
 const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/avax.jpg'
 const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/bnb.jpg'
 const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/eth.jpg'
@@ -66,11 +87,13 @@ export function Icon({ currency, ...rest }: { currency: Currency } & Omit<ImageP
     }
 
     // TODO: Currency logos should be accessed via proxy such as...
-    // https://currency.sushi.com/{chainId}/{identifier}.png
+    // https://currency.sushi.com/{chainId}/{identifier}.jpg
     // e.g.
-    // https://currency.sushi.com/1/native.png - ETH
-    // https://currency.sushi.com/1/0x...png - WETH
-    return undefined
+    // https://currency.sushi.com/1/eth.jpg - ETH
+    // https://currency.sushi.com/1/0x...jpg - WETH
+    return `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/${
+      BLOCKCHAIN[currency.chainId]
+    }/${currency.wrapped.address}.jpg`
   }, [currency])
 
   if (!src) {
