@@ -6,7 +6,7 @@ import redis from '../../lib/redis'
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   const chainId = request.query.chainId as string
-  if (!SUPPORTED_CHAINS.includes(chainId)) {
+  if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     response
       .status(400)
       .json({ message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')) })
