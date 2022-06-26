@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "generate": "graphclient build",
-    "dev": "next dev -p 3011",
-    "lint": "eslint --fix . && next lint"
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@vercel/node": "^1.14.1",
@@ -14,7 +11,6 @@
     "@sushiswap/chain": "workspace:*"
   },
   "devDependencies": {
-    "next": "^12.1.6",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
