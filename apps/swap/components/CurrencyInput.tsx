@@ -1,12 +1,14 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
+import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
 import { NetworkSelectorOverlay } from 'components'
 import { FC, useState } from 'react'
+import useSWR from 'swr'
 
 import { useCustomTokens } from '../lib/state/storage'
 import { Theme } from '../types'
@@ -81,7 +83,11 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(network.chainId)
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
-
+  const { data: tokenPrices } = useSWR(
+    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${currency.chainId}`,
+    (url) => fetch(url).then((response) => response.json())
+  )
+  const price = tokenPrices?.[currency.wrapped.address.toLowerCase()]
   return (
     <>
       <div className="flex flex-col">
@@ -151,7 +157,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           variant="xs"
           className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 select-none ')}
         >
-          {value ? '$0.00' : '-'}
+          {value && price ? formatUSD(String(Number(value) * Number(price))) : '-'}
         </Typography>
 
         <button
@@ -178,7 +184,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       )}
       {!disableCurrencySelect && onCurrencySelect && (
         <TokenSelector
-          variant="dialog"
+          variant="overlay"
           tokenMap={tokenList}
           customTokenMap={customTokenMap}
           onClose={() => setTokenSelectorOpen(false)}

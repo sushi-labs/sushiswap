@@ -3,12 +3,13 @@ import { ChevronRightIcon } from '@heroicons/react/outline'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
+import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import { Caption, ConfirmationComponentController, CurrencyInput, Rate } from 'components'
+import { Caption, ConfirmationComponentController, CurrencyInput, Rate, SettingsOverlay } from 'components'
 import { CrossChainRoute, SameChainRoute } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
@@ -448,6 +449,8 @@ const Widget: FC<Swap> = ({
     (url) => fetch(url).then((response) => response.json())
   )
 
+  const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
+  const dstTokenPrice = dstPrices?.[dstToken.wrapped.address.toLowerCase()]
   console.log({ srcPrices, dstPrices })
 
   return (
@@ -466,7 +469,9 @@ const Widget: FC<Swap> = ({
         >
           Swap
         </Typography>
-        <div className="flex justify-end">{/* <SettingsOverlay chainId={srcChainId} /> */}</div>
+        <div className="flex justify-end">
+          <SettingsOverlay chainId={srcChainId} />
+        </div>
       </div>
       <div className="p-3 pb-0 border-2 border-transparent">
         <CurrencyInput
@@ -539,7 +544,7 @@ const Widget: FC<Swap> = ({
                 }
                 render={({ approved }) => (
                   <ConfirmationComponentController
-                    variant="dialog"
+                    variant="overlay"
                     trigger={({ setOpen }) => (
                       <Button
                         fullWidth
@@ -560,7 +565,9 @@ const Widget: FC<Swap> = ({
                           <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
                         </Typography>
                         <Typography variant="xs" weight={700} className="text-slate-400">
-                          $0.00
+                          {srcAmount && srcTokenPrice
+                            ? formatUSD(String(Number(srcAmount.toFixed()) * Number(srcTokenPrice)))
+                            : '-'}
                         </Typography>
                       </div>
                       <div className="flex items-center justify-center col-span-2">
@@ -572,7 +579,10 @@ const Widget: FC<Swap> = ({
                           <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
                         </Typography>
                         <Typography variant="xs" weight={700} className="text-right text-slate-400">
-                          $0.00 <span className="text-[10px] text-green">(+0.00%)</span>
+                          {dstMinimumAmountOut && dstTokenPrice
+                            ? formatUSD(String(Number(dstMinimumAmountOut.toFixed()) * Number(dstTokenPrice)))
+                            : '-'}
+                          {/* <span className="text-[10px] text-green">(+0.00%)</span> */}
                         </Typography>
                       </div>
                     </div>
