@@ -89,7 +89,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
             >
               <div className="w-[18px] h-[18px]">
-                <Icon currency={dstTrade.outputAmount.currency} width={18} height={18} />
+                <Icon currency={dstTrade.inputAmount.currency} width={18} height={18} />
               </div>
             </Badge>
           </div>
@@ -123,7 +123,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                   }
                 >
                   <div className="w-5 h-5">
-                    <Icon currency={dstTrade.inputAmount.currency} width={20} height={20} />
+                    <Icon currency={dstTrade.outputAmount.currency} width={20} height={20} />
                   </div>
                 </Badge>
               }
