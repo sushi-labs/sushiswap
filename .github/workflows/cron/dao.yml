@@ -1,4 +1,4 @@
-name: dao
+name: dao-cron
 on:
   schedule:
     - cron: '*/15 * * * *'

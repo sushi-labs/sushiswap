@@ -1,4 +1,4 @@
-name: Price
+name: price-cron
 on:
   schedule:
     - cron: '*/5 * * * *'
