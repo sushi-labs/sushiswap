@@ -610,14 +610,14 @@ const Widget: FC<Swap> = ({
                           {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
                         </Typography>
                       </div>
-                      {/* <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Price Impact
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-200">
-                              {priceImpact?.multiply(-1).toFixed(2)}%
-                            </Typography>
-                          </div> */}
+                      <div className="flex justify-between gap-2">
+                        <Typography variant="xs" className="text-slate-400">
+                          Price Impact
+                        </Typography>
+                        <Typography variant="xs" weight={700} className="text-slate-200">
+                          {priceImpact?.multiply(-1).toFixed(2)}%
+                        </Typography>
+                      </div>
                       <div className="flex justify-between gap-2">
                         <Typography variant="xs" className="text-slate-400">
                           Estimated Processing Time
