@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
     "lint": "turbo run lint",
     "prepare": "husky install ",
-    "sort": "sort-package-json 'package.json' 'apis/{,!(node_modules)/**/package.json' 'apps/{,!(node_modules)/**/package.json' 'examples/{,!(node_modules)/**/package.json' 'packages/{,!(node_modules)/**}/package.json' 'protocols/{,!(node_modules)/**/package.json'",
+    "sort": "sort-package-json '.\\package.json' 'apis/**/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/{,!(node_modules)/**/package.json' 'apps/{,!(node_modules)/**/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/**/package.json' 'protocols/{,!(node_modules)/**/package.json' --check",
     "test": "turbo run test --parallel"
   },

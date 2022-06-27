@@ -1,116 +1,116 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
-import { RPool, RToken } from './PrimaryPools'
-import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
+import { BigNumber } from "@ethersproject/bignumber";
+import { RPool, RToken } from "./PrimaryPools";
+import {ASSERT, getBigNumber, closeValues, DEBUG} from "./Utils";
 
 // Routing info about each one swap
 export interface RouteLeg {
-  poolAddress: string // which pool use for swap
+  poolAddress: string       // which pool use for swap
   poolFee: number
 
-  tokenFrom: RToken // from what token to swap
-  tokenTo: RToken // to what token
+  tokenFrom: RToken         // from what token to swap
+  tokenTo: RToken           // to what token 
 
-  assumedAmountIn: number // assumed number of input token for swapping
-  assumedAmountOut: number // assumed number of output token after swapping
+  assumedAmountIn: number   // assumed number of input token for swapping
+  assumedAmountOut: number  // assumed number of output token after swapping
 
-  swapPortion: number // for router contract
-  absolutePortion: number // to depict at webpage for user
+  swapPortion: number       // for router contract
+  absolutePortion: number   // to depict at webpage for user
 }
 
 export enum RouteStatus {
-  Success = 'Success',
-  NoWay = 'NoWay',
-  Partial = 'Partial',
+  Success = "Success",
+  NoWay = "NoWay",
+  Partial = "Partial",
 }
 
 export interface MultiRoute {
-  status: RouteStatus
-  fromToken: RToken
-  toToken: RToken
-  primaryPrice?: number
-  swapPrice?: number
-  priceImpact?: number
-  amountIn: number
-  amountInBN: BigNumber
-  amountOut: number
-  amountOutBN: BigNumber
-  legs: RouteLeg[]
-  gasSpent: number
-  totalAmountOut: number
-  totalAmountOutBN: BigNumber
+  status: RouteStatus;
+  fromToken: RToken;
+  toToken: RToken;
+  primaryPrice?: number;
+  swapPrice?: number;
+  priceImpact?: number;
+  amountIn: number;
+  amountInBN: BigNumber;
+  amountOut: number;
+  amountOutBN: BigNumber;
+  legs: RouteLeg[];
+  gasSpent: number;
+  totalAmountOut: number;
+  totalAmountOutBN: BigNumber;
 }
 
 export class Edge {
-  pool: RPool
-  vert0: Vertice
-  vert1: Vertice
+  pool: RPool;
+  vert0: Vertice;
+  vert1: Vertice;
 
-  canBeUsed: boolean
-  direction: boolean
-  amountInPrevious: number // How many liquidity were passed from vert0 to vert1
-  amountOutPrevious: number // How many liquidity were passed from vert0 to vert1
-  spentGas: number // How much gas was spent for this edge
-  spentGasNew: number //  How much gas was will be spent for this edge
-  bestEdgeIncome: number // debug data
+  canBeUsed: boolean;
+  direction: boolean;
+  amountInPrevious: number;   // How many liquidity were passed from vert0 to vert1
+  amountOutPrevious: number;  // How many liquidity were passed from vert0 to vert1
+  spentGas: number            // How much gas was spent for this edge
+  spentGasNew: number         //  How much gas was will be spent for this edge
+  bestEdgeIncome: number;     // debug data
+
 
   constructor(p: RPool, v0: Vertice, v1: Vertice) {
-    this.pool = p
-    this.vert0 = v0
-    this.vert1 = v1
-    this.amountInPrevious = 0
-    this.amountOutPrevious = 0
-    this.canBeUsed = true
-    this.direction = true
-    this.spentGas = 0
-    this.spentGasNew = 0
-    this.bestEdgeIncome = 0
+    this.pool = p;
+    this.vert0 = v0;
+    this.vert1 = v1;
+    this.amountInPrevious = 0;
+    this.amountOutPrevious = 0;
+    this.canBeUsed = true;
+    this.direction = true;
+    this.spentGas = 0;
+    this.spentGasNew = 0;
+    this.bestEdgeIncome = 0;
   }
 
   cleanTmpData() {
-    this.amountInPrevious = 0
-    this.amountOutPrevious = 0
-    this.canBeUsed = true
-    this.direction = true
-    this.spentGas = 0
-    this.spentGasNew = 0
-    this.bestEdgeIncome = 0
+    this.amountInPrevious = 0;
+    this.amountOutPrevious = 0;
+    this.canBeUsed = true;
+    this.direction = true;
+    this.spentGas = 0;
+    this.spentGasNew = 0;
+    this.bestEdgeIncome = 0;
   }
 
   reserve(v: Vertice): BigNumber {
     return v === this.vert0 ? this.pool.reserve0 : this.pool.reserve1
   }
 
-  calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
-    let res, gas
+  calcOutput(v: Vertice, amountIn: number): {out: number, gasSpent: number} {
+    let res, gas;
     if (v === this.vert1) {
       if (this.direction) {
         if (amountIn < this.amountOutPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut(this.amountOutPrevious - amountIn, true)
+          const {inp, gasSpent} = this.pool.calcInByOut(this.amountOutPrevious - amountIn, true)
           res = this.amountInPrevious - inp
           gas = gasSpent
         } else {
-          const { out, gasSpent } = this.pool.calcOutByIn(amountIn - this.amountOutPrevious, false)
+          const {out, gasSpent} = this.pool.calcOutByIn(amountIn - this.amountOutPrevious, false)
           res = out + this.amountInPrevious
           gas = gasSpent
         }
       } else {
-        const { out, gasSpent } = this.pool.calcOutByIn(this.amountOutPrevious + amountIn, false)
-        res = out - this.amountInPrevious
+        const {out, gasSpent} = this.pool.calcOutByIn(this.amountOutPrevious + amountIn, false)
+        res = out - this.amountInPrevious;
         gas = gasSpent
       }
     } else {
       if (this.direction) {
-        const { out, gasSpent } = this.pool.calcOutByIn(this.amountInPrevious + amountIn, true)
+        const {out, gasSpent} = this.pool.calcOutByIn(this.amountInPrevious + amountIn, true)
         res = out - this.amountOutPrevious
         gas = gasSpent
       } else {
         if (amountIn < this.amountInPrevious) {
-          const { inp, gasSpent } = this.pool.calcInByOut(this.amountInPrevious - amountIn, false)
+          const {inp, gasSpent} = this.pool.calcInByOut(this.amountInPrevious - amountIn, false)
           res = this.amountOutPrevious - inp
           gas = gasSpent
         } else {
-          const { out, gasSpent } = this.pool.calcOutByIn(amountIn - this.amountInPrevious, true)
+          const {out, gasSpent} = this.pool.calcOutByIn(amountIn - this.amountInPrevious, true)
           res = out + this.amountOutPrevious
           gas = gasSpent
         }
@@ -119,39 +119,39 @@ export class Edge {
 
     // this.testApply(v, amountIn, out);
 
-    return { out: res, gasSpent: gas - this.spentGas }
+    return {out: res, gasSpent: gas - this.spentGas};
   }
 
-  calcInput(v: Vertice, amountOut: number): { inp: number; gasSpent: number } {
-    let res, gas
+  calcInput(v: Vertice, amountOut: number): {inp: number, gasSpent: number}  {
+    let res, gas;
     if (v === this.vert1) {
       if (!this.direction) {
         if (amountOut < this.amountOutPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn(this.amountOutPrevious - amountOut, false)
+          const {out, gasSpent}  = this.pool.calcOutByIn(this.amountOutPrevious - amountOut, false)
           res = this.amountInPrevious - out
           gas = gasSpent
         } else {
-          const { inp, gasSpent } = this.pool.calcInByOut(amountOut - this.amountOutPrevious, true)
+          const {inp, gasSpent} = this.pool.calcInByOut(amountOut - this.amountOutPrevious, true)
           res = inp + this.amountInPrevious
           gas = gasSpent
         }
       } else {
-        const { inp, gasSpent } = this.pool.calcInByOut(this.amountOutPrevious + amountOut, true)
+        const {inp, gasSpent} = this.pool.calcInByOut(this.amountOutPrevious + amountOut, true)
         res = inp - this.amountInPrevious
         gas = gasSpent
       }
     } else {
       if (!this.direction) {
-        const { inp, gasSpent } = this.pool.calcInByOut(this.amountInPrevious + amountOut, false)
+        const {inp, gasSpent} = this.pool.calcInByOut(this.amountInPrevious + amountOut, false)
         res = inp - this.amountOutPrevious
         gas = gasSpent
       } else {
         if (amountOut < this.amountInPrevious) {
-          const { out, gasSpent } = this.pool.calcOutByIn(this.amountInPrevious - amountOut, true)
+          const {out, gasSpent} = this.pool.calcOutByIn(this.amountInPrevious - amountOut, true)
           res = this.amountOutPrevious - out
           gas = gasSpent
         } else {
-          const { inp, gasSpent } = this.pool.calcInByOut(amountOut - this.amountInPrevious, false)
+          const {inp, gasSpent} = this.pool.calcInByOut(amountOut - this.amountInPrevious, false)
           res = inp + this.amountOutPrevious
           gas = gasSpent
         }
@@ -160,23 +160,23 @@ export class Edge {
 
     // this.testApply(v, amountIn, out);
 
-    return { inp: res, gasSpent: gas - this.spentGas }
+    return {inp: res, gasSpent: gas - this.spentGas};
   }
 
   checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
     if (from === this.vert0) {
       const r1 = parseInt(this.pool.reserve1.toString())
       if (this.direction) {
-        return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity
+        return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity;
       } else {
-        return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity
+        return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity;
       }
     } else {
       const r0 = parseInt(this.pool.reserve0.toString())
       if (this.direction) {
-        return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity
+        return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity;
       } else {
-        return r0 - amountOut - this.amountInPrevious < this.pool.minLiquidity
+        return r0 - amountOut - this.amountInPrevious < this.pool.minLiquidity;
       }
     }
   }
@@ -209,15 +209,27 @@ export class Edge {
     } else console.error('Error 221')
 
     if (directionNew) {
-      const calc = this.pool.calcOutByIn(amountInNew, true).out
-      const res = closeValues(amountOutNew, calc, 1e-6)
-      if (!res) console.log('Err 225-1 !!', amountOutNew, calc, Math.abs(calc / amountOutNew - 1))
-      return res
+      const calc = this.pool.calcOutByIn(amountInNew, true).out;
+      const res = closeValues(amountOutNew, calc, 1e-6);
+      if (!res)
+        console.log(
+          "Err 225-1 !!",
+          amountOutNew,
+          calc,
+          Math.abs(calc / amountOutNew - 1)
+        );
+      return res;
     } else {
-      const calc = this.pool.calcOutByIn(amountOutNew, false).out
-      const res = closeValues(amountInNew, calc, 1e-6)
-      if (!res) console.log('Err 225-2!!', amountInNew, calc, Math.abs(calc / amountInNew - 1))
-      return res
+      const calc = this.pool.calcOutByIn(amountOutNew, false).out;
+      const res = closeValues(amountInNew, calc, 1e-6);
+      if (!res)
+        console.log(
+          "Err 225-2!!",
+          amountInNew,
+          calc,
+          Math.abs(calc / amountInNew - 1)
+        );
+      return res;
     }
   }
 
@@ -241,7 +253,7 @@ export class Edge {
         this.amountInPrevious = -inNew
         this.amountOutPrevious = -outNew
       }
-    } else console.error('Error 221')
+    } else console.error("Error 221");
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
@@ -250,13 +262,13 @@ export class Edge {
           this.amountOutPrevious,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out,
           1e-6
-        )
+        );
       else {
         return closeValues(
           this.amountInPrevious,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out,
           1e-6
-        )
+        );
       }
     }, `Error 225`)
   }
@@ -325,9 +337,9 @@ export class Graph {
   tokens: Map<string, Vertice>
 
   constructor(pools: RPool[], baseToken: RToken, gasPrice: number) {
-    this.vertices = []
-    this.edges = []
-    this.tokens = new Map()
+    this.vertices = [];
+    this.edges = [];
+    this.tokens = new Map();
     pools.forEach((p) => {
       const v0 = this.getOrCreateVertice(p.token0)
       const v1 = this.getOrCreateVertice(p.token1)
@@ -343,41 +355,41 @@ export class Graph {
   }
 
   cleanTmpData() {
-    this.edges.forEach((e) => e.cleanTmpData())
-    this.vertices.forEach((v) => v.cleanTmpData())
+    this.edges.forEach(e => e.cleanTmpData())
+    this.vertices.forEach(v => v.cleanTmpData())
   }
 
   // Set prices using greedy algorithm
   setPricesStable(from: Vertice, price: number, gasPrice: number) {
-    this.vertices.forEach((v) => (v.price = 0)) // initialization
+    this.vertices.forEach(v => v.price = 0) // initialization
     from.price = price
     from.gasPrice = gasPrice
-
+    
     const edgeValues = new Map<Edge, number>()
     const value = (e: Edge): number => edgeValues.get(e) as number
-
+    
     function addVertice(v: Vertice) {
-      const newEdges = v.edges.filter((e) => v.getNeibour(e)?.price == 0)
-      newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())))
+      const newEdges = v.edges.filter(e => v.getNeibour(e)?.price == 0)
+      newEdges.forEach(e => edgeValues.set(e, v.price*parseInt(e.reserve(v).toString())) )
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
-        if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge)
+        if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge)  
         else res.push(newEdges.shift() as Edge)
       }
       nextEdges = [...res, ...nextEdges, ...newEdges]
     }
-
+    
     let nextEdges: Edge[] = []
     addVertice(from)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
-      const [vFrom, vTo] =
-        bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
+      const [vFrom, vTo] = bestEdge.vert1.price !== 0
+        ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
       if (vTo.price !== 0) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      vTo.price = vFrom.price * p
-      vTo.gasPrice = vFrom.gasPrice / p
+      let p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1);
+      vTo.price = vFrom.price*p
+      vTo.gasPrice = vFrom.gasPrice/p
       addVertice(vTo)
     }
   }
@@ -391,11 +403,11 @@ export class Graph {
       .map((e): [Edge, number] => [e, parseInt(e.reserve(from).toString())])
       .sort(([_1, r1], [_2, r2]) => r2 - r1)
     edges.forEach(([e, _]) => {
-      const v = e.vert0 === from ? e.vert1 : e.vert0
-      if (v.price !== 0) return
-      const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
-      this.setPrices(v, price * p, gasPrice / p)
-    })
+      const v = e.vert0 === from ? e.vert1 : e.vert0;
+      if (v.price !== 0) return;
+      let p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1);
+      this.setPrices(v, price * p, gasPrice / p);
+    });
   }
 
   getOrCreateVertice(token: RToken) {
@@ -501,7 +513,7 @@ export class Graph {
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
       e.spentGasNew = 0
-    })
+    });
     this.vertices.forEach((v) => {
       v.bestIncome = 0
       v.gasSpent = 0
@@ -537,7 +549,7 @@ export class Graph {
         for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeibour(v.bestSource)) {
           bestPath.unshift(v.bestSource)
         }
-        DEBUG(() => console.log(debug_info))
+        DEBUG(() => console.log(debug_info)) 
         return {
           path: bestPath,
           output: finish.bestIncome,
@@ -552,9 +564,8 @@ export class Graph {
         if (processedVert.has(v2)) return
         let newIncome: number, gas
         try {
-          const { out, gasSpent } = e.calcOutput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
-          if (!isFinite(out) || !isFinite(gasSpent))
-            // Math errors protection
+          const {out, gasSpent} = e.calcOutput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
+          if (!isFinite(out) || !isFinite(gasSpent))   // Math errors protection
             return
           newIncome = out
           gas = gasSpent
@@ -570,9 +581,9 @@ export class Graph {
         const price = v2.price / finish.price
         const newTotal = newIncome * price - newGasSpent * gasPrice
 
-        console.assert(e.bestEdgeIncome === 0, 'Error 373')
-        e.bestEdgeIncome = newIncome * price
-        e.spentGasNew = e.spentGas + gas
+        console.assert(e.bestEdgeIncome === 0, "Error 373");
+        e.bestEdgeIncome = newIncome * price;
+        e.spentGasNew = e.spentGas + gas;
 
         if (!v2.bestSource) nextVertList.push(v2)
         if (!v2.bestSource || newTotal > v2.bestTotal) {
@@ -584,7 +595,7 @@ export class Graph {
           v2.bestIncome = newIncome
           v2.gasSpent = newGasSpent
           v2.bestTotal = newTotal
-          v2.bestSource = e
+          v2.bestSource = e          
         }
       })
       processedVert.add(closestVert)
@@ -613,7 +624,7 @@ export class Graph {
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
       e.spentGasNew = 0
-    })
+    });
     this.vertices.forEach((v) => {
       v.bestIncome = 0
       v.gasSpent = 0
@@ -664,9 +675,8 @@ export class Graph {
         if (processedVert.has(v2)) return
         let newIncome: number, gas
         try {
-          const { inp, gasSpent } = e.calcInput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
-          if (!isFinite(inp) || !isFinite(gasSpent))
-            // Math errors protection
+          const {inp, gasSpent} = e.calcInput(closestVert as Vertice, (closestVert as Vertice).bestIncome)
+          if (!isFinite(inp) || !isFinite(gasSpent))   // Math errors protection
             return
           if (inp < 0) return // No enouph liquidity in the pool
           newIncome = inp
@@ -679,9 +689,9 @@ export class Graph {
         const price = v2.price / finish.price
         const newTotal = newIncome * price + newGasSpent * gasPrice
 
-        console.assert(e.bestEdgeIncome === 0, 'Error 373')
-        e.bestEdgeIncome = newIncome * price
-        e.spentGasNew = e.spentGas + gas
+        console.assert(e.bestEdgeIncome === 0, "Error 373");
+        e.bestEdgeIncome = newIncome * price;
+        e.spentGasNew = e.spentGas + gas;
 
         if (!v2.bestSource) nextVertList.push(v2)
         if (!v2.bestSource || newTotal < v2.bestTotal) {
@@ -744,7 +754,7 @@ export class Graph {
   getPrimaryPriceForPath(from: Vertice, path: Edge[]): number {
     let p = 1
     let prevToken = from
-    path.forEach((edge) => {
+    path.forEach( edge => {
       const direction = edge.vert0 === prevToken
       const edgePrice = edge.pool.calcCurrentPriceWithoutFee(direction)
       p *= edgePrice
@@ -808,7 +818,7 @@ export class Graph {
 
     const fromVert = this.tokens.get(from.address) as Vertice
     const toVert = this.tokens.get(to.address) as Vertice
-    const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
+    const {legs, gasSpent, topologyWasChanged} = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     if (topologyWasChanged) {
@@ -817,11 +827,9 @@ export class Graph {
 
     let swapPrice, priceImpact
     try {
-      swapPrice = output / amountIn
-      priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
-    } catch (e) {
-      /* skip division by 0 errors*/
-    }
+      swapPrice = output/amountIn
+      priceImpact = primaryPrice !== undefined? 1- swapPrice/primaryPrice : undefined
+    } catch(e) { /* skip division by 0 errors*/}
 
     return {
       status,
@@ -896,7 +904,7 @@ export class Graph {
 
     const fromVert = this.tokens.get(from.address) as Vertice
     const toVert = this.tokens.get(to.address) as Vertice
-    const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
+    const {legs, gasSpent, topologyWasChanged} = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     if (topologyWasChanged) {
@@ -905,11 +913,9 @@ export class Graph {
 
     let swapPrice, priceImpact
     try {
-      swapPrice = amountOut / input
-      priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
-    } catch (e) {
-      /* skip division by 0 errors*/
-    }
+      swapPrice = amountOut/input
+      priceImpact = primaryPrice !== undefined? 1- swapPrice/primaryPrice : undefined
+    } catch(e) { /* skip division by 0 errors*/}
 
     return {
       status,
@@ -929,15 +935,12 @@ export class Graph {
     }
   }
 
-  getRouteLegs(
-    from: Vertice,
-    to: Vertice
-  ): {
-    legs: RouteLeg[]
-    gasSpent: number
+  getRouteLegs(from: Vertice, to: Vertice): {
+    legs: RouteLeg[],
+    gasSpent: number,
     topologyWasChanged: boolean
   } {
-    const { vertices, topologyWasChanged } = this.cleanTopology(from, to)
+    const {vertices, topologyWasChanged} = this.cleanTopology(from, to)
     const legs: RouteLeg[] = []
     let gasSpent = 0
     vertices.forEach((n) => {
@@ -960,7 +963,7 @@ export class Graph {
           tokenFrom: n.token,
           tokenTo: (n.getNeibour(edge) as Vertice).token,
           assumedAmountIn: edge.direction ? edge.amountInPrevious : edge.amountOutPrevious,
-          assumedAmountOut: edge.direction ? edge.amountOutPrevious : edge.amountInPrevious,
+          assumedAmountOut:  edge.direction ? edge.amountOutPrevious : edge.amountInPrevious,
           swapPortion: quantity,
           absolutePortion: p / total,
         })
@@ -969,12 +972,12 @@ export class Graph {
       })
       console.assert(outAmount / total < 1e-12, 'Error 281')
     })
-    return { legs, gasSpent, topologyWasChanged }
+    return {legs, gasSpent, topologyWasChanged}
   }
 
-  edgeFrom(e: Edge): { vert: Vertice; amount: number } | undefined {
+  edgeFrom(e: Edge): {vert: Vertice, amount: number} | undefined {
     if (e.amountInPrevious === 0) return undefined
-    return e.direction ? { vert: e.vert0, amount: e.amountInPrevious } : { vert: e.vert1, amount: e.amountOutPrevious }
+    return e.direction ? {vert: e.vert0, amount: e.amountInPrevious} : {vert: e.vert1, amount: e.amountOutPrevious}
   }
 
   // TODO: make full test coverage!
@@ -982,62 +985,66 @@ export class Graph {
     const amounts = new Map<string, number>()
     amounts.set(legs[0].tokenFrom.address, amountIn)
     legs.forEach((l) => {
-      const vert = this.tokens.get(l.tokenFrom.address)
-      console.assert(vert !== undefined, 'Internal Error 570')
-      const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
-      console.assert(edge !== undefined, 'Internel Error 569')
-      const pool = (edge as Edge).pool
-      const direction = vert === (edge as Edge).vert0
+      const vert = this.tokens.get(l.tokenFrom.address);
+      console.assert(vert !== undefined, "Internal Error 570");
+      const edge = (vert as Vertice).edges.find(
+        (e) => e.pool.address === l.poolAddress
+      );
+      console.assert(edge !== undefined, "Internel Error 569");
+      const pool = (edge as Edge).pool;
+      const direction = vert === (edge as Edge).vert0;
 
-      const inputTotal = amounts.get(l.tokenFrom.address)
-      console.assert(inputTotal !== undefined, 'Internal Error 564')
-      const input = (inputTotal as number) * l.swapPortion
-      amounts.set(l.tokenFrom.address, (inputTotal as number) - input)
-      const output = pool.calcOutByIn(input, direction).out
+      const inputTotal = amounts.get(l.tokenFrom.address);
+      console.assert(inputTotal !== undefined, "Internal Error 564");
+      const input = (inputTotal as number) * l.swapPortion;
+      amounts.set(l.tokenFrom.address, (inputTotal as number) - input);
+      const output = pool.calcOutByIn(input, direction).out;
 
-      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
-      const prevAmount = amounts.get(vertNext.token.address)
-      amounts.set(vertNext.token.address, (prevAmount || 0) + output)
-    })
-    return amounts.get(legs[legs.length - 1].tokenTo.address) || 0
+      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice;
+      const prevAmount = amounts.get(vertNext.token.address);
+      amounts.set(vertNext.token.address, (prevAmount || 0) + output);
+    });
+    return amounts.get(legs[legs.length-1].tokenTo.address) || 0;
   }
 
   // TODO: make full test coverage!
   calcLegsAmountIn(legs: RouteLeg[], amountOut: number) {
     const totalOutputAssumed = new Map<string, number>()
-    legs.forEach((l) => {
+    legs.forEach(l => {
       const prevValue = totalOutputAssumed.get(l.tokenFrom.address) || 0
       totalOutputAssumed.set(l.tokenFrom.address, prevValue + l.assumedAmountOut)
     })
 
     const amounts = new Map<string, number>()
-    amounts.set(legs[legs.length - 1].tokenTo.address, amountOut)
+    amounts.set(legs[legs.length-1].tokenTo.address, amountOut)
     for (let i = legs.length - 1; i >= 0; --i) {
       const l = legs[i]
-      const vert = this.tokens.get(l.tokenTo.address)
-      console.assert(vert !== undefined, 'Internal Error 884')
-      const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
-      console.assert(edge !== undefined, 'Internel Error 888')
-      const pool = (edge as Edge).pool
-      const direction = vert === (edge as Edge).vert1
+      const vert = this.tokens.get(l.tokenTo.address);
+      console.assert(vert !== undefined, "Internal Error 884");
+      const edge = (vert as Vertice).edges.find(
+        (e) => e.pool.address === l.poolAddress
+      );
+      console.assert(edge !== undefined, "Internel Error 888");
+      const pool = (edge as Edge).pool;
+      const direction = vert === (edge as Edge).vert1;
 
-      const outputTotal = amounts.get(l.tokenTo.address)
-      console.assert(outputTotal !== undefined, 'Internal Error 893')
+      const outputTotal = amounts.get(l.tokenTo.address);
+      console.assert(outputTotal !== undefined, "Internal Error 893");
       const totalAssumed = totalOutputAssumed.get(l.tokenFrom.address)
-      console.assert(totalAssumed !== undefined, 'Internal Error 903')
-      const output = ((outputTotal as number) * l.assumedAmountOut) / (totalAssumed as number)
-      const input = pool.calcInByOut(output, direction).inp
+      console.assert(totalAssumed !== undefined, "Internal Error 903");
+      const output = (outputTotal as number) * l.assumedAmountOut / (totalAssumed as number);
+      const input = pool.calcInByOut(output, direction).inp;
 
-      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
-      const prevAmount = amounts.get(vertNext.token.address)
-      amounts.set(vertNext.token.address, (prevAmount || 0) + input)
-    }
-    return amounts.get(legs[0].tokenFrom.address) || 0
+      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice;
+      const prevAmount = amounts.get(vertNext.token.address);
+      amounts.set(vertNext.token.address, (prevAmount || 0) + input);
+    };
+    return amounts.get(legs[0].tokenFrom.address) || 0;
   }
 
   // removes all cycles if there are any, then removes all dead end could appear after cycle removing
   // Returns clean result topologically sorted
-  cleanTopology(from: Vertice, to: Vertice): { vertices: Vertice[]; topologyWasChanged: boolean } {
+  cleanTopology(from: Vertice, to: Vertice): {vertices: Vertice[], topologyWasChanged: boolean} {
     let topologyWasChanged = false
     let result = this.topologySort(from, to)
     if (result.status !== 2) {
@@ -1052,9 +1059,9 @@ export class Graph {
         result = this.topologySort(from, to)
       }
       console.assert(result.status === 2, 'Internal Error 563')
-      if (result.status !== 2) return { vertices: [], topologyWasChanged }
+      if (result.status !== 2) return {vertices: [], topologyWasChanged}
     }
-    return { vertices: result.vertices, topologyWasChanged }
+    return {vertices: result.vertices, topologyWasChanged}
   }
 
   removeDeadEnds(verts: Vertice[]) {
@@ -1081,7 +1088,6 @@ export class Graph {
         minOutput = out
       }
     })
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     minVert.getOutputEdges().forEach((e) => {
       if (minVert.getNeibour(e) !== minVertNext) return
@@ -1093,7 +1099,7 @@ export class Graph {
   // if there is a cycle - returns [0, <List of envolved vertices in the cycle>]
   // if there are no cycles but deadends- returns [3, <List of all envolved deadend vertices>]
   // if there are no cycles or deadends- returns [2, <List of all envolved vertices topologically sorted>]
-  topologySort(from: Vertice, to: Vertice): { status: number; vertices: Vertice[] } {
+  topologySort(from: Vertice, to: Vertice): {status: number, vertices: Vertice[]} {
     // undefined or 0 - not processed, 1 - in process, 2 - finished, 3 - dedend
     const vertState = new Map<Vertice, number>()
     const vertsFinished: Vertice[] = []
@@ -1147,15 +1153,15 @@ export class Graph {
     }
 
     const res = topSortRecursive(from)
-    if (res === 0) return { status: 0, vertices: foundCycle }
-    if (foundDeadEndVerts.length) return { status: 3, vertices: foundDeadEndVerts }
+    if (res === 0) return {status: 0, vertices: foundCycle}
+    if (foundDeadEndVerts.length) return {status: 3, vertices: foundDeadEndVerts}
     ASSERT(() => {
       if (vertsFinished[0] !== to) return false
       if (vertsFinished[vertsFinished.length - 1] !== from) return false
       return true
     }, 'Internal Error 614')
-    if (res === 2) return { status: 2, vertices: vertsFinished.reverse() }
+    if (res === 2) return {status: 2, vertices: vertsFinished.reverse()}
     console.assert(true, 'Internal Error 612')
-    return { status: 1, vertices: [] }
+    return {status: 1, vertices: []}
   }
 }

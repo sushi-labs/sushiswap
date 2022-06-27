@@ -1,45 +1,39 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.0-canary.88",
+  "version": "1.0.0-canary.100",
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
   },
   "license": "MIT",
-  "author": "Ilya",
-  "sideEffects": false,
+  "author": "Ilya Lyalin",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
+  "module": "dist/tines.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist/**"
+    "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "lint": "TIMING=1 eslint src --fix",
-    "prepublishOnly": "pnpm build",
-    "test": "jest --passWithNoTests"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "build": "tsdx build",
+    "clear_jest_cache": "tsdx test --clearCache --passWithNoTests",
+    "lint": "tsdx lint src test",
+    "prepublishOnly": "npx tsdx build",
+    "test": "tsdx test",
+    "test_debug": "node --inspect-brk '../../node_modules/tsdx/dist/index.js' test",
+    "watch": "tsdx watch"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.0.0",
-    "@sushiswap/currency": "workspace:*"
+    "@ethersproject/bignumber": "^5.4.0",
+    "@sushiswap/core-sdk": "1.0.0-canary.116"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^17.0.35",
     "@types/seedrandom": "^3.0.1",
-    "eslint": "^8.15.0",
     "seedrandom": "^3.0.5",
-    "tsup": "^6.0.1",
-    "typescript": "^4.0.0"
+    "tsdx": "^0.14.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

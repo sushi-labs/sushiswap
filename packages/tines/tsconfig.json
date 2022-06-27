@@ -1,5 +1,8 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
-  "include": ["."],
-  "exclude": ["node_modules"]
+  "extends": "@sushiswap/typescript-config/nextjs.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "src",
+  }
 }
