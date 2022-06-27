@@ -18,22 +18,18 @@ interface CancelModalProps {
 
 export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, title }) => {
   const [open, setOpen] = useState(false)
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { data: account } = useAccount()
+  const { address: account } = useAccount()
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: address,
+    contractInterface: abi,
+    functionName: fn,
+    onSuccess() {
+      setOpen(false)
     },
-    fn,
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const cancelStream = useCallback(async () => {
     if (!stream || !account || !activeChain?.id) return
@@ -51,7 +47,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
     })
   }, [account, activeChain?.id, fundSource, stream, writeAsync])
 
-  if (!account || !stream?.canCancel(account?.address)) return <></>
+  if (!account || !stream?.canCancel(address)) return <></>
 
   return (
     <>

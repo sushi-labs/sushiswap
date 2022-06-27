@@ -16,9 +16,14 @@ interface TransferModalProps {
   fn?: string
 }
 
-export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn = 'transferFrom' }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+export const TransferModal: FC<TransferModalProps> = ({
+  stream,
+  abi,
+  address: contractAddress,
+  fn = 'transferFrom',
+}) => {
+  const { address: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
   const [error, setError] = useState<string>()
@@ -27,25 +32,21 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
     chainId: ChainId.ETHEREUM,
   })
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: fn,
+    onSuccess() {
+      setOpen(false)
     },
-    fn,
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const transferStream = useCallback(async () => {
     if (!stream || !account || !recipient || !resolvedAddress || !activeChain?.id) return
     setError(undefined)
 
     try {
-      const data = await writeAsync({ args: [account?.address, resolvedAddress, stream?.id] })
+      const data = await writeAsync({ args: [account, resolvedAddress, stream?.id] })
 
       createToast({
         txHash: data.hash,
@@ -72,7 +73,7 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
         color="gray"
         fullWidth
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
-        disabled={!account || !stream?.canTransfer(account.address) || !stream?.remainingAmount?.greaterThan(ZERO)}
+        disabled={!account || !stream?.canTransfer(account) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
         Transfer
@@ -92,7 +93,7 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
             </p>
           </Typography>
           <Form.Control label="Recipient">
-            <Web3Input.Ens value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
+            <Web3Input.Ens id="ens-input" value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
           </Form.Control>
 
           <Button

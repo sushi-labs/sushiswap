@@ -19,9 +19,9 @@ interface UpdateModalProps {
   address: string
 }
 
-export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress }) => {
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
@@ -43,18 +43,14 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
     return value
   }, [amount, stream])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: 'updateStream',
+    onSuccess() {
+      setOpen(false)
     },
-    'updateStream',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const updateStream = useCallback(async () => {
     if (!stream || !activeChain?.id) return
@@ -91,7 +87,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
     }
   }, [activeChain?.id, amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream || !account || stream?.canUpdate(account.address)) return null
+  if (!stream || !address || stream?.canUpdate(address)) return null
 
   return (
     <>
@@ -100,7 +96,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
         fullWidth
         startIcon={<PencilIcon width={18} height={18} />}
         onClick={() => setOpen(true)}
-        disabled={!account || !stream?.canUpdate(account.address)}
+        disabled={!address || !stream?.canUpdate(address)}
       >
         Update
       </Button>
@@ -163,7 +159,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
                 onChange={setAmount}
                 currency={stream.token}
                 value={amount}
-                account={account?.address}
+                account={address}
               />
             </div>
           </div>

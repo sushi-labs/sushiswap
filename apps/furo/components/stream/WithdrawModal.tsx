@@ -21,8 +21,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [error, setError] = useState<string>()
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
 
   const amount = useMemo(() => {
@@ -30,15 +30,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     return tryParseAmount(input, stream.token)
   }, [input, stream?.token])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    getFuroStreamContractConfig(activeChain?.id),
-    'withdrawFromStream',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    ...getFuroStreamContractConfig(activeChain?.id),
+    onSuccess() {
+      setOpen(false)
+    },
+    functionName: 'withdrawFromStream',
+  })
 
   const withdraw = useCallback(async () => {
     if (!stream || !amount || !activeChain?.id) return
@@ -75,13 +73,14 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     }
   }, [activeChain?.id, amount, fundSource, stream, writeAsync])
 
+  console.log(address)
   return (
     <>
       <Button
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account?.address) || !balance?.greaterThan(ZERO)}
+        disabled={!address || !stream?.canWithdraw(address) || !balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}

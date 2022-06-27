@@ -22,8 +22,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [error, setError] = useState<string>()
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(activeChain?.id)
 
@@ -32,15 +32,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     return tryParseAmount(input, vesting.token)
   }, [input, vesting?.token])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    getFuroVestingContractConfig(activeChain?.id),
-    'withdraw',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    ...getFuroVestingContractConfig(activeChain?.id),
+    functionName: 'withdraw',
+    onSuccess() {
+      setOpen(false)
+    },
+  })
 
   const withdraw = useCallback(async () => {
     if (!vesting || !amount || !activeChain?.id) return
@@ -71,7 +69,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
 
       log.tenderly({
         chainId: activeChain?.id,
-        from: account?.address,
+        from: address,
         to:
           furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
           AddressZero,
@@ -82,7 +80,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         ]),
       })
     }
-  }, [account?.address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
+  }, [address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
 
   return (
     <>
@@ -90,7 +88,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !vesting?.canWithdraw(account.address)}
+        disabled={!address || !vesting?.canWithdraw(address)}
         onClick={() => {
           setOpen(true)
         }}

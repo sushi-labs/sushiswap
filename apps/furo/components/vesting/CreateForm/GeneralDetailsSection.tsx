@@ -13,18 +13,18 @@ import { CreateVestingFormData } from './types'
 
 export const GeneralDetailsSection = () => {
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const [dialogOpen, setDialogOpen] = useState(false)
   const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
   // @ts-ignore
   const currency = watch('currency')
 
-  const { data: walletBalance } = useWalletBalance(account?.address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
+  const { data: walletBalance } = useWalletBalance(address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
 
   return (
     <Form.Section

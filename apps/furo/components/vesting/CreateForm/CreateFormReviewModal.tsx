@@ -51,7 +51,7 @@ interface CreateFormReviewModal {
 }
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const {
     currency,
     startDate,

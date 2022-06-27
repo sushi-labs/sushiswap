@@ -1,7 +1,5 @@
-import { FallbackProvider, StaticJsonRpcProvider, WebSocketProvider } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
-import { QueryClient } from 'react-query'
-import { allChains, Client, configureChains, createClient } from 'wagmi'
+import { allChains, configureChains, createClient } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -156,11 +154,11 @@ const { chains, provider, webSocketProvider } = configureChains(
   ]
 )
 
-export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketProvider> & {
-  queryClient: QueryClient
-} = createClient({
+export const client = createClient({
+  provider,
+  webSocketProvider,
   autoConnect: true,
-  connectors({ chainId }) {
+  connectors() {
     return [
       new InjectedConnector({
         chains,
@@ -169,8 +167,6 @@ export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketP
         chains,
         // TODO: Flesh out wallet connect options?
         options: {
-          // Bridge?
-          chainId,
           qrcode: true,
         },
       }),
@@ -180,11 +176,8 @@ export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketP
         options: {
           appName: 'Sushi 2.0',
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
-          chainId,
         },
       }),
     ]
   },
-  provider,
-  webSocketProvider,
 })

@@ -13,8 +13,8 @@ import { transformVestingFormData } from './transformVestingFormData'
 import { CreateVestingFormData, CreateVestingFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   const [review, setReview] = useState(false)
 
   const methods = useForm<CreateVestingFormData>({
@@ -50,7 +50,7 @@ export const CreateForm: FC = () => {
     reset()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, account?.address])
+  }, [activeChain?.id, address])
 
   return (
     <>

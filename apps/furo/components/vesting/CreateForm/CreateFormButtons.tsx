@@ -31,8 +31,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     stepConfig,
   },
 }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingContract(activeChain?.id)
@@ -59,7 +59,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   const createVesting = useCallback(async () => {
-    if (!contract || !account?.address || !activeChain?.id) return
+    if (!contract || !address || !activeChain?.id) return
     if (
       !recipient ||
       !currency ||
@@ -73,7 +73,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     }
 
     const actions = [
-      approveBentoBoxAction({ contract, user: account.address, signature }),
+      approveBentoBoxAction({ contract, user: address, signature }),
       vestingCreationAction({
         contract,
         recipient,
@@ -91,7 +91,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     try {
       const data = await sendTransactionAsync({
         request: {
-          from: account.address,
+          from: address,
           to: contract.address,
           data: batchAction({ contract, actions }),
           value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
@@ -119,14 +119,14 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     } catch (e: any) {
       log.tenderly({
         chainId: activeChain?.id,
-        from: account.address,
+        from: address,
         to: contract.address,
         data: batchAction({ contract, actions }),
         value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
       })
     }
   }, [
-    account?.address,
+    address,
     activeChain?.id,
     cliffDuration,
     contract,

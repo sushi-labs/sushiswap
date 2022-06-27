@@ -21,7 +21,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 import { ChartHover } from '../../types'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
@@ -67,8 +67,7 @@ const _Streams: FC = () => {
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
   const connect = useConnect()
-  const { data: account } = useAccount()
-  const { connecting, reconnecting } = useWalletState(connect, account?.address)
+  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
 
   const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>
     fetch(url).then((response) => response.json())
