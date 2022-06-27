@@ -51,9 +51,20 @@ export function getBigNumber(value: number): BigNumber {
 interface Swap {
   width?: number | string
   theme?: Theme
+  initialSrcChainId: number
+  initialDstChainId: number
+  initialSrcToken: Currency
+  initialDstToken: Currency
 }
 
-const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
+const _Swap: FC<Swap> = ({
+  width = 360,
+  theme = defaultTheme,
+  initialSrcChainId = ChainId.AVALANCHE,
+  initialDstChainId = ChainId.FANTOM,
+  initialSrcToken = Native.onChain(initialSrcChainId),
+  initialDstToken = Native.onChain(initialDstChainId),
+}) => {
   const { data: account } = useAccount()
   const { activeChain, switchNetwork } = useNetwork()
 
@@ -61,19 +72,19 @@ const _Swap: FC<Swap> = ({ width = 360, theme = defaultTheme }) => {
 
   const [signature, setSignature] = useState<Signature>()
 
-  const [srcChainId, setSrcChainId] = useState(ChainId.AVALANCHE)
-  const [dstChainId, setDstChainId] = useState(ChainId.FANTOM)
+  const [srcChainId, setSrcChainId] = useState(initialSrcChainId)
+  const [dstChainId, setDstChainId] = useState(initialDstChainId)
+
+  const [srcToken, setSrcToken] = useState<Currency>(initialSrcToken)
+  const [dstToken, setDstToken] = useState<Currency>(initialDstToken)
+
+  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
+  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
   const feeData = useFeeData({
     chainId: srcChainId,
     formatUnits: 'gwei',
   })
-
-  const [srcToken, setSrcToken] = useState<Currency>(Native.onChain(srcChainId))
-  const [dstToken, setDstToken] = useState<Currency>(Native.onChain(dstChainId))
-
-  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
-  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>('')
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
