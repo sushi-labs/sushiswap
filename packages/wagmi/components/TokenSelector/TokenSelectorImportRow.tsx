@@ -47,9 +47,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         </div>
       </button>
       <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
-        <Overlay.Content className="bg-slate-800 !p-0">
-          <Overlay.Header onClose={() => setOpen(false)} title="Import Token" className="p-3 pb-0" />
-          <div className="p-3 space-y-3">
+        <Overlay.Content className="bg-slate-800">
+          <Overlay.Header onClose={() => setOpen(false)} title="Import Token" />
+          <div className="space-y-3">
             <div className="bg-red/20 rounded-2xl p-6 flex flex-col gap-2 items-center">
               {!hideIcons && (
                 <div className="w-9 h-9">
@@ -65,16 +65,9 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               </Typography>
             </div>
             <div className="flex flex-col p-4 items-center bg-slate-700 rounded-2xl p-6">
-              <div className="flex flex-col items-center gap-3">
-                {!hideIcons && (
-                  <div className="w-9 h-9">
-                    <Icon currency={currency} width={36} height={36} />
-                  </div>
-                )}
-                <Typography weight={700} variant="lg">
-                  {currency.symbol}
-                </Typography>
-              </div>
+              <Typography weight={700} variant="lg">
+                {currency.symbol}
+              </Typography>
               <Typography
                 variant="sm"
                 weight={700}
@@ -87,10 +80,10 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 {shortenAddress(currency.wrapped.address)} <ExternalLinkIcon width={16} height={16} />
               </Typography>
             </div>
-            <Button fullWidth onClick={onImport}>
-              Import
-            </Button>
           </div>
+          <Button onClick={onImport} className="absolute bottom-3 left-3 right-3">
+            Import
+          </Button>
         </Overlay.Content>
       </SlideIn.FromLeft>
     </>

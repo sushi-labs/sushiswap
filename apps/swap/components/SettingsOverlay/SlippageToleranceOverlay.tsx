@@ -107,7 +107,11 @@ export const SlippageToleranceOverlay = () => {
           <Typography variant="xs" className="text-slate-400 text-center">
             Your transaction will revert if the prices change unfavorably by more than this percentage
           </Typography>
-          <RadioGroup value={slippageTolerance} onChange={updateSlippageTolerance} className="gap-3 grid grid-cols-2">
+          <RadioGroup
+            value={slippageTolerance}
+            onChange={updateSlippageTolerance}
+            className="gap-3 grid grid-cols-2 mt-3"
+          >
             <SlippageSettingOption
               onClick={handleClose}
               value={0.1}
@@ -121,7 +125,7 @@ export const SlippageToleranceOverlay = () => {
             onClick={() => inputRef.current?.focus()}
             className={classNames(
               custom ? 'ring-2 !ring-blue-500/40 border-blue' : '',
-              'cursor-text border-2 border-slate-700 hover:border-blue transform-all duration-400 bg-slate-700 active:ring-3 rounded-lg relative pl-3 py-2 pr-10'
+              'mt-3 cursor-text border-2 border-slate-700 hover:border-blue transform-all duration-400 bg-slate-700 active:ring-3 rounded-lg relative pl-3 py-2 pr-10'
             )}
             onMouseEnter={() => setCustomHover(true)}
             onMouseLeave={() => setCustomHover(false)}

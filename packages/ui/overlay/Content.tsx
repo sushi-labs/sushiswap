@@ -9,7 +9,7 @@ export interface Content {
 
 export const Content = forwardRef<HTMLDivElement, Content>(({ className, children }, ref) => {
   return (
-    <div ref={ref} className={classNames(className, 'space-y-3 inline-block w-full p-3 !my-0 h-full')}>
+    <div ref={ref} className={classNames(className, 'inline-block w-full pt-12 pb-[68px] !my-0 h-full px-3')}>
       {children}
     </div>
   )

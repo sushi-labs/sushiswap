@@ -37,9 +37,9 @@ export const TokenSelectorOverlay: FC<Omit<TokenSelectorProps, 'variant'>> = ({
     <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-          <Overlay.Content className="bg-slate-700 !p-0 !space-y-0">
-            <Overlay.Header onClose={onClose} title="Select Token" className="p-3 pb-5" />
-            <div className="px-4 pb-4">
+          <Overlay.Content className="bg-slate-700 !px-0">
+            <Overlay.Header onClose={onClose} title="Select Token" />
+            <div className="p-3">
               <div
                 className={classNames(
                   'ring-offset-2 ring-offset-slate-900 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'

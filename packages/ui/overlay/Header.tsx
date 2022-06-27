@@ -13,7 +13,7 @@ export interface Header {
 
 export const Header: FC<Header> = ({ className, title, onClose, arrowDirection = 'left' }) => {
   return (
-    <div className={classNames(className, 'flex items-start justify-between')}>
+    <div className={classNames(className, 'flex items-start justify-between absolute top-3 left-3 right-3')}>
       <IconButton className="flex items-center justify-center gap-2 cursor-pointer" onClick={onClose}>
         {arrowDirection === 'left' && (
           <ChevronLeftIcon width={24} height={24} className={classNames('cursor-pointer ')} />

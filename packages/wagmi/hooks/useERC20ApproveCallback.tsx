@@ -1,9 +1,10 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants'
+import { Chain } from '@sushiswap/chain'
 import { Amount, Currency } from '@sushiswap/currency'
-import { MAX_UINT256 } from '@sushiswap/math'
+import { createToast, Dots } from '@sushiswap/ui'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContract, useSigner } from 'wagmi'
+import { erc20ABI, useAccount, useContract, useSendTransaction, useSigner } from 'wagmi'
 
 import { useERC20Allowance } from './useERC20Allowance'
 
@@ -26,6 +27,7 @@ export function useERC20ApproveCallback(
 ): [ApprovalState, () => Promise<void>] {
   const { data: account } = useAccount()
   const { data: signer } = useSigner()
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useERC20Allowance(watch, token, account?.address ?? undefined, spender)
@@ -34,7 +36,9 @@ export function useERC20ApproveCallback(
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
-    // we might not have enough data to know whether or not we need to approve
+    if (isWritePending) return ApprovalState.PENDING
+
+    // We might not have enough data to know whether we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
 
     // amountToApprove will be defined if currentAllowance is
@@ -52,6 +56,7 @@ export function useERC20ApproveCallback(
       console.error('approve was called unnecessarily')
       return
     }
+
     if (!token) {
       console.error('no token')
       return
@@ -73,22 +78,34 @@ export function useERC20ApproveCallback(
     }
 
     let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MAX_UINT256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
+    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+      // General fallback for tokens who restrict approval amounts
       useExact = true
       return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
     })
 
-    const tx = await tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MAX_UINT256, {
-      gasLimit: calculateGasMargin(estimatedGas),
+    const data = await sendTransactionAsync({
+      request: {
+        from: account?.address,
+        to: tokenContract?.address,
+        data: tokenContract.interface.encodeFunctionData('approve', [
+          spender,
+          useExact ? amountToApprove.quotient.toString() : MaxUint256,
+        ]),
+        gasLimit: calculateGasMargin(estimatedGas),
+      },
     })
 
-    // const waitForApproval = await wait({ confirmations: 1, hash: tx.hash })
-    // if (waitForApproval.data && !waitForApproval.error) {
-    //   console.log('Successfully approved token') // TODO: should probably refactor and update the state to PENDING?
-    // } else {
-    //   console.log(waitForApproval)
-    // }
+    createToast({
+      txHash: data.hash,
+      href: Chain.from(amountToApprove.currency.chainId).getTxUrl(data.hash),
+      promise: data.wait(),
+      summary: {
+        pending: <Dots>Approving {amountToApprove.currency.symbol}</Dots>,
+        completed: `Successfully approved ${amountToApprove.currency.symbol}`,
+        failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
+      },
+    })
   }, [approvalState, token, tokenContract, amountToApprove, spender])
 
   return [approvalState, approve]
