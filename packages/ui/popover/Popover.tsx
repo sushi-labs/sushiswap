@@ -47,14 +47,14 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'rounded-2xl overflow-hidden shadow-[rgba(0,_0,_0,_0.3)_0_4px_20px]'
+                      'rounded-2xl overflow-hidden ring-[2px] ring-black ring-opacity-[0.1] shadow-md shadow-black/40'
                     ),
                   },
                   panel.props.children
                 )}
                 {arrow && <div ref={setArrowElement} style={styles.arrow} className="arrow" />}
               </HeadlessPopover.Panel>,
-              document.querySelector('#popover-portal') as Element
+              document.body
             )}
         </>
       )}
