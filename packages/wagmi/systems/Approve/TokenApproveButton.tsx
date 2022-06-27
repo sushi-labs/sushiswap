@@ -23,7 +23,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       setState(approvalState)
     }, [approvalState, setState])
 
-    if (!amount || approvalState === ApprovalState.APPROVED) return null
+    if (!amount || [ApprovalState.UNKNOWN, ApprovalState.APPROVED].includes(approvalState)) return null
     if (render) return render({ approvalState, onApprove })
 
     return (
