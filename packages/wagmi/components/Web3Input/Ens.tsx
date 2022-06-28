@@ -39,7 +39,7 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
         return (
           <div
             className={classNames(
-              rest.error || isInvalid ? ERROR_INPUT_CLASSNAME : isLoading ? 'ring-yellow' : 'ring-blue',
+              rest.error || isInvalid ? ERROR_INPUT_CLASSNAME : 'ring-blue',
               'flex flex-col bg-slate-800 rounded-xl focus-within:ring-1 ring-offset-2 ring-offset-slate-900'
             )}
           >
