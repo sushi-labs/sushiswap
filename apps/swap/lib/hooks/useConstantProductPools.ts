@@ -41,7 +41,7 @@ export function useConstantProductPools(
         }
       }
     })
-    return [...pairsMap.values()]
+    return Array.from(pairsMap.values())
   }, [currencies])
   const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
 

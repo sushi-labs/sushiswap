@@ -634,7 +634,11 @@ const Widget: FC<Swap> = ({
                           Estimated Processing Time
                         </Typography>
                         <Typography variant="xs" weight={700} className="text-slate-300">
-                          ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId] / 60)} minutes
+                          ~
+                          {Math.ceil(
+                            STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60
+                          )}{' '}
+                          minutes
                         </Typography>
                       </div>
                       {crossChain ? (

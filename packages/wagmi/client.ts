@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { allChains, configureChains, createClient } from 'wagmi'
+import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -148,13 +148,13 @@ const otherChains = [
 const { chains, provider, webSocketProvider } = configureChains(
   [...allChains, ...otherChains],
   [
+    publicProvider(),
     alchemyProvider({ alchemyId }),
     // infuraProvider({ infuraId }),
-    publicProvider(),
   ]
 )
 
-export const client = createClient({
+const config: CreateClientConfig = {
   provider,
   webSocketProvider,
   autoConnect: true,
@@ -180,4 +180,8 @@ export const client = createClient({
       }),
     ]
   },
-})
+}
+
+export type Client = ReturnType<typeof createClient>
+
+export const client: Client = createClient(config)

@@ -7,19 +7,19 @@ export type Mutable<T> = {
 }
 
 export interface TokenListsState {
-  readonly byUrl: {
-    readonly [url: string]: {
-      readonly current: TokenList | null
-      readonly pendingUpdate: TokenList | null
-      readonly loadingRequestId: string | null
-      readonly error: string | null
+  byUrl: {
+    [url: string]: {
+      current: TokenList | null
+      pendingUpdate: TokenList | null
+      loadingRequestId: string | null
+      error: string | null
     }
   }
   // this contains the default list of lists from the last time the updateVersion was called, i.e. the app was reloaded
-  readonly lastInitializedDefaultListOfLists?: string[]
+  lastInitializedDefaultListOfLists?: string[]
 
   // currently active lists
-  readonly activeListUrls: string[] | undefined
+  activeListUrls: string[] | undefined
 }
 
 export type TokenListState = TokenListsState['byUrl'][string]

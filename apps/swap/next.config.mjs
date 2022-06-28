@@ -14,9 +14,9 @@ export default withTranspileModules({
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: true,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
