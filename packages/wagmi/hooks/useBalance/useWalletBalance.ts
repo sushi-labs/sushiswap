@@ -24,7 +24,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account })
+  } = useBalance({ addressOrName: account, chainId })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -45,6 +45,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
   const contracts = useMemo(
     () =>
       validatedTokenAddresses.map((token) => ({
+        chainId,
         addressOrName: token.toLowerCase(),
         contractInterface: erc20ABI,
         functionName: 'balanceOf',

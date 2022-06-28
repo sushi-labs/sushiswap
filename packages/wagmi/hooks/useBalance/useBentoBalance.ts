@@ -40,6 +40,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
   const contractsForTotalsRequest = useMemo(
     () =>
       validatedTokenAddresses.map((token) => ({
+        chainId,
         ...getBentoBoxContractConfig(chainId),
         functionName: 'totals',
         args: token,
@@ -88,6 +89,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
   const contractsForBalancesRequest = useMemo(
     () =>
       balanceInputs.map((input) => ({
+        chainId,
         ...getBentoBoxContractConfig(chainId),
         functionName: 'balanceOf',
         args: input,
