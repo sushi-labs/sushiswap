@@ -45,15 +45,8 @@ jobs:
         run: pnpm build
         working-directory: ./scripts/price
 
-
-      - name: 'Create env file'
-        run: |
-          cd ./scripts/price
-          touch .env
-          echo UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }} >> .env
-          echo UPSTASH_REDIS_REST_PASSWORD=${{ secrets.UPSTASH_REDIS_REST_PASSWORD }} >> .env
-          cat .env
-
       - name: Run script
         run: node ./dist/index.js
         working-directory: ./scripts/price
+        env:
+          REDIS_URL: ${{ secrets.REDIS_URL }}

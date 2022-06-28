@@ -59,7 +59,26 @@ importers:
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@types/lodash.flatmap': 4.5.7
 
-  apis/price:
+  apis/token-list:
+    specifiers:
+      '@sushiswap/chainlink-token-list': ^0.1.0
+      '@sushiswap/default-token-list': ^28.2.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@vercel/node': ^2.2.0
+    dependencies:
+      '@sushiswap/chainlink-token-list': 0.1.0
+      '@sushiswap/default-token-list': 28.2.0
+      '@vercel/node': 2.2.0
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+
+  apis/token-price:
     specifiers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -74,25 +93,6 @@ importers:
       '@vercel/node': 2.2.0
       date-fns: 2.28.0
       ioredis: 5.0.6
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/jest-config': link:../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../packages/config/typescript
-
-  apis/token-list:
-    specifiers:
-      '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^28.2.0
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': ^2.2.0
-    dependencies:
-      '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 28.2.0
-      '@vercel/node': 2.2.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
