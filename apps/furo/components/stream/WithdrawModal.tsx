@@ -73,7 +73,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     }
   }, [activeChain?.id, amount, fundSource, stream, writeAsync])
 
-  console.log(address)
   return (
     <>
       <Button

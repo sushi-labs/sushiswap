@@ -22,7 +22,7 @@ export const TransferModal: FC<TransferModalProps> = ({
   address: contractAddress,
   fn = 'transferFrom',
 }) => {
-  const { address: account } = useAccount()
+  const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
@@ -42,11 +42,11 @@ export const TransferModal: FC<TransferModalProps> = ({
   })
 
   const transferStream = useCallback(async () => {
-    if (!stream || !account || !recipient || !resolvedAddress || !activeChain?.id) return
+    if (!stream || !address || !recipient || !resolvedAddress || !activeChain?.id) return
     setError(undefined)
 
     try {
-      const data = await writeAsync({ args: [account, resolvedAddress, stream?.id] })
+      const data = await writeAsync({ args: [address, resolvedAddress, stream?.id] })
 
       createToast({
         txHash: data.hash,
@@ -63,7 +63,7 @@ export const TransferModal: FC<TransferModalProps> = ({
     }
 
     setRecipient(undefined)
-  }, [account, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
+  }, [address, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
 
   if (!stream || stream?.isEnded) return null
 
@@ -73,7 +73,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         color="gray"
         fullWidth
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
-        disabled={!account || !stream?.canTransfer(account) || !stream?.remainingAmount?.greaterThan(ZERO)}
+        disabled={!address || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
         Transfer

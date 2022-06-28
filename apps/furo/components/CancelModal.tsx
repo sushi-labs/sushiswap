@@ -16,14 +16,14 @@ interface CancelModalProps {
   fn: string
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, title }) => {
+export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title }) => {
   const [open, setOpen] = useState(false)
   const { chain: activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { address: account } = useAccount()
+  const { address } = useAccount()
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
-    addressOrName: address,
+    addressOrName: contractAddress,
     contractInterface: abi,
     functionName: fn,
     onSuccess() {
