@@ -72,7 +72,7 @@ export const CreateForm: FC = () => {
       setError(undefined)
 
       const actions = [
-        approveBentoBoxAction({ contract, user: account.address, signature }),
+        approveBentoBoxAction({ contract, user: address, signature }),
         streamCreationAction({
           contract,
           recipient: _data.recipient,
@@ -115,7 +115,7 @@ export const CreateForm: FC = () => {
 
         log.tenderly({
           chainId: activeChain?.id,
-          from: account.address,
+          from: address,
           to: contract.address,
           data: batchAction({ contract, actions }),
           value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
