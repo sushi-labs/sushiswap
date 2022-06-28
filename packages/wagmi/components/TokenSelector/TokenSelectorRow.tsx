@@ -63,7 +63,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
               </div>
             }
             panel={
-              <div className="flex gap-5 p-3 bg-slate-700 !rounded-lg">
+              <div className="flex gap-5 p-3 bg-slate-700 !rounded-lg min-w-40">
                 <div className="flex flex-col gap-1">
                   <Typography variant="xs" weight={700} className="text-slate-300">
                     Wallet
@@ -73,7 +73,9 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
                     {balance[FundSource.WALLET]?.toSignificant(6)}{' '}
                   </Typography>
                   <Typography variant="xxs" className="text-slate-400">
-                    {price ? `$${balance[FundSource.BENTOBOX]?.multiply(price).toFixed(2)}` : '-'}
+                    {price && balance[FundSource.WALLET]
+                      ? `$${balance[FundSource.WALLET]?.multiply(price).toFixed(2)}`
+                      : '$0.00'}
                   </Typography>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -85,7 +87,9 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
                     {balance[FundSource.BENTOBOX]?.toSignificant(6)}{' '}
                   </Typography>
                   <Typography variant="xxs" className="text-slate-400">
-                    {price ? `$${balance[FundSource.BENTOBOX]?.multiply(price).toFixed(2)}` : '-'}
+                    {price && balance[FundSource.BENTOBOX]
+                      ? `$${balance[FundSource.BENTOBOX]?.multiply(price).toFixed(2)}`
+                      : '$0.00'}
                   </Typography>
                 </div>
               </div>
