@@ -32,7 +32,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   })
 
   const cancelStream = useCallback(async () => {
-    if (!stream || !account || !activeChain?.id) return
+    if (!stream || !address || !activeChain?.id) return
     const data = await writeAsync({ args: [stream.id, fundSource === FundSource.BENTOBOX] })
 
     createToast({
@@ -45,9 +45,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         failed: 'Something went wrong cancelling the stream',
       },
     })
-  }, [account, activeChain?.id, fundSource, stream, writeAsync])
+  }, [address, activeChain?.id, fundSource, stream, writeAsync])
 
-  if (!account || !stream?.canCancel(address)) return <></>
+  if (!address || !stream?.canCancel(address)) return <></>
 
   return (
     <>
