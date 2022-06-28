@@ -40,11 +40,11 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, classN
         </div>
         {balance && balance.greaterThan(ZERO) && (
           <div className="flex flex-col">
-            <Typography variant="xs" weight={700} className="flex items-baseline gap-1 text-slate-200 text-right">
-              {balance.toSignificant(6)}{' '}
+            <Typography variant="xs" weight={700} className="text-slate-200 text-right">
+              {balance.toSignificant(6)}
             </Typography>
-            <Typography variant="xxs" className="flex flex-col text-slate-400 text-right">
-              {price ? `$${balance.multiply(price).toSignificant(6)}` : '-'}
+            <Typography variant="xxs" className="text-slate-400 text-right">
+              {price ? `$${balance.multiply(price).toExact(2)}` : '-'}
             </Typography>
           </div>
         )}
