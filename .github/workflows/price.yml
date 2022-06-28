@@ -48,3 +48,5 @@ jobs:
       - name: Run script
         run: node ./dist/index.js
         working-directory: ./scripts/price
+        env:
+          REDIS_URL: ${{ secrets.REDIS_URL }}
