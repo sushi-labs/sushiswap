@@ -9,7 +9,7 @@ import { useNetwork } from 'wagmi'
 import { useSingleContractMultipleData } from '../multicall'
 
 export const useTokenBentoboxBalances: UseTokenBalances = (account, tokens) => {
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const contract = useBentoBoxContract(activeChain?.id)
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(

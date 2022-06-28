@@ -55,21 +55,21 @@ const exampleStream = new Stream({
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const paySomeone = useConnect({
-    onConnect: () => {
-      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+    onSuccess: ({ chain }) => {
+      if (SUPPORTED_CHAINS.includes(chain.id)) {
         void router.push('/stream/create')
       }
     },
   })
 
   const viewEarnings = useConnect({
-    onConnect: () => {
-      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+    onSuccess: ({ chain }) => {
+      if (SUPPORTED_CHAINS.includes(chain.id)) {
         void router.push('/dashboard')
       }
     },
@@ -96,7 +96,7 @@ export default function Index() {
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
-            {!isMounted || !activeChain || !account ? (
+            {!isMounted || !activeChain || !address ? (
               <>
                 <Wallet.Button
                   color="blue"
@@ -129,17 +129,17 @@ export default function Index() {
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.AddressToEnsResolver address={account.address}>
+                    <Account.AddressToEnsResolver address={address}>
                       {({ data }) => (
                         <Typography
                           as="a"
                           target="_blank"
-                          href={Chain.from(activeChain.id)?.getAccountUrl(account?.address ?? '')}
+                          href={Chain.from(activeChain.id)?.getAccountUrl(address ?? '')}
                           variant="sm"
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {data ? data : account.address ? shortenAddress(account.address) : ''}
+                          {data ? data : address ? shortenAddress(address) : ''}
                         </Typography>
                       )}
                     </Account.AddressToEnsResolver>

@@ -19,7 +19,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
@@ -66,8 +66,7 @@ const _VestingPage: FC = () => {
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
   const connect = useConnect()
-  const { data: account } = useAccount()
-  const { connecting, reconnecting } = useWalletState(connect, account?.address)
+  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>

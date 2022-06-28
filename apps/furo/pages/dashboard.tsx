@@ -8,10 +8,10 @@ import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   const connect = useConnect()
-  const { connecting, notConnected, pendingConnection, reconnecting } = useWalletState(connect, account?.address)
+  const { connecting, notConnected, pendingConnection, reconnecting } = useWalletState(!!connect.pendingConnector)
 
   if (connecting || reconnecting) {
     return <Overlay />
@@ -90,8 +90,8 @@ export default function DashboardPage() {
         </div>
       }
     >
-      {activeChain && account?.address && (
-        <Dashboard chainId={activeChain.id} address={account.address} showOutgoing={router.query.show === 'outgoing'} />
+      {activeChain && address && (
+        <Dashboard chainId={activeChain.id} address={address} showOutgoing={router.query.show === 'outgoing'} />
       )}
     </Layout>
   )

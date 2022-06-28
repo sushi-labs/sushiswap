@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { FuroTable, FuroTableType } from './FuroTable'
 import { Rebase } from '.graphclient'
@@ -27,8 +27,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
 }) => {
   const isMounted = useIsMounted()
   const router = useRouter()
-  const { data: account } = useAccount()
-  const { isConnected } = useConnect()
+  const { address: account, isConnected } = useAccount()
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
@@ -105,7 +104,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             Earn, stream and automate your DAO salaries <br /> and token vesting with Furo.
           </Typography>
           <div className="flex mt-4 h-9">
-            {account?.address && isMounted && isConnected && (
+            {account && isMounted && isConnected && (
               <Menu
                 button={
                   <Menu.Button

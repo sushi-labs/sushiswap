@@ -16,27 +16,23 @@ interface CancelModalProps {
   fn: string
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, title }) => {
+export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title }) => {
   const [open, setOpen] = useState(false)
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: fn,
+    onSuccess() {
+      setOpen(false)
     },
-    fn,
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const cancelStream = useCallback(async () => {
-    if (!stream || !account || !activeChain?.id) return
+    if (!stream || !address || !activeChain?.id) return
     const data = await writeAsync({ args: [stream.id, fundSource === FundSource.BENTOBOX] })
 
     createToast({
@@ -49,9 +45,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
         failed: 'Something went wrong cancelling the stream',
       },
     })
-  }, [account, activeChain?.id, fundSource, stream, writeAsync])
+  }, [address, activeChain?.id, fundSource, stream, writeAsync])
 
-  if (!account || !stream?.canCancel(account?.address)) return <></>
+  if (!address || !stream?.canCancel(address)) return <></>
 
   return (
     <>

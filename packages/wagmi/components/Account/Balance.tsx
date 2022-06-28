@@ -12,7 +12,7 @@ export type Props = {
 }
 
 export function Balance({ address, supportedNetworks }: Props): JSX.Element {
-  const { activeChain } = useNetwork()
+  const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: !!address })
 
@@ -36,7 +36,7 @@ export function Balance({ address, supportedNetworks }: Props): JSX.Element {
     )
   }
 
-  if (supportedNetworks && activeChain?.id && !supportedNetworks.includes(activeChain?.id)) {
+  if (supportedNetworks && chain?.id && !supportedNetworks.includes(chain?.id)) {
     return (
       <Popover
         hover
@@ -54,16 +54,14 @@ export function Balance({ address, supportedNetworks }: Props): JSX.Element {
   return (
     <>
       <Typography weight={700} className="flex gap-1 items-center text-slate-200" as="span">
-        {activeChain?.id && (
-          <NetworkIcon type="naked" chainId={activeChain.id} width={24} height={24} className="-ml-1.5" />
-        )}
+        {chain?.id && <NetworkIcon type="naked" chainId={chain.id} width={24} height={24} className="-ml-1.5" />}
         <Typography weight={700} className="flex gap-1 items-baseline text-slate-200" as="span">
           {isMounted &&
-            activeChain &&
+            chain &&
             data &&
-            Amount.fromRawAmount(Native.onChain(activeChain.id), JSBI.BigInt(data.value)).toSignificant(4)}
+            Amount.fromRawAmount(Native.onChain(chain.id), JSBI.BigInt(data.value)).toSignificant(4)}
           <Typography weight={700} variant="sm" className="text-slate-500" as="span">
-            {activeChain ? Native.onChain(activeChain.id)?.symbol : 'ETH'}
+            {chain ? Native.onChain(chain.id)?.symbol : 'ETH'}
           </Typography>
         </Typography>
       </Typography>

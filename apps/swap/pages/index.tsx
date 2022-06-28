@@ -20,7 +20,7 @@ import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Theme } from 'types'
-import { useAccount, useFeeData, useNetwork } from 'wagmi'
+import { useAccount, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -95,8 +95,9 @@ const Widget: FC<Swap> = ({
   // swapCache,
   // mutateSwapCache,
 }) => {
-  const { data: account } = useAccount()
-  const { activeChain, switchNetwork } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const [isWritePending, setIsWritePending] = useState<boolean>()
 
@@ -324,8 +325,7 @@ const Widget: FC<Swap> = ({
       !srcAmountOutMinusStargateFee,
       !dstChainId,
       !dstMinimumAmountOut,
-      !account,
-      !account?.address,
+      !address,
       !srcTokenRebase,
       // !dstTokenRebase,
       !contract,
@@ -337,8 +337,7 @@ const Widget: FC<Swap> = ({
       !srcAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
-      !account ||
-      !account.address ||
+      !address ||
       !srcTokenRebase ||
       // !dstTokenRebase ||
       !contract
@@ -361,7 +360,7 @@ const Widget: FC<Swap> = ({
       dstTrade,
       srcUseBentoBox,
       dstUseBentoBox,
-      user: account.address,
+      user: address,
       debug: true,
     })
 
@@ -401,7 +400,7 @@ const Widget: FC<Swap> = ({
         setIsWritePending(false)
       })
   }, [
-    account,
+    address,
     contract,
     crossChain,
     dstBridgeToken,
@@ -427,14 +426,14 @@ const Widget: FC<Swap> = ({
 
   const { data: srcBalance } = useTokenBalance(
     srcChainId,
-    account?.address,
+    address,
     srcToken.wrapped,
     srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
   )
 
   const { data: dstBalance } = useTokenBalance(
     dstChainId,
-    account?.address,
+    address,
     dstToken.wrapped,
     dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
   )
@@ -515,7 +514,7 @@ const Widget: FC<Swap> = ({
         <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
 
         <div className="flex gap-2">
-          {!account && isMounted ? (
+          {!address && isMounted ? (
             <Wallet.Button fullWidth color="blue">
               Connect Wallet
             </Wallet.Button>

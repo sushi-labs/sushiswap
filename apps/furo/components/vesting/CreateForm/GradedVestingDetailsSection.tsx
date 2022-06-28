@@ -11,7 +11,7 @@ import { useAccount } from 'wagmi'
 import { useWalletBalance } from '../../../lib'
 
 export const GradedVestingDetailsSection = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormData>()
 
   const [currency, stepConfig, cliff, cliffAmount, cliffEndDate, startDate, stepPayouts, stepAmount, fundSource] =
@@ -28,7 +28,7 @@ export const GradedVestingDetailsSection = () => {
       'fundSource',
     ])
 
-  const { data: balance } = useWalletBalance(account?.address, currency, fundSource)
+  const { data: balance } = useWalletBalance(address, currency, fundSource)
 
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts

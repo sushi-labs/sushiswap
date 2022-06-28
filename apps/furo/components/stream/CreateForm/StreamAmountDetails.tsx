@@ -14,8 +14,8 @@ import { CreateStreamFormData } from './types'
 
 export const StreamAmountDetails = () => {
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
@@ -25,8 +25,8 @@ export const StreamAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useWalletBalance(account?.address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
+  const { data: walletBalance } = useWalletBalance(address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
 
   return (
     <Form.Section
@@ -157,7 +157,7 @@ export const StreamAmountDetails = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput
               onChange={onChange}
-              account={account?.address}
+              account={address}
               value={value}
               currency={currency}
               fundSource={fundSource}

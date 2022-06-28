@@ -26,18 +26,18 @@ const Icons: Record<string, ReactNode> = {
 }
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {
+  // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   hack?: ReturnType<typeof useConnect>
   supportedNetworks?: ChainId[]
 }
 
 export const Button = <C extends React.ElementType>({ hack, children, supportedNetworks, ...rest }: Props<C>) => {
-  const { data } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
-  const hook = hack || useConnect()
-  const { isConnected, connectors, connect } = hook
-  const { pendingConnection, reconnecting } = useWalletState(hook, data?.address)
+  const { connectors, connect, pendingConnector } = hack || useConnect()
+  const { pendingConnection, reconnecting, isConnected } = useWalletState(!!pendingConnector)
 
   // Pending confirmation state
   // Awaiting wallet confirmation
@@ -71,12 +71,16 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
         <Menu.Items>
           <div>
             {isMounted &&
-              connectors.map((conn) => (
-                <Menu.Item key={conn.id} onClick={() => connect(conn)} className="flex items-center gap-3 group">
+              connectors.map((connector) => (
+                <Menu.Item
+                  key={connector.id}
+                  onClick={() => connect({ connector })}
+                  className="flex items-center gap-3 group"
+                >
                   <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
-                    {Icons[conn.name] && Icons[conn.name]}
+                    {Icons[connector.name] && Icons[connector.name]}
                   </div>{' '}
-                  {conn.name}
+                  {connector.name}
                 </Menu.Item>
               ))}
           </div>
@@ -91,16 +95,16 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
     return (
       <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
         <div className="hidden px-3 sm:block">
-          <Account.Balance supportedNetworks={supportedNetworks} address={data?.address} />
+          <Account.Balance supportedNetworks={supportedNetworks} address={address} />
         </div>
         <Menu
           button={
             <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
               {/* <Account.Avatar address={data?.address} /> */}
-              <Account.AddressToEnsResolver address={data?.address}>
+              <Account.AddressToEnsResolver address={address}>
                 {({ data: ens }) => (
                   <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                    {ens ? ens : data?.address ? shortenAddress(data?.address) : ''}
+                    {ens ? ens : address ? shortenAddress(address) : ''}
                   </Typography>
                 )}
               </Account.AddressToEnsResolver>
@@ -109,11 +113,11 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
         >
           <Menu.Items>
             <div>
-              {data?.address && activeChain?.id && (
+              {address && chain?.id && (
                 <Menu.Item
                   as="a"
                   target="_blank"
-                  href={`https://app.sushi.com/account?account=${data.address}&chainId=${activeChain.id}`}
+                  href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
                   className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
                 >
                   View Portfolio
