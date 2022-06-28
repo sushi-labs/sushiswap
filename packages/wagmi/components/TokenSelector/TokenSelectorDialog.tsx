@@ -3,6 +3,7 @@ import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
@@ -18,6 +19,7 @@ type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
   balancesMap: BalanceMap
   tokenMap: Record<string, Token>
   pricesMap: Record<string, Fraction> | undefined
+  fundSource: FundSource
 }
 
 export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
@@ -32,6 +34,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   onRemoveToken,
   balancesMap,
   pricesMap,
+  fundSource,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -87,6 +90,9 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                 )}
               </div>
             </div>
+            <Typography className="px-4 pb-1 text-slate-400" variant="xs">
+              {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
+            </Typography>
             <div className="w-full border-t border-slate-200/5" />
             <div className={classNames(queryToken ? '' : 'relative', 'min-h-[320px] rounded-t-none rounded-xl h-full')}>
               {queryToken && <TokenSelectorImportRow currency={queryToken} onImport={() => handleImport(queryToken)} />}
@@ -108,6 +114,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                       className="!px-4"
                       balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
                       price={pricesMap?.[currency.wrapped.address]}
+                      fundSource={fundSource}
                     />
                   )}
                 />
