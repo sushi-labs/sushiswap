@@ -450,7 +450,7 @@ const Widget: FC<Swap> = ({
 
   const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
   const dstTokenPrice = dstPrices?.[dstToken.wrapped.address.toLowerCase()]
-  console.log({ srcPrices, dstPrices })
+  // console.log({ srcPrices, dstPrices })
 
   return (
     <article

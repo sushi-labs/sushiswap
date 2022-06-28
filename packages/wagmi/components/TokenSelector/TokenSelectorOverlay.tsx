@@ -1,7 +1,9 @@
+import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from '@sushiswap/currency'
+import { Fraction } from '@sushiswap/math'
 import { classNames, Currency, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
@@ -10,7 +12,13 @@ import { TokenSelectorProps } from './TokenSelector'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorRow } from './TokenSelectorRow'
 
-export const TokenSelectorOverlay: FC<Omit<TokenSelectorProps, 'variant'>> = ({
+type TokenSelectorOverlay = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
+  balancesMap: Record<string, Amount<Type>> | undefined
+  tokenMap: Record<string, Token>
+  pricesMap: Record<string, Fraction> | undefined
+}
+
+export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
   currency,
   open,
   onClose,
@@ -18,6 +26,8 @@ export const TokenSelectorOverlay: FC<Omit<TokenSelectorProps, 'variant'>> = ({
   chainId,
   onSelect,
   onAddToken,
+  balancesMap,
+  pricesMap,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -92,7 +102,14 @@ export const TokenSelectorOverlay: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                   className="h-full divide-y hide-scrollbar divide-slate-700"
                   currencies={currencies}
                   rowRenderer={({ currency, style }) => (
-                    <TokenSelectorRow currency={currency} style={style} onCurrency={handleSelect} className="!px-4" />
+                    <TokenSelectorRow
+                      currency={currency}
+                      style={style}
+                      onCurrency={handleSelect}
+                      className="!px-4"
+                      balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
+                      price={pricesMap?.[currency.wrapped.address]}
+                    />
                   )}
                 />
               </div>

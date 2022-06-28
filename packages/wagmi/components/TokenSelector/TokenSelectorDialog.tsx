@@ -1,7 +1,9 @@
+import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { Amount, Token, Type } from '@sushiswap/currency'
+import { Fraction } from '@sushiswap/math'
 import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
@@ -11,7 +13,13 @@ import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
-export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
+type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
+  balancesMap: Record<string, Amount<Type>> | undefined
+  tokenMap: Record<string, Token>
+  pricesMap: Record<string, Fraction> | undefined
+}
+
+export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   currency,
   open,
   onClose,
@@ -21,6 +29,8 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
   onSelect,
   onAddToken,
   onRemoveToken,
+  balancesMap,
+  pricesMap,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -90,7 +100,14 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                   className="h-full divide-y hide-scrollbar divide-slate-700"
                   currencies={currencies}
                   rowRenderer={({ currency, style }) => (
-                    <TokenSelectorRow currency={currency} style={style} onCurrency={handleSelect} />
+                    <TokenSelectorRow
+                      currency={currency}
+                      style={style}
+                      onCurrency={handleSelect}
+                      className="!px-4"
+                      balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
+                      price={pricesMap?.[currency.wrapped.address]}
+                    />
                   )}
                 />
               </div>

@@ -194,6 +194,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           onSelect={onCurrencySelect}
           onAddToken={addCustomToken}
           onRemoveToken={removeCustomToken}
+          fundSource={fundSource}
         />
       )}
     </>

@@ -1,4 +1,5 @@
-import { Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
+import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC } from 'react'
@@ -8,16 +9,18 @@ interface TokenSelectorRow {
   style?: CSSProperties
   className?: string
   onCurrency(currency: Type): void
+  balance?: Amount<Type>
+  price?: Fraction
 }
 
-export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, className, onCurrency }) => {
+export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, className, onCurrency, balance, price }) => {
   return (
     <button
       type="button"
       onClick={() => onCurrency(currency)}
       className={classNames(
         className,
-        `group flex items-center w-full hover:bg-blue-600 px-6 py-4 token-${currency?.symbol}`
+        `group flex items-center w-full hover:bg-blue-600 px-4 h-[48px] token-${currency?.symbol}`
       )}
       style={style}
     >
@@ -35,6 +38,16 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, classN
             </Typography>
           </div>
         </div>
+        {balance && balance.greaterThan(ZERO) && (
+          <div className="flex flex-col">
+            <Typography variant="xs" weight={700} className="flex items-baseline gap-1 text-slate-200 text-right">
+              {balance.toSignificant(6)}{' '}
+            </Typography>
+            <Typography variant="xxs" className="flex flex-col text-slate-400 text-right">
+              {price ? `$${balance.multiply(price).toSignificant(6)}` : '-'}
+            </Typography>
+          </div>
+        )}
       </div>
     </button>
   )
