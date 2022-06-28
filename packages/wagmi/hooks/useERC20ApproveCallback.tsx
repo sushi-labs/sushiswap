@@ -25,12 +25,12 @@ export function useERC20ApproveCallback(
   amountToApprove?: Amount<Currency>,
   spender?: string
 ): [ApprovalState, () => Promise<void>] {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { data: signer } = useSigner()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useERC20Allowance(watch, token, account?.address ?? undefined, spender)
+  const currentAllowance = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -86,7 +86,7 @@ export function useERC20ApproveCallback(
 
     const data = await sendTransactionAsync({
       request: {
-        from: account?.address,
+        from: address,
         to: tokenContract?.address,
         data: tokenContract.interface.encodeFunctionData('approve', [
           spender,
