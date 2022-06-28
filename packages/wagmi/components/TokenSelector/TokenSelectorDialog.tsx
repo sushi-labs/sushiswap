@@ -2,11 +2,12 @@ import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { Fraction } from '@sushiswap/math'
 import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
+import { BalanceMap } from '../../hooks/useBalance/types'
 import { TokenListFilterByQuery } from '../TokenListFilterByQuery'
 import { TokenSelectorProps } from './TokenSelector'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
@@ -14,7 +15,7 @@ import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
-  balancesMap: Record<string, Amount<Type>> | undefined
+  balancesMap: BalanceMap
   tokenMap: Record<string, Token>
   pricesMap: Record<string, Fraction> | undefined
 }

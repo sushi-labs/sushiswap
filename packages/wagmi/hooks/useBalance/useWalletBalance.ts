@@ -44,14 +44,16 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
 
   const contracts = useMemo(
     () =>
-      validatedTokenAddresses.map((token) => ({
-        chainId,
-        addressOrName: token.toLowerCase(),
-        contractInterface: erc20ABI,
-        functionName: 'balanceOf',
-        args: [account],
-      })),
-    [validatedTokens]
+      account
+        ? validatedTokenAddresses.map((token) => ({
+            chainId,
+            addressOrName: token,
+            contractInterface: erc20ABI,
+            functionName: 'balanceOf',
+            args: [account],
+          }))
+        : [],
+    [validatedTokenAddresses, chainId, account]
   )
 
   // Wallet Balances
@@ -89,7 +91,17 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
       isLoading: isTokensLoading ?? isNativeLoading,
       isError: isTokensError ?? isNativeError,
     }
-  }, [account, data, validatedTokens])
+  }, [
+    account,
+    data,
+    validatedTokens,
+    isTokensLoading,
+    isNativeLoading,
+    isTokensError,
+    isNativeError,
+    chainId,
+    nativeBalance,
+  ])
 }
 
 type UseWalletBalanceParams = {

@@ -1,6 +1,7 @@
 import { Amount, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC } from 'react'
 
@@ -9,11 +10,20 @@ interface TokenSelectorRow {
   style?: CSSProperties
   className?: string
   onCurrency(currency: Type): void
-  balance?: Amount<Type>
+  balance?: Record<FundSource, Amount<Type> | undefined>
   price?: Fraction
+  fundSource: FundSource
 }
 
-export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, className, onCurrency, balance, price }) => {
+export const TokenSelectorRow: FC<TokenSelectorRow> = ({
+  currency,
+  fundSource,
+  style,
+  className,
+  onCurrency,
+  balance,
+  price,
+}) => {
   return (
     <button
       type="button"
@@ -38,15 +48,49 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({ currency, style, classN
             </Typography>
           </div>
         </div>
-        {balance && balance.greaterThan(ZERO) && (
-          <div className="flex flex-col">
-            <Typography variant="xs" weight={700} className="text-slate-200 text-right">
-              {balance.toSignificant(6)}
-            </Typography>
-            <Typography variant="xxs" className="text-slate-400 text-right">
-              {price ? `$${balance.multiply(price).toExact(2)}` : '-'}
-            </Typography>
-          </div>
+
+        {balance && balance[fundSource]?.greaterThan(ZERO) && (
+          <Popover
+            hover
+            button={
+              <div className="flex flex-col">
+                <Typography variant="xs" weight={700} className="text-slate-200 text-right">
+                  {balance[fundSource]?.toSignificant(6)}
+                </Typography>
+                <Typography variant="xxs" className="text-slate-400 text-right">
+                  {price ? `$${balance[fundSource]?.multiply(price).toFixed(2)}` : '-'}
+                </Typography>
+              </div>
+            }
+            panel={
+              <div className="flex gap-5 p-3 bg-slate-700 !rounded-lg">
+                <div className="flex flex-col gap-1">
+                  <Typography variant="xs" weight={700} className="text-slate-300">
+                    Wallet
+                  </Typography>
+                  <Typography variant="xs" weight={700} className="flex items-center gap-1">
+                    <Icon currency={currency} width={14} height={14} />
+                    {balance[FundSource.WALLET]?.toSignificant(6)}{' '}
+                  </Typography>
+                  <Typography variant="xxs" className="text-slate-400">
+                    {price ? `$${balance[FundSource.BENTOBOX]?.multiply(price).toFixed(2)}` : '-'}
+                  </Typography>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Typography variant="xs" weight={700} className="text-slate-300">
+                    Bentobox
+                  </Typography>
+                  <Typography variant="xs" weight={700} className="flex items-center gap-1">
+                    <Icon currency={currency} width={14} height={14} />
+                    {balance[FundSource.BENTOBOX]?.toSignificant(6)}{' '}
+                  </Typography>
+                  <Typography variant="xxs" className="text-slate-400">
+                    {price ? `$${balance[FundSource.BENTOBOX]?.multiply(price).toFixed(2)}` : '-'}
+                  </Typography>
+                </div>
+              </div>
+            }
+          />
         )}
       </div>
     </button>

@@ -1,8 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { useMemo } from 'react'
 import { useContractInfiniteReads } from 'wagmi'
 
+import { BalanceMap } from './types'
 import { useBentoBalance, useBentoBalances } from './useBentoBalance'
 import { useWalletBalance, useWalletBalances } from './useWalletBalance'
 
@@ -10,38 +12,65 @@ type UseBalancesParams = {
   account: string | undefined
   tokens: Token[]
   chainId?: ChainId
-  fundSource?: FundSource
 }
 
 type UseBalances = (params: UseBalancesParams) => Pick<
   ReturnType<typeof useContractInfiniteReads>,
   'isError' | 'isLoading'
 > & {
-  data: Record<string, Amount<Type>> | undefined
+  data: BalanceMap
 }
 
-export const useBalances: UseBalances = ({ fundSource, ...rest }) => {
-  const walletBalances = useWalletBalances(rest)
-  const bentoBalances = useBentoBalances(rest)
-  return fundSource === FundSource.BENTOBOX ? bentoBalances : walletBalances
+export const useBalances: UseBalances = (params) => {
+  const { data: walletBalances, isError: walletError, isLoading: walletLoading } = useWalletBalances(params)
+  const { data: bentoBalances, isError: bentoError, isLoading: bentoLoading } = useBentoBalances(params)
+
+  const balances = useMemo(
+    () =>
+      walletBalances && bentoBalances
+        ? Object.entries(walletBalances).reduce<BalanceMap>((acc, [address, balance]) => {
+            acc[address] = {
+              [FundSource.WALLET]: balance,
+              [FundSource.BENTOBOX]: bentoBalances[address],
+            }
+            return acc
+          }, {})
+        : {},
+    []
+  )
+
+  return {
+    isError: walletError || bentoError,
+    isLoading: walletLoading || bentoLoading,
+    data: balances,
+  }
 }
 
 type UseBalanceParams = {
   account: string | undefined
   token: Token
   chainId?: ChainId
-  fundSource?: FundSource
 }
 
 type UseBalance = (params: UseBalanceParams) => Pick<
   ReturnType<typeof useContractInfiniteReads>,
   'isError' | 'isLoading'
 > & {
-  data: Record<string, Amount<Type>> | undefined
+  data: BalanceMap
 }
 
-export const useBalance: UseBalance = ({ fundSource, ...rest }) => {
-  const walletBalance = useWalletBalance(rest)
-  const bentoBalance = useBentoBalance(rest)
-  return fundSource === FundSource.BENTOBOX ? bentoBalance : walletBalance
+export const useBalance: UseBalance = (params) => {
+  const { data: walletBalance, isError: walletError, isLoading: walletLoading } = useWalletBalance(params)
+  const { data: bentoBalance, isError: bentoError, isLoading: bentoLoading } = useBentoBalance(params)
+
+  return {
+    isError: walletError || bentoError,
+    isLoading: walletLoading || bentoLoading,
+    data: {
+      [params.token.wrapped.address]: {
+        [FundSource.WALLET]: walletBalance?.[params.token.wrapped.address],
+        [FundSource.BENTOBOX]: bentoBalance?.[params.token.wrapped.address],
+      },
+    },
+  }
 }

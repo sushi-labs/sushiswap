@@ -40,7 +40,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     account: address,
     chainId,
     tokens: Object.values(_tokenMap),
-    fundSource,
   })
 
   const { data: pricesMap } = usePrices({ chainId })
@@ -52,6 +51,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         tokenMap={_tokenMap}
         pricesMap={pricesMap}
         chainId={chainId}
+        fundSource={fundSource}
         {...props}
       />
     )
@@ -63,6 +63,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
       tokenMap={_tokenMap}
       pricesMap={pricesMap}
       chainId={chainId}
+      fundSource={fundSource}
       {...props}
     />
   )
