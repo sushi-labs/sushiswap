@@ -95,7 +95,7 @@ query articleAndMoreArticles($filters: ArticleFiltersInput, $filters_ne: Article
         }
     }
 
-    moreArticles: articles(sort: "createdAt:desc", pagination: { limit: 2 }, filters: $filters_ne, publicationState: $publicationState) {
+    moreArticles: articles(sort: "publishedAt:desc", pagination: { limit: 2 }, filters: $filters_ne, publicationState: $publicationState) {
         data {
             id
             attributes {
@@ -224,7 +224,7 @@ query getPreviewPostBySlug($slug: String) {
 }
 
 query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
-    articles(pagination: $pagination, sort: "createdAt:desc", filters: $filters) {
+    articles(pagination: $pagination, sort: "publishedAt:desc", filters: $filters) {
         meta {
             pagination {
                 page
