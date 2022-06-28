@@ -52,6 +52,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
         {balance && balance[fundSource]?.greaterThan(ZERO) && (
           <Popover
             hover
+            arrow={false}
             button={
               <div className="flex flex-col">
                 <Typography variant="xs" weight={700} className="text-slate-200 text-right">
@@ -70,7 +71,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
                   </Typography>
                   <Typography variant="xs" weight={700} className="flex items-center gap-1">
                     <Icon currency={currency} width={14} height={14} />
-                    {balance[FundSource.WALLET]?.toSignificant(6)}{' '}
+                    {balance[FundSource.WALLET] ? balance[FundSource.WALLET]?.toSignificant(6) : '0.00'}{' '}
                   </Typography>
                   <Typography variant="xxs" className="text-slate-400">
                     {price && balance[FundSource.WALLET]
@@ -80,11 +81,11 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = ({
                 </div>
                 <div className="flex flex-col gap-1">
                   <Typography variant="xs" weight={700} className="text-slate-300">
-                    Bentobox
+                    BentoBox
                   </Typography>
                   <Typography variant="xs" weight={700} className="flex items-center gap-1">
                     <Icon currency={currency} width={14} height={14} />
-                    {balance[FundSource.BENTOBOX]?.toSignificant(6)}{' '}
+                    {balance[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX]?.toSignificant(6) : '0.00'}{' '}
                   </Typography>
                   <Typography variant="xxs" className="text-slate-400">
                     {price && balance[FundSource.BENTOBOX]
