@@ -23,7 +23,7 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     isLoading: rebaseLoading,
   } = useContractRead({
     ...getBentoBoxContractConfig(chainId),
-    functionName: 'total',
+    functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token,
     args: [token?.address],
