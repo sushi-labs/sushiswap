@@ -438,14 +438,12 @@ const Widget: FC<Swap> = ({
     dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
   )
 
-  const { data: srcPrices } = useSWR(
-    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${srcChainId}`,
-    (url) => fetch(url).then((response) => response.json())
+  const { data: srcPrices } = useSWR(`https://token-price.sushi.com/v0/${srcChainId}`, (url) =>
+    fetch(url).then((response) => response.json())
   )
 
-  const { data: dstPrices } = useSWR(
-    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${dstChainId}`,
-    (url) => fetch(url).then((response) => response.json())
+  const { data: dstPrices } = useSWR(`https://token-price.sushi.com/v0/${dstChainId}`, (url) =>
+    fetch(url).then((response) => response.json())
   )
 
   const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
