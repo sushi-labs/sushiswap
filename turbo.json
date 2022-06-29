@@ -1,38 +1,26 @@
 {
   "pipeline": {
-    "clean": {
-      "cache": false
-    },
-    "validate": {
-      "cache": false
-    },
-    "generate": {
+    "root#build": {
       "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
         "^build",
-        ".graphclient/**",
-        "typechain/**"
+        "$ANALYTICS_URL",
+        "$BLOG_URL",
+        "$DAO_URL",
+        "$DOCS_URL",
+        "$FURO_URL",
+        "$LANDING_URL",
+        "$SWAP_URL",
+        "$LEGACY_URL"
       ],
-      "cache": true
+      "outputs": [".next/**"]
     },
-    "export": {
+    "dao#build": {
       "dependsOn": [
-        "build"
+        "^build",
+        "generate",
+        "$REDIS_PATH"
       ],
-      "outputs": [
-        "exports.json"
-      ]
-    },
-    "node": {
-      "cache": false,
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "deployments/**"
-      ]
+      "outputs": [".next/**"]
     },
     "build": {
       "outputs": [
@@ -46,6 +34,27 @@
         "^build",
         "generate"
       ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": false
+    },
+    "generate": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "^build",
+        ".graphclient/**",
+        "typechain/**"
+      ],
+      "cache": true
     },
     "test": {
       "outputs": [
@@ -61,35 +70,25 @@
         "^build"
       ]  
     },
-    "dev": {
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
+    "validate": {
       "cache": false
     },
-
-    "dao#build": {
+    "export": {
       "dependsOn": [
-        "^build",
-        "generate",
-        "$REDIS_PATH"
+        "build"
       ],
-      "outputs": [".next/**"]
+      "outputs": [
+        "exports.json"
+      ]
     },
-    "root#build": {
+    "node": {
+      "cache": true,
       "dependsOn": [
-        "^build",
-        "$ANALYTICS_URL",
-        "$BLOG_URL",
-        "$DAO_URL",
-        "$DOCS_URL",
-        "$FURO_URL",
-        "$LANDING_URL",
-        "$SWAP_URL",
-        "$LEGACY_URL"
+        "build"
       ],
-      "outputs": [".next/**"]
+      "outputs": [
+        "deployments/**"
+      ]
     }
   },
   "baseBranch": "origin/master"
