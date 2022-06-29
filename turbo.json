@@ -1,9 +1,9 @@
 {
   "pipeline": {
-    "validate": {
+    "clean": {
       "cache": false
     },
-    "clean": {
+    "validate": {
       "cache": false
     },
     "generate": {
@@ -12,7 +12,8 @@
       ],
       "outputs": [
         "^build",
-        ".graphclient/**"
+        ".graphclient/**",
+        "typechain/**"
       ],
       "cache": true
     },
