@@ -157,8 +157,8 @@ function getStableSwapPool(rnd: () => number, t0: RToken, t1: RToken) {
     fee,
     getBigNumber(reserve0),
     getBigNumber(reserve1),
-    6,
-    6,
+    18,
+    18,
     { base: ZERO, elastic: ZERO },
     { base: ZERO, elastic: ZERO }
   )
@@ -203,9 +203,10 @@ function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
 }
 
 function getRandomPool(rnd: () => number, t0: RToken, t1: RToken, price: number) {
-  if (price !== STABLE_TOKEN_PRICE) return getCPPool(rnd, t0, t1, price)
-  if (rnd() < 0.2) return getCPPool(rnd, t0, t1, price)
-  return getStableSwapPool(rnd, t0, t1)
+  return getCPPool(rnd, t0, t1, price)
+  // if (price !== STABLE_TOKEN_PRICE) return getCPPool(rnd, t0, t1, price)
+  // if (rnd() < 0.2) return getCPPool(rnd, t0, t1, price)
+  // return getStableSwapPool(rnd, t0, t1)
 }
 
 interface Network {
