@@ -1,17 +1,28 @@
+import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
+import { Fraction } from '@sushiswap/math'
 import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
+import { BalanceMap } from '../../hooks/useBalance/types'
 import { TokenListFilterByQuery } from '../TokenListFilterByQuery'
 import { TokenSelectorProps } from './TokenSelector'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
-export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
+type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
+  balancesMap?: BalanceMap
+  tokenMap: Record<string, Token>
+  pricesMap?: Record<string, Fraction> | undefined
+  fundSource: FundSource
+}
+
+export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   currency,
   open,
   onClose,
@@ -21,6 +32,9 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
   onSelect,
   onAddToken,
   onRemoveToken,
+  balancesMap,
+  pricesMap,
+  fundSource,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -30,14 +44,23 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
     [onClose, onSelect]
   )
 
-  const handleImport = useCallback((currency: Token) => {
-    onAddToken(currency)
-    onSelect(currency)
-    onClose()
-  }, [])
+  const handleImport = useCallback(
+    (currency: Token) => {
+      onAddToken(currency)
+      onSelect(currency)
+      onClose()
+    },
+    [onAddToken, onClose, onSelect]
+  )
 
   return (
-    <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
+    <TokenListFilterByQuery
+      tokenMap={tokenMap}
+      chainId={chainId}
+      pricesMap={pricesMap}
+      balancesMap={balancesMap}
+      fundSource={fundSource}
+    >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <Dialog open={open} unmount={false} onClose={onClose} initialFocus={inputRef}>
           <Dialog.Content className="!max-w-sm !p-0 !space-y-0 overflow-hidden">
@@ -47,7 +70,7 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
             <div className="px-6 pb-5">
               <div
                 className={classNames(
-                  'ring-offset-2 ring-offset-slate-900 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
+                  'ring-offset-2 ring-offset-slate-700 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
                 )}
               >
                 <Input.Address
@@ -76,6 +99,9 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                 )}
               </div>
             </div>
+            <Typography className="px-4 pb-1 text-slate-400" variant="xs">
+              {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
+            </Typography>
             <div className="w-full border-t border-slate-200/5" />
             <div className={classNames(queryToken ? '' : 'relative', 'min-h-[320px] rounded-t-none rounded-xl h-full')}>
               {queryToken && <TokenSelectorImportRow currency={queryToken} onImport={() => handleImport(queryToken)} />}
@@ -90,7 +116,15 @@ export const TokenSelectorDialog: FC<Omit<TokenSelectorProps, 'variant'>> = ({
                   className="h-full divide-y hide-scrollbar divide-slate-700"
                   currencies={currencies}
                   rowRenderer={({ currency, style }) => (
-                    <TokenSelectorRow currency={currency} style={style} onCurrency={handleSelect} />
+                    <TokenSelectorRow
+                      currency={currency}
+                      style={style}
+                      onCurrency={handleSelect}
+                      className="!px-4"
+                      balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
+                      price={pricesMap?.[currency.wrapped.address]}
+                      fundSource={fundSource}
+                    />
                   )}
                 />
               </div>

@@ -13,6 +13,7 @@ export interface ListProps {
   currencies: Type[]
   rowHeight?: number
   rowRenderer(payload: RendererPayload): ReactElement
+  deps?: any[]
 }
 
 export const List: FC<ListProps> = ({ className, currencies, rowHeight, rowRenderer }) => {

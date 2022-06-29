@@ -19,7 +19,7 @@ export const AddressToEnsResolver = ({
   // Custom onSuccess callback to send success data with resolved result
   useEffect(() => {
     if (result.data && onSuccess) onSuccess(result.data)
-  }, [result.data])
+  }, [onSuccess, result.data])
 
   if (typeof children === 'function') {
     return children(result)
