@@ -27,23 +27,26 @@ export const useBalances: UseBalances = (params) => {
 
   const balances = useMemo(
     () =>
-      walletBalances && bentoBalances
+      walletBalances
         ? Object.entries(walletBalances).reduce<BalanceMap>((acc, [address, balance]) => {
             acc[address] = {
               [FundSource.WALLET]: balance,
-              [FundSource.BENTOBOX]: bentoBalances[address],
+              [FundSource.BENTOBOX]: bentoBalances?.[address],
             }
             return acc
           }, {})
         : {},
-    []
+    [walletBalances, bentoBalances]
   )
 
-  return {
-    isError: walletError || bentoError,
-    isLoading: walletLoading || bentoLoading,
-    data: balances,
-  }
+  return useMemo(
+    () => ({
+      isError: walletError || bentoError,
+      isLoading: walletLoading || bentoLoading,
+      data: balances,
+    }),
+    [walletError, bentoError, walletLoading, bentoLoading, balances]
+  )
 }
 
 type UseBalanceParams = {
@@ -63,14 +66,17 @@ export const useBalance: UseBalance = (params) => {
   const { data: walletBalance, isError: walletError, isLoading: walletLoading } = useWalletBalance(params)
   const { data: bentoBalance, isError: bentoError, isLoading: bentoLoading } = useBentoBalance(params)
 
-  return {
-    isError: walletError || bentoError,
-    isLoading: walletLoading || bentoLoading,
-    data: {
-      [params.token.wrapped.address]: {
-        [FundSource.WALLET]: walletBalance?.[params.token.wrapped.address],
-        [FundSource.BENTOBOX]: bentoBalance?.[params.token.wrapped.address],
+  return useMemo(
+    () => ({
+      isError: walletError || bentoError,
+      isLoading: walletLoading || bentoLoading,
+      data: {
+        [params.token.wrapped.address]: {
+          [FundSource.WALLET]: walletBalance?.[params.token.wrapped.address],
+          [FundSource.BENTOBOX]: bentoBalance?.[params.token.wrapped.address],
+        },
       },
-    },
-  }
+    }),
+    [walletError, bentoError, walletLoading, bentoLoading, params.token, walletBalance, bentoBalance]
+  )
 }

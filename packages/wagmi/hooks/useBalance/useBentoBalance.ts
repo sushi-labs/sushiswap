@@ -1,9 +1,10 @@
 import { isAddress } from '@ethersproject/address'
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { useContractInfiniteReads } from 'wagmi'
+import { useBalance, useContractInfiniteReads, useContractReads } from 'wagmi'
 
 import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
@@ -21,9 +22,17 @@ type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
 }
 
 export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId }) => {
+  const _tokens = useMemo(() => tokens, [tokens])
+
+  const {
+    data: nativeBalance,
+    isLoading: isNativeLoading,
+    error: isNativeError,
+  } = useBalance({ addressOrName: account, chainId })
+
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      tokens.reduce<[Token[], string[][]]>(
+      _tokens.reduce<[Token[], string[][]]>(
         (acc, token) => {
           if (token && isAddress(token.address)) {
             acc[0].push(token)
@@ -34,7 +43,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
         },
         [[], []]
       ),
-    [tokens]
+    [_tokens]
   )
 
   const contractsForTotalsRequest = useMemo(
@@ -52,15 +61,17 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
     data: totals,
     isError: totalsError,
     isLoading: totalsLoading,
-  } = useContractInfiniteReads({
-    cacheKey: 'bentoTotals',
-    contracts: () => contractsForTotalsRequest,
+  } = useContractReads({
+    contracts: contractsForTotalsRequest,
+    cacheOnBlock: true,
+    watch: true,
+    keepPreviousData: true,
   })
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
     () =>
       totals && !totalsError && !totalsLoading
-        ? totals.pages[0].reduce<
+        ? totals.reduce<
             [
               Token[],
               {
@@ -101,16 +112,18 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
     data: balances,
     isError: balancesError,
     isLoading: balancesLoading,
-  } = useContractInfiniteReads({
-    cacheKey: 'bentoBalances',
-    contracts: () => contractsForBalancesRequest,
+  } = useContractReads({
+    contracts: contractsForBalancesRequest,
+    cacheOnBlock: true,
+    watch: true,
+    keepPreviousData: true,
   })
 
   return useMemo(() => {
-    const data = balances
-      ? balances.pages[0].reduce<Record<string, Amount<Token>>>((acc, el, i) => {
+    const _data = balances
+      ? balances.reduce<Record<string, Amount<Token>>>((acc, el, i) => {
           if (baseTotals[i] && tokensWithTotal[i] && el) {
-            const amount = Amount.fromShare(tokensWithTotal[i], el, baseTotals[i])
+            const amount = Amount.fromShare(tokensWithTotal[i], el.toString(), baseTotals[i])
             if (amount.greaterThan(ZERO)) {
               acc[tokensWithTotal[i].address] = amount
             } else {
@@ -123,11 +136,29 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
       : undefined
 
     return {
-      data,
-      isLoading: balancesLoading || totalsLoading,
-      isError: balancesError || totalsError,
+      data: {
+        ...(chainId &&
+          nativeBalance?.value && {
+            [AddressZero]: Amount.fromRawAmount(Native.onChain(chainId), nativeBalance.value.toString()),
+          }),
+        ..._data,
+      },
+      isLoading: balancesLoading ?? totalsLoading ?? isNativeLoading,
+      isError: balancesError ?? totalsError ?? isNativeError,
     }
-  }, [balancesLoading, totalsLoading, balancesError, totalsError, balances, baseTotals, tokensWithTotal])
+  }, [
+    balances,
+    chainId,
+    nativeBalance?.value,
+    balancesLoading,
+    totalsLoading,
+    isNativeLoading,
+    balancesError,
+    totalsError,
+    isNativeError,
+    baseTotals,
+    tokensWithTotal,
+  ])
 }
 
 type UseBentoBalanceParams = {

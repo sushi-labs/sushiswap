@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { erc20ABI, useBalance, useContractInfiniteReads } from 'wagmi'
+import { erc20ABI, useBalance, useContractInfiniteReads, useContractReads } from 'wagmi'
 
 type UseWalletBalancesParams = {
   account: string | undefined
@@ -20,6 +20,8 @@ type UseWalletBalances = (params: UseWalletBalancesParams) => Pick<
 }
 
 export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId }) => {
+  const _tokens = useMemo(() => tokens, [tokens])
+
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
@@ -28,7 +30,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      tokens.reduce<[Token[], string[]]>(
+      _tokens.reduce<[Token[], string[]]>(
         (acc, currency) => {
           if (currency?.wrapped.address && isAddress(currency.wrapped.address)) {
             acc[0].push(currency.wrapped)
@@ -39,7 +41,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
         },
         [[], []]
       ),
-    [tokens]
+    [_tokens]
   )
 
   const contracts = useMemo(
@@ -61,18 +63,19 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
     data,
     isError: isTokensError,
     isLoading: isTokensLoading,
-  } = useContractInfiniteReads({
-    cacheKey: 'tokenBalances',
-    contracts: () => contracts,
+  } = useContractReads({
+    contracts,
+    cacheOnBlock: true,
+    watch: true,
+    keepPreviousData: true,
   })
 
   return useMemo(() => {
     const _data =
       data && account && validatedTokens.length > 0
         ? validatedTokens.reduce<Record<string, Amount<Token>>>((acc, token, i) => {
-            const value = data.pages[0][i]
+            const value = data[i]
             const amount = value ? JSBI.BigInt(value.toString()) : undefined
-
             if (amount) acc[token.address] = Amount.fromRawAmount(token, amount)
             else acc[token.address] = Amount.fromRawAmount(token, '0')
 

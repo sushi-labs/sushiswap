@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -31,18 +31,24 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   ...props
 }) => {
   const { address } = useAccount()
+  const isMounted = useIsMounted()
+
   const _tokenMap: Record<string, Token> = useMemo(
     () => ({ ...tokenMap, ...props.customTokenMap }),
     [tokenMap, props.customTokenMap]
   )
 
+  const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
+
   const { data: balances } = useBalances({
     account: address,
     chainId,
-    tokens: Object.values(_tokenMap),
+    tokens: _tokenMapValues,
   })
 
   const { data: pricesMap } = usePrices({ chainId })
+
+  if (!isMounted) return <></>
 
   if (variant === 'overlay') {
     return (

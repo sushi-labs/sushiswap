@@ -10,10 +10,13 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
   const typedRef = useRef<string>()
   const [showEns, setShowEns] = useState<boolean>(false)
 
-  const onChangeHandler = useCallback((value: string) => {
-    typedRef.current = value
-    onChange(value)
-  }, [])
+  const onChangeHandler = useCallback(
+    (value: string) => {
+      typedRef.current = value
+      onChange(value)
+    },
+    [onChange]
+  )
 
   // To avoid jitter
   useEffect(() => {

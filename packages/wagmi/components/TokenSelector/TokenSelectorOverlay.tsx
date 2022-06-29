@@ -15,14 +15,13 @@ import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorRow } from './TokenSelectorRow'
 
 type TokenSelectorOverlay = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
-  balancesMap: BalanceMap
+  balancesMap?: BalanceMap
   tokenMap: Record<string, Token>
-  pricesMap: Record<string, Fraction> | undefined
+  pricesMap?: Record<string, Fraction> | undefined
   fundSource: FundSource
 }
 
 export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
-  currency,
   open,
   onClose,
   tokenMap,
@@ -41,14 +40,23 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
     [onClose, onSelect]
   )
 
-  const handleImport = useCallback((currency: Token) => {
-    onAddToken(currency)
-    onSelect(currency)
-    onClose()
-  }, [])
+  const handleImport = useCallback(
+    (currency: Token) => {
+      onAddToken(currency)
+      onSelect(currency)
+      onClose()
+    },
+    [onAddToken, onClose, onSelect]
+  )
 
   return (
-    <TokenListFilterByQuery tokenMap={tokenMap} chainId={chainId}>
+    <TokenListFilterByQuery
+      tokenMap={tokenMap}
+      chainId={chainId}
+      pricesMap={pricesMap}
+      balancesMap={balancesMap}
+      fundSource={fundSource}
+    >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
           <Overlay.Content className="bg-slate-700 !px-0">
@@ -56,7 +64,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
             <div className="p-3">
               <div
                 className={classNames(
-                  'ring-offset-2 ring-offset-slate-900 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
+                  'ring-offset-2 ring-offset-slate-700 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
                 )}
               >
                 <Input.Address

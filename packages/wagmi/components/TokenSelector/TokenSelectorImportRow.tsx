@@ -60,7 +60,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 Trade at your own risk!
               </Typography>
               <Typography variant="xs" weight={700} className="text-red-100 text-center">
-                This token doesn't appear on the active token list(s). Anyone can create a token, including creating
+                This token {"doesn't"} appear on the active token list(s). Anyone can create a token, including creating
                 fake versions of existing tokens that claim to represent projects
               </Typography>
             </div>

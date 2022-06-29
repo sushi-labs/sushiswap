@@ -43,7 +43,7 @@ export function useERC20ApproveCallback(
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, spender])
+  }, [amountToApprove, currentAllowance, isWritePending, spender])
 
   const tokenContract = useContract<Contract>({
     addressOrName: token?.address ?? AddressZero,
@@ -106,7 +106,7 @@ export function useERC20ApproveCallback(
         failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
       },
     })
-  }, [approvalState, token, tokenContract, amountToApprove, spender])
+  }, [approvalState, token, tokenContract, amountToApprove, spender, sendTransactionAsync, address])
 
   return [approvalState, approve]
 }
