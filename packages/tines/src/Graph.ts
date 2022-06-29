@@ -77,7 +77,7 @@ export class Edge {
   }
 
   reserve(v: Vertice): BigNumber {
-    return v === this.vert0 ? this.pool.reserve0 : this.pool.reserve1
+    return v === this.vert0 ? this.pool.getReserve0() : this.pool.getReserve1()
   }
 
   calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
@@ -164,14 +164,14 @@ export class Edge {
 
   checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
     if (from === this.vert0) {
-      const r1 = parseInt(this.pool.reserve1.toString())
+      const r1 = parseInt(this.pool.getReserve1().toString())
       if (this.direction) {
         return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity
       } else {
         return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity
       }
     } else {
-      const r0 = parseInt(this.pool.reserve0.toString())
+      const r0 = parseInt(this.pool.getReserve0().toString())
       if (this.direction) {
         return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity
       } else {
