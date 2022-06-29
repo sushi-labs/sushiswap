@@ -36,6 +36,9 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const { disconnect } = useDisconnect()
+
+  // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { connectors, connect, pendingConnector } = hack || useConnect()
   const { pendingConnection, reconnecting, isConnected } = useWalletState(!!pendingConnector)
 
