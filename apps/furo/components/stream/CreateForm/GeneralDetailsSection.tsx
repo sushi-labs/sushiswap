@@ -52,8 +52,10 @@ export const GeneralDetailsSection = () => {
             return (
               <>
                 <Web3Input.Ens
+                  id="recipient"
                   value={value}
                   onChange={onChange}
+                  // @ts-ignore
                   error={!!error?.message}
                   placeholder="Address or ENS Name"
                 />

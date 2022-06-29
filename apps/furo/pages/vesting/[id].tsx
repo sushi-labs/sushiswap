@@ -160,19 +160,25 @@ const _VestingPage: FC = () => {
           <div className="flex gap-2">
             <TransferModal
               stream={vesting}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.address ?? AddressZero
               }
             />
             <CancelModal
               title="Cancel Vesting"
               stream={vesting}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.address ?? AddressZero
               }
               fn="stopVesting"
             />
