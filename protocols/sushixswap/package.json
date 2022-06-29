@@ -54,5 +54,8 @@
     "hardhat-deploy": "^0.11.10",
     "ts-node": "^10.7.0",
     "typescript": "^4.0.0"
+  },
+  "peerDependencies": {
+    "ethers": "^5.0.0"
   }
 }
