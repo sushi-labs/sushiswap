@@ -33,6 +33,9 @@
     "node": "hardhat node"
   },
   "devDependencies": {
+    "ethers": "^5.0.0",
+    "@ethersproject/abi": "^5.0.0",
+    "@ethersproject/providers": "^5.0.0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.6.0",
     "@sushiswap/bentobox": "workspace:*",
@@ -56,6 +59,8 @@
     "typescript": "^4.0.0"
   },
   "peerDependencies": {
-    "ethers": "^5.0.0"
+    "ethers": "^5.0.0",
+    "@ethersproject/abi": "^5.0.0",
+    "@ethersproject/providers": "^5.0.0"
   }
 }

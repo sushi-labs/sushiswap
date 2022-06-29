@@ -1732,6 +1732,8 @@ importers:
 
   protocols/sushixswap:
     specifiers:
+      '@ethersproject/abi': ^5.0.0
+      '@ethersproject/providers': ^5.0.0
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': ^4.6.0
       '@sushiswap/bentobox': workspace:*
@@ -1749,12 +1751,15 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
+      ethers: ^5.0.0
       hardhat: ^2.9.5
       hardhat-deploy: ^0.11.10
       ts-node: ^10.7.0
       typescript: ^4.0.0
     devDependencies:
-      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.9.6
+      '@ethersproject/abi': 5.6.2
+      '@ethersproject/providers': 5.6.6
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
       '@openzeppelin/contracts': 4.6.0
       '@sushiswap/bentobox': link:../bentobox/v1
       '@sushiswap/chain': link:../../packages/chain
@@ -1771,6 +1776,7 @@ importers:
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@tenderly/hardhat-tenderly': 1.0.13_hardhat@2.9.6
       '@types/node': 17.0.35
+      ethers: 5.6.6
       hardhat: 2.9.6
       hardhat-deploy: 0.11.10
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
@@ -7690,7 +7696,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -11802,15 +11808,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.4:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
@@ -18005,7 +18002,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
