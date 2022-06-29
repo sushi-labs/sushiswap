@@ -90,5 +90,6 @@
       ],
       "outputs": [".next/**"]
     }
-  }
+  },
+  "baseBranch": "origin/master"
 }

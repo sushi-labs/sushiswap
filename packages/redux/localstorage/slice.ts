@@ -22,55 +22,57 @@ const initialState: StorageState = {
   customTokens: parsedState?.customTokens || {},
 }
 
+const reducers = {
+  updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
+    const { slippageTolerance } = action.payload
+    state.slippageTolerance = slippageTolerance
+  },
+  updateGasPrice: (state: StorageState, action: PayloadAction<UpdateGasPrice>) => {
+    const { gasPrice } = action.payload
+    state.gasPrice = gasPrice
+    state.gasType = 'preset'
+  },
+  updateMaxFeePerGas: (state: StorageState, action: PayloadAction<UpdateMaxFeePerGas>) => {
+    const { maxFeePerGas } = action.payload
+    state.maxFeePerGas = maxFeePerGas
+    if (state.maxPriorityFeePerGas) {
+      state.gasType = 'custom'
+    }
+  },
+  updateMaxPriorityFeePerGas: (state: StorageState, action: PayloadAction<UpdateMaxPriorityFeePerGas>) => {
+    const { maxPriorityFeePerGas } = action.payload
+    state.maxPriorityFeePerGas = maxPriorityFeePerGas
+    if (state.maxFeePerGas) {
+      state.gasType = 'custom'
+    }
+  },
+  updateGasType: (state: StorageState, action: PayloadAction<UpdateGasType>) => {
+    const { gasType } = action.payload
+    state.gasType = gasType
+  },
+  addCustomToken: (state: StorageState, action: PayloadAction<AddCustomToken>) => {
+    const { address, symbol, name, chainId, decimals } = action.payload
+
+    if (!state.customTokens[chainId]) {
+      state.customTokens[chainId] = {}
+    }
+
+    state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+  },
+  removeCustomToken: (state: StorageState, action: PayloadAction<RemoveCustomToken>) => {
+    const { address, chainId } = action.payload
+
+    if (state.customTokens[chainId] && state.customTokens[chainId][address.toLowerCase()]) {
+      delete state.customTokens[chainId][address.toLowerCase()]
+    }
+  },
+}
+
 export function createStorageSlice(reducerPath: string): Slice<StorageState> {
-  return createSlice({
+  return createSlice<StorageState, typeof reducers>({
     name: reducerPath,
     initialState,
-    reducers: {
-      updateSlippageTolerance: (state, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
-        const { slippageTolerance } = action.payload
-        state.slippageTolerance = slippageTolerance
-      },
-      updateGasPrice: (state, action: PayloadAction<UpdateGasPrice>) => {
-        const { gasPrice } = action.payload
-        state.gasPrice = gasPrice
-        state.gasType = 'preset'
-      },
-      updateMaxFeePerGas: (state, action: PayloadAction<UpdateMaxFeePerGas>) => {
-        const { maxFeePerGas } = action.payload
-        state.maxFeePerGas = maxFeePerGas
-        if (state.maxPriorityFeePerGas) {
-          state.gasType = 'custom'
-        }
-      },
-      updateMaxPriorityFeePerGas: (state, action: PayloadAction<UpdateMaxPriorityFeePerGas>) => {
-        const { maxPriorityFeePerGas } = action.payload
-        state.maxPriorityFeePerGas = maxPriorityFeePerGas
-        if (state.maxFeePerGas) {
-          state.gasType = 'custom'
-        }
-      },
-      updateGasType: (state, action: PayloadAction<UpdateGasType>) => {
-        const { gasType } = action.payload
-        state.gasType = gasType
-      },
-      addCustomToken: (state, action: PayloadAction<AddCustomToken>) => {
-        const { address, symbol, name, chainId, decimals } = action.payload
-
-        if (!state.customTokens[chainId]) {
-          state.customTokens[chainId] = {}
-        }
-
-        state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
-      },
-      removeCustomToken: (state, action: PayloadAction<RemoveCustomToken>) => {
-        const { address, chainId } = action.payload
-
-        if (state.customTokens[chainId] && state.customTokens[chainId][address.toLowerCase()]) {
-          delete state.customTokens[chainId][address.toLowerCase()]
-        }
-      },
-    },
+    reducers,
   })
 }
 

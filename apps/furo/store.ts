@@ -11,6 +11,7 @@ export const store: ReturnType<typeof configureStore> = configureStore({
     [multicall.reducerPath]: multicall.reducer,
     [storage.reducerPath]: storage.reducer,
   },
+  // @ts-ignore
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(storageMiddleware),
 })
 

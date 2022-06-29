@@ -148,27 +148,36 @@ const _Streams: FC = () => {
           <div className="flex gap-2">
             <TransferModal
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
             />
             <UpdateModal
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
             />
             <CancelModal
               title="Cancel Stream"
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
               fn="cancelStream"
             />

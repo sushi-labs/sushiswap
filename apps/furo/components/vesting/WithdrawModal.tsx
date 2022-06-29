@@ -71,8 +71,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         chainId: activeChain?.id,
         from: address,
         to:
-          furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-          AddressZero,
+          furoExports[activeChain?.id as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
+            ?.FuroVesting?.address ?? AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',
