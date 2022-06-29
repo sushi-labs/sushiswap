@@ -156,7 +156,6 @@ const { chains, provider, webSocketProvider } = configureChains(
 
 const config: CreateClientConfig = {
   provider,
-  // @ts-ignore
   webSocketProvider,
   autoConnect: true,
   connectors() {
