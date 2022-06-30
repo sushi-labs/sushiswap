@@ -1,5 +1,6 @@
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { useContractInfiniteReads } from 'wagmi'
@@ -10,7 +11,7 @@ import { useWalletBalance, useWalletBalances } from './useWalletBalance'
 
 type UseBalancesParams = {
   account: string | undefined
-  tokens: Token[]
+  currencies: Type[]
   chainId?: ChainId
 }
 
@@ -22,8 +23,13 @@ type UseBalances = (params: UseBalancesParams) => Pick<
 }
 
 export const useBalances: UseBalances = (params) => {
-  const { data: walletBalances, isError: walletError, isLoading: walletLoading } = useWalletBalances(params)
-  const { data: bentoBalances, isError: bentoError, isLoading: bentoLoading } = useBentoBalances(params)
+  const _params = useMemo(
+    () => ({ chainId: params.chainId, currencies: params.currencies, account: params.account }),
+    [params.chainId, params.account, params.currencies]
+  )
+
+  const { data: walletBalances, isError: walletError, isLoading: walletLoading } = useWalletBalances(_params)
+  const { data: bentoBalances, isError: bentoError, isLoading: bentoLoading } = useBentoBalances(_params)
 
   const balances = useMemo(
     () =>
@@ -51,7 +57,7 @@ export const useBalances: UseBalances = (params) => {
 
 type UseBalanceParams = {
   account: string | undefined
-  token: Token
+  currency: Type
   chainId?: ChainId
 }
 
@@ -59,7 +65,7 @@ type UseBalance = (params: UseBalanceParams) => Pick<
   ReturnType<typeof useContractInfiniteReads>,
   'isError' | 'isLoading'
 > & {
-  data: BalanceMap
+  data: Record<FundSource, Amount<Type> | undefined>
 }
 
 export const useBalance: UseBalance = (params) => {
@@ -71,12 +77,19 @@ export const useBalance: UseBalance = (params) => {
       isError: walletError || bentoError,
       isLoading: walletLoading || bentoLoading,
       data: {
-        [params.token.wrapped.address]: {
-          [FundSource.WALLET]: walletBalance?.[params.token.wrapped.address],
-          [FundSource.BENTOBOX]: bentoBalance?.[params.token.wrapped.address],
-        },
+        [FundSource.WALLET]: walletBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
+        [FundSource.BENTOBOX]: bentoBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
       },
     }),
-    [walletError, bentoError, walletLoading, bentoLoading, params.token, walletBalance, bentoBalance]
+    [
+      walletError,
+      bentoError,
+      walletLoading,
+      bentoLoading,
+      walletBalance,
+      params.currency.isNative,
+      params.currency.wrapped.address,
+      bentoBalance,
+    ]
   )
 }

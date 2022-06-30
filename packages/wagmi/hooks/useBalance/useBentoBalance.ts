@@ -10,7 +10,7 @@ import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
 type UseBentoBalancesParams = {
   account: string | undefined
-  tokens: Token[]
+  currencies: Type[]
   chainId?: ChainId
 }
 
@@ -21,9 +21,7 @@ type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId }) => {
-  const _tokens = useMemo(() => tokens, [tokens])
-
+export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainId }) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
@@ -32,18 +30,18 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      _tokens.reduce<[Token[], string[][]]>(
-        (acc, token) => {
-          if (token && isAddress(token.address)) {
-            acc[0].push(token)
-            acc[1].push([token.address])
+      currencies.reduce<[Token[], string[][]]>(
+        (acc, currencies) => {
+          if (currencies && isAddress(currencies.wrapped.address)) {
+            acc[0].push(currencies.wrapped)
+            acc[1].push([currencies.wrapped.address])
           }
 
           return acc
         },
         [[], []]
       ),
-    [_tokens]
+    [currencies]
   )
 
   const contractsForTotalsRequest = useMemo(
@@ -63,8 +61,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
     isLoading: totalsLoading,
   } = useContractReads({
     contracts: contractsForTotalsRequest,
-    cacheOnBlock: true,
-    watch: true,
+    cacheTime: 20_000,
     keepPreviousData: true,
   })
 
@@ -114,8 +111,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
     isLoading: balancesLoading,
   } = useContractReads({
     contracts: contractsForBalancesRequest,
-    cacheOnBlock: true,
-    watch: true,
+    cacheTime: 20_000,
     keepPreviousData: true,
   })
 
@@ -163,7 +159,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, tokens, chainId })
 
 type UseBentoBalanceParams = {
   account: string | undefined
-  token: Token
+  currency: Type
   chainId?: ChainId
 }
 
@@ -174,7 +170,11 @@ type UseBentoBalance = (params: UseBentoBalanceParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useBentoBalance: UseBentoBalance = ({ account, token, chainId }) => {
-  const tokens = useMemo(() => [token], [token])
-  return useBentoBalances({ account, tokens, chainId })
+export const useBentoBalance: UseBentoBalance = (params) => {
+  const _params = useMemo(
+    () => ({ chainId: params.chainId, currencies: [params.currency], account: params.account }),
+    [params.chainId, params.account, params.currency]
+  )
+
+  return useBentoBalances(_params)
 }

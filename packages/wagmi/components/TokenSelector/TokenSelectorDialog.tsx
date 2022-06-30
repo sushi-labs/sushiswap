@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
@@ -16,6 +15,7 @@ import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
+  account?: string
   balancesMap?: BalanceMap
   tokenMap: Record<string, Token>
   pricesMap?: Record<string, Fraction> | undefined
@@ -23,6 +23,7 @@ type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
 }
 
 export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
+  account,
   currency,
   open,
   onClose,
@@ -117,12 +118,11 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   currencies={currencies}
                   rowRenderer={({ currency, style }) => (
                     <TokenSelectorRow
+                      account={account}
                       currency={currency}
                       style={style}
                       onCurrency={handleSelect}
                       className="!px-4"
-                      balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
-                      price={pricesMap?.[currency.wrapped.address]}
                       fundSource={fundSource}
                     />
                   )}

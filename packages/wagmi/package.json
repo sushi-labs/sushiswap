@@ -51,7 +51,7 @@
     "tsup":  "^6.0.1",
     "typescript": "next",
     "typechain": "^8.0.0",
-    "react-query": "4.0.0-beta.12",
+    "react-query": "4.0.0-beta.23",
     "wagmi": "^0.5.5"
 
   },
