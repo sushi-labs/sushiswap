@@ -46,14 +46,7 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
   // Awaiting wallet confirmation
   if (pendingConnection) {
     return (
-      <UIButton
-        endIcon={<Loader />}
-        variant="filled"
-        color="blue"
-        disabled
-        className={rest.className || '!h-[36px] w-[158px] flex justify-between'}
-        {...rest}
-      >
+      <UIButton endIcon={<Loader />} variant="filled" color="blue" disabled {...rest}>
         Authorize Wallet
       </UIButton>
     )
