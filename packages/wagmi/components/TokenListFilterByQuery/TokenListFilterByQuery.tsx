@@ -71,9 +71,10 @@ export const TokenListFilterByQuery: FC<Props> = ({
   }, [tokenMapValues, debouncedQuery])
 
   const sortedTokens: Token[] = useMemo(() => {
-    if (!balancesMap || !pricesMap || !fundSource) return filteredTokens
-    return filteredTokens.sort(tokenComparator(balancesMap, pricesMap, fundSource))
-  }, [balancesMap, pricesMap, fundSource, filteredTokens])
+    return [...filteredTokens].sort(tokenComparator.bind(null, balancesMap, pricesMap, fundSource))
+
+    // TODO adding balancesMap to this array causes infinite loop
+  }, [filteredTokens, pricesMap, fundSource])
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
   const filteredSortedTokensWithNative = useMemo(() => {

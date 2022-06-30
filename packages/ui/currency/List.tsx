@@ -1,5 +1,5 @@
 import { Type } from '@sushiswap/currency'
-import React, { CSSProperties, FC, ReactElement, useCallback } from 'react'
+import React, { CSSProperties, FC, memo, ReactElement, useCallback } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
@@ -16,28 +16,34 @@ export interface ListProps {
   deps?: any[]
 }
 
-export const List: FC<ListProps> = ({ className, currencies, rowHeight, rowRenderer }) => {
-  const Row = useCallback(
-    ({ index, style }: { index: number; style: CSSProperties }) => {
-      const currency = currencies[index]
-      return rowRenderer({ currency, style })
-    },
-    [currencies, rowRenderer]
-  )
+export const List: FC<ListProps> = memo(
+  ({ className, currencies, rowHeight, rowRenderer }) => {
+    const Row = useCallback(
+      ({ index, style }: { index: number; style: CSSProperties }) => {
+        const currency = currencies[index]
+        return rowRenderer({ currency, style })
+      },
+      [currencies, rowRenderer]
+    )
 
-  return (
-    <AutoSizer>
-      {({ height, width }: { height: number; width: number }) => (
-        <FixedSizeList
-          height={height}
-          width={width}
-          itemCount={currencies.length}
-          itemSize={rowHeight || 48}
-          className={className}
-        >
-          {Row}
-        </FixedSizeList>
-      )}
-    </AutoSizer>
-  )
-}
+    return (
+      <AutoSizer>
+        {({ height, width }: { height: number; width: number }) => (
+          <FixedSizeList
+            height={height}
+            width={width}
+            itemCount={currencies.length}
+            itemSize={rowHeight || 48}
+            className={className}
+          >
+            {Row}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
+    )
+  },
+  (prevProps, nextProps) =>
+    prevProps.className === nextProps.className &&
+    prevProps.currencies === nextProps.currencies &&
+    prevProps.rowHeight === nextProps.rowHeight
+)

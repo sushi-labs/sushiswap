@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { FC, useMemo } from 'react'
+import { FC, memo, useEffect, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalances } from '../../hooks/useBalance'
@@ -23,36 +23,49 @@ export type TokenSelectorProps = {
   fundSource?: FundSource
 }
 
-export const TokenSelector: FC<TokenSelectorProps> = ({
-  variant,
-  tokenMap,
-  chainId,
-  fundSource = FundSource.WALLET,
-  ...props
-}) => {
-  const { address } = useAccount()
-  const isMounted = useIsMounted()
+export const TokenSelector: FC<TokenSelectorProps> = memo(
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, ...props }) => {
+    const { address } = useAccount()
+    const isMounted = useIsMounted()
 
-  const _tokenMap: Record<string, Token> = useMemo(
-    () => ({ ...tokenMap, ...props.customTokenMap }),
-    [tokenMap, props.customTokenMap]
-  )
+    const _tokenMap: Record<string, Token> = useMemo(
+      () => ({ ...tokenMap, ...props.customTokenMap }),
+      [tokenMap, props.customTokenMap]
+    )
 
-  const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
+    const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
 
-  const { data: balances } = useBalances({
-    account: address,
-    chainId,
-    tokens: _tokenMapValues,
-  })
+    const { data: balances } = useBalances({
+      account: address,
+      chainId,
+      currencies: _tokenMapValues,
+    })
 
-  const { data: pricesMap } = usePrices({ chainId })
+    useEffect(() => {
+      console.log('balances')
+    }, [balances])
 
-  if (!isMounted) return <></>
+    const { data: pricesMap } = usePrices({ chainId })
 
-  if (variant === 'overlay') {
+    if (!isMounted) return <></>
+
+    if (variant === 'overlay') {
+      return (
+        <TokenSelectorOverlay
+          account={address}
+          balancesMap={balances}
+          tokenMap={_tokenMap}
+          pricesMap={pricesMap}
+          chainId={chainId}
+          fundSource={fundSource}
+          {...props}
+        />
+      )
+    }
+
     return (
-      <TokenSelectorOverlay
+      <TokenSelectorDialog
+        account={address}
         balancesMap={balances}
         tokenMap={_tokenMap}
         pricesMap={pricesMap}
@@ -61,16 +74,15 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         {...props}
       />
     )
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.variant === nextProps.variant &&
+      prevProps.currency === nextProps.currency &&
+      prevProps.open === nextProps.open &&
+      prevProps.tokenMap === nextProps.tokenMap &&
+      prevProps.customTokenMap === nextProps.customTokenMap &&
+      prevProps.fundSource === nextProps.fundSource
+    )
   }
-
-  return (
-    <TokenSelectorDialog
-      balancesMap={balances}
-      tokenMap={_tokenMap}
-      pricesMap={pricesMap}
-      chainId={chainId}
-      fundSource={fundSource}
-      {...props}
-    />
-  )
-}
+)

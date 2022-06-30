@@ -8,7 +8,7 @@ import { erc20ABI, useBalance, useContractInfiniteReads, useContractReads } from
 
 type UseWalletBalancesParams = {
   account: string | undefined
-  tokens: Token[]
+  currencies: Type[]
   chainId?: ChainId
 }
 
@@ -19,9 +19,7 @@ type UseWalletBalances = (params: UseWalletBalancesParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId }) => {
-  const _tokens = useMemo(() => tokens, [tokens])
-
+export const useWalletBalances: UseWalletBalances = ({ account, currencies, chainId }) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
@@ -30,7 +28,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      _tokens.reduce<[Token[], string[]]>(
+      currencies.reduce<[Token[], string[]]>(
         (acc, currency) => {
           if (currency?.wrapped.address && isAddress(currency.wrapped.address)) {
             acc[0].push(currency.wrapped)
@@ -41,7 +39,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
         },
         [[], []]
       ),
-    [_tokens]
+    [currencies]
   )
 
   const contracts = useMemo(
@@ -65,8 +63,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
-    cacheOnBlock: true,
-    watch: true,
+    cacheTime: 20_000,
     keepPreviousData: true,
   })
 
@@ -109,7 +106,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, tokens, chainId 
 
 type UseWalletBalanceParams = {
   account: string | undefined
-  token: Token
+  currency: Type
   chainId?: ChainId
 }
 
@@ -120,7 +117,11 @@ type UseTokenBalance = (params: UseWalletBalanceParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useWalletBalance: UseTokenBalance = ({ account, token, chainId }) => {
-  const tokens = useMemo(() => [token], [token])
-  return useWalletBalances({ account, tokens, chainId })
+export const useWalletBalance: UseTokenBalance = (params) => {
+  const _params = useMemo(
+    () => ({ chainId: params.chainId, currencies: [params.currency], account: params.account }),
+    [params.chainId, params.account, params.currency]
+  )
+
+  return useWalletBalances(_params)
 }
