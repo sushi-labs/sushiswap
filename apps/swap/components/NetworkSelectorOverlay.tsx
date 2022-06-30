@@ -73,7 +73,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
             />
             {searching.current && <Loader size="16px" />}
           </div>
-          <div className={classNames('rounded-xl overflow-hidden h-[calc(100%-92px)] bg-slate-800')}>
+          <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-800 mt-3')}>
             <div className="h-full overflow-auto hide-scrollbar">
               {filteredChains.map(([k, chain]) => (
                 <Typography
