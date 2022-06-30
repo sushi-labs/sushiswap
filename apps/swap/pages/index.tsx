@@ -13,7 +13,6 @@ import { Caption, ConfirmationComponentController, CurrencyInput, Rate, Settings
 import { CrossChainRoute, SameChainRoute } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
-import { useTokenBalance } from 'lib/hooks/useTokenBalance'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { useRouter } from 'next/router'
@@ -424,19 +423,19 @@ const Widget: FC<Swap> = ({
 
   const isMounted = useIsMounted()
 
-  const { data: srcBalance } = useTokenBalance(
-    srcChainId,
-    address,
-    srcToken.wrapped,
-    srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
-  )
+  // const { data: srcBalance } = useTokenBalance(
+  //   srcChainId,
+  //   address,
+  //   srcToken.wrapped,
+  //   srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
+  // )
 
-  const { data: dstBalance } = useTokenBalance(
-    dstChainId,
-    address,
-    dstToken.wrapped,
-    dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
-  )
+  // const { data: dstBalance } = useTokenBalance(
+  //   dstChainId,
+  //   address,
+  //   dstToken.wrapped,
+  //   dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
+  // )
 
   const { data: srcPrices } = useSWR(`https://token-price.sushi.com/v0/${srcChainId}`, (url) =>
     fetch(url).then((response) => response.json())
@@ -488,7 +487,7 @@ const Widget: FC<Swap> = ({
           }}
           tokenList={srcTokens}
           theme={theme}
-          balance={srcBalance}
+          // balance={srcBalance}
           onMax={(value) => setSrcTypedAmount(value)}
         />
       </div>
@@ -506,7 +505,7 @@ const Widget: FC<Swap> = ({
           tokenList={dstTokens}
           theme={theme}
           disableMaxButton
-          balance={dstBalance}
+          // balance={dstBalance}
         />
 
         <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />

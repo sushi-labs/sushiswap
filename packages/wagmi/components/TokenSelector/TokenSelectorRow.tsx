@@ -59,10 +59,10 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
               arrow={false}
               button={
                 <div className="flex flex-col">
-                  <Typography variant="xs" weight={700} className="text-slate-200 text-right">
+                  <Typography variant="xs" weight={700} className="text-right text-slate-200">
                     {balance?.[fundSource]?.toSignificant(6)}
                   </Typography>
-                  <Typography variant="xxs" className="text-slate-400 text-right">
+                  <Typography variant="xxs" className="text-right text-slate-400">
                     {price ? `$${balance[fundSource]?.multiply(price).toFixed(2)}` : '-'}
                   </Typography>
                 </div>

@@ -63,7 +63,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
-    cacheTime: 20_000,
+    // cacheTime: 20_000,
     keepPreviousData: true,
   })
 

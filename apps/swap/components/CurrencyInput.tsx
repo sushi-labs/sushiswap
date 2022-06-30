@@ -184,7 +184,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       )}
       {!disableCurrencySelect && onCurrencySelect && (
         <TokenSelector
-          variant="overlay"
+          variant="dialog"
           tokenMap={tokenList}
           customTokenMap={customTokenMap}
           onClose={() => setTokenSelectorOpen(false)}
