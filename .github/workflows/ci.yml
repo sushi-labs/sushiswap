@@ -12,7 +12,8 @@ jobs:
       timeout-minutes: 15
       runs-on: ${{ matrix.os }}
       # To use Remote Caching, uncomment the next lines and follow the steps below.
-      # env:
+      env:
+        NODE_OPTIONS: --max-old-space-size=8192
       #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       strategy:
