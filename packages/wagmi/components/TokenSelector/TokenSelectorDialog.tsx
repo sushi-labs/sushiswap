@@ -4,7 +4,7 @@ import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
-import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, Currency, Dialog, Input, Loader, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
 import { BalanceMap } from '../../hooks/useBalance/types'
@@ -64,11 +64,11 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <Dialog open={open} unmount={false} onClose={onClose} initialFocus={inputRef}>
-          <Dialog.Content className="!max-w-sm !p-0 !space-y-0 overflow-hidden">
-            <Dialog.Header onClose={onClose} title="Select Token" className="p-6 pb-5">
-              <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
-            </Dialog.Header>
-            <div className="px-6 pb-5">
+          <Dialog.Content className="!max-w-sm overflow-hidden h-[420px] pb-[116px]">
+            <SlideIn>
+              <Dialog.Header onClose={onClose} title="Select Token">
+                <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
+              </Dialog.Header>
               <div
                 className={classNames(
                   'ring-offset-2 ring-offset-slate-700 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
@@ -99,48 +99,51 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
                 )}
               </div>
-            </div>
-            <Typography className="px-4 pb-1 text-slate-400" variant="xs">
-              {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
-            </Typography>
-            <div className="w-full border-t border-slate-200/5" />
-            <div className={classNames(queryToken ? '' : 'relative', 'min-h-[320px] rounded-t-none rounded-xl h-full')}>
-              {queryToken && <TokenSelectorImportRow currency={queryToken} onImport={() => handleImport(queryToken)} />}
-              <div
-                className={classNames(
-                  queryToken
-                    ? 'min-h-[272px] max-h-[calc(100%-156px)]'
-                    : 'relative min-h-[320px] max-h-[calc(100%-108px)]'
-                )}
-              >
-                <Currency.List
-                  className="h-full divide-y hide-scrollbar divide-slate-700"
-                  currencies={currencies}
-                  rowRenderer={({ currency, style }) => (
-                    <TokenSelectorRow
-                      account={account}
-                      currency={currency}
-                      style={style}
-                      onCurrency={handleSelect}
-                      className="!px-4"
-                      fundSource={fundSource}
+              <div className="relative -ml-6 -mr-6 h-full">
+                <Typography className="px-6 py-1 text-slate-300" variant="xs">
+                  {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
+                </Typography>
+                <div className="relative h-full pt-5">
+                  <div className="w-full border-t border-slate-200/5" />
+                  <div className="absolute inset-0 bg-slate-800 rounded-t-none rounded-xl h-full">
+                    {queryToken && (
+                      <TokenSelectorImportRow
+                        hideIcons
+                        className="!px-6"
+                        currency={queryToken}
+                        onImport={() => handleImport(queryToken)}
+                      />
+                    )}
+                    <Currency.List
+                      className="divide-y hide-scrollbar divide-slate-700"
+                      currencies={currencies}
+                      rowRenderer={({ currency, style }) => (
+                        <TokenSelectorRow
+                          account={account}
+                          currency={currency}
+                          style={style}
+                          onCurrency={handleSelect}
+                          className="!px-6"
+                          fundSource={fundSource}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </div>
-              {currencies.length === 0 && !queryToken && chainId && (
-                <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
-                  <div className="flex flex-col gap-1 justify-center items-center">
-                    <Typography variant="xs" className="flex italic text-slate-500">
-                      No tokens found on
-                    </Typography>
-                    <Typography variant="xs" weight={700} className="flex gap-1 italic text-slate-500">
-                      <NetworkIcon width={14} height={14} chainId={chainId} /> {chain[chainId].name}
-                    </Typography>
+                    {currencies.length === 0 && !queryToken && chainId && (
+                      <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
+                        <div className="flex flex-col gap-1 justify-center items-center">
+                          <Typography variant="xs" className="flex italic text-slate-500">
+                            No tokens found on
+                          </Typography>
+                          <Typography variant="xs" weight={700} className="flex gap-1 italic text-slate-500">
+                            <NetworkIcon width={14} height={14} chainId={chainId} /> {chain[chainId].name}
+                          </Typography>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            </SlideIn>
           </Dialog.Content>
         </Dialog>
       )}

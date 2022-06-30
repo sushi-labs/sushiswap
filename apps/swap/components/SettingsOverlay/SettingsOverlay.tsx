@@ -19,16 +19,18 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
       <button className="hover:animate-spin-slow" onClick={() => setOpen(true)}>
         <CogIcon width={20} height={20} />
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
-        <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
-          <div className="py-1 px-1">
-            <GasSettingsOverlay chainId={chainId} />
-            <SlippageToleranceOverlay />
-            <CustomTokensOverlay />
-          </div>
-        </Overlay.Content>
-      </SlideIn.FromLeft>
+      <SlideIn>
+        <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
+          <Overlay.Content className="!bg-slate-800">
+            <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
+            <div className="py-1 px-1">
+              <GasSettingsOverlay chainId={chainId} />
+              <SlippageToleranceOverlay />
+              <CustomTokensOverlay />
+            </div>
+          </Overlay.Content>
+        </SlideIn.FromLeft>
+      </SlideIn>
     </>
   )
 }

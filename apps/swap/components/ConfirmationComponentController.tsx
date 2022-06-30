@@ -23,12 +23,14 @@ export const ConfirmationComponentController: FC<ConfirmationComponentController
     <>
       {trigger({ setOpen, open })}
       {variant === 'overlay' ? (
-        <SlideIn.FromBottom show={open} unmount={false} onClose={() => setOpen(false)}>
-          <Overlay.Content className="flex flex-col flex-grow !bg-slate-800">
-            <Overlay.Header arrowDirection="bottom" onClose={() => setOpen(false)} title="Confirm Swap" />
-            {typeof children === 'function' ? children({ setOpen, open }) : children}
-          </Overlay.Content>
-        </SlideIn.FromBottom>
+        <SlideIn>
+          <SlideIn.FromBottom show={open} unmount={false} onClose={() => setOpen(false)}>
+            <Overlay.Content className="flex flex-col flex-grow !bg-slate-800">
+              <Overlay.Header arrowDirection="bottom" onClose={() => setOpen(false)} title="Confirm Swap" />
+              {typeof children === 'function' ? children({ setOpen, open }) : children}
+            </Overlay.Content>
+          </SlideIn.FromBottom>
+        </SlideIn>
       ) : (
         <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
           <Dialog.Content>

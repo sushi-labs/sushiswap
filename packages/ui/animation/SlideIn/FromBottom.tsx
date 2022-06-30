@@ -1,8 +1,11 @@
 import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
-import { FC, Fragment, ReactElement } from 'react'
+import React, { FC, Fragment, ReactElement } from 'react'
+import ReactDOM from 'react-dom'
 
-type FromBottom = {
+import { useSlideInContext } from './SlideIn'
+
+export type FromBottom = {
   show: boolean
   unmount: boolean
   onClose(): void
@@ -25,7 +28,10 @@ export const FromBottom: FC<FromBottom> = ({
   children,
   className,
 }) => {
-  return (
+  const portal = useSlideInContext()
+  if (!portal) return <></>
+
+  return ReactDOM.createPortal(
     <Transition.Root show={show} unmount={unmount} as={Fragment}>
       <div className={classNames(className, 'absolute inset-0 translate-y-[100%] z-50')}>
         <Transition.Child
@@ -61,6 +67,7 @@ export const FromBottom: FC<FromBottom> = ({
           {children}
         </Transition.Child>
       </div>
-    </Transition.Root>
+    </Transition.Root>,
+    portal
   )
 }
