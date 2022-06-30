@@ -43,6 +43,8 @@ contract SushiRoll {
         address tokenA,
         address tokenB,
         uint256 liquidity,
+        uint256 amountADesired,
+        uint256 amountBDesired,
         uint256 amountAMin,
         uint256 amountBMin,
         uint256 deadline
@@ -60,7 +62,7 @@ contract SushiRoll {
         );
 
         // Add liquidity to the new router
-        (uint256 pooledAmountA, uint256 pooledAmountB) = addLiquidity(tokenA, tokenB, amountA, amountB);
+        (pooledAmountA, pooledAmountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin);
 
         // Send remaining tokens to msg.sender
         if (amountA > pooledAmountA) {
@@ -102,39 +104,45 @@ contract SushiRoll {
     function addLiquidity(
         address tokenA,
         address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired
-    ) internal returns (uint amountA, uint amountB) {
-        (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired);
-        address pair = UniswapV2Library.pairFor(router.factory(), tokenA, tokenB);
-        IERC20(tokenA).safeTransfer(pair, amountA);
-        IERC20(tokenB).safeTransfer(pair, amountB);
-        IUniswapV2Pair(pair).mint(msg.sender);
+        uint amountADesired,
+        uint amountBDesired,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external virtual override ensure(deadline) returns (uint amountA, uint amountB, uint liquidity) {
+        (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin);
+        address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
+        IERC20(tokenA).safeTransferFrom(tokenA, msg.sender, pair, amountA);
+        IERC20(tokenB).safeTransferFrom(tokenB, msg.sender, pair, amountB);
+        liquidity = IUniswapV2Pair(pair).mint(to);
     }
 
-    function _addLiquidity(
+     function _addLiquidity(
         address tokenA,
         address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired
-    ) internal returns (uint256 amountA, uint256 amountB) {
+        uint amountADesired,
+        uint amountBDesired,
+        uint amountAMin,
+        uint amountBMin
+    ) internal returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
-        IUniswapV2Factory factory = IUniswapV2Factory(router.factory());
-        if (factory.getPair(tokenA, tokenB) == address(0)) {
-            factory.createPair(tokenA, tokenB);
+        if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
+            IUniswapV2Factory(factory).createPair(tokenA, tokenB);
         }
-        (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(address(factory), tokenA, tokenB);
+        (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
-            uint256 amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
+            uint amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
             if (amountBOptimal <= amountBDesired) {
+                require(amountBOptimal >= amountBMin, 'UniswapV2Router: INSUFFICIENT_B_AMOUNT');
                 (amountA, amountB) = (amountADesired, amountBOptimal);
             } else {
-                uint256 amountAOptimal = UniswapV2Library.quote(amountBDesired, reserveB, reserveA);
+                uint amountAOptimal = UniswapV2Library.quote(amountBDesired, reserveB, reserveA);
                 assert(amountAOptimal <= amountADesired);
+                require(amountAOptimal >= amountAMin, 'UniswapV2Router: INSUFFICIENT_A_AMOUNT');
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }
         }
     }
-}
