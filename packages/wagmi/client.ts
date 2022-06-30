@@ -28,6 +28,10 @@ const otherChains = [
         url: 'https://snowtrace.io/',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 11907934,
+    },
   },
   {
     id: ChainId.BSC,
@@ -46,6 +50,10 @@ const otherChains = [
         name: 'Bscscan',
         url: 'https://bscscan.com',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 15921452,
     },
   },
   {
@@ -66,6 +74,10 @@ const otherChains = [
         url: 'https://ftmscan.com',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 33001987,
+    },
   },
   {
     id: ChainId.GNOSIS,
@@ -84,6 +96,10 @@ const otherChains = [
         name: 'Gnosis Blockchain Explorer',
         url: 'https://blockscout.com/xdai/mainnet',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 21022491,
     },
   },
   {
@@ -104,6 +120,10 @@ const otherChains = [
         url: 'https://explorer.harmony.one',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 24185753,
+    },
   },
   {
     id: ChainId.MOONBEAM,
@@ -123,6 +143,10 @@ const otherChains = [
         url: 'https://moonbeam.moonscan.io',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 609002,
+    },
   },
   {
     id: ChainId.MOONRIVER,
@@ -141,6 +165,10 @@ const otherChains = [
         name: 'Moonscan',
         url: 'https://moonriver.moonscan.io',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 1597904,
     },
   },
 ]
