@@ -4,6 +4,7 @@ import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
 import { FC } from 'react'
 import { Provider } from 'react-redux'
@@ -18,7 +19,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <App.Shell>
             <Header />
             {/* <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
-            {/* <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
+            <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
             <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
             <App.Footer />
             <ToastContainer className="mt-[50px]" />

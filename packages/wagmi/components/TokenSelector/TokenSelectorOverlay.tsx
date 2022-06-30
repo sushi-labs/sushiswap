@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
@@ -120,6 +121,8 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                         onCurrency={handleSelect}
                         className="!px-4"
                         fundSource={fundSource}
+                        balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
+                        price={pricesMap?.[currency.wrapped.address]}
                       />
                     )}
                   />

@@ -1,12 +1,9 @@
-import { Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC, memo } from 'react'
-
-import { useBalance } from '../../hooks/useBalance'
-import { usePrices } from '../../hooks/usePrices'
 
 interface TokenSelectorRow {
   account?: string
@@ -15,19 +12,12 @@ interface TokenSelectorRow {
   className?: string
   onCurrency(currency: Type): void
   fundSource: FundSource
+  balance?: Record<FundSource, Amount<Type> | undefined>
+  price?: Fraction
 }
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
-  ({ account, currency, fundSource, style, className, onCurrency }) => {
-    const { data: pricesMap } = usePrices({ chainId: currency.chainId })
-    const { data: balance } = useBalance({
-      chainId: currency.chainId,
-      currency,
-      account,
-    })
-
-    const price = pricesMap?.[currency.wrapped.address]
-
+  ({ price, balance, currency, fundSource, style, className, onCurrency }) => {
     return (
       <button
         type="button"

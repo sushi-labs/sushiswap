@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
@@ -125,6 +126,8 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                           onCurrency={handleSelect}
                           className="!px-6"
                           fundSource={fundSource}
+                          balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
+                          price={pricesMap?.[currency.wrapped.address]}
                         />
                       )}
                     />
