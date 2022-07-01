@@ -27,9 +27,30 @@ const theme: Theme = {
   ...defaultTheme,
 }
 
-export default function Swap() {
-  const router = useRouter()
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, srcUseBentoBox, dstUseBentoBox } = query
+  return {
+    props: {
+      srcChainId,
+      dstChainId,
+      srcTypedAmount,
+      dstTypedAmount,
+      srcUseBentoBox,
+      dstUseBentoBox,
+    },
+  }
+}
+
+export default function Swap({
+  srcChainId = ChainId.AVALANCHE,
+  dstChainId = ChainId.OPTIMISM,
+  srcTypedAmount = '',
+  dstTypedAmount = '',
+  srcUseBentoBox = false,
+  dstUseBentoBox = false,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // TODO: Sync from local storage if no query params
 
   // const { data } = useSWR<SwapCache>('swap-cache', storage, {
@@ -40,24 +61,19 @@ export default function Swap() {
   //   mutate('swap-cache', value)
   // }
 
-  const defaultSrcChainId = ChainId.AVALANCHE
-  const defaultDstChainId = ChainId.OPTIMISM
-
-  // query is empty __/^-_-^/_
-  const srcChainId = Number(router.query.srcChainId) || defaultSrcChainId
-  const dstChainId = Number(router.query.dstChainId) || defaultDstChainId
-
-  // console.log({ router, defaultSrcChainId, defaultDstChainId, srcChainId, dstChainId })
-
   return (
     <div className="mt-40 space-y-12 mb-60">
       <Widget
         theme={theme}
         initialState={{
-          srcChainId,
-          dstChainId,
-          srcToken: Native.onChain(srcChainId),
-          dstToken: Native.onChain(dstChainId),
+          srcChainId: Number(srcChainId),
+          dstChainId: Number(dstChainId),
+          srcTypedAmount,
+          dstTypedAmount,
+          srcUseBentoBox,
+          dstUseBentoBox,
+          srcToken: Native.onChain(Number(srcChainId)),
+          dstToken: Native.onChain(Number(dstChainId)),
         }}
         // swapCache={data}
         // mutateSwapCache={mutateSwapCache}
@@ -73,6 +89,10 @@ interface Swap {
   initialState?: {
     srcChainId: number
     dstChainId: number
+    srcTypedAmount: string
+    dstTypedAmount: string
+    srcUseBentoBox: boolean
+    dstUseBentoBox: boolean
     srcToken: Currency
     dstToken: Currency
   }
@@ -87,6 +107,10 @@ const Widget: FC<Swap> = ({
   initialState = {
     srcChainId: ChainId.AVALANCHE,
     dstChainId: ChainId.FANTOM,
+    srcTypedAmount: '',
+    dstTypedAmount: '',
+    srcUseBentoBox: false,
+    dstUseBentoBox: false,
     srcToken: Native.onChain(ChainId.AVALANCHE),
     dstToken: Native.onChain(ChainId.FANTOM),
   },
@@ -118,11 +142,11 @@ const Widget: FC<Swap> = ({
     formatUnits: 'gwei',
   })
 
-  const [srcTypedAmount, setSrcTypedAmount] = useState<string>('')
-  const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
+  const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
+  const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
 
-  const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
-  const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
+  const [srcUseBentoBox, setSrcUseBentoBox] = useState(initialState.srcUseBentoBox)
+  const [dstUseBentoBox, setDstUseBentoBox] = useState(initialState.dstUseBentoBox)
 
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
