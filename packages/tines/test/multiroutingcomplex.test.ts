@@ -61,6 +61,29 @@ function getRandom(rnd: () => number, min: number, max: number) {
   return res
 }
 
+function expectCloseValues(
+  v1: BigNumberish,
+  v2: BigNumberish,
+  precision: number,
+  description = '',
+  additionalInfo = ''
+) {
+  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
+  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+  const res = closeValues(a, b, precision)
+  if (!res) {
+    console.log(
+      `Close values expectation failed: ${description}` +
+        `\n v1 = ${a}` +
+        `\n v2 = ${b}` +
+        `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
+        `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
+    )
+  }
+  expect(res).toBeTruthy()
+  return res
+}
+
 function getTokenPrice(rnd: () => number) {
   if (rnd() < 0.6) return STABLE_TOKEN_PRICE
   return getRandom(rnd, MIN_TOKEN_PRICE, MAX_TOKEN_PRICE)
@@ -297,6 +320,63 @@ function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>):
   return connected
 }
 
+function simulateRouting(network: Network, route: MultiRoute) {
+  let gasSpentTotal = 0
+  const amounts = new Map<string, number>()
+  const diff = new Map<string, number>()
+  amounts.set(route.fromToken.address, route.amountIn)
+  diff.set(route.fromToken.address, 0)
+  route.legs.forEach((l) => {
+    // Take swap parms
+    const pool = network.pools.find((p) => p.address == l.poolAddress)
+    expect(pool).toBeDefined()
+    const direction = pool.token0.address == l.tokenFrom.address
+    const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
+
+    // Check assumedAmountIn <-> assumedAmountOut correspondance
+    const expectedOut = pool?.calcOutByIn(l.assumedAmountIn, direction).out
+    expectCloseValues(expectedOut / granularityOut, l.assumedAmountOut / granularityOut, 1e-11)
+
+    // Calc legInput
+    const inputTokenAmount = amounts.get(l.tokenFrom.address)
+    //expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
+    const legInput = inputTokenAmount * l.swapPortion
+    amounts.set(l.tokenFrom.address, inputTokenAmount - legInput)
+
+    // Check assumedAmountIn
+    const inputTokenDiff = diff.get(l.tokenFrom.address)
+    const legInputDiff = inputTokenDiff * l.swapPortion
+    expect(Math.abs(legInput - l.assumedAmountIn) <= legInputDiff)
+    diff.set(l.tokenFrom.address, inputTokenDiff - legInputDiff)
+
+    // check assumedAmountOut
+    const { out: legOutput, gasSpent } = pool?.calcOutByIn(legInput, direction)
+    const precision = legInputDiff / l.assumedAmountIn
+    expectCloseValues(legOutput / granularityOut, l.assumedAmountOut / granularityOut, precision + 1e-11)
+    gasSpentTotal += gasSpent
+    const outputTokenAmount = amounts.get(l.tokenTo.address) || 0
+    amounts.set(l.tokenTo.address, outputTokenAmount + legOutput)
+
+    const legDiff = Math.abs(l.assumedAmountOut - legOutput)
+    const prevDiff = diff.get(l.tokenTo.address) || 0
+    diff.set(l.tokenTo.address, prevDiff + legDiff)
+  })
+
+  amounts.forEach((amount, address) => {
+    if (address == route.toToken.address) {
+      const finalDiff = diff.get(address)
+      expect(finalDiff).toBeGreaterThanOrEqual(0)
+      expect(Math.abs(amount - route.amountOut) <= finalDiff)
+      expect(finalDiff / route.amountOut).toBeLessThan(1e-4)
+    } else {
+      expect(amount).toEqual(0)
+    }
+  })
+  expect(route.gasSpent).toEqual(gasSpentTotal)
+
+  return { out: amounts.get(route.toToken.address), gasSpent: gasSpentTotal }
+}
+
 function checkRoute(
   network: Network,
   from: RToken,
@@ -507,7 +587,7 @@ function printRoute(route: MultiRoute, network: Network) {
 const routingQuality = 1e-2
 function checkExactOut(routeIn: MultiRoute, routeOut: MultiRoute) {
   expect(routeOut).toBeDefined()
-  expect(closeValues(routeIn.amountOut as number, routeOut.amountOut as number, 1e-12)).toBeTruthy()
+  expectCloseValues(routeIn.amountOut as number, routeOut.amountOut as number, 1e-12)
   expect(closeValues(routeIn.primaryPrice as number, routeOut.primaryPrice as number, routingQuality)).toBeTruthy()
 
   // We can't expect routeIn and routeOut are similar
@@ -552,6 +632,7 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
 
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
     checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    simulateRouting(network, route)
     checkRouteResult('top20-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
@@ -570,6 +651,7 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
 
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice, 100)
     checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    simulateRouting(network, route)
     checkRouteResult('m100-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
@@ -592,6 +674,7 @@ it(`Multirouter path quantity check`, () => {
     steps.forEach((s) => {
       const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice, s)
       checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+      simulateRouting(network, route)
       expect(route.totalAmountOut).toBeGreaterThan(prevAmountOut / 1.001)
       prevAmountOut = route.totalAmountOut
       checkRouteResult(`st-${i}-${s}`, route.totalAmountOut)
@@ -624,6 +707,7 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
 
     const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
     checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    simulateRouting(network, route)
     const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
     expect(route.amountOut).toBeLessThanOrEqual(route2.amountOut * 1.001)
     checkRouteResult('single20-' + i, route.totalAmountOut)
@@ -637,6 +721,7 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
       if (routeOut.status !== RouteStatus.NoWay) {
         const route3 = findSingleRouteExactIn(t0, t1, routeOut.amountIn, network.pools, tBase, network.gasPrice)
         checkRoute(network, t0, t1, route3.amountIn, tBase, network.gasPrice, route3)
+        simulateRouting(network, route3)
         checkExactOut(route3, routeOut)
       }
     }
