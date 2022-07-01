@@ -1,4 +1,5 @@
-import { createContext, FC, ReactElement, useContext, useRef } from 'react'
+import { randomUUID } from 'crypto'
+import { createContext, FC, ReactElement, useContext, useRef, useState } from 'react'
 
 import { FromBottom } from './FromBottom'
 import { FromLeft } from './FromLeft'
@@ -12,12 +13,13 @@ interface RootProps {
 const SlideInContext = createContext<HTMLElement | null | undefined>(undefined)
 
 export const Root: FC<RootProps> = ({ children }) => {
+  const [id] = useState(randomUUID)
   const ref = useRef<HTMLDivElement>(null)
 
   return (
     <SlideInContext.Provider value={ref?.current}>
       {children}
-      <div ref={ref} />
+      <div id={id} ref={ref} />
     </SlideInContext.Provider>
   )
 }

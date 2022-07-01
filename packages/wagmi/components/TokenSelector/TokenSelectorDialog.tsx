@@ -72,7 +72,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
               </Dialog.Header>
               <div
                 className={classNames(
-                  'ring-offset-2 ring-offset-slate-700 flex gap-2 bg-slate-800 pr-3 w-full relative flex items-center justify-between gap-1 rounded-xl focus-within:ring-2 text-primary ring-blue'
+                  'my-3 mb-5 ring-offset-2 ring-offset-slate-800 flex gap-2 bg-slate-700 pr-3 w-full relative flex items-center justify-between gap-1 rounded-lg focus-within:ring-2 text-primary ring-blue'
                 )}
               >
                 <Input.Address
@@ -82,7 +82,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   value={query}
                   onChange={onInput}
                   className={classNames(
-                    '!pr-0 !border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
+                    'placeholder:text-slate-400 !pr-0 !bg-slate-700 !border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
                   )}
                 />
                 {searching ? (
@@ -101,12 +101,12 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                 )}
               </div>
               <div className="relative -ml-6 -mr-6 h-full">
-                <Typography className="px-6 py-1 text-slate-300" variant="xs">
+                <Typography className="px-6 pb-1 text-slate-400 text-left" variant="xs">
                   {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
                 </Typography>
+                <div className="w-full border-t border-slate-200/5" />
                 <div className="relative h-full pt-5">
-                  <div className="w-full border-t border-slate-200/5" />
-                  <div className="absolute inset-0 bg-slate-800 rounded-t-none rounded-xl h-full">
+                  <div className="absolute inset-0 rounded-t-none rounded-xl h-full">
                     {queryToken && (
                       <TokenSelectorImportRow
                         hideIcons

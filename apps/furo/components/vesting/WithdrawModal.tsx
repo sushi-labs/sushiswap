@@ -96,7 +96,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         Withdraw
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-6 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInput.Base
@@ -114,7 +114,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               }
             />
           </div>
-          <div className="grid items-center grid-cols-2 gap-5">
+          <div className="grid items-center grid-cols-2 gap-3">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
@@ -158,28 +158,31 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               )}
             </div>
           </div>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
-            onClick={withdraw}
-          >
-            {!amount?.greaterThan(0) ? (
-              'Enter an amount'
-            ) : !vesting?.token ? (
-              'Invalid stream token'
-            ) : isWritePending ? (
-              <Dots>Confirm Withdraw</Dots>
-            ) : (
-              'Withdraw'
-            )}
-          </Button>
+
           {error && (
             <Typography variant="xs" className="text-center text-red" weight={700}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
+              onClick={withdraw}
+            >
+              {!amount?.greaterThan(0) ? (
+                'Enter an amount'
+              ) : !vesting?.token ? (
+                'Invalid stream token'
+              ) : isWritePending ? (
+                <Dots>Confirm Withdraw</Dots>
+              ) : (
+                'Withdraw'
+              )}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

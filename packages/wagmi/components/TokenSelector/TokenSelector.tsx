@@ -1,10 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { FC, memo, useEffect, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalances } from '../../hooks/useBalance'
 import { usePrices } from '../../hooks/usePrices'
 import { TokenSelectorDialog } from './TokenSelectorDialog'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
@@ -35,15 +34,15 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
 
     const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
 
-    const { data: balances } = useBalances({
-      account: address,
-      chainId,
-      currencies: _tokenMapValues,
-    })
-
-    useEffect(() => {
-      console.log('balances')
-    }, [balances])
+    // const { data: balances } = useBalances({
+    //   account: address,
+    //   chainId,
+    //   currencies: _tokenMapValues,
+    // })
+    //
+    // useEffect(() => {
+    //   console.log('balances')
+    // }, [balances])
 
     const { data: pricesMap } = usePrices({ chainId })
 
@@ -53,7 +52,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       return (
         <TokenSelectorOverlay
           account={address}
-          balancesMap={balances}
+          // balancesMap={balances}
           tokenMap={_tokenMap}
           pricesMap={pricesMap}
           chainId={chainId}
@@ -66,7 +65,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
     return (
       <TokenSelectorDialog
         account={address}
-        balancesMap={balances}
+        // balancesMap={balances}
         tokenMap={_tokenMap}
         pricesMap={pricesMap}
         chainId={chainId}

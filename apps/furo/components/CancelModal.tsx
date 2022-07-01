@@ -58,7 +58,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         onClick={() => setOpen(true)}
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-5 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title={title} onClose={() => setOpen(false)} />
           <div className="grid items-center grid-cols-2 gap-5">
             <div
@@ -114,15 +114,17 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
               {fundSource === FundSource.BENTOBOX ? 'Bentobox' : 'Wallet'}
             </span>
           </Typography>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || stream?.isEnded}
-            onClick={cancelStream}
-          >
-            {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
-          </Button>
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={isWritePending || stream?.isEnded}
+              onClick={cancelStream}
+            >
+              {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

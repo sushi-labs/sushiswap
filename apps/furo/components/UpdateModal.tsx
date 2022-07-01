@@ -186,14 +186,16 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
-            {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-          </Button>
           {error && (
             <Typography variant="xs" className="text-center text-red" weight={700}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
+              {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

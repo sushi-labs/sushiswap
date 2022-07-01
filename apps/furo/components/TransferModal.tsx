@@ -79,7 +79,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         Transfer
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-6 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
@@ -96,30 +96,34 @@ export const TransferModal: FC<TransferModalProps> = ({
             <Web3Input.Ens id="ens-input" value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
           </Form.Control>
 
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={
-              isWritePending || !resolvedAddress || resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
-            }
-            onClick={transferStream}
-          >
-            {isWritePending ? (
-              <Dots>Confirm Transfer</Dots>
-            ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
-              'Invalid recipient'
-            ) : !resolvedAddress ? (
-              'Enter recipient'
-            ) : (
-              'Transfer'
-            )}
-          </Button>
           {error && (
             <Typography variant="xs" className="text-center text-red" weight={700}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={
+                isWritePending ||
+                !resolvedAddress ||
+                resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+              }
+              onClick={transferStream}
+            >
+              {isWritePending ? (
+                <Dots>Confirm Transfer</Dots>
+              ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+                'Invalid recipient'
+              ) : !resolvedAddress ? (
+                'Enter recipient'
+              ) : (
+                'Transfer'
+              )}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

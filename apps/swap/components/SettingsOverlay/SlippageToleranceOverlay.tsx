@@ -102,16 +102,12 @@ export const SlippageToleranceOverlay = () => {
         </div>
       </button>
       <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
-        <Overlay.Content className="!bg-slate-800">
+        <Overlay.Content className="!bg-slate-800 !pt-[56px]">
           <Overlay.Header onClose={() => setOpen(false)} title="Slippage Tolerance" />
-          <Typography variant="xs" className="text-slate-400 text-center">
+          <Typography variant="xs" className="text-slate-400 text-center mb-2">
             Your transaction will revert if the prices change unfavorably by more than this percentage
           </Typography>
-          <RadioGroup
-            value={slippageTolerance}
-            onChange={updateSlippageTolerance}
-            className="gap-3 grid grid-cols-2 mt-3"
-          >
+          <RadioGroup value={slippageTolerance} onChange={updateSlippageTolerance} className="gap-3 grid grid-cols-2">
             <SlippageSettingOption
               onClick={handleClose}
               value={0.1}
