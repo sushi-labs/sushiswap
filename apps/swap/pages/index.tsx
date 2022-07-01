@@ -70,8 +70,8 @@ export default function Swap({
           dstChainId: Number(dstChainId),
           srcTypedAmount,
           dstTypedAmount,
-          srcUseBentoBox,
-          dstUseBentoBox,
+          srcUseBentoBox: JSON.parse(srcUseBentoBox),
+          dstUseBentoBox: JSON.parse(dstUseBentoBox),
           srcToken: Native.onChain(Number(srcChainId)),
           dstToken: Native.onChain(Number(dstChainId)),
         }}
@@ -104,16 +104,7 @@ interface Swap {
 const Widget: FC<Swap> = ({
   width = 360,
   theme = defaultTheme,
-  initialState = {
-    srcChainId: ChainId.AVALANCHE,
-    dstChainId: ChainId.FANTOM,
-    srcTypedAmount: '',
-    dstTypedAmount: '',
-    srcUseBentoBox: false,
-    dstUseBentoBox: false,
-    srcToken: Native.onChain(ChainId.AVALANCHE),
-    dstToken: Native.onChain(ChainId.FANTOM),
-  },
+  initialState,
   caption = false,
   // swapCache,
   // mutateSwapCache,
@@ -182,23 +173,27 @@ const Widget: FC<Swap> = ({
       return
     }
 
-    void router.replace({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        srcChainId,
-        dstChainId,
-        // TODO: currencyId to handle native currencyId#
-        // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
-        // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
-        srcToken: srcToken.wrapped.address,
-        dstToken: dstToken.wrapped.address,
-        srcTypedAmount,
-        dstTypedAmount,
-        srcUseBentoBox,
-        dstUseBentoBox,
-      },
-    })
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          srcChainId,
+          dstChainId,
+          // TODO: currencyId to handle native currencyId#
+          // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
+          // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
+          srcToken: srcToken.wrapped.address,
+          dstToken: dstToken.wrapped.address,
+          srcTypedAmount,
+          dstTypedAmount,
+          srcUseBentoBox,
+          dstUseBentoBox,
+        },
+      }
+      // undefined,
+      // { shallow: true }
+    )
   }, [
     dstChainId,
     dstToken.wrapped.address,
