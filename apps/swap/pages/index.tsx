@@ -33,12 +33,12 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, srcUseBentoBox, dstUseBentoBox } = query
   return {
     props: {
-      srcChainId,
-      dstChainId,
-      srcTypedAmount,
-      dstTypedAmount,
-      srcUseBentoBox,
-      dstUseBentoBox,
+      srcChainId: srcChainId ?? ChainId.AVALANCHE,
+      dstChainId: dstChainId ?? ChainId.OPTIMISM,
+      srcTypedAmount: srcTypedAmount ?? '',
+      dstTypedAmount: dstTypedAmount ?? '',
+      srcUseBentoBox: srcUseBentoBox ?? false,
+      dstUseBentoBox: dstUseBentoBox ?? false,
     },
   }
 }
