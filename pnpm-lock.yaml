@@ -62,7 +62,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^28.2.0
+      '@sushiswap/default-token-list': ^29.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -70,7 +70,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 28.2.0
+      '@sushiswap/default-token-list': 29.0.0
       '@vercel/node': 2.2.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -6050,8 +6050,8 @@ packages:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: true
 
-  /@sushiswap/default-token-list/28.2.0:
-    resolution: {integrity: sha512-g+YYRj7U2hPqKHddnBPqaeUdG7V66B9+NwfyzxD99JV+1P1jCGALwhUasEWrzHV/8QyVqnrtuJmn8bMM15XkQQ==}
+  /@sushiswap/default-token-list/29.0.0:
+    resolution: {integrity: sha512-tamTpRkYUkdoZiqt79ZaF3wQ3wqnrz3jR2puXA/4aCjw89BLMMfA6NzDcZP6QhZL+Ej+BTjDGn7KTSGY68YiYQ==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -7928,7 +7928,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -12067,15 +12067,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.4:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
@@ -18322,7 +18313,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
