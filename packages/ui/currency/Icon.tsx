@@ -95,9 +95,7 @@ export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
     // e.g.
     // https://currency.sushi.com/1/eth.jpg - ETH
     // https://currency.sushi.com/1/0x...jpg - WETH
-    return `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/network/${
-      BLOCKCHAIN[currency.chainId]
-    }/${currency.wrapped.address}.jpg`
+    return undefined
   }, [currency])
 
   if (!src) {

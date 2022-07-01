@@ -25,7 +25,7 @@ interface Props {
   balancesMap?: BalanceMap
   children(props: RenderProps): JSX.Element
   includeNative?: boolean
-  fundSource?: FundSource
+  fundSource: FundSource
 }
 
 export const TokenListFilterByQuery: FC<Props> = ({
@@ -71,7 +71,7 @@ export const TokenListFilterByQuery: FC<Props> = ({
   }, [tokenMapValues, debouncedQuery])
 
   const sortedTokens: Token[] = useMemo(() => {
-    return [...filteredTokens].sort(tokenComparator.bind(null, balancesMap, pricesMap, fundSource))
+    return [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap, fundSource))
 
     // TODO adding balancesMap to this array causes infinite loop
   }, [filteredTokens, pricesMap, fundSource])

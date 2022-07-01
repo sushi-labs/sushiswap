@@ -57,27 +57,27 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
 export const tokenComparator = (
   balancesMap: Record<string, Record<FundSource, Amount<Type> | undefined>> | undefined,
   pricesMap: Record<string, Fraction> | undefined,
-  fundSource: FundSource,
-  tokenA: Token,
-  tokenB: Token
+  fundSource: FundSource
 ) => {
-  const balanceA = pricesMap?.[tokenA.address]
-    ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(pricesMap[tokenA.address])
-    : undefined
-  const balanceB = pricesMap?.[tokenB.address]
-    ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(pricesMap[tokenB.address])
-    : undefined
+  return (tokenA: Token, tokenB: Token): number => {
+    const balanceA = pricesMap?.[tokenA.address]
+      ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(pricesMap[tokenA.address])
+      : undefined
+    const balanceB = pricesMap?.[tokenB.address]
+      ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(pricesMap[tokenB.address])
+      : undefined
 
-  const balanceComp = balanceComparator(balanceA, balanceB)
-  if (balanceComp !== 0) {
-    return balanceComp
-  }
+    const balanceComp = balanceComparator(balanceA, balanceB)
+    if (balanceComp !== 0) {
+      return balanceComp
+    }
 
-  if (tokenA.symbol && tokenB.symbol) {
-    // sort by symbol
-    return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
-  } else {
-    return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
+    if (tokenA.symbol && tokenB.symbol) {
+      // sort by symbol
+      return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
+    } else {
+      return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
+    }
   }
 }
 
