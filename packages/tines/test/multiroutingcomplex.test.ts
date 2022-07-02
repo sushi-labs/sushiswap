@@ -339,7 +339,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
 
     // Calc legInput
     const inputTokenAmount = amounts.get(l.tokenFrom.address)
-    //expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
+    expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
     const legInput = inputTokenAmount * l.swapPortion
     amounts.set(l.tokenFrom.address, inputTokenAmount - legInput)
 
