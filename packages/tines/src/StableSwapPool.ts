@@ -40,12 +40,12 @@ class RebaseInternal {
   }
 }
 
-function realReservesToAdjusted(reserve: BigNumber, total: Rebase, decimals: number) {
+export function realReservesToAdjusted(reserve: BigNumber, total: Rebase, decimals: number) {
   const amount = toAmountBN(reserve, total)
   return amount.mul(1e12).div(getBigNumber(Math.pow(10, decimals)))
 }
 
-function adjustedReservesToReal(reserve: BigNumber, total: Rebase, decimals: number) {
+export function adjustedReservesToReal(reserve: BigNumber, total: Rebase, decimals: number) {
   const amount = reserve.mul(getBigNumber(Math.pow(10, decimals))).div(1e12)
   return toShareBN(amount, total)
 }

@@ -79,6 +79,7 @@ function expectCloseValues(
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
         `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
     )
+    debugger
   }
   expect(res).toBeTruthy()
   return res
@@ -107,13 +108,13 @@ function getPoolImbalance(rnd: () => number) {
   return getRandom(rnd, MIN_POOL_IMBALANCE, MAX_POOL_IMBALANCE)
 }
 
-function getCPPool(rnd: () => number, t0: RToken, t1: RToken, price: number) {
+function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
   if (rnd() < 0.5) {
     const t = t0
     t0 = t1
     t1 = t
-    price = 1 / price
   }
+  let price = t0.price / t1.price
 
   const fee = getPoolFee(rnd)
   const imbalance = getPoolImbalance(rnd)
@@ -140,13 +141,13 @@ function getCPPool(rnd: () => number, t0: RToken, t1: RToken, price: number) {
     t0,
     t1,
     fee,
-    getBigNumber(reserve0),
-    getBigNumber(reserve1)
+    getBigNumber(reserve0 * Math.pow(10, t0.decimals - 6)),
+    getBigNumber(reserve1 * Math.pow(10, t1.decimals - 6))
   )
 }
 
 const ZERO = BigNumber.from(0)
-function getStableSwapPool(rnd: () => number, t0: RToken, t1: RToken) {
+function getStableSwapPool(rnd: () => number, t0: TToken, t1: TToken) {
   if (rnd() < 0.5) {
     const t = t0
     t0 = t1
@@ -173,18 +174,22 @@ function getStableSwapPool(rnd: () => number, t0: RToken, t1: RToken) {
   console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
   console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
 
-  return new StableSwapRPool(
+  const total0 = { base: ZERO, elastic: ZERO }
+  const total1 = { base: ZERO, elastic: ZERO }
+
+  const pool = new StableSwapRPool(
     `pool ss ${t0.name} ${t1.name} ${reserve0} ${fee}`,
     t0,
     t1,
     fee,
-    getBigNumber(reserve0),
-    getBigNumber(reserve1),
-    18,
-    18,
-    { base: ZERO, elastic: ZERO },
-    { base: ZERO, elastic: ZERO }
+    getBigNumber(reserve0 * Math.pow(10, t0.decimals - 6)),
+    getBigNumber(reserve1 * Math.pow(10, t1.decimals - 6)),
+    t0.decimals,
+    t1.decimals,
+    total0,
+    total1
   )
+  return pool
 }
 
 function getPoolA(rnd: () => number) {
@@ -225,25 +230,47 @@ function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
   )
 }
 
-function getRandomPool(rnd: () => number, t0: RToken, t1: RToken, price: number) {
-  if (price !== STABLE_TOKEN_PRICE) return getCPPool(rnd, t0, t1, price)
-  if (rnd() < 0.2) return getCPPool(rnd, t0, t1, price)
+function getRandomPool(rnd: () => number, t0: TToken, t1: TToken) {
+  if (Math.abs(t0.price / t1.price - 1) > 0.01) return getCPPool(rnd, t0, t1)
+  if (rnd() < 0.2) return getCPPool(rnd, t0, t1)
   return getStableSwapPool(rnd, t0, t1)
 }
 
+function getRandomDecimals(rnd: () => number) {
+  if (rnd() < 0.5) return 6
+  return 18
+}
+
+interface TToken extends RToken {
+  price: number
+  decimals: number
+}
+
+function atomPrice(token: TToken) {
+  return token.price / Math.pow(10, token.decimals)
+}
+
+function createRandomToken(rnd: () => number, name: string): TToken {
+  const price = getTokenPrice(rnd)
+  const decimals = price == STABLE_TOKEN_PRICE ? getRandomDecimals(rnd) : 18
+  return {
+    name,
+    address: name,
+    price,
+    decimals,
+  }
+}
+
 interface Network {
-  tokens: RToken[]
-  prices: number[]
+  tokens: TToken[]
   pools: RPool[]
   gasPrice: number
 }
 
 function createNetwork(rnd: () => number, tokenNumber: number, density: number): Network {
   const tokens = []
-  const prices = []
   for (var i = 0; i < tokenNumber; ++i) {
-    tokens.push({ name: '' + i, address: '' + i })
-    prices.push(getTokenPrice(rnd))
+    tokens.push(createRandomToken(rnd, '' + i))
   }
 
   const pools: RPool[] = []
@@ -251,37 +278,32 @@ function createNetwork(rnd: () => number, tokenNumber: number, density: number):
     for (var j = i + 1; j < tokenNumber; ++j) {
       const r = rnd()
       if (r < density) {
-        pools.push(getRandomPool(rnd, tokens[i], tokens[j], prices[i] / prices[j]))
+        pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
       if (r < density * density) {
         // second pool
-        pools.push(getRandomPool(rnd, tokens[i], tokens[j], prices[i] / prices[j]))
+        pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
       if (r < density * density * density) {
         // third pool
-        pools.push(getRandomPool(rnd, tokens[i], tokens[j], prices[i] / prices[j]))
+        pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
       if (r < Math.pow(density, 4)) {
         // third pool
-        pools.push(getRandomPool(rnd, tokens[i], tokens[j], prices[i] / prices[j]))
+        pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
       if (r < Math.pow(density, 5)) {
         // third pool
-        pools.push(getRandomPool(rnd, tokens[i], tokens[j], prices[i] / prices[j]))
+        pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
     }
   }
 
   return {
     tokens,
-    prices,
     pools,
     gasPrice: GAS_PRICE,
   }
-}
-
-function expectToBeClose(a: number, b: number, max: number) {
-  expect(Math.abs(a / b - 1)).toBeLessThan(max)
 }
 
 function getTokenPools(network: Network): Map<RToken, RPool[]> {
@@ -379,10 +401,10 @@ function simulateRouting(network: Network, route: MultiRoute) {
 
 function checkRoute(
   network: Network,
-  from: RToken,
-  to: RToken,
+  from: TToken,
+  to: TToken,
   amountIn: number,
-  baseToken: RToken,
+  baseToken: TToken,
   gasPrice: number,
   route: MultiRoute
 ) {
@@ -395,7 +417,7 @@ function checkRoute(
   const basePricesAreSet = connectedTokens.has(baseToken)
 
   // amountIn checks
-  if (route.status === RouteStatus.Success) expectToBeClose(route.amountIn, amountIn, 1e-13)
+  if (route.status === RouteStatus.Success) expectCloseValues(route.amountIn, amountIn, 1e-13)
   else if (route.status === RouteStatus.Partial) {
     expect(route.amountIn).toBeLessThan(amountIn)
     expect(route.amountIn).toBeGreaterThan(0)
@@ -403,13 +425,14 @@ function checkRoute(
 
   // amountOut checks
   if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
-  const outPriceToIn = network.prices[parseInt(to.name)] / network.prices[parseInt(from.name)]
+  const outPriceToIn = atomPrice(to) / atomPrice(from)
+  // Slippage can be arbitrary
   // Slippage is always not-negative
-  const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)
-  const maxGranularity = network.pools.reduce((a, p) => Math.max(a, p.granularity0(), p.granularity1()), 1)
-  if (route.amountOut > maxGranularity * MIN_LIQUIDITY * 10) {
-    expect(route.amountOut).toBeLessThanOrEqual((route.amountIn / outPriceToIn) * maxGrow)
-  }
+  // const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)
+  // const maxGranularity = network.pools.reduce((a, p) => Math.max(a, p.granularity0(), p.granularity1()), 1)
+  // if (route.amountOut > maxGranularity * MIN_LIQUIDITY * 10) {
+  //   expect(route.amountOut).toBeLessThanOrEqual((route.amountIn / outPriceToIn) * maxGrow)
+  // }
 
   // gasSpent checks
   const poolMap = new Map<string, RPool>()
@@ -421,9 +444,9 @@ function checkRoute(
   if (route.status === RouteStatus.NoWay) {
     expect(route.totalAmountOut).toEqual(0)
   } else if (basePricesAreSet) {
-    const outPriceToBase = network.prices[parseInt(baseToken.name)] / network.prices[parseInt(to.name)]
+    const outPriceToBase = atomPrice(baseToken) / atomPrice(to)
     const expectedTotalAmountOut = route.amountOut - route.gasSpent * gasPrice * outPriceToBase
-    expectToBeClose(route.totalAmountOut, expectedTotalAmountOut, MAX_POOL_IMBALANCE + 1e-7)
+    expectCloseValues(route.totalAmountOut, expectedTotalAmountOut, 2 * (MAX_POOL_IMBALANCE - 1) + 1e-7)
   } else {
     expect(route.totalAmountOut).toEqual(route.amountOut)
   }
@@ -466,7 +489,7 @@ function checkRoute(
           expect(l.swapPortion).toBeLessThanOrEqual(1)
         }
       })
-      expectToBeClose(absolutePortion, 1, 1e-12)
+      expectCloseValues(absolutePortion, 1, 1e-12)
     }
   })
 }
@@ -510,10 +533,11 @@ function exportNetwork(network: Network, from: RToken, to: RToken, route: MultiR
 // Just for testing
 // @ts-ignore
 function exportPrices(network: Network, baseTokenIndex: number) {
+  const baseToken = network.tokens[baseTokenIndex]
   const allPools = new Map<string, RPool>()
   network.pools.forEach((p) => allPools.set(p.address, p))
 
-  const g = new Graph(network.pools, network.tokens[baseTokenIndex], network.gasPrice)
+  const g = new Graph(network.pools, baseToken, network.gasPrice)
   const tokenPriceMap = new Map<string, number>()
   g.vertices.forEach((v) => {
     tokenPriceMap.set(v.token.name, v.price)
@@ -525,12 +549,9 @@ function exportPrices(network: Network, baseTokenIndex: number) {
     return ', color: "red"'
   }
 
-  function nodeLabel(t: RToken) {
-    const tokenIndex = parseInt(t.name)
-    const info = `${t.name}:${
-      (tokenPriceMap.get(t.name) / network.prices[tokenIndex]) * network.prices[baseTokenIndex]
-    }`
-    if (t == network.tokens[baseTokenIndex]) return `*${info}`
+  function nodeLabel(t: TToken) {
+    const info = `${t.name}:${(tokenPriceMap.get(t.name) / atomPrice(t)) * atomPrice(baseToken)}`
+    if (t == baseToken) return `*${info}`
     return info
   }
 
@@ -573,8 +594,8 @@ function printRoute(route: MultiRoute, network: Network) {
     const pool = network.pools.find((p) => p.address == l.poolAddress)
     const inp = liquidity.get(parseInt(l.tokenFrom.name)) * l.absolutePortion
     const { out } = pool.calcOutByIn(inp, pool.token0.address == l.tokenFrom.address)
-    const price_in = network.prices[parseInt(l.tokenFrom.name)] / network.prices[parseInt(route.fromToken.name)]
-    const price_out = network.prices[parseInt(l.tokenTo.name)] / network.prices[parseInt(route.fromToken.name)]
+    const price_in = atomPrice(l.tokenFrom) / atomPrice(route.fromToken)
+    const price_out = atomPrice(l.tokenTo) / atomPrice(route.fromToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))
     info +=
       `${i} ${numberPrecision(l.absolutePortion)} ${l.tokenFrom.name}->${l.tokenTo.name}` +
@@ -596,7 +617,7 @@ function checkExactOut(routeIn: MultiRoute, routeOut: MultiRoute) {
   //expect(closeValues(routeIn.swapPrice as number, routeOut.swapPrice as number, routingQuality)).toBeTruthy()
 }
 
-function chooseRandomTokens(rnd: () => number, network: Network): [RToken, RToken, RToken] {
+function chooseRandomTokens(rnd: () => number, network: Network): [TToken, TToken, TToken] {
   const num = network.tokens.length
   const token0 = Math.floor(rnd() * num)
   const token1 = (token0 + 1 + Math.floor(rnd() * (num - 1))) % num
@@ -605,22 +626,24 @@ function chooseRandomTokens(rnd: () => number, network: Network): [RToken, RToke
   return [network.tokens[token0], network.tokens[token1], network.tokens[tokenBase]]
 }
 
+function getBasePrice(network: Network, t: TToken) {
+  return network.gasPrice * Math.pow(10, t.decimals - 18)
+}
+
 const network = createNetwork(rnd, 20, 0.3)
 
 it('Token price calculation is correct', () => {
   const baseTokenIndex = 0
-  const g = new Graph(network.pools, network.tokens[baseTokenIndex], network.gasPrice)
+  const baseToken = network.tokens[baseTokenIndex]
+  const gasPrice = getBasePrice(network, baseToken)
+  const g = new Graph(network.pools, baseToken, gasPrice)
   g.vertices.forEach((v) => {
     const tokenIndex = parseInt(v.token.name)
     if (tokenIndex === baseTokenIndex) {
-      expectToBeClose(v.price, 1, 1e-10)
+      expectCloseValues(v.price, 1, 1e-10)
     }
     if (v.price !== 0) {
-      expectToBeClose(
-        v.price,
-        network.prices[tokenIndex] / network.prices[baseTokenIndex],
-        5 * (MAX_POOL_IMBALANCE - 1)
-      )
+      expectCloseValues(v.price, atomPrice(v.token) / atomPrice(baseToken), 5 * (MAX_POOL_IMBALANCE - 1))
     }
   })
 })
@@ -629,16 +652,17 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
   for (var i = 0; i < 200; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
+    const gasPrice = getBasePrice(network, tBase)
 
-    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
-    checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
+    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
     simulateRouting(network, route)
     checkRouteResult('top20-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
       // otherwise exactOut could return too bad value
-      const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, network.gasPrice)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, network.gasPrice, routeOut)
+      const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice)
+      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
       checkExactOut(route, routeOut)
     }
   }
@@ -648,16 +672,17 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
   for (var i = 0; i < 10; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
+    const gasPrice = getBasePrice(network, tBase)
 
-    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice, 100)
-    checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, 100)
+    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
     simulateRouting(network, route)
     checkRouteResult('m100-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
       // otherwise exactOut could return too bad value
-      const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, network.gasPrice, 100)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, network.gasPrice, routeOut)
+      const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice, 100)
+      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
       checkExactOut(route, routeOut)
     }
   }
@@ -669,11 +694,12 @@ it(`Multirouter path quantity check`, () => {
   for (var i = 0; i < 5; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rndInternal, network)
     const amountIn = getRandom(rndInternal, 1e6, 1e24)
+    const gasPrice = getBasePrice(network, tBase)
 
     let prevAmountOut = -1
     steps.forEach((s) => {
-      const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice, s)
-      checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+      const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, s)
+      checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
       simulateRouting(network, route)
       expect(route.totalAmountOut).toBeGreaterThan(prevAmountOut / 1.001)
       prevAmountOut = route.totalAmountOut
@@ -688,8 +714,9 @@ function makeTestForTiming(tokens: number, density: number, tests: number) {
     for (var i = 0; i < tests; ++i) {
       const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
       const amountIn = getRandom(rnd, 1e6, 1e24)
+      const gasPrice = getBasePrice(network2, tBase)
 
-      findMultiRouteExactIn(t0, t1, amountIn, network2.pools, tBase, network2.gasPrice)
+      findMultiRouteExactIn(t0, t1, amountIn, network2.pools, tBase, gasPrice)
     }
   })
 }
@@ -701,26 +728,27 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
   for (var i = 0; i < 100; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
+    const gasPrice = getBasePrice(network, tBase)
 
     // Very special case, failes at checkRoute. Reason: not 100% optimal routing because of edges with negative values
     if (testSeed == '1') if (i == 11 || i == 60 || i == 80) continue
 
-    const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
-    checkRoute(network, t0, t1, amountIn, tBase, network.gasPrice, route)
+    const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
+    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
     simulateRouting(network, route)
-    const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, network.gasPrice)
+    const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
     expect(route.amountOut).toBeLessThanOrEqual(route2.amountOut * 1.001)
     checkRouteResult('single20-' + i, route.totalAmountOut)
 
     if (route.status !== RouteStatus.NoWay) {
-      const routeOut = findSingleRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, network.gasPrice)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, network.gasPrice, routeOut)
+      const routeOut = findSingleRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice)
+      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
       checkExactOut(route, routeOut)
     } else {
-      const routeOut = findSingleRouteExactOut(t0, t1, 1e6, network.pools, tBase, network.gasPrice)
+      const routeOut = findSingleRouteExactOut(t0, t1, 1e6, network.pools, tBase, gasPrice)
       if (routeOut.status !== RouteStatus.NoWay) {
-        const route3 = findSingleRouteExactIn(t0, t1, routeOut.amountIn, network.pools, tBase, network.gasPrice)
-        checkRoute(network, t0, t1, route3.amountIn, tBase, network.gasPrice, route3)
+        const route3 = findSingleRouteExactIn(t0, t1, routeOut.amountIn, network.pools, tBase, gasPrice)
+        checkRoute(network, t0, t1, route3.amountIn, tBase, gasPrice, route3)
         simulateRouting(network, route3)
         checkExactOut(route3, routeOut)
       }

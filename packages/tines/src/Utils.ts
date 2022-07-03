@@ -16,7 +16,7 @@ export function DEBUG_MODE_ON(on: boolean) {
 
 export function closeValues(a: number, b: number, accuracy: number, logInfoIfFalse = ''): boolean {
   if (accuracy === 0) return a === b
-  if (a < 1 / accuracy) return Math.abs(a - b) <= 10
+  if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   const res = Math.abs(a / b - 1) < accuracy
   if (!res && logInfoIfFalse) {
     console.log('Expected close: ', a, b, accuracy, logInfoIfFalse)
