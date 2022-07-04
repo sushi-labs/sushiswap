@@ -1,6 +1,7 @@
 import { Table, Typography } from '@sushiswap/ui'
 import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-table'
 import { Placeholder } from 'components/Placeholder'
+import { IncentiveStatus } from 'lib'
 import { Farm } from 'lib/Farm'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
@@ -61,31 +62,34 @@ const defaultColumns = (tableProps: FarmTableProps) => [
       return (
         <div className="flex flex-col w-full">
           {props.getValue() ? (
-            Object.values(props.getValue()).map((incentive) => (
-              <div className="flex space-x-2" key={incentive.id}>
-                {tableProps.showIsSubscribed ? (
-                  incentive.isSubscribed ? (
-                    <Typography variant="sm" weight={700} className="text-right text-green-400">
-                      ✓
-                    </Typography>
+            Object.values(props.getValue()).map((incentive) => {
+              const textStyle = incentive.status === IncentiveStatus.ACTIVE ? 'text-slate-200' : 'text-slate-500'
+              return (
+                <div className="flex space-x-2" key={incentive.id}>
+                  {tableProps.showIsSubscribed ? (
+                    incentive.isSubscribed ? (
+                      <Typography variant="sm" weight={700} className="text-right text-green-400">
+                        ✓
+                      </Typography>
+                    ) : (
+                      <Typography variant="sm" weight={700} className="text-right text-yellow-400">
+                        ○
+                      </Typography>
+                    )
                   ) : (
-                    <Typography variant="sm" weight={700} className="text-right text-yellow-400">
-                      ○
-                    </Typography>
-                  )
-                ) : (
-                  <></>
-                )}
-                <Typography variant="sm" weight={700} className="text-right text-slate-200">
-                  {incentive.rewardsPerDay?.greaterThan('100000')
-                    ? incentive?.rewardsPerDay.toSignificant(3)
-                    : '< 0.01'}
-                </Typography>
-                <Typography variant="xs" weight={500} className="text-right text-slate-500">
-                  {incentive?.rewardsPerDay.currency.symbol}
-                </Typography>
-              </div>
-            ))
+                    <></>
+                  )}
+                  <Typography variant="sm" weight={700} className={`text-right ${textStyle}`}>
+                    {incentive.rewardsPerDay?.greaterThan('100000')
+                      ? incentive?.rewardsPerDay.toSignificant(3)
+                      : '< 0.01'}
+                  </Typography>
+                  <Typography variant="xs" weight={500} className={`text-right ${textStyle}`}>
+                    {incentive?.rewardsPerDay.currency.symbol}
+                  </Typography>
+                </div>
+              )
+            })
           ) : (
             <></>
           )}

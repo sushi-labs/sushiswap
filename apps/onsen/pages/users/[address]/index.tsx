@@ -1,4 +1,4 @@
-import type { Pair as PairDTO, Stake as StakeDTO } from '@sushiswap/graph-client'
+import type { Pair as PairDTO, StakePosition as StakePositionDTO } from '@sushiswap/graph-client'
 import FarmTable from 'components/FarmTable'
 import Layout from 'components/Layout'
 import { RewardsAvailableModal } from 'components/RewardsAvailableModal'
@@ -26,8 +26,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   return {
     props: {
       fallback: {
-        [`/api/user/${query.address}/farms/${query.chainId}`]: await getUserFarms(query.chainId, query.address),
-        [`/api/user/${query.address}/subscriptions/${query.chainId}`]: await getSubscribedIncentives(
+        [`/api/user/${query.chainId}/${query.address}/farms`]: await getUserFarms(query.chainId, query.address),
+        [`/api/user/${query.chainId}/${query.address}/subscriptions`]: await getSubscribedIncentives(
           query.chainId,
           query.address
         ),
@@ -57,7 +57,7 @@ export const FarmsPage: FC = () => {
     `/onsen/api/user/${chainId}/${account?.address}/subscriptions`,
     fetcher
   )
-  const { data: userStakes, isValidating: isValidatingStakes } = useSWR<StakeDTO[]>(
+  const { data: userStakes, isValidating: isValidatingStakes } = useSWR<StakePositionDTO[]>(
     `/onsen/api/user/${chainId}/${account?.address}/farms`,
     fetcher
   )
@@ -76,7 +76,6 @@ export const FarmsPage: FC = () => {
 
   const farms = useMemo(() => {
     if (isValidating) return []
-    const now = new Date().getTime() / 1000
     const mappedFarms =
       userStakes
         ?.map(
@@ -84,7 +83,7 @@ export const FarmsPage: FC = () => {
             new Farm({
               chainId,
               token: stake.token,
-              incentives: stake.farm.incentives.filter((incentive) => incentive.endTime >= now),
+              incentives: stake.farm.incentives,
             })
         )
         .filter((farm) => farm.incentives.length) ?? []

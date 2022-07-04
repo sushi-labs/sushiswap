@@ -111,7 +111,7 @@ query ArbitrumStakingUserSubscriptions($id: ID!) {
 query ArbitrumStakingUserFarms($id: ID!) {
   ARBITRUM_STAKING_user(id: $id) {
     id
-    stakes {
+    stakePositions {
       id
       token {
       id
@@ -176,7 +176,7 @@ query ArbitrumStakingUserFarms($id: ID!) {
 
 
 query ArbitrumStakingStakePosition($id: ID!) {
-  ARBITRUM_STAKING_stake(id: $id) {
+  ARBITRUM_STAKING_stakePosition(id: $id) {
     id
     token {
     id

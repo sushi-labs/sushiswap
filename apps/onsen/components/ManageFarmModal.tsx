@@ -1,4 +1,4 @@
-import { Stake as StakeDTO } from '@sushiswap/graph-client'
+import { StakePosition as StakePositionDTO } from '@sushiswap/graph-client'
 import log from '@sushiswap/log'
 import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { batchAction, subscribeAction } from 'lib/actions'
@@ -30,7 +30,7 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
   const contract = useStakingContract(chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
-  const { data: stakePositionDTO, isValidating: isValidatingStakePosition } = useSWR<StakeDTO>(
+  const { data: stakePositionDTO, isValidating: isValidatingStakePosition } = useSWR<StakePositionDTO>(
     `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/stake-position`,
     fetcher
   )
@@ -39,7 +39,7 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
     if (chainId && !isValidatingStakePosition && stakePositionDTO) {
       return new StakePosition({ chainId, stake: stakePositionDTO })
     }
-  }, [chainId, stakePositionDTO])
+  }, [chainId, stakePositionDTO, isValidatingStakePosition])
 
   const stakeAndSubscribe = useCallback(async () => {
     if (!account) return

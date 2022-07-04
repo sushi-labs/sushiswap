@@ -45,7 +45,8 @@ export const getUserFarms = async (chainId: string, address: string) => {
   if (!isNetworkSupported(network)) return undefined
   const sdk = getBuiltGraphSDK()
   if (network === ChainId.ARBITRUM) {
-    return (await sdk.ArbitrumStakingUserFarms({ id: address.toLocaleLowerCase() })).ARBITRUM_STAKING_user?.stakes
+    return (await sdk.ArbitrumStakingUserFarms({ id: address.toLocaleLowerCase() })).ARBITRUM_STAKING_user
+      ?.stakePositions
   }
 }
 
@@ -55,7 +56,7 @@ export const getUserStakePositions = async (chainId: string, address: string, fa
   const sdk = getBuiltGraphSDK()
   const id = address.toLocaleLowerCase().concat(':').concat(farmId)
   if (network === ChainId.ARBITRUM) {
-    return (await sdk.ArbitrumStakingStakePosition({ id })).ARBITRUM_STAKING_stake
+    return (await sdk.ArbitrumStakingStakePosition({ id })).ARBITRUM_STAKING_stakePosition
   }
 }
 
