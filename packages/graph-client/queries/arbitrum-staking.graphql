@@ -249,3 +249,33 @@ query ArbitrumStakingUserRewards($id: ID!) {
     }
   }
 }
+
+query ArbitrumStakingUserTransactions($id: ID!, $farmId: ID!) {
+  ARBITRUM_STAKING_user(id: $id) {
+    id
+    transactions(where: { farm: $farmId }) {
+      type
+      incentive {
+        id
+      }
+      amount
+      user {
+        id
+      }
+      to {
+        id
+      }
+      token {
+          id
+          name
+          symbol
+          decimals
+          type
+          assets
+      }
+      txHash
+      createdAtBlock
+      createdAtTimestamp
+    }
+  }
+}

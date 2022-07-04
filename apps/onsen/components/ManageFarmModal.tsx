@@ -1,8 +1,13 @@
-import { Reward as RewardDTO, StakePosition as StakePositionDTO } from '@sushiswap/graph-client'
+import {
+  Reward as RewardDTO,
+  StakePosition as StakePositionDTO,
+  Transaction as TransactionDTO,
+} from '@sushiswap/graph-client'
 import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Farm } from 'lib/Farm'
 import { Reward } from 'lib/Reward'
 import { StakePosition } from 'lib/StakePosition'
+import { Transaction } from 'lib/Transaction'
 import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
@@ -31,6 +36,12 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
     fetcher
   )
 
+  const { data: transactionsDTO, isValidating: isValidatingTransactions } = useSWR<TransactionDTO[]>(
+    `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/transactions`,
+    fetcher
+  )
+  // TODO: merge these three requests to one
+
   const stakePosition = useMemo(() => {
     if (chainId && !isValidatingStakePosition && stakePositionDTO) {
       return new StakePosition({ chainId, stake: stakePositionDTO })
@@ -42,6 +53,12 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
       return rewardsDTO.map((reward) => new Reward({ stakePosition: stakePositionDTO, chainId, reward }))
     }
   }, [chainId, rewardsDTO, isValidatingRewards, stakePositionDTO])
+
+  const transactions = useMemo(() => {
+    if (chainId && !isValidatingTransactions && transactionsDTO) {
+      return transactionsDTO.map((transaction) => new Transaction(transaction, chainId))
+    }
+  }, [chainId, transactionsDTO, isValidatingTransactions])
 
   if (!account) return <></>
   return (
@@ -57,12 +74,27 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5">
           <Dialog.Header title={'Your position and rewards'} onClose={() => setOpen(false)} />
-          <Typography>Your deposits</Typography>
+
+          <Typography variant="xl" weight={700} className="text-slate-100">
+            Your deposits
+          </Typography>
           <Typography>{`${stakePosition?.amount.toExact()} ${stakePosition?.amount.currency.symbol}`}</Typography>
-          <Typography>Your rewards</Typography>
+
+          <Typography variant="xl" weight={700} className="text-slate-100">
+            Your rewards
+          </Typography>
           {rewards?.map((reward, i) => (
             <Typography key={i}>{`${reward.claimableAmount.toExact()} ${
               reward.claimableAmount.currency.symbol
+            }`}</Typography>
+          ))}
+
+          <Typography variant="xl" weight={700} className="text-slate-100">
+            Transactions
+          </Typography>
+          {transactions?.map((transaction, i) => (
+            <Typography key={i}>{`${transaction.status} ${transaction.amount.toExact()} ${
+              transaction.token.symbol
             }`}</Typography>
           ))}
         </Dialog.Content>
