@@ -14,15 +14,12 @@ const fetcher = (params: any) =>
 
 interface ManageFarmModalProps {
   farm: Farm | undefined
-  // liquidity:
   chainId: number | undefined
 }
 
 export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => {
   const [open, setOpen] = useState(false)
   const { data: account } = useAccount()
-  // const contract = useStakingContract(chainId)
-  // const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const { data: stakePositionDTO, isValidating: isValidatingStakePosition } = useSWR<StakePositionDTO>(
     `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/stake-position`,
@@ -39,13 +36,12 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
       return new StakePosition({ chainId, stake: stakePositionDTO })
     }
   }, [chainId, stakePositionDTO, isValidatingStakePosition])
-  console.log(rewardsDTO?.length)
 
   const rewards = useMemo(() => {
-    if (chainId && !isValidatingRewards && rewardsDTO) {
-      return rewardsDTO.map((reward) => new Reward({ chainId, reward }))
+    if (chainId && !isValidatingRewards && rewardsDTO && stakePositionDTO) {
+      return rewardsDTO.map((reward) => new Reward({ stakePosition: stakePositionDTO, chainId, reward }))
     }
-  }, [chainId, rewardsDTO, isValidatingRewards])
+  }, [chainId, rewardsDTO, isValidatingRewards, stakePositionDTO])
 
   if (!account) return <></>
   return (
@@ -61,30 +57,14 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-5">
           <Dialog.Header title={'Your position and rewards'} onClose={() => setOpen(false)} />
+          <Typography>Your deposits</Typography>
           <Typography>{`${stakePosition?.amount.toExact()} ${stakePosition?.amount.currency.symbol}`}</Typography>
+          <Typography>Your rewards</Typography>
           {rewards?.map((reward, i) => (
-            <Typography key={i}>{reward.claimableAmount.toExact()}</Typography>
+            <Typography key={i}>{`${reward.claimableAmount.toExact()} ${
+              reward.claimableAmount.currency.symbol
+            }`}</Typography>
           ))}
-
-          {/* <Typography>Subscriptions: {Number(userSubscriptions?.activeSubscriptionCount)} / 6</Typography> */}
-          {/* // TODO: fix sub count, not correct. should be subscriptions to the current farm/stakeToken */}
-          {/* {TODO: new incentive table} */}
-          {/* <IncentiveTable
-            incentives={farm?.incentives ?? []}
-            chainId={chainId}
-            loading={false}
-            setSelectedRows={setSelectedIncentives}
-            placeholder="No subscriptions available"
-          /> */}
-          {/* <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || selectedIncentives.length == 0}
-            onClick={stakeAndSubscribe}
-          >
-            {isWritePending ? <Dots>{`Subscribing..`}</Dots> : 'Subscribe'}
-          </Button> */}
         </Dialog.Content>
       </Dialog>
     </>
