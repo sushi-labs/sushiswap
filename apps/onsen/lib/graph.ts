@@ -60,6 +60,17 @@ export const getUserStakePositions = async (chainId: string, address: string, fa
   }
 }
 
+export const getUserRewards = async (chainId: string, address: string, farmId: string) => {
+  const network = Number(chainId)
+  if (!isNetworkSupported(network)) return undefined
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.ARBITRUM) {
+    return (
+      await sdk.ArbitrumStakingUserRewards({ id: address.toLocaleLowerCase() })
+    ).ARBITRUM_STAKING_user?.rewards?.filter((reward) => reward.incentive.stakeToken.id === farmId)
+  }
+}
+
 export const getPrice = async (chainId: string) => {
   const network = Number(chainId)
   if (!isNetworkSupported(network)) return undefined

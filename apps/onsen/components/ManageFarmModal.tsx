@@ -1,16 +1,11 @@
-import { StakePosition as StakePositionDTO } from '@sushiswap/graph-client'
-import log from '@sushiswap/log'
-import { Button, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { batchAction, subscribeAction } from 'lib/actions'
+import { Reward as RewardDTO, StakePosition as StakePositionDTO } from '@sushiswap/graph-client'
+import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Farm } from 'lib/Farm'
-import { useStakingContract } from 'lib/hooks/useStakingContract'
-import { Incentive } from 'lib/Incentive'
+import { Reward } from 'lib/Reward'
 import { StakePosition } from 'lib/StakePosition'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { useAccount, useSendTransaction } from 'wagmi'
-
-import { createToast } from './Toast'
+import { useAccount } from 'wagmi'
 
 const fetcher = (params: any) =>
   fetch(params)
@@ -26,12 +21,16 @@ interface ManageFarmModalProps {
 export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => {
   const [open, setOpen] = useState(false)
   const { data: account } = useAccount()
-  const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
-  const contract = useStakingContract(chainId)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  // const contract = useStakingContract(chainId)
+  // const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
 
   const { data: stakePositionDTO, isValidating: isValidatingStakePosition } = useSWR<StakePositionDTO>(
     `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/stake-position`,
+    fetcher
+  )
+
+  const { data: rewardsDTO, isValidating: isValidatingRewards } = useSWR<RewardDTO[]>(
+    `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/rewards`,
     fetcher
   )
 
@@ -40,39 +39,13 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
       return new StakePosition({ chainId, stake: stakePositionDTO })
     }
   }, [chainId, stakePositionDTO, isValidatingStakePosition])
+  console.log(rewardsDTO?.length)
 
-  const stakeAndSubscribe = useCallback(async () => {
-    if (!account) return
-
-    const actions = selectedIncentives.map((incentive) => subscribeAction(contract, incentive.id))
-
-    try {
-      const data = await sendTransactionAsync({
-        request: {
-          from: account?.address,
-          to: contract?.address,
-          data: batchAction({ contract, actions }),
-        },
-      })
-
-      createToast({
-        title: 'Subscribe',
-        description: `You have successfully subscribed to the following rewards: ${selectedIncentives
-          .map((incentive) => incentive.rewardsRemaining.currency.symbol)
-          .join(', ')}`,
-        promise: data.wait(),
-      })
-    } catch (e: any) {
-      // setError(e.message)
-
-      log.tenderly({
-        chainId: chainId,
-        from: account.address,
-        to: contract.address,
-        data: batchAction({ contract, actions }),
-      })
+  const rewards = useMemo(() => {
+    if (chainId && !isValidatingRewards && rewardsDTO) {
+      return rewardsDTO.map((reward) => new Reward({ chainId, reward }))
     }
-  }, [account, sendTransactionAsync, chainId, contract, selectedIncentives])
+  }, [chainId, rewardsDTO, isValidatingRewards])
 
   if (!account) return <></>
   return (
@@ -89,6 +62,9 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
         <Dialog.Content className="space-y-5">
           <Dialog.Header title={'Your position and rewards'} onClose={() => setOpen(false)} />
           <Typography>{`${stakePosition?.amount.toExact()} ${stakePosition?.amount.currency.symbol}`}</Typography>
+          {rewards?.map((reward, i) => (
+            <Typography key={i}>{reward.claimableAmount.toExact()}</Typography>
+          ))}
 
           {/* <Typography>Subscriptions: {Number(userSubscriptions?.activeSubscriptionCount)} / 6</Typography> */}
           {/* // TODO: fix sub count, not correct. should be subscriptions to the current farm/stakeToken */}
@@ -100,7 +76,7 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
             setSelectedRows={setSelectedIncentives}
             placeholder="No subscriptions available"
           /> */}
-          <Button
+          {/* <Button
             variant="filled"
             color="gradient"
             fullWidth
@@ -108,7 +84,7 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
             onClick={stakeAndSubscribe}
           >
             {isWritePending ? <Dots>{`Subscribing..`}</Dots> : 'Subscribe'}
-          </Button>
+          </Button> */}
         </Dialog.Content>
       </Dialog>
     </>

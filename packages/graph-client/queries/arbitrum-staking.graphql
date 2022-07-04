@@ -107,19 +107,18 @@ query ArbitrumStakingUserSubscriptions($id: ID!) {
   }
 }
 
-
 query ArbitrumStakingUserFarms($id: ID!) {
   ARBITRUM_STAKING_user(id: $id) {
     id
     stakePositions {
       id
       token {
-      id
-      name
-      symbol
-      decimals
-      type
-      assets
+        id
+        name
+        symbol
+        decimals
+        type
+        assets
       }
       liquidity
       user {
@@ -170,21 +169,19 @@ query ArbitrumStakingUserFarms($id: ID!) {
       createdAtBlock
       createdAtTimestamp
     }
-    
   }
 }
-
 
 query ArbitrumStakingStakePosition($id: ID!) {
   ARBITRUM_STAKING_stakePosition(id: $id) {
     id
     token {
-    id
-    name
-    symbol
-    decimals
-    type
-    assets
+      id
+      name
+      symbol
+      decimals
+      type
+      assets
     }
     liquidity
     user {
@@ -192,5 +189,63 @@ query ArbitrumStakingStakePosition($id: ID!) {
     }
     createdAtBlock
     createdAtTimestamp
+  }
+}
+
+query ArbitrumStakingUserRewards($id: ID!) {
+  ARBITRUM_STAKING_user(id: $id) {
+    id
+    rewards {
+      id
+      claimedAmount
+      claimableAmount
+      modifiedAtBlock
+      modifiedAtTimestamp
+      createdAtBlock
+      createdAtTimestamp
+      user {
+        id
+      }
+      token {
+        id
+        name
+        symbol
+        decimals
+        type
+        assets
+      }
+      incentive {
+        id
+        rewardsAccrued
+        rewardsRemaining
+        liquidityStaked
+        stakeToken {
+          id
+          name
+          symbol
+          decimals
+          type
+          assets
+        }
+        rewardToken {
+          id
+          name
+          symbol
+          decimals
+          type
+        }
+        createdBy {
+          id
+        }
+        startTime
+        endTime
+        createdAtBlock
+        createdAtTimestamp
+        modifiedAtBlock
+        modifiedAtTimestamp
+        rewardsUpdatedAtBlock
+        rewardsUpdatedAtTimestamp
+      }
+    }
   }
 }
