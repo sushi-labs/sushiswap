@@ -133,6 +133,8 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
 }
 
 const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover.NONE, setHover }) => {
+  const PAGE_SIZE = 3
+
   const [index, setIndex] = useState(0)
 
   return (
@@ -200,7 +202,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
             schedule &&
             schedule.length > 1 &&
             schedule
-              .slice(index + 1, index + 4)
+              .slice(index + 1, index + 1 + PAGE_SIZE)
               .map((period, _index) => (
                 <Block
                   vesting={vesting}
@@ -211,7 +213,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                 />
               ))}
         </div>
-        {schedule && index + 4 < schedule.length && (
+        {schedule && index + 1 + PAGE_SIZE < schedule.length && (
           <div className="absolute items-center hidden h-full md:flex -right-12">
             <button className="p-1 rounded-full cursor-pointer group bg-blue hover:bg-blue-400">
               <ChevronRightIcon
@@ -228,7 +230,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
               <ChevronLeftIcon
                 className="text-slate-200 group-hover:text-white"
                 width={24}
-                onClick={() => setIndex((prevState) => prevState - 1)}
+                onClick={() => setIndex((prevState) => (prevState - PAGE_SIZE < 0 ? prevState : prevState - PAGE_SIZE))}
               />
             </button>
           </div>
@@ -237,7 +239,17 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
               <ChevronRightIcon
                 className="text-slate-200 group-hover:text-white"
                 width={24}
-                onClick={() => setIndex((prevState) => prevState + 1)}
+                onClick={() =>
+                  setIndex((prevState) => {
+                    if (!schedule) return prevState
+
+                    // set to start of next page to prevent jankiness
+                    const previousPage = Math.floor(prevState / PAGE_SIZE)
+                    const nextIndex = previousPage * PAGE_SIZE + PAGE_SIZE
+
+                    return schedule.length - 1 < nextIndex ? prevState : nextIndex
+                  })
+                }
               />
             </button>
           </div>
