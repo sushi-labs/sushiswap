@@ -1,5 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { ChevronRightIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon } from '@heroicons/react/solid'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
@@ -8,13 +9,23 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Badge, Button, Chip, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import { Caption, ConfirmationComponentController, CurrencyInput, Rate, SettingsOverlay } from 'components'
-import { CrossChainRoute, SameChainRoute } from 'components'
+import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
+import {
+  Caption,
+  ConfirmationComponentController,
+  CrossChainRoute,
+  CurrencyInput,
+  Rate,
+  SameChainRoute,
+  SettingsOverlay,
+} from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
@@ -25,10 +36,6 @@ const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 const theme: Theme = {
   ...defaultTheme,
 }
-
-import { Icon } from '@sushiswap/ui/currency/Icon'
-import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, srcUseBentoBox, dstUseBentoBox } = query
@@ -443,26 +450,14 @@ const Widget: FC<Swap> = ({
 
   const isMounted = useIsMounted()
 
-  // const { data: srcBalance } = useTokenBalance(
-  //   srcChainId,
-  //   address,
-  //   srcToken.wrapped,
-  //   srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
-  // )
-
-  // const { data: dstBalance } = useTokenBalance(
-  //   dstChainId,
-  //   address,
-  //   dstToken.wrapped,
-  //   dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET
-  // )
+  // const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  // const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: srcToken })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
 
   const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
   const dstTokenPrice = dstPrices?.[dstToken.wrapped.address.toLowerCase()]
-  // console.log({ srcPrices, dstPrices })
 
   return (
     <article
@@ -502,9 +497,14 @@ const Widget: FC<Swap> = ({
           }}
           tokenList={srcTokens}
           theme={theme}
-          // balance={srcBalance}
           onMax={(value) => setSrcTypedAmount(value)}
+          // balance={srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
+      </div>
+      <div className="flex items-center justify-center -mt-[14px] -mb-[14px] z-10">
+        <div className="p-1 rounded-lg bg-slate-700 border-2 border-slate-700 ring-2 ring-slate-800">
+          <ArrowDownIcon width={14} height={14} className="text-slate-300" />
+        </div>
       </div>
       <div className={classNames(theme.background.secondary, 'p-3 m-0.5 rounded-2xl')}>
         <CurrencyInput
@@ -520,7 +520,7 @@ const Widget: FC<Swap> = ({
           tokenList={dstTokens}
           theme={theme}
           disableMaxButton
-          // balance={dstBalance}
+          // balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
 
         <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
