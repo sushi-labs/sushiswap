@@ -1,57 +1,76 @@
-# Sushi Monorepo
+# Sushi 2.0 Monorepo 🍣
 
-Sushi 2.0 🍣
+### Requirements
+- pnpm via [https://pnpm.io/installation](https://pnpm.io/installation)
+    - on the other hand, you can run: ```bash npm install -g pnpm```
+- (Recommended) GIT client via [GitHub Desktop](https://desktop.github.com)
 
-## Getting Started
+### To run it locally
 
-https://pnpm.io/installation
+- git clone the repository
+```bash
+git clone https://github.com/(yourUsername)/sushiswap.git
+```
 
-### Install
+- cd to the folder you git cloned the repository in
+```bash
+cd (sushiswapRepository) 
+```
 
+#### NOTE: if you run into a peer dependencies error, run 
+```bash 
+pnpm config set auto-install-peers true
+```
+to have peer dependencies automatcally installed
+
+- install all dependencies for a project
+```bash
 pnpm install
+```
 
-### Execute
+- run the project 
+```bash
+pnpm run dev
+```
 
-pnp exec
+your local clone of SushiSwap should be on your free Port i.e http://localhost:XXXX/, where you can make changes
 
-### Dev
 
-pnpn run dev
+# Beast Mode
+Runs dev for all apps and composes under [http://localhost:3000](http://localhost:3000)
 
-### Beast Mode
-
-Runs dev for all apps and composes under localhost:3000
-
+```bash
 pnpm exec turbo run dev --filter=...{./apps/\*}
+```
 
-#### Single Repository
-
-pnpm exec turbo run dev --scope=api/app/package/protocol
-
+### Single Repository
+```bash
+pnpm exec turbo run dev --scope=api/app/package/protocol 
+```
 ### Build
-
-pnpn run build
-
-#### Single Repository
-
+```bash
+pnpm run build
+```
+### Single Repository
+```bash
 pnpm exec turbo run build --scope=api/app/package/protocol
-
+```
 ### Test
-
-pnpn run test
-
-#### Single Repository
-
+```bash
+pnpm run test
+```
+### Single Repository
+```bash
 pnpm exec turbo run test --scope=api/app/package/protocol
-
+```
 ### Test
-
-pnpn run clean
-
-#### Single Repository
-
+```bash
+pnpm run clean
+```
+### Single Repository
+```bash
 pnpm exec turbo run clear --scope=api/app/package/protocol
-
+```
 ## APIs
 
 - `token-list`
