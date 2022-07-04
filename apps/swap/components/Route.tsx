@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Badge, Chip, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
+import chain from '@sushiswap/chain'
+import { STARGATE_TOKEN } from '@sushiswap/stargate'
+import { Badge, Chip, Link, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { FC } from 'react'
 
@@ -67,31 +68,65 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
             />
           </div>
           <div className="bg-slate-700 px-2 py-2.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600">
-            <Badge
-              badgeContent={
-                <div className="rounded-full shadow-md ring-1 ring-black/20">
-                  <NetworkIcon chainId={srcTrade.inputAmount.currency.chainId} width={14} height={14} />
-                </div>
+            <Popover
+              hover
+              button={
+                <Badge
+                  badgeContent={
+                    <div className="rounded-full shadow-md ring-1 ring-black/20">
+                      <NetworkIcon chainId={srcTrade.outputAmount.currency.chainId} width={14} height={14} />
+                    </div>
+                  }
+                >
+                  <div className="w-[18px] h-[18px]">
+                    <Icon currency={srcTrade.outputAmount.currency} width={18} height={18} />
+                  </div>
+                </Badge>
               }
-            >
-              <div className="w-[18px] h-[18px]">
-                <Icon currency={srcTrade.outputAmount.currency} width={18} height={18} />
-              </div>
-            </Badge>
-            <DotsHorizontalIcon width={12} className="text-slate-600" />
-            <NetworkIcon chainId={ChainId.ETHEREUM} width={18} height={18} />
-            <DotsHorizontalIcon width={12} className="text-slate-600" />
-            <Badge
-              badgeContent={
-                <div className="rounded-full shadow-md ring-1 ring-black/20">
-                  <NetworkIcon chainId={dstTrade.outputAmount.currency.chainId} width={14} height={14} />
-                </div>
+              panel={
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
+                  <b>{srcTrade.outputAmount.currency.symbol}</b> on{' '}
+                  <b>{chain[srcTrade.outputAmount.currency.chainId].name}</b>
+                </Typography>
               }
-            >
-              <div className="w-[18px] h-[18px]">
-                <Icon currency={dstTrade.inputAmount.currency} width={18} height={18} />
-              </div>
-            </Badge>
+            />
+
+            <DotsHorizontalIcon width={12} className="text-slate-600" />
+            <Popover
+              hover
+              button={<Icon currency={STARGATE_TOKEN} width={18} height={18} />}
+              panel={
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
+                  Powered by{' '}
+                  <b>
+                    <Link.External href="https://stargate.finance">Stargate Finance</Link.External>
+                  </b>
+                </Typography>
+              }
+            />
+            <DotsHorizontalIcon width={12} className="text-slate-600" />
+            <Popover
+              hover
+              button={
+                <Badge
+                  badgeContent={
+                    <div className="rounded-full shadow-md ring-1 ring-black/20">
+                      <NetworkIcon chainId={dstTrade.inputAmount.currency.chainId} width={14} height={14} />
+                    </div>
+                  }
+                >
+                  <div className="w-[18px] h-[18px]">
+                    <Icon currency={dstTrade.inputAmount.currency} width={18} height={18} />
+                  </div>
+                </Badge>
+              }
+              panel={
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
+                  <b>{dstTrade.inputAmount.currency.symbol}</b> on{' '}
+                  <b>{chain[dstTrade.inputAmount.currency.chainId].name}</b>
+                </Typography>
+              }
+            />
           </div>
           <div className="flex items-center rounded-full bg-slate-700">
             <Popover

@@ -6,9 +6,9 @@ import { FundSource } from '@sushiswap/hooks'
 import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
+import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
 import { NetworkSelectorOverlay } from 'components'
 import { FC, useState } from 'react'
-import useSWR from 'swr'
 
 import { useCustomTokens } from '../lib/state/storage'
 import { Theme } from '../types'
@@ -83,11 +83,9 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(network.chainId)
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
-  const { data: tokenPrices } = useSWR(
-    `https://price-git-feature-price-v0-api-teamsushi.vercel.app/v0/${currency.chainId}`,
-    (url) => fetch(url).then((response) => response.json())
-  )
+  const { data: tokenPrices } = usePrices({ chainId: currency.chainId })
   const price = tokenPrices?.[currency.wrapped.address.toLowerCase()]
+
   return (
     <>
       <div className="flex flex-col">

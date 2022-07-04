@@ -218,4 +218,12 @@ export function isStargateBridgeToken(currency: Currency) {
   return STARGATE_BRIDGE_TOKEN_ADDRESSES[currency.chainId].includes(currency.wrapped.address)
 }
 
+export const STARGATE_TOKEN = new Token({
+  chainId: ChainId.ETHEREUM,
+  address: '0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6',
+  decimals: 18,
+  symbol: 'STG',
+  name: 'StargateToken',
+})
+
 export * from './fee'
