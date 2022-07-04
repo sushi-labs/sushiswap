@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.0-canary.100",
+  "version": "1.0.0-canary.101",
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"

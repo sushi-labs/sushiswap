@@ -249,14 +249,14 @@ export class Edge {
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-3
+          1e-4
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-3,
+          1e-4,
           `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
       }
