@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
+import { classNames, Form, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { CreateIncentiveFormData } from 'components/CreateForm/types'
@@ -46,30 +46,26 @@ export const IncentiveAmountDetails = () => {
                   {value?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
-                <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                  <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector
-                      open={dialogOpen}
-                      variant="dialog"
-                      chainId={activeChain?.id}
-                      tokenMap={tokenMap}
-                      customTokenMap={customTokenMap}
-                      onSelect={(currency) => {
-                        if (currency.isNative) {
-                          setValue('fundSource', FundSource.WALLET)
-                        }
-                        onChange(currency)
-                        setDialogOpen(false)
-                      }}
-                      currency={currency}
-                      onClose={() => setDialogOpen(false)}
-                      onAddToken={({ address, chainId, name, symbol, decimals }) =>
-                        addCustomToken({ address, name, chainId, symbol, decimals })
-                      }
-                      onRemoveToken={removeCustomToken}
-                    />
-                  </Dialog.Content>
-                </Dialog>
+                <TokenSelector
+                  open={dialogOpen}
+                  variant="dialog"
+                  chainId={activeChain?.id}
+                  tokenMap={tokenMap}
+                  customTokenMap={customTokenMap}
+                  onSelect={(currency) => {
+                    if (currency.isNative) {
+                      setValue('fundSource', FundSource.WALLET)
+                    }
+                    onChange(currency)
+                    setDialogOpen(false)
+                  }}
+                  currency={currency}
+                  onClose={() => setDialogOpen(false)}
+                  onAddToken={({ address, chainId, name, symbol, decimals }) =>
+                    addCustomToken({ address, name, chainId, symbol, decimals })
+                  }
+                  onRemoveToken={removeCustomToken}
+                />
               </>
             )
           }}
