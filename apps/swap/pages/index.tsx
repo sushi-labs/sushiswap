@@ -527,7 +527,7 @@ const Widget: FC<Swap> = ({
           // balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
 
-        <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
+        <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />
 
         {!address && isMounted ? (
           <Wallet.Button fullWidth color="blue">
@@ -573,10 +573,21 @@ const Widget: FC<Swap> = ({
                         fullWidth
                         variant="filled"
                         color="gradient"
-                        disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                        disabled={
+                          isWritePending ||
+                          !approved ||
+                          !srcAmount?.greaterThan(ZERO) ||
+                          Boolean(srcAmount && !dstMinimumAmountOut)
+                        }
                         onClick={() => setOpen(true)}
                       >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                        {isWritePending ? (
+                          <Dots>Confirm transaction</Dots>
+                        ) : srcAmount && !dstMinimumAmountOut ? (
+                          'Insufficient liquidity'
+                        ) : (
+                          'Swap'
+                        )}
                       </Button>
                     )}
                   >
