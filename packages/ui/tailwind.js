@@ -125,7 +125,7 @@ module.exports = {
       animation: {
         ellipsis: 'ellipsis 1.25s infinite',
         'spin-slow': 'spin 2s linear infinite',
-        heartbeat: 'heartbeat 1.5s ease 1.5s infinite normal forwards',
+        heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
       },
       keyframes: {
         ellipsis: {
