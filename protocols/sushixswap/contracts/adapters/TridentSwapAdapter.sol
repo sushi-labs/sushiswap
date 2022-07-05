@@ -4,6 +4,9 @@ pragma solidity 0.8.11;
 
 import "../interfaces/trident/ITridentSwapAdapter.sol";
 
+/// @title TridentSwapAdapter
+/// @notice Adapter for all Trident based Swaps
+
 abstract contract TridentSwapAdapter is
     ITridentRouter,
     ImmutableState,
@@ -12,6 +15,10 @@ abstract contract TridentSwapAdapter is
     // Custom Error
     error TooLittleReceived();
 
+    /// @notice Swaps token A to token B directly. Swaps are done on `bento` tokens.
+    /// @param params This includes the address of token A, pool, amount of token A to swap,
+    /// minimum amount of token B after the swap and data required by the pool for the swap.
+    /// @dev Ensure that the pool is trusted before calling this function. The pool can steal users' tokens.
     function _exactInput(ExactInputParams memory params)
         internal
         returns (uint256 amountOut)
@@ -40,6 +47,12 @@ abstract contract TridentSwapAdapter is
         if (amountOut < params.amountOutMinimum) revert TooLittleReceived();
     }
 
+    /// @notice Swaps multiple input tokens to multiple output tokens using multiple paths, in different percentages.
+    /// For example, you can swap 50 DAI + 100 USDC into 60% ETH and 40% BTC.
+    /// @param params This includes everything needed for the swap.
+    /// Look at the `ComplexPathParams` struct for more details.
+    /// @dev This function is not optimized for single swaps and should only be used in complex cases where
+    /// the amounts are large enough that minimizing slippage by using multiple paths is worth the extra gas.
     function _complexPath(ComplexPathParams memory params) internal {
         // Deposit all initial tokens to respective pools and initiate the swaps.
         // Input tokens come from the user - output goes to following pools.
@@ -82,13 +95,22 @@ abstract contract TridentSwapAdapter is
             );
             if (balanceShares < params.output[i].minAmount)
                 revert TooLittleReceived();
-
-            bentoBox.transfer(
-                params.output[i].token,
-                address(this),
-                params.output[i].to,
-                balanceShares
-            );
+            if (params.output[i].unwrapBento) {
+                bentoBox.withdraw(
+                    params.output[i].token,
+                    address(this),
+                    params.output[i].to,
+                    0,
+                    balanceShares
+                );
+            } else {
+                bentoBox.transfer(
+                    params.output[i].token,
+                    address(this),
+                    params.output[i].to,
+                    balanceShares
+                );
+            }
         }
     }
 

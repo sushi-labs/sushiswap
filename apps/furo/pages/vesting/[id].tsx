@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -24,6 +23,7 @@ import { useAccount, useConnect } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -32,22 +32,19 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
-  const { chainId, id } = query
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
   const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+  const [transactions, rebases] = await Promise.all([
+    getVestingTransactions(chainId as string, id as string),
+    getRebase(chainId as string, vesting.token.id),
+  ])
+
   return {
     props: {
       fallback: {
         [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/transactions/${chainId}/${id}`]: (await getVestingTransactions(
-          chainId as string,
-          id as string
-        )) as TransactionDTO[],
-        [`/furo/api/rebase/${query.chainId}/${vesting.token.id}`]: (await getRebase(
-          chainId as string,
-          vesting.token.id
-        )) as Rebase,
+        [`/furo/api/vesting/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${vesting.token.id}`]: rebases as Rebase,
       },
     },
   }
@@ -70,8 +67,12 @@ const _VestingPage: FC = () => {
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
-  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`)
-  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`)
+  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/vesting/${chainId}/${id}/transactions`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
   const { data: rebase } = useSWR<Rebase>(
     () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
     (url) => fetch(url).then((response) => response.json())
@@ -164,6 +165,7 @@ const _VestingPage: FC = () => {
               }
             />
             <CancelModal
+              title="Cancel Vesting"
               stream={vesting}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
               address={

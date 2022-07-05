@@ -32,6 +32,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/log": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
     "@types/node": "^17.0.31",
     "@types/numeral": "^2.0.2",
     "chalk": "^4.1.2",

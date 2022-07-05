@@ -1,0 +1,12 @@
+name: furo-stream-fantom
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-fantom
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: FANTOM_STREAM_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

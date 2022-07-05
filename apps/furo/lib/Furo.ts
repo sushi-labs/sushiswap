@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { type Rebase, type Stream as StreamDTO, type User as UserDTO } from '@sushiswap/graph-client'
 import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
+import { type Rebase, type Stream as StreamDTO, type User as UserDTO } from '.graphclient'
 export abstract class Furo {
   public _balance: Amount<Token>
   public _withdrawnAmount: Amount<Token>
@@ -145,7 +145,7 @@ export abstract class Furo {
   public canTransfer(account: string | undefined): boolean {
     if (this.isCancelled) return false
     if (!account) return false
-    return [this.createdBy.id.toLowerCase(), this.recipient.id.toLowerCase()].includes(account.toLowerCase())
+    return this.recipient.id.toLowerCase() === account.toLowerCase()
   }
 
   public canWithdraw(account: string | undefined): boolean {

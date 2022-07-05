@@ -1,0 +1,12 @@
+name: furo-vesting-optimism
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-optimism
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: OPTIMISM_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

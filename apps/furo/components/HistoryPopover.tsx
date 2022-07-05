@@ -1,9 +1,10 @@
 import { Amount } from '@sushiswap/currency'
-import { type Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { Button, HistoryIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Stream, Transaction, Vesting } from 'lib'
 import { FC, memo, useMemo } from 'react'
+
+import { type Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   stream: Stream | Vesting | undefined

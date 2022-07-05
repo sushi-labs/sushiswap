@@ -1,0 +1,11 @@
+name: exchange-fuse
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fuse-exchange
+transforms:
+  - prefix:
+      value: FUSE_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

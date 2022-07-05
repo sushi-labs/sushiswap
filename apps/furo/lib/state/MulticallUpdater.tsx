@@ -1,14 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
 import { useMulticallContract } from '@sushiswap/wagmi'
+import { useBlockNumber } from 'wagmi'
 
 import { multicall } from './multicall'
 
 interface Props {
-  chainId: ChainId
-  blockNumber: number | undefined
+  chainId: number
+  isDebug?: boolean
 }
 
-export function Updater({ chainId, blockNumber }: Props) {
+// Wagmi wrapper for redux multicall
+export function Updater({ chainId, isDebug = true }: Props) {
   const contract = useMulticallContract(chainId)
-  return <multicall.Updater chainId={chainId} latestBlockNumber={blockNumber} contract={contract} />
+  const { data: latestBlockNumber } = useBlockNumber({ chainId })
+
+  return (
+    <multicall.Updater chainId={chainId} latestBlockNumber={latestBlockNumber} contract={contract} isDebug={isDebug} />
+  )
 }

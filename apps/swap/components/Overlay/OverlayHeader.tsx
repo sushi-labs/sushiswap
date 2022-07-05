@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, XIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, XIcon } from '@heroicons/react/outline'
 import { classNames, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -8,18 +8,42 @@ interface OverlayHeader {
   title: string
   theme: Theme
   onClose(): void
+  arrowDirection?: 'top' | 'bottom' | 'left' | 'right'
 }
 
-export const OverlayHeader: FC<OverlayHeader> = ({ theme, title, onClose }) => {
+export const OverlayHeader: FC<OverlayHeader> = ({ theme, title, onClose, arrowDirection = 'left' }) => {
   return (
     <div className="flex items-start justify-between">
       <div aria-hidden="true" className="cursor-pointer flex gap-2 items-center" onClick={onClose}>
         <div className="rounded-full flex items-center justify-center cursor-pointer">
-          <ChevronLeftIcon
-            width={24}
-            height={24}
-            className={classNames(theme.primary.default, theme.primary.hover, 'cursor-pointer ')}
-          />
+          {arrowDirection === 'left' && (
+            <ChevronLeftIcon
+              width={24}
+              height={24}
+              className={classNames(theme.primary.default, theme.primary.hover, 'cursor-pointer ')}
+            />
+          )}
+          {arrowDirection === 'bottom' && (
+            <ChevronDownIcon
+              width={24}
+              height={24}
+              className={classNames(theme.primary.default, theme.primary.hover, 'cursor-pointer ')}
+            />
+          )}
+          {arrowDirection === 'top' && (
+            <ChevronUpIcon
+              width={24}
+              height={24}
+              className={classNames(theme.primary.default, theme.primary.hover, 'cursor-pointer ')}
+            />
+          )}
+          {arrowDirection === 'right' && (
+            <ChevronRightIcon
+              width={24}
+              height={24}
+              className={classNames(theme.primary.default, theme.primary.hover, 'cursor-pointer ')}
+            />
+          )}
         </div>
         <Typography
           weight={700}

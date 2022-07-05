@@ -1,0 +1,14 @@
+query BscBentoBoxRebase($id: ID!) {
+  BSC_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query BscBentoBoxRebases($where: Rebase_filter) {
+  BSC_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

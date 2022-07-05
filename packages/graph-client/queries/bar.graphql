@@ -12,7 +12,7 @@ query Bar($block: Block_height, $id: String = "0x8798249c2e607446efb7ad49ec89dd1
   }
 }
 
-query Bars($block: Block_height, $first: Int = 1000, $orderBy:  Bar_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: Bar_filter ) {
+query Bars($block: Block_height, $first: Int = 1000, $orderBy:  Bar_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: Bar_filter) {
   bars(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     decimals

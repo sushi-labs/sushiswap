@@ -1,0 +1,14 @@
+query ArbitrumBentoBoxRebase($id: ID!) {
+  ARBITRUM_BENTOBOX_rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query ArbitrumBentoBoxRebases($where: Rebase_filter) {
+  ARBITRUM_BENTOBOX_rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}

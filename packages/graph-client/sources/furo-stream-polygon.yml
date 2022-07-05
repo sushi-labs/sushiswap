@@ -1,0 +1,12 @@
+name: furo-stream-polygon
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-stream-polygon
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: POLYGON_STREAM_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

@@ -14,7 +14,31 @@
     }
 
     .btn-outlined {
-        @apply border-none hover:ring-2 focus:ring-2
+        @apply border-2 hover:ring-2 border-opacity-20 ring-offset-2 ring-offset-slate-900 rounded-xl
+    }
+
+    .btn-red.btn-outlined {
+        @apply border-red ring-red-700 text-red
+    }
+
+    .btn-pink.btn-outlined  {
+        @apply border-pink ring-pink-700 text-pink
+    }
+
+    .btn-blue.btn-outlined  {
+        @apply border-blue ring-blue-700 text-blue
+    }
+
+    .btn-purple.btn-outlined  {
+        @apply border-purple ring-purple-700 text-purple
+    }
+
+    .btn-gradient.btn-outlined  {
+        @apply bg-gradient-to-r hover:ring-4 ring-slate-600 ring-purple/30 from-blue to-pink focus:border-blue-700
+    }
+
+    .btn-gray.btn-outlined  {
+        @apply border-slate-700 ring-slate-700 text-slate-400
     }
 
     .btn-red.btn-filled {
@@ -22,7 +46,7 @@
     }
 
     .btn-pink.btn-filled  {
-        @apply bg-pink ring-blue-700
+        @apply bg-pink ring-pink-700
     }
 
     .btn-blue.btn-filled  {

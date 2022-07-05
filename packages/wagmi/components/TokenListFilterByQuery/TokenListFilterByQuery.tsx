@@ -20,7 +20,7 @@ interface Props {
   includeNative?: boolean
 }
 
-export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap, includeNative = false }) => {
+export const TokenListFilterByQuery: FC<Props> = ({ children, chainId, tokenMap, includeNative = true }) => {
   const tokenMapValues = useMemo(() => Object.values(tokenMap), [tokenMap])
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState<string>('')

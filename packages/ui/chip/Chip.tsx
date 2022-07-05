@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react'
 
 const SIZE = {
   default: 'h-[24px]',
-  sm: 'h-5 text-[10px]',
+  sm: 'h-5 !text-[10px]',
   lg: 'h-12 text-[14px]',
 }
 
@@ -17,18 +17,19 @@ const FILLED = {
   green: 'bg-green-500 bg-opacity-20 text-green',
   pink: 'bg-pink-500 bg-opacity-20 text-pink',
   red: 'bg-red-500 bg-opacity-20 text-red',
+  gray: 'bg-white bg-opacity-10 text-slate-300',
 }
 
 const VARIANT = {
   filled: FILLED,
 }
 
-export type ChipColor = 'default' | 'purple' | 'yellow' | 'blue' | 'green' | 'white' | 'pink' | 'red'
+export type ChipColor = 'default' | 'purple' | 'yellow' | 'blue' | 'green' | 'white' | 'pink' | 'red' | 'gray'
 export type ChipSize = 'default' | 'sm'
 export type ChipVariant = 'filled'
 
 export interface ChipProps {
-  label: string
+  label: ReactNode
   color?: ChipColor
   variant?: ChipVariant
   size?: ChipSize

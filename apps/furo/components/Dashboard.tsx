@@ -1,7 +1,6 @@
 import { Tab } from '@headlessui/react'
 import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
-import { Rebase } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import { toToken } from 'lib'
@@ -14,27 +13,31 @@ import { Streams, Vestings } from 'types'
 import { useAccount, useConnect } from 'wagmi'
 
 import { FuroTable, FuroTableType } from './FuroTable'
+import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)
     .then((res) => res.json())
     .catch((e) => console.log(JSON.stringify(e)))
 
-export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, address }) => {
+export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boolean }> = ({
+  chainId,
+  address,
+  showOutgoing,
+}) => {
   const isMounted = useIsMounted()
   const router = useRouter()
   const { data: account } = useAccount()
   const { isConnected } = useConnect()
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
-  const [showActiveOutgoing, setShowActiveOutgoing] = useState(false)
 
   const { data: streams, isValidating: isValidatingStreams } = useSWR<Streams>(
-    `/furo/api/streams/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/streams`,
     fetcher
   )
   const { data: vestings, isValidating: isValidatingVestings } = useSWR<Vestings>(
-    `/furo/api/vestings/${chainId}/${address}`,
+    `/furo/api/user/${chainId}/${address}/vestings`,
     fetcher
   )
   const [ids, tokens] = useMemo(() => {
@@ -51,8 +54,22 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
       tokens.push(toToken(stream.token, chainId))
     })
 
+    vestings?.incomingVestings?.forEach((vesting) => {
+      tokens.push(toToken(vesting.token, chainId))
+    })
+
+    vestings?.outgoingVestings?.forEach((vesting) => {
+      tokens.push(toToken(vesting.token, chainId))
+    })
+
     return [ids, tokens]
-  }, [chainId, streams?.incomingStreams, streams?.outgoingStreams])
+  }, [
+    chainId,
+    streams?.incomingStreams,
+    streams?.outgoingStreams,
+    vestings?.incomingVestings,
+    vestings?.outgoingVestings,
+  ])
 
   const { data: rebases, isValidating: isValidatingRebases } = useSWR<Rebase[]>(
     () =>
@@ -71,8 +88,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
 
   // Prefetch stream/vesting pages
   useEffect(() => {
-    void router.prefetch('/furo/stream/[id]')
-    void router.prefetch('/furo/vesting/[id]')
+    void router.prefetch('/stream/[id]')
+    void router.prefetch('/vesting/[id]')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -115,7 +132,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
           </div>
         </div>
       </div>
-      <Tab.Group as="div" className="space-y-6">
+      <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
         <div className="flex justify-between px-2">
           <Tab.List className="flex gap-10">
             <Tab
@@ -128,7 +145,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                 )
               }
             >
-              Earning{' '}
+              Incoming{' '}
               <Chip
                 color="blue"
                 label={((streams?.incomingStreams?.length || 0) + (vestings?.incomingVestings?.length || 0)).toString()}
@@ -144,7 +161,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
                 )
               }
             >
-              Payment{' '}
+              Outgoing{' '}
               <Chip
                 color="pink"
                 label={((streams?.outgoingStreams?.length || 0) + (vestings?.outgoingVestings?.length || 0)).toString()}
@@ -178,7 +195,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               type={FuroTableType.INCOMING}
               placeholder={
                 <>
-                  No <b>earning</b> streams found
+                  No <b>incoming</b> streams found
                 </>
               }
             />
@@ -187,8 +204,8 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
             <FuroTable
               chainId={chainId}
               balances={balancesData}
-              globalFilter={showActiveOutgoing}
-              setGlobalFilter={setShowActiveOutgoing}
+              globalFilter={showActiveIncoming}
+              setGlobalFilter={setShowActiveIncoming}
               loading={isValidatingVestings || isValidatingStreams || isValidatingRebases || balancesLoading}
               streams={streams?.outgoingStreams ?? []}
               vestings={vestings?.outgoingVestings ?? []}
@@ -196,7 +213,7 @@ export const Dashboard: FC<{ chainId: number; address: string }> = ({ chainId, a
               type={FuroTableType.OUTGOING}
               placeholder={
                 <>
-                  No <b>payment</b> streams found
+                  No <b>outgoing</b> streams found
                 </>
               }
             />

@@ -18,9 +18,9 @@ module.exports = {
     '**/exports/**',
   ],
   rules: {
-    'simple-import-sort/exports': 'error',
-    'simple-import-sort/imports': 'error',
-    'unused-imports/no-unused-imports': 'error',
+    'simple-import-sort/exports': 'warn',
+    'simple-import-sort/imports': 'warn',
+    'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': 'warn',
     'no-unused-vars': 'warn',
     '@typescript-eslint/no-explicit-any': 'warn',

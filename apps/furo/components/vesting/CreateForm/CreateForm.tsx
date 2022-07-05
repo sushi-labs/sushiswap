@@ -26,9 +26,9 @@ export const CreateForm: FC = () => {
       startDate: undefined,
       recipient: undefined,
       cliffEndDate: undefined,
-      cliffAmount: undefined,
+      cliffAmount: '',
       stepPayouts: 1,
-      stepAmount: undefined,
+      stepAmount: '',
       stepConfig: stepConfigurations[0],
       fundSource: undefined,
       insufficientBalance: false,
@@ -51,6 +51,17 @@ export const CreateForm: FC = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, account?.address])
+
+  // createVestingSchema
+  //   .validate(formData, { abortEarly: false })
+  //   .then(function () {
+  //     // Success
+  //   })
+  //   .catch(function (err) {
+  //     err?.inner?.forEach((e) => {
+  //       console.log(e.message, e.path)
+  //     })
+  //   })
 
   return (
     <>

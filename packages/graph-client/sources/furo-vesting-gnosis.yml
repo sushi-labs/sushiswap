@@ -1,0 +1,12 @@
+name: furo-vesting-gnosis
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-gnosis
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: GNOSIS_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

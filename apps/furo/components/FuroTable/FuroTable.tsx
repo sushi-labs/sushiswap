@@ -2,16 +2,16 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '@sushiswap/graph-client'
 import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
-import { useNetwork } from 'wagmi'
 
+import { LoadingOverlay } from '../Overlay'
 import { Placeholder } from './Placeholder'
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,
@@ -92,7 +92,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
         <div className="flex flex-col w-full">
           <Typography variant="sm" weight={700} className="text-right text-slate-200">
             {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}{' '}
-            <span className="text-slate-500 font-medium">{props.row.original?.token.symbol}</span>
+            <span className="font-medium text-slate-500">{props.row.original?.token.symbol}</span>
           </Typography>
         </div>
       )
@@ -137,26 +137,26 @@ const defaultColumns = (tableProps: FuroTableProps) => [
 ]
 
 export const FuroTable: FC<FuroTableProps> = (props) => {
-  const { streams, vestings, rebases, placeholder, loading } = props
+  const { chainId, streams, vestings, rebases, placeholder, loading } = props
   const [initialized, setInitialized] = useState(!loading)
+  const [showOverlay, setShowOverlay] = useState(false)
 
   useEffect(() => {
     if (!loading) setInitialized(true)
   }, [loading])
 
   const router = useRouter()
-  const { activeChain } = useNetwork()
   const data = useMemo(() => {
-    if (!activeChain || !streams || !vestings || !rebases) return []
+    if (!chainId || !streams || !vestings || !rebases) return []
     return streams
       .map(
         (stream) =>
           new Stream({
-            chainId: activeChain.id,
+            chainId,
             furo: stream,
             rebase: rebases.find((rebase) =>
               stream.token.id === AddressZero
-                ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
                 : rebase.id === stream.token.id
             ) as RebaseDTO,
           })
@@ -166,21 +166,19 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
           (vesting) =>
             new Vesting({
               furo: vesting,
-              chainId: activeChain.id,
+              chainId,
               rebase: rebases.find((rebase) =>
                 vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[activeChain.id].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
                   : rebase.id === vesting.token.id
               ) as RebaseDTO,
             })
         )
       )
     //rebase: rebases.find(rebase => rebase.id === vesting.token) as { base: string; elastic: string }
-  }, [activeChain, streams, vestings, rebases])
+  }, [chainId, streams, vestings, rebases])
 
-  const [columns] = React.useState<typeof defaultColumns>(() => [
-    ...defaultColumns({ ...props, chainId: activeChain?.id }),
-  ])
+  const [columns] = React.useState<typeof defaultColumns>(() => [...defaultColumns({ ...props, chainId })])
 
   const instance = useTableInstance(table, {
     data,
@@ -196,75 +194,82 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   })
 
   return (
-    <Table.container>
-      <Table.table>
-        <Table.thead>
-          {instance.getHeaderGroups().map((headerGroup) => (
-            <Table.thr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Table.th key={header.id} colSpan={header.colSpan}>
-                  {header.renderHeader()}
-                </Table.th>
-              ))}
-            </Table.thr>
-          ))}
-        </Table.thead>
-        <Table.tbody>
-          {instance.getRowModel().rows.length === 0 &&
-            !initialized &&
-            Array.from(Array(4)).map((_, i) => (
-              <Table.tr key={i} className="flex">
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
-                </Table.td>
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
-                </Table.td>
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
-                </Table.td>
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
-                </Table.td>
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-700 rounded-full" />
-                </Table.td>
-                <Table.td className="h-12">
-                  <div className="h-4 animate-pulse bg-slate-800 rounded-full" />
-                </Table.td>
-              </Table.tr>
+    <>
+      <LoadingOverlay show={showOverlay} />
+      <Table.container>
+        <Table.table>
+          <Table.thead>
+            {instance.getHeaderGroups().map((headerGroup) => (
+              <Table.thr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Table.th key={header.id} colSpan={header.colSpan}>
+                    {header.renderHeader()}
+                  </Table.th>
+                ))}
+              </Table.thr>
             ))}
-          {instance.getRowModel().rows.length === 0 && initialized && (
-            <Table.tr>
-              <Table.td colSpan={columns.length} className="h-[192px] py-4 !text-xs italic text-center text-slate-500">
-                <div className="flex justify-center">
-                  <div>
-                    <Placeholder height={140} />
+          </Table.thead>
+          <Table.tbody>
+            {instance.getRowModel().rows.length === 0 &&
+              !initialized &&
+              Array.from(Array(4)).map((_, i) => (
+                <Table.tr key={i} className="flex">
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-700" />
+                  </Table.td>
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-800" />
+                  </Table.td>
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-700" />
+                  </Table.td>
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-800" />
+                  </Table.td>
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-700" />
+                  </Table.td>
+                  <Table.td className="h-12">
+                    <div className="h-4 rounded-full animate-pulse bg-slate-800" />
+                  </Table.td>
+                </Table.tr>
+              ))}
+            {instance.getRowModel().rows.length === 0 && initialized && (
+              <Table.tr>
+                <Table.td
+                  colSpan={columns.length}
+                  className="h-[192px] py-4 !text-xs italic text-center text-slate-500"
+                >
+                  <div className="flex justify-center">
+                    <div>
+                      <Placeholder height={140} />
+                    </div>
                   </div>
-                </div>
-                {placeholder}
-              </Table.td>
-            </Table.tr>
-          )}
-          {instance.getRowModel().rows.map((row) => {
-            return (
-              <Table.tr
-                key={row.id}
-                onClick={() =>
-                  router.push({
-                    pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
-                    query: { chainId: activeChain?.id },
-                  })
-                }
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return <Table.td key={cell.id}>{cell.renderCell()}</Table.td>
-                })}
+                  {placeholder}
+                </Table.td>
               </Table.tr>
-            )
-          })}
-        </Table.tbody>
-      </Table.table>
-    </Table.container>
+            )}
+            {instance.getRowModel().rows.map((row) => {
+              return (
+                <Table.tr
+                  key={row.id}
+                  onClick={() => {
+                    setShowOverlay(true)
+                    void router.push({
+                      pathname: `/${row.original?.type.toLowerCase()}/${row.original?.id}`,
+                      query: { chainId },
+                    })
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    return <Table.td key={cell.id}>{cell.renderCell()}</Table.td>
+                  })}
+                </Table.tr>
+              )
+            })}
+          </Table.tbody>
+        </Table.table>
+      </Table.container>
+    </>
   )
 }

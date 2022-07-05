@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '@sushiswap/graph-client'
 import { JSBI, Percent } from '@sushiswap/math'
 
 import { Furo } from './Furo'
+import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
@@ -12,6 +12,8 @@ export class Stream extends Furo {
 
   public override get balance(): Amount<Token> {
     if (!this.isStarted) return this._balance
+    if (this.isCancelled) return this.withdrawnAmount
+
     const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
     const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
     const balance = Amount.fromRawAmount(this.token, JSBI.divide(JSBI.multiply(this.amount.quotient, passed), duration))

@@ -1,0 +1,12 @@
+name: furo-vesting-avalanche
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/furo-vesting-avalanche
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: AVALANCHE_VESTING_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

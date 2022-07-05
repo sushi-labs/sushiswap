@@ -14,7 +14,7 @@ export const defaultConfig = {
   classes: {
     root: 'flex flex-col max-w-sm mx-auto p-0.5 bg-slate-700 rounded-xl relative shadow-md shadow-slate-900',
     header: '',
-    seperator: '',
+    seperator: 'h-0',
     footer: {
       root: 'flex items-center justify-center cursor-pointer pointer-events-auto group hover:text-pink',
     },
@@ -50,7 +50,7 @@ export interface Props {
 }
 
 export function Widget({
-  header,
+  header = <></>,
   footer = (
     <>
       <SushiIcon width="1em" height="1em" className="mr-1 text-slate-400 group-hover:animate-spin" />{' '}
@@ -59,12 +59,12 @@ export function Widget({
       </span>
     </>
   ),
-  seperator,
-  button,
+  seperator = <></>,
+  button = <></>,
   config = defaultConfig,
 }: Props) {
   return (
-    <div id="sushiswap-widget" className={config.classes.root} style={config.styles.root}>
+    <article id="sushiswap-widget" className={config.classes.root} style={config.styles.root}>
       <header id="sushiswap-widget-header" className={config.classes.header} style={config.styles.header}>
         {header}
       </header>
@@ -80,7 +80,7 @@ export function Widget({
       <footer id="sushiswap-widget-footer" className={config.classes.footer.root} style={config.styles.footer.root}>
         {footer}
       </footer>
-    </div>
+    </article>
   )
 }
 

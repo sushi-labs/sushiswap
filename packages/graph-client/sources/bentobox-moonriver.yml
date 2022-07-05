@@ -1,0 +1,12 @@
+name: bentobox-moonriver
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bentobox-moonriver
+transforms:
+  - addSourceName: true
+  - prefix:
+      value: MOONRIVER_BENTOBOX_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

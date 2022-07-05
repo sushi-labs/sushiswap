@@ -1,0 +1,11 @@
+name: exchange-avalanche
+handler:
+  graphql:
+    endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange
+transforms:
+  - prefix:
+      value: AVALANCHE_EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+  - autoPagination:
+      validateSchema: true

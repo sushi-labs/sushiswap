@@ -24,6 +24,7 @@
     "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.6",
     "@popperjs/core": "^2.11.5",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@tailwindcss/aspect-ratio": "^0.4.0",

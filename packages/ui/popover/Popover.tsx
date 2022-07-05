@@ -26,6 +26,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
       {({ open }) => (
         <>
           <HeadlessPopover.Button
+            as="div"
             ref={setReferenceElement}
             {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
           >
@@ -46,7 +47,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'shadow-md ring-1 ring-black/20 rounded-2xl overflow-hidden'
+                      'shadow-md ring-1 ring-black/10 rounded-2xl overflow-hidden'
                     ),
                   },
                   panel.props.children

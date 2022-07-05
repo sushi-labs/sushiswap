@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '@sushiswap/graph-client'
 import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
@@ -25,6 +24,7 @@ import useSWR, { SWRConfig } from 'swr'
 import { useAccount, useConnect } from 'wagmi'
 
 import { ChartHover } from '../../types'
+import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -34,21 +34,18 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
-
   const stream = (await getStream(chainId as string, id as string)) as StreamDTO
+  const [transactions, rebases] = await Promise.all([
+    getStreamTransactions(chainId as string, id as string),
+    getRebase(chainId as string, stream.token.id),
+  ])
+
   return {
     props: {
       fallback: {
-        [`/furo/api/stream/${chainId}/${id}`]: stream,
-        [`/furo/api/transactions/${chainId}/${id}`]: (await getStreamTransactions(
-          chainId as string,
-          id as string
-        )) as TransactionDTO[],
-        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: (await getRebase(
-          chainId as string,
-          stream.token.id
-        )) as RebaseDTO,
+        [`/furo/api/stream/${chainId}/${id}`]: stream as StreamDTO,
+        [`/furo/api/stream/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: rebases as RebaseDTO,
       },
     },
   }
@@ -70,7 +67,7 @@ const _Streams: FC = () => {
   const { data: account } = useAccount()
   const { connecting, reconnecting } = useWalletState(connect, account?.address)
 
-  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/transactions/${chainId}/${id}`, (url) =>
+  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
@@ -164,6 +161,7 @@ const _Streams: FC = () => {
               }
             />
             <CancelModal
+              title="Cancel Stream"
               stream={stream}
               abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
               address={

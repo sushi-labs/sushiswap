@@ -5,6 +5,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
+import { SUPPORTED_CHAINS } from 'config'
 import { FuroStatus, FuroType, Stream } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -60,13 +61,17 @@ export default function Index() {
 
   const paySomeone = useConnect({
     onConnect: () => {
-      void router.push('/stream/create')
+      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+        void router.push('/stream/create')
+      }
     },
   })
 
   const viewEarnings = useConnect({
     onConnect: () => {
-      void router.push('/dashboard')
+      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+        void router.push('/dashboard')
+      }
     },
   })
 
@@ -80,7 +85,7 @@ export default function Index() {
       }
     >
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
-        <div className="flex flex-col justify-center h-full gap-8">
+        <div className="flex flex-col justify-center h-[420px] gap-8">
           <div className="flex flex-col gap-3">
             <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
               Welcome to <br />
@@ -129,7 +134,7 @@ export default function Index() {
                         <Typography
                           as="a"
                           target="_blank"
-                          href={Chain.from(activeChain.id).getAccountUrl(account?.address ?? '')}
+                          href={Chain.from(activeChain.id)?.getAccountUrl(account?.address ?? '')}
                           variant="sm"
                           weight={700}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
@@ -145,7 +150,7 @@ export default function Index() {
           </div>
         </div>
         <div className="scale-[0.9] lg:block flex justify-center">
-          <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />
+          {isMounted && <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />}
         </div>
       </div>
     </Layout>

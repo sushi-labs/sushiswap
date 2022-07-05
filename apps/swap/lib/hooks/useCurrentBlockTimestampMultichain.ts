@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { ChainId } from '@sushiswap/chain'
+import { MULTICALL_ADDRESS } from '@sushiswap/wagmi'
 import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
-import { MULTICALL_ADDRESS } from 'config'
 import { useMultiChainSingleContractSingleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 

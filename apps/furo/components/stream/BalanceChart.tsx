@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
 import { Stream } from 'lib'
-import { FC, useCallback } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { ChartHover } from '../../types'
 
@@ -12,6 +12,13 @@ interface Props {
 }
 
 export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHover }) => {
+  const [, updateState] = useState<unknown>()
+
+  useEffect(() => {
+    const intervalId = setInterval(() => updateState({}), 1000)
+    return () => clearInterval(intervalId)
+  }, [])
+
   const dashArray = useCallback(({ radius, streamedPct }: { radius: number; streamedPct: number }) => {
     return Math.round(streamedPct * 2 * radius * Math.PI * 100) / 100
   }, [])
@@ -174,7 +181,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={700}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
@@ -226,7 +233,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={700}
           >
-            / {stream?.balance ? stream?.amount.toExact() : '0'} {stream?.token.symbol} Total
+            / {stream?.balance ? stream?.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
