@@ -340,8 +340,12 @@ const Widget: FC<Swap> = ({
   ])
 
   useEffect(() => {
-    setDstTypedAmount(dstMinimumAmountOut?.toFixed() ?? '')
-  }, [dstMinimumAmountOut])
+    if (!crossChain || isStargateBridgeToken(dstToken)) {
+      setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
+    } else if (!isStargateBridgeToken(dstToken)) {
+      setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
+    }
+  }, [dstMinimumAmountOut, srcTrade, crossChain, dstToken, dstTrade])
 
   const execute = useCallback(() => {
     console.log([
@@ -642,7 +646,7 @@ const Widget: FC<Swap> = ({
                     </div>
                     <div className="flex flex-col flex-grow gap-1 px-3 py-2 bg-slate-700 rounded-xl">
                       <div className="flex items-center justify-between gap-2">
-                        <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme}>
+                        <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme}>
                           {({ toggleInvert, content }) => (
                             <Typography
                               as="button"
