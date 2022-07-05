@@ -13,7 +13,6 @@ export class Transaction {
   public readonly token: Token
   public readonly amount: Amount<Token>
   public readonly timestamp: Date
-  public readonly toBentoBox: boolean
   public readonly txHash: string
 
   public constructor(transaction: TransactionDTO, chainId: ChainId) {
@@ -24,7 +23,6 @@ export class Transaction {
     this.recipient = transaction.to.id
     this.amount = Amount.fromRawAmount(this.token, JSBI.BigInt(transaction.amount))
     this.timestamp = new Date(parseInt(transaction.createdAtTimestamp) * 1000)
-    this.toBentoBox = transaction.toBentoBox
     this.txHash = transaction.txHash
   }
 }

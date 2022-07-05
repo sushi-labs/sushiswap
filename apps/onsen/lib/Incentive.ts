@@ -88,11 +88,11 @@ export class Incentive {
     this._isSubscribed = value
   }
 
-  public get price(): number | undefined {
+  public get rewardUsd(): number | undefined {
     return this._rewardUsdPrice
   }
 
-  public set price(value: number | undefined) {
+  public set rewardUsd(value: number | undefined) {
     this._rewardUsdPrice = value
   }
 

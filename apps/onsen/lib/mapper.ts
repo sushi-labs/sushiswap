@@ -23,7 +23,7 @@ export function updateIncentivePricing(
   console.debug('incentive id:', incentive.id, '\nrewards remaining:', incentive.rewardsRemaining.toExact())
   const price = prices[incentive.rewardToken.address.toLowerCase()]
   if (price) {
-    incentive.price = price
+    incentive.rewardUsd = price
   }
   if (incentive.tokenType === TokenType.LEGACY) {
     const pair = legacyPairs ? legacyPairs[incentive.liquidityStaked.currency.address.toLocaleLowerCase()] : undefined

@@ -33,7 +33,7 @@ export class Farm {
 
   public get totalRewardInUsd(): number {
     return this.incentives.reduce(
-      (acc, cur) => (cur.price ? acc + cur.price * Number(cur.rewardsRemaining.toExact()) : acc),
+      (acc, cur) => (cur.rewardUsd ? acc + cur.rewardUsd * Number(cur.rewardsRemaining.toExact()) : acc),
       0
     )
   }
