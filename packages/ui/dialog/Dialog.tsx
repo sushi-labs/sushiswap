@@ -13,7 +13,7 @@ type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
 
 const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
   return (
-    <Transition appear show={open} as={Fragment}>
+    <Transition appear show={open} as={Fragment} unmount={rest.unmount}>
       <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose} {...rest}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child

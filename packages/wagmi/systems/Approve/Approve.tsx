@@ -8,7 +8,7 @@ import React, {
   ReactNode,
   useCallback,
   useMemo,
-  useRef,
+  useState,
 } from 'react'
 
 import { ApprovalState } from '../../hooks'
@@ -23,13 +23,13 @@ interface Props {
 }
 
 const Controller: FC<Props> = ({ components, render }) => {
-  const refs = useRef<ApprovalState[]>([])
+  const [values, setValues] = useState<ApprovalState[]>([])
   const isMounted = useIsMounted()
 
   const handleUpdate = useCallback((value: ApprovalState, index: number) => {
-    const state = [...refs.current]
+    const state = [...values]
     state[index] = value
-    refs.current = state
+    setValues(state)
   }, [])
 
   const children = useMemo(() => {
@@ -47,11 +47,10 @@ const Controller: FC<Props> = ({ components, render }) => {
   }, [components, handleUpdate])
 
   const isUnknown =
-    refs.current.some((el) => el === ApprovalState.UNKNOWN) &&
-    Children.count(components.props.children) === refs.current.length
+    values.some((el) => el === ApprovalState.UNKNOWN) && Children.count(components.props.children) === values.length
   const approved =
-    refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
-    Children.count(components.props.children) === refs.current.length
+    values.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
+    Children.count(components.props.children) === values.length
 
   // Only render renderProp since we can't get approval states on the server anyway
   if (!isMounted)

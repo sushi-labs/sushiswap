@@ -71,7 +71,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
-    return [cliff, step, cliff && step ? step.multiply(stepPayouts).add(cliff) : undefined, endDate]
+    return [
+      cliff,
+      step,
+      cliff && step ? step.multiply(stepPayouts).add(cliff) : step ? step.multiply(stepPayouts) : undefined,
+      endDate,
+    ]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, currency])
 
   const schedule = useMemo(() => {
@@ -88,6 +93,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
       : undefined
   }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
+  console.log(startDate, endDate)
   return (
     <Dialog open={open} onClose={onDismiss} unmount={true}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden border border-slate-700">
@@ -95,7 +101,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <Typography variant="xs" className="!leading-5 text-slate-400">
           This will create a stream to{' '}
           <span className="font-bold text-slate-50 hover:text-blue">
-            {activeChain && (
+            {activeChain && recipient && (
               <a target="_blank" href={Chain.from(activeChain.id).getAccountUrl(recipient)} rel="noreferrer">
                 {shortenAddress(recipient)}
               </a>
@@ -105,8 +111,8 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           <span className="font-bold text-slate-50">
             {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
           </span>{' '}
-          from <span className="font-bold text-slate-50">{format(startDate, 'dd MMM yyyy hh:mm')}</span> until{' '}
-          <span className="font-bold text-slate-50">{format(endDate, 'dd MMM yyyy hh:mm')}</span>
+          from <span className="font-bold text-slate-50">{!!startDate && format(startDate, 'dd MMM yyyy hh:mm')}</span>{' '}
+          until <span className="font-bold text-slate-50">{!!endDate && format(endDate, 'dd MMM yyyy hh:mm')}</span>
         </Typography>
         <div className="flex flex-col w-full">
           <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[240px] mt-2 hide-scrollbar divide-y divide-slate-800">

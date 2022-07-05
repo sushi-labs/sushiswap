@@ -46,7 +46,9 @@ export const CreateForm: FC = () => {
   const validatedData =
     isValid && !isValidating ? transformVestingFormData(formData as CreateVestingFormDataValidated) : undefined
 
+  // Reset form if we switch network or change account
   useEffect(() => {
+    setReview(false)
     reset()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +79,7 @@ export const CreateForm: FC = () => {
           </Form.Buttons>
         </Form>
       </FormProvider>
-      {validatedData && (
+      {validatedData && review && (
         <CreateFormReviewModal open={review} onDismiss={() => setReview(false)} formData={validatedData} />
       )}
     </>
