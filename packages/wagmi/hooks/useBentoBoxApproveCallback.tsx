@@ -3,7 +3,14 @@ import { AddressZero, HashZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { createToast, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractRead, useContractWrite, useNetwork, useSignTypedData } from 'wagmi'
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  UserRejectedRequestError,
+  useSignTypedData,
+} from 'wagmi'
 
 import { BENTOBOX_ADDRESS, getBentoBoxContractConfig } from './useBentoBoxContract'
 import { ApprovalState } from './useERC20ApproveCallback'
@@ -102,18 +109,21 @@ export function useBentoBoxApproveCallback({
       })
 
       setSignature(splitSignature(data))
-    } catch (e) {
-      const data = await writeAsync()
-      createToast({
-        txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
-        promise: data.wait(),
-        summary: {
-          pending: <Dots>Approving BentoBox Master Contract</Dots>,
-          completed: `Successfully approved the master contract`,
-          failed: 'Something went wrong approving the master contract',
-        },
-      })
+    } catch (e: unknown) {
+      // Regular approval as fallback
+      if (!(e instanceof UserRejectedRequestError)) {
+        const data = await writeAsync()
+        createToast({
+          txHash: data.hash,
+          href: Chain.from(activeChain.id).getTxUrl(data.hash),
+          promise: data.wait(),
+          summary: {
+            pending: <Dots>Approving BentoBox Master Contract</Dots>,
+            completed: `Successfully approved the master contract`,
+            failed: 'Something went wrong approving the master contract',
+          },
+        })
+      }
     }
   }, [approvalState, masterContract, activeChain, getNonces, signTypedDataAsync, account?.address, error])
 
