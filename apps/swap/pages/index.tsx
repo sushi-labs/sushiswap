@@ -502,7 +502,7 @@ const Widget: FC<Swap> = ({
         />
       </div>
       <div className="flex items-center justify-center -mt-[14px] -mb-[14px] z-10">
-        <div className="p-1 rounded-lg bg-slate-700 border-2 border-slate-700 ring-2 ring-slate-800">
+        <div className="p-1 border-2 rounded-lg bg-slate-700 border-slate-700 ring-2 ring-slate-800">
           <ArrowDownIcon width={14} height={14} className="text-slate-300" />
         </div>
       </div>
@@ -579,7 +579,7 @@ const Widget: FC<Swap> = ({
                     <div className="h-px bg-slate-200/5 w-full px-0.5" />
                     <div className="!my-0 rounded-xl py-2 grid grid-cols-12 min-h-[64px] items-center">
                       <div className="flex flex-col col-span-5">
-                        <div className="flex gap-3 items-center">
+                        <div className="flex items-center gap-3">
                           {srcAmount && (
                             <Badge
                               badgeContent={
@@ -608,7 +608,7 @@ const Widget: FC<Swap> = ({
                         <ChevronRightIcon width={18} height={18} className="text-slate-500" />
                       </div>
                       <div className="flex flex-col w-full col-span-5">
-                        <div className="flex gap-3 items-center">
+                        <div className="flex items-center gap-3">
                           {dstMinimumAmountOut && (
                             <Badge
                               badgeContent={
@@ -672,7 +672,7 @@ const Widget: FC<Swap> = ({
                         <Typography variant="xs" className="text-slate-400">
                           Minimum Received
                         </Typography>
-                        <Typography variant="xs" weight={700} className="text-slate-200 text-right">
+                        <Typography variant="xs" weight={700} className="text-right text-slate-200">
                           {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
                         </Typography>
                       </div>

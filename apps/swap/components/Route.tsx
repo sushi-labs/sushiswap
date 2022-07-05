@@ -67,7 +67,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
             />
           </div>
-          <div className="bg-slate-700 px-2 py-2.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600">
+          <div className="bg-slate-700 px-2 py-2.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600 items-center">
             <Popover
               hover
               button={
