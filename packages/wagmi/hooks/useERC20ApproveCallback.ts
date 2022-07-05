@@ -1,6 +1,5 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Amount, Currency } from '@sushiswap/currency'
-import { MAX_UINT256 } from '@sushiswap/math'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContract, useSigner } from 'wagmi'
@@ -73,13 +72,13 @@ export function useERC20ApproveCallback(
     }
 
     let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MAX_UINT256).catch(() => {
+    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
       // general fallback for tokens who restrict approval amounts
       useExact = true
       return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
     })
 
-    const tx = await tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MAX_UINT256, {
+    const tx = await tokenContract.approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
       gasLimit: calculateGasMargin(estimatedGas),
     })
 
