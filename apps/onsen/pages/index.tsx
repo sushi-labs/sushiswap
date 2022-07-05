@@ -3,22 +3,20 @@ import { Button, Typography } from '@sushiswap/ui'
 import Layout from 'components/Layout'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
-  const connect = useConnect({
+  const { chain: activeChain } = useNetwork()
+  const { address, isConnecting, isReconnecting, isConnected } = useAccount({
     onConnect: () => {
       void router.push('/farms')
     },
   })
 
-  const { isConnected, isReconnecting, isConnecting } = connect
   if (isMounted && (isConnected || isReconnecting || isConnecting)) {
-    if (!account?.address) return <></>
+    if (!address) return <></>
   }
 
   if (isMounted)

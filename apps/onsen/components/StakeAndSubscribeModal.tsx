@@ -24,34 +24,30 @@ interface StakeAndSubscribeModalProps {
 
 export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }) => {
   const [open, setOpen] = useState(false)
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
   const stakeToken = useMemo(() => farm.incentives[0].liquidityStaked.currency, [farm])
-  const { data: balance } = useWalletBalance(account?.address, stakeToken, FundSource.WALLET)
+  const { data: balance } = useWalletBalance(address, stakeToken, FundSource.WALLET)
   const contract = useStakingContract(activeChain?.id)
 
   const [input, setInput] = useState<string>('')
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
-      contractInterface: STAKING_ABI,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
+    contractInterface: STAKING_ABI,
+    functionName: 'stakeAndSubscribeToIncentives',
+    onSuccess() {
+      setOpen(false)
     },
-    'stakeAndSubscribeToIncentives',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
+
   const amount = useMemo(() => {
     if (!stakeToken) return undefined
-    console.log(input)
     return tryParseAmount(input, stakeToken)
   }, [input, stakeToken])
 
   const stakeAndSubscribe = useCallback(async () => {
-    if (!account || !selectedIncentives || !stakeToken || !amount) return
+    if (!address || !selectedIncentives || !stakeToken || !amount) return
 
     const data = await writeAsync({
       args: [
@@ -71,9 +67,9 @@ export const StakeAndSubscribeModal: FC<StakeAndSubscribeModalProps> = ({ farm }
         .join(', ')}`,
       promise: data.wait(),
     })
-  }, [account, amount, selectedIncentives, stakeToken, writeAsync])
+  }, [address, amount, selectedIncentives, stakeToken, writeAsync])
 
-  if (!account) return <></>
+  if (!address) return <></>
 
   return (
     <>

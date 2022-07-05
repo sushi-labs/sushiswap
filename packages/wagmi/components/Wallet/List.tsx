@@ -1,6 +1,6 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { FC, ReactNode } from 'react'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 export type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
 
@@ -10,16 +10,17 @@ export interface List {
 
 export const List: FC = () => {
   const isMounted = useIsMounted()
+  const { connector: currentConnector, isConnecting } = useAccount()
   const connect = useConnect()
 
   return (
     <>
       {connect.connectors
-        .filter((x) => isMounted && x.ready && x.id !== connect.activeConnector?.id)
-        .map((x) => (
-          <button key={x.id} onClick={() => connect.connect(x)}>
-            {x.name}
-            {connect.isConnecting && x.id === connect.pendingConnector?.id && ' (connecting)'}
+        .filter((connector) => isMounted && connector.ready && connector.id !== currentConnector?.id)
+        .map((connector) => (
+          <button key={connector.id} onClick={() => connect.connect({ connector })}>
+            {connector.name}
+            {isConnecting && connector.id === connect.pendingConnector?.id && ' (connecting)'}
           </button>
         ))}
     </>

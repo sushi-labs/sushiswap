@@ -17,7 +17,7 @@ interface RewardsAvailableModalProps {
 
 export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, chainId }) => {
   const [open, setOpen] = useState(false)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const [selectedIncentives, setSelectedIncentives] = useState<Incentive[]>([])
   const contract = useStakingContract(chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
@@ -32,15 +32,15 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, c
   }, [farms])
 
   const stakeAndSubscribe = useCallback(async () => {
-    if (!account) return
+    if (!address) return
 
     const actions = selectedIncentives.map((incentive) => subscribeAction(contract, incentive.id))
 
     try {
       const data = await sendTransactionAsync({
         request: {
-          from: account?.address,
-          to: contract?.address,
+          from: address,
+          to: address,
           data: batchAction({ contract, actions }),
         },
       })
@@ -57,14 +57,15 @@ export const RewardsAvailableModal: FC<RewardsAvailableModalProps> = ({ farms, c
 
       log.tenderly({
         chainId: chainId,
-        from: account.address,
+        from: address,
         to: contract.address,
         data: batchAction({ contract, actions }),
       })
     }
-  }, [account, sendTransactionAsync, chainId, contract, selectedIncentives])
+  }, [address, sendTransactionAsync, chainId, contract, selectedIncentives])
 
-  if (!account) return <></>
+  if (!address) return <></>
+
   return (
     <>
       {incentives.length ? (

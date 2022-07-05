@@ -9,7 +9,9 @@
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "declarationMap": false,
+    "declaration": false
   },
   "include": ["src", "next-env.d.ts"],
   "exclude": ["node_modules"]

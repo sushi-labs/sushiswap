@@ -1,21 +1,23 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { Token } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
-import { CurrencyInput, TokenSelector } from 'components'
+import { classNames, Form, Select, Typography } from '@sushiswap/ui'
+import { TokenSelector } from '@sushiswap/wagmi'
+import { CurrencyInput } from 'components'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { useCustomTokens } from '../../../lib/state/storage'
 import { CreateStreamFormData } from './types'
 
 export const StreamAmountDetails = () => {
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -23,8 +25,8 @@ export const StreamAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useWalletBalance(account?.address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
+  const { data: walletBalance } = useWalletBalance(address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
 
   return (
     <Form.Section
@@ -35,7 +37,7 @@ export const StreamAmountDetails = () => {
         <Controller
           control={control}
           name="currency"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange }, fieldState: { error } }) => {
             return (
               <>
                 <Select.Button
@@ -44,27 +46,30 @@ export const StreamAmountDetails = () => {
                   className="!cursor-pointer"
                   onClick={() => setDialogOpen(true)}
                 >
-                  {value?.symbol || <span className="text-slate-500">Select a currency</span>}
+                  {currency?.symbol || <span className="text-slate-500">Select a currency</span>}
                 </Select.Button>
                 <Form.Error message={error?.message} />
-                <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                  <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
-                    <TokenSelector
-                      chainId={activeChain?.id}
-                      tokenMap={tokenMap}
-                      onSelect={(currency) => {
-                        if (currency.isNative) {
-                          setValue('fundSource', FundSource.WALLET)
-                        }
+                <TokenSelector
+                  open={dialogOpen}
+                  variant="dialog"
+                  chainId={activeChain?.id}
+                  tokenMap={tokenMap}
+                  customTokenMap={customTokenMap}
+                  onSelect={(currency) => {
+                    if (currency.isNative) {
+                      setValue('fundSource', FundSource.WALLET)
+                    }
 
-                        onChange(currency)
-                        setDialogOpen(false)
-                      }}
-                      currency={value as Token}
-                      onClose={() => setDialogOpen(false)}
-                    />
-                  </Dialog.Content>
-                </Dialog>
+                    onChange(currency)
+                    setDialogOpen(false)
+                  }}
+                  currency={currency}
+                  onClose={() => setDialogOpen(false)}
+                  onAddToken={({ address, chainId, name, symbol, decimals }) =>
+                    addCustomToken({ address, name, chainId, symbol, decimals })
+                  }
+                  onRemoveToken={removeCustomToken}
+                />
               </>
             )
           }}
@@ -152,7 +157,7 @@ export const StreamAmountDetails = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput
               onChange={onChange}
-              account={account?.address}
+              account={address}
               value={value}
               currency={currency}
               fundSource={fundSource}

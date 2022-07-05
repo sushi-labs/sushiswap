@@ -1,10 +1,8 @@
 import '@sushiswap/ui/index.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { ChainId } from '@sushiswap/chain'
-import { useLatestBlockNumber } from '@sushiswap/hooks'
 import { App, ToastContainer } from '@sushiswap/ui'
-import { client, getProvider } from '@sushiswap/wagmi'
+import { client } from '@sushiswap/wagmi'
 import Header from 'components/Header'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
@@ -13,8 +11,9 @@ import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
-import { Updater as MulticallUpdater } from '../lib/state/MulticallUpdater'
-import { Updater as TokenListUpdater } from '../lib/state/TokenListsUpdater'
+import { SUPPORTED_CHAINS } from '../config'
+import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
+import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import store from '../store'
 
 declare global {
@@ -38,22 +37,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  const arbitrumProvider = getProvider(ChainId.ARBITRUM)
-  const arbitrumBlockNumber = useLatestBlockNumber(arbitrumProvider)
-
   return (
     <>
       <WagmiConfig client={client}>
         <ReduxProvider store={store}>
           <App.Shell>
             <Header />
-            <MulticallUpdater chainId={ChainId.ARBITRUM} blockNumber={arbitrumBlockNumber} />
-            <TokenListUpdater chainId={ChainId.ARBITRUM} />
+            <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
+            <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
 
             <Component {...pageProps} />
-            <ToastContainer className="mt-[50px]" />
             <App.Footer />
           </App.Shell>
+          <ToastContainer className="mt-[50px]" />
         </ReduxProvider>
       </WagmiConfig>
       <Script

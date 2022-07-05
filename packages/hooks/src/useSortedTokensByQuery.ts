@@ -1,6 +1,9 @@
 import { isAddress } from '@ethersproject/address'
-import { Token } from '@sushiswap/currency'
+import { Amount, Token, Type } from '@sushiswap/currency'
+import { Fraction } from '@sushiswap/math'
 import { useMemo } from 'react'
+
+import { FundSource } from './useFundSourceToggler'
 
 const alwaysTrue = () => true
 
@@ -39,10 +42,53 @@ export function filterTokens<T extends Token>(tokens: T[], search: string): T[] 
   return tokens.filter(createTokenFilterFunction(search))
 }
 
+export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Type>) => {
+  if (balanceA && balanceB) {
+    if (balanceA.asFraction.equalTo(balanceB.asFraction)) return 0
+    return balanceA.asFraction.greaterThan(balanceB.asFraction) ? -1 : 1
+  } else if (balanceA && balanceA.greaterThan('0')) {
+    return -1
+  } else if (balanceB && balanceB.greaterThan('0')) {
+    return 1
+  }
+  return 0
+}
+
+export const tokenComparator = (
+  balancesMap: Record<string, Record<FundSource, Amount<Type> | undefined>> | undefined,
+  pricesMap: Record<string, Fraction> | undefined,
+  fundSource: FundSource
+) => {
+  return (tokenA: Token, tokenB: Token): number => {
+    const balanceA = pricesMap?.[tokenA.address]
+      ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(pricesMap[tokenA.address])
+      : undefined
+    const balanceB = pricesMap?.[tokenB.address]
+      ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(pricesMap[tokenB.address])
+      : undefined
+
+    const balanceComp = balanceComparator(balanceA, balanceB)
+    if (balanceComp !== 0) {
+      return balanceComp
+    }
+
+    if (tokenA.symbol && tokenB.symbol) {
+      // sort by symbol
+      return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
+    } else {
+      return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
+    }
+  }
+}
+
 export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
   return useMemo(() => {
     if (!tokens) {
       return []
+    }
+
+    if (searchQuery === '') {
+      return tokens
     }
 
     const symbolMatch = searchQuery
@@ -55,7 +101,7 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
     }
 
     const exactMatches: Token[] = []
-    const symbolSubtrings: Token[] = []
+    const symbolSubstrings: Token[] = []
     const rest: Token[] = []
 
     // sort tokens by exact match -> subtring on symbol match -> rest
@@ -63,12 +109,12 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token)
       } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
-        return symbolSubtrings.push(token)
+        return symbolSubstrings.push(token)
       } else {
         return rest.push(token)
       }
     })
 
-    return [...exactMatches, ...symbolSubtrings, ...rest]
+    return [...exactMatches, ...symbolSubstrings, ...rest]
   }, [tokens, searchQuery])
 }

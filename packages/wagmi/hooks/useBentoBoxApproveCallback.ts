@@ -14,21 +14,21 @@ export function useBentoBoxApproveCallback({
   masterContract?: string
   watch: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain } = useNetwork()
 
-  const { data: isBentoBoxApproved, isLoading } = useContractRead(
-    getBentoBoxContractConfig(activeChain?.id),
-    'masterContractApproved',
-    {
-      args: [masterContract, account ? account.address : AddressZero],
-      // This should probably always be true anyway...
-      watch,
-      enabled: Boolean(account && masterContract !== AddressZero),
-    }
-  )
-  const { error, refetch: getNonces } = useContractRead(getBentoBoxContractConfig(activeChain?.id), 'nonces', {
-    args: [account ? account.address : AddressZero],
+  const { data: isBentoBoxApproved, isLoading } = useContractRead({
+    ...getBentoBoxContractConfig(chain?.id),
+    functionName: 'masterContractApproved',
+    args: [masterContract, address ? address : AddressZero],
+    // This should probably always be true anyway...
+    watch,
+    enabled: Boolean(address && masterContract !== AddressZero),
+  })
+  const { error, refetch: getNonces } = useContractRead({
+    ...getBentoBoxContractConfig(chain?.id),
+    functionName: 'nonces',
+    args: [address ? address : AddressZero],
     enabled: false,
   })
 
@@ -44,13 +44,13 @@ export function useBentoBoxApproveCallback({
   }, [isBentoBoxApproved, signature, isLoading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
-    if (!activeChain) {
+    if (!chain) {
       console.error('no active chain')
       return
     }
 
-    if (!(activeChain.id in BENTOBOX_ADDRESS)) {
-      console.error('no bentobox for active chain ' + activeChain.id)
+    if (!(chain.id in BENTOBOX_ADDRESS)) {
+      console.error(`no bentobox for active chain ${chain.id}`)
       return
     }
 
@@ -69,8 +69,8 @@ export function useBentoBoxApproveCallback({
     const data = await signTypedDataAsync({
       domain: {
         name: 'BentoBox V1',
-        chainId: activeChain.id,
-        verifyingContract: BENTOBOX_ADDRESS[activeChain.id],
+        chainId: chain.id,
+        verifyingContract: BENTOBOX_ADDRESS[chain.id],
       },
       types: {
         SetMasterContractApproval: [
@@ -83,7 +83,7 @@ export function useBentoBoxApproveCallback({
       },
       value: {
         warning: 'Give FULL access to funds in (and approved to) BentoBox?',
-        user: account?.address,
+        user: address,
         masterContract,
         approved: true,
         nonce: nonces,
@@ -92,7 +92,7 @@ export function useBentoBoxApproveCallback({
     console.log('signed ', { data, error })
     // TODO: if loading, set pending status
     setSignature(splitSignature(data))
-  }, [approvalState, masterContract, activeChain, getNonces, signTypedDataAsync, account?.address, error])
+  }, [approvalState, masterContract, chain, getNonces, signTypedDataAsync, address, error])
 
   return [approvalState, signature, approveBentoBox]
 }

@@ -9,6 +9,10 @@
         @apply cursor-not-allowed opacity-40 ring-0 !important
     }
 
+    .btn-transparent {
+        
+    }
+
     .btn-filled {
 
     }

@@ -49,16 +49,16 @@ const _FarmsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export const FarmsPage: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   // const connect = useConnect()
 
   const { data: subscriptions, isValidating: isValidatingSubscriptions } = useSWR<string[]>(
-    `/onsen/api/user/${chainId}/${account?.address}/subscriptions`,
+    `/onsen/api/user/${chainId}/${address}/subscriptions`,
     fetcher
   )
   const { data: userStakes, isValidating: isValidatingStakes } = useSWR<StakePositionDTO[]>(
-    `/onsen/api/user/${chainId}/${account?.address}/farms`,
+    `/onsen/api/user/${chainId}/${address}/farms`,
     fetcher
   )
   const { data: prices, isValidating: isValidatingPrices } = useSWR<{ [key: string]: number }[]>(

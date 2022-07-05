@@ -24,20 +24,20 @@ interface ManageFarmModalProps {
 
 export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => {
   const [open, setOpen] = useState(false)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { data: stakePositionDTO, isValidating: isValidatingStakePosition } = useSWR<StakePositionDTO>(
-    `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/stake-position`,
+    `/onsen/api/user/${chainId}/${address}/farm/${farm?.id}/stake-position`,
     fetcher
   )
 
   const { data: rewardsDTO, isValidating: isValidatingRewards } = useSWR<RewardDTO[]>(
-    `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/rewards`,
+    `/onsen/api/user/${chainId}/${address}/farm/${farm?.id}/rewards`,
     fetcher
   )
 
   const { data: transactionsDTO, isValidating: isValidatingTransactions } = useSWR<TransactionDTO[]>(
-    `/onsen/api/user/${chainId}/${account?.address}/farm/${farm?.id}/transactions`,
+    `/onsen/api/user/${chainId}/${address}/farm/${farm?.id}/transactions`,
     fetcher
   )
   // TODO: merge these three requests to one
@@ -60,7 +60,7 @@ export const ManageFarmModal: FC<ManageFarmModalProps> = ({ farm, chainId }) => 
     }
   }, [chainId, transactionsDTO, isValidatingTransactions])
 
-  if (!account) return <></>
+  if (!address) return <></>
   return (
     <>
       {farm ? (

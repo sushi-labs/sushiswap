@@ -1,4 +1,5 @@
 import { Form, Input } from '@sushiswap/ui'
+import { Web3Input } from '@sushiswap/wagmi'
 import { CreateIncentiveFormData } from 'components/CreateForm/types'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -45,7 +46,13 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.Address value={value} placeholder="0x..." onChange={onChange} error={!!error?.message} />
+                <Web3Input.Ens
+                  id="ensInput"
+                  value={value}
+                  onChange={onChange}
+                  error={!!error?.message}
+                  placeholder="Address or ENS Name"
+                />
                 <Form.Error message={error?.message} />
               </>
             )

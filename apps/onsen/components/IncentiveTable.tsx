@@ -109,7 +109,7 @@ export const IncentiveTable: FC<IncentiveTableProps> = (props) => {
   }, [loading])
 
   const router = useRouter()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
 
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns({ ...props, chainId: activeChain?.id }),

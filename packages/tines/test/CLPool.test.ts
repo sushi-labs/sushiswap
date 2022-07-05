@@ -20,7 +20,7 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 function addTick(ticks: CLTick[], index: number, L: number) {
-  let fromIndex = ticks.findIndex((t) => t.index >= index)
+  const fromIndex = ticks.findIndex((t) => t.index >= index)
   if (fromIndex === -1) {
     ticks.push({ index, DLiquidity: L })
   } else {
@@ -73,8 +73,8 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   const tickSpacing = rnd() > 0.5 ? 5 : 60
   const pool = new CLRPool(
     'CLRPool',
-    { name: 'Token0', address: 'Token0' },
-    { name: 'Token1', address: 'Token1' },
+    { name: 'Token0', address: 'Token0', symbol: 'Token0Symbol' },
+    { name: 'Token1', address: 'Token1', symbol: 'Token0Symbol' },
     0.003,
     tickSpacing,
     BigNumber.from(0),

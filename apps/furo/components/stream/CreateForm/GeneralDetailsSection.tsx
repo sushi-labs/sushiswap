@@ -52,6 +52,7 @@ export const GeneralDetailsSection = () => {
             return (
               <>
                 <Web3Input.Ens
+                  id="recipient"
                   value={value}
                   onChange={onChange}
                   error={!!error?.message}

@@ -44,8 +44,10 @@ export const useBentoBoxRebases: UseBentoBoxRebases = (chainId, tokens) => {
 }
 
 export const useBentoBoxRebase = (chainId: number, token: Currency | undefined) => {
-  const tokens = useMemo(() => [token], [token])
-  const { rebases, loading } = useBentoBoxRebases(chainId, tokens)
+  const { rebases, loading } = useBentoBoxRebases(
+    chainId,
+    useMemo(() => [token], [token])
+  )
   return useMemo(() => {
     if (token && !loading) {
       return { rebase: rebases[token?.wrapped.address], loading }

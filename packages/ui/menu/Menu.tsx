@@ -1,33 +1,32 @@
-import { Menu as HeadlessMenu, Transition } from '@headlessui/react'
+import { Menu as HeadlessMenu } from '@headlessui/react'
 import classNames from 'classnames'
-import { FC, Fragment, FunctionComponent, ReactElement, ReactNode } from 'react'
+import React, { FC, FunctionComponent, ReactElement } from 'react'
+import ReactDOM from 'react-dom'
 
 import { MenuButton } from './MenuButton'
 import { MenuItem } from './MenuItem'
 import { MenuItems } from './MenuItems'
+import { usePopper } from './usePopper'
 
 interface MenuProps {
   className?: string
-  button: ReactNode
-  children: ReactElement<typeof HeadlessMenu.Items>
+  button: ReactElement
+  children: ReactElement
 }
 
 const MenuRoot: FC<MenuProps> = ({ className, button, children }) => {
+  const [trigger, container] = usePopper({
+    placement: 'bottom-end',
+    modifiers: [
+      { name: 'flip', enabled: true, options: { padding: 8 } },
+      { name: 'offset', options: { offset: [0, 10] } },
+    ],
+  })
+
   return (
     <HeadlessMenu as="div" className={classNames(className, 'relative')}>
-      {button}
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-        unmount={false}
-      >
-        {children}
-      </Transition>
+      {React.cloneElement(button, { ref: trigger })}
+      {ReactDOM.createPortal(React.cloneElement(children, { ref: container }), document.body)}
     </HeadlessMenu>
   )
 }

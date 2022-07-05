@@ -1,21 +1,23 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { Token } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Dialog, Form, Select, Typography } from '@sushiswap/ui'
+import { TokenSelector } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { CreateIncentiveFormData } from 'components/CreateForm/types'
-import { TokenSelector } from 'components/TokenSelector'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { useCustomTokens } from '../../lib/state/storage'
+
 export const IncentiveAmountDetails = () => {
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const tokenMap = useTokens(activeChain?.id)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -23,8 +25,8 @@ export const IncentiveAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useWalletBalance(account?.address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(account?.address, currency?.wrapped)
+  const { data: walletBalance } = useWalletBalance(address, currency)
+  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
 
   return (
     <Form.Section title="Reward Details" description="">
@@ -47,18 +49,24 @@ export const IncentiveAmountDetails = () => {
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                   <Dialog.Content className="!space-y-6 min-h-[600px] !max-w-md relative overflow-hidden border border-slate-700">
                     <TokenSelector
+                      open={dialogOpen}
+                      variant="dialog"
                       chainId={activeChain?.id}
                       tokenMap={tokenMap}
+                      customTokenMap={customTokenMap}
                       onSelect={(currency) => {
                         if (currency.isNative) {
                           setValue('fundSource', FundSource.WALLET)
                         }
-
                         onChange(currency)
                         setDialogOpen(false)
                       }}
-                      currency={value as Token}
+                      currency={currency}
                       onClose={() => setDialogOpen(false)}
+                      onAddToken={({ address, chainId, name, symbol, decimals }) =>
+                        addCustomToken({ address, name, chainId, symbol, decimals })
+                      }
+                      onRemoveToken={removeCustomToken}
                     />
                   </Dialog.Content>
                 </Dialog>
@@ -149,7 +157,7 @@ export const IncentiveAmountDetails = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput
               onChange={onChange}
-              account={account?.address}
+              account={address}
               value={value}
               currency={currency}
               fundSource={fundSource}

@@ -33,7 +33,7 @@ contract SushiXSwap is
     uint8 internal constant ACTION_SRC_TRANSFER_FROM_BENTOBOX = 2;
     uint8 internal constant ACTION_DST_DEPOSIT_TO_BENTOBOX = 3;
     uint8 internal constant ACTION_DST_WITHDRAW_TOKEN = 4;
-    uint8 internal constant ACTION_DST_WITHDRAW_FROM_BENTOBOX = 5;
+    uint8 internal constant ACTION_DST_WITHDRAW_OR_TRANSFER_FROM_BENTOBOX = 5;
     uint8 internal constant ACTION_UNWRAP_AND_TRANSFER = 6;
 
     // Swap Operations
@@ -150,7 +150,9 @@ contract SushiXSwap is
                     }
                 }
                 _transferTokens(IERC20(token), to, amount);
-            } else if (action == ACTION_DST_WITHDRAW_FROM_BENTOBOX) {
+            } else if (
+                action == ACTION_DST_WITHDRAW_OR_TRANSFER_FROM_BENTOBOX
+            ) {
                 (
                     address token,
                     address to,
@@ -161,8 +163,8 @@ contract SushiXSwap is
                         datas[i],
                         (address, address, uint256, uint256, bool)
                     );
-                if (amount == 0) {
-                    amount = IERC20(token).balanceOf(address(this));
+                if (amount == 0 && share == 0) {
+                    share = bentoBox.balanceOf(token, address(this));
                 }
                 _transferFromBentoBox(
                     token,

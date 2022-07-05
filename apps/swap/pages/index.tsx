@@ -1,82 +1,137 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { BigNumber } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
-import { Zero } from '@ethersproject/constants'
 import { ChevronRightIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon } from '@heroicons/react/solid'
 import chain, { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { TradeType, TradeV1, TradeV2 } from '@sushiswap/exchange'
+import { TradeType } from '@sushiswap/exchange'
+import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent, ZERO } from '@sushiswap/math'
+import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { Button, Chip, classNames, Dots, GasIcon, Loader, Typography } from '@sushiswap/ui'
+import { Badge, Button, Chip, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
+import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
 import {
   Caption,
-  ConfirmationOverlay,
+  ConfirmationComponentController,
+  CrossChainRoute,
   CurrencyInput,
-  OverlayContent,
-  OverlayHeader,
   Rate,
-  WidgetSettingsOverlay,
+  SameChainRoute,
+  SettingsOverlay,
 } from 'components'
-import { Route } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
-import { Complex, isComplex, isExactInput } from 'lib/getComplexParams'
 import { useBentoBoxRebase, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useFeeData, useNetwork } from 'wagmi'
+import { useAccount, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
 
-const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // .50%
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 const theme: Theme = {
   ...defaultTheme,
 }
 
-export function getBigNumber(value: number): BigNumber {
-  const v = Math.abs(value)
-  if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value))
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, srcUseBentoBox, dstUseBentoBox } = query
+  return {
+    props: {
+      srcChainId: srcChainId ?? ChainId.AVALANCHE,
+      dstChainId: dstChainId ?? ChainId.OPTIMISM,
+      srcTypedAmount: srcTypedAmount ?? '',
+      dstTypedAmount: dstTypedAmount ?? '',
+      srcUseBentoBox: srcUseBentoBox ?? false,
+      dstUseBentoBox: dstUseBentoBox ?? false,
+    },
+  }
+}
 
-  const exp = Math.floor(Math.log(v) / Math.LN2)
-  console.assert(exp >= 51, 'Internal Error 314')
-  const shift = exp - 51
-  const mant = Math.round(v / Math.pow(2, shift))
-  const res = BigNumber.from(mant).mul(BigNumber.from(2).pow(shift))
-  return value > 0 ? res : res.mul(-1)
+export default function Swap({
+  srcChainId = ChainId.AVALANCHE,
+  dstChainId = ChainId.OPTIMISM,
+  srcTypedAmount = '',
+  dstTypedAmount = '',
+  srcUseBentoBox = false,
+  dstUseBentoBox = false,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  // TODO: Sync from local storage if no query params
+
+  // const { data } = useSWR<SwapCache>('swap-cache', storage, {
+  //   fallbackData: { srcChainId: ChainId.AVALANCHE, dstChainId: ChainId.FANTOM },
+  // })
+  // function mutateSwapCache(value: SwapCache) {
+  //   localStorage.setItem('swap-cache', JSON.stringify(value))
+  //   mutate('swap-cache', value)
+  // }
+
+  return (
+    <div className="mt-40 space-y-12 mb-60">
+      <Widget
+        theme={theme}
+        initialState={{
+          srcChainId: Number(srcChainId),
+          dstChainId: Number(dstChainId),
+          srcTypedAmount,
+          dstTypedAmount,
+          srcUseBentoBox: JSON.parse(srcUseBentoBox),
+          dstUseBentoBox: JSON.parse(dstUseBentoBox),
+          srcToken: Native.onChain(Number(srcChainId)),
+          dstToken: Native.onChain(Number(dstChainId)),
+        }}
+        // swapCache={data}
+        // mutateSwapCache={mutateSwapCache}
+      />
+      {/* <Widget header={<>Swap</>} /> */}
+    </div>
+  )
 }
 
 interface Swap {
   width?: number | string
   theme?: Theme
-  initialSrcChainId: number
-  initialDstChainId: number
-  initialSrcToken: Currency
-  initialDstToken: Currency
+  initialState: {
+    srcChainId: number
+    dstChainId: number
+    srcTypedAmount: string
+    dstTypedAmount: string
+    srcUseBentoBox: boolean
+    dstUseBentoBox: boolean
+    srcToken: Currency
+    dstToken: Currency
+  }
+  caption?: boolean
+  // swapCache: SwapCache
+  // mutateSwapCache: (cache: SwapCache) => void
 }
 
-const _Swap: FC<Swap> = ({
+const Widget: FC<Swap> = ({
   width = 360,
   theme = defaultTheme,
-  initialSrcChainId = ChainId.AVALANCHE,
-  initialDstChainId = ChainId.FANTOM,
-  initialSrcToken = Native.onChain(initialSrcChainId),
-  initialDstToken = Native.onChain(initialDstChainId),
+  initialState,
+  caption = false,
+  // swapCache,
+  // mutateSwapCache,
 }) => {
-  const { data: account } = useAccount()
-  const { activeChain, switchNetwork } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const [isWritePending, setIsWritePending] = useState<boolean>()
 
   const [signature, setSignature] = useState<Signature>()
 
-  const [srcChainId, setSrcChainId] = useState(initialSrcChainId)
-  const [dstChainId, setDstChainId] = useState(initialDstChainId)
+  const router = useRouter()
 
-  const [srcToken, setSrcToken] = useState<Currency>(initialSrcToken)
-  const [dstToken, setDstToken] = useState<Currency>(initialDstToken)
+  const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
+  const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
+
+  const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
+  const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
 
   useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
   useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
@@ -86,21 +141,100 @@ const _Swap: FC<Swap> = ({
     formatUnits: 'gwei',
   })
 
-  const [srcTypedAmount, setSrcTypedAmount] = useState<string>('')
-  const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
+  const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
+  const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
 
-  const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
-  const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
+  const [srcUseBentoBox, setSrcUseBentoBox] = useState(initialState.srcUseBentoBox)
+  const [dstUseBentoBox, setDstUseBentoBox] = useState(initialState.dstUseBentoBox)
 
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
 
   const { rebase: srcTokenRebase } = useBentoBoxRebase(srcChainId, srcToken)
+  // const { rebase: dstTokenRebase } = useBentoBoxRebase(dstChainId, dstToken)
+
+  // This effect is responsible for encoding the swap state into the URL, to add statefullness
+  // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
+  useEffect(() => {
+    // Escape hatch if already synced (could probably pull something like this out to generic...)
+    // console.debug([
+    //   srcChainId === Number(router.query.srcChainId),
+    //   dstChainId === Number(router.query.dstChainId),
+    //   srcToken.wrapped.address === router.query.srcToken,
+    //   dstToken.wrapped.address === router.query.dstToken,
+    //   srcTypedAmount === router.query.srcTypedAmount,
+    //   dstTypedAmount === router.query.dstTypedAmount,
+    //   srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false'),
+    //   dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false'),
+    // ])
+
+    if (
+      srcChainId === Number(router.query.srcChainId) &&
+      dstChainId === Number(router.query.dstChainId) &&
+      srcToken.wrapped.address === router.query.srcToken &&
+      dstToken.wrapped.address === router.query.dstToken &&
+      srcTypedAmount === router.query.srcTypedAmount &&
+      dstTypedAmount === router.query.dstTypedAmount &&
+      srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false') &&
+      dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false')
+    ) {
+      return
+    }
+
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          srcChainId,
+          dstChainId,
+          // TODO: currencyId to handle native currencyId#
+          // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
+          // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
+          srcToken: srcToken.wrapped.address,
+          dstToken: dstToken.wrapped.address,
+          srcTypedAmount,
+          dstTypedAmount,
+          srcUseBentoBox,
+          dstUseBentoBox,
+        },
+      }
+      // undefined,
+      // { shallow: true }
+    )
+  }, [
+    dstChainId,
+    dstToken.wrapped.address,
+    dstTypedAmount,
+    dstUseBentoBox,
+    router,
+    srcChainId,
+    srcToken.wrapped.address,
+    srcTypedAmount,
+    srcUseBentoBox,
+  ])
 
   const contract = useSushiXSwapContract(srcChainId)
 
   // Computed
   const crossChain = srcChainId !== dstChainId
+
+  // useContractEvent(
+  //   {
+  //     addressOrName: STARGATE_ROUTER_ADDRESS[dstChainId],
+  //     contractInterface: STARGATE_ROUTER_ABI,
+  //   },
+  //   'CreditChainPath',
+  //   (event) => {
+  //     console.log(event)
+  //     if (event.to === account?.address) {
+  //       console.log('GOT EVENT!!!', event)
+  //     }
+  //   },
+  //   {
+  //     chainId: dstChainId,
+  //   }
+  // )
 
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
@@ -112,6 +246,7 @@ const _Swap: FC<Swap> = ({
   const dstBridgeToken =
     dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
 
+  // Parse the srcTypedAmount into a srcAmount
   const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
   }, [srcToken, srcTypedAmount])
@@ -125,24 +260,49 @@ const _Swap: FC<Swap> = ({
     crossChain ? srcBridgeToken : dstToken
   )
 
-  // 5bps sg fee
-  const STARGATE_FEE = new Percent(5, 10_000) // .05%
-
   const srcMinimumAmountOut =
     (crossChain && !isStargateBridgeToken(srcToken)) || !crossChain
       ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
       : srcAmount
 
-  const srcAmountOutMinusStargateFee = crossChain
-    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOut.multiply(STARGATE_FEE))
-    : srcMinimumAmountOut
+  const srcAmountOutMinusStargateFee = useMemo(() => {
+    return crossChain ? srcMinimumAmountOut?.multiply(_10000)?.divide(_9995) : srcMinimumAmountOut
+  }, [crossChain, srcMinimumAmountOut])
+
+  const stargateFee = srcAmountOutMinusStargateFee
+    ? srcMinimumAmountOut?.subtract(srcAmountOutMinusStargateFee)
+    : undefined
 
   const dstAmountIn = useMemo(() => {
-    return tryParseAmount(srcAmountOutMinusStargateFee?.toFixed(), dstBridgeToken)
-  }, [dstBridgeToken, srcAmountOutMinusStargateFee])
+    return tryParseAmount(
+      crossChain ? srcAmountOutMinusStargateFee?.toFixed() : srcMinimumAmountOut?.toFixed(),
+      crossChain ? dstBridgeToken : dstToken
+    )
+  }, [crossChain, dstBridgeToken, dstToken, srcAmountOutMinusStargateFee, srcMinimumAmountOut])
 
   // dstTrade
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
+
+  const priceImpact = useMemo(() => {
+    if (!crossChain && srcTrade) {
+      return srcTrade.priceImpact
+    } else if (
+      crossChain &&
+      srcTrade &&
+      dstTrade &&
+      !isStargateBridgeToken(srcToken) &&
+      !isStargateBridgeToken(dstToken)
+    ) {
+      return srcTrade.priceImpact.add(dstTrade.priceImpact)
+    } else if (crossChain && !srcTrade && dstTrade && !isStargateBridgeToken(dstToken)) {
+      return dstTrade.priceImpact
+    } else if (crossChain && srcTrade && !dstTrade && !isStargateBridgeToken(srcToken)) {
+      return srcTrade.priceImpact
+    }
+
+    // Return zero percent
+    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  }, [crossChain, dstToken, dstTrade, srcToken, srcTrade])
 
   const dstMinimumAmountOut =
     crossChain && !isStargateBridgeToken(dstToken)
@@ -154,39 +314,62 @@ const _Swap: FC<Swap> = ({
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
-  // console.log('SRC AMOUNT IN', srcAmount?.toFixed())
-  // console.log('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-  // console.log('SG FEE', sgFee?.toFixed())
-  // console.log('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusFee?.toFixed())
-  // console.log('DST AMOUNT IN', dstAmountIn?.toFixed())
-  // console.log('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-
-  // console.log('src trade', srcTrade, 'dst trade', dstTrade)
-
-  // console.log({
-  //   srcToken,
-  //   srcTrade,
-  //   dstTrade,
-  //   dstBridgeToken,
-  //   dstToken,
-  //   srcChainId,
-  //   dstChainId,
-  // })
+  // DEBUG
+  useEffect(() => {
+    console.debug('SRC TRADE', srcTrade)
+    console.debug('DST TRADE', dstTrade)
+    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+    console.debug('STARGATE FEE', stargateFee?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusStargateFee?.toFixed())
+    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+  }, [
+    srcTrade,
+    dstTrade,
+    srcAmount,
+    srcMinimumAmountOut,
+    stargateFee,
+    srcAmountOutMinusStargateFee,
+    dstAmountIn,
+    dstMinimumAmountOut,
+    priceImpact,
+  ])
 
   useEffect(() => {
-    setDstTypedAmount(dstMinimumAmountOut?.toSignificant(6) ?? '')
-  }, [dstMinimumAmountOut])
+    if (!crossChain || isStargateBridgeToken(dstToken)) {
+      setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
+    } else if (!isStargateBridgeToken(dstToken)) {
+      setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
+    }
+  }, [dstMinimumAmountOut, srcTrade, crossChain, dstToken, dstTrade])
 
   const execute = useCallback(() => {
+    console.log([
+      !srcChainId,
+      !srcAmount,
+      !srcMinimumAmountOut,
+      !srcAmountOutMinusStargateFee,
+      !dstChainId,
+      !dstMinimumAmountOut,
+      !address,
+      !srcTokenRebase,
+      // !dstTokenRebase,
+      !contract,
+    ])
     if (
       !srcChainId ||
       !srcAmount ||
       !srcMinimumAmountOut ||
+      !srcAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
-      !account ||
-      !account.address ||
+      !address ||
       !srcTokenRebase ||
+      // !dstTokenRebase ||
       !contract
     ) {
       return
@@ -195,347 +378,66 @@ const _Swap: FC<Swap> = ({
     const srcShare = srcAmount.toShare(srcTokenRebase)
 
     const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+    // const dstMinimumShareOut = dstMinimumAmountOut.toShare(dstTokenRebase)
 
     setIsWritePending(true)
 
-    // Transfers Scenarios
-    // T1: BentoBox - Stargate - BentoBox
-    // T2: Wallet - Stargate - Wallet
-    // T3: Wallet - Stargate - BentoBox
-    // T4: BentoBox - Stargate - Wallet
-
-    // Cross Chain Swap Scenarios
-    // X1: BentoBox - Swap - Stargate - Swap - BentoBox
-    // X2: Wallet - Swap - Stargate - Swap - Wallet
-    // X3: Wallet - Swap - Stargate - Swap - BentoBox
-    // X4: BentoBox - Swap - Stargate - Swap - Wallet
-
-    // Non Cross Chain Swap Scenarios
-    // S1: BentoBox - Swap - BentoBox
-    // S2: Wallet - Swap - Wallet
-    // S3: Wallet - Swap - BentoBox
-    // S4: BentoBox - Swap - Wallet
-
-    const cooker = new SushiXSwap({
+    const sushiXSwap = new SushiXSwap({
       contract,
       srcToken,
       dstToken,
+      srcTrade,
+      dstTrade,
       srcUseBentoBox,
       dstUseBentoBox,
-      user: account.address,
+      user: address,
+      debug: true,
     })
 
     if (signature) {
-      console.log('cook set master contract address', signature)
-      cooker.setMasterContractApproval(signature)
+      sushiXSwap.srcCooker.setMasterContractApproval(signature)
     }
 
     if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
-      // Cross-chain transfer operations
-      // T1-T4
-      cooker.stargateTransfer(srcAmount, srcShare)
-    } else {
-      // Cross-chain swap operations (and non cross-chain operations for now)
-
-      // TODO: Refactor for readability... else if (crossChain) { cross-chain operations } else { non cross-chain chain operations }
-
-      // S1-S4 & X1-X4
-
-      // Source operations...
-      if (srcTrade instanceof TradeV1 && srcTrade.route.path.length) {
-        if (!srcUseBentoBox) {
-          console.log('cook src depoit to bentobox')
-          cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-        }
-
-        console.log('cook src transfer from bentobox')
-        cooker.srcTransferFromBentoBox(
-          srcToken.wrapped.address,
-          srcTrade.route.pairs[0].liquidityToken.address,
-          0,
-          srcShare.quotient.toString()
-        )
-
-        console.log('cook src legacy swap', [srcAmount.quotient.toString(), srcMinimumAmountOut.quotient.toString()])
-        cooker.legacyExactInput(
-          srcShare.quotient.toString(),
-          srcMinimumAmountOut.toShare(srcTokenRebase).quotient.toString(),
-          srcTrade.route.path.map((token) => token.address),
-          crossChain || dstToken.isNative || !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address
-        )
-
-        if (!crossChain && dstToken.isNative && !dstUseBentoBox) {
-          cooker.unwrapAndTransfer(dstToken)
-        } else if (!crossChain && dstUseBentoBox) {
-          cooker.srcDepositToBentoBox(dstToken)
-        }
-      }
-
-      if (srcTrade instanceof TradeV2 && srcTrade?.route?.legs?.length) {
-        if (isExactInput(srcTrade)) {
-          console.log('cook trident exact input')
-          cooker.srcDepositToBentoBox(srcToken, account.address, srcAmount.quotient.toString())
-          cooker.srcTransferFromBentoBox(
-            srcToken.wrapped.address,
-            srcTrade.route.legs[0].poolAddress,
-            0,
-            srcAmount.toShare(srcTokenRebase).quotient.toString(),
-            false
-          )
-          cooker.tridentExactInput(
-            srcToken,
-            srcAmount.toShare(srcTokenRebase).quotient.toString(),
-            srcMinimumAmountOut.quotient.toString(),
-            srcTrade.route.legs.map((leg, i) => {
-              const isLastLeg = i === srcTrade.route.legs.length - 1
-              const recipientAddress = isLastLeg
-                ? crossChain
-                  ? SUSHI_X_SWAP_ADDRESS[srcChainId]
-                  : account.address
-                : leg.poolAddress
-              return {
-                pool: leg.poolAddress,
-                data: defaultAbiCoder.encode(
-                  ['address', 'address', 'bool'],
-                  [leg.tokenFrom.address, recipientAddress, crossChain ? isLastLeg : isLastLeg && dstUseBentoBox]
-                ),
-              }
-            })
-          )
-        } else if (isComplex(srcTrade)) {
-          console.log('cook trident complex')
-          cooker.srcDepositToBentoBox(srcToken, SUSHI_X_SWAP_ADDRESS[srcChainId], srcAmount.quotient.toString())
-          const initialPathCount = srcTrade.route.legs.filter(
-            (leg) => leg.tokenFrom.address === srcToken.wrapped.address
-          ).length
-          const params = srcTrade.route.legs.reduce<Complex>(
-            ([initialPath, percentagePath, output], leg, i) => {
-              const isInitialPath = leg.tokenFrom.address === srcToken.wrapped.address
-              if (isInitialPath) {
-                return [
-                  [
-                    ...initialPath,
-                    {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
-                      amount:
-                        initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(srcTrade.route.amountIn).sub(
-                              initialPath.reduce(
-                                (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                Zero
-                              )
-                            )
-                          : getBigNumber(srcTrade.route.amountIn * leg.absolutePortion),
-                      native: false,
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[srcChainId], false]
-                      ),
-                    },
-                  ],
-                  percentagePath,
-                  output,
-                ]
-              } else {
-                return [
-                  initialPath,
-                  [
-                    ...percentagePath,
-                    {
-                      tokenIn: leg.tokenFrom.address,
-                      pool: leg.poolAddress,
-                      balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                      data: defaultAbiCoder.encode(
-                        ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[srcChainId], false]
-                      ),
-                    },
-                  ],
-                  output,
-                ]
-              }
-            },
-            [
-              [],
-              [],
-              [
-                {
-                  token: (srcTrade.route.toToken as Currency).wrapped.address,
-                  to: crossChain ? SUSHI_X_SWAP_ADDRESS[srcChainId] : account.address,
-                  unwrapBento: crossChain ? crossChain : dstUseBentoBox,
-                  minAmount: srcMinimumAmountOut.quotient.toString(),
-                },
-              ],
-            ]
-          )
-          cooker.tridentComplex(params)
-        }
-      }
-
-      // Destination operations...
-      if (crossChain && isStargateBridgeToken(dstToken)) {
-        // If dst token is stargate bridge token, just do a withdraw
-        cooker.teleporter.dstWithdraw(dstToken)
-      } else if (crossChain) {
-        // Else dst token is not one of the stargate bridge tokens
-
-        // Dst trades...
-        if (dstTrade instanceof TradeV1 && dstTrade.route.path.length) {
-          console.log('cook teleport legacy exact in')
-
-          cooker.teleporter.dstWithdraw(dstBridgeToken, dstTrade.route.pairs[0].liquidityToken.address)
-
-          cooker.teleporter.legacyExactInput(
-            srcMinimumAmountOut.quotient.toString(),
-            dstMinimumAmountOut.quotient.toString(),
-            dstTrade.route.path.map((token) => token.address),
-            dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address
-          )
-
-          if (dstToken.isNative && !dstUseBentoBox) {
-            cooker.teleporter.unwrapAndTransfer(dstToken)
-          }
-        } else if (dstTrade instanceof TradeV2 && dstTrade?.route?.legs?.length && dstMinimumAmountOut) {
-          if (isExactInput(dstTrade)) {
-            cooker.teleporter.dstDepositToBentoBox(
-              dstBridgeToken,
-              dstTrade.route.legs[0].poolAddress,
-              srcMinimumAmountOut.quotient.toString()
-            )
-            console.log('cook teleport trident exact input')
-            cooker.teleporter.tridentExactInput(
-              dstBridgeToken,
-              srcMinimumAmountOut.quotient.toString(),
-              dstMinimumAmountOut.quotient.toString(),
-              dstTrade.route.legs.map((leg, i) => {
-                const isLastLeg = i === dstTrade.route.legs.length - 1
-                const recipientAddress = isLastLeg
-                  ? dstToken.isNative && !dstUseBentoBox
-                    ? SUSHI_X_SWAP_ADDRESS[dstChainId]
-                    : account.address
-                  : leg.poolAddress
-                return {
-                  pool: leg.poolAddress,
-                  data: defaultAbiCoder.encode(
-                    ['address', 'address', 'bool'],
-                    [leg.tokenFrom.address, recipientAddress, isLastLeg && !dstUseBentoBox]
-                  ),
-                }
-              })
-            )
-            if (dstToken.isNative && !dstUseBentoBox) {
-              cooker.teleporter.unwrapAndTransfer(dstToken)
-            }
-          } else if (isComplex(dstTrade)) {
-            console.log('cook teleport trident complex')
-            cooker.teleporter.dstDepositToBentoBox(
-              dstBridgeToken,
-              SUSHI_X_SWAP_ADDRESS[dstChainId],
-              srcMinimumAmountOut.quotient.toString()
-            )
-            const initialPathCount = dstTrade.route.legs.filter(
-              (leg) => leg.tokenFrom.address === dstBridgeToken.wrapped.address
-            ).length
-            const params = dstTrade.route.legs.reduce<Complex>(
-              ([initialPath, percentagePath, output], leg, i) => {
-                const isInitialPath = leg.tokenFrom.address === dstBridgeToken.wrapped.address
-                if (isInitialPath) {
-                  return [
-                    [
-                      ...initialPath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        amount:
-                          initialPathCount > 1 && i === initialPathCount - 1
-                            ? getBigNumber(dstTrade.route.amountIn).sub(
-                                initialPath.reduce(
-                                  (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                  Zero
-                                )
-                              )
-                            : getBigNumber(dstTrade.route.amountIn * leg.absolutePortion),
-                        native: false,
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], false]
-                        ),
-                      },
-                    ],
-                    percentagePath,
-                    output,
-                  ]
-                } else {
-                  return [
-                    initialPath,
-                    [
-                      ...percentagePath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[dstChainId], false]
-                        ),
-                      },
-                    ],
-                    output,
-                  ]
-                }
-              },
-              [
-                [],
-                [],
-                [
-                  {
-                    token: dstToken.wrapped.address,
-                    to: dstToken.isNative && !dstUseBentoBox ? SUSHI_X_SWAP_ADDRESS[dstChainId] : account.address,
-                    unwrapBento: !dstUseBentoBox,
-                    minAmount: dstMinimumAmountOut.quotient.toString(),
-                  },
-                ],
-              ]
-            )
-
-            cooker.teleporter.tridentComplex(params)
-
-            if (dstToken.isNative && !dstUseBentoBox) {
-              cooker.teleporter.unwrapAndTransfer(dstToken)
-            }
-          }
-        }
-      }
+      sushiXSwap.transfer(srcAmount, srcShare)
+    } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
+      sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
+    } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
+      sushiXSwap.crossChainSwap(
+        srcAmount,
+        srcShare,
+        srcMinimumAmountOut,
+        srcMinimumShareOut,
+        dstMinimumAmountOut
+        // dstMinimumShareOut
+      )
     }
-    // else {
-    //   // same chain operations...
-    // }
 
     if (crossChain) {
-      cooker.teleport(srcBridgeToken, dstBridgeToken)
+      sushiXSwap.teleport(srcBridgeToken, dstBridgeToken, dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
     }
 
-    console.log('attempt cook')
-    cooker
-      .cook()
+    console.debug('attempt cook')
+    sushiXSwap
+      .cook(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
       .then((res) => {
-        console.log('then cooked', res)
+        console.debug('then cooked', res)
       })
       .catch((err) => {
-        console.log('catch err', err)
+        console.error('catch err', err)
       })
       .finally(() => {
         setIsWritePending(false)
       })
   }, [
-    account,
+    address,
     contract,
     crossChain,
     dstBridgeToken,
     dstChainId,
     dstMinimumAmountOut,
     dstToken,
+    // dstTokenRebase,
     dstTrade,
     dstUseBentoBox,
     signature,
@@ -544,12 +446,22 @@ const _Swap: FC<Swap> = ({
     srcBridgeToken,
     srcChainId,
     srcMinimumAmountOut,
+    srcAmountOutMinusStargateFee,
     srcToken,
     srcTrade,
     srcUseBentoBox,
   ])
 
   const isMounted = useIsMounted()
+
+  // const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  // const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: srcToken })
+
+  const { data: srcPrices } = usePrices({ chainId: srcChainId })
+  const { data: dstPrices } = usePrices({ chainId: dstChainId })
+
+  const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
+  const dstTokenPrice = dstPrices?.[dstToken.wrapped.address.toLowerCase()]
 
   return (
     <article
@@ -560,16 +472,15 @@ const _Swap: FC<Swap> = ({
       )}
       style={{ width }}
     >
-      <div className="p-3 mx-[2px] grid grid-cols-6 items-center pb-4 font-medium">
+      <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
         <Typography
           weight={900}
           className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
         >
           Swap
         </Typography>
-        <Caption className="flex justify-center col-span-4" theme={theme} />
         <div className="flex justify-end">
-          <WidgetSettingsOverlay theme={theme} />
+          <SettingsOverlay chainId={srcChainId} />
         </div>
       </div>
       <div className="p-3 pb-0 border-2 border-transparent">
@@ -581,14 +492,27 @@ const _Swap: FC<Swap> = ({
           fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
           network={chain[srcChainId]}
-          onNetworkSelect={setSrcChainId}
+          onNetworkSelect={(chainId) => {
+            setSrcChainId(chainId)
+            // mutateSwapCache({
+            //   ...swapCache,
+            //   srcChainId: chainId,
+            // })
+          }}
           tokenList={srcTokens}
           theme={theme}
+          onMax={(value) => setSrcTypedAmount(value)}
+          // balance={srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
+      </div>
+      <div className="flex items-center justify-center -mt-[14px] -mb-[14px] z-10">
+        <div className="p-1 border-2 rounded-lg bg-slate-700 border-slate-700 ring-2 ring-slate-800">
+          <ArrowDownIcon width={14} height={14} className="text-slate-300" />
+        </div>
       </div>
       <div className={classNames(theme.background.secondary, 'p-3 m-0.5 rounded-2xl')}>
         <CurrencyInput
-          disabled={true}
+          disabled
           value={dstTypedAmount}
           onChange={setDstTypedAmount}
           onCurrencySelect={setDstToken}
@@ -599,155 +523,217 @@ const _Swap: FC<Swap> = ({
           onNetworkSelect={setDstChainId}
           tokenList={dstTokens}
           theme={theme}
+          disableMaxButton
+          // balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
 
-        <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme} />
+        <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />
 
-        <div className="flex gap-2">
-          {!account && isMounted ? (
-            <Wallet.Button fullWidth color="blue">
-              Connect Wallet
-            </Wallet.Button>
-          ) : activeChain?.id !== srcChainId && isMounted ? (
-            <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-              Switch to {chain[srcChainId].name}
-            </Button>
-          ) : activeChain?.id == srcChainId && isMounted ? (
-            <>
-              <Approve
-                components={
-                  <Approve.Components className="flex gap-4">
-                    <Approve.Bentobox
-                      className="whitespace-nowrap"
-                      fullWidth
-                      address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                      onSignature={setSignature}
-                    />
-                    <Approve.Token
-                      className="whitespace-nowrap"
-                      fullWidth
-                      amount={srcAmount}
-                      address={BENTOBOX_ADDRESS[srcChainId]}
-                    />
-                  </Approve.Components>
-                }
-                render={({ approved }) => (
-                  <ConfirmationOverlay
+        {!address && isMounted ? (
+          <Wallet.Button fullWidth color="blue">
+            Connect Wallet
+          </Wallet.Button>
+        ) : activeChain?.id !== srcChainId && isMounted ? (
+          <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+            Switch to {chain[srcChainId].name}
+          </Button>
+        ) : activeChain?.id == srcChainId && isMounted ? (
+          <>
+            <Approve
+              components={
+                <Approve.Components className="flex gap-4">
+                  <Approve.Bentobox
+                    className="whitespace-nowrap"
+                    fullWidth
+                    address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                    onSignature={setSignature}
+                  />
+                  <Approve.Token
+                    className="whitespace-nowrap"
+                    fullWidth
+                    amount={srcAmount}
+                    address={BENTOBOX_ADDRESS[srcChainId]}
+                  />
+                </Approve.Components>
+              }
+              render={({ approved }) => {
+                const inputUSD =
+                  srcAmount && srcTokenPrice ? Number(srcAmount.toFixed()) * Number(srcTokenPrice) : undefined
+                const outputUSD =
+                  dstMinimumAmountOut && dstTokenPrice
+                    ? Number(dstMinimumAmountOut.toFixed()) * Number(dstTokenPrice)
+                    : undefined
+                const usdPctChange = inputUSD && outputUSD ? ((outputUSD - inputUSD) / inputUSD) * 100 : undefined
+
+                return (
+                  <ConfirmationComponentController
+                    variant="overlay"
                     trigger={({ setOpen }) => (
                       <Button
                         fullWidth
                         variant="filled"
                         color="gradient"
-                        disabled={isWritePending || !approved || !srcAmount?.greaterThan(ZERO)}
+                        disabled={
+                          isWritePending ||
+                          !approved ||
+                          !srcAmount?.greaterThan(ZERO) ||
+                          Boolean(srcAmount && !dstMinimumAmountOut)
+                        }
                         onClick={() => setOpen(true)}
                       >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Swap'}
+                        {isWritePending ? (
+                          <Dots>Confirm transaction</Dots>
+                        ) : srcAmount && !dstMinimumAmountOut ? (
+                          'Insufficient liquidity'
+                        ) : (
+                          'Swap'
+                        )}
                       </Button>
                     )}
                   >
-                    {({ setOpen }) => (
-                      <OverlayContent theme={theme} className="flex flex-col flex-grow !bg-slate-800">
-                        <OverlayHeader
-                          arrowDirection="bottom"
-                          onClose={() => setOpen(false)}
-                          title="Confirm Swap"
-                          theme={theme}
-                        />
-                        <div className="h-px bg-slate-200/5 w-full px-0.5" />
-                        <div className="!my-0 p-2 rounded-xl grid grid-cols-[150px_auto_150px]">
-                          <div className="flex flex-col">
-                            <Typography variant="lg" weight={700}>
-                              {srcAmount?.toSignificant(6)}{' '}
-                              <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-400">
-                              $0.00
-                            </Typography>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <ChevronRightIcon width={18} height={18} className="text-slate-500" />
-                          </div>
-                          <div className="flex flex-col w-full">
-                            <Typography variant="lg" weight={700} className="text-right">
-                              {dstMinimumAmountOut?.toSignificant(6)}{' '}
-                              <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-right text-slate-400">
-                              $0.00 <span className="text-[10px] text-green">(+0.00%)</span>
-                            </Typography>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-1 px-3 py-2 bg-slate-700 rounded-xl">
-                          <div className="flex items-center justify-between gap-2">
-                            <Rate loading={!!srcAmount && !dstMinimumAmountOut} price={price} theme={theme}>
-                              {({ toggleInvert, content }) => (
-                                <Typography
-                                  as="button"
-                                  onClick={() => toggleInvert()}
-                                  variant="xs"
-                                  weight={700}
-                                  className="flex items-center gap-1 text-slate-200"
-                                >
-                                  {content}
-                                </Typography>
-                              )}
-                            </Rate>
-                            <Chip
-                              label={
-                                <div className="flex items-center gap-1">
-                                  <GasIcon width={10} />
-                                  <Typography variant="xs" weight={700}>
-                                    {feeData.data?.formatted.gasPrice} Gwei
-                                  </Typography>
+                    <div className="h-px bg-slate-200/5 w-full px-0.5" />
+                    <div className="!my-0 rounded-xl py-2 grid grid-cols-12 min-h-[64px] items-center">
+                      <div className="flex flex-col col-span-5">
+                        <div className="flex items-center gap-3">
+                          {srcAmount && (
+                            <Badge
+                              badgeContent={
+                                <div className="rounded-full shadow-md ring-1 ring-black/20">
+                                  <NetworkIcon chainId={srcAmount.currency.chainId} width={16} height={16} />
                                 </div>
                               }
-                              color="gray"
-                            />
-                          </div>
-                          <div className="w-full h-px my-1 bg-slate-200/5" />
-                          <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Minimum Received After Slippage
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-200">
-                              {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
-                            </Typography>
-                          </div>
-                          <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Estimated Processing Time
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-300">
-                              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId] / 60)} minutes
-                            </Typography>
-                          </div>
-                          <Route srcTrade={srcTrade} dstTrade={dstTrade} />
+                            >
+                              <div className="w-5 h-5">
+                                <Icon currency={srcAmount.currency} width={20} height={20} />
+                              </div>
+                            </Badge>
+                          )}
+                          <Typography variant="lg" weight={700} className="truncate">
+                            {srcAmount?.toSignificant(6)}{' '}
+                            <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
+                          </Typography>
                         </div>
-                        <Button fullWidth color="gradient" onClick={execute}>
-                          Swap
-                        </Button>
-                      </OverlayContent>
-                    )}
-                  </ConfirmationOverlay>
-                )}
-              />
-            </>
-          ) : (
-            <Button fullWidth color="blue">
-              <Loader size="16px" />
-            </Button>
-          )}
-        </div>
+                        {srcAmount && srcTokenPrice && (
+                          <Typography variant="xs" weight={700} className="text-slate-400">
+                            {formatUSD(String(Number(srcAmount.toFixed()) * Number(srcTokenPrice)))}
+                          </Typography>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-center col-span-2">
+                        <ChevronRightIcon width={18} height={18} className="text-slate-500" />
+                      </div>
+                      <div className="flex flex-col w-full col-span-5">
+                        <div className="flex items-center gap-3">
+                          {dstMinimumAmountOut && (
+                            <Badge
+                              badgeContent={
+                                <div className="rounded-full shadow-md ring-1 ring-black/20">
+                                  <NetworkIcon chainId={dstMinimumAmountOut.currency.chainId} width={16} height={16} />
+                                </div>
+                              }
+                            >
+                              <div className="w-5 h-5">
+                                <Icon currency={dstMinimumAmountOut.currency} width={20} height={20} />
+                              </div>
+                            </Badge>
+                          )}
+                          <Typography variant="lg" weight={700} className="text-right truncate">
+                            {dstMinimumAmountOut?.toSignificant(6)}
+                            <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
+                          </Typography>
+                        </div>
+                        {dstMinimumAmountOut && dstTokenPrice && (
+                          <Typography variant="xs" weight={700} className="text-right text-slate-400">
+                            {formatUSD(String(Number(dstMinimumAmountOut.toFixed()) * Number(dstTokenPrice)))}
+                            {usdPctChange && (
+                              <span className={classNames(usdPctChange > 0 ? 'text-green' : 'text-red', 'text-[10px]')}>
+                                ({usdPctChange > 0 ? '+' : ''}
+                                {usdPctChange}%)
+                              </span>
+                            )}
+                          </Typography>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col flex-grow gap-1 px-3 py-2 bg-slate-700 rounded-xl">
+                      <div className="flex items-center justify-between gap-2">
+                        <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme}>
+                          {({ toggleInvert, content }) => (
+                            <Typography
+                              as="button"
+                              onClick={() => toggleInvert()}
+                              variant="xs"
+                              weight={700}
+                              className="flex items-center gap-1 text-slate-200"
+                            >
+                              {content}
+                            </Typography>
+                          )}
+                        </Rate>
+                        <Chip
+                          label={
+                            <div className="flex items-center gap-1">
+                              <GasIcon width={10} />
+                              <Typography variant="xs" weight={700}>
+                                {feeData.data?.formatted.gasPrice} Gwei
+                              </Typography>
+                            </div>
+                          }
+                          color="gray"
+                        />
+                      </div>
+                      <div className="w-full h-px my-1 bg-slate-200/5" />
+                      <div className="flex justify-between gap-2">
+                        <Typography variant="xs" className="text-slate-400">
+                          Minimum Received
+                        </Typography>
+                        <Typography variant="xs" weight={700} className="text-right text-slate-200">
+                          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+                        </Typography>
+                      </div>
+                      <div className="flex justify-between gap-2">
+                        <Typography variant="xs" className="text-slate-400">
+                          Price Impact
+                        </Typography>
+                        <Typography variant="xs" weight={700} className="text-slate-200">
+                          {priceImpact?.multiply(-1).toFixed(2)}%
+                        </Typography>
+                      </div>
+                      <div className="flex justify-between gap-2">
+                        <Typography variant="xs" className="text-slate-400">
+                          Estimated Processing Time
+                        </Typography>
+                        <Typography variant="xs" weight={700} className="text-slate-300">
+                          ~
+                          {Math.ceil(
+                            STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60
+                          )}{' '}
+                          minutes
+                        </Typography>
+                      </div>
+                      {crossChain ? (
+                        <CrossChainRoute srcTrade={srcTrade} dstTrade={dstTrade} />
+                      ) : (
+                        <SameChainRoute trade={srcTrade} />
+                      )}
+                    </div>
+                    <Overlay.Actions>
+                      <Button fullWidth color="gradient" onClick={execute}>
+                        Swap
+                      </Button>
+                    </Overlay.Actions>
+                  </ConfirmationComponentController>
+                )
+              }}
+            />
+          </>
+        ) : (
+          <Button fullWidth color="blue">
+            <Loader size="16px" />
+          </Button>
+        )}
+        {caption && <Caption theme={theme} />}
       </div>
     </article>
-  )
-}
-
-export default function Swap({ chainIds }: { chainIds: number[] }) {
-  return (
-    <div className="mt-40 space-y-12 mb-60">
-      <_Swap theme={theme} />
-      {/* <Widget header={<>Swap</>} /> */}
-    </div>
   )
 }

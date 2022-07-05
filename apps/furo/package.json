@@ -33,6 +33,7 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/log": "workspace:*",
@@ -40,7 +41,7 @@
     "@sushiswap/furo": "workspace:*",
     "@tanstack/react-table": "8.0.0-alpha.87",
     "@uniswap/redux-multicall": "^1.1.1",
-    "@uniswap/token-lists": "^1.0.0-beta.28",
+    "@uniswap/token-lists": "^1.0.0-beta.29",
     "@visx/curve": "^2.1.0",
     "@visx/gradient": "^2.1.0",
     "@visx/group": "^2.1.0",
@@ -64,7 +65,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "swr": "^1.3.0",
-    "wagmi": "^0.4.4",
+    "wagmi": "^0.5.5",
     "yup": "^0.32.11"
   },
   "devDependencies": {

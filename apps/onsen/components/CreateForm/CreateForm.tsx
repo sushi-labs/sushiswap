@@ -19,17 +19,15 @@ import STAKING_ABI from '../../abis/Staking.json'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 
 export const CreateForm: FC = () => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [error, setError] = useState<string>()
   const contract = useStakingContract(activeChain?.id)
-  const { isLoading: isWritePending, write: writeCreateIncentive } = useContractWrite(
-    {
-      addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
-      contractInterface: STAKING_ABI ?? [],
-    },
-    'createIncentive'
-  )
+  const { isLoading: isWritePending, write: writeCreateIncentive } = useContractWrite({
+    addressOrName: activeChain?.id ? networks.get(activeChain?.id) ?? AddressZero : AddressZero,
+    contractInterface: STAKING_ABI ?? [],
+    functionName: 'createIncentive',
+  })
 
   const [signature, setSignature] = useState<Signature>()
 
@@ -69,7 +67,7 @@ export const CreateForm: FC = () => {
 
   const onSubmit: SubmitHandler<CreateIncentiveFormData> = useCallback(
     async (data) => {
-      if (!amountAsEntity || !account?.address || !data?.currency) return
+      if (!amountAsEntity || !address || !data?.currency) return
 
       // Can cast here safely since input must have been validated already
       const _data = data as CreateIncentiveFormDataValidated
@@ -105,7 +103,7 @@ export const CreateForm: FC = () => {
         // })
       }
     },
-    [account?.address, amountAsEntity, writeCreateIncentive]
+    [address, amountAsEntity, writeCreateIncentive]
   )
 
   return (

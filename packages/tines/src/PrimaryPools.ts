@@ -7,6 +7,7 @@ export const TYPICAL_MINIMAL_LIQUIDITY = 1000
 
 export interface RToken {
   name: string
+  symbol: string
   address: string
 }
 

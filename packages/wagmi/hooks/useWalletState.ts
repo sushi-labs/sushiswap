@@ -1,31 +1,36 @@
-import { useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 type UseWalletStateReturn = {
+  isConnected: boolean
+  isDisconnected: boolean
   connecting: boolean
   notConnected: boolean
   pendingConnection: boolean
   reconnecting: boolean
 }
 
-type UseWalletState = (hook: ReturnType<typeof useConnect>, account: string | undefined) => UseWalletStateReturn
+type UseWalletState = (pendingConnector: boolean) => UseWalletStateReturn
 
 // Mutually exclusive states
-export const useWalletState: UseWalletState = (useConnect, account) => {
-  const { isConnecting, pendingConnector, isReconnecting } = useConnect
+// TODO ramin: remove pendingConnector param when wagmi adds onConnecting callback to useAccount
+export const useWalletState: UseWalletState = (pendingConnector) => {
+  const { address, isConnecting, isReconnecting, isConnected, isDisconnected } = useAccount()
 
   // Trying to see if wallet is connected
-  const connecting = Boolean(isConnecting && !isReconnecting && !pendingConnector && !account)
+  const connecting = Boolean(isConnecting && !isReconnecting && !pendingConnector && !address)
 
   // No wallet connected
-  const notConnected = Boolean(!isConnecting && !isReconnecting && !pendingConnector && !account)
+  const notConnected = Boolean(!isConnecting && !isReconnecting && !pendingConnector && !address)
 
   // pending wallet confirmation
-  const pendingConnection = Boolean(isConnecting && !isReconnecting && !!pendingConnector && !account)
+  const pendingConnection = Boolean(isConnecting && !isReconnecting && pendingConnector && !address)
 
   // We are reconnecting
-  const reconnecting = Boolean(isReconnecting && account)
+  const reconnecting = Boolean(isReconnecting && address)
 
   return {
+    isConnected,
+    isDisconnected,
     connecting,
     notConnected,
     pendingConnection,

@@ -47,8 +47,8 @@ const _FarmsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export const FarmsPage: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   const { data: farmsDTO, isValidating: isValidatingFarms } = useSWR<FarmDTO[]>(`/onsen/api/farms/${chainId}`, fetcher)
   const { data: prices, isValidating: isValidatingPrices } = useSWR<{ [key: string]: number }[]>(
     `/onsen/api/price/${chainId}`,
@@ -65,7 +65,7 @@ export const FarmsPage: FC = () => {
 
   const farms = useMemo(() => {
     if (isValidating || !farmsDTO) {
-      return
+      return []
     }
     const mappedFarms = farmsDTO.map(
       (farm) =>
@@ -92,15 +92,11 @@ export const FarmsPage: FC = () => {
     <Layout>
       <div className="flex p-4 gap-7">
         <Link passHref={true} href="/farm/create">
-          <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-            Create Farm
-          </Button>
+          <Button>Create Farm</Button>
         </Link>
 
-        <Link passHref={true} href={`/users/${account?.address}?chainId=${chainId}`}>
-          <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
-            My Farms
-          </Button>
+        <Link passHref={true} href={`/users/${address}?chainId=${chainId}`}>
+          <Button>My Farms</Button>
         </Link>
       </div>
       <FarmTable

@@ -1,14 +1,9 @@
-import { useIsMounted } from '@sushiswap/hooks'
 import { App, classNames, Container, SushiIcon } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { useAccount, useConnect } from 'wagmi'
 
 const Header: FC = () => {
-  const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { isConnected } = useConnect()
   const router = useRouter()
 
   return (

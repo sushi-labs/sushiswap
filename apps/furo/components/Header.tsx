@@ -10,16 +10,14 @@ import { useAccount, useConnect } from 'wagmi'
 
 export const Header: FC = () => {
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
+  const { address, isConnected } = useAccount()
   const router = useRouter()
 
   const connect = useConnect({
-    onConnect: () => {
+    onSuccess: () => {
       void router.push('/dashboard')
     },
   })
-
-  const { isConnected } = connect
 
   return (
     <div
@@ -39,7 +37,7 @@ export const Header: FC = () => {
         >
           <div className="flex items-center gap-2 whitespace-nowrap">
             <Wallet.Button className="!h-[36px]" hack={connect} supportedNetworks={SUPPORTED_CHAINS} />
-            {account?.address && isMounted && isConnected && (
+            {address && isMounted && isConnected && (
               <Menu
                 button={
                   <Menu.Button

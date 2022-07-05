@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi'
 import { CreateVestingFormData } from './types'
 
 export const CliffDetailsSection: FC = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { control, watch, resetField, setError } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const [currency, cliff, fundSource] = watch(['currency', 'cliff', 'fundSource'])
@@ -56,7 +56,7 @@ export const CliffDetailsSection: FC = () => {
           render={({ field: { onChange, value }, fieldState: { error: validationError } }) => (
             <CurrencyInput
               fundSource={fundSource}
-              account={account?.address}
+              account={address}
               onError={(message) => setError('cliffAmount', { type: 'custom', message })}
               errorMessage={validationError?.message}
               value={value}

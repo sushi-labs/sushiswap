@@ -8,7 +8,9 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
-  } = useContractRead(getFuroVestingContractConfig(chainId), 'vestBalance', {
+  } = useContractRead({
+    ...getFuroVestingContractConfig(chainId),
+    functionName: 'vestBalance',
     chainId,
     enabled: !!chainId && !!vestingId,
     args: [vestingId],
@@ -19,7 +21,9 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     data: rebase,
     error: rebaseError,
     isLoading: rebaseLoading,
-  } = useContractRead(getBentoBoxContractConfig(chainId), 'totals', {
+  } = useContractRead({
+    ...getBentoBoxContractConfig(chainId),
+    functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token,
     args: [token?.address],

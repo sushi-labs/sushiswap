@@ -3,15 +3,13 @@ import { createTable, getCoreRowModel, useTableInstance } from '@tanstack/react-
 import { Placeholder } from 'components/Placeholder'
 import { IncentiveStatus } from 'lib'
 import { Farm } from 'lib/Farm'
-import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
-import { useNetwork } from 'wagmi'
 
 import { ManageFarmModal } from './ManageFarmModal'
 
 interface FarmTableProps {
   chainId: number | undefined
-  farms: Farm[] | undefined
+  farms: Farm[]
   showManageFarmAction?: boolean
   showIsSubscribed?: boolean
   placeholder: string
@@ -115,8 +113,8 @@ const defaultColumns = (tableProps: FarmTableProps) => [
   table.createDisplayColumn({
     id: 'Action',
     header: () => (tableProps.showManageFarmAction ? <div className="w-full text-left"> Subscribe </div> : <></>),
-    cell: (props) =>
-      tableProps.showManageFarmAction ? (
+    cell: (props) => {
+      return tableProps.showManageFarmAction ? (
         props.row.original ? (
           <ManageFarmModal farm={props.row.original} chainId={tableProps.chainId} />
         ) : (
@@ -124,7 +122,8 @@ const defaultColumns = (tableProps: FarmTableProps) => [
         )
       ) : (
         <></>
-      ),
+      )
+    },
   }),
 
   // table.createDisplayColumn({
@@ -144,19 +143,16 @@ export const FarmTable: FC<FarmTableProps> = (props) => {
     if (!loading) setInitialized(true)
   }, [loading])
 
-  const router = useRouter()
-  const { activeChain } = useNetwork()
-
-  const [columns] = React.useState<typeof defaultColumns>(() => [
-    ...defaultColumns({ ...props, chainId: activeChain?.id }),
-  ])
+  const [columns] = useState<typeof defaultColumns>(() => [...defaultColumns({ ...props })])
 
   const instance = useTableInstance(table, {
-    data: farms ?? [],
+    data: farms,
     // @ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  console.log('rerender farmTable')
 
   return (
     <Table.container>
@@ -208,11 +204,7 @@ export const FarmTable: FC<FarmTableProps> = (props) => {
           )}
           {instance.getRowModel().rows.map((row) => {
             return (
-              <Table.tr
-                key={row.id}
-                // onClick={() =>
-                // }
-              >
+              <Table.tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return <Table.td key={cell.id}>{cell.renderCell()}</Table.td>
                 })}

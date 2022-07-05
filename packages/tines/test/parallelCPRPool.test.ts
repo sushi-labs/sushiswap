@@ -1,8 +1,9 @@
+import seedrandom from 'seedrandom'
+
+import { findMultiRouteExactIn } from '../src'
+import { ParallelCPRPool } from '../src/ParallelCPRPool'
 import { ConstantProductRPool } from '../src/PrimaryPools'
 import { getBigNumber } from '../src/Utils'
-import { ParallelCPRPool } from '../src/ParallelCPRPool'
-import { findMultiRouteExactIn } from '../src'
-import seedrandom from 'seedrandom'
 
 const testSeed = '0' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -17,8 +18,8 @@ function getRandom(rnd: () => number, min: number, max: number) {
 }
 
 const gasPrice = 200
-const token0 = { name: 'Token0', address: 'Token0Address' }
-const token1 = { name: 'Token1', address: 'Token1Address' }
+const token0 = { name: 'Token0', address: 'Token0Address', symbol: 'Token0Symbol' }
+const token1 = { name: 'Token1', address: 'Token1Address', symbol: 'Token0Symbol' }
 function getPool(reserve: number, price: number, fee: number) {
   return new ConstantProductRPool(
     'poolAddress',
