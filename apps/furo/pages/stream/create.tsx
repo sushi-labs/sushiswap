@@ -1,12 +1,12 @@
 import { Breadcrumb, Layout } from 'components'
-import { CreateForm } from 'components/stream'
+import { CreateMultipleForm } from 'components/stream'
 
 const Create = () => {
   return (
     <Layout>
       <Breadcrumb title="Create Stream" />
       <div className="mt-6">
-        <CreateForm />
+        <CreateMultipleForm />
       </div>
     </Layout>
   )

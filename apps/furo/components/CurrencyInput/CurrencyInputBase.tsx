@@ -7,9 +7,11 @@ export type CurrencyInputBase = {
   onChange(value: string): void
   currency: Type | undefined
   className?: string
+  inputClassName?: string
   error?: boolean
   bottomPanel?: JSX.Element
   helperTextPanel?: JSX.Element
+  hideSymbol?: boolean
 }
 
 export const CurrencyInputBase: FC<CurrencyInputBase> = ({
@@ -17,9 +19,11 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
   onChange,
   currency,
   className = '',
+  inputClassName = '',
   error,
   bottomPanel,
   helperTextPanel,
+  hideSymbol = false,
 }) => {
   const amountInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -40,12 +44,17 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
             value={value}
             type="text"
             placeholder="0.00"
-            className="!px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none"
+            className={classNames(
+              inputClassName,
+              '!px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none'
+            )}
             onUserInput={(val) => onChange(val)}
           />
-          <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
-            {currency?.symbol}
-          </Typography>
+          {!hideSymbol && (
+            <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
+              {currency?.symbol}
+            </Typography>
+          )}
         </div>
         {bottomPanel &&
           React.cloneElement(

@@ -6,7 +6,7 @@ import { Account } from '../Account'
 
 type EnsInput = Omit<AddressProps, 'ref'>
 
-export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, value, ...rest }, ref) => {
+export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, value, className, ...rest }, ref) => {
   const typedRef = useRef<string>()
   const [showEns, setShowEns] = useState<boolean>(false)
 
@@ -48,6 +48,7 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
               value={value}
               onChange={onChangeHandler}
               className={classNames(
+                className,
                 showEns ? 'pb-1.5' : '',
                 '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
               )}
