@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev -p 3010",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3010",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
@@ -44,7 +44,8 @@
     "date-fns": "^2.28.0",
     "ethers": "^5.0.0",
     "graphql": "^16.5.0",
-    "next": "^12.1.6",
+    "next": "^12.2.0",
+    "numeral": "^2.0.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.31.1",
@@ -64,6 +65,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "17.0.30",
+    "@types/numeral": "^2.0.2",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
     "autoprefixer": "^10.4.5",

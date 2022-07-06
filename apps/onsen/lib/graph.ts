@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import type { Farm as FarmDTO } from '@sushiswap/graph-client'
+import { getUnixTime, subMonths } from 'date-fns'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 
 const SUPPORTED_CHAINS = [ChainId.ARBITRUM]
@@ -104,5 +105,28 @@ export const getLegacyPairs = async (chainId: string) => {
     return await (
       await sdk.ArbitrumPairs()
     ).ARBITRUM_EXCHANGE_pairs
+  }
+}
+
+
+export const getOneMonthBlock = async (chainId: string) => {
+  const network = Number(chainId)
+  const sdk = getBuiltGraphSDK()
+  const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
+  if (network === ChainId.ETHEREUM) {
+    return await (await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })).ETHEREUM_BLOCKS_blocks
+  } else {
+    return undefined
+  }
+}
+
+
+export const getSushiBar = async (chainId: string, blockNumber?: number) => {
+  const network = Number(chainId)
+  const sdk = getBuiltGraphSDK()
+  if (network === ChainId.ETHEREUM) {
+    return await (await sdk.Bar({ block: { number: blockNumber } })).bar
+  } else {
+    return undefined
   }
 }
