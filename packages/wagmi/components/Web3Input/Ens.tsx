@@ -38,10 +38,16 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
         <div
           className={classNames(
             rest.error ? ERROR_INPUT_CLASSNAME : 'ring-blue',
-            'flex flex-col pr-4 bg-slate-800 rounded-xl focus-within:ring-1 ring-offset-2 ring-offset-slate-900'
+            isLoading || isFetching ? 'pr-4' : '',
+            'relative flex flex-col bg-slate-800 rounded-xl focus-within:ring-1 ring-offset-2 ring-offset-slate-900'
           )}
         >
-          <div className="relative flex items-center justify-between gap-1">
+          <div
+            className={classNames(
+              showEns && typedRef.current && typedRef.current.length > 0 ? '' : 'gap-1',
+              'flex items-center justify-between'
+            )}
+          >
             <Input.Address
               error={true}
               ref={ref}
@@ -49,21 +55,25 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(({ onChange, valu
               onChange={onChangeHandler}
               className={classNames(
                 className,
-                showEns ? 'pb-1.5' : '',
-                '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
+                showEns && typedRef.current && typedRef.current.length > 0 ? 'pb-0 pt-1.5' : '',
+                '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full truncate'
               )}
               {...rest}
             />
-            {(isLoading || isFetching) && <Loader width={24} />}
           </div>
-          {showEns && (
+          {showEns && typedRef.current && typedRef.current.length > 0 && (
             <Typography
-              variant="xs"
+              variant="xxs"
               weight={700}
               className={classNames('transition-[max-height] max-height-0 px-4 pb-2 text-slate-500')}
             >
               {typedRef.current}
             </Typography>
+          )}
+          {(isLoading || isFetching) && (
+            <div className="absolute right-3 flex items-center justify-center top-0 bottom-0">
+              <Loader width={16} />
+            </div>
           )}
         </div>
       )}

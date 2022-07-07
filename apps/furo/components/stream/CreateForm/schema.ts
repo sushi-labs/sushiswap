@@ -19,7 +19,7 @@ yup.addMethod(
       params: { address },
       test(value: Maybe<Type>) {
         if (value instanceof Native) return true
-        if (value?.address.length === 0) return true
+        if (value?.address?.length === 0) return true
 
         try {
           return !!(value && getAddress(value.address))
@@ -60,7 +60,7 @@ export const createStreamSchema = yup.object({
   endDate: yup
     .date()
     .when('startDate', (startDate, schema) => {
-      if (startDate) {
+      if (startDate instanceof Date && !isNaN(startDate?.getTime())) {
         const dayAfter = new Date(startDate.getTime() + 1)
         return schema.min(dayAfter, 'Date must be later than start date')
       }

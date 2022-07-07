@@ -17,6 +17,14 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
   ({ watch = true, amount, address, render, setState, disabled, ...props }) => {
     const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
 
+    // Set to undefined on unmount
+    useEffect(() => {
+      return () => {
+        if (!setState) return
+        setState(undefined)
+      }
+    }, [])
+
     useEffect(() => {
       if (!setState) return
 

@@ -395,6 +395,7 @@ importers:
       '@visx/text': ^2.3.0
       '@visx/tooltip': ^2.8.0
       '@visx/xychart': ^2.9.0
+      '@wagmi/core': ^0.4.7
       ajv: ^6.12.6
       autoprefixer: ^10.4.5
       cids: ^1.0.0
@@ -460,6 +461,7 @@ importers:
       '@visx/text': 2.10.0_react@18.1.0
       '@visx/tooltip': 2.10.0_ef5jwxihqo6n7gxfmzogljlgcm
       '@visx/xychart': 2.10.0_gitgatcfdebknnmmc4e6ohrlui
+      '@wagmi/core': 0.4.7_ethers@5.6.6+react@18.1.0
       ajv: 6.12.6
       cids: 1.1.9
       date-fns: 2.28.0
@@ -6992,8 +6994,28 @@ packages:
       - react-dom
     dev: false
 
-  /@wagmi/core/0.4.4_vh6lecw7jiv7vbsmg2rhwrxg4u:
-    resolution: {integrity: sha512-F5GDev6ylp3ZhvLnZriQYPrT0aHGlgcxahMozraO4snQizyMp6CTJ7gJHyL/7at+rDXDqI6Kb5Yy09GGfoaQFA==}
+  /@wagmi/core/0.4.7_ethers@5.6.6+react@18.1.0:
+    resolution: {integrity: sha512-YpD9bxE22qV1vhCKDy18Yq5B6ArRRH15XpMnZhB/1Hdbk9nLK1heSJ1HoCetn1uCxrdUByTAzlmuxL3FbeXM5A==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.3.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      ethers: 5.6.6
+      eventemitter3: 4.0.7
+      zustand: 4.0.0-rc.1_react@18.1.0
+    transitivePeerDependencies:
+      - immer
+      - react
+    dev: false
+
+  /@wagmi/core/0.4.7_vh6lecw7jiv7vbsmg2rhwrxg4u:
+    resolution: {integrity: sha512-YpD9bxE22qV1vhCKDy18Yq5B6ArRRH15XpMnZhB/1Hdbk9nLK1heSJ1HoCetn1uCxrdUByTAzlmuxL3FbeXM5A==}
     peerDependencies:
       '@coinbase/wallet-sdk': '>=3.3.0'
       '@walletconnect/ethereum-provider': '>=1.7.5'
@@ -19986,7 +20008,7 @@ packages:
       react: '>=17.0.0'
     dependencies:
       '@coinbase/wallet-sdk': 3.3.0
-      '@wagmi/core': 0.4.4_vh6lecw7jiv7vbsmg2rhwrxg4u
+      '@wagmi/core': 0.4.7_vh6lecw7jiv7vbsmg2rhwrxg4u
       '@walletconnect/ethereum-provider': 1.7.8
       ethers: 5.6.6
       react: 18.1.0

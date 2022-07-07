@@ -6,7 +6,7 @@ export type StreamData = {
   startDate: string | undefined
   endDate: string | undefined
   recipient: string | undefined
-  amount: string
+  amount: string | undefined
   fundSource: FundSource | undefined
 }
 
