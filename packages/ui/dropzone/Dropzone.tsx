@@ -24,7 +24,7 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
               'border-dashed  border-2 rounded-xl py-6 flex justify-center'
             )}
           >
-            <div className="space-y-3 text-center flex flex-col items-center">
+            <div className="space-y-3 text-center flex flex-col items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={48}

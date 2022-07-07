@@ -7,8 +7,8 @@ import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { createScheduleRepresentation } from '../createScheduleRepresentation'
+import { CreateVestingFormDataTransformed } from '../types'
 import CreateFormButtons from './CreateFormButtons'
-import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string

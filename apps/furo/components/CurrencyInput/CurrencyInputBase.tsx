@@ -46,7 +46,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
             placeholder="0.00"
             className={classNames(
               inputClassName,
-              '!px-4 text-left shadow-none border-none text-lg font-bold bg-transparent !ring-0 shadow-none'
+              'px-4 text-left shadow-none border-none font-bold bg-transparent !ring-0 shadow-none'
             )}
             onUserInput={(val) => onChange(val)}
           />

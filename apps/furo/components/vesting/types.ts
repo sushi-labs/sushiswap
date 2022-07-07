@@ -1,4 +1,4 @@
-import { Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 
@@ -43,4 +43,14 @@ export type CreateVestingFormDataTransformed = Omit<
   startDate: Date
   cliffEndDate: Date | undefined
   cliffDuration: JSBI
+  stepPercentage: JSBI
+  totalAmount: Amount<Type> | undefined
+}
+
+export type CreateMultipleVestingFormData = {
+  vestings: CreateVestingFormData[]
+}
+
+export type CreateMultipleVestingFormDataTransformed = {
+  vestings: CreateVestingFormDataTransformed[]
 }

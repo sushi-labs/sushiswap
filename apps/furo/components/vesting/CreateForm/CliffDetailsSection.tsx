@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
-import { CreateVestingFormData } from './types'
+import { CreateVestingFormData } from '../types'
 
 export const CliffDetailsSection: FC = () => {
   const { address } = useAccount()

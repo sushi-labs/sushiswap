@@ -58,6 +58,7 @@ const Component: FC<CurrencyInput> = ({
   return (
     <CurrencyInput.Base
       {...props}
+      inputClassName="!px-4"
       error={!!errorMessage}
       value={value}
       onChange={onChange}

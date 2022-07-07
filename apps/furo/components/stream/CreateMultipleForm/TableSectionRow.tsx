@@ -10,13 +10,13 @@ import { useNetwork } from 'wagmi'
 import { useCustomTokens } from '../../../lib/state/storage'
 import { useTokens } from '../../../lib/state/token-lists'
 import { CurrencyInput } from '../../CurrencyInput'
-import { CreateStreamFormData, StreamData } from './types'
+import { CreateMultipleStreamFormData, CreateStreamFormData } from '../types'
 
 interface TableSectionRow {
-  control: Control<CreateStreamFormData>
+  control: Control<CreateMultipleStreamFormData>
   index: number
   onRemove(index: number): void
-  onCopy(payload: StreamData): void
+  onCopy(payload: CreateStreamFormData): void
 }
 
 export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove, onCopy }) => {
@@ -25,8 +25,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
   const [dialogOpen, setDialogOpen] = useState(false)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
 
-  const { setValue } = useFormContext<CreateStreamFormData>()
-  const data = useWatch<StreamData>({
+  const { setValue } = useFormContext<CreateMultipleStreamFormData>()
+  const data = useWatch<CreateStreamFormData>({
     name: `streams.${index}`,
     control,
   } as never)
@@ -133,7 +133,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   onChange={onChange}
                   error={!!error?.message}
                   placeholder="Address or ENS Name"
-                  className="placeholder:font-bold placeholder-slate-500"
+                  inputClassName="placeholder:font-bold placeholder-slate-500"
                 />
                 <Form.Error message={error?.message} />
               </>
@@ -176,7 +176,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           </IconButton>
         </div>
         <div className="flex items-center">
-          <IconButton onClick={() => onCopy({ ...data, recipient: undefined } as StreamData)}>
+          <IconButton onClick={() => onCopy({ ...data, recipient: undefined } as CreateStreamFormData)}>
             <DuplicateIcon width={20} height={20} className="text-slate-300" />
           </IconButton>
         </div>

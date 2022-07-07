@@ -25,14 +25,14 @@ export const Breadcrumb: FC<Breadcrumb> = ({ links }) => {
           const last = links.length === index + 1
           if (last) {
             return (
-              <Typography key={index} variant="sm" weight={500} className="text-slate-300">
+              <Typography key={`index-${link.label}`} variant="sm" weight={500} className="text-slate-300">
                 {link.label}
               </Typography>
             )
           }
 
           return (
-            <Link href={link.href} passHref={true} key={index}>
+            <Link href={link.href} passHref={true} key={`index-${link.label}`}>
               <a className="flex items-center gap-2 group">
                 <Typography
                   variant="sm"

@@ -18,3 +18,7 @@ export type CreateStreamFormDataValidated = {
   amount: string
   fundSource: FundSource
 }
+
+export type CreateMultipleStreamFormData = {
+  streams: CreateStreamFormData[]
+}

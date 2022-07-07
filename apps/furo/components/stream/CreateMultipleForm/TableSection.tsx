@@ -9,12 +9,12 @@ import { useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 
+import { CreateMultipleStreamFormData, CreateStreamFormData } from '../types'
 import { TableSectionRow } from './TableSectionRow'
-import { CreateStreamFormData, StreamData } from './types'
 
 export const TableSection = () => {
   const { chain } = useNetwork()
-  const { control } = useFormContext<CreateStreamFormData>()
+  const { control } = useFormContext<CreateMultipleStreamFormData>()
 
   // TODO: cast as never until
   // https://github.com/react-hook-form/react-hook-form/issues/4055#issuecomment-950145092 gets fixed
@@ -40,7 +40,7 @@ export const TableSection = () => {
             const arr = result.split(/\r?\n/)
             arr.shift()
 
-            const rows: StreamData[] = []
+            const rows: CreateStreamFormData[] = []
 
             const tokens = await Promise.all(
               arr.reduce<Promise<FetchTokenResult>[]>((acc, cur) => {

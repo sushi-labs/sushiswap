@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbLink, Layout } from 'components'
-import { CreateForm } from 'components/vesting'
+import { CreateMultipleForm } from 'components/vesting'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -12,15 +12,15 @@ const LINKS: BreadcrumbLink[] = [
   },
 ]
 
-const SingleVesting = () => {
+const MultipleVesting = () => {
   return (
     <Layout>
       <Breadcrumb links={LINKS} />
       <div className="mt-6">
-        <CreateForm />
+        <CreateMultipleForm />
       </div>
     </Layout>
   )
 }
 
-export default SingleVesting
+export default MultipleVesting

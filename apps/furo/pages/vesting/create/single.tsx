@@ -12,7 +12,7 @@ const LINKS: BreadcrumbLink[] = [
   },
 ]
 
-const MultipleVesting = () => {
+const SingleVesting = () => {
   return (
     <Layout>
       <Breadcrumb links={LINKS} />
@@ -23,4 +23,4 @@ const MultipleVesting = () => {
   )
 }
 
-export default MultipleVesting
+export default SingleVesting

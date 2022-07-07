@@ -11,9 +11,9 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
+import { CreateMultipleStreamFormData } from '../types'
 import { createMultipleStreamSchema } from './schema'
 import { TableSection } from './TableSection'
-import { CreateStreamFormData } from './types'
 
 export const CreateMultipleForm: FC = () => {
   const { address } = useAccount()
@@ -22,7 +22,7 @@ export const CreateMultipleForm: FC = () => {
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
 
-  const methods = useForm<CreateStreamFormData>({
+  const methods = useForm<CreateMultipleStreamFormData>({
     // @ts-ignore
     resolver: yupResolver(createMultipleStreamSchema),
     defaultValues: {
@@ -48,9 +48,8 @@ export const CreateMultipleForm: FC = () => {
 
   // @ts-ignore
   const streams = watch('streams')
-  const data = watch()
 
-  const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
+  const onSubmit: SubmitHandler<CreateMultipleStreamFormData> = useCallback(
     async (data) => {
       if (!contract || !address || !activeChain?.id || !data.streams) return
 
@@ -161,8 +160,6 @@ export const CreateMultipleForm: FC = () => {
                 </Approve.Components>
               }
               render={({ approved }) => {
-                console.log(isWritePending, !approved, !isValid, isValidating)
-
                 return (
                   <Button
                     type="submit"
@@ -170,7 +167,7 @@ export const CreateMultipleForm: FC = () => {
                     color="gradient"
                     disabled={isWritePending || !approved || !isValid || isValidating}
                   >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create stream'}
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
                   </Button>
                 )
               }}

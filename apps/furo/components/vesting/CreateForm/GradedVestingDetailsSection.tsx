@@ -67,6 +67,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput.Base
+              inputClassName="!px-4 py-[10px]"
               onChange={onChange}
               value={value}
               currency={currency}

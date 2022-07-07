@@ -2,7 +2,7 @@ import { Form, Input } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateStreamFormData } from './types'
+import { CreateStreamFormData } from '../types'
 
 export const GeneralDetailsSection = () => {
   const { control, watch } = useFormContext<CreateStreamFormData>()

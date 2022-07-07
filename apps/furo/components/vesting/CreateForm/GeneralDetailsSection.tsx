@@ -9,7 +9,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { CreateVestingFormData } from './types'
+import { CreateVestingFormData } from '../types'
 
 export const GeneralDetailsSection = () => {
   const isMounted = useIsMounted()

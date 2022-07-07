@@ -10,7 +10,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { CreateStreamFormData } from './types'
+import { CreateStreamFormData } from '../types'
 
 export const StreamAmountDetails = () => {
   const isMounted = useIsMounted()

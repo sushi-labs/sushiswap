@@ -4,13 +4,13 @@ import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { CreateVestingFormData, CreateVestingFormDataValidated } from '../types'
 import { CliffDetailsSection } from './CliffDetailsSection'
 import CreateFormReviewModal from './CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
 import { createVestingSchema, stepConfigurations } from './schema'
 import { transformVestingFormData } from './transformVestingFormData'
-import { CreateVestingFormData, CreateVestingFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
   const { chain: activeChain } = useNetwork()

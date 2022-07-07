@@ -1,4 +1,4 @@
-import { Native, Token, Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { getAddress } from 'ethers/lib/utils'
 import * as yup from 'yup'
@@ -18,7 +18,7 @@ yup.addMethod(
       exclusive: true,
       params: { address },
       test(value: Maybe<Type>) {
-        if (value instanceof Native) return true
+        if (value?.isNative) return true
         if (value?.address?.length === 0) return true
 
         try {
