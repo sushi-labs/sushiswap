@@ -67,7 +67,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput.Base
-              inputClassName="!px-4 py-[10px]"
+              className="ring-offset-slate-900"
               onChange={onChange}
               value={value}
               currency={currency}
@@ -99,7 +99,15 @@ export const GradedVestingDetailsSection = () => {
             name="stepPayouts"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <Input.Counter step={1} min={0} max={100} onChange={onChange} value={value} error={!!error?.message} />
+                <Input.Counter
+                  step={1}
+                  min={0}
+                  max={100}
+                  onChange={onChange}
+                  value={value}
+                  error={!!error?.message}
+                  className="ring-offset-slate-900"
+                />
                 <Form.Error message={error?.message} />
               </>
             )}
@@ -113,7 +121,7 @@ export const GradedVestingDetailsSection = () => {
               <>
                 <Select
                   error={!!error?.message}
-                  button={<Select.Button>{value.label}</Select.Button>}
+                  button={<Select.Button className="ring-offset-slate-900">{value.label}</Select.Button>}
                   value={value}
                   onChange={onChange}
                 >

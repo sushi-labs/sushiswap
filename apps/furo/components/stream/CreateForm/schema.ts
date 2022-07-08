@@ -71,7 +71,7 @@ export const createStreamSchema = yup.object({
   amount: yup
     .number()
     .typeError('Target must be a number')
-    .min(0, 'Must be greater than zero')
+    .moreThan(0, 'Must be greater than zero')
     .required('This field is required'),
   fundSource: yup.mixed<FundSource>().required('This field is required'),
 })

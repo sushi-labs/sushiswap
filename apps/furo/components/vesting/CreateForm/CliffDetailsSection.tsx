@@ -43,7 +43,12 @@ export const CliffDetailsSection: FC = () => {
           name="cliffEndDate"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
+              <Input.DatetimeLocal
+                onChange={onChange}
+                value={value}
+                error={!!error?.message}
+                className="!ring-offset-slate-900"
+              />
               <Form.Error message={error?.message} />
             </>
           )}
@@ -55,6 +60,7 @@ export const CliffDetailsSection: FC = () => {
           name="cliffAmount"
           render={({ field: { onChange, value }, fieldState: { error: validationError } }) => (
             <CurrencyInput
+              className="ring-offset-slate-900"
               fundSource={fundSource}
               account={address}
               onError={(message) => setError('cliffAmount', { type: 'custom', message })}

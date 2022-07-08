@@ -16,7 +16,7 @@ import { approveBentoBoxAction, batchAction, vestingCreationAction } from '../..
 import {
   CreateMultipleVestingFormData,
   CreateMultipleVestingFormDataTransformed,
-  CreateVestingFormDataValidated,
+  CreateVestingFormData,
   stepConfigurations,
   transformVestingFormData,
 } from '../CreateForm'
@@ -64,7 +64,7 @@ export const CreateMultipleForm = () => {
 
   const onSubmit = useCallback(
     async (data: CreateMultipleVestingFormDataTransformed | undefined) => {
-      if (!contract || !address || !activeChain?.id || !data?.vestings) return
+      if (!contract || !address || !activeChain?.id || !data) return
 
       const summedValue = data.vestings.reduce<Amount<Native>>((acc, cur) => {
         if (cur.totalAmount?.currency?.isNative) {
@@ -85,7 +85,8 @@ export const CreateMultipleForm = () => {
             cur?.cliffDuration &&
             cur?.stepConfig?.time &&
             cur?.stepPercentage &&
-            cur?.totalAmount
+            cur?.totalAmount &&
+            cur?.stepPayouts
           ) {
             acc.push(
               vestingCreationAction({
@@ -148,9 +149,7 @@ export const CreateMultipleForm = () => {
     if (!isValid || isValidating) return undefined
     return {
       ...formData,
-
-      // Can safely cast as form is valid
-      vestings: formData.vestings.map((vest) => transformVestingFormData(vest as CreateVestingFormDataValidated)),
+      vestings: formData.vestings.map((vest) => transformVestingFormData(vest as CreateVestingFormData)),
     }
   }, [formData, isValid, isValidating])
 
@@ -171,6 +170,8 @@ export const CreateMultipleForm = () => {
       })
     })
 
+  console.log(isValid)
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(() => onSubmit(validatedData))}>
@@ -182,7 +183,7 @@ export const CreateMultipleForm = () => {
               </button>
             </a>
           </Link>
-          <div className="grid grid-cols-[296px_auto] gap-20">
+          <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
             <ImportZone />
             <div className="flex flex-col gap-4 col-span-2">
               <Typography weight={700}>Vestings</Typography>
@@ -202,12 +203,15 @@ export const CreateMultipleForm = () => {
                     </Approve.Components>
                   }
                   render={({ approved }) => {
+                    console.log(formData?.vestings?.length === 0, isWritePending, !approved, !isValid, isValidating)
                     return (
                       <Button
                         type="submit"
                         variant="filled"
                         color="gradient"
-                        disabled={isWritePending || !approved || !isValid || isValidating}
+                        disabled={
+                          formData?.vestings?.length === 0 || isWritePending || !approved || !isValid || isValidating
+                        }
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vestings'}
                       </Button>

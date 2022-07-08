@@ -1,6 +1,8 @@
-import { Typography } from '@sushiswap/ui'
+import { PlusIcon } from '@heroicons/react/solid'
+import { Button, classNames, Typography } from '@sushiswap/ui'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
+import { stepConfigurations } from '../CreateForm'
 import { CreateMultipleVestingFormData } from '../types'
 import { TableSectionRow } from './TableSectionRow'
 
@@ -20,8 +22,13 @@ export const TableSection = () => {
 
   return (
     <div className="">
-      <div className="w-full overflow-auto lg:overflow-visible max-w-5xl">
-        <div className="bg-slate-800 rounded-t-xl grid lg:grid-cols-[100px_100px_100px_160px_auto] gap-y-3 gap-x-2 py-[18px] px-6">
+      <div className="w-full max-w-5xl">
+        <div
+          className={classNames(
+            fields?.length === 0 ? 'rounded-2xl' : 'rounded-t-2xl',
+            'bg-slate-800 rounded-t-xl grid grid-cols-[100px_160px_100px_160px_160px_160px_80px] gap-y-3 gap-x-2 py-[18px] px-6'
+          )}
+        >
           <Typography variant="sm" weight={500} className="text-slate-500">
             Currency
           </Typography>
@@ -35,13 +42,49 @@ export const TableSection = () => {
             Start Date
           </Typography>
           <Typography variant="sm" weight={500} className="text-slate-500">
+            Total Amount
+          </Typography>
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Vesting Schedule
           </Typography>
+          <span />
         </div>
-        <div className="flex flex-col gap-2 bg-slate-700 rounded-b-xl">
-          {fields.map((field, index) => (
-            <TableSectionRow index={index} key={index} control={control} onRemove={remove} onCopy={append} />
+        <div className="flex flex-col bg-slate-700 rounded-b-2xl">
+          {fields?.map((field, index) => (
+            <TableSectionRow
+              index={index}
+              key={index}
+              control={control}
+              onRemove={remove}
+              onCopy={append}
+              last={fields?.length === index + 1}
+            />
           ))}
+        </div>
+        <div className="flex px-2 mt-1">
+          <Button
+            type="button"
+            variant="empty"
+            size="sm"
+            startIcon={<PlusIcon width={16} height={16} />}
+            onClick={() =>
+              append({
+                currency: undefined,
+                cliff: false,
+                startDate: undefined,
+                recipient: undefined,
+                cliffEndDate: undefined,
+                cliffAmount: '',
+                stepPayouts: 1,
+                stepAmount: '',
+                stepConfig: stepConfigurations[0],
+                fundSource: undefined,
+                insufficientBalance: false,
+              })
+            }
+          >
+            Add Item
+          </Button>
         </div>
       </div>
     </div>

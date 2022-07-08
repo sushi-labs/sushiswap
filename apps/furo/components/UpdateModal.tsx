@@ -155,7 +155,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
             <div className="flex flex-col gap-2">
               <CurrencyInput
                 fundSource={FundSource.WALLET}
-                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
+                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'ring-offset-slate-800')}
                 onChange={setAmount}
                 currency={stream.token}
                 value={amount}

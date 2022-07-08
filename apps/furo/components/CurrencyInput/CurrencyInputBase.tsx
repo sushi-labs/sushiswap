@@ -1,5 +1,12 @@
 import { Type } from '@sushiswap/currency'
-import { classNames, ERROR_INPUT_CLASSNAME, Input, Typography } from '@sushiswap/ui'
+import {
+  classNames,
+  DEFAULT_INPUT_CLASSNAME,
+  DEFAULT_INPUT_UNSTYLED,
+  ERROR_INPUT_CLASSNAME,
+  Input,
+  Typography,
+} from '@sushiswap/ui'
 import React, { FC, useRef } from 'react'
 
 export type CurrencyInputBase = {
@@ -34,28 +41,29 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
         onClick={() => amountInputRef.current?.focus()}
         className={classNames(
           className,
+          DEFAULT_INPUT_CLASSNAME,
           error ? ERROR_INPUT_CLASSNAME : '',
-          'flex flex-col rounded-xl bg-slate-800 focus:ring-1 focus-within:ring-1 ring-offset-2 ring-offset-slate-900 ring-blue'
+          'relative flex flex-col justify-center'
         )}
       >
-        <div className="flex items-center justify-between gap-1">
-          <Input.Numeric
-            ref={amountInputRef}
-            value={value}
-            type="text"
-            placeholder="0.00"
-            className={classNames(
-              inputClassName,
-              'px-4 text-left shadow-none border-none font-bold bg-transparent !ring-0 shadow-none'
-            )}
-            onUserInput={(val) => onChange(val)}
-          />
-          {!hideSymbol && (
-            <Typography variant="sm" weight={700} className="pr-4 text-slate-500">
-              {currency?.symbol}
-            </Typography>
-          )}
-        </div>
+        <Input.Numeric
+          variant="unstyled"
+          ref={amountInputRef}
+          value={value}
+          type="text"
+          placeholder="0.00"
+          className={classNames(inputClassName, DEFAULT_INPUT_UNSTYLED, 'h-full', hideSymbol ? '' : '!pr-[60px]')}
+          onUserInput={(val) => onChange(val)}
+        />
+        {!hideSymbol && (
+          <Typography
+            variant="sm"
+            weight={700}
+            className="absolute right-4 top-3 bottom-0 text-slate-500 max-w-10 truncate"
+          >
+            {currency?.symbol}
+          </Typography>
+        )}
         {bottomPanel &&
           React.cloneElement(
             bottomPanel,

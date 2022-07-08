@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Form, Input, Select, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_BG, Form, Input, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
@@ -79,7 +79,12 @@ export const GeneralDetailsSection = () => {
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
+                <Input.DatetimeLocal
+                  onChange={onChange}
+                  value={value}
+                  error={!!error?.message}
+                  className="!ring-offset-slate-900"
+                />
                 <Form.Error message={error?.message} />
               </>
             )
@@ -98,6 +103,7 @@ export const GeneralDetailsSection = () => {
                 onChange={onChange}
                 error={!!error?.message}
                 placeholder="Address or ENS Name"
+                className="ring-offset-slate-900"
               />
               <Form.Error message={error?.message} />
             </>
@@ -115,10 +121,9 @@ export const GeneralDetailsSection = () => {
                   <div
                     onClick={() => onChange(FundSource.BENTOBOX)}
                     className={classNames(
-                      value === FundSource.BENTOBOX
-                        ? 'border-green/70 ring-green/70'
-                        : 'ring-transparent border-slate-700',
-                      'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                      value === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                      DEFAULT_INPUT_BG,
+                      'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                     )}
                   >
                     <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -147,8 +152,9 @@ export const GeneralDetailsSection = () => {
                 <div
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
-                    value === FundSource.WALLET ? 'border-green/70 ring-green/70' : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                    value === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                    DEFAULT_INPUT_BG,
+                    'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
                   <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">

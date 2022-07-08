@@ -22,7 +22,12 @@ export const GeneralDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                  <Input.DatetimeLocal
+                    value={value}
+                    onChange={onChange}
+                    error={!!error?.message}
+                    className="!ring-offset-slate-900"
+                  />
                   <Form.Error message={error?.message} />
                 </>
               )
@@ -36,7 +41,12 @@ export const GeneralDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                  <Input.DatetimeLocal
+                    value={value}
+                    onChange={onChange}
+                    error={!!error?.message}
+                    className="!ring-offset-slate-900"
+                  />
                   <Form.Error message={error?.message} />
                 </>
               )
@@ -57,6 +67,7 @@ export const GeneralDetailsSection = () => {
                   onChange={onChange}
                   error={!!error?.message}
                   placeholder="Address or ENS Name"
+                  className="ring-offset-slate-900"
                 />
                 <Form.Error message={error?.message} />
               </>

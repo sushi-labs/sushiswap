@@ -1,5 +1,6 @@
 import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { classNames, DEFAULT_INPUT_PADDING } from '@sushiswap/ui'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
@@ -40,6 +41,7 @@ const Component: FC<CurrencyInput> = ({
   onError,
   helperTextPanel,
   bottomPanel,
+  className,
   ...props
 }) => {
   const { data: balance, isLoading: loading } = useWalletBalance(account, currency, fundSource)
@@ -58,7 +60,8 @@ const Component: FC<CurrencyInput> = ({
   return (
     <CurrencyInput.Base
       {...props}
-      inputClassName="!px-4"
+      className={classNames(className, DEFAULT_INPUT_PADDING)}
+      inputClassName="pl-0 pt-0 pr-0 !pb-2"
       error={!!errorMessage}
       value={value}
       onChange={onChange}

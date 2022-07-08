@@ -46,7 +46,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 <Select.Button
                   error={!!error?.message}
                   standalone
-                  className="!cursor-pointer"
+                  className="ring-offset-slate-900"
                   onClick={() => setDialogOpen(true)}
                 >
                   {data?.currency?.symbol || <span className="text-slate-500">Select</span>}
@@ -86,7 +86,9 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <Select
               error={!!error?.message}
-              button={<Select.Button className="!capitalize">{value?.toLowerCase()}</Select.Button>}
+              button={
+                <Select.Button className="!capitalize ring-offset-slate-900">{value?.toLowerCase()}</Select.Button>
+              }
               value={value}
               onChange={onChange}
             >
@@ -113,8 +115,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 value={value}
                 currency={data?.currency as Type | undefined}
                 error={!!error?.message}
-                inputClassName="!text-sm"
                 hideSymbol={true}
+                className="ring-offset-slate-900"
               />
             )
           }}
@@ -133,7 +135,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   onChange={onChange}
                   error={!!error?.message}
                   placeholder="Address or ENS Name"
-                  inputClassName="placeholder:font-bold placeholder-slate-500"
+                  className="ring-offset-slate-900"
                 />
                 <Form.Error message={error?.message} />
               </>
@@ -148,7 +150,12 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                <Input.DatetimeLocal
+                  value={value}
+                  onChange={onChange}
+                  error={!!error?.message}
+                  className="!ring-offset-slate-900"
+                />
                 <Form.Error message={error?.message} />
               </>
             )
@@ -162,7 +169,12 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           render={({ field: { onChange, value }, fieldState: { error } }) => {
             return (
               <>
-                <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                <Input.DatetimeLocal
+                  value={value}
+                  onChange={onChange}
+                  error={!!error?.message}
+                  className="!ring-offset-slate-900"
+                />
                 <Form.Error message={error?.message} />
               </>
             )

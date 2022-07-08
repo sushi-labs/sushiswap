@@ -120,7 +120,12 @@ export const ImportZone = () => {
           data is formatted correctly.
         </Typography>
         <div>
-          <Button onClick={downloadExample} className="mt-4 px-6" startIcon={<DownloadIcon width={20} height={20} />}>
+          <Button
+            type="button"
+            onClick={downloadExample}
+            className="mt-4 px-6"
+            startIcon={<DownloadIcon width={20} height={20} />}
+          >
             Example
           </Button>
         </div>

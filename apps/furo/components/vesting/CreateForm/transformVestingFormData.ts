@@ -1,13 +1,13 @@
 import { Native, tryParseAmount } from '@sushiswap/currency'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 
-import { CreateVestingFormDataTransformed, CreateVestingFormDataValidated } from '../types'
+import { CreateVestingFormData, CreateVestingFormDataTransformed } from '../types'
 
-type TransformVestingFormData = (x: CreateVestingFormDataValidated) => CreateVestingFormDataTransformed
+type TransformVestingFormData = (x: CreateVestingFormData) => CreateVestingFormDataTransformed
 
 export const transformVestingFormData: TransformVestingFormData = (payload) => {
   const { startDate, cliffEndDate, cliff, currency, cliffAmount, stepAmount, stepPayouts } = payload
-  const _currency = currency.isNative ? Native.onChain(currency.chainId) : currency
+  const _currency = currency?.isNative ? Native.onChain(currency.chainId) : currency
 
   const _startDate = new Date(startDate)
 
@@ -20,7 +20,9 @@ export const transformVestingFormData: TransformVestingFormData = (payload) => {
 
   const cliffAmountAsEntity = tryParseAmount(cliffAmount?.toString(), _currency)
   const stepAmountAsEntity = tryParseAmount(stepAmount.toString(), _currency)
-  const totalStepAmountAsEntity = tryParseAmount(stepAmount.toString(), _currency)?.multiply(JSBI.BigInt(stepPayouts))
+  const totalStepAmountAsEntity = tryParseAmount(stepAmount.toString(), _currency)?.multiply(
+    JSBI.BigInt(stepPayouts || 1)
+  )
   let totalAmount = totalStepAmountAsEntity
 
   if (cliffAmountAsEntity && totalStepAmountAsEntity) {

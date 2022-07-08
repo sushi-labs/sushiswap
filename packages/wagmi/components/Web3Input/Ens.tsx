@@ -1,4 +1,12 @@
-import { classNames, ERROR_INPUT_CLASSNAME, Input, Loader, Typography } from '@sushiswap/ui'
+import {
+  Chip,
+  classNames,
+  DEFAULT_INPUT_CLASSNAME,
+  DEFAULT_INPUT_UNSTYLED,
+  ERROR_INPUT_CLASSNAME,
+  Input,
+  Loader,
+} from '@sushiswap/ui'
 import { AddressProps } from '@sushiswap/ui/input/Address'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -41,38 +49,27 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(
           <div
             className={classNames(
               className,
-              rest.error ? ERROR_INPUT_CLASSNAME : 'ring-blue',
+              DEFAULT_INPUT_CLASSNAME,
+              rest.error ? ERROR_INPUT_CLASSNAME : '',
               isLoading || isFetching ? 'pr-4' : '',
-              'relative flex flex-col bg-slate-800 rounded-xl focus-within:ring-1 ring-offset-2 ring-offset-slate-900'
+              'relative flex flex-col justify-center'
             )}
           >
-            <div
-              className={classNames(
-                showEns && typedRef.current && typedRef.current.length > 0 ? '' : 'gap-1',
-                'flex items-center justify-between'
-              )}
-            >
-              <Input.Address
-                error={true}
-                ref={ref}
-                value={value}
-                onChange={onChangeHandler}
-                className={classNames(
-                  inputClassName,
-                  showEns && typedRef.current && typedRef.current.length > 0 ? 'pb-0 pt-1.5' : '',
-                  '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full truncate'
-                )}
-                {...rest}
-              />
-            </div>
-            {showEns && typedRef.current && typedRef.current.length > 0 && (
-              <Typography
-                variant="xxs"
-                weight={700}
-                className={classNames('transition-[max-height] max-height-0 px-4 pb-2 text-slate-500')}
-              >
-                {typedRef.current}
-              </Typography>
+            <Input.Address
+              variant="unstyled"
+              error={true}
+              ref={ref}
+              value={value}
+              onChange={onChangeHandler}
+              className={classNames(inputClassName, DEFAULT_INPUT_UNSTYLED, 'p-0 h-full')}
+              {...rest}
+            />
+            {showEns && typedRef.current && typedRef.current.length > 0 && !(isLoading || isFetching) && (
+              <div className="absolute top-1 bottom-0 flex items-start right-1">
+                <div className="rounded-2xl overflow-hidden bg-slate-800 shadow-md">
+                  <Chip label={typedRef.current} color="green" />
+                </div>
+              </div>
             )}
             {(isLoading || isFetching) && (
               <div className="absolute right-3 flex items-center justify-center top-0 bottom-0">

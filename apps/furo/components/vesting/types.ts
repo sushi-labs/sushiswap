@@ -14,7 +14,7 @@ export type CreateVestingFormData = {
   currency: Type | undefined
   startDate: string | ''
   recipient: string | ''
-  cliffEndDate: string | ''
+  cliffEndDate: string | null
   cliffAmount: number | ''
   stepPayouts: number | undefined
   stepAmount: number | ''
@@ -37,6 +37,16 @@ export type CreateVestingFormDataValidated = {
 }
 
 export type CreateVestingFormDataTransformed = Omit<
+  CreateVestingFormData,
+  'startDate' | 'cliffEndDate' | 'stepEndDate'
+> & {
+  startDate: Date
+  cliffEndDate: Date | undefined
+  cliffDuration: JSBI
+  stepPercentage: JSBI
+  totalAmount: Amount<Type> | undefined
+}
+export type CreateVestingFormDataTransformedAndValidated = Omit<
   CreateVestingFormDataValidated,
   'startDate' | 'cliffEndDate' | 'stepEndDate'
 > & {

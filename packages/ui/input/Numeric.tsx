@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import React, { forwardRef } from 'react'
 
+import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from './index'
+
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
 const escapeRegExp = (string: string): string => {
@@ -14,6 +16,7 @@ export type NumericProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 
   error?: boolean
   fontSize?: string
   align?: 'right' | 'left'
+  variant?: 'default' | 'unstyled'
 }
 
 export const Input = forwardRef<HTMLInputElement, NumericProps>(
@@ -30,6 +33,8 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
       min = 0,
       minLength = 1,
       maxLength = 79,
+      variant = 'default',
+      error,
       ...rest
     },
     ref
@@ -64,10 +69,11 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
         min={min}
         minLength={minLength}
         maxLength={maxLength}
-        className={classNames(
-          'flex-auto w-full px-0 py-3 overflow-hidden bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed placeholder-slate-500 focus:placeholder-slate-400',
-          className
-        )}
+        className={
+          variant === 'default'
+            ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)
+            : className
+        }
       />
     )
   }

@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Form, Select, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_BG, Form, Select, Typography } from '@sushiswap/ui'
 import { TokenSelector } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
@@ -86,10 +86,9 @@ export const StreamAmountDetails = () => {
                   <div
                     onClick={() => onChange(FundSource.BENTOBOX)}
                     className={classNames(
-                      value === FundSource.BENTOBOX
-                        ? 'border-green/70 ring-green/70'
-                        : 'ring-transparent border-slate-700',
-                      'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                      value === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                      DEFAULT_INPUT_BG,
+                      'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                     )}
                   >
                     <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -118,8 +117,9 @@ export const StreamAmountDetails = () => {
                 <div
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
-                    value === FundSource.WALLET ? 'border-green/70 ring-green/70' : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                    DEFAULT_INPUT_BG,
+                    value === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                    'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
                   <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -156,6 +156,7 @@ export const StreamAmountDetails = () => {
           name="amount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput
+              className="ring-offset-slate-900"
               onChange={onChange}
               account={address}
               value={value}
