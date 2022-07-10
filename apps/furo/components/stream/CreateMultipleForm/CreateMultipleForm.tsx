@@ -1,17 +1,20 @@
 import { Signature } from '@ethersproject/bytes'
+import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
-import { Button, createToast, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots, Form, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useFuroStreamContract } from '@sushiswap/wagmi'
+import Link from 'next/link'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { CreateMultipleStreamFormData } from '../types'
+import { ImportZone } from './ImportZone'
 import { createMultipleStreamSchema } from './schema'
 import { TableSection } from './TableSection'
 
@@ -141,40 +144,53 @@ export const CreateMultipleForm: FC = () => {
   //   })
 
   return (
-    <>
-      <FormProvider {...methods}>
-        <Form header="Create Streams" onSubmit={methods.handleSubmit(onSubmit)}>
-          <TableSection />
-          <Form.Buttons>
-            <Approve
-              components={
-                <Approve.Components>
-                  <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
-                  {streams.map((stream, index) => (
-                    <Approve.Token
-                      key={index}
-                      amount={tryParseAmount(stream.amount, stream.currency)}
-                      address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
-                    />
-                  ))}
-                </Approve.Components>
-              }
-              render={({ approved }) => {
-                return (
-                  <Button
-                    type="submit"
-                    variant="filled"
-                    color="gradient"
-                    disabled={isWritePending || !approved || !isValid || isValidating}
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
-                  </Button>
-                )
-              }}
-            />
-          </Form.Buttons>
-        </Form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <div className="flex flex-col mt-10 gap-20">
+          <Link href="/vesting/create" passHref={true}>
+            <a>
+              <button className="group hover:text-white text-slate-200 flex gap-3 font-bold">
+                <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
+              </button>
+            </a>
+          </Link>
+          <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
+            <ImportZone />
+            <div className="flex flex-col gap-4 col-span-2">
+              <Typography weight={700}>Streams</Typography>
+              <TableSection />
+              <Form.Buttons>
+                <Approve
+                  components={
+                    <Approve.Components>
+                      <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
+                      {streams.map((stream, index) => (
+                        <Approve.Token
+                          key={index}
+                          amount={tryParseAmount(stream.amount, stream.currency)}
+                          address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
+                        />
+                      ))}
+                    </Approve.Components>
+                  }
+                  render={({ approved }) => {
+                    return (
+                      <Button
+                        type="submit"
+                        variant="filled"
+                        color="gradient"
+                        disabled={isWritePending || !approved || !isValid || isValidating}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}
+                      </Button>
+                    )
+                  }}
+                />
+              </Form.Buttons>
+            </div>
+          </div>
+        </div>
+      </form>
+    </FormProvider>
   )
 }

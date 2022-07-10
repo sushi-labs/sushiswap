@@ -1,9 +1,11 @@
+import { Listbox } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/outline'
 import { DuplicateIcon, MinusCircleIcon } from '@heroicons/react/solid'
 import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import { CircleWithText, Form, IconButton, Input, Select } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_RING, ERROR_INPUT_CLASSNAME, IconButton, Input, Select } from '@sushiswap/ui'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
-import { FC, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { Control, Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 
@@ -32,10 +34,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
   } as never)
 
   return (
-    <div className="relative grid lg:grid-cols-[120px_120px_120px_222px_185px_185px] grid-cols-[30px_120px_110px_110px_192px_185px_185px_60px] gap-x-2">
-      <div className="lg:absolute top-0 bottom-0 left-[-40px] flex items-center">
-        <CircleWithText text={`${index + 1}`} width={22} height={22} fill="currentColor" className="text-slate-700" />
-      </div>
+    <div className="relative grid grid-cols-[120px_110px_110px_192px_185px_185px_60px] gap-y-3 gap-x-2 px-2 py-0.5">
       <div className="flex flex-col gap-2">
         <Controller
           control={control as never}
@@ -43,15 +42,19 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           render={({ field: { onChange }, fieldState: { error } }) => {
             return (
               <>
-                <Select.Button
-                  error={!!error?.message}
-                  standalone
-                  className="ring-offset-slate-900"
+                <button
+                  type="button"
+                  className={classNames(
+                    error?.message ? ERROR_INPUT_CLASSNAME : '',
+                    DEFAULT_INPUT_RING,
+                    dialogOpen ? 'ring-offset-2 ring-blue' : '',
+                    'w-full flex gap-2 items-center h-[54px] px-4 rounded-md ring-offset-slate-700'
+                  )}
                   onClick={() => setDialogOpen(true)}
                 >
-                  {data?.currency?.symbol || <span className="text-slate-500">Select</span>}
-                </Select.Button>
-                <Form.Error message={error?.message} />
+                  <span className="text-sm font-bold truncate">{data?.currency?.symbol || 'Select'}</span>
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </button>
                 <TokenSelector
                   open={dialogOpen}
                   variant="dialog"
@@ -61,7 +64,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   onSelect={(currency) => {
                     if (currency.isNative) {
                       // @ts-ignore
-                      setValue(`stream.${index}.fundSource`, FundSource.WALLET)
+                      setValue(`vesting.${index}.fundSource`, FundSource.WALLET)
                     }
 
                     onChange(currency)
@@ -83,13 +86,28 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
         <Controller
           control={control as never}
           name={`streams.${index}.fundSource`}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange }, fieldState: { error } }) => (
             <Select
               error={!!error?.message}
               button={
-                <Select.Button className="!capitalize ring-offset-slate-900">{value?.toLowerCase()}</Select.Button>
+                <Listbox.Button
+                  type="button"
+                  className={({ open }) =>
+                    classNames(
+                      DEFAULT_INPUT_RING,
+                      open ? 'ring-offset-2 ring-blue' : '',
+                      'w-full flex gap-2 items-center h-[54px] items-center rounded-md px-4 ring-offset-slate-700'
+                    )
+                  }
+                  value={data?.fundSource}
+                >
+                  <span className="text-sm capitalize font-bold truncate">
+                    {data?.fundSource?.toLowerCase() || 'Select'}
+                  </span>
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </Listbox.Button>
               }
-              value={value}
+              value={data?.fundSource}
               onChange={onChange}
             >
               <Select.Options>
@@ -116,7 +134,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 currency={data?.currency as Type | undefined}
                 error={!!error?.message}
                 hideSymbol={true}
-                className="ring-offset-slate-900"
+                className="ring-offset-slate-900 bg-transparent shadow-none h-full"
               />
             )
           }}
@@ -128,17 +146,16 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
           name={`streams.${index}.recipient`}
           render={({ field: { onChange }, fieldState: { error } }) => {
             return (
-              <>
-                <Web3Input.Ens
-                  id={`recipient-${index}`}
-                  value={data?.recipient}
-                  onChange={onChange}
-                  error={!!error?.message}
-                  placeholder="Address or ENS Name"
-                  className="ring-offset-slate-900"
-                />
-                <Form.Error message={error?.message} />
-              </>
+              <Web3Input.Ens
+                variant="unstyled"
+                id={`recipient-${index}`}
+                value={data?.recipient}
+                onChange={onChange}
+                error={!!error?.message}
+                placeholder="0x..."
+                className="shadow-none rounded-md !ring-offset-0 h-[54px] ring-offset-slate-700 flex justify-center !bg-slate-700"
+                inputClassName="placeholder:font-bold placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
+              />
             )
           }}
         />
@@ -147,17 +164,14 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
         <Controller
           control={control as never}
           name={`streams.${index}.startDate`}
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange }, fieldState: { error } }) => {
             return (
-              <>
-                <Input.DatetimeLocal
-                  value={value}
-                  onChange={onChange}
-                  error={!!error?.message}
-                  className="!ring-offset-slate-900"
-                />
-                <Form.Error message={error?.message} />
-              </>
+              <Input.DatetimeLocal
+                className="w-full truncate !ring-offset-0 !shadow-none rounded-md h-[54px] flex justify-center !bg-slate-700 !text-sm"
+                value={data?.startDate}
+                onChange={onChange}
+                error={!!error?.message}
+              />
             )
           }}
         />
@@ -166,22 +180,19 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
         <Controller
           control={control as never}
           name={`streams.${index}.endDate`}
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange }, fieldState: { error } }) => {
             return (
-              <>
-                <Input.DatetimeLocal
-                  value={value}
-                  onChange={onChange}
-                  error={!!error?.message}
-                  className="!ring-offset-slate-900"
-                />
-                <Form.Error message={error?.message} />
-              </>
+              <Input.DatetimeLocal
+                className="w-full truncate !ring-offset-0 !shadow-none rounded-md h-[54px] flex justify-center !bg-slate-700 !text-sm"
+                value={data?.endDate}
+                onChange={onChange}
+                error={!!error?.message}
+              />
             )
           }}
         />
       </div>
-      <div className="lg:absolute flex items-center gap-2 ml-2 lg:ml-0 lg:right-[-60px] top-0 bottom-0">
+      <div className="flex items-center gap-2">
         <div className="flex items-center">
           <IconButton onClick={() => onRemove(index)}>
             <MinusCircleIcon width={20} height={20} className="text-red" />

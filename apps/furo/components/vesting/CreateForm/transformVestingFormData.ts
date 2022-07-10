@@ -1,4 +1,4 @@
-import { Native, tryParseAmount } from '@sushiswap/currency'
+import { Native, Token, tryParseAmount } from '@sushiswap/currency'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 
 import { CreateVestingFormData, CreateVestingFormDataTransformed } from '../types'
@@ -7,7 +7,17 @@ type TransformVestingFormData = (x: CreateVestingFormData) => CreateVestingFormD
 
 export const transformVestingFormData: TransformVestingFormData = (payload) => {
   const { startDate, cliffEndDate, cliff, currency, cliffAmount, stepAmount, stepPayouts } = payload
-  const _currency = currency?.isNative ? Native.onChain(currency.chainId) : currency
+  const _currency = currency?.isNative
+    ? Native.onChain(currency.chainId)
+    : currency
+    ? new Token({
+        chainId: currency.chainId,
+        decimals: currency.decimals,
+        address: currency.address,
+        name: currency.name,
+        symbol: currency.symbol,
+      })
+    : undefined
 
   const _startDate = new Date(startDate)
 

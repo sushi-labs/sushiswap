@@ -395,7 +395,6 @@ importers:
       '@visx/text': ^2.3.0
       '@visx/tooltip': ^2.8.0
       '@visx/xychart': ^2.9.0
-      '@wagmi/core': ^0.4.7
       ajv: ^6.12.6
       autoprefixer: ^10.4.5
       cids: ^1.0.0
@@ -461,7 +460,6 @@ importers:
       '@visx/text': 2.10.0_react@18.1.0
       '@visx/tooltip': 2.10.0_ef5jwxihqo6n7gxfmzogljlgcm
       '@visx/xychart': 2.10.0_gitgatcfdebknnmmc4e6ohrlui
-      '@wagmi/core': 0.4.7_ethers@5.6.6+react@18.1.0
       ajv: 6.12.6
       cids: 1.1.9
       date-fns: 2.28.0
@@ -1544,16 +1542,16 @@ importers:
       '@sushiswap/jest-config': link:../config/jest
       '@sushiswap/prettier-config': link:../config/prettier
       '@sushiswap/typescript-config': link:../config/typescript
-      '@typechain/ethers-v5': 10.0.0_udxdf3a65tfyq2w67ophwgwtiu
+      '@typechain/ethers-v5': 10.0.0_y5fcnu7powiebwoqcaiqdfmd2m
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.4
       ethers: 5.6.6
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-query: 4.0.0-beta.23_ef5jwxihqo6n7gxfmzogljlgcm
-      tsup: 6.1.0_wfkf2av5c7m3msu3vb5f2tmmre
-      typechain: 8.0.0_wfkf2av5c7m3msu3vb5f2tmmre
-      typescript: 4.8.0-dev.20220630
+      tsup: 6.1.0_adbjavlwcvguojxrb5vjj5sy4m
+      typechain: 8.0.0_adbjavlwcvguojxrb5vjj5sy4m
+      typescript: 4.8.0-dev.20220710
       wagmi: 0.5.5_psvhf2bcekgpduwaw7lrstqk6m
 
   packages/widget/swap:
@@ -6045,7 +6043,7 @@ packages:
       typescript: 4.7.2
     dev: false
 
-  /@typechain/ethers-v5/10.0.0_udxdf3a65tfyq2w67ophwgwtiu:
+  /@typechain/ethers-v5/10.0.0_y5fcnu7powiebwoqcaiqdfmd2m:
     resolution: {integrity: sha512-Kot7fwAqnH96ZbI8xrRgj5Kpv9yCEdjo7mxRqrH7bYpEgijT5MmuOo8IVsdhOu7Uog4ONg7k/d5UdbAtTKUgsA==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
@@ -6060,9 +6058,9 @@ packages:
       '@ethersproject/providers': 5.6.6
       ethers: 5.6.6
       lodash: 4.17.21
-      ts-essentials: 7.0.3_wfkf2av5c7m3msu3vb5f2tmmre
-      typechain: 8.0.0_wfkf2av5c7m3msu3vb5f2tmmre
-      typescript: 4.8.0-dev.20220630
+      ts-essentials: 7.0.3_adbjavlwcvguojxrb5vjj5sy4m
+      typechain: 8.0.0_adbjavlwcvguojxrb5vjj5sy4m
+      typescript: 4.8.0-dev.20220710
     dev: true
 
   /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
@@ -6992,26 +6990,6 @@ packages:
       react-spring: 9.4.5_ef5jwxihqo6n7gxfmzogljlgcm
     transitivePeerDependencies:
       - react-dom
-    dev: false
-
-  /@wagmi/core/0.4.7_ethers@5.6.6+react@18.1.0:
-    resolution: {integrity: sha512-YpD9bxE22qV1vhCKDy18Yq5B6ArRRH15XpMnZhB/1Hdbk9nLK1heSJ1HoCetn1uCxrdUByTAzlmuxL3FbeXM5A==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': '>=3.3.0'
-      '@walletconnect/ethereum-provider': '>=1.7.5'
-      ethers: '>=5.5.1'
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-    dependencies:
-      ethers: 5.6.6
-      eventemitter3: 4.0.7
-      zustand: 4.0.0-rc.1_react@18.1.0
-    transitivePeerDependencies:
-      - immer
-      - react
     dev: false
 
   /@wagmi/core/0.4.7_vh6lecw7jiv7vbsmg2rhwrxg4u:
@@ -18878,6 +18856,14 @@ packages:
       typescript: 4.6.4
     dev: false
 
+  /ts-essentials/7.0.3_adbjavlwcvguojxrb5vjj5sy4m:
+    resolution: {integrity: sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==}
+    peerDependencies:
+      typescript: '>=3.7.0'
+    dependencies:
+      typescript: 4.8.0-dev.20220710
+    dev: true
+
   /ts-essentials/7.0.3_typescript@4.6.4:
     resolution: {integrity: sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==}
     peerDependencies:
@@ -18892,14 +18878,6 @@ packages:
       typescript: '>=3.7.0'
     dependencies:
       typescript: 4.7.2
-
-  /ts-essentials/7.0.3_wfkf2av5c7m3msu3vb5f2tmmre:
-    resolution: {integrity: sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==}
-    peerDependencies:
-      typescript: '>=3.7.0'
-    dependencies:
-      typescript: 4.8.0-dev.20220630
-    dev: true
 
   /ts-generator/0.1.1:
     resolution: {integrity: sha512-N+ahhZxTLYu1HNTQetwWcx3so8hcYbkKBHTr4b4/YgObFTIKkOSSsaa+nal12w8mfrJAyzJfETXawbNjSfP2gQ==}
@@ -19121,6 +19099,42 @@ packages:
     resolution: {integrity: sha1-4igPXoF/i/QnVlf9D5rr1E9aJ4Y=}
     dev: true
 
+  /tsup/6.1.0_adbjavlwcvguojxrb5vjj5sy4m:
+    resolution: {integrity: sha512-kKSzFbX996OXkbQif23LV0xDDvxnhH95Hw39ku7Kx1NEfJxcxvqexGGEDgRyd5dlzIJI4U8mySfPeq5iExYwnw==}
+    engines: {node: '>=14'}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': ^1
+      postcss: ^8.4.12
+      typescript: ^4.1.0
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      postcss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      bundle-require: 3.0.4_esbuild@0.14.39
+      cac: 6.7.12
+      chokidar: 3.5.3
+      debug: 4.3.4
+      esbuild: 0.14.39
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 3.1.4
+      resolve-from: 5.0.0
+      rollup: 2.74.1
+      source-map: 0.8.0-beta.0
+      sucrase: 3.21.0
+      tree-kill: 1.2.2
+      typescript: 4.8.0-dev.20220710
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+    dev: true
+
   /tsup/6.1.0_typescript@4.6.4:
     resolution: {integrity: sha512-kKSzFbX996OXkbQif23LV0xDDvxnhH95Hw39ku7Kx1NEfJxcxvqexGGEDgRyd5dlzIJI4U8mySfPeq5iExYwnw==}
     engines: {node: '>=14'}
@@ -19152,42 +19166,6 @@ packages:
       sucrase: 3.21.0
       tree-kill: 1.2.2
       typescript: 4.6.4
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-    dev: true
-
-  /tsup/6.1.0_wfkf2av5c7m3msu3vb5f2tmmre:
-    resolution: {integrity: sha512-kKSzFbX996OXkbQif23LV0xDDvxnhH95Hw39ku7Kx1NEfJxcxvqexGGEDgRyd5dlzIJI4U8mySfPeq5iExYwnw==}
-    engines: {node: '>=14'}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': ^1
-      postcss: ^8.4.12
-      typescript: ^4.1.0
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      postcss:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      bundle-require: 3.0.4_esbuild@0.14.39
-      cac: 6.7.12
-      chokidar: 3.5.3
-      debug: 4.3.4
-      esbuild: 0.14.39
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 3.1.4
-      resolve-from: 5.0.0
-      rollup: 2.74.1
-      source-map: 0.8.0-beta.0
-      sucrase: 3.21.0
-      tree-kill: 1.2.2
-      typescript: 4.8.0-dev.20220630
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -19484,6 +19462,27 @@ packages:
       - typescript
     dev: false
 
+  /typechain/8.0.0_adbjavlwcvguojxrb5vjj5sy4m:
+    resolution: {integrity: sha512-rqDfDYc9voVAhmfVfAwzg3VYFvhvs5ck1X9T/iWkX745Cul4t+V/smjnyqrbDzWDbzD93xfld1epg7Y/uFAesQ==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=4.3.0'
+    dependencies:
+      '@types/prettier': 2.6.1
+      debug: 4.3.4
+      fs-extra: 7.0.1
+      glob: 7.1.7
+      js-sha3: 0.8.0
+      lodash: 4.17.21
+      mkdirp: 1.0.4
+      prettier: 2.6.2
+      ts-command-line-args: 2.3.1
+      ts-essentials: 7.0.3_adbjavlwcvguojxrb5vjj5sy4m
+      typescript: 4.8.0-dev.20220710
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /typechain/8.0.0_typescript@4.6.4:
     resolution: {integrity: sha512-rqDfDYc9voVAhmfVfAwzg3VYFvhvs5ck1X9T/iWkX745Cul4t+V/smjnyqrbDzWDbzD93xfld1epg7Y/uFAesQ==}
     hasBin: true
@@ -19525,27 +19524,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /typechain/8.0.0_wfkf2av5c7m3msu3vb5f2tmmre:
-    resolution: {integrity: sha512-rqDfDYc9voVAhmfVfAwzg3VYFvhvs5ck1X9T/iWkX745Cul4t+V/smjnyqrbDzWDbzD93xfld1epg7Y/uFAesQ==}
-    hasBin: true
-    peerDependencies:
-      typescript: '>=4.3.0'
-    dependencies:
-      '@types/prettier': 2.6.1
-      debug: 4.3.4
-      fs-extra: 7.0.1
-      glob: 7.1.7
-      js-sha3: 0.8.0
-      lodash: 4.17.21
-      mkdirp: 1.0.4
-      prettier: 2.6.2
-      ts-command-line-args: 2.3.1
-      ts-essentials: 7.0.3_wfkf2av5c7m3msu3vb5f2tmmre
-      typescript: 4.8.0-dev.20220630
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /typedarray-to-buffer/3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
     dependencies:
@@ -19573,8 +19551,8 @@ packages:
     hasBin: true
     dev: true
 
-  /typescript/4.8.0-dev.20220630:
-    resolution: {integrity: sha512-wyFZIoUdTqDrKU3XfDx+pylAEIhlmpbsbicFXuvggpKeSWiPeUrMiSRqeXBnAjXiD6kn2Anmw+c3eyX3A2WdUw==}
+  /typescript/4.8.0-dev.20220710:
+    resolution: {integrity: sha512-xkF5hMScAHfQYySXwCgrDO8SFZyREaS46YmLy4LbIBdncSoKebfhH2y9W395z9vdIuSz/q1hJUt6qgqXHC4qMw==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true

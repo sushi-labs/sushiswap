@@ -8,18 +8,18 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
-import { stepConfigurations } from '../CreateForm'
-import { CreateMultipleVestingFormData, CreateVestingFormData } from '../types'
+import { CreateMultipleStreamFormData, CreateStreamFormData } from '../types'
 
 export const ImportZone = () => {
   const { chain } = useNetwork()
-  const { control } = useFormContext<CreateMultipleVestingFormData>()
+  const { control } = useFormContext<CreateMultipleStreamFormData>()
 
   // TODO: cast as never until
   // https://github.com/react-hook-form/react-hook-form/issues/4055#issuecomment-950145092 gets fixed
   const { append } = useFieldArray({
     control,
-    name: 'vestings',
+    name: 'streams',
+    shouldUnregister: true,
   } as never)
 
   const onDrop = useCallback(
@@ -38,7 +38,7 @@ export const ImportZone = () => {
             const arr = result.split(/\r?\n/)
             arr.shift()
 
-            const rows: CreateVestingFormData[] = []
+            const rows: CreateStreamFormData[] = []
 
             const tokens = await Promise.all(
               arr.reduce<Promise<FetchTokenResult>[]>((acc, cur) => {
@@ -60,33 +60,17 @@ export const ImportZone = () => {
 
             arr?.forEach((cur) => {
               if (cur !== '') {
-                const [
-                  tokenAddress,
-                  fundSource,
-                  recipient,
-                  startDate,
-                  cliff,
-                  cliffEndDate,
-                  cliffAmount,
-                  stepConfig,
-                  stepPayouts,
-                  stepAmount,
-                ] = cur.split(',')
+                const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
                 const [sMM, sDD, sYYYY] = startDate.split('-')
-                const [eMM, eDD, eYYYY] = cliffEndDate.split('-')
+                const [eMM, eDD, eYYYY] = endDate.split('-')
 
                 rows.push({
-                  currency: tokenMap[tokenAddress.toLowerCase()] ?? Native.onChain(chain.id),
+                  currency: tokenMap[tokenAddress.toLowerCase()] || Native.onChain(chain.id),
                   fundSource: Number(fundSource) === 0 ? FundSource.WALLET : FundSource.BENTOBOX,
                   recipient,
+                  amount,
                   startDate: new Date(+sYYYY, +sMM, +sDD).toISOString().slice(0, 16),
-                  cliff: Number(cliff) === 1,
-                  cliffAmount: Number(cliffAmount),
-                  cliffEndDate: new Date(+eYYYY, +eMM, +eDD).toISOString().slice(0, 16),
-                  stepPayouts: Number(stepPayouts),
-                  stepAmount: Number(stepAmount),
-                  stepConfig: stepConfigurations[Number(stepConfig)],
-                  insufficientBalance: false,
+                  endDate: new Date(+eYYYY, +eMM, +eDD).toISOString().slice(0, 16),
                 })
               }
             }, [])
@@ -103,11 +87,11 @@ export const ImportZone = () => {
 
   const downloadExample = useCallback(() => {
     const encodedUri = encodeURI(
-      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Recipient,Start Date (DD-MM-YYYY),Cliff(0 = DISABLED, 1 = ENABLED),Cliff End Date (DD-MM-YYYY),Cliff Amount,Payout Interval(0=WEEKLY,1=BIWEEKLY,2=MONTHLY,3=QUARTERLY,4=YEARLY),Number of Intervals,Payout Per Interval\n0x0000000000000000000000000000000000000000,0,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,1,10-08-2022,0.0001,0,10,0.0001\n'
+      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Amount,Recipient,Start Date (DD-MM-YYYY),End Date (DD-MM-YYYY)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,10-08-2022'
     )
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
-    link.setAttribute('download', 'sushi_vesting_def_example.csv')
+    link.setAttribute('download', 'sushi_stream_def_example.csv')
     document.body.appendChild(link)
     link.click()
   }, [])

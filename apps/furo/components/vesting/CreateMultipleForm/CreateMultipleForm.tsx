@@ -159,18 +159,16 @@ export const CreateMultipleForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, address])
 
-  createMultipleVestingSchema
-    .validate(formData, { abortEarly: false })
-    .then(function () {
-      console.log('valid')
-    })
-    .catch(function (err) {
-      err?.inner?.forEach((e: any) => {
-        console.log(e.message, e.path)
-      })
-    })
-
-  console.log(isValid)
+  // createMultipleVestingSchema
+  //   .validate(formData, { abortEarly: false })
+  //   .then(function () {
+  //     console.log('valid')
+  //   })
+  //   .catch(function (err) {
+  //     err?.inner?.forEach((e: any) => {
+  //       console.log(e.message, e.path)
+  //     })
+  //   })
 
   return (
     <FormProvider {...methods}>
@@ -203,7 +201,6 @@ export const CreateMultipleForm = () => {
                     </Approve.Components>
                   }
                   render={({ approved }) => {
-                    console.log(formData?.vestings?.length === 0, isWritePending, !approved, !isValid, isValidating)
                     return (
                       <Button
                         type="submit"
