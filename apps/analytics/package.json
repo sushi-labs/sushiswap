@@ -16,8 +16,8 @@
     "graphql": "^16.5.0",
     "isomorphic-fetch": "^3.0.0",
     "next": "^12.1.6",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "0.0.10",
@@ -29,8 +29,8 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.31",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "autoprefixer": "^10.4.5",
     "eslint": "^8.15.0",
     "next-transpile-modules": "9.0.0",

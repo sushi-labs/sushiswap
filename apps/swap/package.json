@@ -42,12 +42,12 @@
     "@uniswap/v2-core": "^1.0.1",
     "ethers": "^5.0.0",
     "next": "^12.1.6",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
     "swr": "^1.2.2",
     "typechain": "^8.0.0",
-    "wagmi": "^0.5.5"
+    "wagmi": "^0.5.8"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -55,8 +55,8 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.30",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "autoprefixer": "^10.4.5",
     "eslint": "^8.15.0",
     "next-transpile-modules": "9.0.0",

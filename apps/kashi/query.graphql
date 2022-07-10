@@ -1,0 +1,50 @@
+# query CrossChainKashiPairs($block: Block_height, $first: Int = 1000, $orderBy:  KashiPair_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
+#   crossChainKashiPairs(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where, chainIds: $chainIds) {
+
+query CrossChainKashiPairs($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainKashiPairs(first: $first, chainIds: $chainIds, orderBy: "totalAsset.base") {
+    id
+    chainId
+    masterContract {
+      id
+    }
+    name
+    symbol
+    decimals
+    collateral {
+      id
+      name
+      symbol
+      decimals
+    }
+    asset {
+      id
+      name
+      symbol
+      decimals
+    }
+    oracle
+    oracleData
+    totalCollateralShare
+    totalAsset {
+      base
+      elastic
+    }
+    totalBorrow {
+      base
+      elastic
+    }
+    exchangeRate
+    accrueInfo {
+      interestPerSecond
+      lastAccrued
+      feesEarnedFraction
+    }
+    kpi {
+      supplyAPR
+      borrowAPR
+      utilization
+      totalFeesEarnedFraction
+    }
+  }
+}

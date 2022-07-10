@@ -23,6 +23,7 @@
       "outputs": [".next/**"]
     },
     "build": {
+      "cache": true,
       "outputs": [
         ".next/**",
         "dist/**",
@@ -46,6 +47,7 @@
       "cache": false
     },
     "generate": {
+      "cache": true,
       "dependsOn": [
         "^build"
       ],
@@ -53,10 +55,10 @@
         "^build",
         ".graphclient/**",
         "typechain/**"
-      ],
-      "cache": true
+      ]
     },
     "test": {
+      "cache": true,      
       "outputs": [
         "coverage/**"
       ],
@@ -74,6 +76,7 @@
       "cache": false
     },
     "export": {
+      "cache": true,
       "dependsOn": [
         "build"
       ],

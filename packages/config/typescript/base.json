@@ -13,13 +13,8 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "useUnknownInCatchVariables": true,
-    "sourceMap": true
+    "strict": true
   },
   "exclude": ["node_modules"]
 }

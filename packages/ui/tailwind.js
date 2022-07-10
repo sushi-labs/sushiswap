@@ -1,5 +1,4 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
-
 module.exports = {
   content: ['node_modules/@sushiswap/ui/**/*.{js,ts,jsx,tsx}'],
   plugins: [

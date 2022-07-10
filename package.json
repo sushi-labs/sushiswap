@@ -43,7 +43,7 @@
     "prettier": "^2.6.2",
     "sort-package-json": "^1.55.0",
     "ts-jest": "^28.0.2",
-    "turbo": "1.2.0"
+    "turbo": "latest"
   },
   "engines": {
     "node": ">=16.x",
