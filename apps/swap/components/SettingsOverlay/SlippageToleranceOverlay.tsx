@@ -53,7 +53,7 @@ export const SlippageSettingOption: FC<{ recommended?: boolean; onClick?(): void
             <Typography variant="sm" weight={700} className="flex gap-1 items-center">
               {value}% {recommended && <StarIcon className="text-blue" width={12} height={12} />}
             </Typography>
-            <Typography variant="xs" className="text-slate-400">
+            <Typography variant="xxs" className="text-slate-400">
               {data}
             </Typography>
           </div>

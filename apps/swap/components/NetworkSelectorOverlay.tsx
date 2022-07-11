@@ -73,24 +73,26 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
           </div>
           <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-700 mt-3')}>
             <div className="h-full overflow-auto hide-scrollbar">
-              {filteredChains.map(([k, chain]) => (
+              {filteredChains.map(([, chain]) => (
                 <Typography
                   as="button"
                   onClick={() => handleSelect(chain.chainId)}
                   key={chain.chainId}
                   variant="sm"
                   className={classNames(
-                    selected === chain.chainId ? classNames('!font-bold ') : classNames('!font-medium '),
-                    'flex items-center gap-1.5 cursor-pointer py-2 pr-3 pl-1.5'
+                    selected === chain.chainId
+                      ? 'text-slate-200 !font-bold hover:text-white'
+                      : 'text-slate-400 hover:text-white',
+                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue'
                   )}
                 >
                   {selected === chain.chainId ? (
                     <div className="flex items-center justify-center w-8 h-8">
-                      <CheckIcon width={32} height={32} className="text-blue" />
+                      <CheckIcon width={24} height={24} className="group-hover:text-white text-blue" />
                     </div>
                   ) : (
                     <div className="flex items-center justify-center w-8 h-8">
-                      <NetworkIcon type="naked" chainId={chain.chainId} width={32} height={32} />
+                      <NetworkIcon type="naked" chainId={chain.chainId} width={24} height={24} />
                     </div>
                   )}
                   {chain.name}
