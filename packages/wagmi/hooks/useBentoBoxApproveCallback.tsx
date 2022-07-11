@@ -25,8 +25,10 @@ export function useBentoBoxApproveCallback({
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { writeAsync } = useContractWrite({...getBentoBoxContractConfig(activeChain?.id), functionName: 'setMasterContractApproval',
-    args: [account ? account.address : AddressZero, masterContract, true, 0, HashZero, HashZero],
+  const { writeAsync } = useContractWrite({
+    ...getBentoBoxContractConfig(chain?.id),
+    functionName: 'setMasterContractApproval',
+    args: [address || AddressZero, masterContract, true, 0, HashZero, HashZero],
   })
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
@@ -37,7 +39,8 @@ export function useBentoBoxApproveCallback({
     watch,
     enabled: Boolean(address && masterContract !== AddressZero),
   })
-  const { error, refetch: getNonces } = useContractRead({
+
+  const { refetch: getNonces } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'nonces',
     args: [address ? address : AddressZero],
@@ -101,7 +104,7 @@ export function useBentoBoxApproveCallback({
         },
         value: {
           warning: 'Give FULL access to funds in (and approved to) BentoBox?',
-          user: account?.address,
+          user: address,
           masterContract,
           approved: true,
           nonce: nonces,
@@ -115,7 +118,7 @@ export function useBentoBoxApproveCallback({
         const data = await writeAsync()
         createToast({
           txHash: data.hash,
-          href: Chain.from(activeChain.id).getTxUrl(data.hash),
+          href: Chain.from(chain.id).getTxUrl(data.hash),
           promise: data.wait(),
           summary: {
             pending: <Dots>Approving BentoBox Master Contract</Dots>,
@@ -125,7 +128,7 @@ export function useBentoBoxApproveCallback({
         })
       }
     }
-  }, [approvalState, masterContract, activeChain, getNonces, signTypedDataAsync, account?.address, error])
+  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, writeAsync])
 
   return [approvalState, signature, approveBentoBox]
 }

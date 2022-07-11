@@ -110,9 +110,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           </div>
           <div className="flex flex-col">
             <Web3Input.Ens
+              id="withdraw-stream-recipient"
               value={withdrawTo}
               onChange={setWithdrawTo}
-              className="!text-[0.73rem]"
+              className="ring-offset-slate-800"
               placeholder="Recipient (optional)"
             />
           </div>
