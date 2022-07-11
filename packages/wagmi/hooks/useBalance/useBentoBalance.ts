@@ -10,7 +10,7 @@ import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
 type UseBentoBalancesParams = {
   account: string | undefined
-  currencies: Type[]
+  currencies: (Type | undefined)[]
   chainId?: ChainId
 }
 
@@ -161,7 +161,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
 
 type UseBentoBalanceParams = {
   account: string | undefined
-  currency: Type
+  currency: Type | undefined
   chainId?: ChainId
 }
 

@@ -8,7 +8,7 @@ import { erc20ABI, useBalance, useContractInfiniteReads, useContractReads } from
 
 type UseWalletBalancesParams = {
   account: string | undefined
-  currencies: Type[]
+  currencies: (Type | undefined)[]
   chainId?: ChainId
 }
 
@@ -107,7 +107,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
 
 type UseWalletBalanceParams = {
   account: string | undefined
-  currency: Type
+  currency: Type | undefined
   chainId?: ChainId
 }
 

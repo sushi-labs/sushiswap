@@ -7,7 +7,7 @@ export type CreateStreamFormData = {
   endDate: string | undefined
   recipient: string | undefined
   amount: string
-  fundSource: FundSource | undefined
+  fundSource: FundSource
 }
 
 export type CreateStreamFormDataValidated = {

@@ -36,6 +36,7 @@ export const CreateForm: FC = () => {
       endDate: undefined,
       recipient: undefined,
       amount: '',
+      fundSource: FundSource.WALLET,
     },
     mode: 'onChange',
   })

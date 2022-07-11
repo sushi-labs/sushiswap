@@ -18,7 +18,7 @@ export type CreateVestingFormData = {
   cliffAmount: number | ''
   stepPayouts: number | undefined
   stepAmount: number | ''
-  fundSource: FundSource | undefined
+  fundSource: FundSource
   insufficientBalance: boolean
 }
 

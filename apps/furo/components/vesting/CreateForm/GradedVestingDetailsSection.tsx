@@ -1,14 +1,13 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
+import { useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { CreateVestingFormData, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
-
-import { useWalletBalance } from '../../../lib'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
@@ -28,7 +27,7 @@ export const GradedVestingDetailsSection = () => {
       'fundSource',
     ])
 
-  const { data: balance } = useWalletBalance(address, currency, fundSource)
+  const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency })
 
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts
@@ -51,13 +50,13 @@ export const GradedVestingDetailsSection = () => {
   }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   useEffect(() => {
-    if (!totalAmount || !balance) return
-    if (totalAmount.greaterThan(balance)) {
+    if (!totalAmount || !balance || !balance[fundSource]) return
+    if (totalAmount.greaterThan(balance[fundSource])) {
       setError('insufficientBalance', { type: 'custom', message: 'Insufficient Balance' })
     } else {
       clearErrors('insufficientBalance')
     }
-  }, [balance, clearErrors, setError, totalAmount])
+  }, [balance, clearErrors, fundSource, setError, totalAmount])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
@@ -148,7 +147,7 @@ export const GradedVestingDetailsSection = () => {
               <Typography
                 variant="sm"
                 className={
-                  balance && totalAmount?.greaterThan(balance)
+                  balance?.[fundSource] && totalAmount?.greaterThan(balance[fundSource])
                     ? 'text-red'
                     : totalAmount
                     ? 'text-slate-50'

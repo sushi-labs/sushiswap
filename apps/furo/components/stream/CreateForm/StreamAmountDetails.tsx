@@ -1,9 +1,8 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_BG, Form, Select, Typography } from '@sushiswap/ui'
-import { TokenSelector } from '@sushiswap/wagmi'
+import { TokenSelector, useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
-import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -25,8 +24,7 @@ export const StreamAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useWalletBalance(address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
+  const { data: balance } = useBalance({ account: address, currency, chainId: activeChain?.id })
 
   return (
     <Form.Section
@@ -99,8 +97,8 @@ export const StreamAmountDetails = () => {
                       <Typography weight={700} variant="xs" className="text-slate-200">
                         {isMounted ? (
                           <>
-                            {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
-                            <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                            {balance?.[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX].toSignificant(6) : '0.00'}{' '}
+                            <span className="text-slate-500">{balance?.[FundSource.BENTOBOX]?.currency.symbol}</span>
                           </>
                         ) : (
                           <div className="h-4" />
@@ -130,8 +128,8 @@ export const StreamAmountDetails = () => {
                     <Typography weight={700} variant="xs" className="text-slate-200">
                       {isMounted ? (
                         <>
-                          {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
-                          <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                          {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'}{' '}
+                          <span className="text-slate-500">{balance?.[FundSource.WALLET]?.currency.symbol}</span>
                         </>
                       ) : (
                         <div className="h-4" />

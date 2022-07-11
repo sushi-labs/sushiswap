@@ -1,12 +1,11 @@
 import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_PADDING } from '@sushiswap/ui'
+import { useBalance } from '@sushiswap/wagmi'
 import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
 import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
 import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
-import { FC, useEffect, useMemo } from 'react'
-
-import { useWalletBalance } from '../../lib'
+import React, { FC, useEffect, useMemo } from 'react'
 
 type BottomPanelRenderProps = {
   onChange(value: string): void
@@ -20,7 +19,7 @@ type HelperTextPanelRenderProps = {
 
 type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel'> & {
   onError?(message: string): void
-  fundSource: FundSource | undefined
+  fundSource: FundSource
   account: string | undefined
   errorMessage?: string
   bottomPanel?:
@@ -44,12 +43,18 @@ const Component: FC<CurrencyInput> = ({
   className,
   ...props
 }) => {
-  const { data: balance, isLoading: loading } = useWalletBalance(account, currency, fundSource)
+  const { data: balance, isLoading: loading } = useBalance({
+    account,
+    currency,
+    chainId: currency?.chainId,
+  })
 
   const insufficientBalanceError = useMemo(() => {
     const amountAsEntity = currency && value ? tryParseAmount(value.toString(), currency) : undefined
-    return amountAsEntity && balance && amountAsEntity.greaterThan(balance) ? 'Insufficient Balance' : undefined
-  }, [balance, currency, value])
+    return amountAsEntity && balance?.[fundSource] && amountAsEntity.greaterThan(balance[fundSource])
+      ? 'Insufficient Balance'
+      : undefined
+  }, [balance, currency, fundSource, value])
 
   const errorMessage = errorMessageProp || insufficientBalanceError
 
@@ -69,12 +74,17 @@ const Component: FC<CurrencyInput> = ({
       bottomPanel={
         bottomPanel ? (
           typeof bottomPanel === 'function' ? (
-            bottomPanel({ onChange, loading, amount: balance })
+            bottomPanel({ onChange, loading, amount: balance?.[fundSource] })
           ) : (
             bottomPanel
           )
         ) : (
-          <CurrencyInput.BottomPanel onChange={onChange} loading={loading} label="Balance" amount={balance} />
+          <CurrencyInput.BottomPanel
+            onChange={onChange}
+            loading={loading}
+            label="Balance"
+            amount={balance?.[fundSource]}
+          />
         )
       }
       helperTextPanel={
