@@ -7,8 +7,8 @@ import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { createScheduleRepresentation } from '../createScheduleRepresentation'
+import { CreateVestingFormDataTransformedAndValidated } from '../types'
 import CreateFormButtons from './CreateFormButtons'
-import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string
@@ -47,7 +47,7 @@ const Table: FC<{
 interface CreateFormReviewModal {
   open: boolean
   onDismiss(): void
-  formData: CreateVestingFormDataTransformed
+  formData: CreateVestingFormDataTransformedAndValidated
 }
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {

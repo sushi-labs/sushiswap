@@ -13,10 +13,10 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
     <Listbox.Option
       ref={ref}
       {...props}
-      className={({ active, selected }: { active: boolean; selected: boolean }) =>
+      className={({ active }: { active: boolean }) =>
         classNames(
           active ? 'text-white bg-blue-500' : 'text-high-emphesis',
-          'flex gap-2 px-4 items-center font-bold text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-slate-800 whitespace-nowrap',
+          'flex gap-2 px-4 items-center font-bold text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-slate-600 whitespace-nowrap',
           className
         )
       }

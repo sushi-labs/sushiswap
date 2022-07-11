@@ -7,14 +7,14 @@ import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroVestingContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
-import { CreateVestingFormDataTransformed } from 'components/vesting'
+import { CreateVestingFormDataTransformedAndValidated } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 interface CreateFormButtons {
   onDismiss(): void
-  formData: CreateVestingFormDataTransformed
+  formData: CreateVestingFormDataTransformedAndValidated
 }
 
 const CreateFormButtons: FC<CreateFormButtons> = ({
@@ -67,7 +67,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       !cliffDuration ||
       !stepConfig?.time ||
       !stepPercentage ||
-      !totalAmountAsEntity
+      !totalAmountAsEntity ||
+      !stepPayouts
     ) {
       return
     }

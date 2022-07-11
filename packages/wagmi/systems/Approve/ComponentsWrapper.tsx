@@ -7,7 +7,13 @@ import { TokenApproveButton } from './TokenApproveButton'
 type OwnProps = {
   children:
     | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>
-    | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>[]
+    | Array<ReactElement<typeof BentoApproveButton | typeof TokenApproveButton> | undefined>
+    | Array<
+        | Array<ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>>
+        | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>
+        | undefined
+      >
+    | undefined
 }
 
 export type ComponentsWrapperProps<C extends React.ElementType> = PolymorphicComponentProps<C, OwnProps>

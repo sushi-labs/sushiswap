@@ -57,7 +57,7 @@ export const useBalances: UseBalances = (params) => {
 
 type UseBalanceParams = {
   account: string | undefined
-  currency: Type
+  currency: Type | undefined
   chainId?: ChainId
 }
 
@@ -65,7 +65,7 @@ type UseBalance = (params: UseBalanceParams) => Pick<
   ReturnType<typeof useContractInfiniteReads>,
   'isError' | 'isLoading'
 > & {
-  data: Record<FundSource, Amount<Type> | undefined>
+  data: Record<FundSource, Amount<Type>> | undefined
 }
 
 export const useBalance: UseBalance = (params) => {
@@ -76,20 +76,18 @@ export const useBalance: UseBalance = (params) => {
     () => ({
       isError: walletError || bentoError,
       isLoading: walletLoading || bentoLoading,
-      data: {
-        [FundSource.WALLET]: walletBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
-        [FundSource.BENTOBOX]: bentoBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
-      },
+      data:
+        params.currency &&
+        walletBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address] &&
+        bentoBalance?.[params.currency.isNative ? AddressZero : params.currency.wrapped.address]
+          ? {
+              [FundSource.WALLET]:
+                walletBalance[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
+              [FundSource.BENTOBOX]:
+                bentoBalance[params.currency.isNative ? AddressZero : params.currency.wrapped.address],
+            }
+          : undefined,
     }),
-    [
-      walletError,
-      bentoError,
-      walletLoading,
-      bentoLoading,
-      walletBalance,
-      params.currency.isNative,
-      params.currency.wrapped.address,
-      bentoBalance,
-    ]
+    [walletError, bentoError, walletLoading, bentoLoading, params.currency, walletBalance, bentoBalance]
   )
 }

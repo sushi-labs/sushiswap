@@ -1,14 +1,13 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
+import { useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { CreateVestingFormData, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
-
-import { useWalletBalance } from '../../../lib'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
@@ -28,7 +27,7 @@ export const GradedVestingDetailsSection = () => {
       'fundSource',
     ])
 
-  const { data: balance } = useWalletBalance(address, currency, fundSource)
+  const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency })
 
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts
@@ -51,13 +50,13 @@ export const GradedVestingDetailsSection = () => {
   }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   useEffect(() => {
-    if (!totalAmount || !balance) return
-    if (totalAmount.greaterThan(balance)) {
+    if (!totalAmount || !balance || !balance[fundSource]) return
+    if (totalAmount.greaterThan(balance[fundSource])) {
       setError('insufficientBalance', { type: 'custom', message: 'Insufficient Balance' })
     } else {
       clearErrors('insufficientBalance')
     }
-  }, [balance, clearErrors, setError, totalAmount])
+  }, [balance, clearErrors, fundSource, setError, totalAmount])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
@@ -67,6 +66,7 @@ export const GradedVestingDetailsSection = () => {
           name="stepAmount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput.Base
+              className="ring-offset-slate-900"
               onChange={onChange}
               value={value}
               currency={currency}
@@ -98,7 +98,15 @@ export const GradedVestingDetailsSection = () => {
             name="stepPayouts"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <Input.Counter step={1} min={0} max={100} onChange={onChange} value={value} error={!!error?.message} />
+                <Input.Counter
+                  step={1}
+                  min={0}
+                  max={100}
+                  onChange={onChange}
+                  value={value}
+                  error={!!error?.message}
+                  className="ring-offset-slate-900"
+                />
                 <Form.Error message={error?.message} />
               </>
             )}
@@ -112,7 +120,7 @@ export const GradedVestingDetailsSection = () => {
               <>
                 <Select
                   error={!!error?.message}
-                  button={<Select.Button>{value.label}</Select.Button>}
+                  button={<Select.Button className="ring-offset-slate-900">{value.label}</Select.Button>}
                   value={value}
                   onChange={onChange}
                 >
@@ -139,7 +147,7 @@ export const GradedVestingDetailsSection = () => {
               <Typography
                 variant="sm"
                 className={
-                  balance && totalAmount?.greaterThan(balance)
+                  balance?.[fundSource] && totalAmount?.greaterThan(balance[fundSource])
                     ? 'text-red'
                     : totalAmount
                     ? 'text-slate-50'

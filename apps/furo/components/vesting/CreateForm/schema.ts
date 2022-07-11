@@ -1,11 +1,11 @@
 import { getAddress } from '@ethersproject/address'
-import { Native, Token, Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import * as yup from 'yup'
 import Reference from 'yup/lib/Reference'
 import { Maybe, Message } from 'yup/lib/types'
 
-import { StepConfig } from './types'
+import { StepConfig } from '../types'
 
 export const stepConfigurations: StepConfig[] = [
   { label: 'Weekly', time: 604800 },
@@ -28,8 +28,8 @@ yup.addMethod(
       exclusive: true,
       params: { address },
       test(value: Maybe<Type>) {
-        if (value instanceof Native) return true
-        if (value?.address.length === 0) return true
+        if (value?.isNative) return true
+        if (value?.address?.length === 0) return true
 
         try {
           return !!(value && getAddress(value.address))
@@ -65,7 +65,7 @@ export const createVestingSchema = yup.object({
   startDate: yup
     .date()
     .when('cliffEndDate', (cliffEndDate, schema) => {
-      if (cliffEndDate) {
+      if (cliffEndDate instanceof Date && !isNaN(cliffEndDate?.getTime())) {
         const dayAfter = new Date(cliffEndDate.getTime() - 1)
         return schema.max(dayAfter, 'Date must be earlier than cliff end date')
       }
@@ -81,7 +81,7 @@ export const createVestingSchema = yup.object({
       .date()
       .min(new Date(), 'Cliff end date must be in the future')
       .when('startDate', (startDate, schema) => {
-        if (startDate) {
+        if (startDate instanceof Date && !isNaN(startDate?.getTime())) {
           const dayAfter = new Date(startDate.getTime() + 1)
           return schema.min(dayAfter, 'Date must be later than start date')
         }
@@ -92,7 +92,7 @@ export const createVestingSchema = yup.object({
   }),
   cliffAmount: yup.number().when('cliff', {
     is: (value: boolean) => value,
-    then: yup.number().typeError('Target must be a number').min(0, 'Must be greater than zero'),
+    then: yup.number().typeError('Target must be a number').moreThan(0, 'Must be greater than zero'),
     otherwise: yup.number().nullable(),
   }),
   stepPayouts: yup
@@ -104,7 +104,7 @@ export const createVestingSchema = yup.object({
   stepAmount: yup
     .number()
     .typeError('Target must be a number')
-    .min(0, 'Must be greater than zero')
+    .moreThan(0, 'Must be greater than zero')
     .required('This field is required'),
   stepConfig: yup.mixed<StepConfig>().required('This field is required'),
   fundSource: yup.mixed<FundSource>().required('This field is required'),

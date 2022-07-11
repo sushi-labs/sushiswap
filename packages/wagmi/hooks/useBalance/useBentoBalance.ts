@@ -4,13 +4,13 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { useBalance, useContractInfiniteReads, useContractReads } from 'wagmi'
+import { useContractInfiniteReads, useContractReads } from 'wagmi'
 
 import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
 type UseBentoBalancesParams = {
   account: string | undefined
-  currencies: Type[]
+  currencies: (Type | undefined)[]
   chainId?: ChainId
 }
 
@@ -22,12 +22,6 @@ type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
 }
 
 export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainId }) => {
-  const {
-    data: nativeBalance,
-    isLoading: isNativeLoading,
-    error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId })
-
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
       currencies.reduce<[Token[], string[][]]>(
@@ -61,8 +55,9 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     isLoading: totalsLoading,
   } = useContractReads({
     contracts: contractsForTotalsRequest,
-    // cacheTime: 20_000,
+    cacheTime: 20_000,
     keepPreviousData: true,
+    watch: false,
   })
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
@@ -113,6 +108,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     contracts: contractsForBalancesRequest,
     cacheTime: 20_000,
     keepPreviousData: true,
+    watch: false,
   })
 
   return useMemo(() => {
@@ -134,32 +130,20 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     return {
       data: {
         ...(chainId &&
-          nativeBalance?.value && {
-            [AddressZero]: Amount.fromRawAmount(Native.onChain(chainId), nativeBalance.value.toString()),
+          _data?.[Native.onChain(chainId).wrapped.address] && {
+            [AddressZero]: _data[Native.onChain(chainId).wrapped.address],
           }),
         ..._data,
       },
-      isLoading: balancesLoading ?? totalsLoading ?? isNativeLoading,
-      isError: balancesError ?? totalsError ?? isNativeError,
+      isLoading: balancesLoading ?? totalsLoading,
+      isError: balancesError ?? totalsError,
     }
-  }, [
-    balances,
-    chainId,
-    nativeBalance?.value,
-    balancesLoading,
-    totalsLoading,
-    isNativeLoading,
-    balancesError,
-    totalsError,
-    isNativeError,
-    baseTotals,
-    tokensWithTotal,
-  ])
+  }, [balances, chainId, balancesLoading, totalsLoading, balancesError, totalsError, baseTotals, tokensWithTotal])
 }
 
 type UseBentoBalanceParams = {
   account: string | undefined
-  currency: Type
+  currency: Type | undefined
   chainId?: ChainId
 }
 

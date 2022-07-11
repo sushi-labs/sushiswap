@@ -4,7 +4,17 @@ import { CheckCircleIcon, StarIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { GasPrice } from '@sushiswap/redux-localstorage'
-import { CircleIcon, classNames, GasIcon, Input, Overlay, Popover, SlideIn, Typography } from '@sushiswap/ui'
+import {
+  CircleIcon,
+  classNames,
+  DEFAULT_INPUT_UNSTYLED,
+  GasIcon,
+  Input,
+  Overlay,
+  Popover,
+  SlideIn,
+  Typography,
+} from '@sushiswap/ui'
 import { FC, useCallback, useState } from 'react'
 import { useFeeData } from 'wagmi'
 
@@ -132,10 +142,11 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
               </Typography>
               <div className="flex items-center gap-2">
                 <Input.Numeric
+                  variant="unstyled"
                   value={maxPriorityFeePerGas ?? ''}
-                  onUserInput={(val) => updateMaxPriorityFeePerGas(+val)}
+                  onUserInput={(val) => updateMaxPriorityFeePerGas(val)}
                   placeholder=""
-                  className="flex font-bold text-sm w-full !py-0"
+                  className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                 />
                 <Typography variant="xs" weight={700} className="text-slate-400">
                   Gwei
@@ -163,10 +174,11 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
               </Typography>
               <div className="flex items-center gap-2">
                 <Input.Numeric
+                  variant="unstyled"
                   value={maxFeePerGas ?? ''}
-                  onUserInput={(val) => updateMaxFeePerGas(+val)}
+                  onUserInput={(val) => updateMaxFeePerGas(val)}
                   placeholder=""
-                  className="flex font-bold text-sm w-full !py-0"
+                  className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                 />
                 <Typography variant="xs" weight={700} className="text-slate-400">
                   Gwei

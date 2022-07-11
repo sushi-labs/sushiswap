@@ -1,4 +1,4 @@
-import { Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 
@@ -14,11 +14,11 @@ export type CreateVestingFormData = {
   currency: Type | undefined
   startDate: string | ''
   recipient: string | ''
-  cliffEndDate: string | ''
+  cliffEndDate: string | null
   cliffAmount: number | ''
   stepPayouts: number | undefined
   stepAmount: number | ''
-  fundSource: FundSource | undefined
+  fundSource: FundSource
   insufficientBalance: boolean
 }
 
@@ -37,10 +37,30 @@ export type CreateVestingFormDataValidated = {
 }
 
 export type CreateVestingFormDataTransformed = Omit<
+  CreateVestingFormData,
+  'startDate' | 'cliffEndDate' | 'stepEndDate'
+> & {
+  startDate: Date
+  cliffEndDate: Date | undefined
+  cliffDuration: JSBI
+  stepPercentage: JSBI
+  totalAmount: Amount<Type> | undefined
+}
+export type CreateVestingFormDataTransformedAndValidated = Omit<
   CreateVestingFormDataValidated,
   'startDate' | 'cliffEndDate' | 'stepEndDate'
 > & {
   startDate: Date
   cliffEndDate: Date | undefined
   cliffDuration: JSBI
+  stepPercentage: JSBI
+  totalAmount: Amount<Type> | undefined
+}
+
+export type CreateMultipleVestingFormData = {
+  vestings: CreateVestingFormData[]
+}
+
+export type CreateMultipleVestingFormDataTransformed = {
+  vestings: CreateVestingFormDataTransformed[]
 }

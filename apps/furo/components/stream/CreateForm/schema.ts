@@ -1,4 +1,4 @@
-import { Native, Token, Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { getAddress } from 'ethers/lib/utils'
 import * as yup from 'yup'
@@ -18,8 +18,8 @@ yup.addMethod(
       exclusive: true,
       params: { address },
       test(value: Maybe<Type>) {
-        if (value instanceof Native) return true
-        if (value?.address.length === 0) return true
+        if (value?.isNative) return true
+        if (value?.address?.length === 0) return true
 
         try {
           return !!(value && getAddress(value.address))
@@ -60,7 +60,7 @@ export const createStreamSchema = yup.object({
   endDate: yup
     .date()
     .when('startDate', (startDate, schema) => {
-      if (startDate) {
+      if (startDate instanceof Date && !isNaN(startDate?.getTime())) {
         const dayAfter = new Date(startDate.getTime() + 1)
         return schema.min(dayAfter, 'Date must be later than start date')
       }
@@ -71,7 +71,7 @@ export const createStreamSchema = yup.object({
   amount: yup
     .number()
     .typeError('Target must be a number')
-    .min(0, 'Must be greater than zero')
+    .moreThan(0, 'Must be greater than zero')
     .required('This field is required'),
   fundSource: yup.mixed<FundSource>().required('This field is required'),
 })

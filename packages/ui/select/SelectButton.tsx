@@ -3,7 +3,7 @@ import { SelectorIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
 import React, { FC, forwardRef, ReactNode } from 'react'
 
-import { ERROR_INPUT_CLASSNAME } from '../input'
+import { DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME } from '../input'
 import { ExtractProps } from '../types'
 import { Typography } from '../typography'
 
@@ -14,14 +14,17 @@ export type SelectButtonProps = ExtractProps<typeof Listbox.Button> & {
 }
 
 const SelectButton: FC<SelectButtonProps> = forwardRef(
-  ({ className, children, standalone, error = false, ...props }, ref) => {
+  ({ className, children, standalone, error = false, open, ...props }, ref) => {
     return React.createElement(
       standalone ? 'div' : Listbox.Button,
       {
+        open,
         ...props,
         ref,
         className: classNames(
-          'relative w-full cursor-default rounded-xl bg-slate-800 py-3 pl-4 pr-10 text-left shadow-md ring-1 ring-slate-900/10',
+          open ? 'ring-2 ring-offset-2 ring-blue !bg-slate-600' : '',
+          'relative w-full pr-10',
+          DEFAULT_INPUT_CLASSNAME,
           error ? ERROR_INPUT_CLASSNAME : '',
           className
         ),
