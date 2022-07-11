@@ -60,14 +60,14 @@ export const GasSettingOption: FC<{ recommended?: boolean; onClick?(): void; val
               {checked ? (
                 <CheckCircleIcon className="text-blue" width={24} height={24} />
               ) : (
-                <div className="w-6 h-6 flex justify-center items-center">
+                <div className="flex items-center justify-center w-6 h-6">
                   <CircleIcon className="text-blue" width={22} height={22} />
                 </div>
               )}
             </Transition>
           </div>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={700} className="flex gap-1 items-center">
+            <Typography variant="sm" weight={700} className="flex items-center gap-1">
               {value} {recommended && <StarIcon className="text-blue" width={12} height={12} />}
             </Typography>
             <Typography variant="xs" className="text-slate-400">
@@ -115,7 +115,7 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                 onClick={onClick}
               />
             ) : (
-              <div className="cursor-pointer w-6 h-6 flex justify-center items-center" onClick={onClick}>
+              <div className="flex items-center justify-center w-6 h-6 cursor-pointer" onClick={onClick}>
                 <CircleIcon className="text-blue hover:scale-[1.10]" width={22} height={22} />
               </div>
             )}
@@ -126,8 +126,8 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
             Custom
           </Typography>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-slate-600 rounded-xl flex flex-col gap-2 px-3 py-2">
-              <Typography variant="xs" weight={700} className="text-slate-300 flex items-center gap-1">
+            <div className="flex flex-col gap-2 px-3 py-2 bg-slate-600 rounded-xl">
+              <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
                 Max Priority Fee
                 <Popover
                   hover
@@ -140,7 +140,7 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                   }
                 />
               </Typography>
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <Input.Numeric
                   variant="unstyled"
                   value={maxPriorityFeePerGas ?? ''}
@@ -153,8 +153,8 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                 </Typography>
               </div>
             </div>
-            <div className="bg-slate-600 rounded-xl flex flex-col gap-2 px-3 py-2">
-              <Typography variant="xs" weight={700} className="text-slate-300 flex items-center gap-1">
+            <div className="flex flex-col gap-2 px-3 py-2 bg-slate-600 rounded-xl">
+              <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
                 Max Fee
                 <Popover
                   hover
@@ -172,7 +172,7 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                   }
                 />
               </Typography>
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <Input.Numeric
                   variant="unstyled"
                   value={maxFeePerGas ?? ''}
@@ -213,12 +213,12 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
+        className="relative flex items-center justify-between w-full gap-3 group rounded-xl"
       >
-        <div className="border-b border-transparent w-5 h-5 flex items-center justify-center">
+        <div className="flex items-center justify-center w-5 h-5 border-b border-transparent">
           <GasIcon width={18} height={18} className="text-slate-500" />
         </div>
-        <div className="flex gap-1 w-full justify-between items-center border-b border-slate-200/5 py-4">
+        <div className="flex items-center justify-between w-full gap-1 py-4 border-b border-slate-200/5">
           <Typography variant="sm" weight={700}>
             Gas Price
           </Typography>
@@ -238,7 +238,7 @@ export const GasSettingsOverlay: FC<GasSettingsOverlay> = ({ chainId }) => {
           <RadioGroup
             value={gasType === 'preset' ? gasPrice : undefined}
             onChange={updateGasPrice}
-            className="gap-3 grid grid-cols-2"
+            className="grid grid-cols-2 gap-3"
           >
             <GasSettingOption
               onClick={handleClose}

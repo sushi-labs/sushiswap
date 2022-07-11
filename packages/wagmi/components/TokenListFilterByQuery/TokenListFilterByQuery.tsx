@@ -74,7 +74,7 @@ export const TokenListFilterByQuery: FC<Props> = ({
     return [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap, fundSource))
 
     // TODO adding balancesMap to this array causes infinite loop
-  }, [filteredTokens, pricesMap, fundSource])
+  }, [filteredTokens, pricesMap, fundSource, balancesMap])
 
   useEffect(() => {
     console.log({ sortedTokens })
