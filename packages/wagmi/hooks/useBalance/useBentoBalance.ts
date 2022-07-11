@@ -62,7 +62,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
     () =>
-      totals && !totalsError && !totalsLoading
+      totals && !totalsError && !totalsLoading && validatedTokens.length === totals.length
         ? totals.reduce<
             [
               Token[],

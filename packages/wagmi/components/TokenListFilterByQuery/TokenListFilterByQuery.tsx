@@ -76,10 +76,6 @@ export const TokenListFilterByQuery: FC<Props> = ({
     // TODO adding balancesMap to this array causes infinite loop
   }, [filteredTokens, pricesMap, fundSource, balancesMap])
 
-  useEffect(() => {
-    console.log({ sortedTokens })
-  }, [sortedTokens])
-
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
 
   const filteredSortedTokensWithNative = useMemo(() => {
