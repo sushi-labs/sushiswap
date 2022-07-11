@@ -5,11 +5,20 @@ import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/curr
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import {
+  isStargateBridgeToken,
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_CHAIN_ID,
+  STARGATE_CONFIRMATION_SECONDS,
+  STARGATE_POOL_ADDRESS,
+  STARGATE_POOL_ID,
+} from '@sushiswap/stargate'
 import { Badge, Button, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Approve, BENTOBOX_ADDRESS, useBalance, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
 import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
+import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
+import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import {
   Caption,
   ConfirmationComponentController,
@@ -27,7 +36,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useContractRead, useContractReads, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -312,6 +321,36 @@ const Widget: FC<Swap> = ({
 
   // dstTrade
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
+
+  const { data } = useContractReads({
+    contracts: [
+      {
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        functionName: 'getChainPath',
+        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
+        contractInterface: STARGATE_POOL_ABI,
+        chainId: srcChainId,
+      },
+      {
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        functionName: 'feeLibrary',
+        contractInterface: STARGATE_POOL_ABI,
+        chainId: srcChainId,
+      },
+    ],
+    enabled: crossChain,
+  })
+
+  const equilibriumFee = useContractRead({
+    addressOrName: String(data?.[1]),
+    functionName: 'getEquilibriumFee',
+    args: [data?.[0].idealBalance.toString(), data?.[0].balance.toString(), srcMinimumAmountOut?.quotient?.toString()],
+    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
+    chainId: srcChainId,
+    enabled: Boolean(crossChain && data?.[1]),
+  })
+
+  console.log(equilibriumFee)
 
   const priceImpact = useMemo(() => {
     if (!crossChain && srcTrade) {
@@ -717,7 +756,7 @@ const Widget: FC<Swap> = ({
                           </Typography>
                         </div>
                       </div>
-                      <div className="flex flex-col flex-grow gap-1 px-3 pb-0 -ml-3 -mr-3 py-2 justify-end">
+                      <div className="flex flex-col justify-end flex-grow gap-1 px-3 py-2 pb-0 -ml-3 -mr-3">
                         <div className="flex items-center justify-between gap-2">
                           <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme}>
                             {({ toggleInvert, content }) => (
