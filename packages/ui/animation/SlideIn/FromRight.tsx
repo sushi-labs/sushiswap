@@ -33,7 +33,7 @@ export const FromRight: FC<FromRight> = ({
 
   return ReactDOM.createPortal(
     <Transition.Root show={show} unmount={unmount} as={Fragment}>
-      <div className={classNames(className, 'absolute inset-0 translate-x-[100%] z-50')}>
+      <div className={classNames(className, 'absolute right-0 top-0 bottom-0 w-full translate-x-[100%] z-50')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
