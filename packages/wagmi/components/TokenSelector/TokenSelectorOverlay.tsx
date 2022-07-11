@@ -101,7 +101,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
               </Typography>
               <div className="relative h-full pt-5">
                 <div className="w-full border-t border-slate-200/5" />
-                <div className="absolute inset-0 bg-slate-800 rounded-t-none rounded-xl h-full">
+                <div className="absolute inset-0 h-full rounded-t-none bg-slate-800 rounded-xl">
                   {queryToken && (
                     <TokenSelectorImportRow
                       className="!px-4"
@@ -127,8 +127,8 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                     )}
                   />
                   {currencies.length === 0 && !queryToken && chainId && (
-                    <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
-                      <div className="flex flex-col gap-1 justify-center items-center">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="flex flex-col items-center justify-center gap-1">
                         <Typography variant="xs" className="flex italic text-slate-500">
                           No tokens found on
                         </Typography>

@@ -39,10 +39,6 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       chainId,
       currencies: _tokenMapValues,
     })
-    //
-    // useEffect(() => {
-    //   console.log('balances')
-    // }, [balances])
 
     const { data: pricesMap } = usePrices({ chainId })
 

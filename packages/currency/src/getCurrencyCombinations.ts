@@ -51,6 +51,18 @@ export const CUSTOM_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
 } = {}
 
+export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
+  [ChainId.AVALANCHE]: [
+    WNATIVE[ChainId.AVALANCHE],
+    WETH9[ChainId.FANTOM],
+    USDC[ChainId.AVALANCHE],
+    USDT[ChainId.AVALANCHE],
+    DAI[ChainId.AVALANCHE],
+    MIM[ChainId.AVALANCHE],
+    FRAX[ChainId.AVALANCHE],
+  ],
+}
+
 export function getCurrencyCombinations(chainId: number, currencyA: Type, currencyB: Type) {
   const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
 

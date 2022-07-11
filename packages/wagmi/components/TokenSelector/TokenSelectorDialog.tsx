@@ -100,13 +100,13 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
                 )}
               </div>
-              <div className="relative -ml-6 -mr-6 h-full">
-                <Typography className="px-6 pb-1 text-slate-400 text-left" variant="xs">
+              <div className="relative h-full -ml-6 -mr-6">
+                <Typography className="px-6 pb-1 text-left text-slate-400" variant="xs">
                   {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
                 </Typography>
                 <div className="w-full border-t border-slate-200/5" />
                 <div className="relative h-full pt-5">
-                  <div className="absolute inset-0 rounded-t-none rounded-xl h-full">
+                  <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
                     {queryToken && (
                       <TokenSelectorImportRow
                         hideIcons
@@ -132,8 +132,8 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                       )}
                     />
                     {currencies.length === 0 && !queryToken && chainId && (
-                      <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
-                        <div className="flex flex-col gap-1 justify-center items-center">
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="flex flex-col items-center justify-center gap-1">
                           <Typography variant="xs" className="flex italic text-slate-500">
                             No tokens found on
                           </Typography>
