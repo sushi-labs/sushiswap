@@ -1,9 +1,10 @@
+import { Transition } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import React, { FC, ReactNode, useMemo } from 'react'
+import React, { FC, Fragment, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { createScheduleRepresentation } from '../createScheduleRepresentation'
@@ -209,6 +210,25 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             <Item title="Amount of Periods" value={stepPayouts} />
           </Table>
         </div>
+        <Transition
+          as={Fragment}
+          show={startDate.getTime() <= new Date().getTime()}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="!my-0 flex flex-col gap-1 absolute inset-0 bg-slate-900 flex items-center justify-center">
+            <Typography variant="lg" weight={700} className="text-slate-200">
+              Start date has expired
+            </Typography>
+            <Typography variant="xs" weight={700} className="text-slate-400">
+              Please change the start date of your stream
+            </Typography>
+          </div>
+        </Transition>
         <div className="border-t border-slate-800">
           <CreateFormButtons formData={formData} onDismiss={onDismiss} />
         </div>

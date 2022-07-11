@@ -161,7 +161,12 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
             <Button
               variant="filled"
               color="gradient"
-              disabled={isWritePending || !approved || !totalAmountAsEntity?.greaterThan(ZERO)}
+              disabled={
+                isWritePending ||
+                !approved ||
+                !totalAmountAsEntity?.greaterThan(ZERO) ||
+                startDate.getTime() <= new Date().getTime()
+              }
               onClick={createVesting}
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
