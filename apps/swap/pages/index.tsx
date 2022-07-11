@@ -594,7 +594,7 @@ const Widget: FC<Swap> = ({
             Insufficient liquidity for this trade.
           </Button>
         ) : isMounted && chain && chain.id == srcChainId ? (
-          <>
+          <div className="space-y-2">
             <Approve
               components={
                 <Approve.Components className="flex gap-4">
@@ -785,7 +785,7 @@ const Widget: FC<Swap> = ({
                 )
               }}
             />
-          </>
+          </div>
         ) : (
           <Button fullWidth color="blue">
             <Loader size="16px" />
