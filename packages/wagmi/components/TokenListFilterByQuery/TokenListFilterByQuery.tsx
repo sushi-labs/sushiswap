@@ -82,18 +82,10 @@ export const TokenListFilterByQuery: FC<Props> = ({
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
 
-  useEffect(() => {
-    console.log({ filteredSortedTokens })
-  }, [filteredSortedTokens])
-
   const filteredSortedTokensWithNative = useMemo(() => {
     if (_includeNative) return [Native.onChain(chainId), ...filteredSortedTokens]
     return filteredSortedTokens
   }, [_includeNative, chainId, filteredSortedTokens])
-
-  useEffect(() => {
-    console.log({ filteredSortedTokensWithNative })
-  }, [filteredSortedTokensWithNative])
 
   return children({
     currencies: filteredSortedTokensWithNative,
