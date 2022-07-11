@@ -4,7 +4,7 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
+import { _9994, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
   isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
@@ -305,7 +305,7 @@ const Widget: FC<Swap> = ({
       : srcAmount
 
   const srcAmountOutMinusStargateFee = useMemo(() => {
-    return crossChain ? srcMinimumAmountOut?.multiply(_10000)?.divide(_9995) : srcMinimumAmountOut
+    return crossChain ? srcMinimumAmountOut?.multiply(_10000)?.divide(_9994) : srcMinimumAmountOut
   }, [crossChain, srcMinimumAmountOut])
 
   const stargateFee = srcAmountOutMinusStargateFee
@@ -322,7 +322,7 @@ const Widget: FC<Swap> = ({
   // dstTrade
   const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
 
-  const { data } = useContractReads({
+  const { data: stargatePoolResults } = useContractReads({
     contracts: [
       {
         addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
@@ -341,37 +341,73 @@ const Widget: FC<Swap> = ({
     enabled: crossChain,
   })
 
-  const equilibriumFee = useContractRead({
-    addressOrName: String(data?.[1]),
+  const { data: equilibriumFee } = useContractRead({
+    addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getEquilibriumFee',
-    args: [data?.[0].idealBalance.toString(), data?.[0].balance.toString(), srcMinimumAmountOut?.quotient?.toString()],
+    args: [
+      stargatePoolResults?.[0].idealBalance.toString(),
+      stargatePoolResults?.[0].balance.toString(),
+      srcMinimumAmountOut?.quotient?.toString(),
+    ],
     contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
     chainId: srcChainId,
-    enabled: Boolean(crossChain && data?.[1]),
+    enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
   })
 
-  console.log(equilibriumFee)
+  // console.log([
+  //   {
+  //     contracts: [
+  //       {
+  //         addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+  //         functionName: 'getChainPath',
+  //         args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
+  //         chainId: srcChainId,
+  //       },
+  //       {
+  //         addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+  //         functionName: 'feeLibrary',
+  //         chainId: srcChainId,
+  //       },
+  //     ],
+  //     enabled: crossChain,
+  //   },
+  //   {
+  //     addressOrName: String(stargatePoolResults?.[1]),
+  //     functionName: 'getEquilibriumFee',
+  //     args: [
+  //       stargatePoolResults?.[0].idealBalance.toString(),
+  //       stargatePoolResults?.[0].balance.toString(),
+  //       srcMinimumAmountOut?.quotient?.toString(),
+  //     ],
+  //   },
+  //   equilibriumFee?.[0]?.toString() / 1e6,
+  // ])
 
   const priceImpact = useMemo(() => {
     if (!crossChain && srcTrade) {
       return srcTrade.priceImpact
-    } else if (
-      crossChain &&
-      srcTrade &&
-      dstTrade &&
-      !isStargateBridgeToken(srcToken) &&
-      !isStargateBridgeToken(dstToken)
-    ) {
-      return srcTrade.priceImpact.add(dstTrade.priceImpact)
+    }
+
+    if (!stargateFee || !equilibriumFee || !srcMinimumAmountOut) {
+      return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+    }
+
+    const bridgeImpact = new Percent(
+      JSBI.add(stargateFee.quotient, JSBI.BigInt(equilibriumFee[0].toString())),
+      srcMinimumAmountOut.quotient
+    )
+
+    if (crossChain && srcTrade && dstTrade && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)) {
+      return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
     } else if (crossChain && !srcTrade && dstTrade && !isStargateBridgeToken(dstToken)) {
-      return dstTrade.priceImpact
+      return dstTrade.priceImpact.add(bridgeImpact)
     } else if (crossChain && srcTrade && !dstTrade && !isStargateBridgeToken(srcToken)) {
-      return srcTrade.priceImpact
+      return srcTrade.priceImpact.add(bridgeImpact)
     }
 
     // Return zero percent
     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-  }, [crossChain, dstToken, dstTrade, srcToken, srcTrade])
+  }, [crossChain, dstToken, dstTrade, equilibriumFee, srcMinimumAmountOut, srcToken, srcTrade, stargateFee])
 
   const dstMinimumAmountOut =
     crossChain && !isStargateBridgeToken(dstToken)
