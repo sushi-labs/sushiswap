@@ -599,13 +599,13 @@ const Widget: FC<Swap> = ({
               components={
                 <Approve.Components className="flex gap-4">
                   <Approve.Bentobox
-                    className="whitespace-nowrap"
+                    className="whitespace-nowrap mb-2"
                     fullWidth
                     address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
                     onSignature={setSignature}
                   />
                   <Approve.Token
-                    className="whitespace-nowrap"
+                    className="whitespace-nowrap mb-2"
                     fullWidth
                     amount={srcAmount}
                     address={BENTOBOX_ADDRESS[srcChainId]}
