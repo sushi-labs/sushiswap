@@ -494,13 +494,17 @@ const Widget: FC<Swap> = ({
   const dstTokenPrice = dstPrices?.[dstToken.wrapped.address]
 
   const routeNotFound = useMemo(() => {
-    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
-      return false
+    if (crossChain && (isStargateBridgeToken(srcToken) || isStargateBridgeToken(dstToken))) {
+      return (
+        (isStargateBridgeToken(srcToken) && (!dstTrade || !dstTrade.route.legs.length)) ||
+        (isStargateBridgeToken(dstToken) && (!srcTrade || !srcTrade.route.legs.length))
+      )
     } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
       return !srcTrade
     } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
       return !srcTrade || !dstTrade
     }
+    return false
   }, [crossChain, srcToken, dstToken, srcTrade, dstTrade])
 
   const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
@@ -594,13 +598,13 @@ const Widget: FC<Swap> = ({
                 components={
                   <Approve.Components className="flex gap-4">
                     <Approve.Bentobox
-                      className="whitespace-nowrap mb-2"
+                      className="mb-2 whitespace-nowrap"
                       fullWidth
                       address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
                       onSignature={setSignature}
                     />
                     <Approve.Token
-                      className="whitespace-nowrap mb-2"
+                      className="mb-2 whitespace-nowrap"
                       fullWidth
                       amount={srcAmount}
                       address={BENTOBOX_ADDRESS[srcChainId]}

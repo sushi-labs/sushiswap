@@ -1,9 +1,10 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Type as Currency, Type } from '@sushiswap/currency'
+import { Amount, Type as Currency } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { useMultipleContractSingleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
-import { useContractReads } from 'wagmi'
+import { useBlockNumber } from 'wagmi'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairArtifact.abi)
 
@@ -18,57 +19,52 @@ export function usePairs(
   chainId: number,
   currencies: [Currency | undefined, Currency | undefined][]
 ): [PairState, Pair | null][] {
+  const { data: latestBlockNumber } = useBlockNumber({ chainId })
   const tokens = useMemo(
-    () =>
-      currencies
-        .filter((currencies): currencies is [Type, Type] => {
-          const [currencyA, currencyB] = currencies
-          return Boolean(
-            currencyA &&
-              currencyB &&
-              currencyA.chainId === currencyB.chainId &&
-              !currencyA.wrapped.equals(currencyB.wrapped) &&
-              FACTORY_ADDRESS[currencyA.chainId]
-          )
-        })
-        .map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]),
+    () => currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]),
     [currencies]
   )
 
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        console.log('computePairAddress', { factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
-        return computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
+        return tokenA &&
+          tokenB &&
+          tokenA.chainId === tokenB.chainId &&
+          !tokenA.equals(tokenB) &&
+          FACTORY_ADDRESS[tokenA.chainId]
+          ? computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
+          : undefined
       }),
     [tokens]
   )
 
-  const { data } = useContractReads({
-    contracts: pairAddresses.map((addressOrName) => ({
-      chainId,
-      addressOrName,
-      contractInterface: PAIR_INTERFACE,
-      functionName: 'getReserves',
-    })),
-    enabled: pairAddresses.length > 0,
-  })
+  const results = useMultipleContractSingleData(
+    chainId,
+    latestBlockNumber,
+    pairAddresses,
+    PAIR_INTERFACE,
+    'getReserves'
+  )
+
+  // console.log('USE PAIRS', chainId, latestBlockNumber, pairAddresses, results)
 
   return useMemo(() => {
-    if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
-    return data.map((result, i) => {
+    return results.map((result, i) => {
+      const { result: reserves, loading } = result
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]
+      if (loading) return [PairState.LOADING, null]
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-      if (!result) return [PairState.NOT_EXISTS, null]
-      const [reserve0, reserve1] = result
+      if (!reserves) return [PairState.NOT_EXISTS, null]
+      const { reserve0, reserve1 } = reserves
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
         new Pair(Amount.fromRawAmount(token0, reserve0.toString()), Amount.fromRawAmount(token1, reserve1.toString())),
       ]
     })
-  }, [data, pairAddresses, tokens])
+  }, [results, tokens])
 }
 
 export function usePair(chainId: number, tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
