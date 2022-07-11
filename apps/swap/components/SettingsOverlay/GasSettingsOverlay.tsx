@@ -131,7 +131,6 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                 Max Priority Fee
                 <Popover
                   hover
-                  arrow={false}
                   button={<InformationCircleIcon width={14} height={14} />}
                   panel={
                     <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
@@ -158,7 +157,6 @@ export const AdvancedGasSettings: FC<{ onClick(): void }> = ({ onClick }) => {
                 Max Fee
                 <Popover
                   hover
-                  arrow={false}
                   button={<InformationCircleIcon width={14} height={14} />}
                   panel={
                     <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">

@@ -1,5 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChevronRightIcon } from '@heroicons/react/outline'
+import { ArrowRightIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
@@ -677,11 +677,16 @@ const Widget: FC<Swap> = ({
                           </Typography>
                         </div>
                         <div className="flex items-center justify-center col-span-2">
-                          <ChevronRightIcon width={18} height={18} className="text-slate-500" />
+                          <ArrowRightIcon width={18} height={18} className="text-slate-500" />
                         </div>
                         <div className="flex flex-col w-full col-span-5 gap-1">
-                          <span className="text-xs text-slate-400">{dstMinimumAmountOut?.currency.symbol}</span>
-                          <div className="flex items-center gap-3">
+                          <span className="text-xs text-slate-400 text-right">
+                            {dstMinimumAmountOut?.currency.symbol}
+                          </span>
+                          <div className="flex items-center gap-3 justify-end">
+                            <Typography variant="lg" weight={700} className="text-right truncate">
+                              {dstMinimumAmountOut?.toSignificant(6)}
+                            </Typography>
                             {dstMinimumAmountOut && (
                               <Badge
                                 badgeContent={
@@ -699,13 +704,10 @@ const Widget: FC<Swap> = ({
                                 </div>
                               </Badge>
                             )}
-                            <Typography variant="lg" weight={700} className="text-right truncate">
-                              {dstMinimumAmountOut?.toSignificant(6)}
-                            </Typography>
                           </div>
                           <Typography variant="xs" weight={700} className="text-right text-slate-400">
                             {dstMinimumAmountOut && dstTokenPrice
-                              ? dstMinimumAmountOut.multiply(dstTokenPrice.asFraction).toFixed(2)
+                              ? `$${dstMinimumAmountOut.multiply(dstTokenPrice.asFraction).toFixed(2)}`
                               : '-'}
                             {usdPctChange && (
                               <span className={classNames(usdPctChange > 0 ? 'text-green' : 'text-red', 'text-[10px]')}>
@@ -724,7 +726,6 @@ const Widget: FC<Swap> = ({
                                 as="button"
                                 onClick={() => toggleInvert()}
                                 variant="xs"
-                                weight={700}
                                 className="flex items-center gap-1 text-slate-200"
                               >
                                 {content}
@@ -733,7 +734,7 @@ const Widget: FC<Swap> = ({
                           </Rate>
                           <div className="flex items-center gap-1">
                             <GasIcon width={10} />
-                            <Typography variant="xs" weight={700}>
+                            <Typography variant="xs" weight={700} className="text-slate-200">
                               {feeData.data?.formatted.gasPrice} Gwei
                             </Typography>
                           </div>
@@ -768,7 +769,14 @@ const Widget: FC<Swap> = ({
                           </Typography>
                         </div>
                         {crossChain ? (
-                          <CrossChainRoute srcTrade={srcTrade} dstTrade={dstTrade} />
+                          <CrossChainRoute
+                            srcTrade={srcTrade}
+                            dstTrade={dstTrade}
+                            inputAmount={srcAmount}
+                            outputAmount={dstMinimumAmountOut}
+                            dstBridgeToken={dstBridgeToken}
+                            srcBridgeToken={srcBridgeToken}
+                          />
                         ) : (
                           <SameChainRoute trade={srcTrade} />
                         )}

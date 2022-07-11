@@ -24,7 +24,6 @@ export function Balance({ address, supportedNetworks }: Props): JSX.Element {
     return (
       <Popover
         hover
-        arrow={false}
         button={<ExclamationCircleIcon width={20} height={20} className="text-red" />}
         panel={
           <Typography variant="xs" className="text-center bg-slate-700 rounded-lg px-3 py-2">
@@ -40,7 +39,6 @@ export function Balance({ address, supportedNetworks }: Props): JSX.Element {
     return (
       <Popover
         hover
-        arrow={false}
         button={<ExclamationCircleIcon width={20} height={20} className="text-red" />}
         panel={
           <Typography variant="xs" className="text-center bg-slate-700 rounded-lg px-3 py-2">
