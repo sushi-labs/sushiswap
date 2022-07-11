@@ -50,7 +50,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
+      <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
         <Overlay.Content className="bg-slate-800 !pt-[60px]">
           <Overlay.Header onClose={onClose} title="Select Network" />
           <div

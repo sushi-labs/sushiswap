@@ -46,7 +46,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           </Button>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
+      <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
         <Overlay.Content className="bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Import Token" />
           <div className="space-y-3">
