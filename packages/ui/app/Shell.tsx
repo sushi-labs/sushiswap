@@ -3,5 +3,5 @@ export interface ShellProps {
 }
 
 export function Shell({ children }: ShellProps): JSX.Element {
-  return <>{children}</>
+  return <div className="pt-[54px]">{children}</div>
 }

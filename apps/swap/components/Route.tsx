@@ -19,7 +19,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
       <Typography variant="xs" className="text-slate-400">
         Optimized Route
       </Typography>
-      <div className="relative flex items-center">
+      <div className="relative flex items-center mt-1">
         <div className="flex flex-grow items-center gap-3 z-[1]">
           <div className="flex items-center w-6 h-6">
             <Popover
@@ -49,16 +49,11 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
             />
           </div>
-          <div className="flex items-center rounded-full bg-slate-700">
+          <div className="flex items-center rounded-full bg-slate-800">
             <Popover
               hover
               button={
-                <Chip
-                  color={srcTrade.isV1() ? 'blue' : 'green'}
-                  label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
-                  size="sm"
-                  className="!px-2"
-                />
+                <Chip color="gray" label={srcTrade.isV1() ? 'Legacy' : 'Trident'} size="sm" className="!px-2 h-full" />
               }
               panel={
                 <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
@@ -67,14 +62,19 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
             />
           </div>
-          <div className="bg-slate-700 px-2 py-2.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600 items-center">
+          <div className="bg-slate-800 p-1.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600 items-center">
             <Popover
               hover
               button={
                 <Badge
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
-                      <NetworkIcon chainId={srcTrade.outputAmount.currency.chainId} width={14} height={14} />
+                      <NetworkIcon
+                        chainId={srcTrade.outputAmount.currency.chainId}
+                        width={14}
+                        height={14}
+                        className="saturate-0"
+                      />
                     </div>
                   }
                 >
@@ -94,7 +94,11 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
             <DotsHorizontalIcon width={12} className="text-slate-600" />
             <Popover
               hover
-              button={<Icon currency={STARGATE_TOKEN} width={18} height={18} />}
+              button={
+                <div className="flex items-center justify-center">
+                  <Icon currency={STARGATE_TOKEN} width={18} height={18} />
+                </div>
+              }
               panel={
                 <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
                   Powered by{' '}
@@ -111,7 +115,12 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 <Badge
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
-                      <NetworkIcon chainId={dstTrade.inputAmount.currency.chainId} width={14} height={14} />
+                      <NetworkIcon
+                        chainId={dstTrade.inputAmount.currency.chainId}
+                        width={14}
+                        height={14}
+                        className="saturate-0"
+                      />
                     </div>
                   }
                 >
@@ -128,16 +137,11 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
               }
             />
           </div>
-          <div className="flex items-center rounded-full bg-slate-700">
+          <div className="flex items-center rounded-full bg-slate-800">
             <Popover
               hover
               button={
-                <Chip
-                  color={dstTrade.isV1() ? 'blue' : 'green'}
-                  label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
-                  size="sm"
-                  className="!px-2"
-                />
+                <Chip color="gray" label={dstTrade.isV1() ? 'Legacy' : 'Trident'} size="sm" className="!px-2 h-full" />
               }
               panel={
                 <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">

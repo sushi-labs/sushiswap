@@ -18,12 +18,14 @@ html {
   height: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
+  background-color: var(--background-color) !important;
 }
 
 body {
   position: relative;
   min-height: 100%;
   margin: 0;
+  background-color: transparent !important;
 }
 
 html,
@@ -32,7 +34,6 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color) !important;
   color: var(--color);
   overscroll-behavior-x: none;
 }

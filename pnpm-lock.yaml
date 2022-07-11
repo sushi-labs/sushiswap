@@ -1417,6 +1417,7 @@ importers:
       '@headlessui/react': ^1.6.1
       '@heroicons/react': ^1.0.6
       '@popperjs/core': ^2.11.5
+      '@react-hook/window-scroll': ^1.3.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -1451,6 +1452,7 @@ importers:
       '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@popperjs/core': 2.11.5
+      '@react-hook/window-scroll': 1.3.0_react@18.1.0
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/hooks': link:../hooks
@@ -5560,6 +5562,41 @@ packages:
   /@rari-capital/solmate/6.2.0:
     resolution: {integrity: sha512-g94F+Ra9ixyJyNgvnOIufNjUz488uEG0nxIEEtJ7+g+tA1XGUupRB2kB5b+VO7WYO26RNOVD2fW6xE4e14iWpg==}
     dev: true
+
+  /@react-hook/event/1.2.6_react@18.1.0:
+    resolution: {integrity: sha512-JUL5IluaOdn5w5Afpe/puPa1rj8X6udMlQ9dt4hvMuKmTrBS1Ya6sb4sVgvfe2eU4yDuOfAhik8xhbcCekbg9Q==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 18.1.0
+    dev: false
+
+  /@react-hook/latest/1.0.3_react@18.1.0:
+    resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 18.1.0
+    dev: false
+
+  /@react-hook/throttle/2.2.0_react@18.1.0:
+    resolution: {integrity: sha512-LJ5eg+yMV8lXtqK3lR+OtOZ2WH/EfWvuiEEu0M3bhR7dZRfTyEJKxH1oK9uyBxiXPtWXiQggWbZirMCXam51tg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/latest': 1.0.3_react@18.1.0
+      react: 18.1.0
+    dev: false
+
+  /@react-hook/window-scroll/1.3.0_react@18.1.0:
+    resolution: {integrity: sha512-LdYnCL22pFI+LTs85Fi2OQHSKWkzIuHFgv8lA+wwuaPxLOEhWR5bzJ21iygUH9X4meeLVRZKEbfpYi3OWWD4GQ==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@react-hook/event': 1.2.6_react@18.1.0
+      '@react-hook/throttle': 2.2.0_react@18.1.0
+      react: 18.1.0
+    dev: false
 
   /@react-spring/animated/9.4.5_react@18.1.0:
     resolution: {integrity: sha512-KWqrtvJSMx6Fj9nMJkhTwM9r6LIriExDRV6YHZV9HKQsaolUFppgkOXpC+rsL1JEtEvKv6EkLLmSqHTnuYjiIA==}

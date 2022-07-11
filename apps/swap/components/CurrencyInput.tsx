@@ -1,7 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Token, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
@@ -84,8 +83,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
   const { data: tokenPrices } = usePrices({ chainId: currency.chainId })
-  const price = tokenPrices?.[currency.wrapped.address.toLowerCase()]
+  const price = tokenPrices?.[currency.wrapped.address]
   const isMounted = useIsMounted()
+  const parsedValue = tryParseAmount(value, currency)
+
   return (
     <>
       <div className="flex flex-col">
@@ -138,7 +139,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex flex-row items-center gap-1 text-xl font-bold'
+                'flex flex-row items-center gap-1 text-xl font-bold bg-white bg-opacity-[0.12] hover:bg-opacity-[0.18] rounded-full px-2 py-0.5'
               )}
             >
               <div className="w-5 h-5">
@@ -157,7 +158,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           variant="xs"
           className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 select-none ')}
         >
-          {value && price ? formatUSD(String(Number(value) * Number(price))) : '-'}
+          {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
         </Typography>
 
         <button
@@ -170,8 +171,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}
           disabled={disableMaxButton}
         >
-          Balance: {isMounted && balance ? balance.toSignificant(6) : '-'}{' '}
-          {!disableMaxButton && <span className="text-blue">MAX</span>}
+          Balance: {isMounted && balance ? balance.toSignificant(6) : ''}{' '}
         </button>
       </div>
       {!disableNetworkSelect && onNetworkSelect && (
