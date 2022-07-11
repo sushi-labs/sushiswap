@@ -1,6 +1,6 @@
 import { SwitchHorizontalIcon } from '@heroicons/react/solid'
 import { Price, Type } from '@sushiswap/currency'
-import { classNames, Dots, Typography } from '@sushiswap/ui'
+import { classNames, Typography } from '@sushiswap/ui'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
 import { Theme } from '../types'
@@ -12,13 +12,12 @@ interface RenderPayload {
 }
 
 interface Rate {
-  loading: boolean
   price: Price<Type, Type> | undefined
   theme: Theme
   children?: (payload: RenderPayload) => ReactNode
 }
 
-export const Rate: FC<Rate> = ({ children, loading, price, theme }) => {
+export const Rate: FC<Rate> = ({ children, price, theme }) => {
   const [invert, setInvert] = useState(false)
   const content = (
     <>
@@ -70,10 +69,8 @@ export const Rate: FC<Rate> = ({ children, loading, price, theme }) => {
           'cursor-pointer h-[36px] flex items-center '
         )}
       >
-        {loading ? (
-          <Dots>Fetching best price</Dots>
-        ) : price ? (
-          <div className="flex gap-1 items-center h-full" onClick={toggleInvert}>
+        {price ? (
+          <div className="flex items-center h-full gap-1" onClick={toggleInvert}>
             {content}
           </div>
         ) : (

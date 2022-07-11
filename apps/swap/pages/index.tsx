@@ -651,7 +651,7 @@ const Widget: FC<Swap> = ({
             balance={dstBalance?.[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
           />
 
-          <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />
+          <Rate price={price} theme={theme} />
 
           {isMounted && !address ? (
             <Wallet.Button fullWidth color="blue">
@@ -755,10 +755,10 @@ const Widget: FC<Swap> = ({
                           <ArrowRightIcon width={18} height={18} className="text-slate-500" />
                         </div>
                         <div className="flex flex-col w-full col-span-5 gap-1">
-                          <span className="text-xs text-slate-400 text-right">
+                          <span className="text-xs text-right text-slate-400">
                             {dstMinimumAmountOut?.currency.symbol}
                           </span>
-                          <div className="flex items-center gap-3 justify-end">
+                          <div className="flex items-center justify-end gap-3">
                             <Typography variant="lg" weight={700} className="text-right truncate">
                               {dstMinimumAmountOut?.toSignificant(6)}
                             </Typography>
