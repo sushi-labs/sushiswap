@@ -502,7 +502,7 @@ const Widget: FC<Swap> = ({
           tokenList={srcTokens}
           theme={theme}
           onMax={(value) => setSrcTypedAmount(value)}
-          balance={srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          balance={srcBalance?.[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
       </div>
       <div className="flex items-center justify-center -mt-[14px] -mb-[14px] z-10">
@@ -524,7 +524,7 @@ const Widget: FC<Swap> = ({
           tokenList={dstTokens}
           theme={theme}
           disableMaxButton
-          balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          balance={dstBalance?.[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
 
         <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />
