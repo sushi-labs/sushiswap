@@ -86,10 +86,12 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                   )}
                 >
                   {selected === chain.chainId ? (
-                    <CheckIcon width={20} height={20} className="text-blue" />
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <CheckIcon width={32} height={32} className="text-blue" />
+                    </div>
                   ) : (
-                    <div className="flex items-center justify-center w-5 h-5">
-                      <NetworkIcon type="naked" chainId={chain.chainId} width={18} height={18} />
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <NetworkIcon type="naked" chainId={chain.chainId} width={32} height={32} />
                     </div>
                   )}
                   {chain.name}

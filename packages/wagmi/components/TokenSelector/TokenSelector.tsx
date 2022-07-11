@@ -4,7 +4,7 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { usePrices } from '../../hooks/usePrices'
+import { useBalances, usePrices } from '../../hooks'
 import { TokenSelectorDialog } from './TokenSelectorDialog'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
 
@@ -34,11 +34,11 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
 
     const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
 
-    // const { data: balances } = useBalances({
-    //   account: address,
-    //   chainId,
-    //   currencies: _tokenMapValues,
-    // })
+    const { data: balances } = useBalances({
+      account: address,
+      chainId,
+      currencies: _tokenMapValues,
+    })
     //
     // useEffect(() => {
     //   console.log('balances')
@@ -52,7 +52,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       return (
         <TokenSelectorOverlay
           account={address}
-          // balancesMap={balances}
+          balancesMap={balances}
           tokenMap={_tokenMap}
           pricesMap={pricesMap}
           chainId={chainId}
@@ -65,7 +65,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
     return (
       <TokenSelectorDialog
         account={address}
-        // balancesMap={balances}
+        balancesMap={balances}
         tokenMap={_tokenMap}
         pricesMap={pricesMap}
         chainId={chainId}
