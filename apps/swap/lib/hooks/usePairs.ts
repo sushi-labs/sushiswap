@@ -1,5 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Type as Currency } from '@sushiswap/currency'
+import { Amount, Type as Currency, Type } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
@@ -21,14 +21,15 @@ export function usePairs(
   const tokens = useMemo(
     () =>
       currencies
-        .filter((currencies): currencies is [Currency, Currency] =>
-          Boolean(
-            currencies[0] &&
-              currencies[1] &&
-              currencies[0].chainId === currencies[1].chainId &&
-              !currencies[0].equals(currencies[1])
+        .filter((currencies): currencies is [Type, Type] => {
+          const [currencyA, currencyB] = currencies
+          return Boolean(
+            currencyA &&
+              currencyB &&
+              currencyA.wrapped.chainId === currencyB.wrapped.chainId &&
+              !currencyA.wrapped.equals(currencyB.wrapped)
           )
-        )
+        })
         .map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]),
     [currencies]
   )
@@ -51,8 +52,7 @@ export function usePairs(
   })
 
   return useMemo(() => {
-    if (!data || isLoading) return pairAddresses.map(() => [PairState.LOADING, null])
-
+    if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]
@@ -65,7 +65,7 @@ export function usePairs(
         new Pair(Amount.fromRawAmount(token0, reserve0.toString()), Amount.fromRawAmount(token1, reserve1.toString())),
       ]
     })
-  }, [data, isLoading, pairAddresses, tokens])
+  }, [data, pairAddresses, tokens])
 }
 
 export function usePair(chainId: number, tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
