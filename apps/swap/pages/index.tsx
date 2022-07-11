@@ -1,7 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { ChevronRightIcon } from '@heroicons/react/outline'
 import { ArrowDownIcon } from '@heroicons/react/solid'
-import chain, { ChainId } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { formatUSD } from '@sushiswap/format'
@@ -30,6 +30,36 @@ import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
+
+const BIPS_BASE = JSBI.BigInt(10000)
+
+// used for warning states
+export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(JSBI.BigInt(100), BIPS_BASE) // 1%
+export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(JSBI.BigInt(300), BIPS_BASE) // 3%
+export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(JSBI.BigInt(500), BIPS_BASE) // 5%
+// if the price slippage exceeds this number, force the user to type 'confirm' to execute
+export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(JSBI.BigInt(1000), BIPS_BASE) // 10%
+// for non expert mode disable swaps above this
+export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(JSBI.BigInt(1500), BIPS_BASE) // 15%
+
+const IMPACT_TIERS = [
+  BLOCKED_PRICE_IMPACT_NON_EXPERT,
+  ALLOWED_PRICE_IMPACT_HIGH,
+  ALLOWED_PRICE_IMPACT_MEDIUM,
+  ALLOWED_PRICE_IMPACT_LOW,
+]
+
+type WarningSeverity = 0 | 1 | 2 | 3 | 4
+
+export function warningSeverity(priceImpact: Percent | undefined): WarningSeverity {
+  if (!priceImpact) return 4
+  let impact: WarningSeverity = IMPACT_TIERS.length as WarningSeverity
+  for (const impactLevel of IMPACT_TIERS) {
+    if (impactLevel.lessThan(priceImpact)) return impact
+    impact--
+  }
+  return 0
+}
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
@@ -118,7 +148,7 @@ const Widget: FC<Swap> = ({
   // mutateSwapCache,
 }) => {
   const { address } = useAccount()
-  const { chain: activeChain } = useNetwork()
+  const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
   const [isWritePending, setIsWritePending] = useState<boolean>()
@@ -126,6 +156,8 @@ const Widget: FC<Swap> = ({
   const [signature, setSignature] = useState<Signature>()
 
   const router = useRouter()
+
+  const [expertMode, setExpertMode] = useState<boolean>(false)
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
@@ -463,6 +495,24 @@ const Widget: FC<Swap> = ({
   const srcTokenPrice = srcPrices?.[srcToken.wrapped.address.toLowerCase()]
   const dstTokenPrice = dstPrices?.[dstToken.wrapped.address.toLowerCase()]
 
+  console.log({ srcTokenPrice, dstTokenPrice })
+
+  const routeNotFound = useMemo(() => {
+    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+      return false
+    } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
+      return !srcTrade
+    } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
+      return !srcTrade || !dstTrade
+    }
+  }, [crossChain, srcToken, dstToken, srcTrade, dstTrade])
+
+  const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
+
+  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
+
+  const showWrap = false
+
   return (
     <article
       id="sushixswap"
@@ -491,7 +541,7 @@ const Widget: FC<Swap> = ({
           onFundSourceSelect={(source) => setSrcUseBentoBox(source === FundSource.BENTOBOX)}
           fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
-          network={chain[srcChainId]}
+          network={Chain.from(srcChainId)}
           onNetworkSelect={(chainId) => {
             setSrcChainId(chainId)
             // mutateSwapCache({
@@ -519,7 +569,7 @@ const Widget: FC<Swap> = ({
           onFundSourceSelect={(source) => setDstUseBentoBox(source === FundSource.BENTOBOX)}
           fundSource={dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={dstToken}
-          network={chain[dstChainId]}
+          network={Chain.from(dstChainId)}
           onNetworkSelect={setDstChainId}
           tokenList={dstTokens}
           theme={theme}
@@ -529,15 +579,21 @@ const Widget: FC<Swap> = ({
 
         <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />
 
-        {!address && isMounted ? (
+        {isMounted && !address ? (
           <Wallet.Button fullWidth color="blue">
             Connect Wallet
           </Wallet.Button>
-        ) : activeChain?.id !== srcChainId && isMounted ? (
+        ) : isMounted && chain && chain.id !== srcChainId ? (
           <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-            Switch to {chain[srcChainId].name}
+            Switch to {Chain.from(srcChainId).name}
           </Button>
-        ) : activeChain?.id == srcChainId && isMounted ? (
+        ) : showWrap ? (
+          <Button fullWidth>Wrap</Button>
+        ) : routeNotFound && srcAmount.greaterThan(0) ? (
+          <Button fullWidth disabled>
+            Insufficient liquidity for this trade.
+          </Button>
+        ) : isMounted && chain && chain.id == srcChainId ? (
           <>
             <Approve
               components={
@@ -572,19 +628,22 @@ const Widget: FC<Swap> = ({
                       <Button
                         fullWidth
                         variant="filled"
-                        color="gradient"
+                        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'gradient'}
                         disabled={
                           isWritePending ||
                           !approved ||
                           !srcAmount?.greaterThan(ZERO) ||
-                          Boolean(srcAmount && !dstMinimumAmountOut)
+                          Boolean(srcAmount && !dstMinimumAmountOut) ||
+                          priceImpactTooHigh
                         }
                         onClick={() => setOpen(true)}
                       >
                         {isWritePending ? (
                           <Dots>Confirm transaction</Dots>
-                        ) : srcAmount && !dstMinimumAmountOut ? (
-                          'Insufficient liquidity'
+                        ) : priceImpactTooHigh ? (
+                          'High Price Impact'
+                        ) : !routeNotFound && priceImpactSeverity > 2 ? (
+                          'Swap Anyway'
                         ) : (
                           'Swap'
                         )}

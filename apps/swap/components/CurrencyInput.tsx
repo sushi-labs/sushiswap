@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
@@ -85,7 +85,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
   const { data: tokenPrices } = usePrices({ chainId: currency.chainId })
   const price = tokenPrices?.[currency.wrapped.address.toLowerCase()]
-
+  const isMounted = useIsMounted()
   return (
     <>
       <div className="flex flex-col">
@@ -170,7 +170,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}
           disabled={disableMaxButton}
         >
-          Balance: {balance ? balance.toSignificant(6) : '-'}{' '}
+          Balance: {isMounted && balance ? balance.toSignificant(6) : '-'}{' '}
           {!disableMaxButton && <span className="text-blue">MAX</span>}
         </button>
       </div>
