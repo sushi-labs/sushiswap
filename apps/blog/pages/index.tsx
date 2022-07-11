@@ -85,7 +85,7 @@ const _Home: FC = () => {
         <section className="py-10 pb-60">
           <Container maxWidth="5xl" className="mx-auto px-4 space-y-10">
             <div className="flex flex-col gap-y-8 md:flex-row items-center justify-between">
-              <div className="order-2 md:order-1 overflow-hidden w-full">
+              <div className="order-2 md:order-1 overflow-hidden w-full p-1 -ml-1">
                 <div className="flex gap-3 flex-wrap">
                   <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
                 </div>
