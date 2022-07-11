@@ -33,7 +33,7 @@ export const FromTop: FC<FromTop> = ({
   if (!portal) return <></>
 
   return ReactDOM.createPortal(
-    <Transition.Root show={show} unmount={false} as={Fragment}>
+    <Transition.Root appear show={show} unmount={false} as={Fragment}>
       <div className={classNames(className, 'absolute left-0 right-0 top-0 h-full translate-y-[-100%] z-50')}>
         <Transition.Child
           as={Fragment}

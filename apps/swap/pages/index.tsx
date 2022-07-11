@@ -649,7 +649,6 @@ const Widget: FC<Swap> = ({
                         </Button>
                       )}
                     >
-                      <div className="h-px bg-slate-200/5 w-full px-0.5" />
                       <div className="!my-0 rounded-xl py-2 grid grid-cols-12 min-h-[64px] items-center">
                         <div className="flex flex-col col-span-5 gap-1">
                           <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
