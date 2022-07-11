@@ -51,7 +51,7 @@ export function usePairs(
   })
 
   return useMemo(() => {
-    if (isLoading) return pairAddresses.map(() => [PairState.LOADING, null])
+    if (!data || isLoading) return pairAddresses.map(() => [PairState.LOADING, null])
 
     return data.map((result, i) => {
       const tokenA = tokens[i][0]
