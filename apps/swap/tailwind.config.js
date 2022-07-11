@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [require('@sushiswap/ui/tailwind')],
   content: [
