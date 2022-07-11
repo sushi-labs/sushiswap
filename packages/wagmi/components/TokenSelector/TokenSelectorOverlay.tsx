@@ -5,7 +5,18 @@ import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
-import { classNames, Currency, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
+import {
+  classNames,
+  Currency,
+  DEFAULT_INPUT_PADDING,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Loader,
+  NetworkIcon,
+  Overlay,
+  SlideIn,
+  Typography,
+} from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
 import { BalanceMap } from '../../hooks/useBalance/types'
@@ -71,14 +82,13 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                   )}
                 >
                   <Input.Address
+                    variant="unstyled"
                     id="token-search"
                     ref={inputRef}
                     placeholder="Search token by address"
                     value={query}
                     onChange={onInput}
-                    className={classNames(
-                      '!pr-0 !border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
-                    )}
+                    className={classNames(DEFAULT_INPUT_UNSTYLED, DEFAULT_INPUT_PADDING)}
                   />
                   {searching ? (
                     <div className="relative left-[-2px]">
