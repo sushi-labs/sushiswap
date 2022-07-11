@@ -1066,12 +1066,6 @@ importers:
       tsup: 6.1.0_typescript@4.6.4
       typescript: 4.6.4
 
-  packages/config/tailwind:
-    specifiers:
-      tailwindcss: ^3.1.0
-    devDependencies:
-      tailwindcss: 3.1.5
-
   packages/config/typescript:
     specifiers: {}
 

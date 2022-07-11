@@ -19,6 +19,7 @@ export const KAVA_HOST = 'api.thegraph.com/subgraphs/id'
 export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'Polygon',
   [ChainId.AVALANCHE]: 'Avalanche',
+  [ChainId.ARBITRUM]: 'Arbitrum',
 }
 
 export const KASHI_SUBGRAPH_HOST: Record<number | string, string> = {

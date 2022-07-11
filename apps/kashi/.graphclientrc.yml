@@ -2,13 +2,12 @@ sources:
   - name: Kashi
     handler:
       graphql:
-        # Default value is bentobox-polygon
-        # This is needed for the initial introspection on buildtime
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/kashi-polygon}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/kashi-polygon}
 
 additionalTypeDefs: |
   extend type KashiPair {
-    chainId: BigInt
+    chainId: BigInt!
+    chainName: String!
   }
   extend type Query {
     crossChainKashiPairs(first: Int!, chainIds: [BigInt!]!): [KashiPair!]!
@@ -22,4 +21,4 @@ documents:
   - ./query.graphql
 
 codegen:
-  contextType: 'MeshContext & { chainId: string; name: string; host: string }'
+  contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'

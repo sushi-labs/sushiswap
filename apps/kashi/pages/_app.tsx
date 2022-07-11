@@ -22,22 +22,20 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               </a>
             </Link.Internal>
           }
-          nav={
-            <nav>
-              <ul className="flex gap-12">
-                <li>
-                  <Link.Internal href="/">Markets</Link.Internal>
-                </li>
-                <li>
-                  <Link.Internal href="/create">Create</Link.Internal>
-                </li>
-              </ul>
-            </nav>
-          }
-        >
-          Connect
-        </App.Header>
-        <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} className="h-full" />
+          // nav={
+          //   <nav>
+          //     <ul className="flex gap-12">
+          //       <li>
+          //         <Link.Internal href="/">Markets</Link.Internal>
+          //       </li>
+          //       <li>
+          //         <Link.Internal href="/create">Create</Link.Internal>
+          //       </li>
+          //     </ul>
+          //   </nav>
+          // }
+        ></App.Header>
+        <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
       </App.Shell>
     </WagmiConfig>
   )

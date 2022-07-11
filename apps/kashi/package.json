@@ -21,7 +21,6 @@
     "@ethersproject/address": "^5.0.0",
     "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.0",
-    "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -36,7 +35,6 @@
     "next": "^12.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.0.0",
     "wagmi": "^0.5.8"
   },
   "devDependencies": {
