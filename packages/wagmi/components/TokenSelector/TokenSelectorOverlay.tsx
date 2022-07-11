@@ -72,7 +72,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn>
-          <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
+          <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
             <Overlay.Content className="bg-slate-700 !px-0 !pb-[88px]">
               <Overlay.Header onClose={onClose} title="Select Token" />
               <div className="p-3">

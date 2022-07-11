@@ -50,7 +50,7 @@ export const CustomTokensOverlay: FC = () => {
           </div>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)} className="!mt-0">
+      <SlideIn.FromLeft show={open} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Custom Tokens" />
           <div className="border-t border-slate-200/5 -ml-3 -mr-3 relative min-h-[320px] rounded-t-none lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full">

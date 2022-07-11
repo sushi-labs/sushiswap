@@ -101,7 +101,7 @@ export const SlippageToleranceOverlay = () => {
           </div>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
+      <SlideIn.FromLeft show={open} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800 !pt-[56px]">
           <Overlay.Header onClose={() => setOpen(false)} title="Slippage Tolerance" />
           <Typography variant="xs" className="text-slate-400 text-center mb-2">

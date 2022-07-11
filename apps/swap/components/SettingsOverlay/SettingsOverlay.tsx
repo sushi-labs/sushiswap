@@ -20,7 +20,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
         <CogIcon width={20} height={20} />
       </button>
       <SlideIn>
-        <SlideIn.FromLeft show={open} unmount={false} onClose={() => setOpen(false)}>
+        <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
           <Overlay.Content className="!bg-slate-800">
             <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
             <div className="py-1 px-1">
