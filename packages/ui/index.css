@@ -6,7 +6,6 @@
 @tailwind utilities;
 
 @import "./variables.css";
-@import "./popover/Popover.css";
 
 *,
 *:before,

@@ -1,5 +1,6 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
+import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
 import { Badge, Chip, Link, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
@@ -8,12 +9,24 @@ import { FC } from 'react'
 import { UseTradeOutput } from '../lib/hooks'
 
 interface CrossChainRoute {
-  srcTrade: UseTradeOutput
-  dstTrade: UseTradeOutput
+  srcTrade?: UseTradeOutput
+  dstTrade?: UseTradeOutput
+  inputAmount?: Amount<Type>
+  outputAmount?: Amount<Type>
+  srcBridgeToken: Token
+  dstBridgeToken: Token
 }
 
-export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => {
-  if (!srcTrade || !dstTrade) return <></>
+export const CrossChainRoute: FC<CrossChainRoute> = ({
+  srcTrade,
+  dstTrade,
+  inputAmount,
+  outputAmount,
+  srcBridgeToken,
+  dstBridgeToken,
+}) => {
+  if (!inputAmount || !outputAmount) return <></>
+
   return (
     <>
       <Typography variant="xs" className="text-slate-400">
@@ -28,39 +41,46 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 <Badge
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
-                      <NetworkIcon chainId={srcTrade.inputAmount.currency.chainId} width={16} height={16} />
+                      <NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />
                     </div>
                   }
                 >
                   <div className="w-5 h-5">
-                    <Icon currency={srcTrade.inputAmount.currency} width={20} height={20} />
+                    <Icon currency={inputAmount.currency} width={20} height={20} />
                   </div>
                 </Badge>
               }
               panel={
-                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
+                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
                   <Typography weight={700} variant="xxs" className="text-slate-400">
                     You pay
                   </Typography>
                   <Typography variant="xs" weight={700}>
-                    {srcTrade.inputAmount.toSignificant(6)} {srcTrade.inputAmount.currency.symbol}
+                    {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
                   </Typography>
                 </div>
               }
             />
           </div>
-          <div className="flex items-center rounded-full bg-slate-800">
-            <Popover
-              hover
-              button={
-                <Chip color="gray" label={srcTrade.isV1() ? 'Legacy' : 'Trident'} size="sm" className="!px-2 h-full" />
-              }
-              panel={
-                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
-                  {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
-                </div>
-              }
-            />
+          <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
+            {srcTrade && (
+              <Popover
+                hover
+                button={
+                  <Chip
+                    color="gray"
+                    label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
+                    size="sm"
+                    className="!px-2 h-full"
+                  />
+                }
+                panel={
+                  <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
+                    {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
+                  </div>
+                }
+              />
+            )}
           </div>
           <div className="bg-slate-800 p-1.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600 items-center">
             <Popover
@@ -70,7 +90,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
                       <NetworkIcon
-                        chainId={srcTrade.outputAmount.currency.chainId}
+                        chainId={srcBridgeToken.wrapped.chainId}
                         width={14}
                         height={14}
                         className="saturate-0"
@@ -79,14 +99,13 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                   }
                 >
                   <div className="w-[18px] h-[18px]">
-                    <Icon currency={srcTrade.outputAmount.currency} width={18} height={18} />
+                    <Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
                   </div>
                 </Badge>
               }
               panel={
-                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
-                  <b>{srcTrade.outputAmount.currency.symbol}</b> on{' '}
-                  <b>{chain[srcTrade.outputAmount.currency.chainId].name}</b>
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
+                  <b>{srcBridgeToken.wrapped.symbol}</b> on <b>{chain[srcBridgeToken.wrapped.chainId].name}</b>
                 </Typography>
               }
             />
@@ -100,7 +119,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 </div>
               }
               panel={
-                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
                   Powered by{' '}
                   <b>
                     <Link.External href="https://stargate.finance">Stargate Finance</Link.External>
@@ -116,7 +135,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
                       <NetworkIcon
-                        chainId={dstTrade.inputAmount.currency.chainId}
+                        chainId={dstBridgeToken.wrapped.chainId}
                         width={14}
                         height={14}
                         className="saturate-0"
@@ -125,30 +144,36 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                   }
                 >
                   <div className="w-[18px] h-[18px]">
-                    <Icon currency={dstTrade.inputAmount.currency} width={18} height={18} />
+                    <Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
                   </div>
                 </Badge>
               }
               panel={
-                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-xl">
-                  <b>{dstTrade.inputAmount.currency.symbol}</b> on{' '}
-                  <b>{chain[dstTrade.inputAmount.currency.chainId].name}</b>
+                <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
+                  <b>{dstBridgeToken.wrapped.symbol}</b> on <b>{chain[dstBridgeToken.wrapped.chainId].name}</b>
                 </Typography>
               }
             />
           </div>
-          <div className="flex items-center rounded-full bg-slate-800">
-            <Popover
-              hover
-              button={
-                <Chip color="gray" label={dstTrade.isV1() ? 'Legacy' : 'Trident'} size="sm" className="!px-2 h-full" />
-              }
-              panel={
-                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
-                  {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
-                </div>
-              }
-            />
+          <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
+            {dstTrade && (
+              <Popover
+                hover
+                button={
+                  <Chip
+                    color="gray"
+                    label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
+                    size="sm"
+                    className="!px-2 h-full"
+                  />
+                }
+                panel={
+                  <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
+                    {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
+                  </div>
+                }
+              />
+            )}
           </div>
           <div className="flex items-center w-6 h-6">
             <Popover
@@ -157,22 +182,22 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({ srcTrade, dstTrade }) => 
                 <Badge
                   badgeContent={
                     <div className="rounded-full shadow-md ring-1 ring-black/20">
-                      <NetworkIcon chainId={dstTrade.inputAmount.currency.chainId} width={16} height={16} />
+                      <NetworkIcon chainId={dstBridgeToken.wrapped.chainId} width={16} height={16} />
                     </div>
                   }
                 >
                   <div className="w-5 h-5">
-                    <Icon currency={dstTrade.outputAmount.currency} width={20} height={20} />
+                    <Icon currency={dstBridgeToken.wrapped} width={20} height={20} />
                   </div>
                 </Badge>
               }
               panel={
-                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-xl">
+                <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
                   <Typography weight={700} variant="xxs" className="text-slate-400">
                     You receive
                   </Typography>
                   <Typography variant="xs" weight={700}>
-                    {dstTrade.outputAmount.toSignificant(6)} {dstTrade.outputAmount.currency.symbol}
+                    {outputAmount.toSignificant(6)} {outputAmount.currency.symbol}
                   </Typography>
                 </div>
               }
@@ -267,7 +292,6 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
 
   return (
     <>
-      <div className="w-full h-px my-1 bg-slate-200/5" />
       <div className="flex justify-between gap-2">
         <Typography variant="xs" className="text-slate-400">
           Optimized Route

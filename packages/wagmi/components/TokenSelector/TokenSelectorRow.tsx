@@ -46,7 +46,6 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
           {balance && balance?.[fundSource]?.greaterThan(ZERO) && (
             <Popover
               hover
-              arrow={false}
               button={
                 <div className="flex flex-col">
                   <Typography variant="xs" weight={700} className="text-right text-slate-200">
