@@ -589,7 +589,7 @@ const Widget: FC<Swap> = ({
           </Button>
         ) : showWrap ? (
           <Button fullWidth>Wrap</Button>
-        ) : routeNotFound && srcAmount.greaterThan(0) ? (
+        ) : srcAmount?.greaterThan(0) && routeNotFound ? (
           <Button fullWidth disabled>
             Insufficient liquidity for this trade.
           </Button>
