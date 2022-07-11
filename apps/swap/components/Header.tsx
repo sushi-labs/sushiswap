@@ -10,25 +10,11 @@ export const Header = () => {
         brand={
           <NextLink href="/">
             <a className="flex flex-row items-center gap-1">
-              <SushiIcon width={32} height={32} className="mr-1 hover:animate-spin hover:text-pink" /> Swap{' '}
-              <span className="font-black">PRO</span>
+              <SushiIcon width={32} height={32} className="mr-1 hover:animate-spin hover:text-pink" />
+              <span className="font-black">Swap</span>
             </a>
           </NextLink>
         }
-        // nav={
-        //   <nav>
-        //     <ul className="flex gap-12">
-        //       <li>
-        //         <Link.Internal href="/swap">Trade</Link.Internal>
-        //       </li>
-        //       <li>
-        //         <Link.Internal href="/pool" disabled>
-        //           Pool
-        //         </Link.Internal>
-        //       </li>
-        //     </ul>
-        //   </nav>
-        // }
       >
         <Wallet.Button className="!h-[36px]" />
         {/* <button className="hover:animate-spin-slow" onClick={() => {}}>

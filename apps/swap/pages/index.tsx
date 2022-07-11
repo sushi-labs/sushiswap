@@ -10,7 +10,7 @@ import { _9995, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Badge, Button, Chip, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
-import { Approve, BENTOBOX_ADDRESS, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useBalance, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
 import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
 import {
   Caption,
@@ -454,8 +454,8 @@ const Widget: FC<Swap> = ({
 
   const isMounted = useIsMounted()
 
-  // const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
-  // const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: srcToken })
+  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -502,7 +502,7 @@ const Widget: FC<Swap> = ({
           tokenList={srcTokens}
           theme={theme}
           onMax={(value) => setSrcTypedAmount(value)}
-          // balance={srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          balance={srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
       </div>
       <div className="flex items-center justify-center -mt-[14px] -mb-[14px] z-10">
@@ -524,7 +524,7 @@ const Widget: FC<Swap> = ({
           tokenList={dstTokens}
           theme={theme}
           disableMaxButton
-          // balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          balance={dstBalance[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
         />
 
         <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme} />

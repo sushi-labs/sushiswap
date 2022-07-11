@@ -77,6 +77,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
             <div className="h-full overflow-auto hide-scrollbar">
               {filteredChains.map(([k, chain]) => (
                 <Typography
+                  as="button"
                   onClick={() => handleSelect(chain.chainId)}
                   key={chain.chainId}
                   variant="sm"
