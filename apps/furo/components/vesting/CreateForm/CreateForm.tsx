@@ -4,13 +4,13 @@ import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
+import { CreateVestingFormData, CreateVestingFormDataTransformedAndValidated } from '../types'
 import { CliffDetailsSection } from './CliffDetailsSection'
 import CreateFormReviewModal from './CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
 import { createVestingSchema, stepConfigurations } from './schema'
 import { transformVestingFormData } from './transformVestingFormData'
-import { CreateVestingFormData, CreateVestingFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
   const { chain: activeChain } = useNetwork()
@@ -42,9 +42,8 @@ export const CreateForm: FC = () => {
     reset,
   } = methods
 
-  const formData = watch()
-  const validatedData =
-    isValid && !isValidating ? transformVestingFormData(formData as CreateVestingFormDataValidated) : undefined
+  const formData = watch() as CreateVestingFormData
+  const validatedData = isValid && !isValidating ? transformVestingFormData(formData) : undefined
 
   useEffect(() => {
     reset()
@@ -67,7 +66,11 @@ export const CreateForm: FC = () => {
         </Form>
       </FormProvider>
       {validatedData && (
-        <CreateFormReviewModal open={review} onDismiss={() => setReview(false)} formData={validatedData} />
+        <CreateFormReviewModal
+          open={review}
+          onDismiss={() => setReview(false)}
+          formData={validatedData as CreateVestingFormDataTransformedAndValidated}
+        />
       )}
     </>
   )

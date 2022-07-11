@@ -8,7 +8,7 @@ import React, {
   ReactNode,
   useCallback,
   useMemo,
-  useRef,
+  useState,
 } from 'react'
 
 import { ApprovalState } from '../../hooks'
@@ -23,13 +23,19 @@ interface Props {
 }
 
 const Controller: FC<Props> = ({ components, render }) => {
-  const refs = useRef<ApprovalState[]>([])
+  const [state, setState] = useState<ApprovalState[]>([])
   const isMounted = useIsMounted()
 
   const handleUpdate = useCallback((value: ApprovalState, index: number) => {
-    const state = [...refs.current]
-    state[index] = value
-    refs.current = state
+    setState((state) => {
+      const newState = [...state]
+      if (value === undefined) {
+        newState.splice(index, 1)
+      } else {
+        newState[index] = value
+      }
+      return newState
+    })
   }, [])
 
   const children = useMemo(() => {
@@ -47,11 +53,10 @@ const Controller: FC<Props> = ({ components, render }) => {
   }, [components, handleUpdate])
 
   const isUnknown =
-    refs.current.some((el) => el === ApprovalState.UNKNOWN) &&
-    Children.count(components.props.children) === refs.current.length
+    state.some((el) => el === ApprovalState.UNKNOWN) && Children.count(components.props.children) === state.length
   const approved =
-    refs.current.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
-    Children.count(components.props.children) === refs.current.length
+    state.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
+    Children.count(components.props.children) === state.length
 
   // Only render renderProp since we can't get approval states on the server anyway
   if (!isMounted)

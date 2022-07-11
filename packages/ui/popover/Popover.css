@@ -3,26 +3,32 @@
 @layer components {
     .arrow,
     .arrow::before {
-        @apply absolute w-5 h-5 z-[-1]
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        z-index: -1;
     }
 
     .arrow::before {
-        @apply content-[''] rotate-45 bg-slate-700 rounded-[3px]
+        content: '';
+        transform: rotate(45deg);
+        border-radius: 3px;
+        @apply bg-slate-700
     }
 
     .tooltip[data-popper-placement^='top'] > .arrow {
-        @apply -bottom-1
+        bottom: -4px
     }
 
     .tooltip[data-popper-placement^='bottom'] > .arrow {
-        @apply -top-1
+        top: -4px
     }
 
     .tooltip[data-popper-placement^='left'] > .arrow {
-        @apply -right-1
+        right: -4px
     }
 
     .tooltip[data-popper-placement^='right'] > .arrow {
-        @apply -left-1
+        left: -4px
     }
 }

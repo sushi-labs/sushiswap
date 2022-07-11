@@ -62,6 +62,13 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
+const LINKS = (id: string) => [
+  {
+    href: `/stream/${id}`,
+    label: `Stream ${id}`,
+  },
+]
+
 const _Streams: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
@@ -99,7 +106,7 @@ const _Streams: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Stream" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />

@@ -9,6 +9,6 @@ export type ApprovalButtonRenderProp = {
 }
 
 export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'> {
-  setState?(state: ApprovalState): void
+  setState?(state: ApprovalState | undefined): void
   render?: (renderProps: T) => ReactElement
 }

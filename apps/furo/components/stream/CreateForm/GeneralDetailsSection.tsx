@@ -2,7 +2,7 @@ import { Form, Input } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateStreamFormData } from './types'
+import { CreateStreamFormData } from '../types'
 
 export const GeneralDetailsSection = () => {
   const { control, watch } = useFormContext<CreateStreamFormData>()
@@ -22,7 +22,12 @@ export const GeneralDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                  <Input.DatetimeLocal
+                    value={value}
+                    onChange={onChange}
+                    error={!!error?.message}
+                    className="!ring-offset-slate-900"
+                  />
                   <Form.Error message={error?.message} />
                 </>
               )
@@ -36,7 +41,12 @@ export const GeneralDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal value={value} onChange={onChange} error={!!error?.message} />
+                  <Input.DatetimeLocal
+                    value={value}
+                    onChange={onChange}
+                    error={!!error?.message}
+                    className="!ring-offset-slate-900"
+                  />
                   <Form.Error message={error?.message} />
                 </>
               )
@@ -57,6 +67,7 @@ export const GeneralDetailsSection = () => {
                   onChange={onChange}
                   error={!!error?.message}
                   placeholder="Address or ENS Name"
+                  className="ring-offset-slate-900"
                 />
                 <Form.Error message={error?.message} />
               </>

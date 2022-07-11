@@ -51,7 +51,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   return (
     <SlideIn>
       <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-        <Overlay.Content className="bg-slate-700 !pt-[60px]">
+        <Overlay.Content className="bg-slate-800 !pt-[60px]">
           <Overlay.Header onClose={onClose} title="Select Network" />
           <div
             className={classNames(
@@ -67,13 +67,11 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 searching.current = true
                 setQuery(val)
               }}
-              className={classNames(
-                '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
-              )}
+              className="focus:ring-offset-slate-800 !bg-slate-700"
             />
             {searching.current && <Loader size="16px" />}
           </div>
-          <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-800 mt-3')}>
+          <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-700 mt-3')}>
             <div className="h-full overflow-auto hide-scrollbar">
               {filteredChains.map(([k, chain]) => (
                 <Typography

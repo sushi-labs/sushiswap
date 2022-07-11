@@ -3,34 +3,11 @@ import React, { ReactNode } from 'react'
 
 import { Loader } from '../loader'
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
+import { BUTTON_CLASSES, BUTTON_SIZES, BUTTON_STYLES, BUTTON_STYLES_VARIANT } from './styles'
 
-export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray' | 'transparent'
+export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
-
-const VARIANT: Record<ButtonVariant, string> = {
-  filled: 'btn-filled',
-  outlined: 'btn-outlined',
-  empty: 'btn-empty',
-}
-
-const COLOR: Record<ButtonColor, string> = {
-  blue: 'btn-blue',
-  red: 'btn-red',
-  pink: 'btn-pink',
-  purple: 'btn-purple',
-  gradient: 'btn-gradient',
-  gray: 'btn-gray',
-  transparent: 'btn-transparent',
-}
-
-const SIZE: Record<ButtonSize, string> = {
-  default: 'btn-default',
-  xs: 'btn-xs',
-  sm: 'btn-sm',
-  md: 'btn-md',
-  lg: 'btn-lg',
-}
 
 interface Props {
   children?: ReactNode
@@ -76,11 +53,12 @@ export const Button: ButtonComponent = React.forwardRef(
         className={classNames(
           'btn',
           fullWidth ? 'w-full' : '',
-          VARIANT[variant],
-          COLOR[color],
-          SIZE[size],
+          BUTTON_CLASSES['btn'],
+          BUTTON_CLASSES[BUTTON_STYLES_VARIANT[variant]],
+          BUTTON_CLASSES[BUTTON_STYLES[variant][color]],
+          BUTTON_CLASSES[BUTTON_SIZES[size]],
           className,
-          disabled ? 'btn-disabled' : ''
+          disabled ? BUTTON_CLASSES['btn-disabled'] : ''
         )}
         {...rest}
       >

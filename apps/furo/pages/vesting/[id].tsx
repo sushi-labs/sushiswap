@@ -61,6 +61,13 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
   )
 }
 
+const LINKS = (id: string) => [
+  {
+    href: `/vesting/${id}`,
+    label: `Vesting ${id}`,
+  },
+]
+
 const _VestingPage: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
@@ -112,7 +119,7 @@ const _VestingPage: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Vesting" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
         <div className="flex justify-center">
           <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />

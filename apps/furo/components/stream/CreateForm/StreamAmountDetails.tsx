@@ -1,16 +1,15 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Form, Select, Typography } from '@sushiswap/ui'
-import { TokenSelector } from '@sushiswap/wagmi'
+import { classNames, DEFAULT_INPUT_BG, Form, Select, Typography } from '@sushiswap/ui'
+import { TokenSelector, useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
-import { useTokenBentoboxBalance, useWalletBalance } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { CreateStreamFormData } from './types'
+import { CreateStreamFormData } from '../types'
 
 export const StreamAmountDetails = () => {
   const isMounted = useIsMounted()
@@ -25,8 +24,7 @@ export const StreamAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: walletBalance } = useWalletBalance(address, currency)
-  const { data: bentoBalance } = useTokenBentoboxBalance(address, currency?.wrapped)
+  const { data: balance } = useBalance({ account: address, currency, chainId: activeChain?.id })
 
   return (
     <Form.Section
@@ -86,10 +84,9 @@ export const StreamAmountDetails = () => {
                   <div
                     onClick={() => onChange(FundSource.BENTOBOX)}
                     className={classNames(
-                      value === FundSource.BENTOBOX
-                        ? 'border-green/70 ring-green/70'
-                        : 'ring-transparent border-slate-700',
-                      'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                      value === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                      DEFAULT_INPUT_BG,
+                      'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                     )}
                   >
                     <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -100,8 +97,8 @@ export const StreamAmountDetails = () => {
                       <Typography weight={700} variant="xs" className="text-slate-200">
                         {isMounted ? (
                           <>
-                            {bentoBalance ? bentoBalance.toSignificant(6) : '0.00'}{' '}
-                            <span className="text-slate-500">{bentoBalance?.currency.symbol}</span>
+                            {balance?.[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX].toSignificant(6) : '0.00'}{' '}
+                            <span className="text-slate-500">{balance?.[FundSource.BENTOBOX]?.currency.symbol}</span>
                           </>
                         ) : (
                           <div className="h-4" />
@@ -118,8 +115,9 @@ export const StreamAmountDetails = () => {
                 <div
                   onClick={() => onChange(FundSource.WALLET)}
                   className={classNames(
-                    value === FundSource.WALLET ? 'border-green/70 ring-green/70' : 'ring-transparent border-slate-700',
-                    'ring-1 border bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                    DEFAULT_INPUT_BG,
+                    value === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                    'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
                   <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
@@ -130,8 +128,8 @@ export const StreamAmountDetails = () => {
                     <Typography weight={700} variant="xs" className="text-slate-200">
                       {isMounted ? (
                         <>
-                          {walletBalance ? walletBalance.toSignificant(6) : '0.00'}{' '}
-                          <span className="text-slate-500">{walletBalance?.currency.symbol}</span>
+                          {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'}{' '}
+                          <span className="text-slate-500">{balance?.[FundSource.WALLET]?.currency.symbol}</span>
                         </>
                       ) : (
                         <div className="h-4" />
@@ -156,6 +154,7 @@ export const StreamAmountDetails = () => {
           name="amount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CurrencyInput
+              className="ring-offset-slate-900"
               onChange={onChange}
               account={address}
               value={value}

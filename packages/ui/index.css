@@ -6,7 +6,6 @@
 @tailwind utilities;
 
 @import "./variables.css";
-@import "./button/Button.css";
 @import "./popover/Popover.css";
 
 *,
@@ -33,7 +32,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color);
+  background-color: var(--background-color) !important;
   color: var(--color);
   overscroll-behavior-x: none;
 }

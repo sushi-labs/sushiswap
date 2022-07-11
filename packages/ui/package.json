@@ -33,6 +33,7 @@
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",
     "classnames": "^2.3.1",
+    "react-dropzone": "^14.2.2",
     "react-popper": "^2.2.5",
     "react-toastify": "^8.2.0",
     "react-virtualized-auto-sizer": "^1.0.6",

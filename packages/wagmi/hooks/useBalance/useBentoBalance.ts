@@ -10,7 +10,7 @@ import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
 type UseBentoBalancesParams = {
   account: string | undefined
-  currencies: Type[]
+  currencies: (Type | undefined)[]
   chainId?: ChainId
 }
 
@@ -61,8 +61,9 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     isLoading: totalsLoading,
   } = useContractReads({
     contracts: contractsForTotalsRequest,
-    // cacheTime: 20_000,
+    cacheTime: 20_000,
     keepPreviousData: true,
+    watch: false,
   })
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
@@ -113,6 +114,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     contracts: contractsForBalancesRequest,
     cacheTime: 20_000,
     keepPreviousData: true,
+    watch: false,
   })
 
   return useMemo(() => {
@@ -159,7 +161,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
 
 type UseBentoBalanceParams = {
   account: string | undefined
-  currency: Type
+  currency: Type | undefined
   chainId?: ChainId
 }
 

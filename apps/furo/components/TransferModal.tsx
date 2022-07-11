@@ -93,7 +93,13 @@ export const TransferModal: FC<TransferModalProps> = ({
             </p>
           </Typography>
           <Form.Control label="Recipient">
-            <Web3Input.Ens id="ens-input" value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
+            <Web3Input.Ens
+              id="ens-input"
+              value={recipient}
+              onChange={setRecipient}
+              placeholder="Address or ENS Name"
+              className="ring-offset-slate-800"
+            />
           </Form.Control>
 
           {error && (

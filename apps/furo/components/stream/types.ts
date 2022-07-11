@@ -7,7 +7,7 @@ export type CreateStreamFormData = {
   endDate: string | undefined
   recipient: string | undefined
   amount: string
-  fundSource: FundSource | undefined
+  fundSource: FundSource
 }
 
 export type CreateStreamFormDataValidated = {
@@ -17,4 +17,8 @@ export type CreateStreamFormDataValidated = {
   recipient: string
   amount: string
   fundSource: FundSource
+}
+
+export type CreateMultipleStreamFormData = {
+  streams: CreateStreamFormData[]
 }
