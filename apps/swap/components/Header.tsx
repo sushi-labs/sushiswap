@@ -15,7 +15,7 @@ export const Header = () => {
         </NextLink>
       }
     >
-      <Wallet.Button className="border-none shadow-md" />
+      <Wallet.Button className="border-none shadow-md !h-[36px]" />
     </App.Header>
   )
 }

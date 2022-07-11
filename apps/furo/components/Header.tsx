@@ -33,7 +33,11 @@ export const Header: FC = () => {
       nav={<></>}
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <Wallet.Button hack={connect} supportedNetworks={SUPPORTED_CHAINS} className="border-none shadow-md" />
+        <Wallet.Button
+          hack={connect}
+          supportedNetworks={SUPPORTED_CHAINS}
+          className="border-none shadow-md !h-[36px]"
+        />
         {address && isMounted && isConnected && (
           <Menu
             button={
