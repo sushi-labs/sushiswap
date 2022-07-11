@@ -585,7 +585,7 @@ const Widget: FC<Swap> = ({
           </Wallet.Button>
         ) : isMounted && chain && chain.id !== srcChainId ? (
           <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-            Switch to {chain[srcChainId].name}
+            Switch to {Chain.from(srcChainId).name}
           </Button>
         ) : showWrap ? (
           <Button fullWidth>Wrap</Button>
