@@ -3,7 +3,7 @@ import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
 import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
@@ -121,12 +121,14 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <div className="flex flex-col">
           <div className="relative flex items-center">
             <Input.Numeric
+              variant="unstyled"
               disabled={disabled}
               onUserInput={onChange}
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex-auto w-full px-0 py-1 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed'
+                DEFAULT_INPUT_UNSTYLED,
+                'text-2xl py-1'
               )}
               value={value}
               readOnly={disabled}
