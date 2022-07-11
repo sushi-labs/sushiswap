@@ -2,10 +2,13 @@
   "name": "token-list",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "lint": "eslint --fix ."
+  },
   "dependencies": {
     "@sushiswap/chainlink-token-list": "^0.1.0",
-    "@sushiswap/default-token-list": "^28.2.0",
-    "@vercel/node": "^1.14.1"
+    "@sushiswap/default-token-list": "^29.0.0",
+    "@vercel/node": "^2.2.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -4,13 +4,14 @@ import { ifCondition } from '@cloudinary/url-gen/actions/conditional'
 import { quality } from '@cloudinary/url-gen/actions/delivery'
 import { fill, scale } from '@cloudinary/url-gen/actions/resize'
 import { toAnimated } from '@cloudinary/url-gen/actions/transcode'
+import { auto } from '@cloudinary/url-gen/qualifiers/quality'
 
 import { cld } from '../pages/_app'
 
 type Metadata =
   | {
-      public_id: string
-      resource_type: string
+      public_id?: string
+      resource_type?: string
     }
   | undefined
 
@@ -24,14 +25,13 @@ export function getOptimizedMedia({
   height,
   asImage = false,
 }: {
-  metadata: {
-    public_id: string
-    resource_type: string
-  }
+  metadata: Metadata
   width?: number
   height?: number
   asImage?: boolean
 }) {
+  if (!metadata?.public_id) return ''
+
   if (isMediaVideo(metadata) && asImage) {
     return cld
       .video(metadata.public_id)
@@ -40,7 +40,7 @@ export function getOptimizedMedia({
       .transcode(toAnimated().sampling(40))
       .animated(edit().delay(200))
       .format('gif')
-      .delivery(quality(50))
+      .delivery(quality(auto()))
       .toURL()
   }
 
@@ -49,31 +49,36 @@ export function getOptimizedMedia({
       .video(metadata.public_id)
       .format('webm')
       .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
-      .delivery(quality(50))
+      .delivery(quality(auto()))
       .toURL()
   } else {
     if (height && width) {
       return cld
         .image(metadata.public_id)
-        .format('jpg')
+        .format('webp')
         .resize(fill().width(width).height(height))
-        .delivery(quality(50))
+        .delivery(quality(auto()))
         .toURL()
     }
 
     if (height) {
-      return cld.image(metadata.public_id).format('jpg').resize(fill().height(height)).delivery(quality(50)).toURL()
+      return cld
+        .image(metadata.public_id)
+        .format('webp')
+        .resize(fill().height(height))
+        .delivery(quality(auto()))
+        .toURL()
     }
 
     if (width) {
-      return cld.image(metadata.public_id).format('jpg').resize(fill().width(width)).delivery(quality(50)).toURL()
+      return cld.image(metadata.public_id).format('webp').resize(fill().width(width)).delivery(quality(auto())).toURL()
     }
 
     return cld
       .image(metadata.public_id)
-      .format('jpg')
+      .format('webp')
       .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
-      .delivery(quality(50))
+      .delivery(quality(auto()))
       .toURL()
   }
 }

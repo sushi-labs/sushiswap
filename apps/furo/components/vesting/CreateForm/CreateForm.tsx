@@ -45,11 +45,24 @@ export const CreateForm: FC = () => {
   const formData = watch() as CreateVestingFormData
   const validatedData = isValid && !isValidating ? transformVestingFormData(formData) : undefined
 
+  // Reset form if we switch network or change account
   useEffect(() => {
+    setReview(false)
     reset()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, address])
+
+  // createVestingSchema
+  //   .validate(formData, { abortEarly: false })
+  //   .then(function () {
+  //     // Success
+  //   })
+  //   .catch(function (err) {
+  //     err?.inner?.forEach((e) => {
+  //       console.log(e.message, e.path)
+  //     })
+  //   })
 
   return (
     <>
@@ -65,7 +78,7 @@ export const CreateForm: FC = () => {
           </Form.Buttons>
         </Form>
       </FormProvider>
-      {validatedData && (
+      {validatedData && review && (
         <CreateFormReviewModal
           open={review}
           onDismiss={() => setReview(false)}

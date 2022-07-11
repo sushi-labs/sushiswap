@@ -1,12 +1,12 @@
 import { FC, ReactNode } from 'react'
 
-import { Article } from '../types'
+import { ArticleEntity } from '../.graphclient'
 import { CardSkeleton } from './Card'
 
 interface ArticleList {
   loading: boolean
-  articles: Article[]
-  render(article: Article): ReactNode
+  articles: ArticleEntity[]
+  render(article: ArticleEntity): ReactNode
 }
 
 export const ArticleList: FC<ArticleList> = ({ articles, loading, render }) => {

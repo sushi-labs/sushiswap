@@ -1,7 +1,16 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero, HashZero } from '@ethersproject/constants'
+import { Chain } from '@sushiswap/chain'
+import { createToast, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractRead, useNetwork, useSignTypedData } from 'wagmi'
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  UserRejectedRequestError,
+  useSignTypedData,
+} from 'wagmi'
 
 import { BENTOBOX_ADDRESS, getBentoBoxContractConfig } from './useBentoBoxContract'
 import { ApprovalState } from './useERC20ApproveCallback'
@@ -16,6 +25,9 @@ export function useBentoBoxApproveCallback({
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const { writeAsync } = useContractWrite({...getBentoBoxContractConfig(activeChain?.id), functionName: 'setMasterContractApproval',
+    args: [account ? account.address : AddressZero, masterContract, true, 0, HashZero, HashZero],
+  })
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
@@ -44,6 +56,11 @@ export function useBentoBoxApproveCallback({
   }, [isBentoBoxApproved, signature, isLoading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
+    if (!address) {
+      console.error('no account connected')
+      return
+    }
+
     if (!chain) {
       console.error('no active chain')
       return
@@ -66,33 +83,49 @@ export function useBentoBoxApproveCallback({
 
     const { data: nonces } = await getNonces()
 
-    const data = await signTypedDataAsync({
-      domain: {
-        name: 'BentoBox V1',
-        chainId: chain.id,
-        verifyingContract: BENTOBOX_ADDRESS[chain.id],
-      },
-      types: {
-        SetMasterContractApproval: [
-          { name: 'warning', type: 'string' },
-          { name: 'user', type: 'address' },
-          { name: 'masterContract', type: 'address' },
-          { name: 'approved', type: 'bool' },
-          { name: 'nonce', type: 'uint256' },
-        ],
-      },
-      value: {
-        warning: 'Give FULL access to funds in (and approved to) BentoBox?',
-        user: address,
-        masterContract,
-        approved: true,
-        nonce: nonces,
-      },
-    })
-    console.log('signed ', { data, error })
-    // TODO: if loading, set pending status
-    setSignature(splitSignature(data))
-  }, [approvalState, masterContract, chain, getNonces, signTypedDataAsync, address, error])
+    try {
+      const data = await signTypedDataAsync({
+        domain: {
+          name: 'BentoBox V1',
+          chainId: chain.id,
+          verifyingContract: BENTOBOX_ADDRESS[chain.id],
+        },
+        types: {
+          SetMasterContractApproval: [
+            { name: 'warning', type: 'string' },
+            { name: 'user', type: 'address' },
+            { name: 'masterContract', type: 'address' },
+            { name: 'approved', type: 'bool' },
+            { name: 'nonce', type: 'uint256' },
+          ],
+        },
+        value: {
+          warning: 'Give FULL access to funds in (and approved to) BentoBox?',
+          user: account?.address,
+          masterContract,
+          approved: true,
+          nonce: nonces,
+        },
+      })
+
+      setSignature(splitSignature(data))
+    } catch (e: unknown) {
+      // Regular approval as fallback
+      if (!(e instanceof UserRejectedRequestError)) {
+        const data = await writeAsync()
+        createToast({
+          txHash: data.hash,
+          href: Chain.from(activeChain.id).getTxUrl(data.hash),
+          promise: data.wait(),
+          summary: {
+            pending: <Dots>Approving BentoBox Master Contract</Dots>,
+            completed: `Successfully approved the master contract`,
+            failed: 'Something went wrong approving the master contract',
+          },
+        })
+      }
+    }
+  }, [approvalState, masterContract, activeChain, getNonces, signTypedDataAsync, account?.address, error])
 
   return [approvalState, signature, approveBentoBox]
 }

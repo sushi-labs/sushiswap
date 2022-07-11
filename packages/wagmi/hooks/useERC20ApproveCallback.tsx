@@ -1,5 +1,6 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Amount, Currency } from '@sushiswap/currency'
 import { createToast, Dots } from '@sushiswap/ui'
 import { BigNumber, Contract } from 'ethers'
