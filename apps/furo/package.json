@@ -69,8 +69,8 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.1",
-    "@graphprotocol/client-cli": "1.0.1",
+    "@graphprotocol/client-add-source-name": "1.0.2",
+    "@graphprotocol/client-cli": "2.0.2",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
