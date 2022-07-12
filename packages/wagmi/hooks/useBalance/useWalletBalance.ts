@@ -65,7 +65,6 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     contracts,
     cacheTime: 20_000,
     keepPreviousData: true,
-    watch: false,
   })
 
   return useMemo(() => {
