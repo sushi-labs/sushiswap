@@ -795,7 +795,7 @@ const Widget: FC<Swap> = ({
                       </div>
                       <div className="flex flex-col justify-end flex-grow gap-1 px-3 py-2 pb-0 -ml-3 -mr-3">
                         <div className="flex items-center justify-between gap-2">
-                          <Rate loading={Boolean(srcAmount && !dstMinimumAmountOut)} price={price} theme={theme}>
+                          <Rate price={price} theme={theme}>
                             {({ toggleInvert, content }) => (
                               <Typography
                                 as="button"
