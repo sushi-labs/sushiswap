@@ -52,7 +52,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   return (
     <SlideIn>
       <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => !isSmallScreen && inputRef.current?.focus()}>
-        <Overlay.Content className="bg-slate-800 !pt-[60px]">
+        <Overlay.Content className="bg-slate-800 !pt-[60px] pb-3 md:pb-[68px]">
           <Overlay.Header onClose={onClose} title="Select Network" />
           <div
             className={classNames(
@@ -84,7 +84,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                     selected === chain.chainId
                       ? 'text-slate-200 !font-medium hover:text-white'
                       : 'text-slate-400 hover:text-white',
-                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue'
+                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue py-1'
                   )}
                 >
                   {selected === chain.chainId ? (

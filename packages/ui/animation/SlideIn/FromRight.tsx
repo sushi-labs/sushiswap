@@ -1,8 +1,10 @@
 import { Transition } from '@headlessui/react'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC, Fragment, ReactElement } from 'react'
 import ReactDOM from 'react-dom'
 
+import { Dialog } from '../../dialog'
 import { useSlideInContext } from './SlideIn'
 import { useEscapeClose } from './useEscapeClose'
 
@@ -27,10 +29,19 @@ export const FromRight: FC<FromRight> = ({
   children,
   className,
 }) => {
+  const isSmallScreen = useIsSmScreen()
   useEscapeClose(onClose)
 
   const portal = useSlideInContext()
   if (!portal) return <></>
+
+  if (isSmallScreen) {
+    return (
+      <Dialog open={show} onClose={onClose} unmount={false} initialFocus={undefined}>
+        <div className="!rounded-t-2xl overflow-hidden">{children}</div>
+      </Dialog>
+    )
+  }
 
   return ReactDOM.createPortal(
     <Transition.Root appear show={show} unmount={false} as={Fragment}>
