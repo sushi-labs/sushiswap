@@ -1,14 +1,15 @@
+import { Transition } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import React, { FC, ReactNode, useMemo } from 'react'
+import React, { FC, Fragment, ReactNode, useMemo } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { createScheduleRepresentation } from '../createScheduleRepresentation'
+import { CreateVestingFormDataTransformedAndValidated } from '../types'
 import CreateFormButtons from './CreateFormButtons'
-import { CreateVestingFormDataTransformed } from './types'
 
 interface Item {
   title: string
@@ -47,7 +48,7 @@ const Table: FC<{
 interface CreateFormReviewModal {
   open: boolean
   onDismiss(): void
-  formData: CreateVestingFormDataTransformed
+  formData: CreateVestingFormDataTransformedAndValidated
 }
 
 const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, formData }) => {
@@ -71,7 +72,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
-    return [cliff, step, cliff && step ? step.multiply(stepPayouts).add(cliff) : undefined, endDate]
+    return [
+      cliff,
+      step,
+      cliff && step ? step.multiply(stepPayouts).add(cliff) : step ? step.multiply(stepPayouts) : undefined,
+      endDate,
+    ]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, currency])
 
   const schedule = useMemo(() => {
@@ -95,7 +101,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         <Typography variant="xs" className="!leading-5 text-slate-400">
           This will create a stream to{' '}
           <span className="font-bold text-slate-50 hover:text-blue">
-            {activeChain && (
+            {activeChain && recipient && (
               <a target="_blank" href={Chain.from(activeChain.id).getAccountUrl(recipient)} rel="noreferrer">
                 {shortenAddress(recipient)}
               </a>
@@ -105,8 +111,8 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           <span className="font-bold text-slate-50">
             {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
           </span>{' '}
-          from <span className="font-bold text-slate-50">{format(startDate, 'dd MMM yyyy hh:mm')}</span> until{' '}
-          <span className="font-bold text-slate-50">{format(endDate, 'dd MMM yyyy hh:mm')}</span>
+          from <span className="font-bold text-slate-50">{!!startDate && format(startDate, 'dd MMM yyyy hh:mm')}</span>{' '}
+          until <span className="font-bold text-slate-50">{!!endDate && format(endDate, 'dd MMM yyyy hh:mm')}</span>
         </Typography>
         <div className="flex flex-col w-full">
           <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[240px] mt-2 hide-scrollbar divide-y divide-slate-800">
@@ -204,6 +210,25 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             <Item title="Amount of Periods" value={stepPayouts} />
           </Table>
         </div>
+        <Transition
+          as={Fragment}
+          show={startDate.getTime() <= new Date().getTime()}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="!my-0 flex flex-col gap-1 absolute inset-0 bg-slate-900 flex items-center justify-center">
+            <Typography variant="lg" weight={700} className="text-slate-200">
+              Start date has expired
+            </Typography>
+            <Typography variant="xs" weight={700} className="text-slate-400">
+              Please change the start date of your stream
+            </Typography>
+          </div>
+        </Transition>
         <div className="border-t border-slate-800">
           <CreateFormButtons formData={formData} onDismiss={onDismiss} />
         </div>

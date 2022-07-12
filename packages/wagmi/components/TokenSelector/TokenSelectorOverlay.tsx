@@ -5,7 +5,18 @@ import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
-import { classNames, Currency, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
+import {
+  classNames,
+  Currency,
+  DEFAULT_INPUT_PADDING,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Loader,
+  NetworkIcon,
+  Overlay,
+  SlideIn,
+  Typography,
+} from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 
 import { BalanceMap } from '../../hooks/useBalance/types'
@@ -61,7 +72,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn>
-          <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
+          <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
             <Overlay.Content className="bg-slate-700 !px-0 !pb-[88px]">
               <Overlay.Header onClose={onClose} title="Select Token" />
               <div className="p-3">
@@ -71,14 +82,13 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                   )}
                 >
                   <Input.Address
+                    variant="unstyled"
                     id="token-search"
                     ref={inputRef}
                     placeholder="Search token by address"
                     value={query}
                     onChange={onInput}
-                    className={classNames(
-                      '!pr-0 !border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
-                    )}
+                    className={classNames(DEFAULT_INPUT_UNSTYLED, DEFAULT_INPUT_PADDING)}
                   />
                   {searching ? (
                     <div className="relative left-[-2px]">
@@ -101,7 +111,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
               </Typography>
               <div className="relative h-full pt-5">
                 <div className="w-full border-t border-slate-200/5" />
-                <div className="absolute inset-0 bg-slate-800 rounded-t-none rounded-xl h-full">
+                <div className="absolute inset-0 h-full rounded-t-none bg-slate-800 rounded-xl">
                   {queryToken && (
                     <TokenSelectorImportRow
                       className="!px-4"
@@ -127,8 +137,8 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                     )}
                   />
                   {currencies.length === 0 && !queryToken && chainId && (
-                    <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
-                      <div className="flex flex-col gap-1 justify-center items-center">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="flex flex-col items-center justify-center gap-1">
                         <Typography variant="xs" className="flex italic text-slate-500">
                           No tokens found on
                         </Typography>

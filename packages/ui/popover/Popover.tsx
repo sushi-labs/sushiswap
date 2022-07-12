@@ -8,12 +8,11 @@ import { usePopover } from './usePopover'
 
 type Popover = ExtractProps<typeof HeadlessPopover> & {
   hover?: boolean
-  arrow?: boolean
 }
 
-export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...props }) => {
+export const Popover: FC<Popover> = ({ button, panel, hover, ...props }) => {
   const [show, setShow] = useState(false)
-  const { styles, attributes, setReferenceElement, setPopperElement, setArrowElement } = usePopover()
+  const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
 
   useEffect(() => {
     if (!document.getElementById('popover-portal')) {
@@ -38,7 +37,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                 {...attributes.popper}
                 ref={setPopperElement}
                 style={styles.popper}
-                className="tooltip z-[100]"
+                className="tooltip z-[100] shadow-md"
                 static
               >
                 {React.cloneElement(
@@ -47,12 +46,11 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'rounded-2xl overflow-hidden ring-[2px] ring-black ring-opacity-[0.1] shadow-md shadow-black/40'
+                      'rounded-lg overflow-hidden shadow-xl shadow-black/20'
                     ),
                   },
                   panel.props.children
                 )}
-                {arrow && <div ref={setArrowElement} style={styles.arrow} className="arrow" />}
               </HeadlessPopover.Panel>,
               document.body
             )}

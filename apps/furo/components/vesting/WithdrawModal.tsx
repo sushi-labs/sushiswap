@@ -6,7 +6,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
-import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
@@ -100,6 +100,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInput.Base
+              className="ring-offset-slate-800"
               currency={vesting?.token}
               onChange={setInput}
               value={input}
@@ -118,10 +119,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.WALLET
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
               <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
@@ -139,10 +139,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
             <div
               onClick={() => setFundSource(FundSource.BENTOBOX)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
               <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">

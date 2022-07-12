@@ -5,6 +5,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button as UIButton,
   ButtonProps,
+  classNames,
   CoinbaseWalletIcon,
   Loader,
   Menu,
@@ -89,7 +90,12 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
   // Show account name and balance
   if (isMounted && !children) {
     return (
-      <div className="z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]">
+      <div
+        className={classNames(
+          'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px]',
+          rest.className
+        )}
+      >
         <div className="hidden px-3 sm:block">
           <Account.Balance supportedNetworks={supportedNetworks} address={address} />
         </div>

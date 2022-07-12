@@ -16,9 +16,9 @@
     "scli": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w",
+    "dev": "tsup index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
   },
@@ -41,6 +41,7 @@
     "date-fns": "^2.28.0",
     "graphql": "^16.5.0",
     "numeral": "^2.0.6",
+    "tsup": "^6.1.3",
     "typescript": "^4.0.0"
   }
 }

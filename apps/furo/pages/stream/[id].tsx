@@ -34,21 +34,18 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
-
   const stream = (await getStream(chainId as string, id as string)) as StreamDTO
+  const [transactions, rebases] = await Promise.all([
+    getStreamTransactions(chainId as string, id as string),
+    getRebase(chainId as string, stream.token.id),
+  ])
+
   return {
     props: {
       fallback: {
-        [`/furo/api/stream/${chainId}/${id}`]: stream,
-        [`/furo/api/stream/${chainId}/${id}/transactions`]: (await getStreamTransactions(
-          chainId as string,
-          id as string
-        )) as TransactionDTO[],
-        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: (await getRebase(
-          chainId as string,
-          stream.token.id
-        )) as RebaseDTO,
+        [`/furo/api/stream/${chainId}/${id}`]: stream as StreamDTO,
+        [`/furo/api/stream/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${stream.token.id}`]: rebases as RebaseDTO,
       },
     },
   }
@@ -61,6 +58,13 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
     </SWRConfig>
   )
 }
+
+const LINKS = (id: string) => [
+  {
+    href: `/stream/${id}`,
+    label: `Stream ${id}`,
+  },
+]
 
 const _Streams: FC = () => {
   const router = useRouter()
@@ -99,7 +103,7 @@ const _Streams: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Stream" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />

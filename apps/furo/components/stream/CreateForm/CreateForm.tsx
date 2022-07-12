@@ -14,10 +14,10 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
+import { CreateStreamFormData, CreateStreamFormDataValidated } from '../types'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { createStreamSchema } from './schema'
 import { StreamAmountDetails } from './StreamAmountDetails'
-import { CreateStreamFormData, CreateStreamFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
   const { address } = useAccount()
@@ -36,6 +36,7 @@ export const CreateForm: FC = () => {
       endDate: undefined,
       recipient: undefined,
       amount: '',
+      fundSource: FundSource.WALLET,
     },
     mode: 'onChange',
   })

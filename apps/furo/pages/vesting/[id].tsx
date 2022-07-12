@@ -32,22 +32,19 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  // if (typeof query.chainId !== 'string' || typeof query.id !== 'string') return { props: {} }
-  const { chainId, id } = query
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
   const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+  const [transactions, rebases] = await Promise.all([
+    getVestingTransactions(chainId as string, id as string),
+    getRebase(chainId as string, vesting.token.id),
+  ])
+
   return {
     props: {
       fallback: {
         [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/vesting/${chainId}/${id}/transactions`]: (await getVestingTransactions(
-          chainId as string,
-          id as string
-        )) as TransactionDTO[],
-        [`/furo/api/rebase/${query.chainId}/${vesting.token.id}`]: (await getRebase(
-          chainId as string,
-          vesting.token.id
-        )) as Rebase,
+        [`/furo/api/vesting/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/rebase/${chainId}/${vesting.token.id}`]: rebases as Rebase,
       },
     },
   }
@@ -60,6 +57,13 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
     </SWRConfig>
   )
 }
+
+const LINKS = (id: string) => [
+  {
+    href: `/vesting/${id}`,
+    label: `Vesting ${id}`,
+  },
+]
 
 const _VestingPage: FC = () => {
   const router = useRouter()
@@ -112,7 +116,7 @@ const _VestingPage: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Vesting" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
         <div className="flex justify-center">
           <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />

@@ -1,10 +1,17 @@
 import { ChainKey } from '@sushiswap/chain'
 import { LiquidityPosition, Pair, Token } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
 
-import { MAKER_CONFIG } from '../config'
+import {
+  CHAIN_NAME_TO_CHAIN_ID,
+  EXCHANGE_SUBGRAPH_NAME,
+  MAKER_ADDRESS,
+  MAKER_SUPPORTED_CHAIN_NAMES,
+  MAKER_TYPE,
+} from '../config'
 
 type LiquidityPositons = Array<
   Pick<LiquidityPosition, 'liquidityTokenBalance'> & {
@@ -31,13 +38,16 @@ export async function maker(args: Arguments) {
     const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
     console.log('network selected: ', network)
 
-    if (!network || !(network in MAKER_CONFIG)) {
-      throw new Error('Unsupported chain. Supported chains are: '.concat(Object.keys(MAKER_CONFIG).join(', ')))
+    if (!network || !MAKER_SUPPORTED_CHAIN_NAMES.includes(network)) {
+      throw new Error('Unsupported chain. Supported chains are: '.concat(MAKER_SUPPORTED_CHAIN_NAMES.join(', ')))
     }
 
-    const liquidityPositions = Object.values(
-      await MAKER_CONFIG[network].fetcher({ id: MAKER_CONFIG[network].address })
-    )[0]?.liquidityPositions
+    const sdk = await getBuiltGraphSDK({
+      chainId: CHAIN_NAME_TO_CHAIN_ID[network],
+      subgraphName: EXCHANGE_SUBGRAPH_NAME[CHAIN_NAME_TO_CHAIN_ID[network]],
+    })
+
+    const liquidityPositions = Object.values(await sdk.User({ id: MAKER_ADDRESS[network] }))[0]?.liquidityPositions
 
     if (network && liquidityPositions) {
       printMakerTable(network, liquidityPositions)
@@ -45,16 +55,34 @@ export async function maker(args: Arguments) {
       console.log('network or subgraph response was empty')
     }
   } else {
+    console.log(
+      MAKER_SUPPORTED_CHAIN_NAMES.map((chain) => ({
+        chain,
+        chainId: CHAIN_NAME_TO_CHAIN_ID[chain],
+        subgraphName: EXCHANGE_SUBGRAPH_NAME[CHAIN_NAME_TO_CHAIN_ID[chain]],
+      }))
+    )
+
     const makers = await Promise.all(
-      Object.keys(MAKER_CONFIG).map((chain) =>
-        Promise.resolve(MAKER_CONFIG[chain].fetcher({ id: MAKER_CONFIG[chain].address })).then((result) => ({
-          network: chain,
-          address: MAKER_CONFIG[chain].address,
-          type: MAKER_CONFIG[chain].type,
-          liquidityPositions: result,
-        }))
+      MAKER_SUPPORTED_CHAIN_NAMES.map((chain) =>
+        Promise.resolve(
+          getBuiltGraphSDK({
+            chainId: CHAIN_NAME_TO_CHAIN_ID[chain],
+            subgraphName: EXCHANGE_SUBGRAPH_NAME[CHAIN_NAME_TO_CHAIN_ID[chain]],
+          })
+            .User({ id: MAKER_ADDRESS[chain] })
+            .then((result) => ({
+              network: chain,
+              address: MAKER_ADDRESS[chain],
+              type: MAKER_TYPE[chain],
+              liquidityPositions: result,
+            }))
+        )
       )
     )
+
+    // console.log({ makers })
+
     const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
     let totalValue = 0
     const rows =

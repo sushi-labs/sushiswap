@@ -2,7 +2,7 @@ import { RadioGroup, Transition } from '@headlessui/react'
 import { AdjustmentsIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon, StarIcon } from '@heroicons/react/solid'
 import { useIsMounted } from '@sushiswap/hooks'
-import { CircleIcon, classNames, Input, Overlay, SlideIn, Typography } from '@sushiswap/ui'
+import { CircleIcon, classNames, DEFAULT_INPUT_UNSTYLED, Input, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { FC, useCallback, useRef, useState } from 'react'
 
 import { useSettings } from '../../lib/state/storage'
@@ -53,7 +53,7 @@ export const SlippageSettingOption: FC<{ recommended?: boolean; onClick?(): void
             <Typography variant="sm" weight={700} className="flex gap-1 items-center">
               {value}% {recommended && <StarIcon className="text-blue" width={12} height={12} />}
             </Typography>
-            <Typography variant="xs" className="text-slate-400">
+            <Typography variant="xxs" className="text-slate-400">
               {data}
             </Typography>
           </div>
@@ -101,7 +101,7 @@ export const SlippageToleranceOverlay = () => {
           </div>
         </div>
       </button>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={handleClose} className="!mt-0">
+      <SlideIn.FromLeft show={open} onClose={handleClose} className="!mt-0">
         <Overlay.Content className="!bg-slate-800 !pt-[56px]">
           <Overlay.Header onClose={() => setOpen(false)} title="Slippage Tolerance" />
           <Typography variant="xs" className="text-slate-400 text-center mb-2">
@@ -159,7 +159,7 @@ export const SlippageToleranceOverlay = () => {
                   )}
                 </Transition>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2 w-full">
                 <Typography variant="sm" weight={700} className="flex gap-2 items-baseline">
                   Custom{' '}
                   {slippageTolerance > 3 && (
@@ -167,10 +167,11 @@ export const SlippageToleranceOverlay = () => {
                   )}
                 </Typography>
                 <Input.Numeric
+                  variant="unstyled"
                   ref={inputRef}
                   placeholder="5"
                   onUserInput={(val) => updateSlippageTolerance(+val)}
-                  className="flex !py-0 font-bold text-sm w-10"
+                  className={classNames(DEFAULT_INPUT_UNSTYLED, 'py-0.5')}
                 />
               </div>
             </div>

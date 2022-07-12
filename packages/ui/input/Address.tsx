@@ -8,6 +8,7 @@ export type AddressProps = Omit<React.HTMLProps<HTMLInputElement>, 'as' | 'onCha
   error?: boolean
   value: string | undefined
   onChange(x: string): void
+  variant?: 'default' | 'unstyled'
 }
 
 const matchSpaces = /\s+/g
@@ -22,6 +23,7 @@ export const Address = forwardRef<HTMLInputElement, AddressProps>(
       title = 'Address or ENS name',
       className = '',
       error,
+      variant = 'default',
       ...rest
     },
     ref
@@ -35,7 +37,11 @@ export const Address = forwardRef<HTMLInputElement, AddressProps>(
           placeholder={placeholder}
           value={value}
           type="search"
-          className={classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)}
+          className={
+            variant === 'default'
+              ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)
+              : className
+          }
           onChange={(event) => onChange && onChange(event.target.value.replace(matchSpaces, ''))}
           inputMode="search"
           autoComplete="off"

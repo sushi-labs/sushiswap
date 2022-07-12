@@ -50,8 +50,8 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn>
-      <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-        <Overlay.Content className="bg-slate-700 !pt-[60px]">
+      <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
+        <Overlay.Content className="bg-slate-800 !pt-[60px]">
           <Overlay.Header onClose={onClose} title="Select Network" />
           <div
             className={classNames(
@@ -67,29 +67,32 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 searching.current = true
                 setQuery(val)
               }}
-              className={classNames(
-                '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
-              )}
+              className="focus:ring-offset-slate-800 !bg-slate-700"
             />
             {searching.current && <Loader size="16px" />}
           </div>
-          <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-800 mt-3')}>
+          <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-700 mt-3')}>
             <div className="h-full overflow-auto hide-scrollbar">
-              {filteredChains.map(([k, chain]) => (
+              {filteredChains.map(([, chain]) => (
                 <Typography
+                  as="button"
                   onClick={() => handleSelect(chain.chainId)}
                   key={chain.chainId}
                   variant="sm"
                   className={classNames(
-                    selected === chain.chainId ? classNames('!font-bold ') : classNames('!font-medium '),
-                    'flex items-center gap-1.5 cursor-pointer py-2 pr-3 pl-1.5'
+                    selected === chain.chainId
+                      ? 'text-slate-200 !font-bold hover:text-white'
+                      : 'text-slate-400 hover:text-white',
+                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue'
                   )}
                 >
                   {selected === chain.chainId ? (
-                    <CheckIcon width={20} height={20} className="text-blue" />
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <CheckIcon width={24} height={24} className="group-hover:text-white text-blue" />
+                    </div>
                   ) : (
-                    <div className="flex items-center justify-center w-5 h-5">
-                      <NetworkIcon type="naked" chainId={chain.chainId} width={18} height={18} />
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <NetworkIcon type="naked" chainId={chain.chainId} width={24} height={24} />
                     </div>
                   )}
                   {chain.name}

@@ -1,10 +1,11 @@
+import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import log from '@sushiswap/log'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
 
 export async function bar() {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
 
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
   const threeMonthAgo = getUnixTime(subMonths(new Date(), 3))
@@ -13,22 +14,22 @@ export async function bar() {
 
   const [
     {
-      ETHEREUM_BLOCKS_blocks: [oneYearBlock],
+      blocks: [oneYearBlock],
     },
     {
-      ETHEREUM_BLOCKS_blocks: [oneMonthBlock],
+      blocks: [oneMonthBlock],
     },
     {
-      ETHEREUM_BLOCKS_blocks: [threeMonthBlock],
+      blocks: [threeMonthBlock],
     },
     {
-      ETHEREUM_BLOCKS_blocks: [sixMonthBlock],
+      blocks: [sixMonthBlock],
     },
   ] = await Promise.all([
-    sdk.EthereumBlocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } }),
-    sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } }),
-    sdk.EthereumBlocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } }),
-    sdk.EthereumBlocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
+    sdk.Blocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } }),
+    sdk.Blocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } }),
+    sdk.Blocks({ where: { timestamp_gt: threeMonthAgo, timestamp_lt: threeMonthAgo + 30000 } }),
+    sdk.Blocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
   ])
 
   const { bar } = await sdk.Bar()
