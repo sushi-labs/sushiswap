@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUPPORTED_CHAINS = [
+export const SUSHISWAP_CHAINS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
   ChainId.BSC,
@@ -15,6 +15,8 @@ export const SUPPORTED_CHAINS = [
   ChainId.POLYGON,
   ChainId.HARMONY,
 ]
+
+export const TRIDENT_CHAINS = [ChainId.OPTIMISM]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraph/name'
 
@@ -31,4 +33,8 @@ export const LEGACY_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
+}
+
+export const TRIDENT_SUBGRAPH_NAME: Record<string | number, string> = {
+  [ChainId.OPTIMISM]: 'olastenberg/trident-optimism',
 }

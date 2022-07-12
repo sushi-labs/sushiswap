@@ -46,6 +46,8 @@
     "@graphql-mesh/cross-helpers": "^0.2.0",
     "@graphql-mesh/cache-localforage": "^0.6.17",
     "@graphql-mesh/graphql": "^0.29.1",
+    "@graphql-mesh/transform-filter-schema": "^0.14.67",
+    "@graphql-mesh/transform-prune": "^0.0.43",
     "@graphql-mesh/merger-stitching": "^0.16.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
