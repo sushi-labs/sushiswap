@@ -54,7 +54,7 @@ export function usePairs(
     enabled: pairAddresses.length > 0,
   })
 
-  console.log({ chainId, data })
+  console.log({ chainId, data, pairAddresses: pairAddresses.length })
   return useMemo(() => {
     if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
     return data.map((result, i) => {

@@ -57,8 +57,6 @@ export function useTrade(
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
 
-  console.log(chainId, pairs)
-
   // Filter legacy and trident pools by existance
   const filteredPools = useMemo(
     () =>
