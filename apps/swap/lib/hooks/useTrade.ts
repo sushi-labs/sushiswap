@@ -57,7 +57,7 @@ export function useTrade(
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
 
-  console.log(currencyCombinations.length, pairs.length, constantProductPools.length, pools.length)
+  console.log(chainId, currencyCombinations.length, pairs.length, constantProductPools.length, pools.length)
 
   // Filter legacy and trident pools by existance
   const filteredPools = useMemo(
@@ -76,18 +76,6 @@ export function useTrade(
   )
 
   return useMemo(() => {
-    console.log(
-      !!data,
-      !!data?.gasPrice,
-      !!currencyIn,
-      !!currencyOut,
-      currencyIn?.wrapped.address !== currencyOut?.wrapped.address,
-      chainId,
-      !!amountSpecified,
-      amountSpecified?.greaterThan(0),
-      !!otherCurrency,
-      filteredPools.length > 0
-    )
     if (
       data &&
       data.gasPrice &&

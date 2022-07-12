@@ -44,6 +44,7 @@ export function usePairs(
     [tokens]
   )
 
+  console.log({ chainId, tokens: tokens.length, pairAddresses: pairAddresses.length })
   const { data } = useContractReads({
     contracts: pairAddresses.map((addressOrName) => ({
       chainId,
