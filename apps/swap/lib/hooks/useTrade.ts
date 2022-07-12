@@ -74,6 +74,18 @@ export function useTrade(
   )
 
   return useMemo(() => {
+    console.log(
+      data,
+      data?.gasPrice,
+      currencyIn,
+      currencyOut,
+      currencyIn?.wrapped.address !== currencyOut?.wrapped.address,
+      chainId,
+      amountSpecified,
+      amountSpecified?.greaterThan(0),
+      otherCurrency,
+      filteredPools.length > 0
+    )
     if (
       data &&
       data.gasPrice &&
