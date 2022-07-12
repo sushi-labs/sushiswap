@@ -44,13 +44,19 @@ export function usePairs(
     [tokens]
   )
 
+  const contracts = useMemo(
+    () =>
+      pairAddresses.map((addressOrName) => ({
+        chainId,
+        addressOrName,
+        contractInterface: PAIR_INTERFACE,
+        functionName: 'getReserves',
+      })),
+    [chainId, pairAddresses]
+  )
+
   const { data } = useContractReads({
-    contracts: pairAddresses.map((addressOrName) => ({
-      chainId,
-      addressOrName,
-      contractInterface: PAIR_INTERFACE,
-      functionName: 'getReserves',
-    })),
+    contracts,
     enabled: pairAddresses.length > 0,
   })
 
