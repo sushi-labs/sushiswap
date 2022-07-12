@@ -83,8 +83,10 @@ const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
         <section className="py-10 pb-60">
           <Container maxWidth="5xl" className="mx-auto px-4 space-y-10">
             <div className="flex flex-col gap-y-8 md:flex-row items-center justify-between">
-              <div className="order-2 md:order-1 flex gap-3">
-                {categories && <Categories selected={selected} onSelect={setSelected} categories={categories} />}
+              <div className="order-2 md:order-1 overflow-hidden w-full p-1 -ml-1">
+                <div className="flex gap-3 flex-wrap">
+                  <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
+                </div>
               </div>
               <div className="w-full md:w-auto order-1 md:order-2 flex items-center gap-3 rounded-xl bg-slate-800 px-3 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
                 <SearchIcon width={24} height={24} className="text-slate-500" />
