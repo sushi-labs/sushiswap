@@ -417,7 +417,7 @@ const Widget: FC<Swap> = ({
 
   // DEBUG
   useEffect(() => {
-    console.debug('SRC CHAIN', dstChainId)
+    console.debug('SRC CHAIN', srcChainId)
     console.debug('DST CHAIN', dstChainId)
     console.debug('SRC TOKEN', srcToken)
     console.debug('DST TOKEN', dstToken)
@@ -445,6 +445,7 @@ const Widget: FC<Swap> = ({
     dstChainId,
     srcToken,
     dstToken,
+    srcChainId,
   ])
 
   useEffect(() => {

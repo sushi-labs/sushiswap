@@ -23,6 +23,7 @@ export type UseTradeOutput =
 
 /**
  * Returns trade for a desired swap.
+ * @param chainId
  * @param tradeType whether we request an exact output amount or we provide an exact input amount
  * @param amountSpecified the exact amount to swap in/out
  * @param mainCurrency the desired input/payment currency
