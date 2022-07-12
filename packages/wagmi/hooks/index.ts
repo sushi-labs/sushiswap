@@ -1,6 +1,7 @@
 export * from './useBalance'
 export * from './useBentoBoxApproveCallback'
 export * from './useBentoBoxContract'
+export * from './useBentoBoxTotals'
 export * from './useChain'
 export * from './useChains'
 export * from './useERC20Allowance'
