@@ -3,20 +3,19 @@ import 'dotenv/config'
 import { getUnixTime } from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import { GRAPH_HOST, LEGACY_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
+import { GRAPH_HOST, SUSHISWAP_CHAINS, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
 import redis from './redis'
 
 export async function execute() {
-  console.log(`Updating prices for SushiSwap chains: ${SUSHISWAP_CHAINS.join(', ')}`)
+  console.log(`Updating prices for chains: ${SUSHISWAP_CHAINS.join(', ')}`)
 
   const sushiSwapResults = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
       if (!SUSHISWAP_CHAINS.includes(chainId)) {
         throw Error(`Unsupported Chain ${chainId}`)
       }
-      console.log({ chainId, host: GRAPH_HOST, subgraphName: LEGACY_SUBGRAPH_NAME[chainId] })
-      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, subgraphName: LEGACY_SUBGRAPH_NAME[chainId] })
-      return sdk.SushiSwapTokenPrices({ first: 100000 })
+      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId] })
+      return sdk.SushiSwapTokenPrices({ first: 5000 })
     })
   )
 
@@ -25,7 +24,6 @@ export async function execute() {
       if (!TRIDENT_CHAINS.includes(chainId)) {
         throw Error(`Unsupported Chain ${chainId}`)
       }
-      console.log({ chainId, host: GRAPH_HOST, subgraphName: TRIDENT_SUBGRAPH_NAME[chainId] })
       const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, subgraphName: TRIDENT_SUBGRAPH_NAME[chainId] })
       return sdk.TridentTokenPrices({ first: 100000 })
     })
@@ -55,7 +53,7 @@ export async function execute() {
           }),
         ]
       }),
-      TRIDENT_CHAINS.map((chainId, i) => {
+      ...TRIDENT_CHAINS.map((chainId, i) => {
         const updatedAtBlock = tridentResults[i]._meta?.block.number
         const updatedAtTimestamp = getUnixTime(Date.now())
         return [
@@ -64,9 +62,9 @@ export async function execute() {
             chainId,
             ...Object.fromEntries(
               tridentResults[i].tokenPrices
-                .filter((price) => price.derivedUSD != 0)
-                .map((price) => {
-                  return [price.id, Number(price.derivedUSD)]
+                .filter((tokenPrice) => tokenPrice.derivedNative != 0)
+                .map((tokenPrice) => {
+                  return [tokenPrice.id, Number(tokenPrice.derivedUSD)]
                 })
             ),
             updatedAtBlock,
@@ -76,7 +74,7 @@ export async function execute() {
       }),
     ])
   )
-  // console.log(`Finished updating prices for chains: ${SUSHISWAP_CHAINS.join(', ')}`)
+  console.log(`Finished updating prices for chains: ${SUSHISWAP_CHAINS.join(', ')}`)
   process.exit()
 }
 execute()

@@ -9,7 +9,6 @@ export const SUSHISWAP_CHAINS = [
   ChainId.FANTOM,
   ChainId.FUSE,
   ChainId.GNOSIS,
-  // ChainId.HECO,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.POLYGON,
@@ -18,9 +17,9 @@ export const SUSHISWAP_CHAINS = [
 
 export const TRIDENT_CHAINS = [ChainId.OPTIMISM]
 
-export const GRAPH_HOST = 'api.thegraph.com/subgraph/name'
+export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 
-export const LEGACY_SUBGRAPH_NAME: Record<string | number, string> = {
+export const SUSHISWAP_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
   [ChainId.BSC]: 'sushiswap/bsc-exchange',

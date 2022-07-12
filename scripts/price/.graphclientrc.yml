@@ -2,19 +2,19 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident-optimism
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/trident-optimism}
     transforms:
-      - blockTracking:
-          validateSchema: true
+      # - blockTracking:
+      #     validateSchema: true
       - autoPagination:
           validateSchema: true
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/exchange-ethereum
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
     transforms:
-      - blockTracking:
-          validateSchema: true
+      # - blockTracking:
+      #     validateSchema: true
       - autoPagination:
           validateSchema: true
       - filterSchema:
