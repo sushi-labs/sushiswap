@@ -1,11 +1,14 @@
 query SushiSwapTokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
+    liquidity
     derivedETH
   }
+
   bundle(id: 1, block: $block) {
     ethPrice
   }
+
   _meta {
     block {
       number
@@ -13,19 +16,21 @@ query SushiSwapTokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, 
   }
 }
 
-query TridentTokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height) {
-  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+query TridentTokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height, $native: String!) {
+  tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
     id
-    price {
-      id
-      derivedUSD
-      derivedNative
-    }
-    kpi {
-      id
-      liquidityUSD
+    derivedNative
+    token {
+      kpi {
+        liquidity
+      }
     }
   }
+
+  native:tokenPrice(id: $native, block: $block) {
+    derivedUSD
+  }
+
   _meta {
     block {
       number

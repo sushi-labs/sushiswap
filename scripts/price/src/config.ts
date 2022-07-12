@@ -15,7 +15,7 @@ export const SUSHISWAP_CHAINS = [
   ChainId.HARMONY,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.OPTIMISM]
+export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON]
 
 export const GRAPH_HOST = 'api.thegraph.com'
 
@@ -40,4 +40,5 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<string | number, string> = {
 
 export const TRIDENT_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.OPTIMISM]: 'olastenberg/trident-optimism',
+  [ChainId.POLYGON]: 'sushiswap/trident-polygon',
 }
