@@ -27,6 +27,7 @@ import {
   Rate,
   SameChainRoute,
   SettingsOverlay,
+  SwitchCurrenciesButton,
 } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
 import { useTrade } from 'lib/hooks'
@@ -454,6 +455,22 @@ const Widget: FC<Swap> = ({
     }
   }, [dstMinimumAmountOut, srcTrade, crossChain, dstToken, dstTrade])
 
+  const switchCurrencies = useCallback(() => {
+    const _srcChainId = srcChainId
+    const _srcToken = srcToken
+    const _srcUseBento = srcUseBentoBox
+    const _dstChainId = dstChainId
+    const _dstToken = dstToken
+    const _dstUseBento = dstUseBentoBox
+
+    setSrcChainId(_dstChainId)
+    setSrcToken(_dstToken)
+    setDstChainId(_srcChainId)
+    setDstToken(_srcToken)
+    setDstUseBentoBox(_srcUseBento)
+    setSrcUseBentoBox(_dstUseBento)
+  }, [dstChainId, dstToken, dstUseBentoBox, srcChainId, srcToken, srcUseBentoBox])
+
   const execute = useCallback(() => {
     console.log([
       !srcChainId,
@@ -633,8 +650,8 @@ const Widget: FC<Swap> = ({
             balance={srcBalance?.[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
           />
         </div>
-        <div className="flex items-center justify-center -mt-[8px] -mb-[8px] z-10">
-          <div className="border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-slate-700" />
+        <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+          <SwitchCurrenciesButton onClick={switchCurrencies} />
         </div>
         <div className={classNames(theme.background.secondary, 'p-3')}>
           <CurrencyInput
