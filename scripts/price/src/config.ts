@@ -15,7 +15,7 @@ export const SUSHISWAP_CHAINS = [
   ChainId.HARMONY,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON]
+export const TRIDENT_CHAINS = [ChainId.OPTIMISM]
 
 export const GRAPH_HOST = 'api.thegraph.com'
 

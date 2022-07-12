@@ -15,7 +15,7 @@ export async function execute() {
         throw Error(`Unsupported Chain ${chainId}`)
       }
       const sdk = getBuiltGraphSDK({ chainId, name: SUSHISWAP_SUBGRAPH_NAME[chainId] })
-      return sdk.SushiSwapTokenPrices({ first: 100000 })
+      return sdk.SushiSwapTokens({ first: 100000 })
     })
   )
 
@@ -25,7 +25,7 @@ export async function execute() {
         throw Error(`Unsupported Chain ${chainId}`)
       }
       const sdk = getBuiltGraphSDK({ chainId, name: TRIDENT_SUBGRAPH_NAME[chainId] })
-      return sdk.TridentTokenPrices({ first: 100000 })
+      return sdk.TridentTokens({ first: 100000 })
     })
   )
 
@@ -61,10 +61,10 @@ export async function execute() {
           JSON.stringify({
             chainId,
             ...Object.fromEntries(
-              tridentResults[i].tokenPrices
-                .filter((tokenPrice) => tokenPrice.derivedNative != 0)
-                .map((tokenPrice) => {
-                  return [tokenPrice.id, Number(tokenPrice.derivedUSD)]
+              tridentResults[i].tokens
+                .filter((token) => token.price.derivedNative != 0)
+                .map((token) => {
+                  return [token.id, Number(token.price.derivedUSD)]
                 })
             ),
             updatedAtBlock,
