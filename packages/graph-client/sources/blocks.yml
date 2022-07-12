@@ -1,0 +1,8 @@
+name: Blocks
+handler:
+  graphql:
+    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+transforms:
+  - addSourceName: true
+  - autoPagination:
+      validateSchema: true

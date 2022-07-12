@@ -1,0 +1,57 @@
+query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    name
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    totalSupply
+    reserveUSD
+    volumeUSD
+  }
+}
+
+query User($id: ID!) {
+  user(id: $id) {
+    liquidityPositions(first: 1000) {
+      liquidityTokenBalance
+      pair {
+        id
+        totalSupply
+        reserveUSD
+        token0 {
+          id
+          symbol
+          name
+          decimals
+        }
+        token1 {
+          id
+          symbol
+          name
+          decimals
+        }
+      }
+    }
+  }
+}
+
+query TokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    derivedETH
+  }
+
+  bundle(id: 1, block: $block) {
+    ethPrice
+  }
+}

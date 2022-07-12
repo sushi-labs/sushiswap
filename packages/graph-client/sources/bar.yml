@@ -1,11 +1,7 @@
-name: bar
+name: Bar
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/matthewlilley/bar
 transforms:
-  # - blockTracking:
-  #     validateSchema: true
   - autoPagination:
       validateSchema: true
-serve:
-  browser: false

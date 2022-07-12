@@ -1,4 +1,4 @@
-name: masterChefV2
+name: MasterChefV2
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
@@ -9,9 +9,5 @@ transforms:
       includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_
-  # - blockTracking:
-  #     validateSchema: true
   - autoPagination:
       validateSchema: true
-serve:
-  browser: false
