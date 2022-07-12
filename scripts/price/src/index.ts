@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { getUnixTime } from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import { GRAPH_HOST, SUSHISWAP_CHAINS, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
+import { SUSHISWAP_CHAINS, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
 import redis from './redis'
 
 export async function execute() {
@@ -14,8 +14,8 @@ export async function execute() {
       if (!SUSHISWAP_CHAINS.includes(chainId)) {
         throw Error(`Unsupported Chain ${chainId}`)
       }
-      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId] })
-      return sdk.SushiSwapTokenPrices({ first: 5000 })
+      const sdk = getBuiltGraphSDK({ chainId, name: SUSHISWAP_SUBGRAPH_NAME[chainId] })
+      return sdk.SushiSwapTokenPrices({ first: 100000 })
     })
   )
 
@@ -24,7 +24,7 @@ export async function execute() {
       if (!TRIDENT_CHAINS.includes(chainId)) {
         throw Error(`Unsupported Chain ${chainId}`)
       }
-      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, subgraphName: TRIDENT_SUBGRAPH_NAME[chainId] })
+      const sdk = getBuiltGraphSDK({ chainId, name: TRIDENT_SUBGRAPH_NAME[chainId] })
       return sdk.TridentTokenPrices({ first: 100000 })
     })
   )

@@ -15,9 +15,13 @@ export const SUSHISWAP_CHAINS = [
   ChainId.HARMONY,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.OPTIMISM]
+export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON]
 
-export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
+export const GRAPH_HOST = 'api.thegraph.com'
+
+export const GRAPH_CURRENT_PATH = 'subgraphs/name'
+
+export const GRAPH_PENDING_PATH = 'subgraphs/id'
 
 export const SUSHISWAP_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
