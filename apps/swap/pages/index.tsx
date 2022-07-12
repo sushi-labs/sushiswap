@@ -219,27 +219,23 @@ const Widget: FC<Swap> = ({
       return
     }
 
-    void router.replace(
-      {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          srcChainId,
-          dstChainId,
-          // TODO: currencyId to handle native currencyId#
-          // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
-          // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
-          srcToken: srcToken.wrapped.address,
-          dstToken: dstToken.wrapped.address,
-          srcTypedAmount,
-          dstTypedAmount,
-          srcUseBentoBox,
-          dstUseBentoBox,
-        },
-      }
-      // undefined,
-      // { shallow: true }
-    )
+    void router.replace({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        srcChainId,
+        dstChainId,
+        // TODO: currencyId to handle native currencyId#
+        // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
+        // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
+        srcToken: srcToken.wrapped.address,
+        dstToken: dstToken.wrapped.address,
+        srcTypedAmount,
+        dstTypedAmount,
+        srcUseBentoBox,
+        dstUseBentoBox,
+      },
+    })
   }, [
     dstChainId,
     dstToken.wrapped.address,
@@ -420,6 +416,10 @@ const Widget: FC<Swap> = ({
 
   // DEBUG
   useEffect(() => {
+    console.debug('SRC CHAIN', dstChainId)
+    console.debug('DST CHAIN', dstChainId)
+    console.debug('SRC TOKEN', srcToken)
+    console.debug('DST TOKEN', dstToken)
     console.debug('SRC TRADE', srcTrade)
     console.debug('DST TRADE', dstTrade)
     console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
@@ -441,6 +441,9 @@ const Widget: FC<Swap> = ({
     dstAmountIn,
     dstMinimumAmountOut,
     priceImpact,
+    dstChainId,
+    srcToken,
+    dstToken,
   ])
 
   useEffect(() => {
