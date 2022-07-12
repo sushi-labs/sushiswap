@@ -44,7 +44,6 @@ export function usePairs(
     [tokens]
   )
 
-  console.log({ chainId, tokens: tokens.length, pairAddresses: pairAddresses.length })
   const { data } = useContractReads({
     contracts: pairAddresses.map((addressOrName) => ({
       chainId,
@@ -55,6 +54,7 @@ export function usePairs(
     enabled: pairAddresses.length > 0,
   })
 
+  console.log({ chainId, data })
   return useMemo(() => {
     if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
     return data.map((result, i) => {
