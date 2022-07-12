@@ -108,7 +108,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Recipient
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {shortenAddress(stream.recipient.id)}
               </Typography>
             </div>
@@ -116,7 +116,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Stream Amount
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.amount.toSignificant(6)}{' '}
                 <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
@@ -125,7 +125,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Start date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.startTime.toLocaleString()}
               </Typography>
             </div>
@@ -133,7 +133,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               <Typography variant="xs" weight={500} className="text-slate-500">
                 End date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.endTime.toLocaleString()}
               </Typography>
             </div>
@@ -180,14 +180,14 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               type="datetime-local"
               className={classNames(
                 changeEndDate ? '' : 'opacity-40 pointer-events-none',
-                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold'
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-medium'
               )}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}

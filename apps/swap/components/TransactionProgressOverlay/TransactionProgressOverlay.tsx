@@ -9,7 +9,7 @@ export const TransactionProgressOverlay = () => {
     <div className="flex flex-col gap-4 flex-grow">
       <Typography variant="xs" className="text-slate-500 pt-4 text-center">
         This usually takes{' '}
-        <span className="font-bold text-slate-200">
+        <span className="font-medium text-slate-200">
           {/*TODO*/}~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[ChainId.ETHEREUM] / 60)} minutes
         </span>{' '}
         but <br /> sometimes the wait is longer.

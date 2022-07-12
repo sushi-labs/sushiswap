@@ -31,7 +31,7 @@ export const Header: FC<Header> = ({ className, title, onClose, arrowDirection =
           <ChevronRightIcon width={24} height={24} className={classNames('cursor-pointer ')} />
         )}
       </IconButton>
-      <Typography weight={700} as="h3" className={classNames('flex gap-4 text-lg font-bold leading-6 ')}>
+      <Typography weight={500} as="h3" className={classNames('flex gap-4 text-lg font-medium leading-6 ')}>
         {title}
       </Typography>
       <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>

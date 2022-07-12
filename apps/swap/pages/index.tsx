@@ -107,7 +107,7 @@ export default function Swap({
   // }
 
   return (
-    <div className="pt-20 space-y-12 pb-60">
+    <div className="pt-10 sm:pt-20 space-y-12 pb-60">
       <Widget
         theme={theme}
         initialState={{
@@ -602,7 +602,7 @@ const Widget: FC<Swap> = ({
       >
         <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
           <Typography
-            weight={900}
+            weight={500}
             className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
           >
             Swap
@@ -728,7 +728,7 @@ const Widget: FC<Swap> = ({
                     >
                       <div className="!my-0 rounded-xl py-2 grid grid-cols-12 min-h-[64px] items-center">
                         <div className="flex flex-col col-span-5 gap-1">
-                          <span className="text-xs text-slate-400">{srcAmount?.currency.symbol}</span>
+                          <span className="text-xs text-slate-400 text-left">{srcAmount?.currency.symbol}</span>
                           <div className="flex items-center gap-3">
                             {srcAmount && (
                               <Badge
@@ -747,7 +747,7 @@ const Widget: FC<Swap> = ({
                               {srcAmount?.toSignificant(6)}{' '}
                             </Typography>
                           </div>
-                          <Typography variant="xs" weight={700} className="text-slate-400">
+                          <Typography variant="xs" weight={700} className="text-slate-400 text-left">
                             {srcAmount && srcTokenPrice
                               ? `$${srcAmount.multiply(srcTokenPrice.asFraction).toFixed(2)}`
                               : '-'}

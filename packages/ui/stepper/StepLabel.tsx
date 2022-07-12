@@ -26,7 +26,7 @@ export const StepLabel: FC<StepLabelInterface> = ({ children, _index }) => {
       )}
       <Typography
         variant="sm"
-        weight={700}
+        weight={500}
         className={activeStep === Number(_index) ? 'text-slate-200' : 'text-slate-400'}
       >
         {children}

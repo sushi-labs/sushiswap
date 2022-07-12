@@ -41,7 +41,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
       button={
         <Button color="gray" as="div">
           <NotepadIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-slate-200">
+          <Typography variant="sm" weight={500} className="text-slate-200">
             Details
           </Typography>
         </Button>
@@ -51,11 +51,11 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="flex justify-between gap-4 p-4 bg-slate-700">
             <div className="flex gap-6">
               <div className="flex items-center justify-end gap-2">
-                <Typography variant="xs" weight={700}>
+                <Typography variant="xs" weight={500}>
                   From:
                 </Typography>
                 <Typography
-                  weight={700}
+                  weight={500}
                   variant="xs"
                   onClick={() => stream && navigator.clipboard.writeText(stream.createdBy.id)}
                   className="hover:text-blue"
@@ -64,11 +64,11 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 </Typography>
               </div>
               <div className="flex items-center justify-end gap-2">
-                <Typography variant="xs" weight={700}>
+                <Typography variant="xs" weight={500}>
                   To:
                 </Typography>
                 <Typography
-                  weight={700}
+                  weight={500}
                   variant="xs"
                   onClick={() => stream && navigator.clipboard.writeText(stream.recipient.id)}
                   className="hover:text-blue"
@@ -92,7 +92,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 <Typography variant="xxs" weight={400} className="tracking-wider uppercase text-slate-500">
                   Time Remaining
                 </Typography>
-                <Typography weight={700} className="mt-2 text-slate-300">
+                <Typography weight={500} className="mt-2 text-slate-300">
                   {remaining?.days} <span className="text-sm font-medium text-slate-500">days</span> {remaining?.hours}{' '}
                   <span className="text-sm font-medium text-slate-500">hours</span> {remaining?.minutes}{' '}
                   <span className="text-sm font-medium text-slate-500">min</span> {remaining?.seconds}{' '}
@@ -110,7 +110,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 <Typography variant="xs" weight={400} className="text-slate-500">
                   Time Remaining
                 </Typography>
-                <Typography variant="lg" weight={700} className="mt-1 text-slate-200">
+                <Typography variant="lg" weight={500} className="mt-1 text-slate-200">
                   -
                 </Typography>
                 <Typography variant="xs" weight={400} className="mt-3">
@@ -123,48 +123,48 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
           <div className="grid grid-cols-4 sm:grid-cols-3 gap-4 px-4 pb-4">
             <div className="col-span-4 sm:col-span-1 flex flex-col gap-4 p-4 bg-slate-700 rounded-xl">
               <div className="flex flex-col">
-                <Typography variant="lg" className="text-slate-200" weight={700}>
+                <Typography variant="lg" className="text-slate-200" weight={500}>
                   Total
                 </Typography>
                 <Typography variant="xs" className="text-slate-400" weight={500}>
                   Value of Stream
                 </Typography>
-                <Typography variant="h3" className="flex items-center mt-3 text-slate-200 truncate" weight={700}>
+                <Typography variant="h3" className="flex items-center mt-3 text-slate-200 truncate" weight={500}>
                   {stream?.amount.toSignificant(6)}
                 </Typography>
-                <Typography variant="xs" weight={700} as="span" className="mt-1 text-slate-400">
+                <Typography variant="xs" weight={500} as="span" className="mt-1 text-slate-400">
                   {stream?.withdrawnAmount.currency.symbol}
                 </Typography>
               </div>
             </div>
             <div className="col-span-2 sm:col-span-1 flex flex-col gap-4 p-4 bg-blue/30 rounded-xl">
               <div className="flex flex-col">
-                <Typography variant="lg" className="text-blue-200" weight={700}>
+                <Typography variant="lg" className="text-blue-200" weight={500}>
                   Streamed
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-blue-300">
                   {stream?.streamedPercentage?.toSignificant(4)}% of total
                 </Typography>
-                <Typography variant="h3" className="flex items-center mt-3 text-blue-200 truncate" weight={700}>
+                <Typography variant="h3" className="flex items-center mt-3 text-blue-200 truncate" weight={500}>
                   {stream?.streamedAmount?.toSignificant(6)}
                 </Typography>
-                <Typography variant="xs" weight={700} as="span" className="mt-1 text-blue-300/80">
+                <Typography variant="xs" weight={500} as="span" className="mt-1 text-blue-300/80">
                   {stream?.withdrawnAmount.currency.symbol}
                 </Typography>
               </div>
             </div>
             <div className="col-span-2 sm:col-span-1 flex flex-col gap-4 p-4 shadow-md bg-pink/30 rounded-xl">
               <div className="flex flex-col">
-                <Typography variant="lg" className="text-pink-200" weight={700}>
+                <Typography variant="lg" className="text-pink-200" weight={500}>
                   Withdrawn
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-pink-300">
                   {stream?.withdrawnPercentage.toSignificant(4)}% of total
                 </Typography>
-                <Typography variant="h3" className="flex items-center mt-3 text-pink-200 truncate" weight={700}>
+                <Typography variant="h3" className="flex items-center mt-3 text-pink-200 truncate" weight={500}>
                   {stream?.withdrawnAmount.toSignificant(6)}
                 </Typography>
-                <Typography variant="xs" weight={700} as="span" className="mt-1 text-pink-300/80">
+                <Typography variant="xs" weight={500} as="span" className="mt-1 text-pink-300/80">
                   {stream?.withdrawnAmount.currency.symbol}
                 </Typography>
               </div>

@@ -1,6 +1,6 @@
 import { CheckIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { useDebounce } from '@sushiswap/hooks'
+import { useDebounce, useIsSmScreen } from '@sushiswap/hooks'
 import { classNames, Input, Loader, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
@@ -23,6 +23,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
   onSelect,
   selected,
 }) => {
+  const isSmallScreen = useIsSmScreen()
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 200)
@@ -50,8 +51,8 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 
   return (
     <SlideIn>
-      <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-        <Overlay.Content className="bg-slate-800 !pt-[60px]">
+      <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => !isSmallScreen && inputRef.current?.focus()}>
+        <Overlay.Content className="bg-slate-800 !pt-[60px] pb-3 md:pb-[68px]">
           <Overlay.Header onClose={onClose} title="Select Network" />
           <div
             className={classNames(
@@ -81,9 +82,9 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                   variant="sm"
                   className={classNames(
                     selected === chain.chainId
-                      ? 'text-slate-200 !font-bold hover:text-white'
+                      ? 'text-slate-200 !font-medium hover:text-white'
                       : 'text-slate-400 hover:text-white',
-                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue'
+                    'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue py-1'
                   )}
                 >
                   {selected === chain.chainId ? (

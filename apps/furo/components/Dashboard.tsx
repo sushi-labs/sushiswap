@@ -97,7 +97,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
     <div className="flex flex-col h-full gap-[80px] pt-20">
       <div className="flex justify-between">
         <div className="flex flex-col gap-3">
-          <Typography variant="h2" weight={700} className="text-slate-200">
+          <Typography variant="h2" weight={500} className="text-slate-200">
             <span className="text-blue">Furo</span> Streaming
           </Typography>
           <Typography className="text-slate-400">
@@ -136,7 +136,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
           <Tab.List className="flex gap-10">
             <Tab
               as={Typography}
-              weight={700}
+              weight={500}
               className={({ selected }) =>
                 classNames(
                   selected ? 'text-slate-200 ' : 'text-slate-500',
@@ -152,7 +152,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             </Tab>
             <Tab
               as={Typography}
-              weight={700}
+              weight={500}
               className={({ selected }) =>
                 classNames(
                   selected ? 'text-slate-200 ' : 'text-slate-500',

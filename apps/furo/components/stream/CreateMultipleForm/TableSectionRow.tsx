@@ -52,7 +52,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   )}
                   onClick={() => setDialogOpen(true)}
                 >
-                  <span className="text-sm font-bold truncate">{data?.currency?.symbol || 'Select'}</span>
+                  <span className="text-sm font-medium truncate">{data?.currency?.symbol || 'Select'}</span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                 </button>
                 <TokenSelector
@@ -101,7 +101,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   }
                   value={data?.fundSource}
                 >
-                  <span className="text-sm capitalize font-bold truncate">
+                  <span className="text-sm capitalize font-medium truncate">
                     {data?.fundSource?.toLowerCase() || 'Select'}
                   </span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
@@ -154,7 +154,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 error={!!error?.message}
                 placeholder="0x..."
                 className="shadow-none rounded-md !ring-offset-0 h-[54px] ring-offset-slate-700 flex justify-center !bg-slate-700"
-                inputClassName="placeholder:font-bold placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
+                inputClassName="placeholder:font-medium placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
               />
             )
           }}

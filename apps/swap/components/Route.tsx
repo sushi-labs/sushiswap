@@ -220,7 +220,7 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <div className="relative flex">
       {trade.route.legs.map((leg, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
+        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
           {i === 0 ? (
             <Typography variant="xs" weight={700}>
               {leg.tokenFrom.symbol}
@@ -254,7 +254,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <>
       {initialPaths.map((initialPath, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
+        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
           {Number(initialPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>
@@ -269,7 +269,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
       {percentPaths.map((percentPath, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-bold leading-4 text-slate-300">
+        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
           {Number(percentPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>

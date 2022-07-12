@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev:gql": "graphclient serve-dev", 
+    "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
@@ -34,9 +34,6 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "tslib": "^2.4.0",
-    "fetchache": "^0.1.2",
-    "cross-undici-fetch": "^0.4.11",
     "@graphprotocol/client-add-source-name": "^1.0.2",
     "@graphprotocol/client-auto-pagination": "^1.0.3",
     "@graphprotocol/client-block-tracking": "^1.0.3",
@@ -50,7 +47,10 @@
     "@graphql-mesh/transform-rename": "^0.12.57",
     "@graphql-mesh/transform-type-merging": "^0.4.11",
     "@graphql-mesh/utils": "^0.37.1",
-    "@sushiswap/chain": "workspace:*"
+    "@sushiswap/chain": "workspace:*",
+    "cross-undici-fetch": "^0.4.11",
+    "fetchache": "^0.1.2",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.0.2",

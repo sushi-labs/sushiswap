@@ -1,6 +1,6 @@
 import { CogIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Overlay, SlideIn } from '@sushiswap/ui'
+import { IconButton, Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
 import { CustomTokensOverlay } from './CustomTokensOverlay'
@@ -16,9 +16,9 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
 
   return (
     <>
-      <button className="hover:animate-spin-slow" onClick={() => setOpen(true)}>
+      <IconButton className="hover:animate-spin-slow" onClick={() => setOpen(true)}>
         <CogIcon width={20} height={20} />
-      </button>
+      </IconButton>
       <SlideIn>
         <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
           <Overlay.Content className="!bg-slate-800">

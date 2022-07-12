@@ -73,7 +73,7 @@ export const Dropzone: FC<Dropzone> = ({ label = 'Select a CSV file to upload', 
                     'flex flex-col gap-1 outline-none relative cursor-pointer rounded-md font-medium hover:purple focus-within:outline-none'
                   )}
                 >
-                  <label htmlFor="file-upload" className="cursor-pointer outline-none text-sm font-bold">
+                  <label htmlFor="file-upload" className="cursor-pointer outline-none text-sm font-medium">
                     {label}
                   </label>
                   <p

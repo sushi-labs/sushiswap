@@ -26,7 +26,8 @@
   "dependencies": {
     "@ethersproject/address": "^5.0.0",
     "@ethersproject/providers": "^5.0.0",
-    "copy-to-clipboard": "^3.3.1"
+    "copy-to-clipboard": "^3.3.1",
+    "react-responsive": "9.0.0-beta.10"
   },
   "devDependencies": {
     "@sushiswap/currency": "workspace:*",

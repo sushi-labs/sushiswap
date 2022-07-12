@@ -13,7 +13,7 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
     <div className="bg-slate-700 py-3 flex items-center border-t border-slate-600 border-b">
       <Container maxWidth="2xl" className="mx-auto px-4 flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <Typography variant="base" weight={700} className="text-white">
+          <Typography variant="base" weight={500} className="text-white">
             Preview Mode
           </Typography>
           <Typography variant="xs" className="text-slate-300">

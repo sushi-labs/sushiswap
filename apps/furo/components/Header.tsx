@@ -34,9 +34,10 @@ export const Header: FC = () => {
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
         <Wallet.Button
+          size="sm"
           hack={connect}
           supportedNetworks={SUPPORTED_CHAINS}
-          className="border-none shadow-md !h-[36px]"
+          className="border-none shadow-md"
         />
         {address && isMounted && isConnected && (
           <Menu
@@ -45,7 +46,7 @@ export const Header: FC = () => {
                 color="blue"
                 fullWidth
                 startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
-                className="!h-[36px]"
+                size="sm"
                 as="div"
               >
                 Pay Someone

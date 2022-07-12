@@ -56,7 +56,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
           progress={Number(props.getValue()?.divide(100).toSignificant(4))}
           color={ProgressColor.BLUE}
         />
-        <Typography variant="sm" weight={700} className="text-slate-200">
+        <Typography variant="sm" weight={500} className="text-slate-200">
           {props.getValue()?.toSignificant(4)}%
         </Typography>
       </div>
@@ -90,7 +90,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
     cell: (props) => {
       return (
         <div className="flex flex-col w-full">
-          <Typography variant="sm" weight={700} className="text-right text-slate-200">
+          <Typography variant="sm" weight={500} className="text-right text-slate-200">
             {props.getValue().greaterThan('0') ? props.getValue().toSignificant(6) : '< 0.01'}{' '}
             <span className="font-medium text-slate-500">{props.row.original?.token.symbol}</span>
           </Typography>

@@ -149,7 +149,7 @@ export const CreateMultipleForm: FC = () => {
         <div className="flex flex-col mt-10 gap-20">
           <Link href="/vesting/create" passHref={true}>
             <a>
-              <button className="group hover:text-white text-slate-200 flex gap-3 font-bold">
+              <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
                 <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
               </button>
             </a>
@@ -157,7 +157,7 @@ export const CreateMultipleForm: FC = () => {
           <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
             <ImportZone />
             <div className="flex flex-col gap-4 col-span-2">
-              <Typography weight={700}>Streams</Typography>
+              <Typography weight={500}>Streams</Typography>
               <TableSection />
               <Form.Buttons>
                 <Approve

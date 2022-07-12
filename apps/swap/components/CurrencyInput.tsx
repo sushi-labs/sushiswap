@@ -97,7 +97,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               className={classNames(
                 theme.secondary.default,
                 theme.secondary.hover,
-                `relative flex items-center gap-1 py-1 text-xs font-bold `
+                `relative flex items-center gap-1 py-1 text-xs font-medium`
               )}
               onClick={() => setNetworkSelectorOpen(true)}
             >
@@ -109,8 +109,8 @@ export const CurrencyInput: FC<CurrencyInput> = ({
             type="button"
             className={classNames(
               theme.secondary.default,
-              theme.primary.hover,
-              'flex items-center gap-2 text-xs font-bold cursor-pointer'
+              theme.secondary.hover,
+              'flex items-center gap-2 text-xs cursor-pointer font-medium'
             )}
             onClick={() =>
               onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
@@ -129,7 +129,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 theme.primary.default,
                 theme.primary.hover,
                 DEFAULT_INPUT_UNSTYLED,
-                'text-2xl py-1'
+                '!text-3xl py-1'
               )}
               value={value}
               readOnly={disabled}
@@ -139,7 +139,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex flex-row items-center gap-1 text-xl font-bold bg-white bg-opacity-[0.12] hover:bg-opacity-[0.18] rounded-full px-2 py-0.5'
+                'flex flex-row items-center gap-1 text-xl font-medium bg-white bg-opacity-[0.12] hover:bg-opacity-[0.18] rounded-full px-2 py-0.5'
               )}
             >
               <div className="w-5 h-5">

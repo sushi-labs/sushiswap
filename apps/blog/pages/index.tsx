@@ -92,7 +92,7 @@ const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
                 <SearchIcon width={24} height={24} className="text-slate-500" />
                 <input
                   onChange={(e) => setQuery(e.target.value)}
-                  className="w-full font-bold placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
+                  className="w-full font-medium placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
                   placeholder="Search Article"
                 />
               </div>
