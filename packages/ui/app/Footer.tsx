@@ -75,7 +75,7 @@ export function Footer(props: FooterProps): JSX.Element {
         <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">
           {Object.entries(config).map(([title, items]) => (
             <div key={title} className="flex flex-col gap-[10px]">
-              <Typography variant="xs" weight={700} className="text-sm sm:text-xs text-slate-100">
+              <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-slate-100">
                 {title}
               </Typography>
               {Object.entries(items).map(([item, href]) => (

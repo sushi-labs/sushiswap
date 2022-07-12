@@ -3,7 +3,7 @@ import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, useIsSmScreen } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import {
   classNames,
@@ -49,6 +49,8 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   pricesMap,
   fundSource,
 }) => {
+  const isSmallScreen = useIsSmScreen()
+
   const handleSelect = useCallback(
     (currency: Type) => {
       onSelect(currency)
@@ -75,15 +77,15 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
       fundSource={fundSource}
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
-        <Dialog open={open} unmount={false} onClose={onClose} initialFocus={inputRef}>
-          <Dialog.Content className="!max-w-sm overflow-hidden h-[420px] pb-[116px]">
+        <Dialog open={open} unmount={false} onClose={onClose} initialFocus={isSmallScreen ? undefined : inputRef}>
+          <Dialog.Content className="!max-w-md overflow-hidden h-[75vh] sm:h-[640px] pb-[116px]">
             <SlideIn>
               <Dialog.Header onClose={onClose} title="Select Token">
                 <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
               </Dialog.Header>
               <div
                 className={classNames(
-                  'my-3 mb-5 ring-offset-2 ring-offset-slate-800 flex gap-2 bg-slate-700 pr-3 w-full relative flex items-center justify-between gap-1 rounded-lg focus-within:ring-2 text-primary ring-blue'
+                  'my-3 mb-5 ring-offset-2 ring-offset-slate-800 flex gap-2 bg-slate-700 pr-3 w-full relative flex items-center justify-between gap-1 rounded-2xl focus-within:ring-2 text-primary ring-blue'
                 )}
               >
                 <Input.Address
@@ -115,7 +117,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'} Balances
                 </Typography>
                 <div className="w-full border-t border-slate-200/5" />
-                <div className="relative h-full pt-5">
+                <div className="relative h-[calc(100%-32px)] pt-5">
                   <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
                     {queryToken && (
                       <TokenSelectorImportRow

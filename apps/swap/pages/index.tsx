@@ -107,7 +107,7 @@ export default function Swap({
   // }
 
   return (
-    <div className="pt-20 space-y-12 pb-60">
+    <div className="pt-10 sm:pt-20 space-y-12 pb-60">
       <Widget
         theme={theme}
         initialState={{
@@ -602,7 +602,7 @@ const Widget: FC<Swap> = ({
       >
         <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
           <Typography
-            weight={900}
+            weight={500}
             className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
           >
             Swap

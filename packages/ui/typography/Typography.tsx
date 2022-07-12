@@ -4,9 +4,14 @@ import React, { forwardRef, ReactNode } from 'react'
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
 const WEIGHTS: Record<string, string> = {
+  100: 'font-thin',
+  200: 'font-extralight',
+  300: 'font-light',
   400: 'font-normal',
   500: 'font-medium',
-  700: 'font-bold',
+  600: 'font-semibold',
+  700: 'font-medium',
+  800: 'font-extrabold',
   900: 'font-black',
 }
 

@@ -25,7 +25,7 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className
         <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
       </IconButton>
 
-      <Typography weight={700} as="h3" className="flex justify-center text-lg font-bold leading-6 text-slate-100">
+      <Typography weight={500} as="h3" className="flex justify-center text-lg font-medium leading-6 text-slate-100">
         {title}
       </Typography>
 

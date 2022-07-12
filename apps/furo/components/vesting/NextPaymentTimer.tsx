@@ -35,7 +35,7 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
       <div className="flex flex-col gap-2">
         <div className="flex justify-center gap-6 text-slate-200">
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-slate-200">
+            <Typography variant="lg" weight={500} className="text-slate-200">
               {remaining.days}
             </Typography>
             <Typography variant="sm" className="text-slate-500">
@@ -43,7 +43,7 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-slate-200">
+            <Typography variant="lg" weight={500} className="text-slate-200">
               {remaining.hours}
             </Typography>
             <Typography variant="sm" className="text-slate-500">
@@ -51,7 +51,7 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-slate-200">
+            <Typography variant="lg" weight={500} className="text-slate-200">
               {remaining.minutes}
             </Typography>
             <Typography variant="sm" className="text-slate-500">
@@ -59,7 +59,7 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
             </Typography>
           </div>
           <div className="flex flex-col text-center">
-            <Typography variant="lg" weight={700} className="text-slate-200">
+            <Typography variant="lg" weight={500} className="text-slate-200">
               {remaining.seconds}
             </Typography>
             <Typography variant="sm" className="text-slate-500">

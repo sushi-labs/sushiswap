@@ -1150,11 +1150,13 @@ importers:
       jest: ^28.1.0
       react: ^18.1.0
       react-dom: ^18.1.0
+      react-responsive: 9.0.0-beta.10
       typescript: ^4.0.0
     dependencies:
       '@ethersproject/address': 5.6.0
       '@ethersproject/providers': 5.6.6
       copy-to-clipboard: 3.3.1
+      react-responsive: 9.0.0-beta.10_react@18.1.0
     devDependencies:
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../config/eslint
@@ -10277,6 +10279,10 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
+  /css-mediaquery/0.1.2:
+    resolution: {integrity: sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q==}
+    dev: false
+
   /css-to-react-native/3.0.0:
     resolution: {integrity: sha512-Ro1yETZA813eoyUp2GDBhG2j+YggidUmzO1/v9eYBKR2EHVEniE2MI/NqpTQ954BMpTPZFsGNPm46qFB9dpaPQ==}
     dependencies:
@@ -13778,6 +13784,10 @@ packages:
     hasBin: true
     dev: true
 
+  /hyphenate-style-name/1.0.4:
+    resolution: {integrity: sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==}
+    dev: false
+
   /iconv-lite/0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -16316,6 +16326,12 @@ packages:
       '@babel/runtime': 7.18.0
       remove-accents: 0.4.2
 
+  /matchmediaquery/0.3.1:
+    resolution: {integrity: sha512-Hlk20WQHRIm9EE9luN1kjRjYXAQToHOIAHPJn9buxBwuhfTHoKUcX+lXBbxc85DVQfXYbEQ4HcwQdd128E3qHQ==}
+    dependencies:
+      css-mediaquery: 0.1.2
+    dev: false
+
   /math-expression-evaluator/1.3.14:
     resolution: {integrity: sha512-M6AMrvq9bO8uL42KvQHPA2/SbAobA0R7gviUmPrcTcGfdwpaLitz4q2Euzx2lP9Oy88vxK3HOrsISgSwKsYS4A==}
     dev: false
@@ -18651,6 +18667,19 @@ packages:
       react-is: 18.1.0
       use-sync-external-store: 1.1.0_react@18.1.0
 
+  /react-responsive/9.0.0-beta.10_react@18.1.0:
+    resolution: {integrity: sha512-41H8g4FYP46ln16rsHvs9/0ZoZxAPfnNiHET86/5pgS+Vw8fSKfLBuOS2SAquaxOxq7DgPviFoHmybgVvSKCNQ==}
+    engines: {node: '>=0.10'}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      hyphenate-style-name: 1.0.4
+      matchmediaquery: 0.3.1
+      prop-types: 15.8.1
+      react: 18.1.0
+      shallow-equal: 1.2.1
+    dev: false
+
   /react-spring/9.4.5_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-FRIXQGR+jG+Fx4UcqhF0b5jMEU3Q5QcZ8rEVWKqZgrrn92C1HcqtuZy7dH+rZ6uNGjnlV7HBf8iprJaJ+350LA==}
     dependencies:
@@ -19443,6 +19472,10 @@ packages:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
+
+  /shallow-equal/1.2.1:
+    resolution: {integrity: sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==}
+    dev: false
 
   /shallowequal/1.1.0:
     resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}

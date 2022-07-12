@@ -83,7 +83,7 @@ export const TransferModal: FC<TransferModalProps> = ({
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
-            <span className="font-bold text-slate-200">
+            <span className="font-medium text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to the entered recipient.
@@ -103,7 +103,7 @@ export const TransferModal: FC<TransferModalProps> = ({
           </Form.Control>
 
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}

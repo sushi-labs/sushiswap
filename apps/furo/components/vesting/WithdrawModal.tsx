@@ -124,7 +124,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
                 'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -144,7 +144,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
                 'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Bentobox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -159,7 +159,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           </div>
 
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}

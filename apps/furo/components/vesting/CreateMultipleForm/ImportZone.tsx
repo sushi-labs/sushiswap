@@ -115,7 +115,7 @@ export const ImportZone = () => {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Typography weight={700}>Quick Import</Typography>
+        <Typography weight={500}>Quick Import</Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
           Autofill your list by uploading a .csv file to save time and effort! Please use the demo file to check if your
           data is formatted correctly.
