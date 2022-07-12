@@ -14,6 +14,9 @@ export const SUPPORTED_CHAINS = [
   ChainId.MOONRIVER,
   ChainId.FUSE,
   ChainId.POLYGON,
+
+  // TRIDENT
+  ChainId.OPTIMISM,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com'
