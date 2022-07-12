@@ -16,7 +16,7 @@ import {
 import { Badge, Button, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Approve, BENTOBOX_ADDRESS, useBalance, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
-import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
+import { useBentoBoxTotal, usePrices } from '@sushiswap/wagmi'
 import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import {
@@ -29,7 +29,7 @@ import {
   SettingsOverlay,
 } from 'components'
 import { defaultTheme, SUSHI_X_SWAP_ADDRESS } from 'config'
-import { useBentoBoxRebase, useTrade } from 'lib/hooks'
+import { useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -189,8 +189,7 @@ const Widget: FC<Swap> = ({
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
 
-  const { rebase: srcTokenRebase } = useBentoBoxRebase(srcChainId, srcToken)
-  // const { rebase: dstTokenRebase } = useBentoBoxRebase(dstChainId, dstToken)
+  const srcTokenRebase = useBentoBoxTotal(srcChainId, srcToken)
 
   // This effect is responsible for encoding the swap state into the URL, to add statefullness
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
