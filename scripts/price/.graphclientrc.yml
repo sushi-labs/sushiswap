@@ -1,8 +1,13 @@
 sources:
-  - name: ExchangeDummy
+  - name: Trident
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/exchange-ethereum
+        endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/trident-optimism
+    transforms:
+      - blockTracking:
+          validateSchema: true
+      - autoPagination:
+          validateSchema: true
   - name: Exchange
     handler:
       graphql:
@@ -12,5 +17,9 @@ sources:
           validateSchema: true
       - autoPagination:
           validateSchema: true
+      - filterSchema:
+          mode: wrap
+          filters:
+            - Type.!{Factory}
 documents:
   - ./query.graphql
