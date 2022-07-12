@@ -15,7 +15,6 @@ query MasterChefPools($first: Int = 1000, $skip: Int = 0, $where: Pool_filter, $
     pair
     allocPoint
     slpBalance
-
     masterChef {
       totalAllocPoint
     }

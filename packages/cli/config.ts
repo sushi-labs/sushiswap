@@ -1,5 +1,7 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 
+export const WETH_MAKER_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.AVALANCHE]
+
 export const MAKER_SUPPORTED_CHAIN_NAMES = [
   ChainKey.ETHEREUM,
   ChainKey.FANTOM,
@@ -30,34 +32,34 @@ export const CHAIN_NAME_TO_CHAIN_ID: Record<string, string | number> = {
   [ChainKey.HARMONY]: ChainId.HARMONY,
 }
 
-export const MAKER_TYPE: Record<string, string> = {
-  [ChainKey.ETHEREUM]: 'SushiMaker',
-  [ChainKey.FANTOM]: 'Safe',
-  [ChainKey.POLYGON]: 'WethMaker',
-  [ChainKey.GNOSIS]: 'Safe',
-  [ChainKey.BSC]: 'Safe',
-  [ChainKey.ARBITRUM]: 'WethMaker',
-  [ChainKey.AVALANCHE]: 'WethMaker',
-  [ChainKey.CELO]: 'Safe',
-  [ChainKey.MOONBEAM]: 'Safe',
-  [ChainKey.MOONRIVER]: 'Deployer',
-  [ChainKey.FUSE]: 'Safe',
-  [ChainKey.HARMONY]: 'Deployer',
+export const MAKER_TYPE: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'SushiMaker',
+  [ChainId.FANTOM]: 'Safe',
+  [ChainId.POLYGON]: 'WethMaker',
+  [ChainId.GNOSIS]: 'Safe',
+  [ChainId.BSC]: 'Safe',
+  [ChainId.ARBITRUM]: 'WethMaker',
+  [ChainId.AVALANCHE]: 'WethMaker',
+  [ChainId.CELO]: 'Safe',
+  [ChainId.MOONBEAM]: 'Safe',
+  [ChainId.MOONRIVER]: 'Deployer',
+  [ChainId.FUSE]: 'Safe',
+  [ChainId.HARMONY]: 'Deployer',
 }
 
-export const MAKER_ADDRESS: Record<string, string> = {
-  [ChainKey.ETHEREUM]: '0x5ad6211cd3fde39a9cecb5df6f380b8263d1e277',
-  [ChainKey.FANTOM]: '0xf9e7d4c6d36ca311566f46c81e572102a2dc9f52',
-  [ChainKey.POLYGON]: '0xf1c9881be22ebf108b8927c4d197d126346b5036',
-  [ChainKey.GNOSIS]: '0xc375411c6597f692add6a7a3ad5b3c38626b0f26',
-  [ChainKey.BSC]: '0xc6fd91ad4919fd91e2c84077ba648092cb499638',
-  [ChainKey.ARBITRUM]: '0xa19b3b22f29e23e4c04678c94cfc3e8f202137d8',
-  [ChainKey.AVALANCHE]: '0x560c759a11cd026405f6f2e19c65da1181995fa2',
-  [ChainKey.CELO]: '0x8b63fcbb752e425e3c4b12f7802bad1a24c6d7f4',
-  [ChainKey.MOONBEAM]: '0x87aeb22b7bb02ac42204eb312c08a22fc3f077f3',
-  [ChainKey.MOONRIVER]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
-  [ChainKey.FUSE]: '0x33b6beb37837459ee84a1ffed2c6a4ca22e5f316',
-  [ChainKey.HARMONY]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
+export const MAKER_ADDRESS: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: '0x5ad6211cd3fde39a9cecb5df6f380b8263d1e277',
+  [ChainId.FANTOM]: '0xf9e7d4c6d36ca311566f46c81e572102a2dc9f52',
+  [ChainId.POLYGON]: '0xf1c9881be22ebf108b8927c4d197d126346b5036',
+  [ChainId.GNOSIS]: '0xc375411c6597f692add6a7a3ad5b3c38626b0f26',
+  [ChainId.BSC]: '0xc6fd91ad4919fd91e2c84077ba648092cb499638',
+  [ChainId.ARBITRUM]: '0xa19b3b22f29e23e4c04678c94cfc3e8f202137d8',
+  [ChainId.AVALANCHE]: '0x560c759a11cd026405f6f2e19c65da1181995fa2',
+  [ChainId.CELO]: '0x8b63fcbb752e425e3c4b12f7802bad1a24c6d7f4',
+  [ChainId.MOONBEAM]: '0x87aeb22b7bb02ac42204eb312c08a22fc3f077f3',
+  [ChainId.MOONRIVER]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
+  [ChainId.FUSE]: '0x33b6beb37837459ee84a1ffed2c6a4ca22e5f316',
+  [ChainId.HARMONY]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
 }
 
 // [ChainKey.MOONBEAM]: {address: '0x87aeb22b7bb02ac42204eb312c08a22fc3f077f3', type: "Safe"}, // Disabled, reserveUSD returns 0
