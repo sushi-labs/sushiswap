@@ -59,7 +59,7 @@ export async function maker(args: Arguments) {
 
     // const liquidityPositions = Object.values(await sdk.User({ id: MAKER_ADDRESS[chainId] }))[0]?.liquidityPositions
 
-    const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
+    const { liquidityPositions } = await sdk.LiquidityPositions({
       first: 10000,
       where: { user: MAKER_ADDRESS[chainId] },
     })
@@ -80,10 +80,10 @@ export async function maker(args: Arguments) {
 
         return sdk
           .LiquidityPositions({
-            first: 100000,
-            where: { user: MAKER_ADDRESS[chainId] },
+            first: 10000,
+            where: { user: MAKER_ADDRESS[chainId], liquidityTokenBalance_gt: 0 },
           })
-          .then(({ liquidityPositions }: { liquidityPositions: LiquidityPosition[] }) => {
+          .then(({ liquidityPositions }) => {
             return {
               network: chainName,
               address: MAKER_ADDRESS[chainId],

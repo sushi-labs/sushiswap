@@ -45,8 +45,8 @@ query User($block: Block_height, $id: ID!) {
   }
 }
 
-query LiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
-  liquidityPositions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+query LiquidityPositions($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: LiquidityPosition_orderBy, $orderDirection: OrderDirection, $where: LiquidityPosition_filter) {
+  liquidityPositions(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
     liquidityTokenBalance
     pair {
       id
