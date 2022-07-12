@@ -37,7 +37,6 @@
     "tslib": "^2.4.0",
     "fetchache": "^0.1.2",
     "cross-undici-fetch": "^0.4.11",
-    "@sushiswap/chain": "workspace:*",
     "@graphprotocol/client-add-source-name": "^1.0.2",
     "@graphprotocol/client-auto-pagination": "^1.0.3",
     "@graphprotocol/client-block-tracking": "^1.0.3",
@@ -50,7 +49,8 @@
     "@graphql-mesh/transform-prefix": "^0.11.56",
     "@graphql-mesh/transform-rename": "^0.12.57",
     "@graphql-mesh/transform-type-merging": "^0.4.11",
-    "@graphql-mesh/utils": "^0.37.1"
+    "@graphql-mesh/utils": "^0.37.1",
+    "@sushiswap/chain": "workspace:*"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.0.2",
@@ -62,10 +62,7 @@
     "@types/numeral": "^2.0.2",
     "graphql": "^16.5.0",
     "jest": "^28.1.0",
-    "tsup": "^6.1.2",
+    "tsup": "^6.1.3",
     "typescript": "^4.0.0"
-  },
-  "peerDependencies": {
-    "graphql": "^16.5.0"
   }
 }
