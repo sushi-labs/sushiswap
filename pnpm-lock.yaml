@@ -1808,6 +1808,7 @@ importers:
       '@graphql-mesh/transform-prune': ^0.0.43
       '@graphql-mesh/utils': ^0.37.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/core-sdk': 1.0.0-canary.116
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -1839,6 +1840,7 @@ importers:
       '@graphql-mesh/transform-prune': 0.0.43_graphql@16.5.0
       '@graphql-mesh/utils': 0.37.1_graphql@16.5.0
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/core-sdk': 1.0.0-canary.116
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -6436,6 +6438,24 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  /@sushiswap/core-sdk/1.0.0-canary.116:
+    resolution: {integrity: sha512-e4S44ocDi9iwjdu0SHcxKrsZ3wDfntISg6/mThyT+WBin0HOXOOscFepsS7lP1m1IaAjuBwVjtXAvP4WPwLD1A==}
+    dependencies:
+      '@ethersproject/address': 5.6.0
+      '@ethersproject/bignumber': 5.6.1
+      '@ethersproject/providers': 5.6.6
+      '@ethersproject/solidity': 5.6.0
+      big.js: 6.1.1
+      decimal.js-light: 2.5.1
+      jsbi: 4.3.0
+      tiny-invariant: 1.2.0
+      tiny-warning: 1.0.3
+      toformat: 2.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
 
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
