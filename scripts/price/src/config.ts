@@ -16,7 +16,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.HARMONY,
 ]
 
-export const GRAPH_HOST = 'api.thegraph.com'
+export const GRAPH_HOST = 'api.thegraph.com/subgraph/name'
 
 export const LEGACY_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
