@@ -191,6 +191,8 @@ const Widget: FC<Swap> = ({
 
   const srcTokenRebase = useBentoBoxTotal(srcChainId, srcToken)
 
+  console.log({ srcTokenRebase })
+
   // This effect is responsible for encoding the swap state into the URL, to add statefullness
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
   useEffect(() => {

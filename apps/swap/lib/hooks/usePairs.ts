@@ -38,7 +38,7 @@ export function usePairs(
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        console.log('computePairAddress', { factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
+        // console.log('computePairAddress', { factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
         return computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
       }),
     [tokens]

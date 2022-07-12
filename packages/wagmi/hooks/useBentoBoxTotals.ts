@@ -18,7 +18,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, tokens) => {
         chainId,
         ...getBentoBoxContractConfig(chainId),
         functionName: 'totals',
-        args: [address],
+        args: address,
       })),
     [addresses, chainId]
   )
@@ -29,12 +29,15 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, tokens) => {
     keepPreviousData: true,
   })
 
+  // console.log({ totals })
+
   return useMemo(() => {
-    return totals?.reduce((previousValue, currentValue) => {
+    return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue) => {
       const { base, elastic } = currentValue
       const rebase = { base: JSBI.BigInt(base), elastic: JSBI.BigInt(elastic) }
-      return { ...previousValue, [currentValue.address]: rebase }
-    })
+      previousValue[currentValue.address] = rebase
+      return previousValue
+    }, {})
   }, [totals])
 }
 
@@ -47,7 +50,7 @@ export const useBentoBoxTotal = (
     useMemo(() => [token], [token])
   )
   return useMemo(() => {
-    if (!totals || !token || !(token.wrapped.address in totals)) {
+    if (!totals || !token) {
       return undefined
     }
     return totals[token.wrapped.address]
