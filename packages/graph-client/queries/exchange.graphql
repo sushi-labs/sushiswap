@@ -22,7 +22,9 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
 
 query User($block: Block_height, $id: ID!) {
   user(id: $id) {
-    liquidityPositions(first: 1000) {
+    id
+    liquidityPositions(first: 25000) {
+      id
       liquidityTokenBalance
       pair {
         id
@@ -47,6 +49,7 @@ query User($block: Block_height, $id: ID!) {
 
 query LiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
   liquidityPositions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+    id
     liquidityTokenBalance
     pair {
       id

@@ -1,5 +1,5 @@
 import { ChainKey } from '@sushiswap/chain'
-import { getBuiltGraphSDK, LiquidityPosition, Pair, Token } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK, LiquidityPosition, Pair, Token, User } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
@@ -34,14 +34,6 @@ interface row {
 }
 
 export async function maker(args: Arguments) {
-  const throbber = ora({
-    text: 'Searching Sushi Makers',
-    spinner: {
-      frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
-      interval: 300,
-    },
-  }).start()
-
   if (args.network) {
     const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
     console.log('network selected: ', network)
@@ -70,31 +62,54 @@ export async function maker(args: Arguments) {
       console.log('network or subgraph response was empty')
     }
   } else {
-    const makers = await Promise.all(
-      MAKER_SUPPORTED_CHAIN_NAMES.map((chainName) => {
-        const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
-        const sdk = getBuiltGraphSDK({
-          chainId,
-          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-        })
+    const makers = []
 
-        return sdk
-          .LiquidityPositions({
-            first: 100000,
-            where: { user: MAKER_ADDRESS[chainId] },
-          })
-          .then(({ liquidityPositions }: { liquidityPositions: LiquidityPosition[] }) => {
-            return {
-              network: chainName,
-              address: MAKER_ADDRESS[chainId],
-              type: MAKER_TYPE[chainId],
-              liquidityPositions,
-            }
-          })
+    for (const chainName of MAKER_SUPPORTED_CHAIN_NAMES) {
+      const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
+      const sdk = getBuiltGraphSDK({
+        chainId,
+        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
       })
-    )
+      // throbber.info(`Searching maker liquidity positions for ${chainName}`)
 
-    throbber.stop()
+      const throbber = ora({
+        text: `Searching maker liquidity positions for ${chainName}`,
+        spinner: {
+          frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
+          interval: 300,
+        },
+      }).start()
+
+      // const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
+      //   first: 10000000,
+      //   where: { user: MAKER_ADDRESS[chainId] },
+      // })
+      const {
+        user: { liquidityPositions },
+      }: { user: User } = await sdk.User({
+        id: MAKER_ADDRESS[chainId],
+      })
+
+      if (liquidityPositions) {
+        throbber.stopAndPersist({
+          symbol: '🍽️ ',
+          text: `Found ${liquidityPositions.length} maker liquidity positions for ${chainName}, set size is ${
+            new Set(liquidityPositions.map((liquidityPosition) => liquidityPosition.id)).size
+          }`,
+        })
+        makers.push({
+          network: chainName,
+          address: MAKER_ADDRESS[chainId],
+          type: MAKER_TYPE[chainId],
+          liquidityPositions,
+        })
+      } else {
+        throbber.stopAndPersist({
+          symbol: '❌ ',
+          text: 'Liquidity Positons is undefined',
+        })
+      }
+    }
 
     const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
     let totalValue = 0
