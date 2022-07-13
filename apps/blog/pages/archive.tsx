@@ -12,7 +12,7 @@ import {
   ArticleEntityResponseCollection,
   CategoryEntityResponseCollection,
   CmsTypes,
-} from '../.graphclient'
+} from '../.mesh'
 import { ArticleList, ArticleListItem, Categories, Pagination, Seo } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 import GlobalEntity = CmsTypes.GlobalEntity

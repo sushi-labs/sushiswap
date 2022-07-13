@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { FC } from 'react'
 
-import { ComponentSharedSeo, GlobalEntity } from '../.graphclient'
+import { ComponentSharedSeo, GlobalEntity } from '../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 export type SeoType = (ComponentSharedSeo & { slug: string; article: boolean; tags: string[] | undefined }) | undefined

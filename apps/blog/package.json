@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build --debug",
-    "generate": "graphclient build",
+    "generate": "graphql-mesh build",
     "dev": "next dev --port 3002",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
@@ -24,8 +24,8 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.1",
-    "@graphprotocol/client-cli": "1.0.1",
+    "@graphql-mesh/cli": "^0.71.1",
+    "@graphql-mesh/graphql": "^0.29.1",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

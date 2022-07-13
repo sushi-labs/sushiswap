@@ -5,12 +5,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import {
-  ArticleEntity,
-  ArticleEntityResponseCollection,
-  CategoryEntityResponseCollection,
-  CmsTypes,
-} from '../.graphclient'
+import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, CmsTypes } from '../.mesh'
 import { ArticleList, Card, Categories, Hero, Seo } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 import GlobalEntity = CmsTypes.GlobalEntity
@@ -81,14 +76,14 @@ const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
       <div className="flex flex-col divide-y divide-slate-800">
         {articles?.[0] && <Hero article={articles[0]} />}
         <section className="py-10 pb-60">
-          <Container maxWidth="5xl" className="mx-auto px-4 space-y-10">
-            <div className="flex flex-col gap-y-8 md:flex-row items-center justify-between">
-              <div className="order-2 md:order-1 overflow-hidden w-full p-1 -ml-1">
-                <div className="flex gap-3 flex-wrap">
+          <Container maxWidth="5xl" className="px-4 mx-auto space-y-10">
+            <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
+              <div className="order-2 w-full p-1 -ml-1 overflow-hidden md:order-1">
+                <div className="flex flex-wrap gap-3">
                   <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
                 </div>
               </div>
-              <div className="w-full md:w-auto order-1 md:order-2 flex items-center gap-3 rounded-xl bg-slate-800 px-3 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
+              <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
                 <SearchIcon width={24} height={24} className="text-slate-500" />
                 <input
                   onChange={(e) => setQuery(e.target.value)}
@@ -99,7 +94,7 @@ const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
             </div>
 
             {articleList && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all">
+              <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
                 <ArticleList
                   articles={articleList as ArticleEntity[]}
                   loading={loading}
