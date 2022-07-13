@@ -5,20 +5,11 @@
         "^build",
         "$ANALYTICS_URL",
         "$BLOG_URL",
-        "$DAO_URL",
         "$DOCS_URL",
         "$FURO_URL",
         "$LANDING_URL",
         "$SWAP_URL",
         "$LEGACY_URL"
-      ],
-      "outputs": [".next/**"]
-    },
-    "dao#build": {
-      "dependsOn": [
-        "^build",
-        "generate",
-        "$REDIS_PATH"
       ],
       "outputs": [".next/**"]
     },
