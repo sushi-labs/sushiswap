@@ -150,12 +150,12 @@ export const CreateForm: FC = () => {
                   />
                 </Approve.Components>
               }
-              render={() => (
+              render={({ approved }) => (
                 <Button
                   type="submit"
                   variant="filled"
                   color="gradient"
-                  disabled={isWritePending || !isValid || isValidating}
+                  disabled={isWritePending || !approved || !isValid || isValidating}
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create stream'}
                 </Button>

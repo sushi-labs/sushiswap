@@ -219,7 +219,6 @@ export const CreateMultipleForm = () => {
                     </Approve.Components>
                   }
                   render={({ approved }) => {
-                    console.log(formData?.vestings?.length === 0, isWritePending, !approved, !isValid, isValidating)
                     return (
                       <Button
                         type="submit"
