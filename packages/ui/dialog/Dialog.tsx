@@ -7,7 +7,7 @@ import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
-type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   children?: React.ReactNode
 }
 

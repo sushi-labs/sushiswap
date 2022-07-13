@@ -64,7 +64,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   onSelect={(currency) => {
                     if (currency.isNative) {
                       // @ts-ignore
-                      setValue(`vesting.${index}.fundSource`, FundSource.WALLET)
+                      setValue(`streams.${index}.fundSource`, FundSource.WALLET)
                     }
 
                     onChange(currency)
@@ -134,7 +134,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 currency={data?.currency as Type | undefined}
                 error={!!error?.message}
                 hideSymbol={true}
-                className="ring-offset-slate-900 bg-transparent shadow-none h-full"
+                className="ring-offset-slate-700 bg-transparent shadow-none h-full !rounded-md"
               />
             )
           }}

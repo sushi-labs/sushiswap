@@ -27,7 +27,7 @@ export const ConfirmationComponentController: FC<ConfirmationComponentController
       {variant === 'overlay' ? (
         <SlideIn>
           <SlideIn.FromBottom show={open} onClose={() => setOpen(false)}>
-            <Overlay.Content className={classNames(className, 'flex flex-col flex-grow !bg-slate-800')}>
+            <Overlay.Content className={classNames(className, 'flex flex-col flex-grow !bg-slate-800 !pb-0')}>
               <Overlay.Header arrowDirection="bottom" onClose={() => setOpen(false)} title="Confirm Swap" />
               {typeof children === 'function' ? children({ setOpen, open }) : children}
             </Overlay.Content>

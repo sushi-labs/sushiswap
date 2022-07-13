@@ -12,13 +12,13 @@ export interface StepDetails {
   _last?: boolean
 }
 
-interface Stepper {
+export interface VerticalStepperInterface {
   children: React.ReactElement<StepInterface> | Array<React.ReactElement<StepInterface>>
   activeStep: number
   setActiveStep(x: number): void
 }
 
-const StepperContext = createContext<Omit<Stepper, 'children'> & { steps: number }>({
+const StepperContext = createContext<Omit<VerticalStepperInterface, 'children'> & { steps: number }>({
   steps: 0,
   activeStep: 0,
   setActiveStep(_: number) {
@@ -28,7 +28,7 @@ const StepperContext = createContext<Omit<Stepper, 'children'> & { steps: number
 
 export const useStepperContext = () => useContext(StepperContext)
 
-const StepperRoot: FC<Stepper> = ({ children, activeStep, setActiveStep }) => {
+const StepperRoot: FC<VerticalStepperInterface> = ({ children, activeStep, setActiveStep }) => {
   const contextValue = useMemo(
     () => ({
       steps: Children.count(children),
@@ -53,7 +53,7 @@ const StepperRoot: FC<Stepper> = ({ children, activeStep, setActiveStep }) => {
   )
 }
 
-export const Stepper: typeof StepperRoot & {
+export const VerticalStepper: typeof StepperRoot & {
   Step: typeof Step
   Content: typeof StepContent
   Description: typeof StepDescription

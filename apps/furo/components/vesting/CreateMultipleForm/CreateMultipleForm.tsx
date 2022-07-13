@@ -1,8 +1,9 @@
 import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Native } from '@sushiswap/currency'
+import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, createToast, Dots, Form, Typography } from '@sushiswap/ui'
@@ -159,16 +160,32 @@ export const CreateMultipleForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, address])
 
-  // createMultipleVestingSchema
-  //   .validate(formData, { abortEarly: false })
-  //   .then(function () {
-  //     console.log('valid')
-  //   })
-  //   .catch(function (err) {
-  //     err?.inner?.forEach((e: any) => {
-  //       console.log(e.message, e.path)
-  //     })
-  //   })
+  createMultipleVestingSchema
+    .validate(formData, { abortEarly: false })
+    .then(function () {
+      console.log('valid')
+    })
+    .catch(function (err) {
+      err?.inner?.forEach((e: any) => {
+        console.log(e.message, e.path)
+      })
+    })
+
+  const summedAmounts = validatedData
+    ? Object.values(
+        validatedData.vestings.reduce<Record<string, Amount<Type>>>((acc, cur) => {
+          if (!cur.totalAmount) return acc
+          const address = cur.totalAmount.currency.isNative ? AddressZero : cur.totalAmount.currency.address
+          if (acc[address]) {
+            acc[address] = acc[address].add(cur.totalAmount)
+          } else {
+            acc[address] = cur.totalAmount
+          }
+
+          return acc
+        }, {})
+      )
+    : []
 
   return (
     <FormProvider {...methods}>
@@ -186,21 +203,23 @@ export const CreateMultipleForm = () => {
             <div className="flex flex-col gap-4 col-span-2">
               <Typography weight={500}>Vestings</Typography>
               <TableSection />
-              <Form.Buttons>
+              <Form.Buttons className="flex flex-col items-end gap-3">
                 <Approve
+                  className="!items-end"
                   components={
                     <Approve.Components>
                       <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
-                      {validatedData?.vestings.map((vesting, index) => (
+                      {summedAmounts.map((amount, index) => (
                         <Approve.Token
                           key={index}
-                          amount={vesting?.totalAmount}
+                          amount={amount}
                           address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
                         />
                       ))}
                     </Approve.Components>
                   }
                   render={({ approved }) => {
+                    console.log(formData?.vestings?.length === 0, isWritePending, !approved, !isValid, isValidating)
                     return (
                       <Button
                         type="submit"

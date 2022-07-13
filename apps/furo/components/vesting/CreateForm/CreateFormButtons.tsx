@@ -4,7 +4,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
-import { Button, createToast, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroVestingContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { CreateVestingFormDataTransformedAndValidated } from 'components/vesting'
@@ -145,12 +145,13 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   ])
 
   return (
-    <Form.Buttons>
+    <div className="flex flex-col gap-3">
       <Approve
         components={
           <Approve.Components>
-            <Approve.Bentobox watch address={contract?.address} onSignature={setSignature} />
+            <Approve.Bentobox fullWidth watch address={contract?.address} onSignature={setSignature} />
             <Approve.Token
+              fullWidth
               watch
               amount={totalAmountAsEntity}
               address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
@@ -160,22 +161,23 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         render={({ approved }) => {
           return (
             <Button
+              fullWidth
               variant="filled"
               color="gradient"
               disabled={
-                isWritePending ||
                 !approved ||
+                isWritePending ||
                 !totalAmountAsEntity?.greaterThan(ZERO) ||
                 startDate.getTime() <= new Date().getTime()
               }
               onClick={createVesting}
             >
-              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
+              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
             </Button>
           )
         }}
       />
-    </Form.Buttons>
+    </div>
   )
 }
 

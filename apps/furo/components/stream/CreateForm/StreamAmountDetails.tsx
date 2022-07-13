@@ -41,7 +41,7 @@ export const StreamAmountDetails = () => {
                 <Select.Button
                   error={!!error?.message}
                   standalone
-                  className="!cursor-pointer"
+                  className="!cursor-pointer ring-offset-slate-900"
                   onClick={() => setDialogOpen(true)}
                 >
                   {currency?.symbol || <span className="text-slate-500">Select a currency</span>}
