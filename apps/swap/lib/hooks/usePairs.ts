@@ -38,7 +38,6 @@ export function usePairs(
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        // console.log('computePairAddress', { factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
         return computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
       }),
     [tokens]
@@ -52,11 +51,8 @@ export function usePairs(
       functionName: 'getReserves',
     })),
     enabled: pairAddresses.length > 0,
-    watch: true,
-    allowFailure: true,
   })
 
-  console.log({ chainId, data, pairAddresses: pairAddresses.length })
   return useMemo(() => {
     if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
     return data.map((result, i) => {
