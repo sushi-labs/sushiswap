@@ -17,13 +17,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
-  /** The `Long` scalar type represents 52-bit integers */
   Long: any;
-  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
   AboutBlocksDynamicZoneInput: any;
   ArticleBlocksDynamicZoneInput: any;
@@ -2100,9 +2096,13 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
+  /** The `Long` scalar type represents 52-bit integers */
   Long: any;
+  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
   AboutBlocksDynamicZoneInput: any;
   ArticleBlocksDynamicZoneInput: any;
@@ -3288,90 +3288,90 @@ export type MutationemailConfirmationArgs = {
 
     }
     export type QueryCmsSdk = {
-  /** null **/
+  /** undefined **/
   uploadFile: InContextSdkMethod<CmsTypes.Query['uploadFile'], CmsTypes.QueryuploadFileArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   uploadFiles: InContextSdkMethod<CmsTypes.Query['uploadFiles'], CmsTypes.QueryuploadFilesArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   schedulerScheduler: InContextSdkMethod<CmsTypes.Query['schedulerScheduler'], CmsTypes.QueryschedulerSchedulerArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   i18NLocale: InContextSdkMethod<CmsTypes.Query['i18NLocale'], CmsTypes.Queryi18NLocaleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   i18NLocales: InContextSdkMethod<CmsTypes.Query['i18NLocales'], CmsTypes.Queryi18NLocalesArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   usersPermissionsRole: InContextSdkMethod<CmsTypes.Query['usersPermissionsRole'], CmsTypes.QueryusersPermissionsRoleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   usersPermissionsRoles: InContextSdkMethod<CmsTypes.Query['usersPermissionsRoles'], CmsTypes.QueryusersPermissionsRolesArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   usersPermissionsUser: InContextSdkMethod<CmsTypes.Query['usersPermissionsUser'], CmsTypes.QueryusersPermissionsUserArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   usersPermissionsUsers: InContextSdkMethod<CmsTypes.Query['usersPermissionsUsers'], CmsTypes.QueryusersPermissionsUsersArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   about: InContextSdkMethod<CmsTypes.Query['about'], {}, MeshContext>,
-  /** null **/
+  /** undefined **/
   article: InContextSdkMethod<CmsTypes.Query['article'], CmsTypes.QueryarticleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   articles: InContextSdkMethod<CmsTypes.Query['articles'], CmsTypes.QueryarticlesArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   author: InContextSdkMethod<CmsTypes.Query['author'], CmsTypes.QueryauthorArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   authors: InContextSdkMethod<CmsTypes.Query['authors'], CmsTypes.QueryauthorsArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   category: InContextSdkMethod<CmsTypes.Query['category'], CmsTypes.QuerycategoryArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   categories: InContextSdkMethod<CmsTypes.Query['categories'], CmsTypes.QuerycategoriesArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   global: InContextSdkMethod<CmsTypes.Query['global'], {}, MeshContext>,
-  /** null **/
+  /** undefined **/
   me: InContextSdkMethod<CmsTypes.Query['me'], {}, MeshContext>
 };
 
 export type MutationCmsSdk = {
-  /** null **/
+  /** undefined **/
   createUploadFile: InContextSdkMethod<CmsTypes.Mutation['createUploadFile'], CmsTypes.MutationcreateUploadFileArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateUploadFile: InContextSdkMethod<CmsTypes.Mutation['updateUploadFile'], CmsTypes.MutationupdateUploadFileArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteUploadFile: InContextSdkMethod<CmsTypes.Mutation['deleteUploadFile'], CmsTypes.MutationdeleteUploadFileArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   createSchedulerScheduler: InContextSdkMethod<CmsTypes.Mutation['createSchedulerScheduler'], CmsTypes.MutationcreateSchedulerSchedulerArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateSchedulerScheduler: InContextSdkMethod<CmsTypes.Mutation['updateSchedulerScheduler'], CmsTypes.MutationupdateSchedulerSchedulerArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteSchedulerScheduler: InContextSdkMethod<CmsTypes.Mutation['deleteSchedulerScheduler'], CmsTypes.MutationdeleteSchedulerSchedulerArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateAbout: InContextSdkMethod<CmsTypes.Mutation['updateAbout'], CmsTypes.MutationupdateAboutArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteAbout: InContextSdkMethod<CmsTypes.Mutation['deleteAbout'], {}, MeshContext>,
-  /** null **/
+  /** undefined **/
   createArticle: InContextSdkMethod<CmsTypes.Mutation['createArticle'], CmsTypes.MutationcreateArticleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateArticle: InContextSdkMethod<CmsTypes.Mutation['updateArticle'], CmsTypes.MutationupdateArticleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteArticle: InContextSdkMethod<CmsTypes.Mutation['deleteArticle'], CmsTypes.MutationdeleteArticleArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   createAuthor: InContextSdkMethod<CmsTypes.Mutation['createAuthor'], CmsTypes.MutationcreateAuthorArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateAuthor: InContextSdkMethod<CmsTypes.Mutation['updateAuthor'], CmsTypes.MutationupdateAuthorArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteAuthor: InContextSdkMethod<CmsTypes.Mutation['deleteAuthor'], CmsTypes.MutationdeleteAuthorArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   createCategory: InContextSdkMethod<CmsTypes.Mutation['createCategory'], CmsTypes.MutationcreateCategoryArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateCategory: InContextSdkMethod<CmsTypes.Mutation['updateCategory'], CmsTypes.MutationupdateCategoryArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteCategory: InContextSdkMethod<CmsTypes.Mutation['deleteCategory'], CmsTypes.MutationdeleteCategoryArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateGlobal: InContextSdkMethod<CmsTypes.Mutation['updateGlobal'], CmsTypes.MutationupdateGlobalArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   deleteGlobal: InContextSdkMethod<CmsTypes.Mutation['deleteGlobal'], {}, MeshContext>,
-  /** null **/
+  /** undefined **/
   upload: InContextSdkMethod<CmsTypes.Mutation['upload'], CmsTypes.MutationuploadArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   multipleUpload: InContextSdkMethod<CmsTypes.Mutation['multipleUpload'], CmsTypes.MutationmultipleUploadArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   updateFileInfo: InContextSdkMethod<CmsTypes.Mutation['updateFileInfo'], CmsTypes.MutationupdateFileInfoArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   removeFile: InContextSdkMethod<CmsTypes.Mutation['removeFile'], CmsTypes.MutationremoveFileArgs, MeshContext>,
   /** Create a new role **/
   createUsersPermissionsRole: InContextSdkMethod<CmsTypes.Mutation['createUsersPermissionsRole'], CmsTypes.MutationcreateUsersPermissionsRoleArgs, MeshContext>,
@@ -3385,7 +3385,7 @@ export type MutationCmsSdk = {
   updateUsersPermissionsUser: InContextSdkMethod<CmsTypes.Mutation['updateUsersPermissionsUser'], CmsTypes.MutationupdateUsersPermissionsUserArgs, MeshContext>,
   /** Delete an existing user **/
   deleteUsersPermissionsUser: InContextSdkMethod<CmsTypes.Mutation['deleteUsersPermissionsUser'], CmsTypes.MutationdeleteUsersPermissionsUserArgs, MeshContext>,
-  /** null **/
+  /** undefined **/
   login: InContextSdkMethod<CmsTypes.Mutation['login'], CmsTypes.MutationloginArgs, MeshContext>,
   /** Register a user **/
   register: InContextSdkMethod<CmsTypes.Mutation['register'], CmsTypes.MutationregisterArgs, MeshContext>,
@@ -3403,6 +3403,7 @@ export type SubscriptionCmsSdk = {
 
 export type CmsContext = {
       ["CMS"]: { Query: QueryCmsSdk, Mutation: MutationCmsSdk, Subscription: SubscriptionCmsSdk },
+      
     };
 
 export type MeshContext = CmsContext & BaseMeshContext;
@@ -3437,22 +3438,27 @@ const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
 import type { GetMeshOptions } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
-import MeshCache from "@graphql-mesh/cache-localforage";
 import { DefaultLogger } from '@graphql-mesh/utils';
+import MeshCache from "@graphql-mesh/cache-localforage";
+import { fetchFactory } from 'fetchache';
+import { fetch, Request, Response } from 'cross-undici-fetch';
+
 import GraphqlHandler from "@graphql-mesh/graphql"
 import BareMerger from "@graphql-mesh/merger-bare";
 import { printWithCache } from '@graphql-mesh/utils';
 export const rawServeConfig: YamlConfig.Config['serve'] = undefined as any
 export async function getMeshOptions(): Promise<GetMeshOptions> {
 const pubsub = new PubSub();
+const sourcesStore = rootStore.child('sources');
+const logger = new DefaultLogger("🕸️  Mesh");
 const cache = new (MeshCache as any)({
       ...({} as any),
       importFn,
       store: rootStore.child('cache'),
       pubsub,
+      logger,
     } as any)
-const sourcesStore = rootStore.child('sources');
-const logger = new DefaultLogger('🕸️  Mesh');
+const fetchFn = fetchFactory({ cache, fetch, Request, Response });
 const sources = [];
 const transforms = [];
 const additionalEnvelopPlugins = [];
@@ -3466,20 +3472,21 @@ const cmsHandler = new GraphqlHandler({
               pubsub,
               store: sourcesStore.child("CMS"),
               logger: logger.child("CMS"),
-              importFn
+              importFn,
+              fetchFn,
             });
-sources.push({
+sources[0] = {
           name: 'CMS',
           handler: cmsHandler,
           transforms: cmsTransforms
-        })
+        }
+const additionalResolvers = [] as any[]
 const merger = new(BareMerger as any)({
         cache,
         pubsub,
         logger: logger.child('bareMerger'),
         store: rootStore.child('bareMerger')
       })
-const additionalResolvers = [] as any[]
 
   return {
     sources,
