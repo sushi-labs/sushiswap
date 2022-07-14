@@ -3,7 +3,6 @@ import { allChains, configureChains, createClient, CreateClientConfig } from 'wa
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
@@ -177,7 +176,7 @@ const { chains, provider, webSocketProvider } = configureChains(
   [...allChains, ...otherChains],
   [
     publicProvider(),
-    alchemyProvider({ alchemyId }),
+    // alchemyProvider({ alchemyId }),
     // infuraProvider({ infuraId }),
   ]
 )
