@@ -26,6 +26,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0xa722c13135930332Eb3d749B2F0906559D2C5b99',
   [ChainId.MOONBEAM]: '0x30D2a9F5FDf90ACe8c17952cbb4eE48a55D916A7',
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000006',
+  [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
 }
 
 export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
@@ -62,6 +63,7 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.TELOS]: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
   [ChainId.MOONBEAM]: '0xAcc15dC74880C9944775448304B263D191c6077F',
   [ChainId.KAVA]: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
+  [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
 }
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -183,6 +185,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     decimals: 18,
     symbol: 'WKAVA',
     name: 'Wrapped Kava',
+  }),
+  [ChainId.METIS]: new Token({
+    chainId: ChainId.METIS,
+    address: WNATIVE_ADDRESS[ChainId.METIS],
+    decimals: 18,
+    symbol: 'WMETIS',
+    name: 'Wrapped Metis',
   }),
 }
 
