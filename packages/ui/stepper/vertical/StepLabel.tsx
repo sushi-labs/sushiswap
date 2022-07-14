@@ -1,8 +1,8 @@
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { FC } from 'react'
 
-import { CircleWithText } from '../icons'
-import { Typography } from '../typography'
+import { CircleWithText } from '../../icons'
+import { Typography } from '../../typography'
 import { StepDetails, useStepperContext } from './Stepper'
 
 export interface StepLabelInterface extends StepDetails {

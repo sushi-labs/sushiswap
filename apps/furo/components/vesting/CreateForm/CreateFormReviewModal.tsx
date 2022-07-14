@@ -95,10 +95,10 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
   return (
-    <Dialog open={open} onClose={onDismiss} unmount={true}>
-      <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden border border-slate-700">
+    <Dialog open={open} onClose={onDismiss} unmount={false}>
+      <Dialog.Content className="!space-y- min-h-[300px] !max-w-sm relative overflow-hidden bg-slate-900 !pb-3">
         <Dialog.Header title="Review Details" onClose={onDismiss} />
-        <Typography variant="xs" className="!leading-5 text-slate-400">
+        <Typography variant="xs" className="!leading-5 text-slate-400 mt-3">
           This will create a stream to{' '}
           <span className="font-medium text-slate-50 hover:text-blue">
             {activeChain && recipient && (
@@ -168,7 +168,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             }
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mt-3">
           <Table title="Details">
             <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
             <Item
@@ -230,9 +230,8 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             </Typography>
           </div>
         </Transition>
-        <div className="border-t border-slate-800">
-          <CreateFormButtons formData={formData} onDismiss={onDismiss} />
-        </div>
+        <div className="border-t border-slate-200/5 w-full pt-3" />
+        <CreateFormButtons formData={formData} onDismiss={onDismiss} />
       </Dialog.Content>
     </Dialog>
   )

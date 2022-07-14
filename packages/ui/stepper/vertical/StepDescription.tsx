@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Typography } from '../typography'
+import { Typography } from '../../typography'
 import { StepDetails } from './Stepper'
 
 export interface StepDescriptionInterface extends StepDetails {

@@ -1,12417 +1,12419 @@
 // @ts-nocheck
-import { buildASTSchema } from 'graphql';
+import { buildASTSchema } from 'graphql'
 
 const schemaAST = {
-  "kind": "Document",
-  "definitions": [
+  kind: 'Document',
+  definitions: [
     {
-      "kind": "SchemaDefinition",
-      "operationTypes": [
+      kind: 'SchemaDefinition',
+      operationTypes: [
         {
-          "kind": "OperationTypeDefinition",
-          "operation": "query",
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Query"
-            }
-          }
+          kind: 'OperationTypeDefinition',
+          operation: 'query',
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Query',
+            },
+          },
         },
         {
-          "kind": "OperationTypeDefinition",
-          "operation": "mutation",
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Mutation"
-            }
-          }
-        }
+          kind: 'OperationTypeDefinition',
+          operation: 'mutation',
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Mutation',
+            },
+          },
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ScalarTypeDefinition",
-      "description": {
-        "kind": "StringValue",
-        "value": "The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).",
-        "block": true
+      kind: 'ScalarTypeDefinition',
+      description: {
+        kind: 'StringValue',
+        value:
+          'The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).',
+        block: true,
       },
-      "name": {
-        "kind": "Name",
-        "value": "JSON"
+      name: {
+        kind: 'Name',
+        value: 'JSON',
       },
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ScalarTypeDefinition",
-      "description": {
-        "kind": "StringValue",
-        "value": "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.",
-        "block": true
+      kind: 'ScalarTypeDefinition',
+      description: {
+        kind: 'StringValue',
+        value:
+          'A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.',
+        block: true,
       },
-      "name": {
-        "kind": "Name",
-        "value": "DateTime"
+      name: {
+        kind: 'Name',
+        value: 'DateTime',
       },
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ScalarTypeDefinition",
-      "description": {
-        "kind": "StringValue",
-        "value": "The `Long` scalar type represents 52-bit integers",
-        "block": true
+      kind: 'ScalarTypeDefinition',
+      description: {
+        kind: 'StringValue',
+        value: 'The `Long` scalar type represents 52-bit integers',
+        block: true,
       },
-      "name": {
-        "kind": "Name",
-        "value": "Long"
+      name: {
+        kind: 'Name',
+        value: 'Long',
       },
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ScalarTypeDefinition",
-      "description": {
-        "kind": "StringValue",
-        "value": "The `Upload` scalar type represents a file upload.",
-        "block": true
+      kind: 'ScalarTypeDefinition',
+      description: {
+        kind: 'StringValue',
+        value: 'The `Upload` scalar type represents a file upload.',
+        block: true,
       },
-      "name": {
-        "kind": "Name",
-        "value": "Upload"
+      name: {
+        kind: 'Name',
+        value: 'Upload',
       },
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Error"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Error',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "code"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'code',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "message"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'message',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Pagination"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Pagination',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "total"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'total',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "page"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'page',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "pageSize"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'pageSize',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "pageCount"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'pageCount',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ResponseCollectionMeta"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ResponseCollectionMeta',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "pagination"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'pagination',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Pagination"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Pagination',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "EnumTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "PublicationState"
+      kind: 'EnumTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'PublicationState',
       },
-      "values": [
+      values: [
         {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "LIVE"
+          kind: 'EnumValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'LIVE',
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "PREVIEW"
+          kind: 'EnumValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'PREVIEW',
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "IDFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'IDFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "BooleanFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'BooleanFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BooleanFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'BooleanFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "StringFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'StringFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "IntFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'IntFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IntFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IntFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Int"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Int',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "LongFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'LongFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Long"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Long',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Long"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Long',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "LongFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'LongFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Long"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Long',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Long"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Long',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Long"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Long',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "FloatFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'FloatFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "FloatFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'FloatFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "DateTimeFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'DateTimeFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'DateTime',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'DateTime',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'DateTime',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'DateTime',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'DateTime',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "JSONFilterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'JSONFilterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "JSON"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'JSON',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "JSON"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'JSON',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSONFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSONFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "eq"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'eq',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ne"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ne',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "startsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'startsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "endsWith"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'endsWith',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContains"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContains',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "containsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'containsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notContainsi"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notContainsi',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "gte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'gte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "lte"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'lte',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "null"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'null',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notNull"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notNull',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "in"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'in',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "JSON"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'JSON',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "notIn"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'notIn',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "JSON"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'JSON',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "between"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'between',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "JSON"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'JSON',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedDivider"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedDivider',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedMedia"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedMedia',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "file"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'file',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "caption"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'caption',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedRichText"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedRichText',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "body"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'body',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedSeoInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedSeoInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "metaTitle"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'metaTitle',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "metaDescription"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'metaDescription',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "shareImage"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'shareImage',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedSeo"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedSeo',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "metaTitle"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'metaTitle',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "metaDescription"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'metaDescription',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "shareImage"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'shareImage',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ComponentSharedSlider"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ComponentSharedSlider',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "files"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'files',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UploadFileFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UploadFileFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileRelationResponseCollection',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "alternativeText"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'alternativeText',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "caption"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'caption',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "width"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'width',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IntFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IntFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "height"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'height',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IntFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IntFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "formats"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'formats',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSONFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSONFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "hash"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'hash',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ext"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ext',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "mime"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'mime',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "size"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'size',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "FloatFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'FloatFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "url"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'url',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "previewUrl"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'previewUrl',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider_metadata"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider_metadata',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSONFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSONFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "alternativeText"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'alternativeText',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "caption"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'caption',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "width"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'width',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "height"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'height',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "formats"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'formats',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "hash"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'hash',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ext"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ext',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "mime"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'mime',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "size"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'size',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Float"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Float',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "url"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'url',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "previewUrl"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'previewUrl',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider_metadata"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider_metadata',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFile"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFile',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "alternativeText"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'alternativeText',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "caption"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'caption',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "width"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'width',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "height"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'height',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "formats"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'formats',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "hash"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'hash',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ext"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ext',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "mime"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'mime',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "size"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'size',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Float"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Float',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "url"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'url',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "previewUrl"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'previewUrl',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider_metadata"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider_metadata',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "JSON"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'JSON',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "related"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'related',
           },
-          "arguments": [],
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "GenericMorph"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'GenericMorph',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFile"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFile',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UploadFileEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UploadFileEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UploadFileRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UploadFileRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UploadFileEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UploadFileEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerSchedulerFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerSchedulerFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduledDatetime"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduledDatetime',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "uid"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'uid',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contentId"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contentId',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "LongFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'LongFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduleType"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduleType',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "SchedulerSchedulerFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'SchedulerSchedulerFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "SchedulerSchedulerFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'SchedulerSchedulerFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerSchedulerInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerSchedulerInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduledDatetime"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduledDatetime',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "uid"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'uid',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contentId"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contentId',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduleType"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduleType',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerScheduler"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerScheduler',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduledDatetime"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduledDatetime',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "uid"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'uid',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "contentId"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'contentId',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Long"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Long',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "scheduleType"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'scheduleType',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerSchedulerEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerSchedulerEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerScheduler"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerScheduler',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerSchedulerEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerSchedulerEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "SchedulerSchedulerEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'SchedulerSchedulerEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "SchedulerSchedulerEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'SchedulerSchedulerEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "I18NLocaleFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'I18NLocaleFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "code"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'code',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "I18NLocaleFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'I18NLocaleFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "I18NLocaleFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'I18NLocaleFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "I18NLocaleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'I18NLocaleFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "I18NLocale"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'I18NLocale',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "code"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'code',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "I18NLocaleEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'I18NLocaleEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "I18NLocale"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'I18NLocale',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "I18NLocaleEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'I18NLocaleEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "I18NLocaleEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'I18NLocaleEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "I18NLocaleEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'I18NLocaleEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "I18NLocaleEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'I18NLocaleEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsPermissionFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsPermissionFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "action"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'action',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsPermissionFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsPermissionFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsPermissionFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsPermissionFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsPermissionFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsPermissionFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsPermission"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsPermission',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "action"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'action',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsPermissionEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsPermissionEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsPermission"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsPermission',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsPermissionRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsPermissionRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsPermissionEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsPermissionEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRoleFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRoleFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "type"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'type',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "permissions"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'permissions',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsPermissionFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsPermissionFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "users"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'users',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsRoleFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsRoleFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsRoleFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsRoleFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRoleInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRoleInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "type"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'type',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "permissions"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'permissions',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "users"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'users',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRole"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRole',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "type"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'type',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "permissions"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'permissions',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UsersPermissionsPermissionFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UsersPermissionsPermissionFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsPermissionRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsPermissionRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "users"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'users',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UsersPermissionsUserFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UsersPermissionsUserFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRoleEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRoleEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRole"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRole',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRoleEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRoleEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRoleEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRoleEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsRoleEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsRoleEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "username"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'username',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "password"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'password',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "resetPasswordToken"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'resetPasswordToken',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmationToken"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmationToken',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmed"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmed',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BooleanFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'BooleanFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocked"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocked',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BooleanFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'BooleanFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsUserFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsUserFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsUserFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsUserFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "username"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'username',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "password"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'password',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "resetPasswordToken"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'resetPasswordToken',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmationToken"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmationToken',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmed"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmed',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocked"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocked',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUser"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUser',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "username"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'username',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmed"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmed',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocked"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocked',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUser"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUser',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsUserEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsUserEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUserRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUserRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsUserEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsUserEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "UnionTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AboutBlocksDynamicZone"
+      kind: 'UnionTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AboutBlocksDynamicZone',
       },
-      "directives": [],
-      "types": [
+      directives: [],
+      types: [
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedMedia"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedMedia',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedRichText"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedRichText',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedSlider"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedSlider',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Error"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ScalarTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AboutBlocksDynamicZoneInput"
-      },
-      "directives": []
-    },
-    {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AboutInput"
-      },
-      "fields": [
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "title"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Error',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
-          },
-          "directives": []
         },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocks"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "AboutBlocksDynamicZoneInput"
-                }
-              }
-            }
-          },
-          "directives": []
-        }
       ],
-      "directives": []
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "About"
+      kind: 'ScalarTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AboutBlocksDynamicZoneInput',
       },
-      "fields": [
+      directives: [],
+    },
+    {
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AboutInput',
+      },
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "title"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'title',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocks"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocks',
           },
-          "arguments": [],
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "AboutBlocksDynamicZone"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NonNullType',
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'AboutBlocksDynamicZoneInput',
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
-          },
-          "directives": []
-        }
       ],
-      "interfaces": [],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AboutEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'About',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'title',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocks',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "About"
-            }
+          arguments: [],
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'AboutBlocksDynamicZone',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
+          },
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
+          },
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
+          },
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AboutEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AboutEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AboutEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
+          },
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'About',
+            },
+          },
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "UnionTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleBlocksDynamicZone"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AboutEntityResponse',
       },
-      "directives": [],
-      "types": [
+      fields: [
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedDivider"
-          }
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
+          },
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AboutEntity',
+            },
+          },
+          directives: [],
         },
-        {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedMedia"
-          }
-        },
-        {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedRichText"
-          }
-        },
-        {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedSlider"
-          }
-        },
-        {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Error"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ScalarTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleBlocksDynamicZoneInput"
-      },
-      "directives": []
-    },
-    {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleFiltersInput"
-      },
-      "fields": [
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "title"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "authors"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorFiltersInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "categories"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryFiltersInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "publishedAt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ArticleFiltersInput"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ArticleFiltersInput"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleFiltersInput"
-            }
-          },
-          "directives": []
-        }
       ],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleInput"
+      kind: 'UnionTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleBlocksDynamicZone',
       },
-      "fields": [
+      directives: [],
+      types: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "title"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedDivider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
-          },
-          "directives": []
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedMedia',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
-          },
-          "directives": []
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedRichText',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
-          },
-          "directives": []
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "cover"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedSlider',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
-          },
-          "directives": []
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "authors"
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Error',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
-          },
-          "directives": []
         },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "categories"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocks"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ArticleBlocksDynamicZoneInput"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "publishedAt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
-          },
-          "directives": []
-        }
       ],
-      "directives": []
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Article"
+      kind: 'ScalarTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleBlocksDynamicZoneInput',
       },
-      "fields": [
+      directives: [],
+    },
+    {
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleFiltersInput',
+      },
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "title"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'title',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "cover"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "authors"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'authors',
           },
-          "arguments": [
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorFiltersInput',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'categories',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryFiltersInput',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'publishedAt',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
+          },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ArticleFiltersInput',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
+          },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ArticleFiltersInput',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleFiltersInput',
+            },
+          },
+          directives: [],
+        },
+      ],
+      directives: [],
+    },
+    {
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleInput',
+      },
+      fields: [
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'title',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'cover',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'authors',
+          },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'categories',
+          },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocks',
+          },
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NonNullType',
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ArticleBlocksDynamicZoneInput',
+                },
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'publishedAt',
+          },
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
+          },
+          directives: [],
+        },
+      ],
+      directives: [],
+    },
+    {
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Article',
+      },
+      fields: [
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'title',
+          },
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
+          },
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
+          },
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'cover',
+          },
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileEntityResponse',
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'authors',
+          },
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "AuthorFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'AuthorFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "categories"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'categories',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "CategoryFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'CategoryFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocks"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocks',
           },
-          "arguments": [],
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ArticleBlocksDynamicZone"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ArticleBlocksDynamicZone',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "publishedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'publishedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Article"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Article',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ArticleEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ArticleEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "ArticleRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'ArticleRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ArticleEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ArticleEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "handle"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'handle',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "AuthorFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'AuthorFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "AuthorFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'AuthorFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "avatar"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'avatar',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "handle"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'handle',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Author"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Author',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "avatar"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'avatar',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileEntityResponse"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "handle"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'handle',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ArticleFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ArticleFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "publicationState"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'publicationState',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PublicationState"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PublicationState',
+                },
               },
-              "defaultValue": {
-                "kind": "EnumValue",
-                "value": "LIVE"
+              defaultValue: {
+                kind: 'EnumValue',
+                value: 'LIVE',
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Author"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Author',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "AuthorEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'AuthorEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "AuthorRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'AuthorRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "AuthorEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'AuthorEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryFiltersInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryFiltersInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "IDFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'IDFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "StringFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'StringFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleFiltersInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTimeFilterInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTimeFilterInput',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "and"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'and',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "CategoryFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'CategoryFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "or"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'or',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "CategoryFiltersInput"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'CategoryFiltersInput',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "not"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'not',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryFiltersInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryFiltersInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          type: {
+            kind: 'ListType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Category"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Category',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "slug"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'slug',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ArticleFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ArticleFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "publicationState"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'publicationState',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PublicationState"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PublicationState',
+                },
               },
-              "defaultValue": {
-                "kind": "EnumValue",
-                "value": "LIVE"
+              defaultValue: {
+                kind: 'EnumValue',
+                value: 'LIVE',
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleRelationResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleRelationResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Category"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Category',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryEntityResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryEntityResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "CategoryEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'CategoryEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "meta"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'meta',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ResponseCollectionMeta"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ResponseCollectionMeta',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "CategoryRelationResponseCollection"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'CategoryRelationResponseCollection',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "CategoryEntity"
-                  }
-                }
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'CategoryEntity',
+                  },
+                },
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "GlobalInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'GlobalInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "siteName"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'siteName',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "favicon"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'favicon',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "siteDescription"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'siteDescription',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "defaultSeo"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'defaultSeo',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ComponentSharedSeoInput"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ComponentSharedSeoInput',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Global"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Global',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "siteName"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'siteName',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "favicon"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'favicon',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "siteDescription"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'siteDescription',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "defaultSeo"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'defaultSeo',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ComponentSharedSeo"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ComponentSharedSeo',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createdAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createdAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updatedAt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updatedAt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "DateTime"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'DateTime',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "GlobalEntity"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'GlobalEntity',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ID"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ID',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "attributes"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'attributes',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Global"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Global',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "GlobalEntityResponse"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'GlobalEntityResponse',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "data"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'data',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "GlobalEntity"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'GlobalEntity',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "UnionTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "GenericMorph"
+      kind: 'UnionTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'GenericMorph',
       },
-      "directives": [],
-      "types": [
+      directives: [],
+      types: [
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedDivider"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedDivider',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedMedia"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedMedia',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedRichText"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedRichText',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedSeo"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedSeo',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "ComponentSharedSlider"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'ComponentSharedSlider',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "UploadFile"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'UploadFile',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "SchedulerScheduler"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'SchedulerScheduler',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "I18NLocale"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'I18NLocale',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "UsersPermissionsPermission"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'UsersPermissionsPermission',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "UsersPermissionsRole"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'UsersPermissionsRole',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "UsersPermissionsUser"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'UsersPermissionsUser',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "About"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'About',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Article"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Article',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Author"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Author',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Category"
-          }
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Category',
+          },
         },
         {
-          "kind": "NamedType",
-          "name": {
-            "kind": "Name",
-            "value": "Global"
-          }
-        }
-      ]
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'Global',
+          },
+        },
+      ],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "FileInfoInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'FileInfoInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "alternativeText"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'alternativeText',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "caption"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'caption',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsMe"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsMe',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "username"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'username',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "confirmed"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'confirmed',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "blocked"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'blocked',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Boolean"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Boolean',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "role"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'role',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsMeRole"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsMeRole',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsMeRole"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsMeRole',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'id',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "ID"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'ID',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "name"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'name',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "description"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'description',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "type"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'type',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsRegisterInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsRegisterInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "username"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'username',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "email"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'email',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "password"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'password',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsLoginInput"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsLoginInput',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "identifier"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'identifier',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "password"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'password',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "provider"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'provider',
           },
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "String"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'String',
+              },
+            },
           },
-          "directives": [],
-          "defaultValue": {
-            "kind": "StringValue",
-            "value": "local"
-          }
-        }
+          directives: [],
+          defaultValue: {
+            kind: 'StringValue',
+            value: 'local',
+          },
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsPasswordPayload"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsPasswordPayload',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ok"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ok',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsLoginPayload"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsLoginPayload',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "jwt"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'jwt',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "String"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'String',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "user"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'user',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsMe"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsMe',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsCreateRolePayload"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsCreateRolePayload',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ok"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ok',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsUpdateRolePayload"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsUpdateRolePayload',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ok"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ok',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "UsersPermissionsDeleteRolePayload"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'UsersPermissionsDeleteRolePayload',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "ok"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'ok',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "Boolean"
-              }
-            }
+          arguments: [],
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'Boolean',
+              },
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "InputObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "PaginationArg"
+      kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'PaginationArg',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "page"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'page',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "pageSize"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'pageSize',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "start"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'start',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "limit"
+          kind: 'InputValueDefinition',
+          name: {
+            kind: 'Name',
+            value: 'limit',
           },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "Int"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'Int',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "directives": []
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Query"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Query',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "uploadFile"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'uploadFile',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "uploadFiles"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'uploadFiles',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UploadFileFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UploadFileFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "schedulerScheduler"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'schedulerScheduler',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "SchedulerSchedulerFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'SchedulerSchedulerFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "i18NLocale"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'i18NLocale',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "I18NLocaleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'I18NLocaleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "i18NLocales"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'i18NLocales',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "I18NLocaleFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'I18NLocaleFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "I18NLocaleEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'I18NLocaleEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "usersPermissionsRole"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'usersPermissionsRole',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "usersPermissionsRoles"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'usersPermissionsRoles',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UsersPermissionsRoleFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UsersPermissionsRoleFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsRoleEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsRoleEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "usersPermissionsUser"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'usersPermissionsUser',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "usersPermissionsUsers"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'usersPermissionsUsers',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UsersPermissionsUserFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UsersPermissionsUserFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUserEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUserEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "about"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'about',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AboutEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AboutEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "article"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'article',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "articles"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'articles',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ArticleFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ArticleFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "publicationState"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'publicationState',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PublicationState"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PublicationState',
+                },
               },
-              "defaultValue": {
-                "kind": "EnumValue",
-                "value": "LIVE"
+              defaultValue: {
+                kind: 'EnumValue',
+                value: 'LIVE',
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "author"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'author',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "authors"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'authors',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "AuthorFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'AuthorFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "category"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'category',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "categories"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'categories',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "filters"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'filters',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "CategoryFiltersInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'CategoryFiltersInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "pagination"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'pagination',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "PaginationArg"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'PaginationArg',
+                },
               },
-              "defaultValue": {
-                "kind": "ObjectValue",
-                "fields": []
+              defaultValue: {
+                kind: 'ObjectValue',
+                fields: [],
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "sort"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'sort',
               },
-              "type": {
-                "kind": "ListType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'ListType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "defaultValue": {
-                "kind": "ListValue",
-                "values": []
+              defaultValue: {
+                kind: 'ListValue',
+                values: [],
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntityResponseCollection"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntityResponseCollection',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "global"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'global',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "GlobalEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'GlobalEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "me"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'me',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsMe"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsMe',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
+      interfaces: [],
+      directives: [],
     },
     {
-      "kind": "ObjectTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "Mutation"
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'Mutation',
       },
-      "fields": [
+      fields: [
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createUploadFile"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createUploadFile',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UploadFileInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UploadFileInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateUploadFile"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateUploadFile',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UploadFileInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UploadFileInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteUploadFile"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteUploadFile',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createSchedulerScheduler"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createSchedulerScheduler',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "SchedulerSchedulerInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'SchedulerSchedulerInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateSchedulerScheduler"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateSchedulerScheduler',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "SchedulerSchedulerInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'SchedulerSchedulerInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteSchedulerScheduler"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteSchedulerScheduler',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "SchedulerSchedulerEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'SchedulerSchedulerEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateAbout"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateAbout',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "AboutInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'AboutInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AboutEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AboutEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteAbout"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteAbout',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AboutEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AboutEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createArticle"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createArticle',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ArticleInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ArticleInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateArticle"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateArticle',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ArticleInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ArticleInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteArticle"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteArticle',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "ArticleEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'ArticleEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createAuthor"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createAuthor',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "AuthorInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'AuthorInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateAuthor"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateAuthor',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "AuthorInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'AuthorInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteAuthor"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteAuthor',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "AuthorEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'AuthorEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "createCategory"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'createCategory',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "CategoryInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'CategoryInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateCategory"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateCategory',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "CategoryInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'CategoryInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteCategory"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteCategory',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "CategoryEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'CategoryEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateGlobal"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateGlobal',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "GlobalInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'GlobalInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "GlobalEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'GlobalEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "deleteGlobal"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'deleteGlobal',
           },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "GlobalEntityResponse"
-            }
+          arguments: [],
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'GlobalEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "upload"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'upload',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "refId"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'refId',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "ref"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'ref',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "String"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'String',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "field"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'field',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "String"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'String',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "info"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'info',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "FileInfoInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'FileInfoInput',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "file"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'file',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "Upload"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'Upload',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "multipleUpload"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'multipleUpload',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "refId"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'refId',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "ID"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'ID',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "ref"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'ref',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "String"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'String',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "field"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'field',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "String"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'String',
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "files"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'files',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "ListType",
-                  "type": {
-                    "kind": "NamedType",
-                    "name": {
-                      "kind": "Name",
-                      "value": "Upload"
-                    }
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'ListType',
+                  type: {
+                    kind: 'NamedType',
+                    name: {
+                      kind: 'Name',
+                      value: 'Upload',
+                    },
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "ListType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "UploadFileEntityResponse"
-                }
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'ListType',
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'UploadFileEntityResponse',
+                },
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "updateFileInfo"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'updateFileInfo',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "info"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'info',
               },
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "FileInfoInput"
-                }
+              type: {
+                kind: 'NamedType',
+                name: {
+                  kind: 'Name',
+                  value: 'FileInfoInput',
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UploadFileEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UploadFileEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "removeFile"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'removeFile',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UploadFileEntityResponse"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UploadFileEntityResponse',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Create a new role",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Create a new role',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "createUsersPermissionsRole"
+          name: {
+            kind: 'Name',
+            value: 'createUsersPermissionsRole',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsRoleInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsRoleInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsCreateRolePayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsCreateRolePayload',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Update an existing role",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Update an existing role',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "updateUsersPermissionsRole"
+          name: {
+            kind: 'Name',
+            value: 'updateUsersPermissionsRole',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsRoleInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsRoleInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsUpdateRolePayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsUpdateRolePayload',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Delete an existing role",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Delete an existing role',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "deleteUsersPermissionsRole"
+          name: {
+            kind: 'Name',
+            value: 'deleteUsersPermissionsRole',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsDeleteRolePayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsDeleteRolePayload',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Create a new user",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Create a new user',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "createUsersPermissionsUser"
+          name: {
+            kind: 'Name',
+            value: 'createUsersPermissionsUser',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsUserInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsUserInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsUserEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsUserEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Update an existing user",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Update an existing user',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "updateUsersPermissionsUser"
+          name: {
+            kind: 'Name',
+            value: 'updateUsersPermissionsUser',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "data"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'data',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsUserInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsUserInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsUserEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsUserEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Delete an existing user",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Delete an existing user',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "deleteUsersPermissionsUser"
+          name: {
+            kind: 'Name',
+            value: 'deleteUsersPermissionsUser',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "id"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'id',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ID"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'ID',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsUserEntityResponse"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsUserEntityResponse',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "login"
+          kind: 'FieldDefinition',
+          name: {
+            kind: 'Name',
+            value: 'login',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "input"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'input',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsLoginInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsLoginInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsLoginPayload"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsLoginPayload',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Register a user",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Register a user',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "register"
+          name: {
+            kind: 'Name',
+            value: 'register',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "input"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'input',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "UsersPermissionsRegisterInput"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'UsersPermissionsRegisterInput',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "UsersPermissionsLoginPayload"
-              }
-            }
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: {
+                kind: 'Name',
+                value: 'UsersPermissionsLoginPayload',
+              },
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Request a reset password token",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Request a reset password token',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "forgotPassword"
+          name: {
+            kind: 'Name',
+            value: 'forgotPassword',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "email"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'email',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsPasswordPayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsPasswordPayload',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Reset user password. Confirm with a code (resetToken from forgotPassword)",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Reset user password. Confirm with a code (resetToken from forgotPassword)',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "resetPassword"
+          name: {
+            kind: 'Name',
+            value: 'resetPassword',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "password"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'password',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "passwordConfirmation"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'passwordConfirmation',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "directives": []
+              directives: [],
             },
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "code"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'code',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsLoginPayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsLoginPayload',
+            },
           },
-          "directives": []
+          directives: [],
         },
         {
-          "kind": "FieldDefinition",
-          "description": {
-            "kind": "StringValue",
-            "value": "Confirm an email users email address",
-            "block": true
+          kind: 'FieldDefinition',
+          description: {
+            kind: 'StringValue',
+            value: 'Confirm an email users email address',
+            block: true,
           },
-          "name": {
-            "kind": "Name",
-            "value": "emailConfirmation"
+          name: {
+            kind: 'Name',
+            value: 'emailConfirmation',
           },
-          "arguments": [
+          arguments: [
             {
-              "kind": "InputValueDefinition",
-              "name": {
-                "kind": "Name",
-                "value": "confirmation"
+              kind: 'InputValueDefinition',
+              name: {
+                kind: 'Name',
+                value: 'confirmation',
               },
-              "type": {
-                "kind": "NonNullType",
-                "type": {
-                  "kind": "NamedType",
-                  "name": {
-                    "kind": "Name",
-                    "value": "String"
-                  }
-                }
+              type: {
+                kind: 'NonNullType',
+                type: {
+                  kind: 'NamedType',
+                  name: {
+                    kind: 'Name',
+                    value: 'String',
+                  },
+                },
               },
-              "directives": []
-            }
+              directives: [],
+            },
           ],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "UsersPermissionsLoginPayload"
-            }
+          type: {
+            kind: 'NamedType',
+            name: {
+              kind: 'Name',
+              value: 'UsersPermissionsLoginPayload',
+            },
           },
-          "directives": []
-        }
+          directives: [],
+        },
       ],
-      "interfaces": [],
-      "directives": []
-    }
-  ]
-};
+      interfaces: [],
+      directives: [],
+    },
+  ],
+}
 
 export default buildASTSchema(schemaAST, {
   assumeValid: true,
-  assumeValidSDL: true
-});
+  assumeValidSDL: true,
+})

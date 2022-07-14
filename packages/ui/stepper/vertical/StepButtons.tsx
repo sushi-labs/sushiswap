@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Button } from '../button'
+import { Button } from '../../button'
 import { StepDetails, useStepperContext } from './Stepper'
 
 export interface StepButtonsInterface extends StepDetails {

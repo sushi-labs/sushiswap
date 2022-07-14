@@ -7,12 +7,7 @@ import Link from 'next/link'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import {
-  ArticleEntity,
-  ArticleEntityResponseCollection,
-  CategoryEntityResponseCollection,
-  CmsTypes,
-} from '../.mesh'
+import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, CmsTypes } from '../.mesh'
 import { ArticleList, ArticleListItem, Categories, Pagination, Seo } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 import GlobalEntity = CmsTypes.GlobalEntity

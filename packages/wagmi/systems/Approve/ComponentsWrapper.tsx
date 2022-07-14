@@ -1,27 +1,17 @@
-import { PolymorphicComponentProps } from '@sushiswap/ui'
-import React, { createElement, ReactElement } from 'react'
+import { classNames } from '@sushiswap/ui'
+import React, { FC, ReactElement } from 'react'
 
-import { BentoApproveButton } from './BentoApproveButton'
-import { TokenApproveButton } from './TokenApproveButton'
+import { DefaultButtonInterface } from './DefaultButton'
 
-type OwnProps = {
+type ComponentsWrapper = {
+  className?: string
   children:
-    | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>
-    | Array<ReactElement<typeof BentoApproveButton | typeof TokenApproveButton> | undefined>
-    | Array<
-        | Array<ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>>
-        | ReactElement<typeof BentoApproveButton | typeof TokenApproveButton>
-        | undefined
-      >
+    | ReactElement<DefaultButtonInterface>
+    | Array<ReactElement<DefaultButtonInterface> | undefined>
+    | Array<Array<ReactElement<DefaultButtonInterface>> | ReactElement<DefaultButtonInterface> | undefined>
     | undefined
 }
 
-export type ComponentsWrapperProps<C extends React.ElementType> = PolymorphicComponentProps<C, OwnProps>
-export type ComponentsWrapperComponent = <C extends React.ElementType = 'div'>(
-  props: ComponentsWrapperProps<C>
-) => React.ReactElement | null
-
-export const ComponentsWrapper: ComponentsWrapperComponent = ({ as, children, ...props }) => {
-  if (as) return createElement(as, props, children)
-  return <>{children}</>
+export const ComponentsWrapper: FC<ComponentsWrapper> = ({ className, children }) => {
+  return <div className={classNames(className, 'relative flex gap-6')}>{children}</div>
 }
