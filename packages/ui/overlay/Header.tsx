@@ -13,7 +13,7 @@ export interface Header {
   className?: string
 }
 
-export const Header: FC<Header> = ({ className, title, border, onBack, onClose, arrowDirection = 'left' }) => {
+export const Header: FC<Header> = ({ className, title, border = true, onBack, onClose, arrowDirection = 'left' }) => {
   return (
     <div
       className={classNames(

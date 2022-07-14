@@ -4,7 +4,7 @@ import { IconButton, Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
 import { CustomTokensOverlay } from './CustomTokensOverlay'
-import { GasSettingsOverlay } from './GasSettingsOverlay'
+import { GasSettingsDisclosure } from './GasSettingsDisclosure'
 import { SlippageToleranceOverlay } from './SlippageToleranceOverlay'
 
 interface SettingsOverlay {
@@ -24,7 +24,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
           <Overlay.Content className="!bg-slate-800">
             <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
             <div className="py-1 px-1">
-              <GasSettingsOverlay chainId={chainId} />
+              <GasSettingsDisclosure chainId={chainId} />
               <SlippageToleranceOverlay />
               <CustomTokensOverlay />
             </div>
