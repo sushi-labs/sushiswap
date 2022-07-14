@@ -24,7 +24,7 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "^0.71.1",
+    "@graphql-mesh/cli": "^0.74.1",
     "@graphql-mesh/graphql": "^0.29.1",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
