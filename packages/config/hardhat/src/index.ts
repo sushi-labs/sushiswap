@@ -336,6 +336,13 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    metis: {
+      url: 'https://andromeda.metis.io/?owner=1088',
+      accounts,
+      chainId: 1088,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
