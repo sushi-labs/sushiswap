@@ -715,7 +715,7 @@ const Widget: FC<Swap> = ({
               {({ content, usdPrice, toggleInvert }) => (
                 <div
                   className={classNames(
-                    'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700 py-1'
+                    'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700 py-2'
                   )}
                 >
                   <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
