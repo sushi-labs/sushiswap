@@ -131,7 +131,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           </button>
         </div>
         <div className="flex flex-col">
-          <div className="relative flex items-center">
+          <div className="relative flex items-center gap-1">
             <Input.Numeric
               ref={inputRef}
               variant="unstyled"
@@ -147,7 +147,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               readOnly={disabled}
             />
             <button
-              onClick={() => setTokenSelectorOpen(true)}
+              onClick={(e) => {
+                setTokenSelectorOpen(true)
+                e.stopPropagation()
+              }}
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
@@ -174,7 +177,8 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? 'text-green' : 'text-red'
               )}
             >
-              {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '+' : ''} (${
+              {' '}
+              {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '(+' : '('}${
                 usdPctChange.equalTo(ZERO) ? '0.00' : usdPctChange?.toFixed(2)
               }%)`}
             </span>

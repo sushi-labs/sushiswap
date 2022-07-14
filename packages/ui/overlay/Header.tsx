@@ -6,37 +6,50 @@ import { Typography } from '../typography'
 
 export interface Header {
   title: string
-  onClose(): void
+  onBack?(): void
+  onClose?(): void
+  border?: boolean
   arrowDirection?: 'top' | 'bottom' | 'left' | 'right'
   className?: string
 }
 
-export const Header: FC<Header> = ({ className, title, onClose, arrowDirection = 'left' }) => {
+export const Header: FC<Header> = ({ className, title, border, onBack, onClose, arrowDirection = 'left' }) => {
   return (
     <div
       className={classNames(
         className,
-        'flex items-center justify-between absolute top-0 left-0 right-0 px-3 h-[48px] border-b border-slate-200/5'
+        border ? 'border-b border-slate-200/5' : '',
+        'flex items-center justify-between absolute top-0 left-0 right-0 px-3 h-[48px]'
       )}
     >
-      <IconButton className="flex items-center justify-center gap-2 cursor-pointer" onClick={onClose}>
-        {arrowDirection === 'left' && (
-          <ChevronLeftIcon width={24} height={24} className={classNames('cursor-pointer ')} />
-        )}
-        {arrowDirection === 'bottom' && (
-          <ChevronDownIcon width={24} height={24} className={classNames('cursor-pointer ')} />
-        )}
-        {arrowDirection === 'top' && <ChevronUpIcon width={24} height={24} className={classNames('cursor-pointer ')} />}
-        {arrowDirection === 'right' && (
-          <ChevronRightIcon width={24} height={24} className={classNames('cursor-pointer ')} />
-        )}
-      </IconButton>
+      {onBack ? (
+        <IconButton className="flex items-center justify-center gap-2 cursor-pointer" onClick={onBack}>
+          {arrowDirection === 'left' && (
+            <ChevronLeftIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+          )}
+          {arrowDirection === 'bottom' && (
+            <ChevronDownIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+          )}
+          {arrowDirection === 'top' && (
+            <ChevronUpIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+          )}
+          {arrowDirection === 'right' && (
+            <ChevronRightIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+          )}
+        </IconButton>
+      ) : (
+        <div />
+      )}
       <Typography weight={500} as="h3" className={classNames('flex gap-4 text-lg font-medium leading-6 ')}>
         {title}
       </Typography>
-      <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-        <XIcon width={24} height={24} />
-      </IconButton>
+      {onClose ? (
+        <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
+          <XIcon width={24} height={24} />
+        </IconButton>
+      ) : (
+        <div />
+      )}
     </div>
   )
 }
