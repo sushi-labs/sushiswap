@@ -4,7 +4,11 @@ import log from '@sushiswap/log'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
 
-export async function bar() {
+type Arguments = {
+  user?: string
+}
+
+export async function bar(args: Arguments) {
   const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
 
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
@@ -32,20 +36,21 @@ export async function bar() {
     sdk.Blocks({ where: { timestamp_gt: sixMonthAgo, timestamp_lt: sixMonthAgo + 30000 } }),
   ])
 
-  const { bar } = await sdk.Bar()
+  const { xsushi: bar } = await sdk.Bar()
 
-  const [{ bar: oneYearBar }, { bar: oneMonthBar }, { bar: threeMonthBar }, { bar: sixMonthBar }] = await Promise.all([
-    sdk.Bar({ block: { number: Number(oneYearBlock.number) } }),
-    sdk.Bar({ block: { number: Number(oneMonthBlock.number) } }),
-    sdk.Bar({ block: { number: Number(threeMonthBlock.number) } }),
-    sdk.Bar({ block: { number: Number(sixMonthBlock.number) } }),
-  ])
+  const [{ xsushi: oneYearBar }, { xsushi: oneMonthBar }, { xsushi: threeMonthBar }, { xsushi: sixMonthBar }] =
+    await Promise.all([
+      sdk.Bar({ block: { number: Number(oneYearBlock.number) } }),
+      sdk.Bar({ block: { number: Number(oneMonthBlock.number) } }),
+      sdk.Bar({ block: { number: Number(threeMonthBlock.number) } }),
+      sdk.Bar({ block: { number: Number(sixMonthBlock.number) } }),
+    ])
 
   // Lukas Witpeerd, [02/05/2022 19:23] ((current ratio / ratio 365 days ago) - 1) * 100
-  log('APR 1y:', numeral(bar?.ratio / oneYearBar?.ratio - 1).format('0.00%'))
-  log('APR 6m:', numeral((bar?.ratio / sixMonthBar?.ratio - 1) * 2).format('0.00%'))
-  log('APR 3m:', numeral((bar?.ratio / threeMonthBar?.ratio - 1) * 4).format('0.00%'))
-  log('APR 1m:', numeral((bar?.ratio / oneMonthBar?.ratio - 1) * 12).format('0.00%'))
+  log('APR 1y:', numeral(bar?.sushiXsushiRatio / oneYearBar?.sushiXsushiRatio - 1).format('0.00%'))
+  log('APR 6m:', numeral((bar?.sushiXsushiRatio / sixMonthBar?.sushiXsushiRatio - 1) * 2).format('0.00%'))
+  log('APR 3m:', numeral((bar?.sushiXsushiRatio / threeMonthBar?.sushiXsushiRatio - 1) * 4).format('0.00%'))
+  log('APR 1m:', numeral((bar?.sushiXsushiRatio / oneMonthBar?.sushiXsushiRatio - 1) * 12).format('0.00%'))
 
   // log('Total SUSHI transfered to the bar:')
   // log('Total SUSHI entered the bar:', numeral(bar?.sushiStaked).format('0.00 a'))
