@@ -449,7 +449,7 @@ importers:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.8.10_react-hook-form@7.31.1
       '@reduxjs/toolkit': 1.8.1_htj7zfpqmi5wbvr2ur325ip5ey
-      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
@@ -607,7 +607,7 @@ importers:
       '@ethersproject/solidity': 5.6.0
       '@headlessui/react': 1.6.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
-      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
@@ -705,7 +705,7 @@ importers:
       '@headlessui/react': 1.6.2_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.1_htj7zfpqmi5wbvr2ur325ip5ey
-      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/exchange': link:../../packages/exchange
@@ -1624,7 +1624,7 @@ importers:
       react-virtualized-auto-sizer: 1.0.6_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.7_biqbaboplfbrettd7655fr4n2y
     optionalDependencies:
-      next: 12.1.6_biqbaboplfbrettd7655fr4n2y
+      next: 12.2.2_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -1684,7 +1684,7 @@ importers:
       '@ethersproject/providers': 5.6.6
       '@headlessui/react': 1.6.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
-      '@sushiswap/bentobox': link:../../protocols/bentobox/v1
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/format': link:../format
@@ -1739,7 +1739,7 @@ importers:
       tsup: 6.1.2_typescript@4.7.2
       typescript: 4.7.2
 
-  protocols/bentobox/v1:
+  protocols/bentobox:
     specifiers:
       '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
       '@ethersproject/abi': ^5.0.0
@@ -1763,19 +1763,19 @@ importers:
       '@ethersproject/abi': 5.6.2
       '@ethersproject/providers': 5.6.6
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
-      '@sushiswap/currency': link:../../../packages/currency
-      '@sushiswap/eslint-config': link:../../../packages/config/eslint
-      '@sushiswap/hardhat-config': link:../../../packages/config/hardhat
-      '@sushiswap/jest-config': link:../../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../../packages/config/typescript
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/hardhat-config': link:../../packages/config/hardhat
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@types/node': 17.0.35
       ethers: 5.6.6
       hardhat: 2.9.6
       hardhat-deploy: 0.11.10
       hardhat-deploy-ethers: 0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
-      ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
-      typescript: 4.7.2
+      ts-node: 10.8.2_zgusdg2syqzg2kik2gzyf5b6di
+      typescript: 4.7.4
 
   protocols/furo:
     specifiers:
@@ -1809,7 +1809,7 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
       '@openzeppelin/contracts': 4.6.0
       '@rari-capital/solmate': 6.2.0
-      '@sushiswap/bentobox': link:../bentobox/v1
+      '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 1.4.2
       '@sushiswap/core-sdk': 1.0.0-canary.110
@@ -1828,6 +1828,50 @@ importers:
       hardhat-deploy: 0.11.10
       ts-node: 10.7.0_smgpfffxrhk5i4ijhe3532b4hq
       typescript: 4.7.2
+
+  protocols/kashi:
+    specifiers:
+      '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#371a01c11465eb1c881193c60a53c0bf15ee8a19
+      '@ethersproject/abi': ^5.0.0
+      '@ethersproject/providers': ^5.0.0
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/bentobox-sdk': sushiswap/bentobox-sdk#e3f809870b86afbd57e0930662221d2362a160db
+      '@sushiswap/core': 1.4.2
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': ^17.0.33
+      ethers: ^5.0.0
+      hardhat: ^2.9.5
+      hardhat-deploy: ^0.11.10
+      hardhat-deploy-ethers: 0.3.0-beta.13
+      ts-node: ^10.7.0
+      typescript: ^4.0.0
+    devDependencies:
+      '@boringcrypto/boring-solidity': github.com/boringcrypto/BoringSolidity/371a01c11465eb1c881193c60a53c0bf15ee8a19
+      '@ethersproject/abi': 5.6.2
+      '@ethersproject/providers': 5.6.6
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
+      '@sushiswap/bentobox': link:../bentobox
+      '@sushiswap/bentobox-sdk': github.com/sushiswap/bentobox-sdk/e3f809870b86afbd57e0930662221d2362a160db
+      '@sushiswap/core': 1.4.2
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/hardhat-config': link:../../packages/config/hardhat
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.35
+      ethers: 5.6.6
+      hardhat: 2.9.6
+      hardhat-deploy: 0.11.10
+      hardhat-deploy-ethers: 0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
+      ts-node: 10.8.2_zgusdg2syqzg2kik2gzyf5b6di
+      typescript: 4.7.4
 
   protocols/sushiswap:
     specifiers:
@@ -1896,7 +1940,7 @@ importers:
       '@ethersproject/providers': 5.6.6
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.6+hardhat@2.9.6
       '@openzeppelin/contracts': 4.6.0
-      '@sushiswap/bentobox': link:../bentobox/v1
+      '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 1.4.2
       '@sushiswap/core-sdk': 1.0.0-canary.110
@@ -23197,6 +23241,12 @@ packages:
       node-fetch: 2.6.1
     dev: false
 
+  github.com/boringcrypto/BoringSolidity/371a01c11465eb1c881193c60a53c0bf15ee8a19:
+    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/371a01c11465eb1c881193c60a53c0bf15ee8a19}
+    name: '@boringcrypto/boring-solidity'
+    version: 1.2.1
+    dev: true
+
   github.com/boringcrypto/BoringSolidity/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc:
     resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
     name: '@boringcrypto/boring-solidity'
@@ -23210,3 +23260,11 @@ packages:
     dependencies:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
+
+  github.com/sushiswap/bentobox-sdk/e3f809870b86afbd57e0930662221d2362a160db:
+    resolution: {tarball: https://codeload.github.com/sushiswap/bentobox-sdk/tar.gz/e3f809870b86afbd57e0930662221d2362a160db}
+    name: '@sushiswap/bentobox-sdk'
+    version: 1.0.2
+    dependencies:
+      '@boringcrypto/boring-solidity': github.com/boringcrypto/BoringSolidity/371a01c11465eb1c881193c60a53c0bf15ee8a19
+    dev: true
