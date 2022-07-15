@@ -11,7 +11,7 @@ export const DefaultButton: FC<DefaultButtonInterface> = ({ className, children 
     <div
       className={classNames(
         className,
-        'mb-4 flex flex-col gap-1 w-6 h-6 m-1 disabled:pointer-events-none disabled:saturate-[0] cursor-pointer hover:scale-[1.25] transition-all'
+        'mb-4 mt-2 mx-3 flex flex-col gap-1 w-6 h-6 disabled:pointer-events-none disabled:saturate-[0] cursor-pointer hover:scale-[1.25] transition-all'
       )}
     >
       {children}

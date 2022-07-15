@@ -73,11 +73,12 @@ const Controller: FC<Props> = ({ className, components, render }) => {
             dispatch,
             index,
             allApproved: state.isApproved,
+            initialized,
           })
         }
       })
     )
-  }, [components, state.isApproved])
+  }, [components, initialized, state.isApproved])
 
   const button = useMemo(() => {
     const index = state.approvals.findIndex((el) => el?.[0] === ApprovalState.NOT_APPROVED)

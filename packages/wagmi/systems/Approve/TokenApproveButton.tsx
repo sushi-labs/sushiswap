@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react'
 import { Amount, Currency } from '@sushiswap/currency'
 import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Popover, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
@@ -15,7 +16,7 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
-  ({ watch = true, amount, address, render, dispatch, disabled, index, allApproved, ...props }) => {
+  ({ watch = true, amount, address, render, dispatch, disabled, index, allApproved, initialized, ...props }) => {
     const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
 
     // Set to undefined on unmount
@@ -63,68 +64,83 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       props,
     ])
 
-    if (allApproved || !amount || amount.currency.isNative || [ApprovalState.UNKNOWN].includes(approvalState))
-      return null
     if (render) return render({ approvalState, onApprove })
 
     return (
-      <DefaultButton as="div" {...props}>
-        <Popover
-          as="div"
-          disableClickListener
-          hover
-          button={
-            <Badge
-              badgeContent={
-                <div
-                  className={classNames(
-                    approvalState === ApprovalState.PENDING
-                      ? 'bg-yellow'
-                      : approvalState === ApprovalState.APPROVED
-                      ? 'bg-green'
-                      : 'bg-red',
-                    'w-2 h-2 rounded-full shadow-md'
-                  )}
-                />
-              }
-            >
-              <IconButton
-                as="div"
-                className={classNames(
-                  disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                  'flex items-center justify-center'
-                )}
-                onClick={onApprove}
+      <Transition
+        unmount={false}
+        show={
+          !allApproved &&
+          initialized &&
+          amount &&
+          !amount.currency.isNative &&
+          ![ApprovalState.UNKNOWN].includes(approvalState)
+        }
+        enter="transform transition duration-[400ms] delay-[500ms] ease-out"
+        enterFrom="opacity-0 scale-50"
+        enterTo="opacity-100 scale-100"
+        leave="transform duration-200 transition ease-out"
+        leaveFrom="opacity-100 scale-100"
+        leaveTo="opacity-0 scale-95"
+      >
+        <DefaultButton as="div" {...props}>
+          <Popover
+            as="div"
+            disableClickListener
+            hover
+            button={
+              <Badge
+                badgeContent={
+                  <div
+                    className={classNames(
+                      approvalState === ApprovalState.PENDING
+                        ? 'bg-yellow'
+                        : approvalState === ApprovalState.APPROVED
+                        ? 'bg-green'
+                        : 'bg-red',
+                      'w-2 h-2 rounded-full shadow-md'
+                    )}
+                  />
+                }
               >
-                <CurrencyFromUi.Icon currency={amount?.currency} width="100%" height="100%" />
-              </IconButton>
-            </Badge>
-          }
-          panel={
-            <div className="flex flex-col gap-2 bg-slate-800 max-w-[200px] p-3">
-              <Typography variant="xs" weight={500}>
-                Status:
-                <span
+                <IconButton
+                  as="div"
                   className={classNames(
-                    'ml-1 capitalize',
-                    approvalState === ApprovalState.PENDING
-                      ? 'text-yellow'
-                      : approvalState === ApprovalState.APPROVED
-                      ? 'text-green'
-                      : 'text-red'
+                    disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                    'flex items-center justify-center'
                   )}
+                  onClick={onApprove}
                 >
-                  {approvalState.toLowerCase().replace('_', ' ')}
-                </span>
-              </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-400">
-                This is a one-time approval when it is your first time using {amount?.currency.symbol} for this purpose
-                on Sushi. Please give us permission to execute transaction on your behalf. 🍣
-              </Typography>
-            </div>
-          }
-        />
-      </DefaultButton>
+                  {amount && <CurrencyFromUi.Icon currency={amount?.currency} width="100%" height="100%" />}
+                </IconButton>
+              </Badge>
+            }
+            panel={
+              <div className="flex flex-col gap-2 bg-slate-800 max-w-[200px] p-3">
+                <Typography variant="xs" weight={500}>
+                  Status:
+                  <span
+                    className={classNames(
+                      'ml-1 capitalize',
+                      approvalState === ApprovalState.PENDING
+                        ? 'text-yellow'
+                        : approvalState === ApprovalState.APPROVED
+                        ? 'text-green'
+                        : 'text-red'
+                    )}
+                  >
+                    {approvalState.toLowerCase().replace('_', ' ')}
+                  </span>
+                </Typography>
+                <Typography variant="xs" weight={500} className="text-slate-400">
+                  This is a one-time approval when it is your first time using {amount?.currency.symbol} for this
+                  purpose on Sushi. Please give us permission to execute transaction on your behalf. 🍣
+                </Typography>
+              </div>
+            }
+          />
+        </DefaultButton>
+      </Transition>
     )
   }
 )
