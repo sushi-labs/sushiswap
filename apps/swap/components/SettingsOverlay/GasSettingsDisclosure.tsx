@@ -29,7 +29,6 @@ const gasIndexToPrice: Record<number, GasPrice> = {
 
 export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) => {
   const isMounted = useIsMounted()
-
   const { data } = useFeeData({
     formatUnits: 'gwei',
     chainId,
@@ -163,33 +162,6 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                     <div className="flex gap-1 mt-2">
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
                         <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
-                          Max Priority Fee
-                          <Popover
-                            tabIndex={-1}
-                            hover
-                            button={<InformationCircleIcon width={14} height={14} />}
-                            panel={
-                              <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
-                                This fee goes directly to miners as an incentive to prioritize your transaction
-                              </Typography>
-                            }
-                          />
-                        </Typography>
-                        <div className="flex items-center gap-2">
-                          <Input.Numeric
-                            variant="unstyled"
-                            value={maxPriorityFeePerGas ?? ''}
-                            onUserInput={(val) => updateMaxPriorityFeePerGas(val)}
-                            placeholder=""
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
-                          />
-                          <Typography variant="xs" weight={700} className="text-slate-400">
-                            Gwei
-                          </Typography>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                        <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
                           Max Fee
                           <Popover
                             tabIndex={-1}
@@ -212,7 +184,34 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             variant="unstyled"
                             value={maxFeePerGas ?? ''}
                             onUserInput={(val) => updateMaxFeePerGas(val)}
-                            placeholder=""
+                            placeholder={data?.formatted.maxFeePerGas || ''}
+                            className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
+                          />
+                          <Typography variant="xs" weight={700} className="text-slate-400">
+                            Gwei
+                          </Typography>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
+                        <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
+                          Max Priority Fee
+                          <Popover
+                            tabIndex={-1}
+                            hover
+                            button={<InformationCircleIcon width={14} height={14} />}
+                            panel={
+                              <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
+                                This fee goes directly to miners as an incentive to prioritize your transaction
+                              </Typography>
+                            }
+                          />
+                        </Typography>
+                        <div className="flex items-center gap-2">
+                          <Input.Numeric
+                            variant="unstyled"
+                            value={maxPriorityFeePerGas ?? ''}
+                            onUserInput={(val) => updateMaxPriorityFeePerGas(val)}
+                            placeholder={data?.formatted.maxPriorityFeePerGas || ''}
                             className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                           />
                           <Typography variant="xs" weight={700} className="text-slate-400">

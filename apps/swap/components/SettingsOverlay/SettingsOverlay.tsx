@@ -5,7 +5,7 @@ import { FC, useState } from 'react'
 
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { GasSettingsDisclosure } from './GasSettingsDisclosure'
-import { SlippageToleranceOverlay } from './SlippageToleranceOverlay'
+import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
 interface SettingsOverlay {
   chainId: ChainId | undefined
@@ -21,12 +21,14 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
       </IconButton>
       <SlideIn>
         <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
-          <Overlay.Content className="!bg-slate-800">
-            <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
-            <div className="py-1 px-1">
-              <GasSettingsDisclosure chainId={chainId} />
-              <SlippageToleranceOverlay />
-              <CustomTokensOverlay />
+          <Overlay.Content className="!bg-slate-800 !pb-0">
+            <div className="overflow-y-auto overflow-x-hidden scroll h-full -ml-3 -mr-3 px-3">
+              <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
+              <div className="py-1 px-1">
+                <GasSettingsDisclosure chainId={chainId} />
+                <SlippageToleranceDisclosure />
+                <CustomTokensOverlay />
+              </div>
             </div>
           </Overlay.Content>
         </SlideIn.FromLeft>

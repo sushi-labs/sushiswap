@@ -10,11 +10,13 @@ import {
   UpdateMaxFeePerGas,
   UpdateMaxPriorityFeePerGas,
   UpdateSlippageTolerancePayload,
+  UpdateSlippageToleranceTypePayload,
 } from './types'
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
 const initialState: StorageState = {
   slippageTolerance: parsedState?.slippageTolerance || 1,
+  slippageToleranceType: parsedState?.slippageToleranceType || 'auto',
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
   maxFeePerGas: parsedState?.maxFeePerGas || undefined,
   maxPriorityFeePerGas: parsedState?.maxPriorityFeePerGas || undefined,
@@ -26,6 +28,10 @@ const reducers = {
   updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
     const { slippageTolerance } = action.payload
     state.slippageTolerance = slippageTolerance
+  },
+  updateSlippageToleranceType: (state: StorageState, action: PayloadAction<UpdateSlippageToleranceTypePayload>) => {
+    const { slippageToleranceType } = action.payload
+    state.slippageToleranceType = slippageToleranceType
   },
   updateGasPrice: (state: StorageState, action: PayloadAction<UpdateGasPrice>) => {
     const { gasPrice } = action.payload

@@ -5,3 +5,7 @@
   --background-color: #0f172a;
   --color: #ffffff;
 }
+
+:root {
+  color-scheme: dark;
+}

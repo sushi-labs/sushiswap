@@ -613,7 +613,7 @@ const Widget: FC<Swap> = ({
       dstMinimumAmountOut && dstTokenPrice ? dstMinimumAmountOut.multiply(dstTokenPrice.asFraction) : undefined
     const usdPctChange =
       inputUSD && outputUSD
-        ? new Percent(outputUSD.asFraction.subtract(inputUSD.asFraction).quotient, inputUSD.quotient)
+        ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
         : undefined
 
     return [inputUSD, outputUSD, usdPctChange]
@@ -863,16 +863,12 @@ const Widget: FC<Swap> = ({
                         {usdPctChange && (
                           <span
                             className={classNames(
-                              usdPctChange.equalTo(ZERO)
-                                ? ''
-                                : usdPctChange?.greaterThan(ZERO)
-                                ? 'text-green'
-                                : 'text-red'
+                              usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red'
                             )}
                           >
                             {' '}
-                            {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '(+' : '('}${
-                              usdPctChange.equalTo(ZERO) ? '0.00' : usdPctChange?.toFixed(2)
+                            {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                              usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
                             }%)`}
                           </span>
                         )}

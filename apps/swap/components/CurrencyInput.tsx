@@ -2,7 +2,6 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
@@ -24,7 +23,7 @@ interface CurrencyInputBase {
   tokenList: Record<string, Token>
   theme: Theme
   className?: string
-  usdPctChange?: Fraction
+  usdPctChange?: number
 }
 
 type CurrencyInputDisableMaxButton = {
@@ -172,14 +171,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
           {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
           {usdPctChange && (
-            <span
-              className={classNames(
-                usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? 'text-green' : 'text-red'
-              )}
-            >
+            <span className={classNames(usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red')}>
               {' '}
-              {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '(+' : '('}${
-                usdPctChange.equalTo(ZERO) ? '0.00' : usdPctChange?.toFixed(2)
+              {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
               }%)`}
             </span>
           )}
