@@ -76,7 +76,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
           !amount.currency.isNative &&
           ![ApprovalState.UNKNOWN].includes(approvalState)
         }
-        enter="transform transition duration-[400ms] delay-[500ms] ease-out"
+        enter="transform transition duration-[400ms] delay-[700ms] ease-out"
         enterFrom="opacity-0 scale-50"
         enterTo="opacity-100 scale-100"
         leave="transform duration-200 transition ease-out"
