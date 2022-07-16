@@ -109,7 +109,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 theme.secondary.hover,
                 `relative flex items-center gap-1 py-1 text-xs font-medium`
               )}
-              onClick={() => setNetworkSelectorOpen(true)}
+              onClick={(e) => {
+                setNetworkSelectorOpen(true)
+                e.stopPropagation()
+              }}
             >
               <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />
               {network.name} <ChevronDownIcon width={16} height={16} />
