@@ -5,7 +5,7 @@
       "chainId": "10",
       "contracts": {
         "SushiXSwap": {
-          "address": "0x8f54301F315C56c112D492D9443047D4745dbe9e",
+          "address": "0x1838b053E0223F05FB768fa79aA07Df3f0f27480",
           "abi": [
             {
               "inputs": [
@@ -42,6 +42,38 @@
               "inputs": [],
               "name": "TooLittleReceived",
               "type": "error"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "bytes32",
+                  "name": "srcContext",
+                  "type": "bytes32"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "failed",
+                  "type": "bool"
+                }
+              ],
+              "name": "StargateSushiXSwapDst",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "bytes32",
+                  "name": "srcContext",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "StargateSushiXSwapSrc",
+              "type": "event"
             },
             {
               "inputs": [
@@ -696,7 +728,7 @@
       "chainId": "43114",
       "contracts": {
         "SushiXSwap": {
-          "address": "0x5629CE74DdCAD7Cc72b3Ea30444dA7172AD851D9",
+          "address": "0xBBDe1d67297329148Fe1ED5e6B00114842728e65",
           "abi": [
             {
               "inputs": [
@@ -733,6 +765,38 @@
               "inputs": [],
               "name": "TooLittleReceived",
               "type": "error"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "bytes32",
+                  "name": "srcContext",
+                  "type": "bytes32"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "failed",
+                  "type": "bool"
+                }
+              ],
+              "name": "StargateSushiXSwapDst",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "bytes32",
+                  "name": "srcContext",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "StargateSushiXSwapSrc",
+              "type": "event"
             },
             {
               "inputs": [
