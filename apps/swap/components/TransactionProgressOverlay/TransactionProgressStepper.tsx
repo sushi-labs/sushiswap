@@ -33,10 +33,11 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({ id,
     eventName: 'StargateSushiXSwapDst',
     listener: (event) => {
       const [context, success, { transactionHash }] = event
+      console.log(event, formatBytes32String(id), context === formatBytes32String(id))
       if (context === formatBytes32String(id)) {
         setDstTxState({
           txHash: transactionHash,
-          isSuccess: success,
+          isSuccess: !success,
         })
       }
     },
@@ -78,15 +79,15 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({ id,
       {srcTrade && dstTrade && (
         <TransactionProgressStep
           status={
-            isError
+            dstTxState
+              ? dstTxState.isSuccess
+                ? 'success'
+                : 'notice'
+              : isError
               ? 'skipped'
               : isSuccess
               ? 'pending'
-              : !dstTxState
-              ? 'idle'
-              : dstTxState.isSuccess
-              ? 'success'
-              : 'failed'
+              : 'idle'
           }
           header={
             <TransactionProgressStep.Header>
@@ -110,18 +111,18 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({ id,
       )}
       {dstTrade && (
         <TransactionProgressStep
-          {...(dstTxState && { link: chains[dstTrade.inputAmount.currency.chainId].getTxUrl(dstTxState.txHash) })}
+          link={dstTxState ? chains[dstTrade.inputAmount.currency.chainId].getTxUrl(dstTxState.txHash) : undefined}
           lastStep={true}
           status={
-            isError
+            dstTxState && delayed
+              ? dstTxState.isSuccess
+                ? 'success'
+                : 'notice'
+              : isError
               ? 'skipped'
               : isSuccess
               ? 'pending'
-              : !dstTxState
-              ? 'idle'
-              : dstTxState.isSuccess && delayed
-              ? 'success'
-              : 'notice'
+              : 'idle'
           }
           header={
             dstTxState && !dstTxState.isSuccess ? (

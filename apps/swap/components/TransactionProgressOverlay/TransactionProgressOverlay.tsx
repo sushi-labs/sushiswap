@@ -25,7 +25,7 @@ export const TransactionProgressOverlay: FC<TransactionProgressOverlay> = ({
   return (
     <>
       <Dialog.Header title="Transaction In Progress" onClose={onClose} />
-      <div className="flex flex-col gap-10 flex-grow">
+      <div className="flex flex-col gap-8 flex-grow">
         <div className="flex justify-center items-center flex-grow pt-6">
           <TransactionProgressStepper id={id} srcTrade={srcTrade} dstTrade={dstTrade} srcTxHash={srcTxHash} />
         </div>

@@ -48,7 +48,7 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
       <div className="flex flex-col items-center">
         <div className="w-6 h-6 flex justify-center items-center">
           {status === 'pending' && <Loader width={21} height={21} />}
-          {status === 'success' && <CheckCircleIcon className="text-green" width={24} height={24} />}
+          {status === 'success' && <CheckCircleIcon className="text-blue" width={24} height={24} />}
           {status === 'skipped' && (
             <Popover
               hover
@@ -87,7 +87,13 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
         {!lastStep && (
           <div
             className={classNames(
-              status === 'success' ? 'border-green' : 'border-slate-600',
+              status === 'success'
+                ? 'border-blue'
+                : status === 'failed'
+                ? 'border-red'
+                : status === 'notice'
+                ? 'border-yellow'
+                : 'border-slate-600',
               'transition-all h-12 w-0 border-dashed border-l-2 my-2'
             )}
           />
