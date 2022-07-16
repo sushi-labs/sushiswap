@@ -131,7 +131,7 @@ export default function Swap({
 }
 
 interface Swap {
-  width?: number | string
+  maxWidth?: number | string
   theme?: Theme
   initialState: {
     srcChainId: number
@@ -149,7 +149,7 @@ interface Swap {
 }
 
 const Widget: FC<Swap> = ({
-  width = 400,
+  maxWidth = 400,
   theme = defaultTheme,
   initialState,
   caption = false,
@@ -648,14 +648,14 @@ const Widget: FC<Swap> = ({
   }, [dstMinimumAmountOut, priceImpact, srcChainId])
 
   return (
-    <div className="mx-2">
+    <div className="px-2">
       <article
         id="sushixswap"
         className={classNames(
           theme.background.primary,
           'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900'
         )}
-        style={{ width }}
+        style={{ maxWidth }}
       >
         <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
           <Typography
