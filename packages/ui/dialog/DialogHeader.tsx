@@ -10,20 +10,26 @@ export interface DialogHeaderProps {
   onClose?(): void
   onBack?(): void
   className?: string
+  border?: boolean
   children?: ReactNode | Array<ReactNode>
 }
 
-const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, className, children }) => {
+const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, border = true, className, children }) => {
   return (
     <div
       className={classNames(
         className,
-        'grid grid-cols-[40px_auto_40px] items-center absolute top-0 left-0 right-0 px-3 border-b border-slate-200/5 h-12'
+        border ? 'border-b border-slate-200/5' : '',
+        'grid grid-cols-[40px_auto_40px] items-center absolute top-0 left-0 right-0 px-3 h-12'
       )}
     >
-      <IconButton className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer" onClick={onClose}>
-        <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
-      </IconButton>
+      {onBack ? (
+        <IconButton className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer" onClick={onBack}>
+          <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
+        </IconButton>
+      ) : (
+        <div />
+      )}
 
       <Typography weight={500} as="h3" className="flex justify-center text-lg font-medium leading-6 text-slate-100">
         {title}

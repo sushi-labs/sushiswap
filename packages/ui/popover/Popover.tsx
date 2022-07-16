@@ -7,10 +7,12 @@ import { ExtractProps } from '../types'
 import { usePopover } from './usePopover'
 
 type Popover = ExtractProps<typeof HeadlessPopover> & {
+  tabIndex?: number
   hover?: boolean
+  disableClickListener?: boolean
 }
 
-export const Popover: FC<Popover> = ({ button, panel, hover, ...props }) => {
+export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableClickListener, ...props }) => {
   const [show, setShow] = useState(false)
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
 
@@ -24,13 +26,27 @@ export const Popover: FC<Popover> = ({ button, panel, hover, ...props }) => {
     <HeadlessPopover {...props} as={Fragment}>
       {({ open }) => (
         <>
-          <HeadlessPopover.Button
-            as="div"
-            ref={setReferenceElement}
-            {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
-          >
-            {button}
-          </HeadlessPopover.Button>
+          {disableClickListener ? (
+            <button
+              tabIndex={tabIndex}
+              type="button"
+              ref={setReferenceElement}
+              onMouseEnter={() => setShow(true)}
+              onMouseLeave={() => setShow(false)}
+            >
+              {button}
+            </button>
+          ) : (
+            <HeadlessPopover.Button
+              tabIndex={tabIndex}
+              type="button"
+              as="button"
+              ref={setReferenceElement}
+              {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
+            >
+              {button}
+            </HeadlessPopover.Button>
+          )}
           {(show || open) &&
             ReactDOM.createPortal(
               <HeadlessPopover.Panel

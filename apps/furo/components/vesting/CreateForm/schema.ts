@@ -15,6 +15,13 @@ export const stepConfigurations: StepConfig[] = [
   { label: 'Yearly', time: 31449600 },
 ]
 
+function emptyStringToNull(value: string, originalValue: string) {
+  if (typeof originalValue === 'string' && originalValue === '') {
+    return null
+  }
+  return value
+}
+
 yup.addMethod(
   yup.mixed,
   'currency',
@@ -90,11 +97,14 @@ export const createVestingSchema = yup.object({
       .required('This field is required'),
     otherwise: yup.date().nullable().notRequired(),
   }),
-  cliffAmount: yup.number().when('cliff', {
-    is: (value: boolean) => value,
-    then: yup.number().typeError('Target must be a number').moreThan(0, 'Must be greater than zero'),
-    otherwise: yup.number().nullable(),
-  }),
+  cliffAmount: yup
+    .number()
+    .transform(emptyStringToNull)
+    .when('cliff', {
+      is: (value: boolean) => value,
+      then: yup.number().moreThan(0, 'Must be greater than zero'),
+      otherwise: yup.number().nullable(),
+    }),
   stepPayouts: yup
     .number()
     .min(1, 'Must be more than 1')

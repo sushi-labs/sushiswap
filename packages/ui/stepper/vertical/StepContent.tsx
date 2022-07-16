@@ -1,8 +1,9 @@
 import { Transition } from '@headlessui/react'
+import classNames from 'classnames'
 import React, { Children, cloneElement, FC, Fragment, isValidElement, ReactElement } from 'react'
 
-import { classNames, StepDetails } from '../index'
 import { StepDescriptionInterface } from './StepDescription'
+import { StepDetails } from './Stepper'
 
 export interface StepContentInterface extends StepDetails {
   description: React.ReactElement<StepDescriptionInterface>

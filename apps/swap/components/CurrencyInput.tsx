@@ -2,7 +2,6 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { TokenSelector } from '@sushiswap/wagmi'
@@ -24,7 +23,7 @@ interface CurrencyInputBase {
   tokenList: Record<string, Token>
   theme: Theme
   className?: string
-  usdPctChange?: Fraction
+  usdPctChange?: number
 }
 
 type CurrencyInputDisableMaxButton = {
@@ -110,7 +109,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                 theme.secondary.hover,
                 `relative flex items-center gap-1 py-1 text-xs font-medium`
               )}
-              onClick={() => setNetworkSelectorOpen(true)}
+              onClick={(e) => {
+                setNetworkSelectorOpen(true)
+                e.stopPropagation()
+              }}
             >
               <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />
               {network.name} <ChevronDownIcon width={16} height={16} />
@@ -123,15 +125,16 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               theme.secondary.hover,
               'flex items-center gap-2 text-xs cursor-pointer font-medium'
             )}
-            onClick={() =>
+            onClick={(e) => {
               onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
-            }
+              e.stopPropagation()
+            }}
           >
             {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
           </button>
         </div>
         <div className="flex flex-col">
-          <div className="relative flex items-center">
+          <div className="relative flex items-center gap-1">
             <Input.Numeric
               ref={inputRef}
               variant="unstyled"
@@ -147,7 +150,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               readOnly={disabled}
             />
             <button
-              onClick={() => setTokenSelectorOpen(true)}
+              onClick={(e) => {
+                setTokenSelectorOpen(true)
+                e.stopPropagation()
+              }}
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
@@ -169,13 +175,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
           {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
           {usdPctChange && (
-            <span
-              className={classNames(
-                usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? 'text-green' : 'text-red'
-              )}
-            >
-              {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '+' : ''} (${
-                usdPctChange.equalTo(ZERO) ? '0.00' : usdPctChange?.toFixed(2)
+            <span className={classNames(usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red')}>
+              {' '}
+              {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
               }%)`}
             </span>
           )}

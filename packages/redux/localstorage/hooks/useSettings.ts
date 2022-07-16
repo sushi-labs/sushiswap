@@ -8,6 +8,7 @@ type UseSettingsReturn = [
   Omit<StorageState, 'customTokens'>,
   {
     updateSlippageTolerance(slippageTolerance: number): void
+    updateSlippageToleranceType(slippageToleranceType: 'auto' | 'custom'): void
     updateMaxFeePerGas(updateMaxFeePerGas: number | string | undefined): void
     updateMaxPriorityFeePerGas(maxPriorityFeePerGas: number | string | undefined): void
     updateGasPrice(gasPrice: GasPrice): void
@@ -25,6 +26,13 @@ export const useSettings: UseSettings = (context) => {
   const updateSlippageTolerance = useCallback(
     (slippageTolerance: number) => {
       dispatch(actions.updateSlippageTolerance({ slippageTolerance }))
+    },
+    [actions, dispatch]
+  )
+
+  const updateSlippageToleranceType = useCallback(
+    (slippageToleranceType: 'auto' | 'custom') => {
+      dispatch(actions.updateSlippageToleranceType({ slippageToleranceType }))
     },
     [actions, dispatch]
   )
@@ -61,6 +69,7 @@ export const useSettings: UseSettings = (context) => {
     settings,
     {
       updateSlippageTolerance,
+      updateSlippageToleranceType,
       updateMaxFeePerGas,
       updateMaxPriorityFeePerGas,
       updateGasPrice,

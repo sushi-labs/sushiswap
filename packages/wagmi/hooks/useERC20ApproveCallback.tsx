@@ -4,7 +4,7 @@ import { Amount, Currency } from '@sushiswap/currency'
 import { createToast, Dots } from '@sushiswap/ui'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContract, useSendTransaction, useSigner } from 'wagmi'
+import { erc20ABI, useAccount, useContract, UserRejectedRequestError, useSendTransaction, useSigner } from 'wagmi'
 
 import { useERC20Allowance } from './useERC20Allowance'
 
@@ -84,28 +84,34 @@ export function useERC20ApproveCallback(
       return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
     })
 
-    const data = await sendTransactionAsync({
-      request: {
-        from: address,
-        to: tokenContract?.address,
-        data: tokenContract.interface.encodeFunctionData('approve', [
-          spender,
-          useExact ? amountToApprove.quotient.toString() : MaxUint256,
-        ]),
-        gasLimit: calculateGasMargin(estimatedGas),
-      },
-    })
+    try {
+      const data = await sendTransactionAsync({
+        request: {
+          from: address,
+          to: tokenContract?.address,
+          data: tokenContract.interface.encodeFunctionData('approve', [
+            spender,
+            useExact ? amountToApprove.quotient.toString() : MaxUint256,
+          ]),
+          gasLimit: calculateGasMargin(estimatedGas),
+        },
+      })
 
-    createToast({
-      txHash: data.hash,
-      href: Chain.from(amountToApprove.currency.chainId).getTxUrl(data.hash),
-      promise: data.wait(),
-      summary: {
-        pending: <Dots>Approving {amountToApprove.currency.symbol}</Dots>,
-        completed: `Successfully approved ${amountToApprove.currency.symbol}`,
-        failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
-      },
-    })
+      createToast({
+        txHash: data.hash,
+        href: Chain.from(amountToApprove.currency.chainId).getTxUrl(data.hash),
+        promise: data.wait(),
+        summary: {
+          pending: <Dots>Approving {amountToApprove.currency.symbol}</Dots>,
+          completed: `Successfully approved ${amountToApprove.currency.symbol}`,
+          failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
+        },
+      })
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        console.error(e)
+      }
+    }
   }, [approvalState, token, tokenContract, amountToApprove, spender, sendTransactionAsync, address])
 
   return [approvalState, approve]

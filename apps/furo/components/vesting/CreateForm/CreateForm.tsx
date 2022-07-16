@@ -78,7 +78,7 @@ export const CreateForm: FC = () => {
           </Form.Buttons>
         </Form>
       </FormProvider>
-      {validatedData && review && (
+      {validatedData && (
         <CreateFormReviewModal
           open={review}
           onDismiss={() => setReview(false)}

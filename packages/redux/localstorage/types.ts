@@ -15,6 +15,7 @@ export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string
 
 export type StorageState = {
   slippageTolerance: number
+  slippageToleranceType: 'auto' | 'custom'
   gasPrice: GasPrice
   maxFeePerGas: undefined | number
   maxPriorityFeePerGas: undefined | number
@@ -24,6 +25,10 @@ export type StorageState = {
 
 export interface UpdateSlippageTolerancePayload {
   slippageTolerance: number
+}
+
+export interface UpdateSlippageToleranceTypePayload {
+  slippageToleranceType: 'auto' | 'custom'
 }
 
 export interface UpdateGasPrice {

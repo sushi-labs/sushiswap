@@ -1,6 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
-import { ArrowRightIcon } from '@heroicons/react/outline'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { InformationCircleIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
@@ -13,7 +14,7 @@ import {
   STARGATE_POOL_ADDRESS,
   STARGATE_POOL_ID,
 } from '@sushiswap/stargate'
-import { Badge, Button, classNames, Dots, GasIcon, Loader, NetworkIcon, Overlay, Typography } from '@sushiswap/ui'
+import { Button, classNames, Dots, Loader, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Approve, BENTOBOX_ADDRESS, useBalance, useSushiXSwapContract, Wallet } from '@sushiswap/wagmi'
 import { useBentoBoxTotal, usePrices } from '@sushiswap/wagmi'
@@ -130,7 +131,7 @@ export default function Swap({
 }
 
 interface Swap {
-  width?: number | string
+  maxWidth?: number | string
   theme?: Theme
   initialState: {
     srcChainId: number
@@ -148,7 +149,7 @@ interface Swap {
 }
 
 const Widget: FC<Swap> = ({
-  width = 360,
+  maxWidth = 400,
   theme = defaultTheme,
   initialState,
   caption = false,
@@ -607,28 +608,54 @@ const Widget: FC<Swap> = ({
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
   const [inputUsd, outputUsd, usdPctChange] = useMemo(() => {
-    const inputUSD = srcAmount && srcTokenPrice ? srcAmount.multiply(srcTokenPrice.asFraction).asFraction : undefined
+    const inputUSD = srcAmount && srcTokenPrice ? srcAmount.multiply(srcTokenPrice.asFraction) : undefined
     const outputUSD =
-      dstMinimumAmountOut && dstTokenPrice
-        ? dstMinimumAmountOut.multiply(dstTokenPrice.asFraction).asFraction
-        : undefined
+      dstMinimumAmountOut && dstTokenPrice ? dstMinimumAmountOut.multiply(dstTokenPrice.asFraction) : undefined
     const usdPctChange =
-      inputUSD && outputUSD ? new Percent(outputUSD.subtract(inputUSD).quotient, inputUSD.quotient) : undefined
+      inputUSD && outputUSD
+        ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
+        : undefined
 
     return [inputUSD, outputUSD, usdPctChange]
   }, [dstMinimumAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   const showWrap = false
 
+  const stats = useMemo(() => {
+    return (
+      <>
+        <Typography variant="sm" className="text-slate-400">
+          Min. Received
+        </Typography>
+        <Typography variant="sm" weight={700} className="text-right text-slate-200 truncate">
+          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+        </Typography>
+        <Typography variant="sm" className="text-slate-400">
+          Price Impact
+        </Typography>
+        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+          {priceImpact?.multiply(-1).toFixed(2)}%
+        </Typography>
+        <Typography variant="sm" className="text-slate-400">
+          Est. Processing Time
+        </Typography>
+        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+          ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
+          minutes
+        </Typography>
+      </>
+    )
+  }, [dstMinimumAmountOut, priceImpact, srcChainId])
+
   return (
-    <>
+    <div className="px-2">
       <article
         id="sushixswap"
         className={classNames(
           theme.background.primary,
           'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900'
         )}
-        style={{ width }}
+        style={{ maxWidth }}
       >
         <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
           <Typography
@@ -684,218 +711,229 @@ const Widget: FC<Swap> = ({
           />
 
           <div className="px-3 pb-3">
-            <Rate price={price} theme={theme} />
+            <Rate price={price} theme={theme}>
+              {({ content, usdPrice, toggleInvert }) => (
+                <div
+                  className={classNames(
+                    'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700 py-2'
+                  )}
+                >
+                  <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
+                    <Popover
+                      hover
+                      panel={<div className="bg-slate-700 p-3 grid grid-cols-2 gap-1">{stats}</div>}
+                      button={<InformationCircleIcon width={16} height={16} />}
+                    />
+                    Rate
+                  </Typography>
+                  <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
+                    {price ? (
+                      <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
+                        {content} <span className="text-slate-500">(${usdPrice})</span>
+                      </div>
+                    ) : (
+                      'Enter an amount'
+                    )}
+                  </Typography>
+                </div>
+              )}
+            </Rate>
 
             {isMounted && !address ? (
-              <Wallet.Button fullWidth color="blue">
+              <Wallet.Button fullWidth color="blue" size="md">
                 Connect Wallet
               </Wallet.Button>
             ) : isMounted && chain && chain.id !== srcChainId ? (
-              <Button fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+              <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
                 Switch to {Chain.from(srcChainId).name}
               </Button>
             ) : showWrap ? (
-              <Button fullWidth>Wrap</Button>
+              <Button size="md" fullWidth>
+                Wrap
+              </Button>
             ) : srcAmount?.greaterThan(0) && routeNotFound ? (
-              <Button fullWidth disabled>
+              <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
             ) : isMounted && chain && chain.id == srcChainId ? (
               <>
-                <Approve
-                  components={
-                    <Approve.Components className="flex gap-4">
-                      <Approve.Bentobox
-                        className="mb-2 whitespace-nowrap"
-                        fullWidth
-                        address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
-                        onSignature={setSignature}
-                      />
-                      <Approve.Token
-                        className="mb-2 whitespace-nowrap"
-                        fullWidth
-                        amount={srcAmount}
-                        address={BENTOBOX_ADDRESS[srcChainId]}
-                      />
-                    </Approve.Components>
-                  }
-                  render={({ approved }) => {
-                    return (
-                      <ConfirmationComponentController
-                        variant="overlay"
-                        trigger={({ setOpen }) => (
-                          <Button
-                            fullWidth
-                            variant="filled"
-                            color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'gradient'}
-                            disabled={
-                              isWritePending ||
-                              !approved ||
-                              !srcAmount?.greaterThan(ZERO) ||
-                              Boolean(srcAmount && !dstMinimumAmountOut) ||
-                              priceImpactTooHigh
-                            }
-                            onClick={() => setOpen(true)}
-                          >
-                            {isWritePending ? (
-                              <Dots>Confirm transaction</Dots>
-                            ) : priceImpactTooHigh ? (
-                              'High Price Impact'
-                            ) : !routeNotFound && priceImpactSeverity > 2 ? (
-                              'Swap Anyway'
-                            ) : (
-                              'Swap'
-                            )}
-                          </Button>
+                <ConfirmationComponentController
+                  variant="dialog"
+                  trigger={({ setOpen }) => (
+                    <Button
+                      fullWidth
+                      size="md"
+                      variant="filled"
+                      color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+                      disabled={
+                        isWritePending ||
+                        !srcAmount?.greaterThan(ZERO) ||
+                        Boolean(srcAmount && !dstMinimumAmountOut) ||
+                        priceImpactTooHigh
+                      }
+                      onClick={() => setOpen(true)}
+                    >
+                      {isWritePending ? (
+                        <Dots>Confirm transaction</Dots>
+                      ) : priceImpactTooHigh ? (
+                        'High Price Impact'
+                      ) : !routeNotFound && priceImpactSeverity > 2 ? (
+                        'Swap Anyway'
+                      ) : (
+                        'Swap'
+                      )}
+                    </Button>
+                  )}
+                >
+                  <div className="!my-0 grid grid-cols-12 items-center">
+                    <div className="relative flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                      <div className="flex justify-between gap-2">
+                        {srcAmount && (
+                          <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
+                            <NetworkIcon type="naked" chainId={srcAmount.currency.chainId} width={16} height={16} />
+                            <span>{chains[srcAmount.currency.chainId].name}</span>
+                          </Typography>
                         )}
-                      >
-                        <div className="!my-0 rounded-xl py-2 grid grid-cols-12 min-h-[64px] items-center">
-                          <div className="flex flex-col col-span-5 gap-1">
-                            <span className="text-xs text-slate-400 text-left">{srcAmount?.currency.symbol}</span>
-                            <div className="flex items-center gap-3">
-                              {srcAmount && (
-                                <Badge
-                                  badgeContent={
-                                    <div className="rounded-full shadow-md ring-1 ring-black/20">
-                                      <NetworkIcon chainId={srcAmount.currency.chainId} width={16} height={16} />
-                                    </div>
-                                  }
-                                >
-                                  <div className="w-5 h-5">
-                                    <Icon currency={srcAmount.currency} width={20} height={20} />
-                                  </div>
-                                </Badge>
-                              )}
-                              <Typography variant="lg" weight={700} className="truncate">
-                                {srcAmount?.toSignificant(6)}{' '}
-                              </Typography>
-                            </div>
-                            <Typography variant="xs" weight={700} className="text-slate-400 text-left">
-                              {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
-                            </Typography>
-                          </div>
-                          <div className="flex items-center justify-center col-span-2">
-                            <ArrowRightIcon width={18} height={18} className="text-slate-500" />
-                          </div>
-                          <div className="flex flex-col w-full col-span-5 gap-1">
-                            <span className="text-xs text-right text-slate-400">
-                              {dstMinimumAmountOut?.currency.symbol}
-                            </span>
-                            <div className="flex items-center justify-end gap-3">
-                              <Typography variant="lg" weight={700} className="text-right truncate">
-                                {dstMinimumAmountOut?.toSignificant(6)}
-                              </Typography>
-                              {dstMinimumAmountOut && (
-                                <Badge
-                                  badgeContent={
-                                    <div className="rounded-full shadow-md ring-1 ring-black/20">
-                                      <NetworkIcon
-                                        chainId={dstMinimumAmountOut.currency.chainId}
-                                        width={16}
-                                        height={16}
-                                      />
-                                    </div>
-                                  }
-                                >
-                                  <div className="w-5 h-5">
-                                    <Icon currency={dstMinimumAmountOut.currency} width={20} height={20} />
-                                  </div>
-                                </Badge>
-                              )}
-                            </div>
-                            <Typography variant="xs" weight={700} className="text-right text-slate-400">
-                              {outputUsd ? `$${outputUsd.toFixed(2)}` : '-'}
-                              {usdPctChange && (
-                                <span
-                                  className={classNames(
-                                    usdPctChange.equalTo(ZERO)
-                                      ? ''
-                                      : usdPctChange?.greaterThan(ZERO)
-                                      ? 'text-green'
-                                      : 'text-red'
-                                  )}
-                                >
-                                  {`${usdPctChange.equalTo(ZERO) ? '' : usdPctChange?.greaterThan(ZERO) ? '+' : ''} (${
-                                    usdPctChange.equalTo(ZERO) ? '0.00' : usdPctChange?.toFixed(2)
-                                  }%)`}
-                                </span>
-                              )}
+                        <span className="text-xs text-slate-400 font-medium">
+                          {srcUseBentoBox ? 'Pay From BentoBox' : 'Pay From Wallet'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex justify-between items-center w-full gap-2">
+                          <Typography variant="h3" weight={700} className="truncate text-slate-50">
+                            {srcAmount?.toSignificant(6)}{' '}
+                          </Typography>
+                          <div className="flex gap-2 text-right justify-end items-center">
+                            {srcAmount && (
+                              <div className="w-5 h-5">
+                                <Icon currency={srcAmount.currency} width={20} height={20} />
+                              </div>
+                            )}
+                            <Typography variant="h3" weight={500} className="text-slate-50 text-right">
+                              {srcAmount?.currency.symbol}
                             </Typography>
                           </div>
                         </div>
-                        <div className="flex flex-col justify-end flex-grow gap-1 px-3 py-2 pb-0 -ml-3 -mr-3">
-                          <div className="flex items-center justify-between gap-2">
-                            <Rate price={price} theme={theme}>
-                              {({ toggleInvert, content }) => (
-                                <Typography
-                                  as="button"
-                                  onClick={() => toggleInvert()}
-                                  variant="xs"
-                                  className="flex items-center gap-1 text-slate-200"
-                                >
-                                  {content}
-                                </Typography>
-                              )}
-                            </Rate>
-                            <div className="flex items-center gap-1">
-                              <GasIcon width={10} />
-                              <Typography variant="xs" weight={700} className="text-slate-200">
-                                {feeData.data?.formatted.gasPrice} Gwei
-                              </Typography>
-                            </div>
-                          </div>
-                          <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Minimum Received
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-right text-slate-200">
-                              {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
-                            </Typography>
-                          </div>
-                          <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Price Impact
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-200">
-                              {priceImpact?.multiply(-1).toFixed(2)}%
-                            </Typography>
-                          </div>
-                          <div className="flex justify-between gap-2">
-                            <Typography variant="xs" className="text-slate-400">
-                              Estimated Processing Time
-                            </Typography>
-                            <Typography variant="xs" weight={700} className="text-slate-300">
-                              ~
-                              {Math.ceil(
-                                STARGATE_CONFIRMATION_SECONDS[
-                                  srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS
-                                ] / 60
-                              )}{' '}
-                              minutes
-                            </Typography>
-                          </div>
-                          {crossChain ? (
-                            <CrossChainRoute
-                              srcTrade={srcTrade}
-                              dstTrade={dstTrade}
-                              inputAmount={srcAmount}
-                              outputAmount={dstMinimumAmountOut}
-                              dstBridgeToken={dstBridgeToken}
-                              srcBridgeToken={srcBridgeToken}
+                      </div>
+                      <Typography variant="sm" weight={700} className="text-slate-500">
+                        {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
+                      </Typography>
+                    </div>
+                    <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+                      <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                        <ChevronDownIcon width={18} height={18} className="text-slate-200" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                      <div className="flex justify-between gap-2">
+                        {dstMinimumAmountOut && (
+                          <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
+                            <NetworkIcon
+                              type="naked"
+                              chainId={dstMinimumAmountOut.currency.chainId}
+                              width={16}
+                              height={16}
                             />
-                          ) : (
-                            <SameChainRoute trade={srcTrade} />
-                          )}
+                            <span>{chains[dstMinimumAmountOut.currency.chainId].name}</span>
+                          </Typography>
+                        )}
+                        <span className="text-xs text-slate-400 font-medium">
+                          {dstUseBentoBox ? 'Receive In BentoBox' : 'Receive In Wallet'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex justify-between items-center w-full gap-2">
+                          <Typography variant="h3" weight={700} className="truncate text-slate-50">
+                            {dstMinimumAmountOut?.toSignificant(6)}{' '}
+                          </Typography>
+                          <div className="flex gap-2 text-right justify-end items-center">
+                            {dstMinimumAmountOut && (
+                              <div className="w-5 h-5">
+                                <Icon currency={dstMinimumAmountOut.currency} width={20} height={20} />
+                              </div>
+                            )}
+                            <Typography variant="h3" weight={500} className="text-slate-50 text-right">
+                              {dstMinimumAmountOut?.currency.symbol}
+                            </Typography>
+                          </div>
                         </div>
-                        <Overlay.Actions>
-                          <Button fullWidth color="gradient" onClick={execute}>
-                            Swap
-                          </Button>
-                        </Overlay.Actions>
-                      </ConfirmationComponentController>
-                    )
-                  }}
-                />
+                      </div>
+                      <Typography variant="sm" weight={700} className="text-slate-500">
+                        {outputUsd ? `$${outputUsd.toFixed(2)}` : '-'}
+                        {usdPctChange && (
+                          <span
+                            className={classNames(
+                              usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red'
+                            )}
+                          >
+                            {' '}
+                            {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                              usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
+                            }%)`}
+                          </span>
+                        )}
+                      </Typography>
+                    </div>
+                  </div>
+                  <div className="px-4 py-3">
+                    <Rate price={price} theme={theme}>
+                      {({ toggleInvert, content, usdPrice }) => (
+                        <Typography
+                          as="button"
+                          onClick={() => toggleInvert()}
+                          variant="sm"
+                          weight={600}
+                          className="flex items-center gap-1 text-slate-100"
+                        >
+                          {content} <span className="text-slate-300 font-normal">(${usdPrice})</span>
+                        </Typography>
+                      )}
+                    </Rate>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 rounded-2xl p-2 sm:p-4 border border-slate-200/5 bg-slate-700/40">
+                    {stats}
+                    {crossChain ? (
+                      <CrossChainRoute
+                        srcTrade={srcTrade}
+                        dstTrade={dstTrade}
+                        inputAmount={srcAmount}
+                        outputAmount={dstMinimumAmountOut}
+                        dstBridgeToken={dstBridgeToken}
+                        srcBridgeToken={srcBridgeToken}
+                      />
+                    ) : (
+                      <SameChainRoute trade={srcTrade} />
+                    )}
+                  </div>
+                  <Approve
+                    className="flex-grow !justify-end pt-4"
+                    components={
+                      <Approve.Components>
+                        <Approve.Bentobox
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          address={SUSHI_X_SWAP_ADDRESS[srcChainId]}
+                          onSignature={setSignature}
+                        />
+                        <Approve.Token
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={srcAmount}
+                          address={BENTOBOX_ADDRESS[srcChainId]}
+                        />
+                      </Approve.Components>
+                    }
+                    render={({ approved }) => {
+                      return (
+                        <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
+                          Confirm Swap
+                        </Button>
+                      )
+                    }}
+                  />
+                </ConfirmationComponentController>
               </>
             ) : (
               <Button fullWidth color="blue">
@@ -906,6 +944,6 @@ const Widget: FC<Swap> = ({
           </div>
         </div>
       </article>
-    </>
+    </div>
   )
 }

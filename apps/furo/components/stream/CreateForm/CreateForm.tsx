@@ -138,8 +138,9 @@ export const CreateForm: FC = () => {
         <Form header="Create Stream" onSubmit={methods.handleSubmit(onSubmit)}>
           <GeneralDetailsSection />
           <StreamAmountDetails />
-          <Form.Buttons>
+          <Form.Buttons className="flex flex-col items-end gap-3">
             <Approve
+              className="!items-end"
               components={
                 <Approve.Components>
                   <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
