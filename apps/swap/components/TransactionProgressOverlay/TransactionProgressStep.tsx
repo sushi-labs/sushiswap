@@ -1,14 +1,13 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid'
-import chain, { ChainId } from '@sushiswap/chain'
-import { classNames, HalfCircleIcon, Typography } from '@sushiswap/ui'
+import { CheckCircleIcon, ExclamationCircleIcon, XCircleIcon } from '@heroicons/react/solid'
+import { CircleIcon, classNames, Loader, Popover, Typography } from '@sushiswap/ui'
 import Link from 'next/link'
 import { FC, ReactNode } from 'react'
 
 type TransactionProgressStepHeader = { children: ReactNode }
 const TransactionProgressStepHeader: FC<TransactionProgressStepHeader> = ({ children }) => {
   return (
-    <Typography variant="xs" className="text-inherit group-hover:text-inherit">
+    <Typography variant="sm" className="text-inherit group-hover:text-inherit">
       {children}
     </Typography>
   )
@@ -25,11 +24,11 @@ const TransactionProgressStepSubHeader: FC<TransactionProgressStepSubHeader> = (
 }
 
 interface TransactionProgressStep {
-  status: 'failed' | 'success' | 'pending'
+  status: 'failed' | 'success' | 'pending' | 'idle' | 'skipped' | 'notice'
   header: ReactNode
   subheader: ReactNode
-  txHash: string
   lastStep?: boolean
+  link?: string
 }
 
 type TransactionProgressStepType<P> = FC<P> & {
@@ -38,38 +37,79 @@ type TransactionProgressStepType<P> = FC<P> & {
 }
 
 export const TransactionProgressStep: TransactionProgressStepType<TransactionProgressStep> = ({
-  txHash,
   status,
   header,
   subheader,
   lastStep = false,
+  link,
 }) => {
   return (
-    <div className={classNames('grid grid-cols-[40px_260px] mx-auto')}>
+    <div className={classNames('grid grid-cols-[60px_320px] mx-auto')}>
       <div className="flex flex-col items-center">
-        <div className="w-4 h-4 flex justify-center items-center">
-          {status === 'pending' && <HalfCircleIcon className="text-blue" width={13} height={13} />}
-          {status === 'success' && <CheckCircleIcon className="text-slate-500" width={16} height={16} />}
-          {status === 'failed' && <ExclamationCircleIcon className="text-yellow" width={16} height={16} />}
+        <div className="w-6 h-6 flex justify-center items-center">
+          {status === 'pending' && <Loader width={21} height={21} />}
+          {status === 'success' && <CheckCircleIcon className="text-green" width={24} height={24} />}
+          {status === 'skipped' && (
+            <Popover
+              hover
+              button={<ExclamationCircleIcon className="text-slate-500 hover:text-slate-300" width={24} height={24} />}
+              panel={
+                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
+                  <b>Skipped</b> due to an earlier failure.
+                </div>
+              }
+            />
+          )}
+          {status === 'idle' && <CircleIcon className="text-slate-500" width={24} height={24} />}
+          {status === 'failed' && (
+            <Popover
+              hover
+              button={<XCircleIcon className="text-red" width={24} height={24} />}
+              panel={
+                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
+                  Transaction Failed
+                </div>
+              }
+            />
+          )}
+          {status === 'notice' && (
+            <Popover
+              hover
+              button={<ExclamationCircleIcon className="text-yellow" width={24} height={24} />}
+              panel={
+                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
+                  Non expected result.
+                </div>
+              }
+            />
+          )}
         </div>
-        {!lastStep && <div className="h-6 w-0 border-dashed border-l-2 my-2 border-slate-600" />}
-      </div>
-      <div className="flex flex-col gap-1">
-        <Link href={chain[ChainId.ETHEREUM].getTxUrl(txHash)} passHref={true}>
-          <a
-            target="_blank"
+        {!lastStep && (
+          <div
             className={classNames(
-              status === 'success' ? 'text-slate-500' : 'text-slate-200',
-              'flex items-center gap-1 hover:text-slate-50'
+              status === 'success' ? 'border-green' : 'border-slate-600',
+              'transition-all h-12 w-0 border-dashed border-l-2 my-2'
             )}
-          >
-            {header}
-            <ExternalLinkIcon width={16} className="text-inherit" />
-          </a>
-        </Link>
-        <Typography variant="xs" className="flex gap-2 text-slate-500 items-center">
-          {subheader}
-        </Typography>
+          />
+        )}
+      </div>
+      <div
+        className={classNames(
+          ['idle', 'skipped'].includes(status) ? 'opacity-40 pointer-events-none' : '',
+          'flex flex-col gap-1 mt-0.5'
+        )}
+      >
+        {link ? (
+          <Link href={link} passHref={true}>
+            <a target="_blank" className={classNames('text-slate-200', 'flex items-center gap-1 hover:text-slate-50')}>
+              {header}
+              <ExternalLinkIcon width={16} className="text-inherit" />
+            </a>
+          </Link>
+        ) : (
+          <div className="text-slate-200">{header}</div>
+        )}
+        {subheader}
       </div>
     </div>
   )

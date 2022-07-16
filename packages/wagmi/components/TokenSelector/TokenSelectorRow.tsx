@@ -19,8 +19,7 @@ interface TokenSelectorRow {
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
   ({ price, balance, currency, fundSource, style, className, onCurrency }) => {
     return (
-      <button
-        type="button"
+      <div
         onClick={() => onCurrency(currency)}
         className={classNames(
           className,
@@ -91,7 +90,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
             />
           )}
         </div>
-      </button>
+      </div>
     )
   }
 )

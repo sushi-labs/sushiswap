@@ -7,8 +7,9 @@ import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/exchange'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getBigNumber } from '@sushiswap/tines'
-import { SUSHI_X_SWAP_ADDRESS } from 'config'
+import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { ContractTransaction } from 'ethers'
+import { formatBytes32String } from 'ethers/lib/utils'
 
 export type Complex = [
   {
@@ -287,7 +288,11 @@ export abstract class Cooker implements Cooker {
                       native: false,
                       data: defaultAbiCoder.encode(
                         ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
+                        [
+                          leg.tokenFrom.address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
+                        ]
                       ),
                     },
                   ],
@@ -305,7 +310,11 @@ export abstract class Cooker implements Cooker {
                       balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
                       data: defaultAbiCoder.encode(
                         ['address', 'address', 'bool'],
-                        [leg.tokenFrom.address, SUSHI_X_SWAP_ADDRESS[trade.inputAmount.currency.chainId], false]
+                        [
+                          leg.tokenFrom.address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
+                        ]
                       ),
                     },
                   ],
@@ -463,14 +472,14 @@ export class SushiXSwap {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: SUSHI_X_SWAP_ADDRESS[this.srcToken.chainId],
+      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).addressOrName,
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: SUSHI_X_SWAP_ADDRESS[this.dstToken.chainId],
+      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).addressOrName,
       user,
     })
   }
@@ -732,7 +741,8 @@ export class SushiXSwap {
   teleport(
     srcBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
     dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
-    gasSpent = 500000
+    gasSpent = 500000,
+    id: string
   ): void {
     const data = defaultAbiCoder.encode(
       [
@@ -746,6 +756,7 @@ export class SushiXSwap {
         'address',
         'address',
         'uint256',
+        'bytes32',
         'uint8[]',
         'uint256[]',
         'bytes[]',
@@ -761,6 +772,7 @@ export class SushiXSwap {
         this.dstCooker.masterContract,
         this.user,
         gasSpent,
+        formatBytes32String(id),
         this.dstCooker.actions,
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
@@ -779,6 +791,7 @@ export class SushiXSwap {
         this.dstCooker.masterContract,
         this.user,
         gasSpent,
+        id,
         this.dstCooker.actions,
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,

@@ -70,7 +70,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
               }}
               className="focus:ring-offset-slate-800 !bg-slate-700"
             />
-            {searching.current && <Loader size="16px" />}
+            {searching.current && <Loader size={16} />}
           </div>
           <div className={classNames('rounded-xl overflow-hidden h-full bg-slate-700 mt-3')}>
             <div className="h-full overflow-auto hide-scrollbar">

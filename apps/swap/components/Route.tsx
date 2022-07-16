@@ -29,7 +29,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
 
   return (
     <>
-      <Typography variant="xs" className="text-slate-400">
+      <Typography variant="sm" className="text-slate-400">
         Optimized Route
       </Typography>
       <div className="flex justify-end">
@@ -212,7 +212,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
             </div>
           }
           button={
-            <Typography as="button" variant="sm" weight={500} className="cursor-pointer text-blue text-right">
+            <Typography variant="sm" weight={500} className="cursor-pointer text-blue text-right">
               View Route
             </Typography>
           }
