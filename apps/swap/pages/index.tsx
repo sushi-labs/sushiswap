@@ -648,7 +648,7 @@ const Widget: FC<Swap> = ({
   }, [dstMinimumAmountOut, priceImpact, srcChainId])
 
   return (
-    <>
+    <div className="mx-2">
       <article
         id="sushixswap"
         className={classNames(
@@ -786,7 +786,7 @@ const Widget: FC<Swap> = ({
                   )}
                 >
                   <div className="!my-0 grid grid-cols-12 items-center">
-                    <div className="relative flex flex-col col-span-12 gap-1 p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                    <div className="relative flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
                       <div className="flex justify-between gap-2">
                         {srcAmount && (
                           <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
@@ -824,7 +824,7 @@ const Widget: FC<Swap> = ({
                         <ChevronDownIcon width={18} height={18} className="text-slate-200" />
                       </div>
                     </div>
-                    <div className="flex flex-col col-span-12 gap-1 p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                    <div className="flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
                       <div className="flex justify-between gap-2">
                         {dstMinimumAmountOut && (
                           <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
@@ -890,7 +890,7 @@ const Widget: FC<Swap> = ({
                       )}
                     </Rate>
                   </div>
-                  <div className="grid grid-cols-2 gap-1 rounded-2xl p-4 border border-slate-200/5 bg-slate-700/40">
+                  <div className="grid grid-cols-2 gap-1 rounded-2xl p-2 sm:p-4 border border-slate-200/5 bg-slate-700/40">
                     {stats}
                     {crossChain ? (
                       <CrossChainRoute
@@ -944,6 +944,6 @@ const Widget: FC<Swap> = ({
           </div>
         </div>
       </article>
-    </>
+    </div>
   )
 }

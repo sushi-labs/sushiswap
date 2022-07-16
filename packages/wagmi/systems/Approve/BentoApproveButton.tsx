@@ -103,11 +103,11 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   as="div"
                   className={classNames(
                     disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                    'flex items-center justify-center bg-slate-700 rounded-full'
+                    'flex items-center justify-center bg-slate-700 rounded-full overflow-hidden'
                   )}
                   onClick={onApprove}
                 >
-                  <div className="bg-white bg-opacity-[0.24] rounded-full flex items-center justify-center w-6 h-6">
+                  <div className="bg-white bg-opacity-[0.24] flex items-center justify-center rounded-full w-6 h-6 min-w-6 min-h-6 ">
                     <BentoboxIcon width={14} height={14} />
                   </div>
                 </IconButton>
