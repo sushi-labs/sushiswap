@@ -125,9 +125,10 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               theme.secondary.hover,
               'flex items-center gap-2 text-xs cursor-pointer font-medium'
             )}
-            onClick={() =>
+            onClick={(e) => {
               onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
-            }
+              e.stopPropagation()
+            }}
           >
             {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
           </button>
