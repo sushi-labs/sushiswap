@@ -1137,7 +1137,7 @@ const Widget: FC<Swap> = ({
                 </ConfirmationComponentController>
               </>
             ) : (
-              <Button fullWidth color="blue">
+              <Button fullWidth color="blue" size="md">
                 <Loader size={16} />
               </Button>
             )}
