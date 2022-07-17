@@ -438,7 +438,7 @@ importers:
       '@ethersproject/contracts': ^5.0.0
       '@ethersproject/experimental': ^5.0.0
       '@ethersproject/providers': ^5.0.0
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/bentobox': workspace:*
@@ -492,7 +492,7 @@ importers:
       '@ethersproject/contracts': 5.6.1
       '@ethersproject/experimental': 5.6.1
       '@ethersproject/providers': 5.6.6
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       '@sushiswap/bentobox': link:../../protocols/bentobox/v1
@@ -1369,7 +1369,7 @@ importers:
   packages/ui:
     specifiers:
       '@fontsource/inter': ^4.5.10
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.6
       '@popperjs/core': ^2.11.5
       '@react-hook/window-scroll': ^1.3.0
@@ -1404,7 +1404,7 @@ importers:
       typescript: ^4.0.0
     dependencies:
       '@fontsource/inter': 4.5.10
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@popperjs/core': 2.11.5
       '@react-hook/window-scroll': 1.3.0_react@18.1.0
@@ -4468,6 +4468,17 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
+  /@headlessui/react/1.6.6_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-MFJtmj9Xh/hhBMhLccGbBoSk+sk61BlP6sJe4uQcVMtXZhCgGqd2GyIQzzmsdPdTEWGSF434CBi8mnhR6um46Q==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
   /@heroicons/react/1.0.6_react@18.1.0:
     resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
     peerDependencies:
@@ -5755,7 +5766,6 @@ packages:
       ts-essentials: 7.0.3_typescript@4.6.4
       typechain: 8.0.0_typescript@4.6.4
       typescript: 4.6.4
-    dev: false
 
   /@typechain/ethers-v5/10.0.0_h2ywsp2xm3bo3arf62btpski5i:
     resolution: {integrity: sha512-Kot7fwAqnH96ZbI8xrRgj5Kpv9yCEdjo7mxRqrH7bYpEgijT5MmuOo8IVsdhOu7Uog4ONg7k/d5UdbAtTKUgsA==}
@@ -5793,7 +5803,6 @@ packages:
       ts-essentials: 7.0.3_typescript@4.7.2
       typechain: 8.0.0_typescript@4.7.2
       typescript: 4.7.2
-    dev: false
 
   /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
@@ -7427,7 +7436,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -11891,15 +11900,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.4:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
@@ -20160,7 +20160,6 @@ packages:
       typescript: 4.6.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /typechain/8.0.0_typescript@4.7.2:
     resolution: {integrity: sha512-rqDfDYc9voVAhmfVfAwzg3VYFvhvs5ck1X9T/iWkX745Cul4t+V/smjnyqrbDzWDbzD93xfld1epg7Y/uFAesQ==}

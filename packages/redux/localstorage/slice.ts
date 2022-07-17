@@ -5,6 +5,7 @@ import {
   GasPrice,
   RemoveCustomToken,
   StorageState,
+  UpdateExpertMode,
   UpdateGasPrice,
   UpdateGasType,
   UpdateMaxFeePerGas,
@@ -22,9 +23,14 @@ const initialState: StorageState = {
   maxPriorityFeePerGas: parsedState?.maxPriorityFeePerGas || undefined,
   gasType: parsedState?.gasType || 'preset',
   customTokens: parsedState?.customTokens || {},
+  expertMode: parsedState?.expertMode || false,
 }
 
 const reducers = {
+  updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
+    const { expertMode } = action.payload
+    state.expertMode = expertMode
+  },
   updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
     const { slippageTolerance } = action.payload
     state.slippageTolerance = slippageTolerance

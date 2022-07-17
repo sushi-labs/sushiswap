@@ -13,6 +13,7 @@ type UseSettingsReturn = [
     updateMaxPriorityFeePerGas(maxPriorityFeePerGas: number | string | undefined): void
     updateGasPrice(gasPrice: GasPrice): void
     updateGasType(gasType: 'preset' | 'custom'): void
+    updateExpertMode(expertMode: boolean): void
   }
 ]
 
@@ -22,6 +23,13 @@ export const useSettings: UseSettings = (context) => {
   const { reducerPath, actions } = context
   const { customTokens, ...settings } = useSelector((state: WithStorageState) => state[reducerPath])
   const dispatch = useDispatch()
+
+  const updateExpertMode = useCallback(
+    (expertMode: boolean) => {
+      dispatch(actions.updateExpertMode({ expertMode }))
+    },
+    [actions, dispatch]
+  )
 
   const updateSlippageTolerance = useCallback(
     (slippageTolerance: number) => {
@@ -68,6 +76,7 @@ export const useSettings: UseSettings = (context) => {
   return [
     settings,
     {
+      updateExpertMode,
       updateSlippageTolerance,
       updateSlippageToleranceType,
       updateMaxFeePerGas,

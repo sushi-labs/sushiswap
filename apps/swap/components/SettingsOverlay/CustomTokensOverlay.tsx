@@ -28,7 +28,7 @@ export const CustomTokensOverlay: FC = () => {
   if (!isMounted) return <></>
 
   return (
-    <>
+    <div className="border-b border-slate-200/5">
       <button
         onClick={() => setOpen(true)}
         className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
@@ -41,7 +41,7 @@ export const CustomTokensOverlay: FC = () => {
             Custom Tokens
           </Typography>
           <div className="flex gap-1">
-            <Typography variant="sm" className="group-hover:text-slate-200 text-slate-300">
+            <Typography variant="sm" className="group-hover:text-slate-200 text-slate-400">
               {ids.length || '0'} Tokens
             </Typography>
             <div className="w-5 h-5 -mr-1.5 flex items-center">
@@ -77,6 +77,6 @@ export const CustomTokensOverlay: FC = () => {
           )}
         </Overlay.Content>
       </SlideIn.FromLeft>
-    </>
+    </div>
   )
 }

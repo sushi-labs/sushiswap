@@ -49,7 +49,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useContractRead, useContractReads, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useContractRead, useContractReads, useNetwork, useSwitchNetwork } from 'wagmi'
+
+import { useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -177,7 +179,7 @@ const Widget: FC<Swap> = ({
 
   const router = useRouter()
 
-  const [expertMode, setExpertMode] = useState<boolean>(false)
+  const [{ expertMode }] = useSettings()
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
@@ -191,11 +193,6 @@ const Widget: FC<Swap> = ({
 
   useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
   useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
-
-  const feeData = useFeeData({
-    chainId: srcChainId,
-    formatUnits: 'gwei',
-  })
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
@@ -736,7 +733,14 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Price Impact
         </Typography>
-        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+        <Typography
+          variant="sm"
+          weight={700}
+          className={classNames(
+            priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
+            'text-right truncate'
+          )}
+        >
           {priceImpact?.multiply(-1).toFixed(2)}%
         </Typography>
         <Typography variant="sm" className="text-slate-400">
@@ -785,6 +789,7 @@ const Widget: FC<Swap> = ({
     dstMinimumAmountOut,
     dstTrade,
     priceImpact,
+    priceImpactSeverity,
     srcAmount,
     srcBridgeToken,
     srcChainId,
@@ -952,11 +957,15 @@ const Widget: FC<Swap> = ({
                       size="md"
                       variant="filled"
                       color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+                      {...(Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode) && {
+                        title: 'Enable expert mode to swap with high price impact',
+                      })}
                       disabled={
                         isWritePending ||
                         !srcAmount?.greaterThan(ZERO) ||
                         Boolean(srcAmount && !dstMinimumAmountOut) ||
-                        priceImpactTooHigh
+                        priceImpactTooHigh ||
+                        Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
                       }
                       onClick={() => setOpen(true)}
                     >
