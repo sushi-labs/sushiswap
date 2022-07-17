@@ -932,7 +932,10 @@ const Widget: FC<Swap> = ({
               <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
-            ) : feeRef.current && nativeBalance && feeRef.current.greaterThan(nativeBalance[FundSource.WALLET]) ? (
+            ) : srcAmount?.greaterThan(0) &&
+              feeRef.current &&
+              nativeBalance &&
+              feeRef.current.greaterThan(nativeBalance[FundSource.WALLET]) ? (
               <Button size="md" fullWidth disabled>
                 Insufficient Balance
               </Button>
