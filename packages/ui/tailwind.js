@@ -126,6 +126,7 @@ module.exports = {
         ellipsis: 'ellipsis 1.25s infinite',
         'spin-slow': 'spin 2s linear infinite',
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
+        rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
       },
       keyframes: {
         ellipsis: {
@@ -139,6 +140,14 @@ module.exports = {
           '17%': { animationTimingFunction: 'ease-out', transform: 'scale(0.98)' },
           '33%': { animationTimingFunction: 'ease-out', transform: 'scale(0.87)' },
           '45%': { animationTimingFunction: 'ease-out', transform: 'scale(1)' },
+        },
+        rotate360: {
+          from: {
+            transform: 'rotate(0deg)',
+          },
+          to: {
+            transform: 'rotate(360deg)',
+          },
         },
       },
     },

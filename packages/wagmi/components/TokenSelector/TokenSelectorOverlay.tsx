@@ -92,7 +92,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                   />
                   {searching ? (
                     <div className="relative left-[-2px]">
-                      <Loader size="14px" strokeWidth={3} className="animate-spin-slow text-slate-500" />
+                      <Loader size={14} strokeWidth={3} className="animate-spin-slow text-slate-500" />
                     </div>
                   ) : query ? (
                     <XCircleIcon

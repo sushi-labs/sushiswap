@@ -35,14 +35,7 @@ export const ConfirmationComponentController: FC<ConfirmationComponentController
         </SlideIn>
       ) : (
         <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
-          <Dialog.Content className={classNames(className, 'max-w-sm !bg-slate-800 px-4 !pb-4 overflow-hidden')}>
-            <SlideIn>
-              <>
-                <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
-                {typeof children === 'function' ? children({ setOpen, open }) : children}
-              </>
-            </SlideIn>
-          </Dialog.Content>
+          {typeof children === 'function' ? children({ setOpen, open }) : children}
         </Dialog>
       )}
     </>
