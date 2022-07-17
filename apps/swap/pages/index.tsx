@@ -21,10 +21,11 @@ import {
   BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
+  useBentoBoxTotal,
+  usePrices,
   useSushiXSwapContract,
   Wallet,
 } from '@sushiswap/wagmi'
-import { useBentoBoxTotal, usePrices } from '@sushiswap/wagmi'
 import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import {
@@ -932,10 +933,12 @@ const Widget: FC<Swap> = ({
               <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
-            ) : srcAmount?.greaterThan(0) &&
-              feeRef.current &&
-              nativeBalance &&
-              feeRef.current.greaterThan(nativeBalance[FundSource.WALLET]) ? (
+            ) : (srcAmount?.greaterThan(0) &&
+                feeRef.current &&
+                nativeBalance &&
+                feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
+              (srcBalance &&
+                srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET])) ? (
               <Button size="md" fullWidth disabled>
                 Insufficient Balance
               </Button>
