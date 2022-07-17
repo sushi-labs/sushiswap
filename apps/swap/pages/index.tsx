@@ -886,8 +886,8 @@ const Widget: FC<Swap> = ({
                               width={24}
                               height={24}
                               className={classNames(
-                                open ? 'rotate-180' : '',
-                                'rotate-0 transition-[transform] ease-in-out delay-200'
+                                open ? '!rotate-180' : '',
+                                'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
                               )}
                             />
                           </Disclosure.Button>
