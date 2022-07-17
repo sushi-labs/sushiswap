@@ -696,7 +696,6 @@ const Widget: FC<Swap> = ({
 
       try {
         const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
-        console.log('hi')
         feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
       } catch (e) {
         console.log(e)
