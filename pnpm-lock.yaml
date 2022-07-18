@@ -292,7 +292,7 @@ importers:
       '@ethersproject/units': ^5.0.0
       '@graphprotocol/client-add-source-name': 1.0.2
       '@graphprotocol/client-cli': 2.0.2
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.0
       '@hookform/resolvers': ^2.8.10
       '@reduxjs/toolkit': ^1.8.1
@@ -364,7 +364,7 @@ importers:
       '@ethersproject/solidity': 5.6.0
       '@ethersproject/strings': 5.6.0
       '@ethersproject/units': 5.6.0
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@hookform/resolvers': 2.8.10_react-hook-form@7.31.1
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
@@ -4446,17 +4446,6 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /@headlessui/react/1.6.2_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-x+kbTjJ+ixgsignqUU9MluoZYBJAlIYMeya4w7dk/Mo13vIdI/mSnzJAVgHhHKzE/hX//+rXylr4jUVThuQq/A==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16 || ^17 || ^18
-      react-dom: ^16 || ^17 || ^18
-    dependencies:
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-    dev: false
-
   /@headlessui/react/1.6.3_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-WNu/ypGzl0JmJ+sD34KtdycEu2n7EZjKFx2rq6fivsszPdoEyOVZ/GYQMJ437dfAJI0/ZxoRYfrOVduZHjlokQ==}
     engines: {node: '>=10'}
@@ -5766,6 +5755,7 @@ packages:
       ts-essentials: 7.0.3_typescript@4.6.4
       typechain: 8.0.0_typescript@4.6.4
       typescript: 4.6.4
+    dev: false
 
   /@typechain/ethers-v5/10.0.0_h2ywsp2xm3bo3arf62btpski5i:
     resolution: {integrity: sha512-Kot7fwAqnH96ZbI8xrRgj5Kpv9yCEdjo7mxRqrH7bYpEgijT5MmuOo8IVsdhOu7Uog4ONg7k/d5UdbAtTKUgsA==}
@@ -5803,6 +5793,7 @@ packages:
       ts-essentials: 7.0.3_typescript@4.7.2
       typechain: 8.0.0_typescript@4.7.2
       typescript: 4.7.2
+    dev: false
 
   /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
@@ -20160,6 +20151,7 @@ packages:
       typescript: 4.6.4
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /typechain/8.0.0_typescript@4.7.2:
     resolution: {integrity: sha512-rqDfDYc9voVAhmfVfAwzg3VYFvhvs5ck1X9T/iWkX745Cul4t+V/smjnyqrbDzWDbzD93xfld1epg7Y/uFAesQ==}
