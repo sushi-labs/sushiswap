@@ -1,3 +1,4 @@
+export * from './useAutoConnect'
 export * from './useBalance'
 export * from './useBentoBoxApproveCallback'
 export * from './useBentoBoxContract'
