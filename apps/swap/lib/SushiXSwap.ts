@@ -801,6 +801,22 @@ export class SushiXSwap {
     this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
+  async getFee(gasSpent = 500000) {
+    return this.crossChain
+      ? await this.contract.getFee(
+          STARGATE_CHAIN_ID[this.dstCooker.chainId],
+          1,
+          this.dstCooker.masterContract,
+          gasSpent,
+          0,
+          defaultAbiCoder.encode(
+            ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
+            [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
+          )
+        )
+      : [Zero, Zero]
+  }
+
   async cook(gasSpent = 500000): Promise<ContractTransaction | undefined> {
     if (!this.contract) {
       return
@@ -826,19 +842,7 @@ export class SushiXSwap {
     try {
       console.log('Before fee')
 
-      const [fee] = this.crossChain
-        ? await this.contract.getFee(
-            STARGATE_CHAIN_ID[this.dstCooker.chainId],
-            1,
-            this.dstCooker.masterContract,
-            gasSpent,
-            0,
-            defaultAbiCoder.encode(
-              ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
-              [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-            )
-          )
-        : [Zero, Zero]
+      const [fee] = await this.getFee(gasSpent)
 
       console.log(`Successful Fee`, fee)
 

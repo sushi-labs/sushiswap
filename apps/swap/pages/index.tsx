@@ -1,6 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
-import { InformationCircleIcon } from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { Disclosure, Transition } from '@headlessui/react'
+import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
@@ -21,10 +21,11 @@ import {
   BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
+  useBentoBoxTotal,
+  usePrices,
   useSushiXSwapContract,
   Wallet,
 } from '@sushiswap/wagmi'
-import { useBentoBoxTotal, usePrices } from '@sushiswap/wagmi'
 import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import {
@@ -46,9 +47,11 @@ import { SushiXSwap } from 'lib/SushiXSwap'
 import { nanoid } from 'nanoid'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useContractRead, useContractReads, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useContractRead, useContractReads, useNetwork, useSwitchNetwork } from 'wagmi'
+
+import { useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -176,7 +179,7 @@ const Widget: FC<Swap> = ({
 
   const router = useRouter()
 
-  const [expertMode, setExpertMode] = useState<boolean>(false)
+  const [{ expertMode }] = useSettings()
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
@@ -184,16 +187,12 @@ const Widget: FC<Swap> = ({
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
 
+  const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
   const [srcTxHash, setSrcTxHash] = useState<string>()
 
   useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
   useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
-
-  const feeData = useFeeData({
-    chainId: srcChainId,
-    formatUnits: 'gwei',
-  })
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
@@ -603,6 +602,11 @@ const Widget: FC<Swap> = ({
 
   const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
   const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
+  const { data: nativeBalance } = useBalance({
+    chainId: srcChainId,
+    account: address,
+    currency: Native.onChain(srcChainId),
+  })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -642,19 +646,100 @@ const Widget: FC<Swap> = ({
 
   const showWrap = false
 
+  useEffect(() => {
+    if (
+      !srcChainId ||
+      !srcAmount ||
+      !srcMinimumAmountOut ||
+      !srcAmountOutMinusStargateFee ||
+      !dstChainId ||
+      !dstMinimumAmountOut ||
+      !address ||
+      !srcTokenRebase ||
+      !contract
+    ) {
+      return
+    }
+
+    const getFee = async () => {
+      const srcShare = srcAmount.toShare(srcTokenRebase)
+      const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+
+      const sushiXSwap = new SushiXSwap({
+        contract,
+        srcToken,
+        dstToken,
+        srcTrade,
+        dstTrade,
+        srcUseBentoBox,
+        dstUseBentoBox,
+        user: address,
+        debug: true,
+      })
+
+      if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+        sushiXSwap.transfer(srcAmount, srcShare)
+      } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
+        sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
+      } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
+        sushiXSwap.crossChainSwap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut, dstMinimumAmountOut)
+      }
+
+      if (crossChain) {
+        sushiXSwap.teleport(
+          srcBridgeToken,
+          dstBridgeToken,
+          dstTrade ? dstTrade.route.gasSpent + 500000 : undefined,
+          nanoId
+        )
+      }
+
+      try {
+        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
+        feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    void getFee()
+  }, [
+    address,
+    contract,
+    crossChain,
+    dstBridgeToken,
+    dstChainId,
+    dstMinimumAmountOut,
+    dstToken,
+    dstTrade,
+    dstUseBentoBox,
+    nanoId,
+    signature,
+    srcAmount,
+    srcAmountOutMinusStargateFee,
+    srcBridgeToken,
+    srcChainId,
+    srcMinimumAmountOut,
+    srcToken,
+    srcTokenRebase,
+    srcTrade,
+    srcUseBentoBox,
+  ])
+
   const stats = useMemo(() => {
     return (
       <>
         <Typography variant="sm" className="text-slate-400">
-          Min. Received
-        </Typography>
-        <Typography variant="sm" weight={700} className="text-right text-slate-200 truncate">
-          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
-        </Typography>
-        <Typography variant="sm" className="text-slate-400">
           Price Impact
         </Typography>
-        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+        <Typography
+          variant="sm"
+          weight={700}
+          className={classNames(
+            priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
+            'text-right truncate'
+          )}
+        >
           {priceImpact?.multiply(-1).toFixed(2)}%
         </Typography>
         <Typography variant="sm" className="text-slate-400">
@@ -664,9 +749,51 @@ const Widget: FC<Swap> = ({
           ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
           minutes
         </Typography>
+        <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
+        <Typography variant="sm" className="text-slate-400">
+          Min. Received
+        </Typography>
+        <Typography variant="sm" weight={700} className="text-right text-slate-400 truncate">
+          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+        </Typography>
+        <Typography variant="sm" className="text-slate-400">
+          Transaction Fee
+        </Typography>
+        {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
+          <Typography variant="sm" weight={700} className="text-slate-400 text-right truncate">
+            ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)}
+          </Typography>
+        ) : (
+          <div className="flex justify-end">
+            <Loader size={12} />
+          </div>
+        )}
+        {crossChain ? (
+          <CrossChainRoute
+            srcTrade={srcTrade}
+            dstTrade={dstTrade}
+            inputAmount={srcAmount}
+            outputAmount={dstMinimumAmountOut}
+            dstBridgeToken={dstBridgeToken}
+            srcBridgeToken={srcBridgeToken}
+          />
+        ) : (
+          <SameChainRoute trade={srcTrade} />
+        )}
       </>
     )
-  }, [dstMinimumAmountOut, priceImpact, srcChainId])
+  }, [
+    crossChain,
+    dstBridgeToken,
+    dstMinimumAmountOut,
+    dstTrade,
+    priceImpact,
+    priceImpactSeverity,
+    srcAmount,
+    srcBridgeToken,
+    srcChainId,
+    srcTrade,
+  ])
 
   return (
     <>
@@ -697,13 +824,7 @@ const Widget: FC<Swap> = ({
           fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
           network={Chain.from(srcChainId)}
-          onNetworkSelect={(chainId) => {
-            setSrcChainId(chainId)
-            // mutateSwapCache({
-            //   ...swapCache,
-            //   srcChainId: chainId,
-            // })
-          }}
+          onNetworkSelect={setSrcChainId}
           tokenList={srcTokens}
           theme={theme}
           onMax={(value) => setSrcTypedAmount(value)}
@@ -731,34 +852,74 @@ const Widget: FC<Swap> = ({
             usdPctChange={usdPctChange}
           />
 
-          <div className="px-3 pb-3">
-            <Rate price={price} theme={theme}>
-              {({ content, usdPrice, toggleInvert }) => (
-                <div
-                  className={classNames(
-                    'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700 py-2'
-                  )}
-                >
-                  <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
-                    <Popover
-                      hover
-                      panel={<div className="bg-slate-700 p-3 grid grid-cols-2 gap-1">{stats}</div>}
-                      button={<InformationCircleIcon width={16} height={16} />}
-                    />
-                    Rate
-                  </Typography>
-                  <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
-                    {price ? (
-                      <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
-                        {content} <span className="text-slate-500">(${usdPrice})</span>
-                      </div>
-                    ) : (
-                      'Enter an amount'
-                    )}
-                  </Typography>
-                </div>
-              )}
-            </Rate>
+          <div className="p-3">
+            <Transition
+              show={!!price}
+              unmount={false}
+              className="transition-[max-height] overflow-hidden"
+              enter="duration-300 ease-in-out"
+              enterFrom="transform max-h-0"
+              enterTo="transform max-h-[380px]"
+              leave="transition-[max-height] duration-250 ease-in-out"
+              leaveFrom="transform max-h-[380px]"
+              leaveTo="transform max-h-0"
+            >
+              <Disclosure>
+                {({ open }) => (
+                  <>
+                    <Rate price={price} theme={theme}>
+                      {({ content, usdPrice, toggleInvert }) => (
+                        <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1">
+                          <div
+                            className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center"
+                            onClick={toggleInvert}
+                          >
+                            <Popover
+                              hover
+                              panel={
+                                <div className="bg-slate-800 border border-slate-200/10 p-3 grid grid-cols-2 gap-1">
+                                  {stats}
+                                </div>
+                              }
+                              button={<InformationCircleIcon width={16} height={16} />}
+                            />{' '}
+                            {content} <span className="text-slate-500 font-medium">(${usdPrice})</span>
+                          </div>
+                          <Disclosure.Button className="flex flex-grow items-center justify-end cursor-pointer">
+                            <ChevronDownIcon
+                              width={24}
+                              height={24}
+                              className={classNames(
+                                open ? '!rotate-180' : '',
+                                'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
+                              )}
+                            />
+                          </Disclosure.Button>
+                        </div>
+                      )}
+                    </Rate>
+                    <Transition
+                      show={open}
+                      unmount={false}
+                      className="transition-[max-height] overflow-hidden"
+                      enter="duration-300 ease-in-out"
+                      enterFrom="transform max-h-0"
+                      enterTo="transform max-h-[380px]"
+                      leave="transition-[max-height] duration-250 ease-in-out"
+                      leaveFrom="transform max-h-[380px]"
+                      leaveTo="transform max-h-0"
+                    >
+                      <Disclosure.Panel
+                        as="div"
+                        className="border border-slate-200/5 rounded-2xl px-4 mb-4 py-2 grid grid-cols-2 gap-1"
+                      >
+                        {stats}
+                      </Disclosure.Panel>
+                    </Transition>
+                  </>
+                )}
+              </Disclosure>
+            </Transition>
 
             {isMounted && !address ? (
               <Wallet.Button fullWidth color="blue" size="md">
@@ -776,6 +937,16 @@ const Widget: FC<Swap> = ({
               <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
+            ) : isMounted &&
+              ((srcAmount?.greaterThan(0) &&
+                feeRef.current &&
+                nativeBalance &&
+                feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
+                (srcBalance &&
+                  srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]))) ? (
+              <Button size="md" fullWidth disabled>
+                Insufficient Balance
+              </Button>
             ) : isMounted && chain && chain.id == srcChainId ? (
               <>
                 <ConfirmationComponentController
@@ -786,11 +957,15 @@ const Widget: FC<Swap> = ({
                       size="md"
                       variant="filled"
                       color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+                      {...(Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode) && {
+                        title: 'Enable expert mode to swap with high price impact',
+                      })}
                       disabled={
                         isWritePending ||
                         !srcAmount?.greaterThan(ZERO) ||
                         Boolean(srcAmount && !dstMinimumAmountOut) ||
-                        priceImpactTooHigh
+                        priceImpactTooHigh ||
+                        Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
                       }
                       onClick={() => setOpen(true)}
                     >
@@ -940,18 +1115,6 @@ const Widget: FC<Swap> = ({
                             </div>
                             <div className="grid grid-cols-2 gap-1 rounded-2xl p-2 sm:p-4 border border-slate-200/5 bg-slate-700/40">
                               {stats}
-                              {crossChain ? (
-                                <CrossChainRoute
-                                  srcTrade={srcTrade}
-                                  dstTrade={dstTrade}
-                                  inputAmount={srcAmount}
-                                  outputAmount={dstMinimumAmountOut}
-                                  dstBridgeToken={dstBridgeToken}
-                                  srcBridgeToken={srcBridgeToken}
-                                />
-                              ) : (
-                                <SameChainRoute trade={srcTrade} />
-                              )}
                             </div>
                             <Approve
                               className="flex-grow !justify-end pt-4"
@@ -989,7 +1152,7 @@ const Widget: FC<Swap> = ({
                 </ConfirmationComponentController>
               </>
             ) : (
-              <Button fullWidth color="blue">
+              <Button fullWidth color="blue" size="md">
                 <Loader size={16} />
               </Button>
             )}
