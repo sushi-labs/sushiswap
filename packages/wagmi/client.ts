@@ -185,9 +185,9 @@ const { chains, provider, webSocketProvider } = configureChains(
 const config: CreateClientConfig = {
   provider,
   webSocketProvider,
-  autoConnect: true,
   connectors() {
     return [
+      new SafeConnector({ chains }),
       new InjectedConnector({
         chains,
       }),
@@ -206,7 +206,6 @@ const config: CreateClientConfig = {
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
         },
       }),
-      new SafeConnector({ chains }),
     ]
   },
 }
