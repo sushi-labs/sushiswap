@@ -266,24 +266,24 @@ const Widget: FC<Swap> = ({
   const contract = useSushiXSwapContract(srcChainId)
 
   // Computed
+
+  // Same chain
+  const sameChain = srcChainId === dstChainId
+
+  // Cross chain
   const crossChain = srcChainId !== dstChainId
 
-  // useContractEvent(
-  //   {
-  //     addressOrName: STARGATE_ROUTER_ADDRESS[dstChainId],
-  //     contractInterface: STARGATE_ROUTER_ABI,
-  //   },
-  //   'CreditChainPath',
-  //   (event) => {
-  //     console.log(event)
-  //     if (event.to === account?.address) {
-  //       console.log('GOT EVENT!!!', event)
-  //     }
-  //   },
-  //   {
-  //     chainId: dstChainId,
-  //   }
-  // )
+  // A cross chain swap, a swap on the source and a swap on the destination
+  const crossChainSwap = crossChain && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
+
+  // A regular bridge transfer, no swaps on either end
+  const transfer = crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)
+
+  // A swap transfer, a swap on the source, but not swap on the destination
+  const swapTransfer = crossChain && !isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)
+
+  // A transfer swap, no swap on the source, but a swap on the destination
+  const transferSwap = crossChain && isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
 
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
@@ -306,31 +306,45 @@ const Widget: FC<Swap> = ({
     TradeType.EXACT_INPUT,
     srcAmount,
     srcToken,
-    crossChain ? srcBridgeToken : dstToken
+    crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
 
   const srcMinimumAmountOut =
-    (crossChain && !isStargateBridgeToken(srcToken)) || !crossChain
-      ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
-      : srcAmount
+    sameChain || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
 
-  const srcAmountOutMinusStargateFee = useMemo(() => {
-    return crossChain ? srcMinimumAmountOut?.multiply(_10000)?.divide(_9994) : srcMinimumAmountOut
+  const srcAmountMinusStargateFee = useMemo(() => {
+    return srcAmount?.multiply(_9994)?.divide(_10000)
+  }, [srcAmount])
+
+  const srcMinimumAmountOutMinusStargateFee = useMemo(() => {
+    return crossChain ? srcMinimumAmountOut?.multiply(_9994)?.divide(_10000) : srcMinimumAmountOut
   }, [crossChain, srcMinimumAmountOut])
 
-  const stargateFee = srcAmountOutMinusStargateFee
-    ? srcMinimumAmountOut?.subtract(srcAmountOutMinusStargateFee)
+  const stargateFee = srcMinimumAmountOutMinusStargateFee
+    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOutMinusStargateFee)
     : undefined
 
   const dstAmountIn = useMemo(() => {
     return tryParseAmount(
-      crossChain ? srcAmountOutMinusStargateFee?.toFixed() : srcMinimumAmountOut?.toFixed(),
+      crossChain ? srcMinimumAmountOutMinusStargateFee?.toFixed() : srcMinimumAmountOut?.toFixed(),
       crossChain ? dstBridgeToken : dstToken
     )
-  }, [crossChain, dstBridgeToken, dstToken, srcAmountOutMinusStargateFee, srcMinimumAmountOut])
+  }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
 
   // dstTrade
-  const dstTrade = useTrade(dstChainId, TradeType.EXACT_INPUT, dstAmountIn, dstBridgeToken, dstToken)
+  console.log('THIS', [
+    srcTrade,
+    crossChainSwap || transferSwap ? dstAmountIn : undefined,
+    crossChainSwap || transferSwap ? dstBridgeToken : undefined,
+    crossChainSwap || transferSwap ? dstToken : undefined,
+  ])
+  const dstTrade = useTrade(
+    dstChainId,
+    TradeType.EXACT_INPUT,
+    crossChainSwap || transferSwap ? dstAmountIn : undefined,
+    crossChainSwap || transferSwap ? dstBridgeToken : undefined,
+    crossChainSwap || transferSwap ? dstToken : undefined
+  )
 
   const { data: stargatePoolResults } = useContractReads({
     contracts: [
@@ -407,7 +421,15 @@ const Widget: FC<Swap> = ({
       srcMinimumAmountOut.quotient
     )
 
-    if (crossChain && srcTrade && dstTrade && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)) {
+    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+      return bridgeImpact
+    } else if (
+      crossChain &&
+      srcTrade &&
+      dstTrade &&
+      !isStargateBridgeToken(srcToken) &&
+      !isStargateBridgeToken(dstToken)
+    ) {
       return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
     } else if (crossChain && !srcTrade && dstTrade && !isStargateBridgeToken(dstToken)) {
       return dstTrade.priceImpact.add(bridgeImpact)
@@ -429,46 +451,15 @@ const Widget: FC<Swap> = ({
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
-  // DEBUG
   useEffect(() => {
-    console.debug('SRC CHAIN', srcChainId)
-    console.debug('DST CHAIN', dstChainId)
-    console.debug('SRC TOKEN', srcToken)
-    console.debug('DST TOKEN', dstToken)
-    console.debug('SRC TRADE', srcTrade)
-    console.debug('DST TRADE', dstTrade)
-    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-    console.debug('STARGATE FEE', stargateFee?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcAmountOutMinusStargateFee?.toFixed())
-    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
-  }, [
-    srcTrade,
-    dstTrade,
-    srcAmount,
-    srcMinimumAmountOut,
-    stargateFee,
-    srcAmountOutMinusStargateFee,
-    dstAmountIn,
-    dstMinimumAmountOut,
-    priceImpact,
-    dstChainId,
-    srcToken,
-    dstToken,
-    srcChainId,
-  ])
-
-  useEffect(() => {
-    if (!crossChain || isStargateBridgeToken(dstToken)) {
+    if (transfer) {
+      setDstTypedAmount(srcAmount?.toFixed() ?? '')
+    } else if (sameChain || swapTransfer) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
-    } else if (!isStargateBridgeToken(dstToken)) {
+    } else if (crossChainSwap) {
       setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
     }
-  }, [dstMinimumAmountOut, srcTrade, crossChain, dstToken, dstTrade])
+  }, [crossChainSwap, dstTrade?.outputAmount, sameChain, srcAmount, srcTrade?.outputAmount, swapTransfer, transfer])
 
   const switchCurrencies = useCallback(() => {
     const _srcChainId = srcChainId
@@ -491,7 +482,7 @@ const Widget: FC<Swap> = ({
       !srcChainId,
       !srcAmount,
       !srcMinimumAmountOut,
-      !srcAmountOutMinusStargateFee,
+      !srcMinimumAmountOutMinusStargateFee,
       !dstChainId,
       !dstMinimumAmountOut,
       !address,
@@ -503,7 +494,7 @@ const Widget: FC<Swap> = ({
       !srcChainId ||
       !srcAmount ||
       !srcMinimumAmountOut ||
-      !srcAmountOutMinusStargateFee ||
+      !srcMinimumAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
       !address ||
@@ -580,7 +571,7 @@ const Widget: FC<Swap> = ({
     srcChainId,
     srcAmount,
     srcMinimumAmountOut,
-    srcAmountOutMinusStargateFee,
+    srcMinimumAmountOutMinusStargateFee,
     dstChainId,
     dstMinimumAmountOut,
     address,
@@ -640,6 +631,39 @@ const Widget: FC<Swap> = ({
     return [inputUSD, outputUSD, usdPctChange]
   }, [dstMinimumAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
+  // DEBUG
+  useEffect(() => {
+    console.debug('SRC CHAIN', srcChainId)
+    console.debug('DST CHAIN', dstChainId)
+    console.debug('SRC TOKEN', srcToken)
+    console.debug('DST TOKEN', dstToken)
+    console.debug('SRC TRADE', srcTrade)
+    console.debug('DST TRADE', dstTrade)
+    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+    console.debug('STARGATE FEE', stargateFee?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+  }, [
+    srcTrade,
+    dstTrade,
+    srcAmount,
+    srcMinimumAmountOut,
+    stargateFee,
+    srcMinimumAmountOutMinusStargateFee,
+    dstAmountIn,
+    dstMinimumAmountOut,
+    priceImpact,
+    dstChainId,
+    srcToken,
+    dstToken,
+    srcChainId,
+  ])
+
   const showWrap = false
 
   const stats = useMemo(() => {
@@ -648,19 +672,19 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Min. Received
         </Typography>
-        <Typography variant="sm" weight={700} className="text-right text-slate-200 truncate">
+        <Typography variant="sm" weight={700} className="text-right truncate text-slate-200">
           {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
         </Typography>
         <Typography variant="sm" className="text-slate-400">
           Price Impact
         </Typography>
-        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+        <Typography variant="sm" weight={700} className="text-right truncate text-slate-200">
           {priceImpact?.multiply(-1).toFixed(2)}%
         </Typography>
         <Typography variant="sm" className="text-slate-400">
           Est. Processing Time
         </Typography>
-        <Typography variant="sm" weight={700} className="text-slate-200 text-right truncate">
+        <Typography variant="sm" weight={700} className="text-right truncate text-slate-200">
           ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
           minutes
         </Typography>
@@ -742,7 +766,7 @@ const Widget: FC<Swap> = ({
                   <Typography variant="sm" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
                     <Popover
                       hover
-                      panel={<div className="bg-slate-700 p-3 grid grid-cols-2 gap-1">{stats}</div>}
+                      panel={<div className="grid grid-cols-2 gap-1 p-3 bg-slate-700">{stats}</div>}
                       button={<InformationCircleIcon width={16} height={16} />}
                     />
                     Rate
@@ -772,7 +796,7 @@ const Widget: FC<Swap> = ({
               <Button size="md" fullWidth>
                 Wrap
               </Button>
-            ) : srcAmount?.greaterThan(0) && routeNotFound ? (
+            ) : !transfer && srcAmount?.greaterThan(0) && routeNotFound ? (
               <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
@@ -821,13 +845,13 @@ const Widget: FC<Swap> = ({
                           <>
                             <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
                             <div className="!my-0 grid grid-cols-12 items-center">
-                              <div className="relative flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                              <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex justify-between gap-2">
                                   {srcAmount && (
                                     <Typography
                                       variant="xs"
                                       weight={500}
-                                      className="flex gap-1 items-center text-slate-400"
+                                      className="flex items-center gap-1 text-slate-400"
                                     >
                                       <NetworkIcon
                                         type="naked"
@@ -838,22 +862,22 @@ const Widget: FC<Swap> = ({
                                       <span>{chains[srcAmount.currency.chainId].name}</span>
                                     </Typography>
                                   )}
-                                  <span className="text-xs text-slate-400 font-medium">
+                                  <span className="text-xs font-medium text-slate-400">
                                     {srcUseBentoBox ? 'Pay From BentoBox' : 'Pay From Wallet'}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className="flex justify-between items-center w-full gap-2">
+                                  <div className="flex items-center justify-between w-full gap-2">
                                     <Typography variant="h3" weight={700} className="truncate text-slate-50">
                                       {srcAmount?.toSignificant(6)}{' '}
                                     </Typography>
-                                    <div className="flex gap-2 text-right justify-end items-center">
+                                    <div className="flex items-center justify-end gap-2 text-right">
                                       {srcAmount && (
                                         <div className="w-5 h-5">
                                           <Icon currency={srcAmount.currency} width={20} height={20} />
                                         </div>
                                       )}
-                                      <Typography variant="h3" weight={500} className="text-slate-50 text-right">
+                                      <Typography variant="h3" weight={500} className="text-right text-slate-50">
                                         {srcAmount?.currency.symbol}
                                       </Typography>
                                     </div>
@@ -868,13 +892,13 @@ const Widget: FC<Swap> = ({
                                   <ChevronDownIcon width={18} height={18} className="text-slate-200" />
                                 </div>
                               </div>
-                              <div className="flex flex-col col-span-12 gap-1 p-2 sm:p-4 rounded-2xl bg-slate-700/40 border border-slate-200/5">
+                              <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex justify-between gap-2">
                                   {dstMinimumAmountOut && (
                                     <Typography
                                       variant="xs"
                                       weight={500}
-                                      className="flex gap-1 items-center text-slate-400"
+                                      className="flex items-center gap-1 text-slate-400"
                                     >
                                       <NetworkIcon
                                         type="naked"
@@ -885,22 +909,22 @@ const Widget: FC<Swap> = ({
                                       <span>{chains[dstMinimumAmountOut.currency.chainId].name}</span>
                                     </Typography>
                                   )}
-                                  <span className="text-xs text-slate-400 font-medium">
+                                  <span className="text-xs font-medium text-slate-400">
                                     {dstUseBentoBox ? 'Receive In BentoBox' : 'Receive In Wallet'}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className="flex justify-between items-center w-full gap-2">
+                                  <div className="flex items-center justify-between w-full gap-2">
                                     <Typography variant="h3" weight={700} className="truncate text-slate-50">
                                       {dstMinimumAmountOut?.toSignificant(6)}{' '}
                                     </Typography>
-                                    <div className="flex gap-2 text-right justify-end items-center">
+                                    <div className="flex items-center justify-end gap-2 text-right">
                                       {dstMinimumAmountOut && (
                                         <div className="w-5 h-5">
                                           <Icon currency={dstMinimumAmountOut.currency} width={20} height={20} />
                                         </div>
                                       )}
-                                      <Typography variant="h3" weight={500} className="text-slate-50 text-right">
+                                      <Typography variant="h3" weight={500} className="text-right text-slate-50">
                                         {dstMinimumAmountOut?.currency.symbol}
                                       </Typography>
                                     </div>
@@ -933,12 +957,12 @@ const Widget: FC<Swap> = ({
                                     weight={600}
                                     className="flex items-center gap-1 text-slate-100"
                                   >
-                                    {content} <span className="text-slate-300 font-normal">(${usdPrice})</span>
+                                    {content} <span className="font-normal text-slate-300">(${usdPrice})</span>
                                   </Typography>
                                 )}
                               </Rate>
                             </div>
-                            <div className="grid grid-cols-2 gap-1 rounded-2xl p-2 sm:p-4 border border-slate-200/5 bg-slate-700/40">
+                            <div className="grid grid-cols-2 gap-1 p-2 border rounded-2xl sm:p-4 border-slate-200/5 bg-slate-700/40">
                               {stats}
                               {crossChain ? (
                                 <CrossChainRoute
