@@ -16,6 +16,7 @@ import {
   Typography,
 } from '@sushiswap/ui'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
 import React, { FC, useState } from 'react'
 import { Control, Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
@@ -46,7 +47,13 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
     control,
   } as never) as CreateVestingFormData
 
-  const { totalAmount } = transformVestingFormData(data)
+  const { totalAmount, cliff, cliffEndDate, startDate, stepConfig, stepPayouts } = transformVestingFormData(data)
+  const endDate =
+    ((cliff && cliffEndDate) || startDate) && stepPayouts
+      ? new Date(
+          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
+        )
+      : undefined
 
   return (
     <Disclosure>
@@ -357,6 +364,17 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                     />
                   </Form.Control>
                 </div>
+                <Form.Control label="End Date">
+                  {endDate instanceof Date && !isNaN(endDate?.getTime()) ? (
+                    <Typography variant="sm" className="text-slate-50" weight={500}>
+                      {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                    </Typography>
+                  ) : (
+                    <Typography variant="sm" className="italic text-slate-500">
+                      Not available
+                    </Typography>
+                  )}
+                </Form.Control>
               </div>
               <div className="mr-6 mb-6 flex justify-end items-end">
                 <Button type="button" onClick={() => close()} size="sm" className="px-6">
