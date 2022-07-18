@@ -15,7 +15,9 @@ export const Header: FC = () => {
 
   const connect = useConnect({
     onSuccess: () => {
-      void router.push('/dashboard')
+      if (router.pathname === '/') {
+        void router.push('/dashboard')
+      }
     },
   })
 
