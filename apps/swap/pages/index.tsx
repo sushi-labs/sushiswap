@@ -759,9 +759,9 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Transaction Fee
         </Typography>
-        {feeRef.current ? (
-          <Typography variant="sm" weight={700} className="text-slate-400 cursor-pointer text-right truncate">
-            {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
+        {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
+          <Typography variant="sm" weight={700} className="text-slate-400 text-right truncate">
+            ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)}
           </Typography>
         ) : (
           <div className="flex justify-end">
@@ -937,12 +937,13 @@ const Widget: FC<Swap> = ({
               <Button size="md" fullWidth disabled>
                 Insufficient liquidity for this trade.
               </Button>
-            ) : (srcAmount?.greaterThan(0) &&
+            ) : isMounted &&
+              ((srcAmount?.greaterThan(0) &&
                 feeRef.current &&
                 nativeBalance &&
                 feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
-              (srcBalance &&
-                srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET])) ? (
+                (srcBalance &&
+                  srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]))) ? (
               <Button size="md" fullWidth disabled>
                 Insufficient Balance
               </Button>
