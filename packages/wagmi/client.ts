@@ -1,3 +1,4 @@
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
@@ -205,6 +206,7 @@ const config: CreateClientConfig = {
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
         },
       }),
+      new SafeConnector({ chains }),
     ]
   },
 }
