@@ -102,7 +102,7 @@ export const createVestingSchema = yup.object({
     .transform(emptyStringToNull)
     .when('cliff', {
       is: (value: boolean) => value,
-      then: yup.number().moreThan(0, 'Must be greater than zero'),
+      then: yup.number().min(0, 'Cliff amount cant be negative'),
       otherwise: yup.number().nullable(),
     }),
   stepPayouts: yup

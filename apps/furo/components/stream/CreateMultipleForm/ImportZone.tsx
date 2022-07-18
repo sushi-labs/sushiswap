@@ -1,9 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
+import chains from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dropzone, Typography } from '@sushiswap/ui'
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
@@ -12,7 +14,8 @@ import { CreateMultipleStreamFormData, CreateStreamFormData } from '../types'
 
 export const ImportZone = () => {
   const { chain } = useNetwork()
-  const { control } = useFormContext<CreateMultipleStreamFormData>()
+  const { control, trigger } = useFormContext<CreateMultipleStreamFormData>()
+  const errors = useRef<string[][]>([])
 
   // TODO: cast as never until
   // https://github.com/react-hook-form/react-hook-form/issues/4055#issuecomment-950145092 gets fixed
@@ -41,11 +44,18 @@ export const ImportZone = () => {
             const rows: CreateStreamFormData[] = []
 
             const tokens = await Promise.all(
-              arr.reduce<Promise<FetchTokenResult>[]>((acc, cur) => {
+              arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur, index) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',')
                   if (tokenAddress !== AddressZero) {
-                    acc.push(fetchToken({ address: tokenAddress, chainId: chain.id, formatUnits: 'ether' }))
+                    fetchToken({ address: tokenAddress, chainId: chain.id }).catch(() => {
+                      if (!errors.current[index]) {
+                        errors.current[index] = []
+                      }
+                      errors.current[index].push(
+                        `${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
+                      )
+                    })
                   }
                 }
 
@@ -53,41 +63,65 @@ export const ImportZone = () => {
               }, [])
             )
 
-            const tokenMap = tokens.reduce<Record<string, Token>>((acc, { address, decimals, symbol }) => {
-              acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId: chain.id })
+            const tokenMap = tokens?.reduce<Record<string, Token>>((acc, result) => {
+              if (result) {
+                const { address, symbol, decimals } = result
+                acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId: chain.id })
+              }
               return acc
             }, {})
 
-            arr?.forEach((cur) => {
+            arr?.forEach((cur, index) => {
               if (cur !== '') {
                 const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
-                const [sMM, sDD, sYYYY] = startDate.split('-')
-                const [eMM, eDD, eYYYY] = endDate.split('-')
+
+                let _startDate = ''
+                try {
+                  _startDate = new Date(Number(startDate) * 1000).toISOString().slice(0, 16)
+                } catch (e) {
+                  errors.current[index].push('Start date must be in unix timestamp')
+                }
+
+                let _endDate = ''
+                try {
+                  _endDate = new Date(Number(endDate) * 1000).toISOString().slice(0, 16)
+                } catch (e) {
+                  errors.current[index].push('End date must be in unix timestamp')
+                }
+
+                if (![0, 1].includes(Number(fundSource))) {
+                  errors.current[index].push('Fund source must be either 0 for Wallet or 1 for Bentobox')
+                }
 
                 rows.push({
-                  currency: tokenMap[tokenAddress.toLowerCase()] || Native.onChain(chain.id),
+                  currency:
+                    tokenAddress.toLowerCase() === AddressZero.toLowerCase()
+                      ? Native.onChain(chain.id)
+                      : tokenMap?.[tokenAddress.toLowerCase()],
                   fundSource: Number(fundSource) === 0 ? FundSource.WALLET : FundSource.BENTOBOX,
                   recipient,
                   amount,
-                  startDate: new Date(+sYYYY, +sMM, +sDD).toISOString().slice(0, 16),
-                  endDate: new Date(+eYYYY, +eMM, +eDD).toISOString().slice(0, 16),
+                  startDate: _startDate,
+                  endDate: _endDate,
                 })
               }
             }, [])
 
             append(rows)
+            await trigger()
           }
         }
 
         reader.readAsText(file)
       })
     },
-    [append, chain]
+    // @ts-ignore
+    [append, chain, trigger]
   )
 
   const downloadExample = useCallback(() => {
     const encodedUri = encodeURI(
-      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Amount,Recipient,Start Date (DD-MM-YYYY),End Date (DD-MM-YYYY)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,10-08-2022'
+      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Amount,Recipient,Start Date (Unix Epoch Timestamp),End Date (Unix Epoch Timestamp)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,10-08-2022'
     )
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)

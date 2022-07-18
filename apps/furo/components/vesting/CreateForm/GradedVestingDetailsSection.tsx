@@ -165,7 +165,7 @@ export const GradedVestingDetailsSection = () => {
       <Form.Control label="End Date">
         {endDate ? (
           <Typography variant="sm" className="text-slate-50" weight={500}>
-            {format(endDate, 'dd MMM yyyy hh:maaa')}
+            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
           </Typography>
         ) : (
           <Typography variant="sm" className="italic text-slate-500">

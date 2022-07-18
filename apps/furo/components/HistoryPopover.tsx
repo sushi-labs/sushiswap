@@ -71,7 +71,7 @@ const HistoryPopoverTransaction: FC<{ stream: Stream | Vesting; transaction: Tra
         <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
           {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
           <Typography as="span" variant="xxs" className="text-slate-500">
-            {format(new Date(transaction.timestamp), 'hh:maaa')}
+            {format(new Date(transaction.timestamp), 'hh:mmaaa')}
           </Typography>
         </Typography>
         <Typography variant="xs" weight={500} className="flex flex-col text-right text-slate-200">
