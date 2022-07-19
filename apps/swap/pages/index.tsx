@@ -286,7 +286,7 @@ const Widget: FC<Swap> = ({
   const srcMinimumAmountOut =
     sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
 
-  const srcAmountMinusStargateFee = useMemo(() => {
+  const srcAmountOutMinusStargateFee = useMemo(() => {
     return srcAmount?.multiply(_9994)?.divide(_10000)
   }, [srcAmount])
 
@@ -383,6 +383,8 @@ const Widget: FC<Swap> = ({
     crossChain && !isStargateBridgeToken(dstToken)
       ? dstTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
       : srcMinimumAmountOut
+      ? Amount.fromFractionalAmount(dstToken, srcMinimumAmountOut.numerator, srcMinimumAmountOut.denominator)
+      : undefined
 
   const price =
     srcAmount && dstMinimumAmountOut
@@ -922,6 +924,7 @@ const Widget: FC<Swap> = ({
               <>
                 <ConfirmationComponentController
                   variant="dialog"
+                  onClose={() => setSrcTxHash(undefined)}
                   trigger={({ setOpen }) => (
                     <Button
                       fullWidth
@@ -959,8 +962,10 @@ const Widget: FC<Swap> = ({
                           onClose={() => setOpen(false)}
                           id={nanoId}
                           srcTxHash={srcTxHash}
-                          srcTrade={srcTrade}
-                          dstTrade={dstTrade}
+                          inputAmount={srcAmount}
+                          outputAmount={dstMinimumAmountOut}
+                          srcBridgeToken={srcBridgeToken}
+                          dstBridgeToken={dstBridgeToken}
                         />
                       ) : (
                         <SlideIn>
@@ -968,26 +973,6 @@ const Widget: FC<Swap> = ({
                             <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
                             <div className="!my-0 grid grid-cols-12 items-center">
                               <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-                                <div className="flex justify-between gap-2">
-                                  {srcAmount && (
-                                    <Typography
-                                      variant="xs"
-                                      weight={500}
-                                      className="flex items-center gap-1 text-slate-400"
-                                    >
-                                      <NetworkIcon
-                                        type="naked"
-                                        chainId={srcAmount.currency.chainId}
-                                        width={16}
-                                        height={16}
-                                      />
-                                      <span>{chains[srcAmount.currency.chainId].name}</span>
-                                    </Typography>
-                                  )}
-                                  <span className="text-xs font-medium text-slate-400">
-                                    {srcUseBentoBox ? 'Pay From BentoBox' : 'Pay From Wallet'}
-                                  </span>
-                                </div>
                                 <div className="flex items-center gap-2">
                                   <div className="flex items-center justify-between w-full gap-2">
                                     <Typography variant="h3" weight={700} className="truncate text-slate-50">
@@ -1005,18 +990,11 @@ const Widget: FC<Swap> = ({
                                     </div>
                                   </div>
                                 </div>
-                                <Typography variant="sm" weight={700} className="text-slate-500">
-                                  {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
-                                </Typography>
-                              </div>
-                              <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
-                                <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                                  <ChevronDownIcon width={18} height={18} className="text-slate-200" />
-                                </div>
-                              </div>
-                              <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex justify-between gap-2">
-                                  {dstMinimumAmountOut && (
+                                  <Typography variant="sm" weight={700} className="text-slate-500">
+                                    {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
+                                  </Typography>
+                                  {srcAmount && (
                                     <Typography
                                       variant="xs"
                                       weight={500}
@@ -1024,17 +1002,21 @@ const Widget: FC<Swap> = ({
                                     >
                                       <NetworkIcon
                                         type="naked"
-                                        chainId={dstMinimumAmountOut.currency.chainId}
+                                        chainId={srcAmount.currency.chainId}
                                         width={16}
                                         height={16}
                                       />
-                                      <span>{chains[dstMinimumAmountOut.currency.chainId].name}</span>
+                                      <span>{chains[srcAmount.currency.chainId].name}</span>
                                     </Typography>
                                   )}
-                                  <span className="text-xs font-medium text-slate-400">
-                                    {dstUseBentoBox ? 'Receive In BentoBox' : 'Receive In Wallet'}
-                                  </span>
                                 </div>
+                              </div>
+                              <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+                                <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                                  <ChevronDownIcon width={18} height={18} className="text-slate-200" />
+                                </div>
+                              </div>
+                              <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex items-center gap-2">
                                   <div className="flex items-center justify-between w-full gap-2">
                                     <Typography variant="h3" weight={700} className="truncate text-slate-50">
@@ -1052,21 +1034,46 @@ const Widget: FC<Swap> = ({
                                     </div>
                                   </div>
                                 </div>
-                                <Typography variant="sm" weight={700} className="text-slate-500">
-                                  {outputUsd ? `$${outputUsd.toFixed(2)}` : '-'}
-                                  {usdPctChange && (
-                                    <span
-                                      className={classNames(
-                                        usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red'
-                                      )}
+                                <div className="flex justify-between gap-2">
+                                  <Typography variant="sm" weight={700} className="text-slate-500">
+                                    {outputUsd ? `$${outputUsd.toFixed(2)}` : '-'}
+                                    {usdPctChange && (
+                                      <span
+                                        className={classNames(
+                                          usdPctChange === 0
+                                            ? ''
+                                            : usdPctChange > 0
+                                            ? 'text-green'
+                                            : usdPctChange < -3
+                                            ? 'text-red'
+                                            : usdPctChange < -2
+                                            ? 'text-yellow'
+                                            : 'text-slate-500'
+                                        )}
+                                      >
+                                        {' '}
+                                        {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                                          usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
+                                        }%)`}
+                                      </span>
+                                    )}
+                                  </Typography>
+                                  {dstMinimumAmountOut && (
+                                    <Typography
+                                      variant="xs"
+                                      weight={500}
+                                      className="flex items-center gap-1 text-slate-400"
                                     >
-                                      {' '}
-                                      {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
-                                        usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
-                                      }%)`}
-                                    </span>
+                                      <NetworkIcon
+                                        type="naked"
+                                        chainId={dstMinimumAmountOut.currency.chainId}
+                                        width={16}
+                                        height={16}
+                                      />
+                                      <span>{chains[dstMinimumAmountOut.currency.chainId].name}</span>
+                                    </Typography>
                                   )}
-                                </Typography>
+                                </div>
                               </div>
                             </div>
                             <div className="px-4 py-3">

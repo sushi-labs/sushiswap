@@ -7,13 +7,14 @@ import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
-export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
-  children?: React.ReactNode
-}
+export type DialogRootProps = ExtractProps<typeof HeadlessDialog> &
+  Pick<ExtractProps<typeof HeadlessDialog>, 'afterLeave'> & {
+    children?: React.ReactNode
+  }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
   return (
-    <Transition show={open} as={Fragment}>
+    <Transition show={open} as={Fragment} afterLeave={afterLeave}>
       <HeadlessDialog className="relative z-[100]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
