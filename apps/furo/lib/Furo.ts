@@ -4,7 +4,8 @@ import { JSBI, Percent } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
-import { type Rebase, type Stream as StreamDTO, type User as UserDTO } from '.graphclient'
+import { type Rebase, type Stream as StreamDTO, type User as UserDTO, type Vesting as VestingDTO } from '.graphclient'
+
 export abstract class Furo {
   public _balance: Amount<Token>
   public _withdrawnAmount: Amount<Token>
@@ -23,7 +24,7 @@ export abstract class Furo {
   public readonly rebase: Pick<Rebase, 'base' | 'elastic'>
   public readonly txHash: string
 
-  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: Rebase }) {
+  public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO | VestingDTO; rebase: Rebase }) {
     this.rebase = {
       base: JSBI.BigInt(Math.round(Math.floor(rebase.base * 1e5))),
       elastic: JSBI.BigInt(Math.round(Math.floor(rebase.elastic * 1e5))),
