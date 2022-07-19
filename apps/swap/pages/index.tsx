@@ -812,9 +812,9 @@ const Widget: FC<Swap> = ({
                   <>
                     <Rate price={price} theme={theme}>
                       {({ content, usdPrice, toggleInvert }) => (
-                        <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1">
+                        <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1 gap-2">
                           <div
-                            className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center"
+                            className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
                             onClick={toggleInvert}
                           >
                             <Popover
@@ -826,7 +826,9 @@ const Widget: FC<Swap> = ({
                               }
                               button={<InformationCircleIcon width={16} height={16} />}
                             />{' '}
-                            {content} <span className="font-medium text-slate-500">(${usdPrice})</span>
+                            <>
+                              {content} <span className="font-medium text-slate-500">(${usdPrice})</span>
+                            </>
                           </div>
                           <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
                             <ChevronDownIcon

@@ -73,7 +73,9 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
           <div>
             {isMounted &&
               connectors
-                .sort((a) => (a.name === 'Safe' ? 1 : -1))
+                .sort((a, b) =>
+                  a.name === 'Safe' || b.name == 'safe' ? 1 : a.name === 'MetaMask' || b.name === 'MetaMask' ? -1 : 0
+                )
                 .map((connector) => (
                   <Menu.Item
                     key={connector.id}
