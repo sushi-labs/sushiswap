@@ -250,14 +250,23 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
 }
 
-export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = addressMapToTokenMap(
-  {
-    decimals: 6,
+export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
+  ...addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    },
+    USDC_ADDRESS
+  ),
+  [ChainId.BSC]: new Token({
+    chainId: ChainId.BSC,
+    address: USDC_ADDRESS[ChainId.BSC],
+    decimals: 18,
     symbol: 'USDC',
     name: 'USD Coin',
-  },
-  USDC_ADDRESS
-)
+  }),
+}
 
 export const USDT_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
@@ -280,14 +289,23 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
 }
 
-export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = addressMapToTokenMap(
-  {
-    decimals: 6,
+export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
+  ...addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'USDT',
+      name: 'Tether USD',
+    },
+    USDT_ADDRESS
+  ),
+  [ChainId.BSC]: new Token({
+    chainId: ChainId.BSC,
+    address: USDT_ADDRESS[ChainId.BSC],
+    decimals: 18,
     symbol: 'USDT',
     name: 'Tether USD',
-  },
-  USDT_ADDRESS
-)
+  }),
+}
 
 export const DAI_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
