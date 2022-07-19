@@ -469,12 +469,9 @@ const Widget: FC<Swap> = ({
 
     if (transfer) {
       sushiXSwap.transfer(srcAmount, srcShare)
-    } else if (!sameChainSwap && srcTrade && srcTrade.route.legs.length) {
+    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length) {
       sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
-    } else if (
-      crossChainSwap &&
-      ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))
-    ) {
+    } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
       sushiXSwap.crossChainSwap(
         srcAmount,
         srcShare,
@@ -528,7 +525,6 @@ const Widget: FC<Swap> = ({
     signature,
     transfer,
     sameChainSwap,
-    crossChainSwap,
     crossChain,
     srcBridgeToken,
     dstBridgeToken,
