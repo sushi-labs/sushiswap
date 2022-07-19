@@ -1,7 +1,7 @@
 import CHAIN from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
-import { WNATIVE } from '.'
+import { WNATIVE } from './constants'
 import { Currency } from './Currency'
 import { Token } from './Token'
 import { Type } from './Type'
