@@ -48,7 +48,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useContractRead, useContractReads, useFeeData, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useContractRead, useContractReads, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       srcChainId: srcChainId ?? ChainId.AVALANCHE,
       dstChainId: dstChainId ?? ChainId.OPTIMISM,
       srcTypedAmount: srcTypedAmount ?? '',
-      dstTypedAmount: dstTypedAmount ?? ''
+      dstTypedAmount: dstTypedAmount ?? '',
     },
   }
 }
@@ -198,8 +198,10 @@ const Widget: FC<Swap> = ({
     console.debug([
       srcChainId === Number(router.query.srcChainId),
       dstChainId === Number(router.query.dstChainId),
-      srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-      dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+      (srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken) ||
+        srcToken.wrapped.address === router.query.srcToken,
+      (dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken) ||
+        dstToken.wrapped.address === router.query.dstToken,
       srcTypedAmount === router.query.srcTypedAmount,
       dstTypedAmount === router.query.dstTypedAmount,
     ])
@@ -207,8 +209,10 @@ const Widget: FC<Swap> = ({
     if (
       srcChainId === Number(router.query.srcChainId) &&
       dstChainId === Number(router.query.dstChainId) &&
-      (srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
-      (dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
+      ((srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken) ||
+        srcToken.wrapped.address === router.query.srcToken) &&
+      ((dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken) ||
+        dstToken.wrapped.address === router.query.dstToken) &&
       srcTypedAmount === router.query.srcTypedAmount &&
       dstTypedAmount === router.query.dstTypedAmount
     ) {
@@ -224,22 +228,12 @@ const Widget: FC<Swap> = ({
         srcChainId,
         dstChainId,
         srcTypedAmount,
-        dstTypedAmount
+        dstTypedAmount,
       },
     })
-  }, [
-    srcToken,
-    dstToken,
-    srcChainId,
-    dstChainId,
-    srcTypedAmount,
-    dstTypedAmount,
-    router,
-  ])
+  }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, router])
 
   const contract = useSushiXSwapContract(srcChainId)
-
-  console.log({srcTypedAmount, dstTypedAmount})
 
   // Computed
 
@@ -468,7 +462,7 @@ const Widget: FC<Swap> = ({
       sushiXSwap.srcCooker.setMasterContractApproval(signature)
     }
 
-    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+    if (transfer) {
       sushiXSwap.transfer(srcAmount, srcShare)
     } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
       sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
@@ -524,6 +518,7 @@ const Widget: FC<Swap> = ({
     srcUseBentoBox,
     dstUseBentoBox,
     signature,
+    transfer,
     crossChain,
     srcBridgeToken,
     dstBridgeToken,
