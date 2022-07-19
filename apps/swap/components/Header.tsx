@@ -9,8 +9,8 @@ export const Header = () => {
       brand={
         <NextLink href="/">
           <a className="flex flex-row items-center gap-1.5">
-            <div className="w-7 h-7 sm:w-8 sm:h-8">
-              <SushiIcon width="100%" height="100%" className="mr-1 hover:animate-spin hover:text-pink" />
+            <div className="w-6 h-6">
+              <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
             </div>
             <span className="hidden sm:block font-semibold">Swap</span>
           </a>

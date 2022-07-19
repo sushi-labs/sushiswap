@@ -48,8 +48,8 @@ export function Footer(props: FooterProps): JSX.Element {
     <footer className="flex border-t border-slate-400/5 py-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
-          <div className="flex items-center justify-start gap-3">
-            <SushiWithTextIcon height={36} className="text-slate-50" />
+          <div className="flex items-center justify-start gap-3 pt-2">
+            <SushiWithTextIcon height={20} className="text-slate-50" />
           </div>
           <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
