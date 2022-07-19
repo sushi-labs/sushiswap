@@ -180,12 +180,6 @@ const Widget: FC<Swap> = ({
   const [nanoId] = useState(nanoid())
   const [srcTxHash, setSrcTxHash] = useState<string>()
 
-
-  const feeData = useFeeData({
-    chainId: srcChainId,
-    formatUnits: 'gwei',
-  })
-
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
 
@@ -201,20 +195,20 @@ const Widget: FC<Swap> = ({
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
   useEffect(() => {
     // Escape hatch if already synced (could probably pull something like this out to generic...)
-    // console.debug([
-    //   srcChainId === Number(router.query.srcChainId),
-    //   dstChainId === Number(router.query.dstChainId),
-    //   srcToken.wrapped.address === router.query.srcToken,
-    //   dstToken.wrapped.address === router.query.dstToken,
-    //   srcTypedAmount === router.query.srcTypedAmount,
-    //   dstTypedAmount === router.query.dstTypedAmount,
-    // ])
+    console.debug([
+      srcChainId === Number(router.query.srcChainId),
+      dstChainId === Number(router.query.dstChainId),
+      srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+      dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+      srcTypedAmount === router.query.srcTypedAmount,
+      dstTypedAmount === router.query.dstTypedAmount,
+    ])
 
     if (
       srcChainId === Number(router.query.srcChainId) &&
       dstChainId === Number(router.query.dstChainId) &&
-      srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken &&
-      dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken &&
+      (srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
+      (dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
       srcTypedAmount === router.query.srcTypedAmount &&
       dstTypedAmount === router.query.dstTypedAmount
     ) {
@@ -225,10 +219,10 @@ const Widget: FC<Swap> = ({
       pathname: router.pathname,
       query: {
         ...router.query,
-        srcChainId,
-        dstChainId,
         srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.address,
         dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.address,
+        srcChainId,
+        dstChainId,
         srcTypedAmount,
         dstTypedAmount
       },
@@ -245,6 +239,7 @@ const Widget: FC<Swap> = ({
 
   const contract = useSushiXSwapContract(srcChainId)
 
+  console.log({srcTypedAmount, dstTypedAmount})
 
   // Computed
 
@@ -352,35 +347,6 @@ const Widget: FC<Swap> = ({
     enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
   })
 
-  // console.log([
-  //   {
-  //     contracts: [
-  //       {
-  //         addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-  //         functionName: 'getChainPath',
-  //         args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
-  //         chainId: srcChainId,
-  //       },
-  //       {
-  //         addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-  //         functionName: 'feeLibrary',
-  //         chainId: srcChainId,
-  //       },
-  //     ],
-  //     enabled: crossChain,
-  //   },
-  //   {
-  //     addressOrName: String(stargatePoolResults?.[1]),
-  //     functionName: 'getEquilibriumFee',
-  //     args: [
-  //       stargatePoolResults?.[0].idealBalance.toString(),
-  //       stargatePoolResults?.[0].balance.toString(),
-  //       srcMinimumAmountOut?.quotient?.toString(),
-  //     ],
-  //   },
-  //   equilibriumFee?.[0]?.toString() / 1e6,
-  // ])
-
   const priceImpact = useMemo(() => {
     if (!crossChain && srcTrade) {
       return srcTrade.priceImpact
@@ -430,7 +396,7 @@ const Widget: FC<Swap> = ({
       setDstTypedAmount(srcAmount?.toFixed() ?? '')
     } else if (sameChain || swapTransfer) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
-    } else if (crossChainSwap) {
+    } else if (crossChainSwap || transferSwap) {
       setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
     }
   }, [crossChainSwap, dstTrade?.outputAmount, sameChain, srcAmount, srcTrade?.outputAmount, swapTransfer, transfer])
