@@ -71,7 +71,6 @@ query vesting($block: Block_height, $id: ID!) {
     stepAmount
     cliffAmount
     totalAmount
-    initialAmount
     withdrawnAmount
     fromBentoBox
     txHash
@@ -136,6 +135,8 @@ query userStreams($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     totalAmount
     withdrawnAmount
+    initialAmount
+    extendedAmount
     recipient {
       id
     }
@@ -158,6 +159,8 @@ query userStreams($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     totalAmount
     withdrawnAmount
+    initialAmount
+    extendedAmount
     recipient {
       id
     }
@@ -183,6 +186,8 @@ query stream($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     totalAmount
     withdrawnAmount
+    initialAmount
+    extendedAmount
     txHash
     recipient {
       id

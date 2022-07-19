@@ -6,8 +6,12 @@ import { Furo } from './Furo'
 import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
+  // public readonly initialAmount: Amount<Token>
+  // public readonly extendedAmount: Amount<Token>
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
     super({ chainId, furo, rebase })
+    // this.initialAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.initialAmount), this.rebase)
+    // this.extendedAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.extendedAmount), this.rebase)
   }
 
   public override get balance(): Amount<Token> {
