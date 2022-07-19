@@ -15,7 +15,7 @@ import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
 import { PoolState, useConstantProductPools } from './useConstantProductPools'
-import { PairState, usePairs } from './usePairs'
+import { PairState, usePairs } from './usePairs2'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
