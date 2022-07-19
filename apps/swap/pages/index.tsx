@@ -827,7 +827,7 @@ const Widget: FC<Swap> = ({
                               button={<InformationCircleIcon width={16} height={16} />}
                             />{' '}
                             <>
-                              {content} <span className="font-medium text-slate-500">(${usdPrice})</span>
+                              {content} {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
                             </>
                           </div>
                           <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
@@ -1070,7 +1070,8 @@ const Widget: FC<Swap> = ({
                                     weight={600}
                                     className="flex items-center gap-1 text-slate-100"
                                   >
-                                    {content} <span className="font-normal text-slate-300">(${usdPrice})</span>
+                                    {content}{' '}
+                                    {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
                                   </Typography>
                                 )}
                               </Rate>
