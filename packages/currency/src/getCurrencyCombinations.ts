@@ -34,12 +34,30 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
   ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
-    WETH9[ChainId.FANTOM],
+    WETH9[ChainId.AVALANCHE],
     USDC[ChainId.AVALANCHE],
     USDT[ChainId.AVALANCHE],
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
+  ],
+  [ChainId.POLYGON]: [
+    WNATIVE[ChainId.POLYGON],
+    WETH9[ChainId.POLYGON],
+    USDC[ChainId.POLYGON],
+    USDT[ChainId.POLYGON],
+    DAI[ChainId.POLYGON],
+    MIM[ChainId.POLYGON],
+    FRAX[ChainId.POLYGON],
+  ],
+  [ChainId.BSC]: [
+    WNATIVE[ChainId.BSC],
+    WETH9[ChainId.BSC],
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+    MIM[ChainId.BSC],
+    FRAX[ChainId.BSC],
   ],
 }
 
