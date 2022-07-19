@@ -24,4 +24,14 @@ export default withTranspileModules({
   experimental: {
     nextScriptWorkers: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/swap',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 })

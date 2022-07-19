@@ -345,39 +345,30 @@ const Widget: FC<Swap> = ({
     enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
   })
 
-  const priceImpact = useMemo(() => {
-    if (!crossChain && srcTrade) {
-      return srcTrade.priceImpact
-    }
-
+  const bridgeImpact = useMemo(() => {
     if (!stargateFee || !equilibriumFee || !srcMinimumAmountOut) {
       return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
     }
-
-    const bridgeImpact = new Percent(
+    return new Percent(
       JSBI.add(stargateFee.quotient, JSBI.BigInt(equilibriumFee[0].toString())),
       srcMinimumAmountOut.quotient
     )
+  }, [equilibriumFee, srcMinimumAmountOut, stargateFee])
 
-    if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
+  const priceImpact = useMemo(() => {
+    if (transfer) {
       return bridgeImpact
-    } else if (
-      crossChain &&
-      srcTrade &&
-      dstTrade &&
-      !isStargateBridgeToken(srcToken) &&
-      !isStargateBridgeToken(dstToken)
-    ) {
+    } else if (sameChainSwap && srcTrade) {
+      return srcTrade.priceImpact
+    } else if (crossChainSwap && srcTrade && dstTrade) {
       return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
-    } else if (crossChain && !srcTrade && dstTrade && !isStargateBridgeToken(dstToken)) {
+    } else if (transferSwap && !srcTrade && dstTrade) {
       return dstTrade.priceImpact.add(bridgeImpact)
-    } else if (crossChain && srcTrade && !dstTrade && !isStargateBridgeToken(srcToken)) {
+    } else if (swapTransfer && srcTrade && !dstTrade) {
       return srcTrade.priceImpact.add(bridgeImpact)
     }
-
-    // Return zero percent
     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-  }, [crossChain, dstToken, dstTrade, equilibriumFee, srcMinimumAmountOut, srcToken, srcTrade, stargateFee])
+  }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
   const dstMinimumAmountOut =
     crossChain && !isStargateBridgeToken(dstToken)
@@ -457,7 +448,6 @@ const Widget: FC<Swap> = ({
     const srcShare = srcAmount.toShare(srcTokenRebase)
 
     const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
-    // const dstMinimumShareOut = dstMinimumAmountOut.toShare(dstTokenRebase)
 
     setIsWritePending(true)
 
@@ -479,7 +469,7 @@ const Widget: FC<Swap> = ({
 
     if (transfer) {
       sushiXSwap.transfer(srcAmount, srcShare)
-    } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
+    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length) {
       sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
     } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
       sushiXSwap.crossChainSwap(
@@ -534,6 +524,7 @@ const Widget: FC<Swap> = ({
     dstUseBentoBox,
     signature,
     transfer,
+    sameChainSwap,
     crossChain,
     srcBridgeToken,
     dstBridgeToken,
@@ -557,18 +548,21 @@ const Widget: FC<Swap> = ({
   const dstTokenPrice = dstPrices?.[dstToken.wrapped.address]
 
   const routeNotFound = useMemo(() => {
-    if (crossChain && (isStargateBridgeToken(srcToken) || isStargateBridgeToken(dstToken))) {
+    if (swapTransfer || transferSwap) {
       return (
         (isStargateBridgeToken(srcToken) && (!dstTrade || !dstTrade.route.legs.length)) ||
         (isStargateBridgeToken(dstToken) && (!srcTrade || !srcTrade.route.legs.length))
       )
-    } else if (!crossChain && srcTrade && srcTrade.route.legs.length) {
+    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length) {
       return !srcTrade
-    } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
+    } else if (
+      crossChainSwap &&
+      ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))
+    ) {
       return !srcTrade || !dstTrade
     }
     return false
-  }, [crossChain, srcToken, dstToken, srcTrade, dstTrade])
+  }, [swapTransfer, transferSwap, sameChainSwap, srcTrade, crossChainSwap, dstTrade, srcToken, dstToken])
 
   const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
 
@@ -663,13 +657,13 @@ const Widget: FC<Swap> = ({
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
-          dstTrade ? dstTrade.route.gasSpent + 500000 : undefined,
+          dstTrade ? dstTrade.route.gasSpent + 100000 : undefined,
           nanoId
         )
       }
 
       try {
-        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
+        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
         feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
       } catch (e) {
         console.log(e)
@@ -742,19 +736,7 @@ const Widget: FC<Swap> = ({
         )}
       </>
     )
-  }, [
-    crossChain,
-    dstBridgeToken,
-    dstMinimumAmountOut,
-    dstTrade,
-    priceImpact,
-    priceImpactSeverity,
-    srcAmount,
-    srcBridgeToken,
-    srcChainId,
-    srcPrices,
-    srcTrade,
-  ])
+  }, [dstMinimumAmountOut, priceImpact, priceImpactSeverity, srcChainId, srcPrices])
 
   return (
     <>
