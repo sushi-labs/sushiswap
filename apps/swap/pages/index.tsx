@@ -40,7 +40,7 @@ import {
   TransactionProgressOverlay,
 } from 'components'
 import { defaultTheme } from 'config'
-import { useTrade } from 'lib/hooks'
+import { useCurrency, useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { nanoid } from 'nanoid'
@@ -87,27 +87,20 @@ const theme: Theme = {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, srcUseBentoBox, dstUseBentoBox } = query
+  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount } = query
   return {
     props: {
+      srcToken: srcToken ?? Native.onChain(ChainId.AVALANCHE).symbol,
+      dstToken: dstToken ?? Native.onChain(ChainId.OPTIMISM).symbol,
       srcChainId: srcChainId ?? ChainId.AVALANCHE,
       dstChainId: dstChainId ?? ChainId.OPTIMISM,
       srcTypedAmount: srcTypedAmount ?? '',
-      dstTypedAmount: dstTypedAmount ?? '',
-      srcUseBentoBox: srcUseBentoBox ?? false,
-      dstUseBentoBox: dstUseBentoBox ?? false,
+      dstTypedAmount: dstTypedAmount ?? ''
     },
   }
 }
 
-export default function Swap({
-  srcChainId = ChainId.AVALANCHE,
-  dstChainId = ChainId.OPTIMISM,
-  srcTypedAmount = '',
-  dstTypedAmount = '',
-  srcUseBentoBox = false,
-  dstUseBentoBox = false,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Swap(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // TODO: Sync from local storage if no query params
 
   // const { data } = useSWR<SwapCache>('swap-cache', storage, {
@@ -117,20 +110,19 @@ export default function Swap({
   //   localStorage.setItem('swap-cache', JSON.stringify(value))
   //   mutate('swap-cache', value)
   // }
-
+  const srcToken = useCurrency({ chainId: props.srcChainId, id: props.srcToken })
+  const dstToken = useCurrency({ chainId: props.dstChainId, id: props.dstToken })
   return (
     <Layout>
       <Widget
         theme={theme}
         initialState={{
-          srcChainId: Number(srcChainId),
-          dstChainId: Number(dstChainId),
-          srcTypedAmount,
-          dstTypedAmount,
-          srcUseBentoBox: JSON.parse(srcUseBentoBox),
-          dstUseBentoBox: JSON.parse(dstUseBentoBox),
-          srcToken: Native.onChain(Number(srcChainId)),
-          dstToken: Native.onChain(Number(dstChainId)),
+          srcToken,
+          dstToken,
+          srcChainId: Number(props.srcChainId),
+          dstChainId: Number(props.dstChainId),
+          srcTypedAmount: props.srcTypedAmount,
+          dstTypedAmount: props.dstTypedAmount,
         }}
         // swapCache={data}
         // mutateSwapCache={mutateSwapCache}
@@ -148,8 +140,6 @@ interface Swap {
     dstChainId: number
     srcTypedAmount: string
     dstTypedAmount: string
-    srcUseBentoBox: boolean
-    dstUseBentoBox: boolean
     srcToken: Currency
     dstToken: Currency
   }
@@ -184,11 +174,12 @@ const Widget: FC<Swap> = ({
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
 
+  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
+  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
+
   const [nanoId] = useState(nanoid())
   const [srcTxHash, setSrcTxHash] = useState<string>()
 
-  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
-  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
   const feeData = useFeeData({
     chainId: srcChainId,
@@ -198,8 +189,8 @@ const Widget: FC<Swap> = ({
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
 
-  const [srcUseBentoBox, setSrcUseBentoBox] = useState(initialState.srcUseBentoBox)
-  const [dstUseBentoBox, setDstUseBentoBox] = useState(initialState.dstUseBentoBox)
+  const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
+  const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
 
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
@@ -217,19 +208,15 @@ const Widget: FC<Swap> = ({
     //   dstToken.wrapped.address === router.query.dstToken,
     //   srcTypedAmount === router.query.srcTypedAmount,
     //   dstTypedAmount === router.query.dstTypedAmount,
-    //   srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false'),
-    //   dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false'),
     // ])
 
     if (
       srcChainId === Number(router.query.srcChainId) &&
       dstChainId === Number(router.query.dstChainId) &&
-      srcToken.wrapped.address === router.query.srcToken &&
-      dstToken.wrapped.address === router.query.dstToken &&
+      srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken &&
+      dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken &&
       srcTypedAmount === router.query.srcTypedAmount &&
-      dstTypedAmount === router.query.dstTypedAmount &&
-      srcUseBentoBox === JSON.parse((router?.query?.srcUseBentoBox as string) || 'false') &&
-      dstUseBentoBox === JSON.parse((router?.query?.dstUseBentoBox as string) || 'false')
+      dstTypedAmount === router.query.dstTypedAmount
     ) {
       return
     }
@@ -240,30 +227,24 @@ const Widget: FC<Swap> = ({
         ...router.query,
         srcChainId,
         dstChainId,
-        // TODO: currencyId to handle native currencyId#
-        // srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.wrapped.address,
-        // dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.wrapped.address,
-        srcToken: srcToken.wrapped.address,
-        dstToken: dstToken.wrapped.address,
+        srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.address,
+        dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.address,
         srcTypedAmount,
-        dstTypedAmount,
-        srcUseBentoBox,
-        dstUseBentoBox,
+        dstTypedAmount
       },
     })
   }, [
-    dstChainId,
-    dstToken.wrapped.address,
-    dstTypedAmount,
-    dstUseBentoBox,
-    router,
+    srcToken,
+    dstToken,
     srcChainId,
-    srcToken.wrapped.address,
+    dstChainId,
     srcTypedAmount,
-    srcUseBentoBox,
+    dstTypedAmount,
+    router,
   ])
 
   const contract = useSushiXSwapContract(srcChainId)
+
 
   // Computed
 
@@ -331,13 +312,6 @@ const Widget: FC<Swap> = ({
     )
   }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
 
-  // dstTrade
-  console.log('THIS', [
-    srcTrade,
-    crossChainSwap || transferSwap ? dstAmountIn : undefined,
-    crossChainSwap || transferSwap ? dstBridgeToken : undefined,
-    crossChainSwap || transferSwap ? dstToken : undefined,
-  ])
   const dstTrade = useTrade(
     dstChainId,
     TradeType.EXACT_INPUT,

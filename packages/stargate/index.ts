@@ -250,5 +250,3 @@ export const STARGATE_TOKEN = new Token({
   symbol: 'STG',
   name: 'StargateToken',
 })
-
-export * from './fee'

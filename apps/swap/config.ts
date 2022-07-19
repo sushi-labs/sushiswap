@@ -21,9 +21,9 @@ export const defaultTheme: Theme = {
 
 export const SUPPORTED_CHAIN_IDS = [
   // ChainId.ETHEREUM,
-  // ChainId.BSC,
+  ChainId.BSC,
   // ChainId.AVALANCHE,
-  // ChainId.POLYGON,
+  ChainId.POLYGON,
   ChainId.ARBITRUM,
   ChainId.OPTIMISM,
   ChainId.AVALANCHE,
