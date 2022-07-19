@@ -541,7 +541,7 @@ export class SushiXSwap {
         this.srcCooker.srcDepositToBentoBox(
           this.srcToken,
           this.srcTrade.route.legs[0].poolAddress,
-          0, 
+          0,
           shareIn.quotient.toString()
         )
       } else {
@@ -562,7 +562,12 @@ export class SushiXSwap {
       )
     } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.isComplex()) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.srcCooker.masterContract, 0, shareIn.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(
+          this.srcToken,
+          this.srcCooker.masterContract,
+          0,
+          shareIn.quotient.toString()
+        )
       } else {
         this.srcCooker.srcTransferFromBentoBox(
           this.srcToken,
@@ -613,7 +618,7 @@ export class SushiXSwap {
       )
     } else if (this.srcTrade && this.srcTrade.isV1() && this.srcTrade.route.legs.length) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, srcShare.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, srcAmount.quotient.toString(), 0)
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -635,8 +640,8 @@ export class SushiXSwap {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcTrade.route.legs[0].poolAddress,
-            0, 
-            srcShare.quotient.toString()
+            srcAmount.quotient.toString(),
+            0
           )
         } else {
           this.srcCooker.srcTransferFromBentoBox(
@@ -660,8 +665,8 @@ export class SushiXSwap {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcCooker.masterContract,
-            0, 
-            srcShare.quotient.toString()
+            srcAmount.quotient.toString(),
+            0
           )
         } else {
           this.srcCooker.srcTransferFromBentoBox(

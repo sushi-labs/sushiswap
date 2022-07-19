@@ -120,8 +120,8 @@ export default function Swap(props: InferGetServerSidePropsType<typeof getServer
       <Widget
         theme={theme}
         initialState={{
-          srcToken,
-          dstToken,
+          srcToken: srcToken ?? Native.onChain(Number(props.srcChainId)),
+          dstToken: dstToken ?? Native.onChain(Number(props.dstChainId)),
           srcChainId: Number(props.srcChainId),
           dstChainId: Number(props.dstChainId),
           srcTypedAmount: props.srcTypedAmount,
@@ -242,7 +242,7 @@ const Widget: FC<Swap> = ({
   // Computed
 
   // Same chain
-  const sameChain = srcChainId === dstChainId
+  const sameChainSwap = srcChainId === dstChainId
 
   // Cross chain
   const crossChain = srcChainId !== dstChainId
@@ -284,7 +284,7 @@ const Widget: FC<Swap> = ({
   )
 
   const srcMinimumAmountOut =
-    sameChain || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
+    sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
 
   const srcAmountMinusStargateFee = useMemo(() => {
     return srcAmount?.multiply(_9994)?.divide(_10000)
@@ -392,12 +392,21 @@ const Widget: FC<Swap> = ({
   useEffect(() => {
     if (transfer) {
       setDstTypedAmount(srcAmount?.toFixed() ?? '')
-    } else if (sameChain || swapTransfer) {
+    } else if (sameChainSwap || swapTransfer) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
     } else if (crossChainSwap || transferSwap) {
       setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
     }
-  }, [crossChainSwap, dstTrade?.outputAmount, sameChain, srcAmount, srcTrade?.outputAmount, swapTransfer, transfer])
+  }, [
+    crossChainSwap,
+    dstTrade?.outputAmount,
+    sameChainSwap,
+    srcAmount,
+    srcTrade?.outputAmount,
+    swapTransfer,
+    transfer,
+    transferSwap,
+  ])
 
   const switchCurrencies = useCallback(() => {
     const _srcChainId = srcChainId
@@ -615,7 +624,6 @@ const Widget: FC<Swap> = ({
       !srcChainId ||
       !srcAmount ||
       !srcMinimumAmountOut ||
-      !srcAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
       !address ||
@@ -678,9 +686,7 @@ const Widget: FC<Swap> = ({
     dstTrade,
     dstUseBentoBox,
     nanoId,
-    signature,
     srcAmount,
-    srcAmountOutMinusStargateFee,
     srcBridgeToken,
     srcChainId,
     srcMinimumAmountOut,
@@ -756,6 +762,7 @@ const Widget: FC<Swap> = ({
     srcAmount,
     srcBridgeToken,
     srcChainId,
+    srcPrices,
     srcTrade,
   ])
 
