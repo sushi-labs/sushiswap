@@ -1,26 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { SUPPORTED_CHAINS } from 'config'
+import { FURO_SUBGRAPH_NAME, SUPPORTED_CHAINS } from 'config'
 
 import { getBuiltGraphSDK } from '.graphclient'
 
 const GRAPH_HOST = 'api.thegraph.com'
-
-const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.ETHEREUM]: 'olastenberg/furo-ethereum',
-  [ChainId.GÖRLI]: 'sushiswap/furo-stream-goerli',
-  [ChainId.ARBITRUM]: 'sushiswap/furo-stream-arbitrum',
-  [ChainId.AVALANCHE]: 'sushiswap/furo-stream-avalanche',
-  [ChainId.BSC]: 'sushiswap/furo-stream-bsc',
-  [ChainId.FANTOM]: 'sushiswap/furo-stream-fantom',
-  [ChainId.GNOSIS]: 'sushiswap/furo-stream-gnosis',
-  [ChainId.HARMONY]: 'sushiswap/furo-stream-harmony',
-  [ChainId.MOONBEAM]: 'sushiswap/furo-stream-moonbeam',
-  [ChainId.MOONRIVER]: 'sushiswap/furo-stream-moonriver',
-  [ChainId.OPTIMISM]: 'sushiswap/furo-stream-optimism',
-  [ChainId.POLYGON]: 'sushiswap/furo-stream-polygon',
-}
 
 export const getRebase = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
