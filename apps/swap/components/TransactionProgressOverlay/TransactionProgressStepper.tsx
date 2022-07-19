@@ -17,6 +17,7 @@ interface TransactionProgressStepper {
   srcBridgeToken: Token
   dstBridgeToken: Token
   srcTxHash: string
+  crossChain: boolean
 }
 
 export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
@@ -26,6 +27,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
   srcBridgeToken,
   dstBridgeToken,
   srcTxHash,
+  crossChain,
 }) => {
   const { isError, isSuccess, isLoading } = useWaitForTransaction({
     hash: srcTxHash,
@@ -59,6 +61,38 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
       }, 750)
     }
   }, [dstTxState])
+
+  if (!crossChain) {
+    return (
+      <div className="flex flex-col">
+        {inputAmount && outputAmount && (
+          <TransactionProgressStep
+            lastStep={true}
+            link={chains[inputAmount.currency.chainId].getTxUrl(srcTxHash)}
+            status={isSuccess ? 'success' : isError ? 'failed' : isLoading ? 'pending' : 'idle'}
+            header={
+              <TransactionProgressStep.Header>
+                Swapping{' '}
+                <b>
+                  {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
+                </b>{' '}
+                for{' '}
+                <b>
+                  {outputAmount?.toSignificant(6)} {outputAmount.currency.symbol}
+                </b>
+              </TransactionProgressStep.Header>
+            }
+            subheader={
+              <TransactionProgressStep.SubHeader
+                icon={<NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />}
+                caption={chain[inputAmount.currency.chainId].name}
+              />
+            }
+          />
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">

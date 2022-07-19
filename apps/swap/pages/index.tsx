@@ -336,8 +336,8 @@ const Widget: FC<Swap> = ({
     addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getEquilibriumFee',
     args: [
-      stargatePoolResults?.[0].idealBalance.toString(),
-      stargatePoolResults?.[0].balance.toString(),
+      stargatePoolResults?.[0]?.idealBalance?.toString(),
+      stargatePoolResults?.[0]?.balance?.toString(),
       srcMinimumAmountOut?.quotient?.toString(),
     ],
     contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
@@ -904,7 +904,7 @@ const Widget: FC<Swap> = ({
               <>
                 <ConfirmationComponentController
                   variant="dialog"
-                  onClose={() => setSrcTxHash(undefined)}
+                  onClose={() => setTimeout(() => setSrcTxHash(undefined), 1000)}
                   trigger={({ setOpen }) => (
                     <Button
                       fullWidth
@@ -946,6 +946,7 @@ const Widget: FC<Swap> = ({
                           outputAmount={dstMinimumAmountOut}
                           srcBridgeToken={srcBridgeToken}
                           dstBridgeToken={dstBridgeToken}
+                          crossChain={crossChain}
                         />
                       ) : (
                         <SlideIn>

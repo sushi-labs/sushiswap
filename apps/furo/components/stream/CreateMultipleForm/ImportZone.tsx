@@ -90,7 +90,7 @@ export const ImportZone = () => {
                 }
 
                 if (![0, 1].includes(Number(fundSource))) {
-                  errors.current[index].push('Fund source must be either 0 for Wallet or 1 for Bentobox')
+                  errors.current[index].push('Fund source must be either 0 for Wallet or 1 for BentoBox')
                 }
 
                 rows.push({

@@ -90,7 +90,7 @@ export const StreamAmountDetails = () => {
                     )}
                   >
                     <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                      Bentobox
+                      BentoBox
                     </Typography>
                     <div className="flex flex-col gap-1">
                       <Typography variant="xs">Available Balance</Typography>

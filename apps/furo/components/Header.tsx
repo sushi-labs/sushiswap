@@ -27,8 +27,11 @@ export const Header: FC = () => {
       withScrollBackground={router.pathname === '/'}
       brand={
         <Link href={isConnected ? '/dashboard' : '/'} passHref={true}>
-          <a>
-            <SushiIcon width={32} height={32} className="cursor-pointer" />
+          <a className="flex flex-row items-center gap-1.5">
+            <div className="w-6 h-6">
+              <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
+            </div>
+            <span className="hidden sm:block font-semibold">Furo</span>
           </a>
         </Link>
       }
