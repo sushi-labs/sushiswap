@@ -105,7 +105,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
       <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
         {format(period.date, 'dd MMM yyyy')}
         <Typography as="span" variant="xxs" className="text-slate-500">
-          {format(period.date, 'hh:maaa')}
+          {format(period.date, 'hh:mmaaa')}
         </Typography>
       </Typography>
       <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>

@@ -1,3 +1,4 @@
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
@@ -184,9 +185,9 @@ const { chains, provider, webSocketProvider } = configureChains(
 const config: CreateClientConfig = {
   provider,
   webSocketProvider,
-  autoConnect: true,
   connectors() {
     return [
+      new SafeConnector({ chains }),
       new InjectedConnector({
         chains,
       }),

@@ -2,7 +2,7 @@ import { Head, Html, Main, NextScript } from 'next/document'
 
 const MyDocument = () => {
   return (
-    <Html>
+    <Html className="overflow-y-scroll">
       <Head>
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=optional" rel="stylesheet" />
       </Head>

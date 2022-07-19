@@ -17,6 +17,7 @@ export const List: FC = () => {
     <>
       {connect.connectors
         .filter((connector) => isMounted && connector.ready && connector.id !== currentConnector?.id)
+        .sort((a) => (a.name === 'Safe' ? 1 : -1))
         .map((connector) => (
           <button key={connector.id} onClick={() => connect.connect({ connector })}>
             {connector.name}

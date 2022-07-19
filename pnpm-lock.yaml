@@ -292,7 +292,7 @@ importers:
       '@ethersproject/units': ^5.0.0
       '@graphprotocol/client-add-source-name': 1.0.2
       '@graphprotocol/client-cli': 2.0.2
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.0
       '@hookform/resolvers': ^2.8.10
       '@reduxjs/toolkit': ^1.8.1
@@ -364,7 +364,7 @@ importers:
       '@ethersproject/solidity': 5.6.0
       '@ethersproject/strings': 5.6.0
       '@ethersproject/units': 5.6.0
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@hookform/resolvers': 2.8.10_react-hook-form@7.31.1
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
@@ -438,7 +438,7 @@ importers:
       '@ethersproject/contracts': ^5.0.0
       '@ethersproject/experimental': ^5.0.0
       '@ethersproject/providers': ^5.0.0
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/bentobox': workspace:*
@@ -492,7 +492,7 @@ importers:
       '@ethersproject/contracts': 5.6.1
       '@ethersproject/experimental': 5.6.1
       '@ethersproject/providers': 5.6.6
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@reduxjs/toolkit': 1.8.1_j24pcqpkbsj43woxscsovlj4au
       '@sushiswap/bentobox': link:../../protocols/bentobox/v1
@@ -1371,7 +1371,7 @@ importers:
   packages/ui:
     specifiers:
       '@fontsource/inter': ^4.5.10
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.6
       '@popperjs/core': ^2.11.5
       '@react-hook/window-scroll': ^1.3.0
@@ -1406,7 +1406,7 @@ importers:
       typescript: ^4.0.0
     dependencies:
       '@fontsource/inter': 4.5.10
-      '@headlessui/react': 1.6.2_ef5jwxihqo6n7gxfmzogljlgcm
+      '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@popperjs/core': 2.11.5
       '@react-hook/window-scroll': 1.3.0_react@18.1.0
@@ -1449,6 +1449,7 @@ importers:
       '@ethersproject/bytes': ^5.0.0
       '@ethersproject/constants': ^5.0.0
       '@ethersproject/providers': ^5.0.0
+      '@gnosis.pm/safe-apps-wagmi': ^1.0.1
       '@headlessui/react': ^1.6.3
       '@heroicons/react': ^1.0.6
       '@sushiswap/bentobox': workspace:*
@@ -1483,6 +1484,7 @@ importers:
       '@ethersproject/bytes': 5.6.1
       '@ethersproject/constants': 5.6.0
       '@ethersproject/providers': 5.6.6
+      '@gnosis.pm/safe-apps-wagmi': 1.0.1
       '@headlessui/react': 1.6.3_ef5jwxihqo6n7gxfmzogljlgcm
       '@heroicons/react': 1.0.6_react@18.1.0
       '@sushiswap/bentobox': link:../../protocols/bentobox/v1
@@ -3636,6 +3638,49 @@ packages:
     resolution: {integrity: sha512-YOt2/K8yo25MVBjrTImHxVimmyZEt0GcrWp2w7O29sdFX9SJqbGlOqjFJ1wI5yBbP6AmTeimyPE0UC/jjFRoIA==}
     dev: false
 
+  /@gnosis.pm/safe-apps-provider/0.11.3:
+    resolution: {integrity: sha512-vER+vuf44f40KfwqTRjU8rdVMDnGZMmgQcGetlMxq+MTI7VD2Cr3CrCuABFGE/DZK80SxZ+IvQ9yjkemo/ywmQ==}
+    dependencies:
+      '@gnosis.pm/safe-apps-sdk': 7.5.0
+      events: 3.3.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
+  /@gnosis.pm/safe-apps-sdk/7.5.0:
+    resolution: {integrity: sha512-OaF2agv2zfPExzedv1eOGtt3W+rnwGFwtuP37epofhsnDgqS/JMPoqyDLRSvyWYlU22OeKvtghTppvRfaEnUTw==}
+    dependencies:
+      '@gnosis.pm/safe-react-gateway-sdk': 3.2.1
+      ethers: 5.6.9
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
+  /@gnosis.pm/safe-apps-wagmi/1.0.1:
+    resolution: {integrity: sha512-dTa+u8ECodgRzKXcQsfC8suVmH1rgEyadMI0Yugz0eD8E7sa0OWcGRv9mjqII/uI+LnSx/E6OtxR63AgUTl+IQ==}
+    peerDependencies:
+      '@wagmi/core': ^0.3.8
+    dependencies:
+      '@gnosis.pm/safe-apps-provider': 0.11.3
+      '@gnosis.pm/safe-apps-sdk': 7.5.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
+  /@gnosis.pm/safe-react-gateway-sdk/3.2.1:
+    resolution: {integrity: sha512-5k2DHIhsjvamWo7KL+LNC/YksCI76IWIKWUZ3H22w8TnWtoXTh1BFP5hDNHQL1pur2sF4zcPJuPh2qY+y5YanA==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@graphprotocol/client-add-source-name/1.0.2_graphql@16.5.0:
     resolution: {integrity: sha512-MuzErqblIreV0P7MB1ScL1TDH3K2UcFkTVbDI88iuHq3wh0jR3frbPWGzOAbZLVgRJ7h+kZyQH/Dh4hbfLnjDQ==}
     peerDependencies:
@@ -4760,8 +4805,8 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /@headlessui/react/1.6.2_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-x+kbTjJ+ixgsignqUU9MluoZYBJAlIYMeya4w7dk/Mo13vIdI/mSnzJAVgHhHKzE/hX//+rXylr4jUVThuQq/A==}
+  /@headlessui/react/1.6.3_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-WNu/ypGzl0JmJ+sD34KtdycEu2n7EZjKFx2rq6fivsszPdoEyOVZ/GYQMJ437dfAJI0/ZxoRYfrOVduZHjlokQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18
@@ -4771,8 +4816,8 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
-  /@headlessui/react/1.6.3_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-WNu/ypGzl0JmJ+sD34KtdycEu2n7EZjKFx2rq6fivsszPdoEyOVZ/GYQMJ437dfAJI0/ZxoRYfrOVduZHjlokQ==}
+  /@headlessui/react/1.6.6_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-MFJtmj9Xh/hhBMhLccGbBoSk+sk61BlP6sJe4uQcVMtXZhCgGqd2GyIQzzmsdPdTEWGSF434CBi8mnhR6um46Q==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18

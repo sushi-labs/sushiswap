@@ -7,6 +7,7 @@ import {
   ButtonProps,
   classNames,
   CoinbaseWalletIcon,
+  GnosisSafeIcon,
   Loader,
   Menu,
   MetamaskIcon,
@@ -16,7 +17,7 @@ import {
 import React, { ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
 
-import { useWalletState } from '../../hooks'
+import { useAutoConnect, useWalletState } from '../../hooks'
 import { Account } from '..'
 
 const Icons: Record<string, ReactNode> = {
@@ -24,6 +25,7 @@ const Icons: Record<string, ReactNode> = {
   MetaMask: <MetamaskIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
+  Safe: <GnosisSafeIcon width={16} height={16} />,
 }
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {
@@ -42,6 +44,8 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { connectors, connect, pendingConnector } = hack || useConnect()
   const { pendingConnection, reconnecting, isConnected } = useWalletState(!!pendingConnector)
+
+  useAutoConnect()
 
   // Pending confirmation state
   // Awaiting wallet confirmation
@@ -68,18 +72,20 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
         <Menu.Items>
           <div>
             {isMounted &&
-              connectors.map((connector) => (
-                <Menu.Item
-                  key={connector.id}
-                  onClick={() => connect({ connector })}
-                  className="flex items-center gap-3 group"
-                >
-                  <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
-                    {Icons[connector.name] && Icons[connector.name]}
-                  </div>{' '}
-                  {connector.name}
-                </Menu.Item>
-              ))}
+              connectors
+                .sort((a) => (a.name === 'Safe' ? 1 : -1))
+                .map((connector) => (
+                  <Menu.Item
+                    key={connector.id}
+                    onClick={() => connect({ connector })}
+                    className="flex items-center gap-3 group"
+                  >
+                    <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
+                      {Icons[connector.name] && Icons[connector.name]}
+                    </div>{' '}
+                    {connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+                  </Menu.Item>
+                ))}
           </div>
         </Menu.Items>
       </Menu>

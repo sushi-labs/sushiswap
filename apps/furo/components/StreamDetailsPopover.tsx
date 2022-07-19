@@ -100,9 +100,9 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                 </Typography>
                 <Typography variant="xs" weight={400} className="mt-3 text-slate-400">
                   The stream was started on{' '}
-                  <span className="text-slate-200">{format(new Date(stream.startTime), 'dd MMM yyyy hh:maaa')}</span> If
-                  the sender does not cancel the stream, the full amount will be disbursed to you on{' '}
-                  <span className="text-slate-200">{format(new Date(stream.endTime), 'dd MMM yyyy hh:maaa')}</span>
+                  <span className="text-slate-200">{format(new Date(stream.startTime), 'dd MMM yyyy hh:mmaaa')}</span>{' '}
+                  If the sender does not cancel the stream, the full amount will be disbursed to you on{' '}
+                  <span className="text-slate-200">{format(new Date(stream.endTime), 'dd MMM yyyy hh:mmaaa')}</span>
                 </Typography>
               </>
             ) : (

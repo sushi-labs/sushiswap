@@ -160,16 +160,16 @@ export const CreateMultipleForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChain?.id, address])
 
-  createMultipleVestingSchema
-    .validate(formData, { abortEarly: false })
-    .then(function () {
-      console.log('valid')
-    })
-    .catch(function (err) {
-      err?.inner?.forEach((e: any) => {
-        console.log(e.message, e.path)
-      })
-    })
+  // createMultipleVestingSchema
+  //   .validate(formData, { abortEarly: false })
+  //   .then(function () {
+  //     console.log('valid')
+  //   })
+  //   .catch(function (err) {
+  //     err?.inner?.forEach((e: any) => {
+  //       console.log(e.message, e.path)
+  //     })
+  //   })
 
   const summedAmounts = validatedData
     ? Object.values(
