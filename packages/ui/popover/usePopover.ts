@@ -1,12 +1,13 @@
+import * as PopperJS from '@popperjs/core'
 import { useState } from 'react'
 import { usePopper } from 'react-popper'
 
-type UsePopover = () => ReturnType<typeof usePopper> & {
+type UsePopover = (options?: Omit<Partial<PopperJS.Options>, 'modifiers'>) => ReturnType<typeof usePopper> & {
   setReferenceElement: any
   setPopperElement: any
 }
 
-export const usePopover: UsePopover = () => {
+export const usePopover: UsePopover = (options) => {
   const [referenceElement, setReferenceElement] = useState(null)
   const [popperElement, setPopperElement] = useState(null)
 
@@ -16,6 +17,7 @@ export const usePopover: UsePopover = () => {
       { name: 'flip', enabled: true, options: { padding: 8 } },
       { name: 'offset', options: { offset: [-12, 14] } },
     ],
+    ...options,
   })
 
   return {

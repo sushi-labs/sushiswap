@@ -740,18 +740,6 @@ const Widget: FC<Swap> = ({
             <Loader size={12} />
           </div>
         )}
-        {crossChain ? (
-          <CrossChainRoute
-            srcTrade={srcTrade}
-            dstTrade={dstTrade}
-            inputAmount={srcAmount}
-            outputAmount={dstMinimumAmountOut}
-            dstBridgeToken={dstBridgeToken}
-            srcBridgeToken={srcBridgeToken}
-          />
-        ) : (
-          <SameChainRoute trade={srcTrade} />
-        )}
       </>
     )
   }, [
@@ -887,6 +875,18 @@ const Widget: FC<Swap> = ({
                         className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
                       >
                         {stats}
+                        {crossChain ? (
+                          <CrossChainRoute
+                            srcTrade={srcTrade}
+                            dstTrade={dstTrade}
+                            inputAmount={srcAmount}
+                            outputAmount={dstMinimumAmountOut}
+                            dstBridgeToken={dstBridgeToken}
+                            srcBridgeToken={srcBridgeToken}
+                          />
+                        ) : (
+                          <SameChainRoute trade={srcTrade} />
+                        )}
                       </Disclosure.Panel>
                     </Transition>
                   </>
@@ -1093,6 +1093,18 @@ const Widget: FC<Swap> = ({
                             </div>
                             <div className="grid grid-cols-2 gap-1 p-2 border rounded-2xl sm:p-4 border-slate-200/5 bg-slate-700/40">
                               {stats}
+                              {crossChain ? (
+                                <CrossChainRoute
+                                  srcTrade={srcTrade}
+                                  dstTrade={dstTrade}
+                                  inputAmount={srcAmount}
+                                  outputAmount={dstMinimumAmountOut}
+                                  dstBridgeToken={dstBridgeToken}
+                                  srcBridgeToken={srcBridgeToken}
+                                />
+                              ) : (
+                                <SameChainRoute trade={srcTrade} />
+                              )}
                             </div>
                             <Approve
                               className="flex-grow !justify-end pt-4"
