@@ -1,8 +1,7 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
-import chain from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Badge, Chip, Link, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
+import { Badge, Chip, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { FC } from 'react'
 
@@ -39,173 +38,90 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
             <div className="relative flex items-center mt-1 bg-slate-800 border border-slate-200/10 rounded-2xl px-4 py-3">
               <div className="flex flex-grow items-center gap-3 z-[1]">
                 <div className="flex items-center w-6 h-6">
-                  <Popover
-                    hover
-                    button={
-                      <Badge
-                        badgeContent={
-                          <div className="rounded-full shadow-md ring-1 ring-black/20">
-                            <NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />
-                          </div>
-                        }
-                      >
-                        <div className="w-5 h-5">
-                          <Icon currency={inputAmount.currency} width={20} height={20} />
-                        </div>
-                      </Badge>
-                    }
-                    panel={
-                      <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                        <Typography weight={700} variant="xxs" className="text-slate-400">
-                          You pay
-                        </Typography>
-                        <Typography variant="xs" weight={700}>
-                          {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
-                        </Typography>
+                  <Badge
+                    badgeContent={
+                      <div className="rounded-full shadow-md ring-1 ring-black/20">
+                        <NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />
                       </div>
                     }
-                  />
+                  >
+                    <div className="w-5 h-5">
+                      <Icon currency={inputAmount.currency} width={20} height={20} />
+                    </div>
+                  </Badge>
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {srcTrade && (
-                    <Popover
-                      hover
-                      button={
-                        <Chip
-                          color="gray"
-                          label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
-                          size="sm"
-                          className="!px-2 h-full"
-                        />
-                      }
-                      panel={
-                        <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                          {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
-                        </div>
-                      }
+                    <Chip
+                      color="gray"
+                      label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
+                      size="sm"
+                      className="!px-2 h-full"
                     />
                   )}
                 </div>
                 <div className="bg-slate-800 p-1.5 w-full justify-center flex gap-1 rounded-full border-2 border-dashed border-slate-600 items-center">
-                  <Popover
-                    hover
-                    button={
-                      <Badge
-                        badgeContent={
-                          <div className="rounded-full shadow-md ring-1 ring-black/20">
-                            <NetworkIcon
-                              chainId={srcBridgeToken.wrapped.chainId}
-                              width={14}
-                              height={14}
-                              className="saturate-0"
-                            />
-                          </div>
-                        }
-                      >
-                        <div className="w-[18px] h-[18px]">
-                          <Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
-                        </div>
-                      </Badge>
-                    }
-                    panel={
-                      <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
-                        <b>{srcBridgeToken.wrapped.symbol}</b> on <b>{chain[srcBridgeToken.wrapped.chainId].name}</b>
-                      </Typography>
-                    }
-                  />
-
-                  <DotsHorizontalIcon width={12} className="text-slate-600" />
-                  <Popover
-                    hover
-                    button={
-                      <div className="flex items-center justify-center">
-                        <Icon currency={STARGATE_TOKEN} width={18} height={18} />
+                  <Badge
+                    badgeContent={
+                      <div className="rounded-full shadow-md ring-1 ring-black/20">
+                        <NetworkIcon
+                          chainId={srcBridgeToken.wrapped.chainId}
+                          width={14}
+                          height={14}
+                          className="saturate-0"
+                        />
                       </div>
                     }
-                    panel={
-                      <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
-                        Powered by{' '}
-                        <b>
-                          <Link.External href="https://stargate.finance">Stargate Finance</Link.External>
-                        </b>
-                      </Typography>
-                    }
-                  />
+                  >
+                    <div className="w-[18px] h-[18px]">
+                      <Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
+                    </div>
+                  </Badge>
+
                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-                  <Popover
-                    hover
-                    button={
-                      <Badge
-                        badgeContent={
-                          <div className="rounded-full shadow-md ring-1 ring-black/20">
-                            <NetworkIcon
-                              chainId={dstBridgeToken.wrapped.chainId}
-                              width={14}
-                              height={14}
-                              className="saturate-0"
-                            />
-                          </div>
-                        }
-                      >
-                        <div className="w-[18px] h-[18px]">
-                          <Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
-                        </div>
-                      </Badge>
+                  <div className="flex items-center justify-center">
+                    <Icon currency={STARGATE_TOKEN} width={18} height={18} />
+                  </div>
+                  <DotsHorizontalIcon width={12} className="text-slate-600" />
+                  <Badge
+                    badgeContent={
+                      <div className="rounded-full shadow-md ring-1 ring-black/20">
+                        <NetworkIcon
+                          chainId={dstBridgeToken.wrapped.chainId}
+                          width={14}
+                          height={14}
+                          className="saturate-0"
+                        />
+                      </div>
                     }
-                    panel={
-                      <Typography variant="xs" className="p-2 bg-slate-700 !rounded-md">
-                        <b>{dstBridgeToken.wrapped.symbol}</b> on <b>{chain[dstBridgeToken.wrapped.chainId].name}</b>
-                      </Typography>
-                    }
-                  />
+                  >
+                    <div className="w-[18px] h-[18px]">
+                      <Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
+                    </div>
+                  </Badge>
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {dstTrade && (
-                    <Popover
-                      hover
-                      button={
-                        <Chip
-                          color="gray"
-                          label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
-                          size="sm"
-                          className="!px-2 h-full"
-                        />
-                      }
-                      panel={
-                        <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                          {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
-                        </div>
-                      }
+                    <Chip
+                      color="gray"
+                      label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
+                      size="sm"
+                      className="!px-2 h-full"
                     />
                   )}
                 </div>
                 <div className="flex items-center w-6 h-6">
-                  <Popover
-                    hover
-                    button={
-                      <Badge
-                        badgeContent={
-                          <div className="rounded-full shadow-md ring-1 ring-black/20">
-                            <NetworkIcon chainId={dstBridgeToken.wrapped.chainId} width={16} height={16} />
-                          </div>
-                        }
-                      >
-                        <div className="w-5 h-5">
-                          <Icon currency={dstBridgeToken.wrapped} width={20} height={20} />
-                        </div>
-                      </Badge>
-                    }
-                    panel={
-                      <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                        <Typography weight={700} variant="xxs" className="text-slate-400">
-                          You receive
-                        </Typography>
-                        <Typography variant="xs" weight={700}>
-                          {outputAmount.toSignificant(6)} {outputAmount.currency.symbol}
-                        </Typography>
+                  <Badge
+                    badgeContent={
+                      <div className="rounded-full shadow-md ring-1 ring-black/20">
+                        <NetworkIcon chainId={dstBridgeToken.wrapped.chainId} width={16} height={16} />
                       </div>
                     }
-                  />
+                  >
+                    <div className="w-5 h-5">
+                      <Icon currency={dstBridgeToken.wrapped} width={20} height={20} />
+                    </div>
+                  </Badge>
                 </div>
               </div>
               <div className="absolute z-0 left-4 right-4 border border-dashed pointer-events-none border-slate-600" />

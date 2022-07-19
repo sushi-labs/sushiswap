@@ -118,20 +118,6 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
-          <button
-            type="button"
-            className={classNames(
-              theme.secondary.default,
-              theme.secondary.hover,
-              'flex items-center gap-2 text-xs cursor-pointer font-medium'
-            )}
-            onClick={(e) => {
-              onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
-              e.stopPropagation()
-            }}
-          >
-            {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
-          </button>
         </div>
         <div className="flex flex-col">
           <div className="relative flex items-center gap-1">
@@ -175,7 +161,19 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
           {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
           {usdPctChange && (
-            <span className={classNames(usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red')}>
+            <span
+              className={classNames(
+                usdPctChange === 0
+                  ? ''
+                  : usdPctChange > 0
+                  ? 'text-green'
+                  : usdPctChange < -3
+                  ? 'text-red'
+                  : usdPctChange < -2
+                  ? 'text-yellow'
+                  : 'text-slate-500'
+              )}
+            >
               {' '}
               {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
                 usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)

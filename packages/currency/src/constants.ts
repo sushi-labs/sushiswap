@@ -195,12 +195,6 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
   }),
 }
 
-// export const NATIVE_ID: Record<string | number, Native> = Object.fromEntries(
-//   Object.entries(chains)
-//     .filter(([chainId]) => Boolean(chainId in WNATIVE_ADDRESS))
-//     .map(([chainId, chain]) => [`${chainId}:${chain.nativeCurrency.symbol}`, Native.onChain(Number(chainId))])
-// )
-
 export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
   [ChainId.ROPSTEN]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
