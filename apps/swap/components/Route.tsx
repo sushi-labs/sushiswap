@@ -52,11 +52,21 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {srcTrade && (
-                    <Chip
-                      color="gray"
-                      label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
-                      size="sm"
-                      className="!px-2 h-full"
+                    <Popover
+                      hover
+                      button={
+                        <Chip
+                          color="gray"
+                          label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
+                          size="sm"
+                          className="!px-2 h-full"
+                        />
+                      }
+                      panel={
+                        <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
+                          {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
+                        </div>
+                      }
                     />
                   )}
                 </div>
@@ -102,11 +112,21 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {dstTrade && (
-                    <Chip
-                      color="gray"
-                      label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
-                      size="sm"
-                      className="!px-2 h-full"
+                    <Popover
+                      hover
+                      button={
+                        <Chip
+                          color="gray"
+                          label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
+                          size="sm"
+                          className="!px-2 h-full"
+                        />
+                      }
+                      panel={
+                        <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
+                          {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
+                        </div>
+                      }
                     />
                   )}
                 </div>
@@ -148,7 +168,7 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <div className="relative flex">
       {trade.route.legs.map((leg, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
+        <div key={i} className="z-10 flex gap-1 items-center text-sm font-medium leading-4 text-slate-400">
           {i === 0 ? (
             <Typography variant="xs" weight={700}>
               {leg.tokenFrom.symbol}
@@ -182,7 +202,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <>
       {initialPaths.map((initialPath, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
+        <div key={i} className="z-10 flex gap-1 items-center text-xs font-medium leading-4 text-slate-300">
           {Number(initialPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>
@@ -197,7 +217,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
       {percentPaths.map((percentPath, i) => (
-        <div key={i} className="z-10 flex items-center text-xs font-medium leading-4 text-slate-300">
+        <div key={i} className="z-10 flex gap-1 items-center text-xs font-medium leading-4 text-slate-300">
           {Number(percentPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>
@@ -220,12 +240,26 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
 
   return (
     <>
-      <div className="flex justify-between gap-2">
-        <Typography variant="xs" className="text-slate-400">
-          Optimized Route
-        </Typography>
+      <Typography variant="sm" className="text-slate-400">
+        Optimized Route
+      </Typography>
+      <div className="flex justify-end">
         {trade.isSingle() && <SingleRoute trade={trade} />}
-        {trade.isComplex() && <ComplexRoute trade={trade} />}
+        {trade.isComplex() && (
+          <Popover
+            hover
+            panel={
+              <div className="relative flex items-center mt-1 bg-slate-800 border border-slate-200/10 rounded-2xl px-4 py-3">
+                <ComplexRoute trade={trade} />
+              </div>
+            }
+            button={
+              <Typography variant="sm" weight={500} className="cursor-pointer text-blue text-right">
+                View Route
+              </Typography>
+            }
+          />
+        )}
       </div>
     </>
   )
