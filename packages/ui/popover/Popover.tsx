@@ -29,7 +29,13 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
       {({ open }) => (
         <>
           {disableClickListener ? (
-            <button tabIndex={tabIndex} type="button" ref={setReferenceElement} onMouseEnter={() => setShow(true)}>
+            <button
+              tabIndex={tabIndex}
+              type="button"
+              ref={setReferenceElement}
+              onMouseEnter={() => setShow(true)}
+              onMouseLeave={() => setShow(false)}
+            >
               {button}
             </button>
           ) : (
@@ -38,7 +44,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
               type="button"
               as="button"
               ref={setReferenceElement}
-              {...(hover && { onMouseEnter: () => setShow(true) })}
+              {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
             >
               {button}
             </HeadlessPopover.Button>
@@ -49,9 +55,8 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
                 {...attributes.popper}
                 ref={setPopperElement}
                 style={styles.popper}
-                className="tooltip p-8 -m-8 z-[100]"
+                className="tooltip z-[100]"
                 static
-                onMouseLeave={() => setShow(false)}
               >
                 {React.cloneElement(
                   panel,
