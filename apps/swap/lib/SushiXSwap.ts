@@ -518,7 +518,7 @@ export class SushiXSwap {
     // S1-S4
     if (this.srcTrade && this.srcTrade.isV1()) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, amountIn.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, shareIn.quotient.toString())
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -541,7 +541,8 @@ export class SushiXSwap {
         this.srcCooker.srcDepositToBentoBox(
           this.srcToken,
           this.srcTrade.route.legs[0].poolAddress,
-          amountIn.quotient.toString()
+          0, 
+          shareIn.quotient.toString()
         )
       } else {
         this.srcCooker.srcTransferFromBentoBox(
@@ -561,7 +562,7 @@ export class SushiXSwap {
       )
     } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.isComplex()) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.srcCooker.masterContract, amountIn.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.srcCooker.masterContract, 0, shareIn.quotient.toString())
       } else {
         this.srcCooker.srcTransferFromBentoBox(
           this.srcToken,
@@ -601,7 +602,7 @@ export class SushiXSwap {
       // If cross chain & src token is stargate bridge token, there's no need for a src trade
       // so deposit to bentobox (if neccasasry) and transfer shares to SushiXSwap Router
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, srcAmount.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, srcShare.quotient.toString())
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -612,7 +613,7 @@ export class SushiXSwap {
       )
     } else if (this.srcTrade && this.srcTrade.isV1() && this.srcTrade.route.legs.length) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, srcAmount.quotient.toString())
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, srcShare.quotient.toString())
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -634,7 +635,8 @@ export class SushiXSwap {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcTrade.route.legs[0].poolAddress,
-            srcAmount.quotient.toString()
+            0, 
+            srcShare.quotient.toString()
           )
         } else {
           this.srcCooker.srcTransferFromBentoBox(
@@ -658,7 +660,8 @@ export class SushiXSwap {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcCooker.masterContract,
-            srcAmount.quotient.toString()
+            0, 
+            srcShare.quotient.toString()
           )
         } else {
           this.srcCooker.srcTransferFromBentoBox(
