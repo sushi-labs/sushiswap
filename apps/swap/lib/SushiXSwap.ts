@@ -492,7 +492,7 @@ export class SushiXSwap {
   transfer(amountIn: Amount<Currency>, shareIn: Share<Currency>): void {
     // T1-T4
     if (!this.srcUseBentoBox) {
-      this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, amountIn.quotient.toString())
+      this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, shareIn.quotient.toString())
     }
     this.srcCooker.srcTransferFromBentoBox(
       this.srcToken,
