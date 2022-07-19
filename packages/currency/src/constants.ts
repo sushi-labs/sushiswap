@@ -1,10 +1,8 @@
-import chains, { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 
 import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
-import { Native } from './Native'
 import { Token } from './Token'
-
 
 export const WETH9_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -197,7 +195,11 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
   }),
 }
 
-export const NATIVE_ID: Record<string | number, Native> = Object.fromEntries(Object.entries(chains).filter(([chainId]) => Boolean(chainId in WNATIVE)).map(([chainId, chain]) => [`${chainId}:${chain.nativeCurrency.symbol}`, Native.onChain(Number(chainId)) ]))
+// export const NATIVE_ID: Record<string | number, Native> = Object.fromEntries(
+//   Object.entries(chains)
+//     .filter(([chainId]) => Boolean(chainId in WNATIVE_ADDRESS))
+//     .map(([chainId, chain]) => [`${chainId}:${chain.nativeCurrency.symbol}`, Native.onChain(Number(chainId))])
+// )
 
 export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
