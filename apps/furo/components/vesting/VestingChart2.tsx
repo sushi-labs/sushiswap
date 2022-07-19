@@ -144,7 +144,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
           {[ChartHover.STREAMED, ChartHover.NONE].includes(hover) && (
             <div className="flex flex-col gap-3">
               <Typography variant="xs" className="uppercase text-center tracking-[0.2rem]">
-                Streamed
+                Unlocked
               </Typography>
               <div className="flex flex-col gap-1">
                 <Typography variant="h1" weight={500} className="text-center text-slate-50">

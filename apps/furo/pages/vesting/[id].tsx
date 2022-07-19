@@ -125,7 +125,7 @@ const _VestingPage: FC = () => {
           <div className="flex flex-col justify-center gap-5">
             <ProgressBarCard
               aria-hidden="true"
-              label="Streamed"
+              label="Unlocked"
               value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
               onMouseEnter={() => setHover(ChartHover.STREAMED)}
               onMouseLeave={() => setHover(ChartHover.NONE)}
