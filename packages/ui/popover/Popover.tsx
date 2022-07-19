@@ -49,7 +49,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
                 {...attributes.popper}
                 ref={setPopperElement}
                 style={styles.popper}
-                className="tooltip p-8 -m-8"
+                className="tooltip p-8 -m-8 z-[100]"
                 static
                 onMouseLeave={() => setShow(false)}
               >
@@ -59,7 +59,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'rounded-lg overflow-hidden shadow-xl shadow-black/20 z-[100] shadow-md'
+                      'rounded-lg overflow-hidden shadow-xl shadow-black/20 shadow-md'
                     ),
                   },
                   panel.props.children
