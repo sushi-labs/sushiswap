@@ -404,18 +404,14 @@ const Widget: FC<Swap> = ({
   const switchCurrencies = useCallback(() => {
     const _srcChainId = srcChainId
     const _srcToken = srcToken
-    const _srcUseBento = srcUseBentoBox
     const _dstChainId = dstChainId
     const _dstToken = dstToken
-    const _dstUseBento = dstUseBentoBox
 
     setSrcChainId(_dstChainId)
     setSrcToken(_dstToken)
     setDstChainId(_srcChainId)
     setDstToken(_srcToken)
-    setDstUseBentoBox(_srcUseBento)
-    setSrcUseBentoBox(_dstUseBento)
-  }, [dstChainId, dstToken, dstUseBentoBox, srcChainId, srcToken, srcUseBentoBox])
+  }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const execute = useCallback(() => {
     console.log([
