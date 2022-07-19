@@ -24,7 +24,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId })
+  } = useBalance({ addressOrName: account, chainId, keepPreviousData: true })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -44,15 +44,13 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
 
   const contracts = useMemo(
     () =>
-      account
-        ? validatedTokenAddresses.map((token) => ({
-            chainId,
-            addressOrName: token,
-            contractInterface: erc20ABI,
-            functionName: 'balanceOf',
-            args: [account],
-          }))
-        : [],
+      validatedTokenAddresses.map((token) => ({
+        chainId,
+        addressOrName: token,
+        contractInterface: erc20ABI,
+        functionName: 'balanceOf',
+        args: [account],
+      })),
     [validatedTokenAddresses, chainId, account]
   )
 
@@ -63,6 +61,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
+    enabled: Boolean(account && validatedTokenAddresses.length),
     keepPreviousData: true,
   })
 
@@ -116,11 +115,6 @@ type UseTokenBalance = (params: UseWalletBalanceParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useWalletBalance: UseTokenBalance = (params) => {
-  const _params = useMemo(
-    () => ({ chainId: params.chainId, currencies: [params.currency], account: params.account }),
-    [params.chainId, params.account, params.currency]
-  )
-
-  return useWalletBalances(_params)
+export const useWalletBalance: UseTokenBalance = ({ chainId, currency, account }) => {
+  return useWalletBalances(useMemo(() => ({ chainId, currencies: [currency], account }), [chainId, currency, account]))
 }
