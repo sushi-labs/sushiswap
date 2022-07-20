@@ -48,7 +48,7 @@
     "react-redux": "^8.0.1",
     "swr": "^1.2.2",
     "typechain": "^8.0.0",
-    "wagmi": "^0.5.10"
+    "wagmi": "^0.5.11"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

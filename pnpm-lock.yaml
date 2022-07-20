@@ -349,7 +349,7 @@ importers:
       tailwindcss: ^3.0.24
       typechain: ^8.0.0
       typescript: ^4.0.0
-      wagmi: ^0.5.10
+      wagmi: ^0.5.11
       yup: ^0.32.11
     dependencies:
       '@ethersproject/abi': 5.6.2
@@ -407,7 +407,7 @@ importers:
       redux-devtools-extension: 2.13.9
       redux-persist: 6.0.0_react@18.1.0
       swr: 1.3.0_react@18.1.0
-      wagmi: 0.5.10_psvhf2bcekgpduwaw7lrstqk6m
+      wagmi: 0.5.11_psvhf2bcekgpduwaw7lrstqk6m
       yup: 0.32.11
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.2_graphql@16.5.0
@@ -481,7 +481,7 @@ importers:
       tailwindcss: ^3.0.24
       typechain: ^8.0.0
       typescript: ^4.0.0
-      wagmi: ^0.5.10
+      wagmi: ^0.5.11
     dependencies:
       '@builder.io/partytown': 0.6.1
       '@ethersproject/abi': 5.6.2
@@ -522,7 +522,7 @@ importers:
       react-redux: 8.0.1_e6senhi6gkhdouiqizr2s56gsi
       swr: 1.3.0_react@18.1.0
       typechain: 8.0.0_typescript@4.7.2
-      wagmi: 0.5.10_psvhf2bcekgpduwaw7lrstqk6m
+      wagmi: 0.5.11_psvhf2bcekgpduwaw7lrstqk6m
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -687,7 +687,7 @@ importers:
       react-dom: 18.1.0
       tailwindcss: ^3.0.24
       typescript: ^4.0.0
-      wagmi: ^0.5.10
+      wagmi: ^0.5.11
     dependencies:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
@@ -695,7 +695,7 @@ importers:
       next: 12.1.6_ef5jwxihqo6n7gxfmzogljlgcm
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-      wagmi: 0.5.10_psvhf2bcekgpduwaw7lrstqk6m
+      wagmi: 0.5.11_psvhf2bcekgpduwaw7lrstqk6m
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -1477,7 +1477,7 @@ importers:
       tsup: ^6.0.1
       typechain: ^8.0.0
       typescript: ^4.0.0
-      wagmi: ^0.5.10
+      wagmi: ^0.5.11
     dependencies:
       '@ethersproject/abi': 5.6.2
       '@ethersproject/address': 5.6.0
@@ -1513,7 +1513,7 @@ importers:
       tsup: 6.1.0_typescript@4.7.2
       typechain: 8.0.0_typescript@4.7.2
       typescript: 4.7.2
-      wagmi: 0.5.10_psvhf2bcekgpduwaw7lrstqk6m
+      wagmi: 0.5.11_psvhf2bcekgpduwaw7lrstqk6m
 
   packages/widget/swap:
     specifiers:
@@ -21228,6 +21228,13 @@ packages:
     dependencies:
       react: 18.1.0
 
+  /use-sync-external-store/1.2.0_react@18.1.0:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.1.0
+
   /use/3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}
     engines: {node: '>=0.10.0'}
@@ -21371,8 +21378,8 @@ packages:
       vfile-message: 3.1.2
     dev: false
 
-  /wagmi/0.5.10_psvhf2bcekgpduwaw7lrstqk6m:
-    resolution: {integrity: sha512-tiCzwkeT4ZLDRO5shG8HuDVtKE9iVaV5FgCWnfWMInpsOtY4JzSHe8yUZ0fG9o1oavUYNQNQloKMEWnCdhMdcA==}
+  /wagmi/0.5.11_psvhf2bcekgpduwaw7lrstqk6m:
+    resolution: {integrity: sha512-7ayOgMuaMQasvU7IbJfdmFS0YnxbtBOlnJj9Xqlz0h6MAYJ+3iSDmJeIZaPb5OKDPrvhTzawSlFt8rYSYoSKbQ==}
     peerDependencies:
       ethers: '>=5.5.1'
       react: '>=17.0.0'
@@ -21383,7 +21390,7 @@ packages:
       ethers: 5.6.6
       react: 18.1.0
       react-query: 4.0.0-beta.23_ef5jwxihqo6n7gxfmzogljlgcm
-      use-sync-external-store: 1.1.0_react@18.1.0
+      use-sync-external-store: 1.2.0_react@18.1.0
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
