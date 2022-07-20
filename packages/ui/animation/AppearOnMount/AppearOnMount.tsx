@@ -4,10 +4,15 @@ import { FC, ReactNode } from 'react'
 
 interface AppearOnMount {
   children(mounted: boolean): ReactNode
+  enabled?: boolean
 }
 
-export const AppearOnMount: FC<AppearOnMount> = ({ children }) => {
+export const AppearOnMount: FC<AppearOnMount> = ({ children, enabled }) => {
   const isMounted = useIsMounted()
+
+  if (!enabled) {
+    return <>{children(isMounted)}</>
+  }
 
   return (
     <Transition

@@ -3,7 +3,7 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Select, SushiIcon } from '../index'
+import { classNames, Link, Select, SushiIcon } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -89,19 +89,8 @@ export function Header({
                   {AppType.Furo}
                 </Select.Option>
               )}
-              {appType !== AppType.Blog && (
-                <Select.Option
-                  as="a"
-                  href="https://sushi.com/blog"
-                  key={AppType.Blog}
-                  value={AppType.Blog}
-                  className="!border-slate-700 !cursor-pointer"
-                >
-                  {AppType.Blog}
-                </Select.Option>
-              )}
               <Select.Option
-                as="a"
+                as={Link.External}
                 href="https://app.sushi.com"
                 key={AppType.Legacy}
                 value={AppType.Legacy}
