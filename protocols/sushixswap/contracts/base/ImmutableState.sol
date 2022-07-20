@@ -13,6 +13,9 @@ abstract contract ImmutableState is IImmutableState {
     /// @notice Stargate Router for cross chain interaction
     IStargateRouter public immutable override stargateRouter;
 
+    /// @notice Stargate Widget for stargate partner fee
+    IStargateWidget public immutable override stargateWidget;
+
     /// @notice Sushiswap Legacy AMM Factory
     address public immutable override factory;
 
@@ -23,10 +26,12 @@ abstract contract ImmutableState is IImmutableState {
         IBentoBoxMinimal _bentoBox,
         IStargateRouter _stargateRouter,
         address _factory,
-        bytes32 _pairCodeHash
+        bytes32 _pairCodeHash,
+        IStargateWidget _stargateWidget
     ) {
         bentoBox = _bentoBox;
         stargateRouter = _stargateRouter;
+        stargateWidget = _stargateWidget;
         factory = _factory;
         pairCodeHash = _pairCodeHash;
     }
