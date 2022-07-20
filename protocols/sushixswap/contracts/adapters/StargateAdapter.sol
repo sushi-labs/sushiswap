@@ -69,6 +69,8 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             payload
         );
 
+        stargateWidget.partnerSwap(0x0001);
+
         emit StargateSushiXSwapSrc(params.srcContext);
     }
 

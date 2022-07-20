@@ -4,11 +4,14 @@ pragma solidity 0.8.11;
 
 import "./IBentoBoxMinimal.sol";
 import "./stargate/IStargateRouter.sol";
+import "./stargate/IStargateWidget.sol";
 
 interface IImmutableState {
     function bentoBox() external view returns (IBentoBoxMinimal);
 
     function stargateRouter() external view returns (IStargateRouter);
+
+    function stargateWidget() external view returns (IStargateWidget);
 
     function factory() external view returns (address);
 
