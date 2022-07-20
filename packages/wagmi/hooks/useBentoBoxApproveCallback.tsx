@@ -132,7 +132,7 @@ export function useBentoBoxApproveCallback({
         })
       }
     }
-  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, writeAsync])
+  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync])
 
-  return [approvalState, signature, approveBentoBox]
+  return useMemo(() => [approvalState, signature, approveBentoBox], [approvalState, approveBentoBox, signature])
 }
