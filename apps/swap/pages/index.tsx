@@ -877,7 +877,7 @@ const Widget: FC<Swap> = ({
             </Transition>
 
             {isMounted && !address ? (
-              <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
+              <Wallet.Button fullWidth color="blue" size="md">
                 Connect Wallet
               </Wallet.Button>
             ) : isMounted && chain && chain.id !== srcChainId ? (
@@ -1126,9 +1126,8 @@ const Widget: FC<Swap> = ({
                 </ConfirmationComponentController>
               </>
             ) : (
-              // Placeholder
               <Button fullWidth color="blue" size="md">
-                Connect Wallet
+                <Loader size={16} />
               </Button>
             )}
             {caption && <Caption theme={theme} />}
