@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
+  FACTORY_ADDRESS,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
@@ -10,6 +11,7 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
@@ -87,6 +89,34 @@ export function useTrade(
       filteredPools.length > 0
     ) {
       if (tradeType === TradeType.EXACT_INPUT) {
+        if (chainId in FACTORY_ADDRESS && chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS) {
+          const legacyRoute = findSingleRouteExactIn(
+            currencyIn.wrapped,
+            currencyOut.wrapped,
+            BigNumber.from(amountSpecified.quotient.toString()),
+            filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof Pair),
+            WNATIVE[amountSpecified.currency.chainId],
+            data.gasPrice.toNumber()
+          )
+          const tridentRoute = findMultiRouteExactIn(
+            currencyIn.wrapped,
+            currencyOut.wrapped,
+            BigNumber.from(amountSpecified.quotient.toString()),
+            filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
+            WNATIVE[amountSpecified.currency.chainId],
+            data.gasPrice.toNumber()
+          )
+
+          const useLegacy = legacyRoute.amountOutBN.gt(tridentRoute.amountOutBN)
+
+          return Trade.exactIn(
+            useLegacy ? legacyRoute : tridentRoute,
+            amountSpecified,
+            currencyOut,
+            useLegacy ? TradeVersion.V1 : TradeVersion.V2
+          )
+        }
+
         const legacyRoute = findSingleRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
