@@ -1,6 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { ConstantProductPool } from '@sushiswap/exchange'
+import { useBentoBoxTotals } from '@sushiswap/wagmi'
 import CONSTANT_PRODUCT_POOL_ABI from 'abis/constant-product-pool.json'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
@@ -44,6 +45,11 @@ export function useConstantProductPools(
     return Array.from(pairsMap.values())
   }, [currencies])
   const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
+
+  const tokensUnique = useMemo(
+    () => pairsUnique.reduce((previousValue, [t0, t1]) => previousValue.add(t0).add(t1), new Set<Token>()),
+    [pairsUnique]
+  )
 
   const callStatePoolsCount = useSingleContractMultipleData(
     chainId,
@@ -105,16 +111,27 @@ export function useConstantProductPools(
     'swapFee'
   )
 
+  const totals = useBentoBoxTotals(chainId, Array.from(tokensUnique))
+
   return useMemo(
     () =>
       pools.map((p, i) => {
+        if (!totals) return [PoolState.LOADING, null]
         if (!resultsReserves[i].valid || !resultsReserves[i].result) return [PoolState.LOADING, null]
         if (!resultsFee[i].valid || !resultsFee[i].result) return [PoolState.LOADING, null]
         return [
           PoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()),
+            Amount.fromShare(
+              p.token0,
+              resultsReserves[i].result!._reserve0.toString(),
+              totals[p.token0.wrapped.address]
+            ),
+            Amount.fromShare(
+              p.token1,
+              resultsReserves[i].result!._reserve1.toString(),
+              totals[p.token1.wrapped.address]
+            ),
             parseInt(resultsFee[i].result![0].toString()),
             resultsReserves[i].result!._blockTimestampLast !== 0
           ),
