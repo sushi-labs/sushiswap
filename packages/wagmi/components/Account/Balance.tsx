@@ -50,19 +50,17 @@ export function Balance({ address, supportedNetworks }: Props): JSX.Element {
   }
 
   return (
-    <>
-      <Typography weight={700} className="flex gap-1 items-center text-slate-200" as="span">
-        {chain?.id && <NetworkIcon type="naked" chainId={chain.id} width={24} height={24} className="-ml-1.5" />}
-        <Typography weight={700} className="flex gap-1 items-baseline text-slate-200" as="span">
-          {isMounted &&
-            chain &&
-            data &&
-            Amount.fromRawAmount(Native.onChain(chain.id), JSBI.BigInt(data.value)).toSignificant(4)}
-          <Typography weight={700} variant="sm" className="text-slate-500" as="span">
-            {chain ? Native.onChain(chain.id)?.symbol : 'ETH'}
-          </Typography>
+    <Typography weight={700} className="flex gap-1 items-center text-slate-200" as="span">
+      {chain?.id && <NetworkIcon type="naked" chainId={chain.id} width={24} height={24} className="-ml-1.5" />}
+      <Typography weight={700} className="flex gap-1 items-baseline text-slate-200" as="span">
+        {isMounted &&
+          chain &&
+          data &&
+          Amount.fromRawAmount(Native.onChain(chain.id), JSBI.BigInt(data.value)).toSignificant(4)}
+        <Typography weight={700} variant="sm" className="text-slate-500" as="span">
+          {chain ? Native.onChain(chain.id)?.symbol : 'ETH'}
         </Typography>
       </Typography>
-    </>
+    </Typography>
   )
 }

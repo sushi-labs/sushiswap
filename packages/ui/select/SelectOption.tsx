@@ -1,11 +1,11 @@
 import { Listbox } from '@headlessui/react'
 import classNames from 'classnames'
-import { FC, forwardRef } from 'react'
+import { FC, forwardRef, ReactNode } from 'react'
 
 import { ExtractProps } from '../types'
 
 export type SelectOptionProps = ExtractProps<typeof Listbox.Option> & {
-  children?: string
+  children?: ReactNode
 }
 
 const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, ...props }, ref) => {
