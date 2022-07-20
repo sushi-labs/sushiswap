@@ -74,26 +74,18 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
               <Menu.Items>
                 <div>
                   {isMounted &&
-                    connectors
-                      .sort((a, b) =>
-                        a.name === 'Safe' || b.name == 'safe'
-                          ? 1
-                          : a.name === 'MetaMask' || b.name === 'MetaMask'
-                          ? -1
-                          : 0
-                      )
-                      .map((connector) => (
-                        <Menu.Item
-                          key={connector.id}
-                          onClick={() => connect({ connector })}
-                          className="flex items-center gap-3 group"
-                        >
-                          <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
-                            {Icons[connector.name] && Icons[connector.name]}
-                          </div>{' '}
-                          {connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
-                        </Menu.Item>
-                      ))}
+                    connectors.map((connector) => (
+                      <Menu.Item
+                        key={connector.id}
+                        onClick={() => connect({ connector })}
+                        className="flex items-center gap-3 group"
+                      >
+                        <div className="-ml-[6px] group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
+                          {Icons[connector.name] && Icons[connector.name]}
+                        </div>{' '}
+                        {connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+                      </Menu.Item>
+                    ))}
                 </div>
               </Menu.Items>
             </Menu>
