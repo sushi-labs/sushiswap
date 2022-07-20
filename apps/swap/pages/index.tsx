@@ -169,7 +169,9 @@ const Widget: FC<Swap> = ({
 
   const router = useRouter()
 
-  const [{ expertMode }] = useSettings()
+  const [{ expertMode, slippageTolerance }] = useSettings()
+
+  const SWAP_SLIPPAGE = slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
@@ -284,7 +286,7 @@ const Widget: FC<Swap> = ({
   )
 
   const srcMinimumAmountOut =
-    sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE) : srcAmount
+    sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_SLIPPAGE) : srcAmount
 
   const srcAmountOutMinusStargateFee = useMemo(() => {
     return srcAmount?.multiply(_9994)?.divide(_10000)
@@ -372,7 +374,7 @@ const Widget: FC<Swap> = ({
 
   const dstMinimumAmountOut =
     crossChain && !isStargateBridgeToken(dstToken)
-      ? dstTrade?.minimumAmountOut(SWAP_DEFAULT_SLIPPAGE)
+      ? dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
       : srcMinimumAmountOut
       ? Amount.fromFractionalAmount(dstToken, srcMinimumAmountOut.numerator, srcMinimumAmountOut.denominator)
       : undefined
@@ -726,8 +728,8 @@ const Widget: FC<Swap> = ({
             ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)}
           </Typography>
         ) : (
-          <div className="flex justify-end items-center">
-            <Loader size={14} />
+          <div className="flex justify-end">
+            <Loader size={12} />
           </div>
         )}
       </>
