@@ -1124,8 +1124,9 @@ const Widget: FC<Swap> = ({
                 </ConfirmationComponentController>
               </>
             ) : (
+              // Placeholder
               <Button fullWidth color="blue" size="md">
-                <Loader size={16} />
+                Connect Wallet
               </Button>
             )}
             {caption && <Caption theme={theme} />}
