@@ -32,9 +32,16 @@ export type Props<C extends React.ElementType> = ButtonProps<C> & {
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   hack?: ReturnType<typeof useConnect>
   supportedNetworks?: ChainId[]
+  appearOnMount?: boolean
 }
 
-export const Button = <C extends React.ElementType>({ hack, children, supportedNetworks, ...rest }: Props<C>) => {
+export const Button = <C extends React.ElementType>({
+  hack,
+  children,
+  supportedNetworks,
+  appearOnMount = true,
+  ...rest
+}: Props<C>) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { disconnect } = useDisconnect()
@@ -47,7 +54,7 @@ export const Button = <C extends React.ElementType>({ hack, children, supportedN
   useAutoConnect()
 
   return (
-    <AppearOnMount>
+    <AppearOnMount enabled={appearOnMount}>
       {(isMounted) => {
         // Pending confirmation state
         // Awaiting wallet confirmation
