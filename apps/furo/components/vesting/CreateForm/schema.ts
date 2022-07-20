@@ -107,14 +107,14 @@ export const createVestingSchema = yup.object({
     }),
   stepPayouts: yup
     .number()
-    .min(1, 'Must be more than 1')
+    .min(1, 'Must be at least 1')
     .integer('Must be a whole number')
     .typeError('This field is required')
     .required('This field is required'),
   stepAmount: yup
     .number()
     .typeError('Target must be a number')
-    .moreThan(0, 'Must be greater than zero')
+    .min(0, 'Must be a positive number')
     .required('This field is required'),
   stepConfig: yup.mixed<StepConfig>().required('This field is required'),
   fundSource: yup.mixed<FundSource>().required('This field is required'),

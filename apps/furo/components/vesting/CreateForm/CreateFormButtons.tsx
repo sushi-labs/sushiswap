@@ -50,6 +50,10 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       totalAmount = totalStep.add(cliff)
     }
 
+    if (cliff && !totalStep) {
+      totalAmount = cliff
+    }
+
     return [
       totalAmount,
       totalAmount?.greaterThan(ZERO) && step
