@@ -13,12 +13,12 @@ export type FooterProps = React.HTMLProps<HTMLDivElement>
 
 const config: Record<string, Record<string, string>> = {
   Services: {
-    Swap: 'https://app.sushi.com',
+    Swap: 'https://sushi.com/swap',
     'Liquidity Providing': 'https://app.sushi.com/pools',
     'Lending & Borrowing': 'https://app.sushi.com/kashi',
     'Miso Launchpad': 'https://app.sushi.com/miso',
     'Shoyu NFT': 'https://shoyunft.com',
-    'Furo Streaming': 'https://furo.sushi.com',
+    'Furo Streaming': 'https://sushi.com/furo',
     Analytics: 'https://analytics.sushi.com',
   },
   Help: {
