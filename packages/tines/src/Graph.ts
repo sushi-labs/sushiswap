@@ -786,9 +786,9 @@ export class Graph {
         //totalOutput += p.totalOutput
         this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
         totalrouted += routeValues[step]
-        if (step === 0) {
-          primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
-        }
+        // if (step === 0) {
+        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        // }
       }
     }
     if (step == 0)
@@ -821,6 +821,9 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = output / amountIn
+      const priceTo = this.tokens.get(to.address)?.price
+      const priceFrom = this.tokens.get(from.address)?.price
+      primaryPrice = priceTo && priceFrom ? priceTo / priceFrom : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
@@ -874,9 +877,9 @@ export class Graph {
         //totalOutput += p.totalOutput
         this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
         totalrouted += routeValues[step]
-        if (step === 0) {
-          primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
-        }
+        // if (step === 0) {
+        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        // }
       }
     }
     if (step == 0)
@@ -909,6 +912,9 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = amountOut / input
+      const priceTo = this.tokens.get(to.address)?.price
+      const priceFrom = this.tokens.get(from.address)?.price
+      primaryPrice = priceTo && priceFrom ? priceTo / priceFrom : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
