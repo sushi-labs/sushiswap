@@ -29,7 +29,7 @@ export const CustomTokensOverlay: FC = () => {
 
   return (
     <div className="border-b border-slate-200/5">
-      <button
+      <div
         onClick={() => setOpen(true)}
         className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
       >
@@ -64,7 +64,7 @@ export const CustomTokensOverlay: FC = () => {
             </div>
           </div>
         </div>
-      </button>
+      </div>
       <SlideIn.FromLeft show={open} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Custom Tokens" />

@@ -13,7 +13,10 @@ export const SlippageToleranceDisclosure: FC = () => {
     <Disclosure>
       {({ open }) => (
         <div className="border-b border-slate-200/5">
-          <Disclosure.Button className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
+          <Disclosure.Button
+            as="div"
+            className="relative flex items-center justify-between w-full gap-3 group rounded-xl"
+          >
             <div className="flex items-center justify-center w-5 h-5">
               <AdjustmentsIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
             </div>

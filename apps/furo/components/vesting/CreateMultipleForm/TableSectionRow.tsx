@@ -131,9 +131,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
               <Controller
                 control={control as never}
                 name={`vestings.${index}.fundSource`}
-                render={({ field: { onChange }, fieldState: { error } }) => (
+                render={({ field: { onChange } }) => (
                   <Select
-                    error={!!error?.message}
                     button={
                       <Listbox.Button
                         type="button"
@@ -341,9 +340,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <>
                           <Select
-                            error={!!error?.message}
                             button={
-                              <Select.Button className="ring-offset-slate-800" type="button">
+                              <Select.Button error={!!error?.message} className="ring-offset-slate-800" type="button">
                                 {value?.label}
                               </Select.Button>
                             }
