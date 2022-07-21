@@ -180,6 +180,10 @@ export const STARGATE_BRIDGE_TOKEN_ADDRESSES: Record<number, string[]> = {
 }
 
 export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
+  [ChainId.ETHEREUM]: {
+    [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]: 1,
+    [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]: 2,
+  },
   [ChainId.OPTIMISM]: {
     [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: 1,
   },
@@ -205,6 +209,11 @@ export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
 }
 
 export const STARGATE_POOL_ADDRESS: Record<number, Record<string, string>> = {
+  [ChainId.ETHEREUM]: {
+    [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]: '0xdf0770dF86a8034b3EFEf0A1Bb3c889B8332FF56',
+    [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]: '0x38EA452219524Bb87e18dE1C24D3bB59510BD783',
+  },
+
   [ChainId.OPTIMISM]: {
     [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: '0xDecC0c09c3B5f6e92EF4184125D5648a66E35298',
   },
