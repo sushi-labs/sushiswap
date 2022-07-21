@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
@@ -309,6 +310,8 @@ const Widget: FC<Swap> = ({
       crossChain ? dstBridgeToken : dstToken
     )
   }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
+
+  console.log('Dst Amount In', dstAmountIn?.quotient.toString())
 
   const dstTrade = useTrade(
     dstChainId,
@@ -623,7 +626,6 @@ const Widget: FC<Swap> = ({
       !srcMinimumAmountOut ||
       !dstChainId ||
       !dstMinimumAmountOut ||
-      !address ||
       !srcTokenRebase ||
       !contractWithProvider
     ) {
@@ -642,8 +644,7 @@ const Widget: FC<Swap> = ({
         dstTrade,
         srcUseBentoBox,
         dstUseBentoBox,
-        user: address,
-        debug: true,
+        user: AddressZero,
       })
 
       if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
@@ -673,7 +674,6 @@ const Widget: FC<Swap> = ({
 
     void getFee()
   }, [
-    address,
     contractWithProvider,
     crossChain,
     dstBridgeToken,
