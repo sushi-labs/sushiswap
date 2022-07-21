@@ -83,5 +83,10 @@
       ]
     }
   },
+  "globalDependencies": [
+    ".env",
+    "tsconfig.json",
+    "$NODE_ENV"
+  ],
   "baseBranch": "origin/master"
 }
