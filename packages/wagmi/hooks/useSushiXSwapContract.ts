@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import sushiXSwapArtifact from '@sushiswap/sushixswap/artifacts/contracts/SushiXSwap.sol/SushiXSwap.json'
 import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
 import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
-import { useContract, useSigner } from 'wagmi'
+import { useContract, useProvider, useSigner } from 'wagmi'
 
 export const getSushiXSwapContractConfig = (chainId: number | undefined) => ({
   addressOrName:
@@ -18,5 +18,13 @@ export function useSushiXSwapContract(chainId: number | undefined) {
   return useContract<SushiXSwap>({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider,
+  })
+}
+
+export function useSushiXSwapContractWithProvider(chainId: number | undefined) {
+  const provider = useProvider({ chainId })
+  return useContract<SushiXSwap>({
+    ...getSushiXSwapContractConfig(chainId),
+    signerOrProvider: provider,
   })
 }

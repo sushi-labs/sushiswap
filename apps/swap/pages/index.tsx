@@ -24,6 +24,7 @@ import {
   useBentoBoxTotal,
   usePrices,
   useSushiXSwapContract,
+  useSushiXSwapContractWithProvider,
   Wallet,
 } from '@sushiswap/wagmi'
 import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
@@ -240,6 +241,8 @@ const Widget: FC<Swap> = ({
   }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, router])
 
   const contract = useSushiXSwapContract(srcChainId)
+
+  const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId)
 
   // Computed
 
@@ -622,7 +625,7 @@ const Widget: FC<Swap> = ({
       !dstMinimumAmountOut ||
       !address ||
       !srcTokenRebase ||
-      !contract
+      !contractWithProvider
     ) {
       return
     }
@@ -632,7 +635,7 @@ const Widget: FC<Swap> = ({
       const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
 
       const sushiXSwap = new SushiXSwap({
-        contract,
+        contract: contractWithProvider,
         srcToken,
         dstToken,
         srcTrade,
@@ -671,7 +674,7 @@ const Widget: FC<Swap> = ({
     void getFee()
   }, [
     address,
-    contract,
+    contractWithProvider,
     crossChain,
     dstBridgeToken,
     dstChainId,
