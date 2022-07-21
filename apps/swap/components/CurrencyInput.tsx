@@ -168,9 +168,9 @@ export const CurrencyInput: FC<CurrencyInput> = ({
                   ? ''
                   : usdPctChange > 0
                   ? 'text-green'
-                  : usdPctChange < -3
+                  : usdPctChange < -5
                   ? 'text-red'
-                  : usdPctChange < -2
+                  : usdPctChange < -3
                   ? 'text-yellow'
                   : 'text-slate-500'
               )}

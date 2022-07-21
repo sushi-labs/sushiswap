@@ -94,10 +94,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount } = query
   return {
     props: {
-      srcToken: srcToken ?? Native.onChain(ChainId.AVALANCHE).symbol,
-      dstToken: dstToken ?? Native.onChain(ChainId.OPTIMISM).symbol,
-      srcChainId: srcChainId ?? ChainId.AVALANCHE,
-      dstChainId: dstChainId ?? ChainId.OPTIMISM,
+      srcToken: srcToken ?? Native.onChain(ChainId.ETHEREUM).symbol,
+      dstToken: dstToken ?? Native.onChain(ChainId.ARBITRUM).symbol,
+      srcChainId: srcChainId ?? ChainId.ETHEREUM,
+      dstChainId: dstChainId ?? ChainId.ARBITRUM,
       srcTypedAmount: srcTypedAmount ?? '',
       dstTypedAmount: dstTypedAmount ?? '',
     },
