@@ -508,6 +508,7 @@ const Widget: FC<Swap> = ({
         console.error('catch err', err)
       })
       .finally(() => {
+        setSignature(undefined)
         setIsWritePending(false)
       })
   }, [
