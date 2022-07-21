@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber'
-
 import { getBigNumber, revertPositive } from './Utils'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
@@ -44,13 +43,25 @@ export abstract class RPool {
     this.reserve0 = res0
     this.reserve1 = res1
   }
+  getReserve0() {
+    return this.reserve0
+  }
+  getReserve1() {
+    return this.reserve1
+  }
 
   // Returns [<output amount>, <gas consumption estimation>]
   abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
   abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
-  // abstract calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number;
-  // abstract calcInputByPrice(price: number, direction: boolean, takeFeeIntoAccount: boolean, hint: number): number;
+
+  // precision of calcOutByIn
+  granularity0() {
+    return 1
+  }
+  granularity1() {
+    return 1
+  }
 }
 
 export class ConstantProductRPool extends RPool {
@@ -83,7 +94,7 @@ export class ConstantProductRPool extends RPool {
       // not possible swap
       return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
-    const input = (x * amountOut) / (1 - this.fee) / (y - amountOut)
+    let input = (x * amountOut) / (1 - this.fee) / (y - amountOut)
     return { inp: input, gasSpent: this.swapGasCost }
   }
 
@@ -171,11 +182,11 @@ export class HybridRPool extends RPool {
 
     const nA = this.A * 2
 
-    const c = D.mul(D)
+    let c = D.mul(D)
       .div(x.mul(2))
       .mul(D)
       .div((nA * 2) / this.A_PRECISION)
-    const b = D.mul(this.A_PRECISION).div(nA).add(x)
+    let b = D.mul(this.A_PRECISION).div(nA).add(x)
 
     let yPrev
     let y = D
@@ -209,7 +220,7 @@ export class HybridRPool extends RPool {
       yNewBN = BigNumber.from(1)
 
     const xNewBN = this.computeY(yNewBN)
-    const input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee))
+    let input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee))
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: this.swapGasCost }
