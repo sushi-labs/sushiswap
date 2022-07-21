@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
@@ -118,20 +119,6 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
-          <button
-            type="button"
-            className={classNames(
-              theme.secondary.default,
-              theme.secondary.hover,
-              'flex items-center gap-2 text-xs cursor-pointer font-medium'
-            )}
-            onClick={(e) => {
-              onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
-              e.stopPropagation()
-            }}
-          >
-            {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
-          </button>
         </div>
         <div className="flex flex-col">
           <div className="relative flex items-center gap-1">
@@ -175,7 +162,19 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
           {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
           {usdPctChange && (
-            <span className={classNames(usdPctChange === 0 ? '' : usdPctChange > 0 ? 'text-green' : 'text-red')}>
+            <span
+              className={classNames(
+                usdPctChange === 0
+                  ? ''
+                  : usdPctChange > 0
+                  ? 'text-green'
+                  : usdPctChange < -3
+                  ? 'text-red'
+                  : usdPctChange < -2
+                  ? 'text-yellow'
+                  : 'text-slate-500'
+              )}
+            >
               {' '}
               {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
                 usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
@@ -184,18 +183,31 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           )}
         </Typography>
 
-        <button
-          type="button"
-          onClick={() => {
-            if (onMax && balance) {
-              onMax(balance.greaterThan(0) ? balance.toFixed() : '')
-            }
-          }}
-          className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}
-          disabled={disableMaxButton}
-        >
-          Balance: {isMounted && balance ? balance.toSignificant(6) : ''}{' '}
-        </button>
+        <div className="h-6">
+          <Transition
+            appear
+            show={Boolean(isMounted && balance)}
+            enter="transition duration-300 origin-center ease-out"
+            enterFrom="transform scale-90 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform opacity-100"
+            leaveTo="transform opacity-0"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                if (onMax && balance) {
+                  onMax(balance.greaterThan(0) ? balance.toFixed() : '')
+                }
+              }}
+              className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs')}
+              disabled={disableMaxButton}
+            >
+              {isMounted && balance ? `Balance: ${balance.toSignificant(6)}` : ''}{' '}
+            </button>
+          </Transition>
+        </div>
       </div>
       {!disableNetworkSelect && onNetworkSelect && (
         <NetworkSelectorOverlay

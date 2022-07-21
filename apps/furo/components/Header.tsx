@@ -1,6 +1,7 @@
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { App, Menu, SushiIcon } from '@sushiswap/ui'
+import { App, Menu } from '@sushiswap/ui'
+import { AppType } from '@sushiswap/ui/app/Header'
 import { Wallet } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAINS } from 'config'
 import Link from 'next/link'
@@ -23,16 +24,9 @@ export const Header: FC = () => {
 
   return (
     <App.Header
+      appType={AppType.Furo}
       className={router.pathname === '/' ? '' : 'bg-slate-900 border-b border-slate-200/5'}
       withScrollBackground={router.pathname === '/'}
-      brand={
-        <Link href={isConnected ? '/dashboard' : '/'} passHref={true}>
-          <a>
-            <SushiIcon width={32} height={32} className="cursor-pointer" />
-          </a>
-        </Link>
-      }
-      nav={<></>}
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
         <Wallet.Button

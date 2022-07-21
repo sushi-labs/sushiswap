@@ -16,7 +16,7 @@ import {
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
 const initialState: StorageState = {
-  slippageTolerance: parsedState?.slippageTolerance || 1,
+  slippageTolerance: parsedState?.slippageTolerance || 0.5,
   slippageToleranceType: parsedState?.slippageToleranceType || 'auto',
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
   maxFeePerGas: parsedState?.maxFeePerGas || undefined,

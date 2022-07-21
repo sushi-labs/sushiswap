@@ -1,4 +1,5 @@
 import { Popover as HeadlessPopover } from '@headlessui/react'
+import * as PopperJS from '@popperjs/core'
 import React, { FC, Fragment, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -10,11 +11,12 @@ type Popover = ExtractProps<typeof HeadlessPopover> & {
   tabIndex?: number
   hover?: boolean
   disableClickListener?: boolean
+  options?: Omit<Partial<PopperJS.Options>, 'modifiers'>
 }
 
-export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableClickListener, ...props }) => {
+export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableClickListener, options, ...props }) => {
   const [show, setShow] = useState(false)
-  const { styles, attributes, setReferenceElement, setPopperElement } = usePopover()
+  const { styles, attributes, setReferenceElement, setPopperElement } = usePopover(options)
 
   useEffect(() => {
     if (!document.getElementById('popover-portal')) {
@@ -53,7 +55,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
                 {...attributes.popper}
                 ref={setPopperElement}
                 style={styles.popper}
-                className="tooltip z-[100] shadow-md"
+                className="tooltip z-[100]"
                 static
               >
                 {React.cloneElement(
@@ -62,7 +64,7 @@ export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableCl
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'rounded-lg overflow-hidden shadow-xl shadow-black/20'
+                      'rounded-lg overflow-hidden shadow-xl shadow-black/20 shadow-md'
                     ),
                   },
                   panel.props.children

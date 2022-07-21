@@ -29,6 +29,7 @@ interface TransactionProgressStep {
   subheader: ReactNode
   lastStep?: boolean
   link?: string
+  comingSoon?: boolean
 }
 
 type TransactionProgressStepType<P> = FC<P> & {
@@ -42,6 +43,7 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
   subheader,
   lastStep = false,
   link,
+  comingSoon = false,
 }) => {
   return (
     <div className={classNames('grid grid-cols-[60px_320px] mx-auto')}>
@@ -112,6 +114,19 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
               <ExternalLinkIcon width={16} className="text-inherit" />
             </a>
           </Link>
+        ) : comingSoon ? (
+          <div className="text-slate-200 flex items-center gap-1 hover:text-slate-50">
+            {header}{' '}
+            <Popover
+              hover
+              button={<ExternalLinkIcon width={16} className="text-inherit opacity-40" />}
+              panel={
+                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
+                  LzScan coming soon!
+                </div>
+              }
+            />
+          </div>
         ) : (
           <div className="text-slate-200">{header}</div>
         )}

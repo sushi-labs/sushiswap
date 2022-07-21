@@ -60,12 +60,16 @@ export class Trade<
     route: MultiRoute,
     amountIn: Amount<TInput>,
     currencyOut: TOutput,
-    version: TVersion
+    version: TVersion,
+    currencyInRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
+    currencyOutRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
   ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
     return new Trade(
       { ...route, fromToken: amountIn.currency as RToken, toToken: currencyOut as RToken },
       Type.EXACT_INPUT,
-      version
+      version,
+      currencyInRebase,
+      currencyOutRebase
     )
   }
 
@@ -79,23 +83,33 @@ export class Trade<
     route: MultiRoute,
     currencyIn: TInput,
     amountOut: Amount<TOutput>,
-    version: TVersion
+    version: TVersion,
+    currencyInRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
+    currencyOutRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
     return new Trade(
       { ...route, fromToken: currencyIn as RToken, toToken: amountOut.currency as RToken },
       Type.EXACT_OUTPUT,
-      version
+      version,
+      currencyInRebase,
+      currencyOutRebase
     )
   }
 
-  public constructor(route: MultiRoute, tradeType: TradeType, tradeVersion: TradeVersion) {
+  public constructor(
+    route: MultiRoute,
+    tradeType: TradeType,
+    tradeVersion: TradeVersion,
+    currencyInRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
+    currencyOutRebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
+  ) {
     this.route = route
     this.tradeType = tradeType
     this.tradeVersion = tradeVersion
 
-    const amountIn = Amount.fromRawAmount(route.fromToken as TInput, route.amountInBN.toString())
+    const amountIn = Amount.fromShare(route.fromToken as TInput, route.amountInBN.toString(), currencyInRebase)
 
-    const amountOut = Amount.fromRawAmount(route.toToken as TOutput, route.amountOutBN.toString())
+    const amountOut = Amount.fromShare(route.toToken as TOutput, route.amountOutBN.toString(), currencyOutRebase)
 
     if (tradeType === Type.EXACT_INPUT) {
       this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)

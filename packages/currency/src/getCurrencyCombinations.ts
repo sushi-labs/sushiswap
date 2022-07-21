@@ -1,16 +1,34 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { DAI, FRAX, MIM, USDC, USDT, WETH9, WNATIVE } from './constants'
+import { DAI, FRAX, FXS, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[] } = {
+  [ChainId.ETHEREUM]: [
+    WNATIVE[ChainId.ETHEREUM],
+    WBTC[ChainId.ETHEREUM],
+    USDC[ChainId.ETHEREUM],
+    USDT[ChainId.ETHEREUM],
+    DAI[ChainId.ETHEREUM],
+    MIM[ChainId.ETHEREUM],
+    FRAX[ChainId.ETHEREUM],
+    new Token({
+      chainId: ChainId.ETHEREUM,
+      address: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
+      decimals: 9,
+      name: 'Olympus',
+      symbol: 'OHM',
+    }),
+  ],
+
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
   [ChainId.POLYGON_TESTNET]: [WNATIVE[ChainId.POLYGON_TESTNET], USDC[ChainId.POLYGON_TESTNET]],
   [ChainId.ARBITRUM]: [
     WNATIVE[ChainId.ARBITRUM],
+    WBTC[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
@@ -19,13 +37,16 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
   ],
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
+    WBTC[ChainId.OPTIMISM],
     USDC[ChainId.OPTIMISM],
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],
+    LUSD[ChainId.OPTIMISM],
   ],
   [ChainId.FANTOM]: [
     WNATIVE[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
+    WBTC[ChainId.FANTOM],
     USDC[ChainId.FANTOM],
     USDT[ChainId.FANTOM],
     DAI[ChainId.FANTOM],
@@ -34,18 +55,77 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
   ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
-    WETH9[ChainId.FANTOM],
+    WETH9[ChainId.AVALANCHE],
+    WBTC[ChainId.AVALANCHE],
     USDC[ChainId.AVALANCHE],
     USDT[ChainId.AVALANCHE],
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
+    new Token({
+      chainId: ChainId.AVALANCHE,
+      address: '0x0da67235dD5787D67955420C84ca1cEcd4E5Bb3b',
+      decimals: 18,
+      name: 'Wrapped MEMO',
+      symbol: 'WMEMO',
+    }),
+  ],
+  [ChainId.POLYGON]: [
+    WNATIVE[ChainId.POLYGON],
+    WETH9[ChainId.POLYGON],
+    WBTC[ChainId.POLYGON],
+    USDC[ChainId.POLYGON],
+    USDT[ChainId.POLYGON],
+    DAI[ChainId.POLYGON],
+    MIM[ChainId.POLYGON],
+    FRAX[ChainId.POLYGON],
+    new Token({
+      chainId: ChainId.POLYGON,
+      address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
+      decimals: 18,
+      name: 'Toucan Protocol: Base Carbon Tonne',
+      symbol: 'BCT',
+    }),
+  ],
+  [ChainId.BSC]: [
+    WNATIVE[ChainId.BSC],
+    WETH9[ChainId.BSC],
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+    MIM[ChainId.BSC],
+    FRAX[ChainId.BSC],
   ],
 }
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
-} = {}
+} = {
+  [ChainId.ETHEREUM]: {
+    [FRAX[ChainId.ETHEREUM].address]: [FRAX[ChainId.ETHEREUM]],
+    [FXS[ChainId.ETHEREUM].address]: [FXS[ChainId.ETHEREUM]],
+  },
+  [ChainId.POLYGON]: {
+    [FRAX[ChainId.POLYGON].address]: [FRAX[ChainId.POLYGON]],
+    [FXS[ChainId.POLYGON].address]: [FXS[ChainId.POLYGON]],
+  },
+  [ChainId.ARBITRUM]: {
+    [FRAX[ChainId.ARBITRUM].address]: [FRAX[ChainId.ARBITRUM]],
+    [FXS[ChainId.ARBITRUM].address]: [FXS[ChainId.ARBITRUM]],
+  },
+  [ChainId.FANTOM]: {
+    [FRAX[ChainId.FANTOM].address]: [FRAX[ChainId.FANTOM]],
+    [FXS[ChainId.FANTOM].address]: [FXS[ChainId.FANTOM]],
+  },
+  [ChainId.BSC]: {
+    [FRAX[ChainId.BSC].address]: [FRAX[ChainId.BSC]],
+    [FXS[ChainId.BSC].address]: [FXS[ChainId.BSC]],
+  },
+  [ChainId.AVALANCHE]: {
+    [FRAX[ChainId.AVALANCHE].address]: [FRAX[ChainId.AVALANCHE]],
+    [FXS[ChainId.AVALANCHE].address]: [FXS[ChainId.AVALANCHE]],
+  },
+}
 
 export const CUSTOM_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

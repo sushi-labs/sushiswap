@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 type UseWalletStateReturn = {
@@ -14,10 +15,12 @@ type UseWalletState = (pendingConnector: boolean) => UseWalletStateReturn
 // Mutually exclusive states
 // TODO ramin: remove pendingConnector param when wagmi adds onConnecting callback to useAccount
 export const useWalletState: UseWalletState = (pendingConnector) => {
+  const [initialDc, setInitialDc] = useState(true)
+
   const { address, isConnecting, isReconnecting, isConnected, isDisconnected } = useAccount()
 
   // Trying to see if wallet is connected
-  const connecting = Boolean(isConnecting && !isReconnecting && !pendingConnector && !address)
+  const connecting = Boolean(isConnecting && !isReconnecting && !pendingConnector && !address) || initialDc
 
   // No wallet connected
   const notConnected = Boolean(!isConnecting && !isReconnecting && !pendingConnector && !address)
@@ -27,6 +30,12 @@ export const useWalletState: UseWalletState = (pendingConnector) => {
 
   // We are reconnecting
   const reconnecting = Boolean(isReconnecting && address)
+
+  useEffect(() => {
+    if (initialDc && connecting) {
+      setInitialDc(false)
+    }
+  }, [connecting, initialDc])
 
   return {
     isConnected,

@@ -147,7 +147,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               )}
             >
               <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Bentobox
+                BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
                 Receive funds in your BentoBox

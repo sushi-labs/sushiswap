@@ -20,6 +20,16 @@ export const STARGATE_CHAIN_ID: Record<number, number> = {
   [ChainId.FANTOM_TESTNET]: 10012,
 }
 
+export const STARGATE_WIDGET_ADDRESS: Record<number, string> = {
+  [ChainId.ETHEREUM]: '0x02489ac60F7f581445b7D2Dd59bb0A415A1009Df',
+  [ChainId.POLYGON]: '0xc2a6A1A8ACcc8BD757BF4b34FBAcB20fbeA87f55',
+  [ChainId.AVALANCHE]: '0x0cFF9ACef65A64B5D76e83B70787b27F7416644C',
+  [ChainId.FANTOM]: '0x7eA8d498d4db3a8895454F4BF3bD56385ba80968',
+  [ChainId.BSC]: '0xa8BA2FF9d0D7d175b2729866bE3D9c51cACb2e00',
+  [ChainId.OPTIMISM]: '0x16419058f15a86795933f78dC624B384D09E3a4e',
+  [ChainId.ARBITRUM]: '0x962F92cEe9A559d705f8999C92752EbCDD550616',
+}
+
 export const STARGATE_ROUTER_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x8731d54E9D02c286767d56ac03e8037C07e01e98',
   [ChainId.POLYGON]: '0x45A01E4e04F14f7A4a6702c74187c5F6222033cd',
@@ -250,5 +260,3 @@ export const STARGATE_TOKEN = new Token({
   symbol: 'STG',
   name: 'StargateToken',
 })
-
-export * from './fee'

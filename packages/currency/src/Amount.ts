@@ -18,7 +18,7 @@ export class Amount<T extends Type> extends Fraction {
     return new Amount(currency, rawAmount)
   }
 
-  public static fromShare<T extends Token>(
+  public static fromShare<T extends Type>(
     currency: T,
     shares: BigintIsh,
     rebase: { base: JSBI; elastic: JSBI }
