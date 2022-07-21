@@ -76,7 +76,7 @@ const func: DeployFunction = async function ({
   await run('verify:verify', {
     address,
     constructorArguments: args,
-    waitConfirmations: 10,
+    waitConfirmations: 20,
   })
 
   await tenderly.persistArtifacts([

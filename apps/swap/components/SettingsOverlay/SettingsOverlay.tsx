@@ -5,7 +5,6 @@ import { FC, useState } from 'react'
 
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { ExpertMode } from './ExpertMode'
-import { GasSettingsDisclosure } from './GasSettingsDisclosure'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
 interface SettingsOverlay {
@@ -26,7 +25,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
             <div className="overflow-y-auto overflow-x-hidden scroll h-full -ml-3 -mr-3 px-3">
               <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
               <div className="py-1 px-1">
-                <GasSettingsDisclosure chainId={chainId} />
+                {/*<GasSettingsDisclosure chainId={chainId} />*/}
                 <SlippageToleranceDisclosure />
                 <CustomTokensOverlay />
                 <ExpertMode />

@@ -12,6 +12,13 @@ export enum AppType {
   Legacy = 'Sushi 1.0',
 }
 
+const LINK = {
+  [AppType.Swap]: '/swap',
+  [AppType.Furo]: '/furo',
+  [AppType.Blog]: '/blog',
+  [AppType.Legacy]: '/',
+}
+
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
   nav?: JSX.Element
   withScrollBackground?: boolean
@@ -47,7 +54,7 @@ export function Header({
       </Transition>
       <div className="grid grid-cols-3 items-center max-w-5xl w-full mx-auto z-[101] px-4">
         <div className="flex gap-3 items-center">
-          <a className="flex flex-row items-center gap-1.5" href="/">
+          <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">
               <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
             </div>

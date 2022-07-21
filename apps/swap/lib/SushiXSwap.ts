@@ -749,7 +749,7 @@ export class SushiXSwap {
   teleport(
     srcBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
     dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
-    gasSpent = 100000,
+    gasSpent = 1000000,
     id: string
   ): void {
     const data = defaultAbiCoder.encode(
@@ -809,7 +809,7 @@ export class SushiXSwap {
     this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
-  async getFee(gasSpent = 100000) {
+  async getFee(gasSpent = 1000000) {
     return this.crossChain
       ? await this.contract.getFee(
           STARGATE_CHAIN_ID[this.dstCooker.chainId],
@@ -825,7 +825,7 @@ export class SushiXSwap {
       : [Zero, Zero]
   }
 
-  async cook(gasSpent = 100000): Promise<ContractTransaction | undefined> {
+  async cook(gasSpent = 1000000): Promise<ContractTransaction | undefined> {
     if (!this.contract) {
       return
     }

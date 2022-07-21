@@ -311,8 +311,6 @@ const Widget: FC<Swap> = ({
     )
   }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
 
-  console.log('Dst Amount In', dstAmountIn?.quotient.toString())
-
   const dstTrade = useTrade(
     dstChainId,
     TradeType.EXACT_INPUT,
@@ -490,14 +488,14 @@ const Widget: FC<Swap> = ({
       sushiXSwap.teleport(
         srcBridgeToken,
         dstBridgeToken,
-        dstTrade ? dstTrade.route.gasSpent + 500000 : undefined,
+        dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
         nanoId
       )
     }
 
     console.debug('attempt cook')
     sushiXSwap
-      .cook(dstTrade ? dstTrade.route.gasSpent + 500000 : undefined)
+      .cook(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       .then((res) => {
         if (res) {
           setSrcTxHash(res.hash)
@@ -508,6 +506,7 @@ const Widget: FC<Swap> = ({
         console.error('catch err', err)
       })
       .finally(() => {
+        setSignature(undefined)
         setIsWritePending(false)
       })
   }, [
@@ -659,13 +658,13 @@ const Widget: FC<Swap> = ({
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
-          dstTrade ? dstTrade.route.gasSpent + 100000 : undefined,
+          dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
           nanoId
         )
       }
 
       try {
-        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 100000 : undefined)
+        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
         feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
       } catch (e) {
         console.log(e)
