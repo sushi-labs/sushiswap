@@ -39,16 +39,12 @@ export function checkRouteResult(id: string, amountOut: number) {
     const increase = prevOut === 0 ? amountOut - prevOut : (amountOut / prevOut - 1) * 100
     totalIncrease += increase
     testCount++
-    const avgInc = totalIncrease / testCount
+    const avgInc = totalIncrease/testCount
     console.assert(increase >= -1e-4, `Routing result ${id} ${increase}%`)
-    fs.writeFileSync(
-      __dirname + '/' + REPORT_FILE,
-      `${testCount}:"${id}": ${prevOut} -> ${amountOut} (${increase}%) avg:${avgInc}%\n`,
-      {
-        encoding: 'utf8',
-        flag: newReportWasStarted ? 'a' : 'w',
-      }
-    )
+    fs.writeFileSync(__dirname + '/' + REPORT_FILE, `${testCount}:"${id}": ${prevOut} -> ${amountOut} (${increase}%) avg:${avgInc}%\n`, {
+      encoding: 'utf8',
+      flag: newReportWasStarted ? 'a' : 'w',
+    })
     newReportWasStarted = true
   }
 }

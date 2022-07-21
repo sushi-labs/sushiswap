@@ -311,8 +311,6 @@ const Widget: FC<Swap> = ({
     )
   }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
 
-  console.log('Dst Amount In', dstAmountIn?.quotient.toString())
-
   const dstTrade = useTrade(
     dstChainId,
     TradeType.EXACT_INPUT,

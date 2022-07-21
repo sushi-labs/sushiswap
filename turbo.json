@@ -85,7 +85,6 @@
     }
   },
   "globalDependencies": [
-    ".env",
     "tsconfig.json",
     "$NODE_ENV"
   ],

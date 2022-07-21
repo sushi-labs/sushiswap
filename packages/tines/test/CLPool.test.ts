@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import seedrandom from 'seedrandom'
-
-import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick } from '../src'
+import { default as seedrandom } from 'seedrandom'
+import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
