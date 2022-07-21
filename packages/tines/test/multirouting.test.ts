@@ -15,10 +15,12 @@ const gasPrice = 1 * 200 * 1e-9
 const USDC: RToken = {
   name: 'USDC',
   address: 'USDC',
+  symbol: 'USDC',
 }
 const WNATIVE: RToken = {
   name: 'WNATIVE',
   address: 'WNATIVE',
+  symbol: 'WNATIVE',
 }
 
 // Bridge:
@@ -275,19 +277,19 @@ describe('Multirouting for bridge topology', () => {
     checkExactOut(res, res2)
   })
 
-  it.skip('timing mesure', () => {
-    const pool = testPool1_2_2
-    const amountIn = 1_000_000
-    const start0 = performance.now()
-    for (let i = 0; i < 10_000_000; ++i) pool.calcOutByIn(amountIn * i, i % 2 == 0)
-    const start1 = performance.now()
-    for (let i = 0; i < 10_000_000; ++i) pool.calcInByOut(amountIn * i, i % 2 == 0)
-    const start2 = performance.now()
-    for (let i = 0; i < 10_000_000; ++i) pool.calcCurrentPriceWithoutFee(i % 2 == 0)
-    const finish = performance.now()
-    const t1 = numberPrecision((start1 - start0) / 10_000_000)
-    const t2 = numberPrecision((start2 - start1) / 10_000_000)
-    const t3 = numberPrecision((finish - start2) / 10_000_000)
-    console.log(`ConstantProduct pool calcOutByIn: ${t1}ms, calcInByOut: ${t2}ms, price: ${t3}ms`)
-  })
+  // it.skip('timing mesure', () => {
+  //   const pool = testPool1_2_2
+  //   const amountIn = 1_000_000
+  //   const start0 = performance.now()
+  //   for (let i = 0; i < 10_000_000; ++i) pool.calcOutByIn(amountIn * i, i % 2 == 0)
+  //   const start1 = performance.now()
+  //   for (let i = 0; i < 10_000_000; ++i) pool.calcInByOut(amountIn * i, i % 2 == 0)
+  //   const start2 = performance.now()
+  //   for (let i = 0; i < 10_000_000; ++i) pool.calcCurrentPriceWithoutFee(i % 2 == 0)
+  //   const finish = performance.now()
+  //   const t1 = numberPrecision((start1 - start0) / 10_000_000)
+  //   const t2 = numberPrecision((start2 - start1) / 10_000_000)
+  //   const t3 = numberPrecision((finish - start2) / 10_000_000)
+  //   console.log(`ConstantProduct pool calcOutByIn: ${t1}ms, calcInByOut: ${t2}ms, price: ${t3}ms`)
+  // })
 })

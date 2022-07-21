@@ -823,7 +823,7 @@ export class Graph {
       swapPrice = output / amountIn
       const priceTo = this.tokens.get(to.address)?.price
       const priceFrom = this.tokens.get(from.address)?.price
-      primaryPrice = priceTo && priceFrom ? priceTo / priceFrom : undefined
+      primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
@@ -914,7 +914,7 @@ export class Graph {
       swapPrice = amountOut / input
       const priceTo = this.tokens.get(to.address)?.price
       const priceFrom = this.tokens.get(from.address)?.price
-      primaryPrice = priceTo && priceFrom ? priceTo / priceFrom : undefined
+      primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
