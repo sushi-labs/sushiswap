@@ -50,6 +50,7 @@ const price = [1, 1, 1, 1, 1]
 const tokens = price.map((_, i) => ({
   name: '' + (i + 1),
   address: 'token_addres ' + (i + 1),
+  symbol: '' + (i + 1),
 }))
 
 const testPool0_1 = getPool(tokens, 0, 1, price, 1_500_0)
@@ -65,6 +66,7 @@ const price2 = [1, 2, 2.2, 15, 0.01]
 const tokens2 = price2.map((_, i) => ({
   name: '' + (i + 1),
   address: 'token_addres ' + (i + 1),
+  symbol: '' + (i + 1),
 }))
 
 const testPool0_1_2 = getPool(tokens2, 0, 1, price2, 15_000)
@@ -262,8 +264,8 @@ describe('Multirouting for bridge topology', () => {
   })
 
   it('very small swap', () => {
-    const token0 = { name: 'Token0', address: 'Token0Address' }
-    const token1 = { name: 'Token1', address: 'Token1Address' }
+    const token0 = { name: 'Token0', address: 'Token0Address', symbol: 'Token0Symbol' }
+    const token1 = { name: 'Token1', address: 'Token1Address', symbol: 'Token1Symbol' }
     const pool = getPool([token0, token1], 0, 1, [1, 2], 1e18, 0.03, 0)
     const res = findMultiRouteExactIn(token0, token1, 100, [pool], token1, 200)
     expect(res.amountOut).toBeGreaterThan(0)

@@ -4,10 +4,12 @@ import { getBigNumber, StableSwapRPool, closeValues } from '../src'
 const token0 = {
   name: 'Token0',
   address: '0xb7a4F3E9097C08dA09517b5aB877F7a917224ede',
+  symbol: 'Token1Symbol',
 }
 const token1 = {
   name: 'Token1',
   address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+  symbol: 'Token1Symbol',
 }
 const v = BigNumber.from('0x76329851304572304587') // random number  ~ 2^80
 

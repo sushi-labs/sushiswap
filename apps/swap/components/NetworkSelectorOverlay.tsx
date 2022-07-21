@@ -1,12 +1,9 @@
 import { CheckIcon } from '@heroicons/react/outline'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { useDebounce } from '@sushiswap/hooks'
-import { classNames, Input, Loader, NetworkIcon, SlideIn, Typography } from '@sushiswap/ui'
+import chains, { ChainId } from '@sushiswap/chain'
+import { useIsSmScreen } from '@sushiswap/hooks'
+import { classNames, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react'
-
-import { Theme } from '../types'
-import { OverlayContent, OverlayHeader } from './Overlay'
+import React, { FC, useCallback, useRef } from 'react'
 
 interface NetworkSelectorOverlay {
   open: boolean
@@ -14,100 +11,59 @@ interface NetworkSelectorOverlay {
   onSelect(network: ChainId): void
   selected: ChainId
   className?: string
-  networks?: { [k: string]: Chain }
-  theme: Theme
+  networks?: ChainId[]
 }
 
 export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
-  networks = Object.fromEntries(
-    Object.entries(chains).filter(([chainId]) => SUPPORTED_CHAIN_IDS.includes(Number(chainId)))
-  ),
+  networks = SUPPORTED_CHAIN_IDS,
   open,
   onClose,
   onSelect,
   selected,
-  className,
-  theme,
 }) => {
+  const isSmallScreen = useIsSmScreen()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [query, setQuery] = useState<string>()
-  const debouncedQuery = useDebounce(query, 200)
-  const searching = useRef<boolean>(false)
 
   const handleSelect = useCallback(
     (chainId: ChainId) => {
       onSelect(chainId)
       onClose()
-
-      setQuery(undefined)
     },
     [onClose, onSelect]
   )
 
-  const filteredChains: [string, Chain][] = useMemo(() => {
-    if (!debouncedQuery) {
-      searching.current = false
-      return Object.entries(networks)
-    }
-
-    searching.current = false
-    return Object.entries(networks).filter(([k, v]) => v.name.toLowerCase().includes(debouncedQuery.toLowerCase()))
-  }, [networks, debouncedQuery])
-
   return (
-    <SlideIn.FromLeft show={open} unmount={false} onClose={onClose} afterEnter={() => inputRef.current?.focus()}>
-      <OverlayContent theme={theme}>
-        <OverlayHeader onClose={onClose} title="Select Network" theme={theme} />
-        <div
-          className={classNames(
-            theme.background.secondary,
-            'w-full relative flex items-center justify-between gap-1 pr-4 rounded-xl focus-within:ring-2'
-          )}
-          style={{ '--tw-ring-color': theme.accent }}
-        >
-          <Input.Address
-            ref={inputRef}
-            placeholder="Search token by address"
-            value={query}
-            onChange={(val: string) => {
-              searching.current = true
-              setQuery(val)
-            }}
-            className={classNames(
-              theme.primary.default,
-              theme.primary.hover,
-              '!border-none !ring-offset-0 !shadow-none font-bold placeholder:font-medium !ring-0 w-full'
-            )}
-          />
-          {searching.current && <Loader size="16px" />}
-        </div>
-        <div className={classNames(theme.background.secondary, 'rounded-xl overflow-hidden h-[calc(100%-92px)]')}>
-          <div className="h-full overflow-auto hide-scrollbar">
-            {filteredChains.map(([k, chain]) => (
-              <Typography
-                onClick={() => handleSelect(chain.chainId)}
-                key={chain.chainId}
-                variant="sm"
-                className={classNames(
-                  selected === chain.chainId
-                    ? classNames(theme.primary.default, theme.primary.hover, '!font-bold ')
-                    : classNames(theme.secondary.default, theme.secondary.hover, '!font-medium '),
-                  'flex items-center gap-1.5 cursor-pointer py-2 pr-3 pl-1.5'
-                )}
-              >
-                {selected === chain.chainId ? (
-                  <CheckIcon width={20} height={20} className="text-blue" />
-                ) : (
-                  <div className="h-5 w-5 flex justify-center items-center">
-                    <NetworkIcon type="naked" chainId={chain.chainId} width={18} height={18} />
-                  </div>
-                )}
-                {chain.name}
-              </Typography>
-            ))}
-          </div>
-        </div>
-      </OverlayContent>
-    </SlideIn.FromLeft>
+    <SlideIn>
+      <SlideIn.FromLeft show={open} onClose={onClose} afterEnter={() => !isSmallScreen && inputRef.current?.focus()}>
+        <Overlay.Content className="bg-slate-800 !pb-0 !px-0">
+          <Overlay.Header onClose={onClose} title="Select Network" />
+          {networks.map((chainId) => (
+            <Typography
+              as="button"
+              onClick={() => handleSelect(chainId)}
+              key={chainId}
+              variant="sm"
+              className={classNames(
+                selected === chainId
+                  ? 'text-slate-200 !font-medium hover:text-white'
+                  : 'text-slate-400 hover:text-white',
+                'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue py-1'
+              )}
+            >
+              {selected === chainId ? (
+                <div className="flex items-center justify-center w-8 h-8">
+                  <CheckIcon width={24} height={24} className="group-hover:text-white text-blue" />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center w-8 h-8">
+                  <NetworkIcon type="naked" chainId={chainId} width={24} height={24} />
+                </div>
+              )}
+              {chains[chainId].name}
+            </Typography>
+          ))}
+        </Overlay.Content>
+      </SlideIn.FromLeft>
+    </SlideIn>
   )
 }

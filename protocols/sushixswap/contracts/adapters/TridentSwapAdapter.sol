@@ -10,7 +10,8 @@ import "../interfaces/trident/ITridentSwapAdapter.sol";
 abstract contract TridentSwapAdapter is
     ITridentRouter,
     ImmutableState,
-    BentoAdapter
+    BentoAdapter,
+    TokenAdapter
 {
     // Custom Error
     error TooLittleReceived();
@@ -24,12 +25,20 @@ abstract contract TridentSwapAdapter is
         returns (uint256 amountOut)
     {
         if (params.amountIn == 0) {
+          uint256 tokenBalance = IERC20(params.tokenIn).balanceOf(
+                address(this)
+            );
+            _transferTokens(
+                IERC20(params.tokenIn),
+                address(bentoBox),
+                tokenBalance
+            );
             // Pay the first pool directly.
             (, params.amountIn) = bentoBox.deposit(
                 params.tokenIn,
-                address(this),
+                address(bentoBox),
                 params.path[0].pool,
-                IERC20(params.tokenIn).balanceOf(address(this)),
+                tokenBalance,
                 0
             );
         }
@@ -64,7 +73,6 @@ abstract contract TridentSwapAdapter is
                 params.initialPath[i].pool,
                 params.initialPath[i].amount
             );
-
             IPool(params.initialPath[i].pool).swap(params.initialPath[i].data);
         }
         // Do all the middle swaps. Input comes from previous pools.

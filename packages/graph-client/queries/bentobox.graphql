@@ -1,0 +1,22 @@
+query Rebase($id: ID!) {
+  rebase(id: $id) {
+    id
+    base
+    elastic
+  }
+}
+query Rebases($where: Rebase_filter) {
+  rebases(where: $where) {
+    id
+    base
+    elastic
+  }
+}
+
+query CrossChainRebases($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainRebases(first: $first, chainIds: $chainIds) {
+    id
+    base
+    elastic
+  }
+}

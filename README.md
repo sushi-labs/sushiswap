@@ -26,7 +26,7 @@ pnpm exec turbo run dev --filter=...{./apps/\*}
 
 #### Single Repository
 
-pnpm exec turbo run dev --scope=api/app/package/protocol
+pnpm exec turbo run dev --filter=api/app/package/protocol
 
 ### Build
 
@@ -34,7 +34,7 @@ pnpn run build
 
 #### Single Repository
 
-pnpm exec turbo run build --scope=api/app/package/protocol
+pnpm exec turbo run build --filter=api/app/package/protocol
 
 ### Test
 
@@ -42,7 +42,7 @@ pnpn run test
 
 #### Single Repository
 
-pnpm exec turbo run test --scope=api/app/package/protocol
+pnpm exec turbo run test --filter=api/app/package/protocol
 
 ### Test
 
@@ -50,7 +50,7 @@ pnpn run clean
 
 #### Single Repository
 
-pnpm exec turbo run clear --scope=api/app/package/protocol
+pnpm exec turbo run clear --filter=api/app/package/protocol
 
 ## APIs
 

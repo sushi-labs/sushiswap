@@ -13,7 +13,7 @@ const DialogContent: FC<DialogContentProps> = forwardRef<HTMLDivElement, DialogC
         ref={ref}
         className={classNames(
           className,
-          'space-y-3 inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-slate-900 shadow-xl rounded-2xl'
+          'text-left max-w-md inline-block w-full pt-12 pb-[68px] !my-0 h-full px-3 bg-slate-800 shadow-xl align-middle transition-all transform rounded-t-2xl rounded-b-none sm:rounded-2xl relative'
         )}
       >
         {children}

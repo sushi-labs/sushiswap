@@ -4,17 +4,17 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
-import { Button, createToast, Dots, Form } from '@sushiswap/ui'
+import { Button, createToast, Dots } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useFuroVestingContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
-import { CreateVestingFormDataTransformed } from 'components/vesting'
+import { CreateVestingFormDataTransformedAndValidated } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
 interface CreateFormButtons {
   onDismiss(): void
-  formData: CreateVestingFormDataTransformed
+  formData: CreateVestingFormDataTransformedAndValidated
 }
 
 const CreateFormButtons: FC<CreateFormButtons> = ({
@@ -31,8 +31,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     stepConfig,
   },
 }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingContract(activeChain?.id)
@@ -50,6 +50,10 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       totalAmount = totalStep.add(cliff)
     }
 
+    if (cliff && !totalStep) {
+      totalAmount = cliff
+    }
+
     return [
       totalAmount,
       totalAmount?.greaterThan(ZERO) && step
@@ -59,7 +63,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   }, [cliffAmount, stepAmount, stepPayouts, currency])
 
   const createVesting = useCallback(async () => {
-    if (!contract || !account?.address || !activeChain?.id) return
+    if (!contract || !address || !activeChain?.id) return
     if (
       !recipient ||
       !currency ||
@@ -67,13 +71,14 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       !cliffDuration ||
       !stepConfig?.time ||
       !stepPercentage ||
-      !totalAmountAsEntity
+      !totalAmountAsEntity ||
+      !stepPayouts
     ) {
       return
     }
 
     const actions = [
-      approveBentoBoxAction({ contract, user: account.address, signature }),
+      approveBentoBoxAction({ contract, user: address, signature }),
       vestingCreationAction({
         contract,
         recipient,
@@ -91,7 +96,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     try {
       const data = await sendTransactionAsync({
         request: {
-          from: account.address,
+          from: address,
           to: contract.address,
           data: batchAction({ contract, actions }),
           value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
@@ -119,14 +124,14 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     } catch (e: any) {
       log.tenderly({
         chainId: activeChain?.id,
-        from: account.address,
+        from: address,
         to: contract.address,
         data: batchAction({ contract, actions }),
         value: totalAmountAsEntity.currency.isNative ? totalAmountAsEntity.quotient.toString() : '0',
       })
     }
   }, [
-    account?.address,
+    address,
     activeChain?.id,
     cliffDuration,
     contract,
@@ -144,12 +149,13 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   ])
 
   return (
-    <Form.Buttons>
+    <div className="flex flex-col gap-3">
       <Approve
         components={
           <Approve.Components>
-            <Approve.Bentobox watch address={contract?.address} onSignature={setSignature} />
+            <Approve.Bentobox fullWidth watch address={contract?.address} onSignature={setSignature} />
             <Approve.Token
+              fullWidth
               watch
               amount={totalAmountAsEntity}
               address={activeChain ? BENTOBOX_ADDRESS[activeChain?.id] : undefined}
@@ -159,17 +165,23 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         render={({ approved }) => {
           return (
             <Button
+              fullWidth
               variant="filled"
               color="gradient"
-              disabled={isWritePending || !approved || !totalAmountAsEntity?.greaterThan(ZERO)}
+              disabled={
+                !approved ||
+                isWritePending ||
+                !totalAmountAsEntity?.greaterThan(ZERO) ||
+                startDate.getTime() <= new Date().getTime()
+              }
               onClick={createVesting}
             >
-              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create vesting'}
+              {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
             </Button>
           )
         }}
       />
-    </Form.Buttons>
+    </div>
   )
 }
 

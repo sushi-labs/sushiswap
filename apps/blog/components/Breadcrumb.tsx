@@ -9,7 +9,7 @@ export const Breadcrumb: FC = () => {
       <Link href="/" passHref={true}>
         <a className="flex items-center gap-2 group">
           <ChevronLeftIcon width={24} className="text-slate-400 group-hover:text-slate-50" />
-          <Typography variant="sm" weight={700} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
+          <Typography variant="sm" weight={500} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
             Go Back
           </Typography>
         </a>

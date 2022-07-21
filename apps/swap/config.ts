@@ -20,30 +20,16 @@ export const defaultTheme: Theme = {
 }
 
 export const SUPPORTED_CHAIN_IDS = [
-  // ChainId.ETHEREUM,
-  // ChainId.BSC,
-  // ChainId.AVALANCHE,
-  // ChainId.POLYGON,
+  ChainId.ETHEREUM,
   ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
   ChainId.AVALANCHE,
+  ChainId.POLYGON,
   ChainId.FANTOM,
-  // ChainId.FANTOM,
-  // TESTNETS
-  // ChainId.POLYGON_TESTNET,
-  // ChainId.RINKEBY,
-  // ChainId.ROPSTEN,
-  // ChainId.GÖRLI,
-  // ChainId.KOVAN,
+  ChainId.BSC,
+  ChainId.OPTIMISM,
 ]
-
-export const SUSHI_X_SWAP_ADDRESS: Record<number, string> = {
-  [ChainId.AVALANCHE]: '0x5629CE74DdCAD7Cc72b3Ea30444dA7172AD851D9',
-  [ChainId.FANTOM]: '0x5629CE74DdCAD7Cc72b3Ea30444dA7172AD851D9',
-  [ChainId.ARBITRUM]: '0x1C4369df5732ccF317fef479B26A56e176B18ABb',
-  [ChainId.OPTIMISM]: '0x67468E6c4418d58B1b41bc0A795BaCB824F70792',
-}
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0x93395129bd3fcf49d95730D3C2737c17990fF328',
+  [ChainId.POLYGON]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288',
 }

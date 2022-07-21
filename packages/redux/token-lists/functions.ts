@@ -1,6 +1,6 @@
+import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import { TokenList } from '@uniswap/token-lists'
 
-import { WrappedTokenInfo } from './token'
 import { Mutable, TokenAddressMap } from './types'
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =

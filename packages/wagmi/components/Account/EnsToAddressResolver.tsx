@@ -19,6 +19,8 @@ export const EnsToAddressResolver = ({
   // Custom onSuccess callback to send success data with resolved result
   useEffect(() => {
     if (result.data && onSuccess) onSuccess(result.data)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data])
 
   if (typeof children === 'function') {

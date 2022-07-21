@@ -13,7 +13,7 @@ export const ToastContent: FC<ToastContent> = ({ icon, title, summary }) => {
     <div className="p-4 flex gap-4 items-start">
       <div className="mt-0.5">{icon}</div>
       <div className="flex flex-col gap-1">
-        <Typography weight={700} variant="sm" className="text-slate-50">
+        <Typography weight={500} variant="sm" className="text-slate-50">
           {title}
         </Typography>
         <Typography variant="xs" className="text-slate-400">

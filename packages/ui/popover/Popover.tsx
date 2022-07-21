@@ -1,4 +1,5 @@
 import { Popover as HeadlessPopover } from '@headlessui/react'
+import * as PopperJS from '@popperjs/core'
 import React, { FC, Fragment, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -7,13 +8,15 @@ import { ExtractProps } from '../types'
 import { usePopover } from './usePopover'
 
 type Popover = ExtractProps<typeof HeadlessPopover> & {
+  tabIndex?: number
   hover?: boolean
-  arrow?: boolean
+  disableClickListener?: boolean
+  options?: Omit<Partial<PopperJS.Options>, 'modifiers'>
 }
 
-export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...props }) => {
+export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableClickListener, options, ...props }) => {
   const [show, setShow] = useState(false)
-  const { styles, attributes, setReferenceElement, setPopperElement, setArrowElement } = usePopover()
+  const { styles, attributes, setReferenceElement, setPopperElement } = usePopover(options)
 
   useEffect(() => {
     if (!document.getElementById('popover-portal')) {
@@ -25,13 +28,27 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
     <HeadlessPopover {...props} as={Fragment}>
       {({ open }) => (
         <>
-          <HeadlessPopover.Button
-            as="div"
-            ref={setReferenceElement}
-            {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
-          >
-            {button}
-          </HeadlessPopover.Button>
+          {disableClickListener ? (
+            <button
+              tabIndex={tabIndex}
+              type="button"
+              ref={setReferenceElement}
+              onMouseEnter={() => setShow(true)}
+              onMouseLeave={() => setShow(false)}
+            >
+              {button}
+            </button>
+          ) : (
+            <HeadlessPopover.Button
+              tabIndex={tabIndex}
+              type="button"
+              as="button"
+              ref={setReferenceElement}
+              {...(hover && { onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) })}
+            >
+              {button}
+            </HeadlessPopover.Button>
+          )}
           {(show || open) &&
             ReactDOM.createPortal(
               <HeadlessPopover.Panel
@@ -47,14 +64,13 @@ export const Popover: FC<Popover> = ({ button, panel, hover, arrow = true, ...pr
                     ...panel.props,
                     className: classNames(
                       panel.props.className,
-                      'shadow-md ring-1 ring-black/10 rounded-2xl overflow-hidden'
+                      'rounded-lg overflow-hidden shadow-xl shadow-black/20 shadow-md'
                     ),
                   },
                   panel.props.children
                 )}
-                {arrow && <div ref={setArrowElement} style={styles.arrow} className="arrow" />}
               </HeadlessPopover.Panel>,
-              document.querySelector('#popover-portal') as Element
+              document.body
             )}
         </>
       )}

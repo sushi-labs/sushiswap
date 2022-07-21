@@ -1,3 +1,14 @@
-import { List } from './List'
+import { FC } from 'react'
 
-export const Currency = { List }
+import { Icon, IconProps } from './Icon'
+import { List, ListProps } from './List'
+
+type Currency = {
+  List: FC<ListProps>
+  Icon: FC<IconProps>
+}
+
+export const Currency: Currency = {
+  List,
+  Icon,
+}

@@ -16,27 +16,23 @@ interface CancelModalProps {
   fn: string
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, title }) => {
+export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title }) => {
   const [open, setOpen] = useState(false)
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: fn,
+    onSuccess() {
+      setOpen(false)
     },
-    fn,
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const cancelStream = useCallback(async () => {
-    if (!stream || !account || !activeChain?.id) return
+    if (!stream || !address || !activeChain?.id) return
     const data = await writeAsync({ args: [stream.id, fundSource === FundSource.BENTOBOX] })
 
     createToast({
@@ -49,9 +45,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
         failed: 'Something went wrong cancelling the stream',
       },
     })
-  }, [account, activeChain?.id, fundSource, stream, writeAsync])
+  }, [address, activeChain?.id, fundSource, stream, writeAsync])
 
-  if (!account || !stream?.canCancel(account?.address)) return <></>
+  if (!address || !stream?.canCancel(address)) return <></>
 
   return (
     <>
@@ -62,7 +58,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
         onClick={() => setOpen(true)}
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-5 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title={title} onClose={() => setOpen(false)} />
           <div className="grid items-center grid-cols-2 gap-5">
             <div
@@ -74,7 +70,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
                 'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -95,8 +91,8 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
                 'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Bentobox
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+                BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
                 Receive funds in your BentoBox
@@ -110,23 +106,25 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address, fn, ti
           </div>
           <Typography variant="xs" weight={400} className="italic text-center text-slate-400">
             This will send the remaining amount of <br />{' '}
-            <span className="font-bold text-slate-200">
+            <span className="font-medium text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to your{' '}
-            <span className="font-bold text-slate-200">
-              {fundSource === FundSource.BENTOBOX ? 'Bentobox' : 'Wallet'}
+            <span className="font-medium text-slate-200">
+              {fundSource === FundSource.BENTOBOX ? 'BentoBox' : 'Wallet'}
             </span>
           </Typography>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || stream?.isEnded}
-            onClick={cancelStream}
-          >
-            {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
-          </Button>
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={isWritePending || stream?.isEnded}
+              onClick={cancelStream}
+            >
+              {isWritePending ? <Dots>Confirm Cancel</Dots> : title}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

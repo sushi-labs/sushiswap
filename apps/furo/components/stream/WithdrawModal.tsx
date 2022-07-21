@@ -4,7 +4,7 @@ import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroStreamContractConfig, Web3Input } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
@@ -22,8 +22,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const [withdrawTo, setWithdrawTo] = useState<string>()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const balance = useStreamBalance(activeChain?.id, stream?.id, stream?.token)
 
   const amount = useMemo(() => {
@@ -31,15 +31,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
     return tryParseAmount(input, stream.token)
   }, [input, stream?.token])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    getFuroStreamContractConfig(activeChain?.id),
-    'withdrawFromStream',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    ...getFuroStreamContractConfig(activeChain?.id),
+    onSuccess() {
+      setOpen(false)
+    },
+    functionName: 'withdrawFromStream',
+  })
 
   const withdraw = useCallback(async () => {
     if (!stream || !amount || !activeChain?.id) return
@@ -82,7 +80,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !stream?.canWithdraw(account?.address) || !balance?.greaterThan(ZERO)}
+        disabled={!address || !stream?.canWithdraw(address) || !balance?.greaterThan(ZERO)}
         onClick={() => {
           setOpen(true)
         }}
@@ -90,10 +88,12 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         Withdraw
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-6 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInput.Base
+              inputClassName="pb-2"
+              className="ring-offset-slate-800"
               currency={stream?.token}
               onChange={setInput}
               value={input}
@@ -110,23 +110,23 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           </div>
           <div className="flex flex-col">
             <Web3Input.Ens
+              id="withdraw-stream-recipient"
               value={withdrawTo}
               onChange={setWithdrawTo}
-              className="!text-[0.73rem]"
+              className="ring-offset-slate-800"
               placeholder="Recipient (optional)"
             />
           </div>
-          <div className="grid items-center grid-cols-2 gap-5">
+          <div className="grid items-center grid-cols-2 gap-3">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.WALLET
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 ring-offset-2 ring-offset-slate-900 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -141,14 +141,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
             <div
               onClick={() => setFundSource(FundSource.BENTOBOX)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 ring-offset-2 ring-offset-slate-900 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Bentobox
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+                BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
                 Receive funds in your BentoBox
@@ -160,34 +159,36 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
               )}
             </div>
           </div>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={
-              isWritePending ||
-              !amount ||
-              !stream?.balance ||
-              !amount.greaterThan(0) ||
-              amount.greaterThan(stream.balance)
-            }
-            onClick={withdraw}
-          >
-            {!amount?.greaterThan(0) ? (
-              'Enter an amount'
-            ) : !stream?.token ? (
-              'Invalid stream token'
-            ) : isWritePending ? (
-              <Dots>Confirm Withdraw</Dots>
-            ) : (
-              'Withdraw'
-            )}
-          </Button>
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={
+                isWritePending ||
+                !amount ||
+                !stream?.balance ||
+                !amount.greaterThan(0) ||
+                amount.greaterThan(stream.balance)
+              }
+              onClick={withdraw}
+            >
+              {!amount?.greaterThan(0) ? (
+                'Enter an amount'
+              ) : !stream?.token ? (
+                'Invalid stream token'
+              ) : isWritePending ? (
+                <Dots>Confirm Withdraw</Dots>
+              ) : (
+                'Withdraw'
+              )}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

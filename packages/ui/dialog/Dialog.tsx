@@ -7,42 +7,41 @@ import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
-type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+  afterLeave?(): void
   children?: React.ReactNode
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
   return (
-    <Transition appear show={open} as={Fragment}>
-      <HeadlessDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose} {...rest}>
-        <div className="min-h-screen px-4 text-center">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <HeadlessDialog.Overlay className="fixed inset-0 transition-opacity bg-slate-700 bg-opacity-75" />
-          </Transition.Child>
+    <Transition show={open} as={Fragment} afterLeave={afterLeave}>
+      <HeadlessDialog className="relative z-[100]" onClose={onClose} {...rest}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
+        </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span className="inline-block h-screen align-middle" aria-hidden="true">
-            &#8203;
-          </span>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            {children}
-          </Transition.Child>
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end sm:items-center justify-center min-h-full text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
       </HeadlessDialog>
     </Transition>

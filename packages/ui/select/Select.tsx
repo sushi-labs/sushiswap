@@ -32,7 +32,7 @@ const SelectRoot: FC<SelectProps> = ({
         <div className={classNames('space-y-2 flex flex-col gap-2', className)}>
           {label && label}
           <div className="relative">
-            {cloneElement(button, { error })}
+            {cloneElement(button, { error, open })}
             <Transition
               as={Fragment}
               show={open}

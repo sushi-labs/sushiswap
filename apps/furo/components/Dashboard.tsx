@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { FuroTable, FuroTableType } from './FuroTable'
 import { Rebase } from '.graphclient'
@@ -27,8 +27,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
 }) => {
   const isMounted = useIsMounted()
   const router = useRouter()
-  const { data: account } = useAccount()
-  const { isConnected } = useConnect()
+  const { address: account, isConnected } = useAccount()
 
   const [showActiveIncoming, setShowActiveIncoming] = useState(false)
 
@@ -98,14 +97,14 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
     <div className="flex flex-col h-full gap-[80px] pt-20">
       <div className="flex justify-between">
         <div className="flex flex-col gap-3">
-          <Typography variant="h2" weight={700} className="text-slate-200">
+          <Typography variant="h2" weight={500} className="text-slate-200">
             <span className="text-blue">Furo</span> Streaming
           </Typography>
           <Typography className="text-slate-400">
             Earn, stream and automate your DAO salaries <br /> and token vesting with Furo.
           </Typography>
           <div className="flex mt-4 h-9">
-            {account?.address && isMounted && isConnected && (
+            {account && isMounted && isConnected && (
               <Menu
                 button={
                   <Menu.Button
@@ -137,7 +136,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
           <Tab.List className="flex gap-10">
             <Tab
               as={Typography}
-              weight={700}
+              weight={500}
               className={({ selected }) =>
                 classNames(
                   selected ? 'text-slate-200 ' : 'text-slate-500',
@@ -153,7 +152,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             </Tab>
             <Tab
               as={Typography}
-              weight={700}
+              weight={500}
               className={({ selected }) =>
                 classNames(
                   selected ? 'text-slate-200 ' : 'text-slate-500',

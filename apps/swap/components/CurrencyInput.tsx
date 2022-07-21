@@ -1,13 +1,16 @@
+import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { WrappedTokenInfo } from '@sushiswap/redux-token-lists/token'
-import { classNames, Input, NetworkIcon, Typography } from '@sushiswap/ui'
-import { NetworkSelectorOverlay, TokenSelectorOverlay } from 'components'
-import Image from 'next/image'
-import { FC, useState } from 'react'
+import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
+import { TokenSelector } from '@sushiswap/wagmi'
+import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
+import { NetworkSelectorOverlay } from 'components'
+import { FC, useCallback, useRef, useState } from 'react'
 
+import { useCustomTokens } from '../lib/state/storage'
 import { Theme } from '../types'
 
 interface CurrencyInputBase {
@@ -20,6 +23,20 @@ interface CurrencyInputBase {
   network: Chain
   tokenList: Record<string, Token>
   theme: Theme
+  className?: string
+  usdPctChange?: number
+}
+
+type CurrencyInputDisableMaxButton = {
+  disableMaxButton: true
+  onMax?(value: string): void
+  balance?: Amount<Currency>
+}
+
+type CurrencyInputEnableMaxButton = {
+  disableMaxButton?: false
+  onMax(value: string): void
+  balance?: Amount<Currency>
 }
 
 type CurrencyInputEnableTokenSelect = {
@@ -42,9 +59,10 @@ type CurrencyInputSingleChain = {
   onNetworkSelect?(network: ChainId): void
 }
 
+type CurrencyInputBalance = CurrencyInputDisableMaxButton | CurrencyInputEnableMaxButton
 type CurrencyInputChain = CurrencyInputSingleChain | CurrencyInputMultiChain
 type CurrencyInputTokenSelect = CurrencyInputEnableTokenSelect | CurrencyInputDisableTokenSelect
-type CurrencyInput = CurrencyInputBase & CurrencyInputChain & CurrencyInputTokenSelect
+type CurrencyInput = CurrencyInputBase & CurrencyInputChain & CurrencyInputTokenSelect & CurrencyInputBalance
 
 export const CurrencyInput: FC<CurrencyInput> = ({
   disabled,
@@ -59,80 +77,137 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   tokenList,
   disableNetworkSelect = false,
   disableCurrencySelect = false,
+  disableMaxButton = false,
+  onMax,
+  balance,
   theme,
+  className,
+  usdPctChange,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(network.chainId)
   const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
+  const { data: tokenPrices } = usePrices({ chainId: currency.chainId })
+  const price = tokenPrices?.[currency.wrapped.address]
+  const isMounted = useIsMounted()
+  const parsedValue = tryParseAmount(value, currency)
+
+  const focusInput = useCallback(() => {
+    if (disabled) return
+    inputRef.current?.focus()
+  }, [disabled])
 
   return (
-    <>
+    <div className={classNames(className, 'p-3')} onClick={focusInput}>
       <div className="flex flex-col">
         <div className="flex flex-row justify-between">
           {!disableNetworkSelect && (
             <button
+              type="button"
               className={classNames(
                 theme.secondary.default,
                 theme.secondary.hover,
-                `relative flex items-center gap-1 py-1 text-xs font-bold `
+                `relative flex items-center gap-1 py-1 text-xs font-medium`
               )}
-              onClick={() => setNetworkSelectorOpen(true)}
+              onClick={(e) => {
+                setNetworkSelectorOpen(true)
+                e.stopPropagation()
+              }}
             >
               <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />
               {network.name} <ChevronDownIcon width={16} height={16} />
             </button>
           )}
-          <div
-            className={classNames(
-              theme.secondary.default,
-              theme.primary.hover,
-              'flex items-center gap-2 text-xs font-bold cursor-pointer'
-            )}
-            onClick={() =>
-              onFundSourceSelect(fundSource === FundSource.WALLET ? FundSource.BENTOBOX : FundSource.WALLET)
-            }
-          >
-            {fundSource === FundSource.WALLET ? 'Wallet' : 'BentoBox'}
-          </div>
         </div>
         <div className="flex flex-col">
-          <div className="relative flex items-center">
+          <div className="relative flex items-center gap-1">
             <Input.Numeric
+              ref={inputRef}
+              variant="unstyled"
               disabled={disabled}
               onUserInput={onChange}
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex-auto w-full px-0 py-1 overflow-hidden text-2xl font-bold bg-transparent border-none shadow-none outline-none focus:ring-0 overflow-ellipsis disabled:cursor-not-allowed'
+                DEFAULT_INPUT_UNSTYLED,
+                '!text-3xl py-1'
               )}
               value={value}
               readOnly={disabled}
             />
             <button
-              onClick={() => setTokenSelectorOpen(true)}
+              onClick={(e) => {
+                setTokenSelectorOpen(true)
+                e.stopPropagation()
+              }}
               className={classNames(
                 theme.primary.default,
                 theme.primary.hover,
-                'flex flex-row items-center gap-1 text-xl font-bold'
+                'transition-all hover:ring-2 ring-slate-500 shadow-md flex flex-row items-center gap-1 text-xl font-medium bg-white bg-opacity-[0.12] rounded-full px-2 py-1'
               )}
             >
-              {currency.isNative ? (
-                <></>
-              ) : currency instanceof WrappedTokenInfo && currency.logoURI ? (
-                <Image src={currency.logoURI} width="48px" height="48px" />
-              ) : null}
-              {currency.symbol} <ChevronDownIcon width={16} height={16} />
+              <div className="w-5 h-5">
+                <Icon layout="responsive" currency={currency} width={20} height={20} />
+              </div>
+              <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
+              <div className="w-5 h-5">
+                <ChevronDownIcon width={20} height={20} />
+              </div>
             </button>
           </div>
         </div>
       </div>
       <div className="flex flex-row justify-between">
-        <Typography
-          variant="xs"
-          className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 select-none ')}
-        >
-          {value && '$0.00'}
+        <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
+          {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
+          {usdPctChange && (
+            <span
+              className={classNames(
+                usdPctChange === 0
+                  ? ''
+                  : usdPctChange > 0
+                  ? 'text-green'
+                  : usdPctChange < -5
+                  ? 'text-red'
+                  : usdPctChange < -3
+                  ? 'text-yellow'
+                  : 'text-slate-500'
+              )}
+            >
+              {' '}
+              {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
+              }%)`}
+            </span>
+          )}
         </Typography>
-        <button className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}>MAX</button>
+
+        <div className="h-6">
+          <Transition
+            appear
+            show={Boolean(isMounted && balance)}
+            enter="transition duration-300 origin-center ease-out"
+            enterFrom="transform scale-90 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform opacity-100"
+            leaveTo="transform opacity-0"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                if (onMax && balance) {
+                  onMax(balance.greaterThan(0) ? balance.toFixed() : '')
+                }
+              }}
+              className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs')}
+              disabled={disableMaxButton}
+            >
+              {isMounted && balance ? `Balance: ${balance.toSignificant(6)}` : ''}{' '}
+            </button>
+          </Transition>
+        </div>
       </div>
       {!disableNetworkSelect && onNetworkSelect && (
         <NetworkSelectorOverlay
@@ -140,20 +215,23 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           onClose={() => setNetworkSelectorOpen(false)}
           onSelect={onNetworkSelect}
           selected={network.chainId}
-          theme={theme}
         />
       )}
       {!disableCurrencySelect && onCurrencySelect && (
-        <TokenSelectorOverlay
+        <TokenSelector
+          variant="dialog"
           tokenMap={tokenList}
+          customTokenMap={customTokenMap}
           onClose={() => setTokenSelectorOpen(false)}
           chainId={network.chainId}
           open={tokenSelectorOpen}
           currency={currency}
           onSelect={onCurrencySelect}
-          theme={theme}
+          onAddToken={addCustomToken}
+          onRemoveToken={removeCustomToken}
+          fundSource={fundSource}
         />
       )}
-    </>
+    </div>
   )
 }

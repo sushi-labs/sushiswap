@@ -1,10 +1,17 @@
 import { ChainKey } from '@sushiswap/chain'
-import { LiquidityPosition, Pair, Token } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK, LiquidityPosition, Pair, Token, User } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
+import ora from 'ora'
 
-import { MAKER_CONFIG } from '../config'
+import {
+  CHAIN_NAME_TO_CHAIN_ID,
+  EXCHANGE_SUBGRAPH_NAME,
+  MAKER_ADDRESS,
+  MAKER_SUPPORTED_CHAIN_NAMES,
+  MAKER_TYPE,
+} from '../config'
 
 type LiquidityPositons = Array<
   Pick<LiquidityPosition, 'liquidityTokenBalance'> & {
@@ -31,13 +38,23 @@ export async function maker(args: Arguments) {
     const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
     console.log('network selected: ', network)
 
-    if (!network || !(network in MAKER_CONFIG)) {
-      throw new Error('Unsupported chain. Supported chains are: '.concat(Object.keys(MAKER_CONFIG).join(', ')))
+    if (!network || !MAKER_SUPPORTED_CHAIN_NAMES.includes(network)) {
+      throw new Error('Unsupported chain. Supported chains are: '.concat(MAKER_SUPPORTED_CHAIN_NAMES.join(', ')))
     }
 
-    const liquidityPositions = Object.values(
-      await MAKER_CONFIG[network].fetcher({ id: MAKER_CONFIG[network].address })
-    )[0]?.liquidityPositions
+    const chainId = CHAIN_NAME_TO_CHAIN_ID[network]
+
+    const sdk = await getBuiltGraphSDK({
+      chainId,
+      subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+    })
+
+    // const liquidityPositions = Object.values(await sdk.User({ id: MAKER_ADDRESS[chainId] }))[0]?.liquidityPositions
+
+    const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
+      first: 10000,
+      where: { user: MAKER_ADDRESS[chainId] },
+    })
 
     if (network && liquidityPositions) {
       printMakerTable(network, liquidityPositions)
@@ -45,16 +62,55 @@ export async function maker(args: Arguments) {
       console.log('network or subgraph response was empty')
     }
   } else {
-    const makers = await Promise.all(
-      Object.keys(MAKER_CONFIG).map((chain) =>
-        Promise.resolve(MAKER_CONFIG[chain].fetcher({ id: MAKER_CONFIG[chain].address })).then((result) => ({
-          network: chain,
-          address: MAKER_CONFIG[chain].address,
-          type: MAKER_CONFIG[chain].type,
-          liquidityPositions: result,
-        }))
-      )
-    )
+    const makers = []
+
+    for (const chainName of MAKER_SUPPORTED_CHAIN_NAMES) {
+      const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
+      const sdk = getBuiltGraphSDK({
+        chainId,
+        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+      })
+      // throbber.info(`Searching maker liquidity positions for ${chainName}`)
+
+      const throbber = ora({
+        text: `Searching maker liquidity positions for ${chainName}`,
+        spinner: {
+          frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
+          interval: 300,
+        },
+      }).start()
+
+      // const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
+      //   first: 10000000,
+      //   where: { user: MAKER_ADDRESS[chainId] },
+      // })
+      const {
+        user: { liquidityPositions },
+      }: { user: User } = await sdk.User({
+        id: MAKER_ADDRESS[chainId],
+      })
+
+      if (liquidityPositions) {
+        throbber.stopAndPersist({
+          symbol: '🍽️ ',
+          text: `Found ${liquidityPositions.length} maker liquidity positions for ${chainName}, set size is ${
+            new Set(liquidityPositions.map((liquidityPosition) => liquidityPosition.id)).size
+          }`,
+        })
+        makers.push({
+          network: chainName,
+          address: MAKER_ADDRESS[chainId],
+          type: MAKER_TYPE[chainId],
+          liquidityPositions,
+        })
+      } else {
+        throbber.stopAndPersist({
+          symbol: '❌ ',
+          text: 'Liquidity Positons is undefined',
+        })
+      }
+    }
+
     const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
     let totalValue = 0
     const rows =
@@ -62,8 +118,7 @@ export async function maker(args: Arguments) {
         const network = lp.network.toString()
         const makerAddress = lp.address
         const type = lp.type
-        const liquidityPositions = Object.values(lp.liquidityPositions)[0]?.liquidityPositions
-        const lpValue = liquidityPositions?.map((lp) =>
+        const lpValue = lp.liquidityPositions?.map((lp) =>
           Number(lp.pair.totalSupply)
             ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
             : 0
@@ -71,8 +126,8 @@ export async function maker(args: Arguments) {
         const summedLp = lpValue?.reduce((acc, curr) => acc + curr)
         totalValue += summedLp ?? 0
 
-        if (network && liquidityPositions && args.verbose) {
-          printMakerTable(network, liquidityPositions)
+        if (network && lp.liquidityPositions && args.verbose) {
+          printMakerTable(network, lp.liquidityPositions)
         }
 
         return {

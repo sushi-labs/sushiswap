@@ -1,13 +1,11 @@
-import { FallbackProvider, StaticJsonRpcProvider, WebSocketProvider } from '@ethersproject/providers'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { ChainId } from '@sushiswap/chain'
-import { QueryClient } from 'react-query'
-import { allChains, Client, configureChains, createClient } from 'wagmi'
+import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
-
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
@@ -30,6 +28,10 @@ const otherChains = [
         url: 'https://snowtrace.io/',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 11907934,
+    },
   },
   {
     id: ChainId.BSC,
@@ -48,6 +50,10 @@ const otherChains = [
         name: 'Bscscan',
         url: 'https://bscscan.com',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 15921452,
     },
   },
   {
@@ -68,6 +74,10 @@ const otherChains = [
         url: 'https://ftmscan.com',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 33001987,
+    },
   },
   {
     id: ChainId.GNOSIS,
@@ -86,6 +96,10 @@ const otherChains = [
         name: 'Gnosis Blockchain Explorer',
         url: 'https://blockscout.com/xdai/mainnet',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 21022491,
     },
   },
   {
@@ -106,6 +120,10 @@ const otherChains = [
         url: 'https://explorer.harmony.one',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 24185753,
+    },
   },
   {
     id: ChainId.MOONBEAM,
@@ -124,6 +142,10 @@ const otherChains = [
         name: 'Moonscan',
         url: 'https://moonbeam.moonscan.io',
       },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 609002,
     },
   },
   {
@@ -144,33 +166,38 @@ const otherChains = [
         url: 'https://moonriver.moonscan.io',
       },
     },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 1597904,
+    },
   },
 ]
 
 const { chains, provider, webSocketProvider } = configureChains(
   [...allChains, ...otherChains],
   [
+    publicProvider(),
     alchemyProvider({ alchemyId }),
     // infuraProvider({ infuraId }),
-    publicProvider(),
   ]
 )
 
-export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketProvider> & {
-  queryClient: QueryClient
-} = createClient({
-  autoConnect: true,
-  connectors({ chainId }) {
+const config: CreateClientConfig = {
+  provider,
+  webSocketProvider,
+  autoConnect: false,
+  connectors() {
     return [
       new InjectedConnector({
         chains,
+        options: {
+          shimDisconnect: true,
+        },
       }),
       new WalletConnectConnector({
         chains,
         // TODO: Flesh out wallet connect options?
         options: {
-          // Bridge?
-          chainId,
           qrcode: true,
         },
       }),
@@ -180,11 +207,13 @@ export const client: Client<StaticJsonRpcProvider | FallbackProvider, WebSocketP
         options: {
           appName: 'Sushi 2.0',
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
-          chainId,
         },
       }),
+      new SafeConnector({ chains }),
     ]
   },
-  provider,
-  webSocketProvider,
-})
+}
+
+export type Client = ReturnType<typeof createClient>
+
+export const client: Client = createClient(config)

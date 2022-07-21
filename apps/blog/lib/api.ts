@@ -1,7 +1,7 @@
-import { ArticleFiltersInput, CategoryFiltersInput, getBuiltGraphSDK, PaginationArg } from '../.graphclient'
+import { ArticleFiltersInput, CategoryFiltersInput, getMeshSDK, PaginationArg } from '../.mesh'
 
 export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
 
   try {
     return (
@@ -19,26 +19,26 @@ export const getArticleAndMoreArticles = async (slug: string, preview: Record<st
 }
 
 export const getAllArticlesBySlug = async () => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
   return await sdk.getAllArticlesWithSlug()
 }
 
 export const getGlobalPage = async () => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
   return await sdk.getGlobalPage()
 }
 
 export const getPreviewPostBySlug = async (slug: string) => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
   return await sdk.getPreviewPostBySlug({ slug })
 }
 
 export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
   return await sdk.getArticles(variables)
 }
 
 export const getCategories = async (filters?: CategoryFiltersInput) => {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getMeshSDK()
   return await sdk.getCategories({ filters })
 }

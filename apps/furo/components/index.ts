@@ -1,5 +1,4 @@
 export * from './BackgroundVector'
-export * from './Balance'
 export * from './Breadcrumb'
 export * from './CancelModal'
 export * from './CurrencyInput'
@@ -13,7 +12,6 @@ export * from './Main'
 export * from './Overlay'
 export * from './ProgressBarCard'
 export * from './StreamDetailsPopover'
-export * from './TokenSelector'
 export * from './TransferModal'
 export * from './UpdateModal'
 

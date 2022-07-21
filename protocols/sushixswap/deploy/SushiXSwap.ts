@@ -1,6 +1,11 @@
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { INIT_CODE_HASH } from '@sushiswap/exchange'
-import { STARGATE_BRIDGE_TOKENS, STARGATE_ROUTER_ADDRESS, STARGATE_USDC_ADDRESS } from '@sushiswap/stargate'
+import {
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_ROUTER_ADDRESS,
+  STARGATE_USDC_ADDRESS,
+  STARGATE_WIDGET_ADDRESS,
+} from '@sushiswap/stargate'
 import sushiSwapExports from '@sushiswap/sushiswap/exports.json'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
@@ -33,6 +38,10 @@ const func: DeployFunction = async function ({
     throw Error(`No STARGATE_USDC_ADDRESS for chain #${chainId}!`)
   }
 
+  if (!(chainId in STARGATE_WIDGET_ADDRESS)) {
+    throw Error(`No STARGATE_WIDGET_ADDRESS for chain #${chainId}!`)
+  }
+
   if (!factory && !(chainId in sushiSwapExports)) {
     // throw Error(`No FACTORY_ADDRESS for chain #${chainId}!`)
     console.warn(`No FACTORY_ADDRESS for chain #${chainId}!`)
@@ -49,6 +58,7 @@ const func: DeployFunction = async function ({
     sushiSwapExports?.[chainId as unknown as keyof Omit<typeof sushiSwapExports, '31337'>]?.[0]?.contracts
       ?.UniswapV2Factory.address ?? ethers.constants.AddressZero,
     INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
+    STARGATE_WIDGET_ADDRESS[chainId],
   ]
 
   const { address } = await deploy('SushiXSwap', {

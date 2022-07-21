@@ -42,6 +42,9 @@ yarn-error.log*
 # env
 .env
 
+# mesh
+.mesh
+
 # graphql
 .graphclient
 

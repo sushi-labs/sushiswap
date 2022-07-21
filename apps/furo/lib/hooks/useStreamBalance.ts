@@ -17,7 +17,9 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     data: balance,
     error: balanceError,
     isLoading: balanceLoading,
-  } = useContractRead(getFuroStreamContractConfig(chainId), 'streamBalanceOf', {
+  } = useContractRead({
+    ...getFuroStreamContractConfig(chainId),
+    functionName: 'streamBalanceOf',
     chainId,
     enabled: !!chainId && !!streamId,
     args: [streamId],
@@ -28,7 +30,9 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     data: rebase,
     error: rebaseError,
     isLoading: rebaseLoading,
-  } = useContractRead(getBentoBoxContractConfig(chainId), 'totals', {
+  } = useContractRead({
+    ...getBentoBoxContractConfig(chainId),
+    functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token?.address,
     args: [token?.address],

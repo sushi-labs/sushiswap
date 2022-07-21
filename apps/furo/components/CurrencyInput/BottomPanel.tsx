@@ -11,12 +11,12 @@ interface BottomPanel {
 
 export const BottomPanel: FC<BottomPanel> = ({ loading, amount, label, onChange }) => {
   return (
-    <div className="flex justify-between px-4 pb-3">
+    <div className="flex justify-between">
       <Typography variant="xs" weight={500} className="text-slate-500">
         {label}
       </Typography>
       {loading ? (
-        <Loader size="12px" />
+        <Loader size={12} />
       ) : (
         <Typography
           variant="xs"

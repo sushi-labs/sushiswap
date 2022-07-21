@@ -1,37 +1,17 @@
 {
   "pipeline": {
-    "validate": {
-      "cache": false
-    },
-    "clean": {
-      "cache": false
-    },
-    "generate": {
+    "root#build": {
       "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
         "^build",
-        ".graphclient/**"
+        "$ANALYTICS_URL",
+        "$BLOG_URL",
+        "$DOCS_URL",
+        "$FURO_URL",
+        "$LANDING_URL",
+        "$SWAP_URL",
+        "$LEGACY_URL"
       ],
-      "cache": true
-    },
-    "export": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "exports.json"
-      ]
-    },
-    "node": {
-      "cache": false,
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "deployments/**"
-      ]
+      "outputs": [".next/**"]
     },
     "build": {
       "outputs": [
@@ -45,6 +25,29 @@
         "^build",
         "generate"
       ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": false
+    },
+    "generate": {
+      "dependsOn": [
+        "^build",
+        "$REDIS_URL"
+      ],
+      "outputs": [
+        "^build",
+        ".graphclient/**",
+        ".mesh/**",
+        "typechain/**"
+      ],
+      "cache": true
     },
     "test": {
       "outputs": [
@@ -60,35 +63,31 @@
         "^build"
       ]  
     },
-    "dev": {
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
+    "validate": {
       "cache": false
     },
-
-    "dao#build": {
+    "export": {
       "dependsOn": [
-        "^build",
-        "generate",
-        "$REDIS_PATH"
+        "build"
       ],
-      "outputs": [".next/**"]
+      "outputs": [
+        "exports.json"
+      ]
     },
-    "root#build": {
+    "node": {
+      "cache": true,
       "dependsOn": [
-        "^build",
-        "$ANALYTICS_URL",
-        "$BLOG_URL",
-        "$DAO_URL",
-        "$DOCS_URL",
-        "$FURO_URL",
-        "$LANDING_URL",
-        "$SWAP_URL",
-        "$LEGACY_URL"
+        "build"
       ],
-      "outputs": [".next/**"]
+      "outputs": [
+        "deployments/**"
+      ]
     }
-  }
+  },
+  "globalDependencies": [
+    ".env",
+    "tsconfig.json",
+    "$NODE_ENV"
+  ],
+  "baseBranch": "origin/master"
 }

@@ -3,7 +3,7 @@ import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../.graphclient'
+import { ArticleEntity } from '../../.mesh'
 import { isMediaVideo } from '../../lib/media'
 import { Image } from '../Image'
 
@@ -38,19 +38,19 @@ export const Card: FC<Card> = ({ article }) => {
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <Typography variant="sm" weight={700} className="text-slate-200 line-clamp-1">
+            <Typography variant="sm" weight={500} className="text-slate-200 line-clamp-1">
               {article?.attributes?.title}
             </Typography>
             <Typography variant="sm" className="text-slate-400 line-clamp-2">
               {article?.attributes?.description}
             </Typography>
             <div className="absolute bottom-3 left-4 right-4">
-              <div className="flex justify-between items-center">
-                <Typography variant="xs" weight={700} className="text-slate-400 line-clamp-2">
+              <div className="flex items-center justify-between">
+                <Typography variant="xs" weight={500} className="text-slate-400 line-clamp-2">
                   {article?.attributes?.publishedAt &&
                     format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
                 </Typography>
-                <div className="flex items-center text-sm font-bold text-blue">
+                <div className="flex items-center text-sm font-medium text-blue">
                   Read more <ChevronRightIcon width={16} height={16} />
                 </div>
               </div>

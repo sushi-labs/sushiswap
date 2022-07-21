@@ -1,13 +1,11 @@
 @tailwind base;
 
-@import '@fontsource/inter/index.css';
+@import '@fontsource/inter/variable.css';
 
 @tailwind components;
 @tailwind utilities;
 
 @import "./variables.css";
-@import "./button/Button.css";
-@import "./popover/Popover.css";
 
 *,
 *:before,
@@ -19,12 +17,14 @@ html {
   height: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
+  background-color: var(--background-color) !important;
 }
 
 body {
   position: relative;
   min-height: 100%;
   margin: 0;
+  background-color: transparent !important;
 }
 
 html,
@@ -33,7 +33,6 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color);
   color: var(--color);
   overscroll-behavior-x: none;
 }
@@ -41,11 +40,39 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none; /* for Firefox */
-  overflow-y: scroll;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+div.scroll {
+  overflow-y: overlay;
+}
+
+div.scroll::-webkit-scrollbar {
+  width: 14px;
+  height: 18px;
+}
+
+div.scroll::-webkit-scrollbar-thumb {
+  height: 6px;
+  border: 4px solid rgba(255, 255, 255, 0);
+  background-clip: padding-box;
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-border-radius: 7px;
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
+  inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+}
+
+div.scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+div.scroll::-webkit-scrollbar-corner {
+  background-color: transparent;
 }
 
 @layer utilities {
@@ -53,6 +80,9 @@ body {
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
   }
 }
 

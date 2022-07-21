@@ -13,12 +13,12 @@ export type FooterProps = React.HTMLProps<HTMLDivElement>
 
 const config: Record<string, Record<string, string>> = {
   Services: {
-    Swap: 'https://app.sushi.com',
+    Swap: 'https://sushi.com/swap',
     'Liquidity Providing': 'https://app.sushi.com/pools',
     'Lending & Borrowing': 'https://app.sushi.com/kashi',
     'Miso Launchpad': 'https://app.sushi.com/miso',
     'Shoyu NFT': 'https://shoyunft.com',
-    'Furo Streaming': 'https://furo.sushi.com',
+    'Furo Streaming': 'https://sushi.com/furo',
     Analytics: 'https://analytics.sushi.com',
   },
   Help: {
@@ -45,11 +45,11 @@ const config: Record<string, Record<string, string>> = {
 
 export function Footer(props: FooterProps): JSX.Element {
   return (
-    <footer className="flex border-t border-slate-800 py-[72px]" {...props}>
+    <footer className="flex border-t border-slate-400/5 py-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
-          <div className="flex items-center justify-start gap-3">
-            <SushiWithTextIcon height={36} className="text-slate-50" />
+          <div className="flex items-center justify-start gap-3 pt-2">
+            <SushiWithTextIcon height={20} className="text-slate-50" />
           </div>
           <div className="text-sm sm:text-[0.625rem] leading-5 sm:leading-4 text-slate-400">
             Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!
@@ -75,7 +75,7 @@ export function Footer(props: FooterProps): JSX.Element {
         <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">
           {Object.entries(config).map(([title, items]) => (
             <div key={title} className="flex flex-col gap-[10px]">
-              <Typography variant="xs" weight={700} className="text-sm sm:text-xs text-slate-100">
+              <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-slate-100">
                 {title}
               </Typography>
               {Object.entries(items).map(([item, href]) => (

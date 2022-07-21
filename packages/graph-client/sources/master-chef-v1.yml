@@ -1,4 +1,4 @@
-name: masterChefV1
+name: MasterChefV1
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chef
@@ -24,9 +24,5 @@ transforms:
           to:
             type:   Pool
             field:  slpBalance
-  # - blockTracking:
-  #     validateSchema: true
   - autoPagination:
       validateSchema: true
-serve:
-  browser: false

@@ -55,21 +55,21 @@ const exampleStream = new Stream({
 export default function Index() {
   const router = useRouter()
   const isMounted = useIsMounted()
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const paySomeone = useConnect({
-    onConnect: () => {
-      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+    onSuccess: ({ chain }) => {
+      if (SUPPORTED_CHAINS.includes(chain.id)) {
         void router.push('/stream/create')
       }
     },
   })
 
   const viewEarnings = useConnect({
-    onConnect: () => {
-      if (activeChain && activeChain.id in SUPPORTED_CHAINS) {
+    onSuccess: ({ chain }) => {
+      if (SUPPORTED_CHAINS.includes(chain.id)) {
         void router.push('/dashboard')
       }
     },
@@ -87,7 +87,7 @@ export default function Index() {
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
         <div className="flex flex-col justify-center h-[420px] gap-8">
           <div className="flex flex-col gap-3">
-            <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
+            <div className="text-center font-medium sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
               Welcome to <br />
               <span className="text-blue">Furo</span> Streaming
             </div>
@@ -96,9 +96,10 @@ export default function Index() {
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
-            {!isMounted || !activeChain || !account ? (
+            {!isMounted || !activeChain || !address ? (
               <>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="blue"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
@@ -106,6 +107,7 @@ export default function Index() {
                   Pay Someone
                 </Wallet.Button>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="gray"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}
@@ -117,29 +119,39 @@ export default function Index() {
               <>
                 <div>
                   <Link passHref={true} href="/stream/create">
-                    <Button className="transition-all hover:ring-4 btn btn-blue btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                    <Button
+                      color="blue"
+                      variant="filled"
+                      fullWidth
+                      className="transition-all hover:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
+                    >
                       Pay Someone
                     </Button>
                   </Link>
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
                   <Link passHref={true} href="/dashboard">
-                    <Button className="transition-all hover:ring-4 ring-gray-700 btn btn-gray btn-filled btn-default w-full text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl">
+                    <Button
+                      fullWidth
+                      color="gray"
+                      variant="filled"
+                      className="transition-all hover:ring-4 ring-gray-700 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
+                    >
                       View My Earnings
                     </Button>
                   </Link>
                   <div className="px-6">
-                    <Account.AddressToEnsResolver address={account.address}>
+                    <Account.AddressToEnsResolver address={address}>
                       {({ data }) => (
                         <Typography
                           as="a"
                           target="_blank"
-                          href={Chain.from(activeChain.id)?.getAccountUrl(account?.address ?? '')}
+                          href={Chain.from(activeChain.id)?.getAccountUrl(address ?? '')}
                           variant="sm"
-                          weight={700}
+                          weight={500}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {data ? data : account.address ? shortenAddress(account.address) : ''}
+                          {data ? data : address ? shortenAddress(address) : ''}
                         </Typography>
                       )}
                     </Account.AddressToEnsResolver>

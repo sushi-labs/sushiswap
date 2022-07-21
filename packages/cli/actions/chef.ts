@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
@@ -12,11 +13,11 @@ type Arguments = {
 }
 
 export async function chef(args: Arguments) {
-  const sdk = getBuiltGraphSDK()
+  const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
 
   const { MASTERCHEF_V1_pools, MASTERCHEF_V2_pools } = await sdk.MasterChefPools()
 
-  const { ETHEREUM_EXCHANGE_pairs } = await sdk.EthereumPairs({
+  const { pairs } = await sdk.Pairs({
     where: {
       id_in: [...MASTERCHEF_V1_pools, ...MASTERCHEF_V2_pools].reduce<string[]>(
         (previousValue, currentValue) => [...previousValue, currentValue.pair],
@@ -27,7 +28,7 @@ export async function chef(args: Arguments) {
 
   const sushiPriceUSD = await (async function () {
     {
-      const { ETHEREUM_EXCHANGE_tokens: tokens, ETHEREUM_EXCHANGE_bundle: bundle } = await sdk.EthereumTokenPrices({
+      const { tokens: tokens, bundle: bundle } = await sdk.TokenPrices({
         where: { id_in: ['0x6b3595068778dd592e39a122f4f5a5cf09c90fe2'] },
       })
 
@@ -39,11 +40,11 @@ export async function chef(args: Arguments) {
     pools
       .filter(
         (pool) =>
-          (!args.all && pool.allocPoint !== '0' && ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair)) ||
-          (args.all && ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair))
+          (!args.all && pool.allocPoint !== '0' && pairs.find((pair) => pair.id === pool.pair)) ||
+          (args.all && pairs.find((pair) => pair.id === pool.pair))
       )
       .map((pool) => {
-        const pair = ETHEREUM_EXCHANGE_pairs.find((pair) => pair.id === pool.pair)
+        const pair = pairs.find((pair) => pair.id === pool.pair)
         const tvl = ((pair?.reserveUSD / pair?.totalSupply) * pool.slpBalance) / 1e18
         const sushiPerSecond = ((pool.allocPoint / pool.masterChef.totalAllocPoint) * sushiPerBlock) / secondsPerBlock
         const apr = (getUnixTime(addYears(0, 1)) * sushiPerSecond * sushiPriceUSD) / tvl

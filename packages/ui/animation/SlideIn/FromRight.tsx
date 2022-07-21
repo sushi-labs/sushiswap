@@ -1,31 +1,51 @@
 import { Transition } from '@headlessui/react'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import classNames from 'classnames'
-import { FC, Fragment, ReactElement } from 'react'
+import React, { FC, Fragment, ReactElement } from 'react'
+import ReactDOM from 'react-dom'
 
-type FromRight = {
+import { Dialog } from '../../dialog'
+import { useSlideInContext } from './SlideIn'
+import { useEscapeClose } from './useEscapeClose'
+
+export type FromRight = {
   show: boolean
-  unmount: boolean
   onClose(): void
   afterEnter?(): void
   beforeEnter?(): void
   beforeLeave?(): void
   afterLeave?(): void
   children: ReactElement
+  className?: string
 }
 
 export const FromRight: FC<FromRight> = ({
   show,
   beforeLeave,
   beforeEnter,
-  unmount = false,
   afterEnter,
   afterLeave,
   onClose,
   children,
+  className,
 }) => {
-  return (
-    <Transition.Root show={show} unmount={unmount} as={Fragment}>
-      <div className={classNames('absolute inset-0 translate-x-[100%] z-50')}>
+  const isSmallScreen = useIsSmScreen()
+  useEscapeClose(onClose)
+
+  const portal = useSlideInContext()
+  if (!portal) return <></>
+
+  if (isSmallScreen) {
+    return (
+      <Dialog open={show} onClose={onClose} unmount={false} initialFocus={undefined}>
+        <div className="!rounded-t-2xl overflow-hidden">{children}</div>
+      </Dialog>
+    )
+  }
+
+  return ReactDOM.createPortal(
+    <Transition.Root appear show={show} unmount={false} as={Fragment}>
+      <div className={classNames(className, 'absolute right-0 top-0 bottom-0 w-full translate-x-[100%] z-50')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -59,6 +79,7 @@ export const FromRight: FC<FromRight> = ({
           {children}
         </Transition.Child>
       </div>
-    </Transition.Root>
+    </Transition.Root>,
+    portal
   )
 }

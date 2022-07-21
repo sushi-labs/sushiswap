@@ -1,3 +1,25 @@
 sources: !includes sources
+
+additionalTypeDefs: |
+  extend type Block {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Rebase {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Query {
+    crossChainBlocks(first: Int!, chainIds: [BigInt!]!): [Block!]!
+    crossChainRebases(first: Int!, chainIds: [BigInt!]!): [Rebase!]!
+  }
+
+additionalResolvers:
+  - ./resolvers/bentobox.ts
+  - ./resolvers/blocks.ts
+
 documents:
   - './queries/*.graphql'
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'

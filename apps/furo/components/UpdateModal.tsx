@@ -19,9 +19,9 @@ interface UpdateModalProps {
   address: string
 }
 
-export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress }) => {
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
@@ -43,18 +43,14 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
     return value
   }, [amount, stream])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: 'updateStream',
+    onSuccess() {
+      setOpen(false)
     },
-    'updateStream',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const updateStream = useCallback(async () => {
     if (!stream || !activeChain?.id) return
@@ -91,7 +87,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
     }
   }, [activeChain?.id, amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
 
-  if (!stream || !account || stream?.canUpdate(account.address)) return null
+  if (!stream || !address || stream?.canUpdate(address)) return null
 
   return (
     <>
@@ -100,7 +96,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
         fullWidth
         startIcon={<PencilIcon width={18} height={18} />}
         onClick={() => setOpen(true)}
-        disabled={!account || !stream?.canUpdate(account.address)}
+        disabled={!address || !stream?.canUpdate(address)}
       >
         Update
       </Button>
@@ -112,7 +108,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Recipient
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {shortenAddress(stream.recipient.id)}
               </Typography>
             </div>
@@ -120,7 +116,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Stream Amount
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.amount.toSignificant(6)}{' '}
                 <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
@@ -129,7 +125,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
               <Typography variant="xs" weight={500} className="text-slate-500">
                 Start date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.startTime.toLocaleString()}
               </Typography>
             </div>
@@ -137,7 +133,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
               <Typography variant="xs" weight={500} className="text-slate-500">
                 End date
               </Typography>
-              <Typography variant="sm" weight={700} className="text-slate-200">
+              <Typography variant="sm" weight={500} className="text-slate-200">
                 {stream.endTime.toLocaleString()}
               </Typography>
             </div>
@@ -159,11 +155,11 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
             <div className="flex flex-col gap-2">
               <CurrencyInput
                 fundSource={FundSource.WALLET}
-                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none')}
+                className={classNames(topUp ? '' : 'opacity-40 pointer-events-none', 'ring-offset-slate-800')}
                 onChange={setAmount}
                 currency={stream.token}
                 value={amount}
-                account={account?.address}
+                account={address}
               />
             </div>
           </div>
@@ -184,20 +180,22 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address }) => {
               type="datetime-local"
               className={classNames(
                 changeEndDate ? '' : 'opacity-40 pointer-events-none',
-                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-bold'
+                'rounded-xl bg-slate-800 py-3 px-4 text-left shadow-md border-none text-sm font-medium'
               )}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
-            {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-          </Button>
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button variant="filled" color="gradient" fullWidth disabled={isWritePending} onClick={updateStream}>
+              {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

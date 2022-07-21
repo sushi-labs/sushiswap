@@ -1,6 +1,7 @@
-import { SwitchHorizontalIcon } from '@heroicons/react/solid'
+import { InformationCircleIcon } from '@heroicons/react/outline'
 import { Price, Type } from '@sushiswap/currency'
-import { classNames, Dots, Typography } from '@sushiswap/ui'
+import { classNames, Popover, Typography } from '@sushiswap/ui'
+import { usePrices } from '@sushiswap/wagmi'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
 import { Theme } from '../types'
@@ -9,17 +10,22 @@ interface RenderPayload {
   invert: boolean
   toggleInvert(): void
   content: ReactElement
+  usdPrice?: string
 }
 
 interface Rate {
-  loading: boolean
   price: Price<Type, Type> | undefined
   theme: Theme
   children?: (payload: RenderPayload) => ReactNode
 }
 
-export const Rate: FC<Rate> = ({ children, loading, price, theme }) => {
+export const Rate: FC<Rate> = ({ children, price }) => {
   const [invert, setInvert] = useState(false)
+  const { data: prices } = usePrices({ chainId: invert ? price?.quoteCurrency.chainId : price?.baseCurrency.chainId })
+  const usdPrice = price
+    ? prices?.[invert ? price.quoteCurrency.wrapped.address : price.baseCurrency.wrapped.address]?.toFixed(2)
+    : undefined
+
   const content = (
     <>
       {invert ? (
@@ -31,8 +37,7 @@ export const Rate: FC<Rate> = ({ children, loading, price, theme }) => {
         <>
           1 {price?.baseCurrency.symbol} = {price?.toSignificant(6)} {price?.quoteCurrency.symbol}
         </>
-      )}{' '}
-      <SwitchHorizontalIcon width={12} height={12} />
+      )}
     </>
   )
 
@@ -41,40 +46,27 @@ export const Rate: FC<Rate> = ({ children, loading, price, theme }) => {
   }, [])
 
   if (typeof children === 'function') {
-    return <>{children({ invert, toggleInvert, content })}</>
+    return <>{children({ invert, toggleInvert, content, usdPrice })}</>
   }
 
   return (
     <div
       className={classNames(
-        theme.secondary.default,
-        theme.secondary.hover,
-        'flex justify-between border-t border-opacity-40 border-slate-700'
+        'text-slate-300 hover:text-slate-200 flex justify-between border-t border-opacity-40 border-slate-700'
       )}
     >
-      <Typography
-        variant="xs"
-        className={classNames(
-          theme.secondary.default,
-          theme.secondary.hover,
-          'cursor-pointer h-[36px] flex items-center '
-        )}
-      >
+      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
+        <Popover
+          hover
+          panel={<div className="bg-slate-800 p-3"></div>}
+          button={<InformationCircleIcon width={16} height={16} />}
+        />
         Rate
       </Typography>
-      <Typography
-        variant="xs"
-        className={classNames(
-          theme.secondary.default,
-          theme.secondary.hover,
-          'cursor-pointer h-[36px] flex items-center '
-        )}
-      >
-        {loading ? (
-          <Dots>Fetching best price</Dots>
-        ) : price ? (
-          <div className="flex gap-1 items-center h-full" onClick={toggleInvert}>
-            {content}
+      <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
+        {price ? (
+          <div className="flex items-center h-full gap-1 font-medium" onClick={toggleInvert}>
+            {content} <span className="text-slate-500">(${usdPrice})</span>
           </div>
         ) : (
           'Enter an amount'

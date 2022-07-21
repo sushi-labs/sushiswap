@@ -19,7 +19,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
@@ -58,13 +58,19 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
   )
 }
 
+const LINKS = (id: string) => [
+  {
+    href: `/vesting/${id}`,
+    label: `Vesting ${id}`,
+  },
+]
+
 const _VestingPage: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
   const connect = useConnect()
-  const { data: account } = useAccount()
-  const { connecting, reconnecting } = useWalletState(connect, account?.address)
+  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
   const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>
@@ -110,7 +116,7 @@ const _VestingPage: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Vesting" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
         <div className="flex justify-center">
           <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />
@@ -119,7 +125,7 @@ const _VestingPage: FC = () => {
           <div className="flex flex-col justify-center gap-5">
             <ProgressBarCard
               aria-hidden="true"
-              label="Streamed"
+              label="Unlocked"
               value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
               onMouseEnter={() => setHover(ChartHover.STREAMED)}
               onMouseLeave={() => setHover(ChartHover.NONE)}
@@ -158,19 +164,25 @@ const _VestingPage: FC = () => {
           <div className="flex gap-2">
             <TransferModal
               stream={vesting}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.address ?? AddressZero
               }
             />
             <CancelModal
               title="Cancel Vesting"
               stream={vesting}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVesting
+                  ?.address ?? AddressZero
               }
               fn="stopVesting"
             />

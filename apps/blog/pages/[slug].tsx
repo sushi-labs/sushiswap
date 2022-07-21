@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, CmsTypes, ComponentSharedMedia, ComponentSharedRichText } from '../.graphclient'
+import { ArticleEntity, CmsTypes, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -64,28 +64,27 @@ const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview
     return <ErrorPage statusCode={404} />
   }
 
-  const seo: SeoType =
-    article?.attributes && article?.id
-      ? {
-          id: article.id,
-          slug: article?.attributes.slug,
-          metaTitle: article?.attributes.title,
-          metaDescription: article?.attributes.description,
-          shareImage: article?.attributes.cover,
-          article: true,
-          tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
-            if (el?.attributes?.name) acc.push(el?.attributes.name)
-            return acc
-          }, []),
-        }
-      : undefined
+  const seo: SeoType = article?.attributes
+    ? {
+        id: article?.id as string,
+        slug: article?.attributes.slug,
+        metaTitle: article?.attributes.title,
+        metaDescription: article?.attributes.description,
+        shareImage: article?.attributes.cover,
+        article: true,
+        tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
+          if (el?.attributes?.name) acc.push(el?.attributes.name)
+          return acc
+        }, []),
+      }
+    : undefined
 
   return (
     <>
       <Seo global={global} seo={seo} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
-      <Container maxWidth="2xl" className="mx-auto px-4 my-16">
+      <Container maxWidth="2xl" className="px-4 mx-auto my-16">
         <main>
           <article className="relative pt-10">
             <ArticleHeader article={article} />
@@ -104,7 +103,7 @@ const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview
 
                 // @ts-ignore
                 if (block?.__typename === 'ComponentSharedDivider') {
-                  return <hr key={i} className="border border-slate-200/5 my-12" />
+                  return <hr key={i} className="my-12 border border-slate-200/5" />
                 }
               })}
             </div>

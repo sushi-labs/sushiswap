@@ -21,7 +21,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 import { ChartHover } from '../../types'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
@@ -59,13 +59,19 @@ const Streams: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ f
   )
 }
 
+const LINKS = (id: string) => [
+  {
+    href: `/stream/${id}`,
+    label: `Stream ${id}`,
+  },
+]
+
 const _Streams: FC = () => {
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
   const connect = useConnect()
-  const { data: account } = useAccount()
-  const { connecting, reconnecting } = useWalletState(connect, account?.address)
+  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
 
   const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>
     fetch(url).then((response) => response.json())
@@ -97,7 +103,7 @@ const _Streams: FC = () => {
         </div>
       }
     >
-      <Breadcrumb title="Stream" />
+      <Breadcrumb links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />
@@ -146,27 +152,36 @@ const _Streams: FC = () => {
           <div className="flex gap-2">
             <TransferModal
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
             />
             <UpdateModal
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
             />
             <CancelModal
               title="Cancel Stream"
               stream={stream}
-              abi={furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.abi ?? []}
+              abi={
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.abi ?? []
+              }
               address={
-                furoExports[chainId as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroStream?.address ??
-                AddressZero
+                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+                  ?.address ?? AddressZero
               }
               fn="cancelStream"
             />

@@ -1,7 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 
-import { CategoryEntity } from '../.graphclient'
+import { CategoryEntity } from '../.mesh'
 
 interface Categories {
   selected: string[]

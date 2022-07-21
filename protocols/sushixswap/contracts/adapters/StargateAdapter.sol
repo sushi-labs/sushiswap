@@ -12,6 +12,10 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
     // Custom Error
     error NotStargateRouter();
 
+    // events
+    event StargateSushiXSwapSrc(bytes32 indexed srcContext);
+    event StargateSushiXSwapDst(bytes32 indexed srcContext, bool failed);
+
     struct StargateTeleportParams {
         uint16 dstChainId; // stargate dst chain id
         address token; // token getting bridged
@@ -23,6 +27,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
         address receiver; // sushiXswap on dst chain
         address to; // receiver bridge token incase of transaction reverts on dst chain
         uint256 gas; // extra gas to be sent for dst chain operations
+        bytes32 srcContext; // random bytes32 as source context
     }
 
     /// @notice Approves token to the Stargate Router
@@ -44,7 +49,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
         uint256[] memory values,
         bytes[] memory datas
     ) internal {
-        bytes memory payload = abi.encode(params.to, actions, values, datas);
+        bytes memory payload = abi.encode(params.to, actions, values, datas, params.srcContext);
 
         stargateRouter.swap{value: address(this).balance}(
             params.dstChainId,
@@ -63,6 +68,10 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             abi.encodePacked(params.receiver), // sushiXswap on the dst chain
             payload
         );
+
+        stargateWidget.partnerSwap(0x0001);
+
+        emit StargateSushiXSwapSrc(params.srcContext);
     }
 
     /// @notice Get the fees to be paid in native token for the swap
@@ -112,18 +121,30 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             address to,
             uint8[] memory actions,
             uint256[] memory values,
-            bytes[] memory datas
-        ) = abi.decode(payload, (address, uint8[], uint256[], bytes[]));
+            bytes[] memory datas,
+            bytes32 srcContext
+        ) = abi.decode(payload, (address, uint8[], uint256[], bytes[], bytes32));
 
+        // 100000 -> exit gas
+        uint256 limit = gasleft() - 100000;
+        bool failed;
         /// @dev incase the actions fail, transfer bridge token to the to address
         try
-            ISushiXSwap(payable(address(this))).cook(actions, values, datas)
+            ISushiXSwap(payable(address(this))).cook{gas: limit}(
+                actions,
+                values,
+                datas
+            )
         {} catch (bytes memory) {
-            IERC20(_token).transfer(to, amountLD);
+            IERC20(_token).safeTransfer(to, amountLD);
+            failed = true;
         }
 
         /// @dev transfer any native token received as dust to the to address
         if (address(this).balance > 0)
-            payable(to).transfer(address(this).balance);
+            to.call{value: (address(this).balance)}("");
+
+        emit StargateSushiXSwapDst(srcContext, failed);
+
     }
 }

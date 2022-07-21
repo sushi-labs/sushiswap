@@ -1,6 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { namehash } from '@ethersproject/hash'
 import { BaseProvider } from '@ethersproject/providers'
+import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import type { TokenInfo, TokenList } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 // @ts-ignore
@@ -13,7 +14,6 @@ import { getCodec, rmPrefix } from 'multicodec'
 import { decode, toB58String } from 'multihashes'
 
 import { DEFAULT_LIST_OF_LISTS } from './constants'
-import { WrappedTokenInfo } from './token'
 import { ChainTokenMap } from './types'
 
 type Mutable<T> = {

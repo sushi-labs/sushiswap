@@ -1,23 +1,23 @@
 // @ts-nocheck
+import seedrandom from 'seedrandom'
+
 import {
-  Graph,
+  closeValues,
   findMultiRouteExactIn,
+  findMultiRouteExactOut,
+  findSingleRouteExactIn,
+  findSingleRouteExactOut,
+  Graph,
   MultiRoute,
-  RToken,
   RouteLeg,
   RouteStatus,
-  findSingleRouteExactIn,
-  findMultiRouteExactOut,
-  findSingleRouteExactOut,
-  closeValues,
+  RToken,
   StableSwapRPool,
 } from '../src'
-
-import { checkRouteResult } from './snapshots/snapshot'
 import { getBigNumber } from '../src'
-import seedrandom from 'seedrandom'
 import { ConstantProductRPool, HybridRPool, RPool } from '../src/PrimaryPools'
 import { BigNumber } from '@ethersproject/bignumber'
+import { checkRouteResult } from './snapshots/snapshot'
 
 const testSeed = '1' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -45,7 +45,7 @@ function choice(rnd: () => number, obj: Variants) {
   if (total <= 0) throw new Error('Error 62')
   const val = rnd() * total
   let past = 0
-  for (let k in obj) {
+  for (const k in obj) {
     past += obj[k]
     if (past >= val) return k
   }
@@ -258,6 +258,7 @@ function createRandomToken(rnd: () => number, name: string): TToken {
     address: name,
     price,
     decimals,
+    symbol: name,
   }
 }
 
@@ -275,7 +276,7 @@ function createNetwork(rnd: () => number, tokenNumber: number, density: number):
 
   const pools: RPool[] = []
   for (i = 0; i < tokenNumber; ++i) {
-    for (var j = i + 1; j < tokenNumber; ++j) {
+    for (let j = i + 1; j < tokenNumber; ++j) {
       const r = rnd()
       if (r < density) {
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
@@ -649,7 +650,7 @@ it('Token price calculation is correct', () => {
 })
 
 it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} pools (200 times)`, () => {
-  for (var i = 0; i < 200; ++i) {
+  for (let i = 0; i < 200; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)
@@ -669,7 +670,7 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
 })
 
 it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.length} pools`, () => {
-  for (var i = 0; i < 10; ++i) {
+  for (let i = 0; i < 10; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)
@@ -711,7 +712,7 @@ it(`Multirouter path quantity check`, () => {
 function makeTestForTiming(tokens: number, density: number, tests: number) {
   const network2 = createNetwork(rnd, tokens, density)
   it(`Multirouter timing test for ${tokens} tokens and ${network2.pools.length} pools (${tests} times)`, () => {
-    for (var i = 0; i < tests; ++i) {
+    for (let i = 0; i < tests; ++i) {
       const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
       const amountIn = getRandom(rnd, 1e6, 1e24)
       const gasPrice = getBasePrice(network2, tBase)
@@ -725,7 +726,7 @@ makeTestForTiming(10, 0.5, 100)
 makeTestForTiming(10, 0.9, 100)
 
 it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length} pools (100 times)`, () => {
-  for (var i = 0; i < 100; ++i) {
+  for (let i = 0; i < 100; ++i) {
     const [t0, t1, tBase] = chooseRandomTokens(rnd, network)
     const amountIn = getRandom(rnd, 1e6, 1e24)
     const gasPrice = getBasePrice(network, tBase)

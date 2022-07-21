@@ -35,6 +35,7 @@ const price = [1, 1, 1, 1, 1]
 const tokens = price.map((_, i) => ({
   name: '' + (i + 1),
   address: 'token_addres ' + (i + 1),
+  symbol: '' + (i + 1),
 }))
 
 //const testPool0_1 = getPool(tokens, 0, 1, price, 1_500_0)

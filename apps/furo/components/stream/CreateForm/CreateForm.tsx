@@ -14,14 +14,14 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
+import { CreateStreamFormData, CreateStreamFormDataValidated } from '../types'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { createStreamSchema } from './schema'
 import { StreamAmountDetails } from './StreamAmountDetails'
-import { CreateStreamFormData, CreateStreamFormDataValidated } from './types'
 
 export const CreateForm: FC = () => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [error, setError] = useState<string>()
   const contract = useFuroStreamContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
@@ -36,6 +36,7 @@ export const CreateForm: FC = () => {
       endDate: undefined,
       recipient: undefined,
       amount: '',
+      fundSource: FundSource.WALLET,
     },
     mode: 'onChange',
   })
@@ -64,7 +65,7 @@ export const CreateForm: FC = () => {
 
   const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
     async (data) => {
-      if (!amountAsEntity || !contract || !account?.address || !activeChain?.id) return
+      if (!amountAsEntity || !contract || !address || !activeChain?.id) return
 
       // Can cast here safely since input must have been validated already
       const _data = data as CreateStreamFormDataValidated
@@ -72,7 +73,7 @@ export const CreateForm: FC = () => {
       setError(undefined)
 
       const actions = [
-        approveBentoBoxAction({ contract, user: account.address, signature }),
+        approveBentoBoxAction({ contract, user: address, signature }),
         streamCreationAction({
           contract,
           recipient: _data.recipient,
@@ -87,7 +88,7 @@ export const CreateForm: FC = () => {
       try {
         const data = await sendTransactionAsync({
           request: {
-            from: account?.address,
+            from: address,
             to: contract?.address,
             data: batchAction({ contract, actions }),
             value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
@@ -115,21 +116,21 @@ export const CreateForm: FC = () => {
 
         log.tenderly({
           chainId: activeChain?.id,
-          from: account.address,
+          from: address,
           to: contract.address,
           data: batchAction({ contract, actions }),
           value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
         })
       }
     },
-    [account?.address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
+    [address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
   )
 
   useEffect(() => {
     reset()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, account?.address])
+  }, [activeChain?.id, address])
 
   return (
     <>
@@ -137,8 +138,9 @@ export const CreateForm: FC = () => {
         <Form header="Create Stream" onSubmit={methods.handleSubmit(onSubmit)}>
           <GeneralDetailsSection />
           <StreamAmountDetails />
-          <Form.Buttons>
+          <Form.Buttons className="flex flex-col items-end gap-3">
             <Approve
+              className="!items-end"
               components={
                 <Approve.Components>
                   <Approve.Bentobox address={contract?.address} onSignature={setSignature} />

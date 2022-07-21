@@ -15,7 +15,7 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
         href={href}
         target="_blank"
         variant="xs"
-        weight={700}
+        weight={500}
         className="py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
       >
         View Detail
@@ -23,7 +23,7 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
       <Typography
         onClick={onDismiss}
         variant="xs"
-        weight={700}
+        weight={500}
         className="py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
       >
         Dismiss

@@ -2,7 +2,7 @@ import { Chip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../.graphclient'
+import { ArticleEntity } from '../.mesh'
 import { Image } from './Image'
 
 interface ArticleListItem {
@@ -33,9 +33,9 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
           </div>
         )}
         <div className="flex flex-col gap-2 lg:gap-3">
-          <div className="text-base md:text-2xl font-bold text-slate-200">{article?.attributes?.title}</div>
+          <div className="text-base font-medium md:text-2xl text-slate-200">{article?.attributes?.title}</div>
           {/*<Typography className="text-slate-400 line-clamp-2">{article?.attributes.description}</Typography>*/}
-          <Typography variant="sm" weight={700} className="text-slate-400">
+          <Typography variant="sm" weight={500} className="text-slate-400">
             {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
           </Typography>
         </div>

@@ -45,16 +45,16 @@ export abstract class Currency {
     symbol,
     name,
   }: {
-    chainId: number
-    decimals: number
+    chainId: number | string
+    decimals: number | string
     symbol?: string
     name?: string
   }) {
-    invariant(Number.isSafeInteger(chainId), 'CHAIN_ID')
-    invariant(decimals >= 0 && decimals < 255 && Number.isInteger(decimals), 'DECIMALS')
+    invariant(Number.isSafeInteger(Number(chainId)), 'CHAIN_ID')
+    invariant(decimals >= 0 && decimals < 255 && Number.isInteger(Number(decimals)), 'DECIMALS')
 
-    this.chainId = chainId
-    this.decimals = decimals
+    this.chainId = Number(chainId)
+    this.decimals = Number(decimals)
     this.symbol = symbol
     this.name = name
   }

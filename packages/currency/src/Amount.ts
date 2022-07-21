@@ -1,6 +1,7 @@
 import { Big, BigintIsh, Fraction, JSBI, MAX_UINT256, Rounding, ZERO } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
+import { Share } from './Share'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -17,7 +18,7 @@ export class Amount<T extends Type> extends Fraction {
     return new Amount(currency, rawAmount)
   }
 
-  public static fromShare<T extends Token>(
+  public static fromShare<T extends Type>(
     currency: T,
     shares: BigintIsh,
     rebase: { base: JSBI; elastic: JSBI }
@@ -29,7 +30,7 @@ export class Amount<T extends Type> extends Fraction {
   }
 
   public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
-    return new Amount(
+    return Share.fromRawShare(
       this.currency,
       JSBI.GT(rebase.elastic, 0)
         ? JSBI[roundUp ? 'add' : 'subtract'](

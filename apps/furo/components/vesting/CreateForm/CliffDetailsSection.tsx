@@ -5,10 +5,10 @@ import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
-import { CreateVestingFormData } from './types'
+import { CreateVestingFormData } from '../types'
 
 export const CliffDetailsSection: FC = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { control, watch, resetField, setError } = useFormContext<CreateVestingFormData>()
   // @ts-ignore
   const [currency, cliff, fundSource] = watch(['currency', 'cliff', 'fundSource'])
@@ -43,7 +43,12 @@ export const CliffDetailsSection: FC = () => {
           name="cliffEndDate"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
-              <Input.DatetimeLocal onChange={onChange} value={value} error={!!error?.message} />
+              <Input.DatetimeLocal
+                onChange={onChange}
+                value={value}
+                error={!!error?.message}
+                className="!ring-offset-slate-900"
+              />
               <Form.Error message={error?.message} />
             </>
           )}
@@ -55,8 +60,9 @@ export const CliffDetailsSection: FC = () => {
           name="cliffAmount"
           render={({ field: { onChange, value }, fieldState: { error: validationError } }) => (
             <CurrencyInput
+              className="ring-offset-slate-900"
               fundSource={fundSource}
-              account={account?.address}
+              account={address}
               onError={(message) => setError('cliffAmount', { type: 'custom', message })}
               errorMessage={validationError?.message}
               value={value}

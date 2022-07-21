@@ -6,7 +6,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
-import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
@@ -22,8 +22,8 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [error, setError] = useState<string>()
   const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { activeChain } = useNetwork()
-  const { data: account } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(activeChain?.id)
 
@@ -32,15 +32,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     return tryParseAmount(input, vesting.token)
   }, [input, vesting?.token])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    getFuroVestingContractConfig(activeChain?.id),
-    'withdraw',
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    ...getFuroVestingContractConfig(activeChain?.id),
+    functionName: 'withdraw',
+    onSuccess() {
+      setOpen(false)
+    },
+  })
 
   const withdraw = useCallback(async () => {
     if (!vesting || !amount || !activeChain?.id) return
@@ -71,10 +69,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
 
       log.tenderly({
         chainId: activeChain?.id,
-        from: account?.address,
+        from: address,
         to:
-          furoExports[activeChain?.id as unknown as keyof typeof furoExports]?.[0]?.contracts?.FuroVesting?.address ??
-          AddressZero,
+          furoExports[activeChain?.id as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
+            ?.FuroVesting?.address ?? AddressZero,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',
@@ -82,7 +80,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         ]),
       })
     }
-  }, [account?.address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
+  }, [address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
 
   return (
     <>
@@ -90,7 +88,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!account || !vesting?.canWithdraw(account.address)}
+        disabled={!address || !vesting?.canWithdraw(address)}
         onClick={() => {
           setOpen(true)
         }}
@@ -98,10 +96,11 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         Withdraw
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-6 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
             <CurrencyInput.Base
+              className="ring-offset-slate-800"
               currency={vesting?.token}
               onChange={setInput}
               value={input}
@@ -116,17 +115,16 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               }
             />
           </div>
-          <div className="grid items-center grid-cols-2 gap-5">
+          <div className="grid items-center grid-cols-2 gap-3">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.WALLET
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -141,14 +139,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
             <div
               onClick={() => setFundSource(FundSource.BENTOBOX)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX
-                  ? 'border-green/70 ring-green/70'
-                  : 'ring-transparent border-slate-700',
-                'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                DEFAULT_INPUT_BG,
+                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Bentobox
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+                BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
                 Receive funds in your BentoBox
@@ -160,28 +157,31 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               )}
             </div>
           </div>
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
-            onClick={withdraw}
-          >
-            {!amount?.greaterThan(0) ? (
-              'Enter an amount'
-            ) : !vesting?.token ? (
-              'Invalid stream token'
-            ) : isWritePending ? (
-              <Dots>Confirm Withdraw</Dots>
-            ) : (
-              'Withdraw'
-            )}
-          </Button>
+
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
+              onClick={withdraw}
+            >
+              {!amount?.greaterThan(0) ? (
+                'Enter an amount'
+              ) : !vesting?.token ? (
+                'Invalid stream token'
+              ) : isWritePending ? (
+                <Dots>Confirm Withdraw</Dots>
+              ) : (
+                'Withdraw'
+              )}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>

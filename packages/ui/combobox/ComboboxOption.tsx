@@ -14,15 +14,15 @@ const ComboboxOption: FC<ComboboxOptionProps> = forwardRef(({ className, childre
     <HeadlessCombobox.Option
       ref={ref}
       {...props}
-      className={({ active }) =>
+      className={({ active }: { active: boolean }) =>
         classNames(
           active ? 'text-blue-100 bg-blue-500 bg-opacity-50' : 'text-high-emphesis',
-          'font-bold text-sm cursor-default Combobox-none relative py-2 pl-4 pr-9 rounded-xl border-[3px] border-slate-800',
+          'font-medium text-sm cursor-default Combobox-none relative py-2 pl-4 pr-9 rounded-xl border-[3px] border-slate-800',
           className
         )
       }
     >
-      {({ selected }) => (
+      {({ selected }: { selected: boolean }) => (
         <>
           {selected && <CheckIcon width={24} height={24} />}
           {children}

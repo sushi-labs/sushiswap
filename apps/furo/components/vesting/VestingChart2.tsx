@@ -40,7 +40,7 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
   return (
     <div className="flex justify-center gap-4 text-slate-200">
       <div className="flex flex-col text-center">
-        <Typography variant="sm" weight={700} className="text-slate-200">
+        <Typography variant="sm" weight={500} className="text-slate-200">
           {remaining?.days}
         </Typography>
         <Typography variant="xs" className="text-slate-400">
@@ -48,7 +48,7 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
         </Typography>
       </div>
       <div className="flex flex-col text-center">
-        <Typography variant="sm" weight={700} className="text-slate-200">
+        <Typography variant="sm" weight={500} className="text-slate-200">
           {remaining?.hours}
         </Typography>
         <Typography variant="xs" className="text-slate-400">
@@ -56,7 +56,7 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
         </Typography>
       </div>
       <div className="flex flex-col text-center">
-        <Typography variant="sm" weight={700} className="text-slate-200">
+        <Typography variant="sm" weight={500} className="text-slate-200">
           {remaining?.minutes}
         </Typography>
         <Typography variant="xs" className="text-slate-400">
@@ -64,7 +64,7 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
         </Typography>
       </div>
       <div className="flex flex-col text-center">
-        <Typography variant="sm" weight={700} className="text-slate-200">
+        <Typography variant="sm" weight={500} className="text-slate-200">
           {remaining?.seconds}
         </Typography>
         <Typography variant="xs" className="text-slate-400">
@@ -96,11 +96,11 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
             'w-full hover:ring-2 ring-offset-2 ring-offset-slate-900 ring-slate-700 relative bg-slate-800 rounded-xl flex flex-col gap-1 items-center justify-center h-30 p-4 pt-8'
           )}
         >
-          <Typography variant="xxs" weight={700} className="text-slate-500 uppercase absolute top-2 left-3">
+          <Typography variant="xxs" weight={500} className="absolute uppercase text-slate-500 top-2 left-3">
             {[PeriodType.STEP, PeriodType.END].includes(period.type) ? 'Payout' : 'Cliff End'}
           </Typography>
           {unlocked ? <LockOpenIcon width={24} /> : <LockClosedIcon width={24} />}
-          <Typography variant="sm" weight={700} className="text-center text-slate-200 w-full truncate">
+          <Typography variant="sm" weight={500} className="w-full text-center truncate text-slate-200">
             {period.amount.toSignificant(4)}{' '}
             <span className="text-sm text-slate-400">{period.amount.currency.symbol}</span>
           </Typography>
@@ -117,8 +117,8 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
         </div>
       }
       panel={
-        <div className="flex flex-col bg-slate-700 p-3 gap-3">
-          <Typography variant="xxs" weight={700} className="text-slate-300">
+        <div className="flex flex-col gap-3 p-3 bg-slate-700">
+          <Typography variant="xxs" weight={500} className="text-slate-300">
             {vesting.status === FuroStatus.CANCELLED ? 'Cancelled' : 'Unlocks In'}
           </Typography>
           <Timer
@@ -133,49 +133,51 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
 }
 
 const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover.NONE, setHover }) => {
+  const PAGE_SIZE = 3
+
   const [index, setIndex] = useState(0)
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="bg-slate-800 z-10 rounded-2xl overflow-hidden">
+    <div className="flex flex-col w-full gap-4">
+      <div className="z-10 overflow-hidden bg-slate-800 rounded-2xl">
         <div className="flex flex-col bg-gradient-to-b from-slate-800 via-slate-800 to-blue/25 h-[228px] items-center justify-center w-full">
           {[ChartHover.STREAMED, ChartHover.NONE].includes(hover) && (
             <div className="flex flex-col gap-3">
               <Typography variant="xs" className="uppercase text-center tracking-[0.2rem]">
-                Streamed
+                Unlocked
               </Typography>
               <div className="flex flex-col gap-1">
-                <Typography variant="h1" weight={700} className="text-slate-50 text-center">
+                <Typography variant="h1" weight={500} className="text-center text-slate-50">
                   {vesting?.streamedAmount?.toSignificant(6).split('.')[0]}
-                  <Typography variant="h3" weight={700} className="text-slate-300" as="span">
+                  <Typography variant="h3" weight={500} className="text-slate-300" as="span">
                     .
                     {vesting?.streamedAmount?.greaterThan(ZERO)
                       ? vesting?.streamedAmount.toFixed(6).split('.')[1]
                       : '000000'}
                   </Typography>
                 </Typography>
-                <Typography variant="sm" className="text-slate-500" weight={700}>
+                <Typography variant="sm" className="text-slate-500" weight={500}>
                   / {vesting?.withdrawnAmount ? vesting.amount.toExact() : '0.000'} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>
           )}
           {hover === ChartHover.WITHDRAW && (
-            <div className="flex flex-col gap-3 justify-center">
+            <div className="flex flex-col justify-center gap-3">
               <Typography variant="xs" className="uppercase text-center tracking-[0.2rem]">
                 Withdrawn
               </Typography>
               <div className="flex flex-col gap-1">
-                <Typography variant="h1" weight={700} className="text-slate-50 text-center">
+                <Typography variant="h1" weight={500} className="text-center text-slate-50">
                   {vesting?.withdrawnAmount?.toSignificant(6).split('.')[0]}
-                  <Typography variant="h3" weight={700} className="text-slate-300" as="span">
+                  <Typography variant="h3" weight={500} className="text-slate-300" as="span">
                     .
                     {vesting?.withdrawnAmount?.greaterThan(ZERO)
                       ? vesting?.withdrawnAmount.toFixed(6).split('.')[1]
                       : '000000'}
                   </Typography>
                 </Typography>
-                <Typography variant="sm" className="text-slate-500" weight={700}>
+                <Typography variant="sm" className="text-slate-500" weight={500}>
                   / {vesting?.amount.toExact() || '0.000'} {vesting?.token.symbol} Total
                 </Typography>
               </div>
@@ -183,10 +185,10 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
           )}
         </div>
       </div>
-      <div className="flex flex-col md:flex-row relative">
+      <div className="relative flex flex-col md:flex-row">
         {index > 0 && (
-          <div className="hidden md:flex absolute -left-12 h-full items-center">
-            <button className="cursor-pointer group p-1 bg-blue hover:bg-blue-400  rounded-full">
+          <div className="absolute items-center hidden h-full md:flex -left-12">
+            <button className="p-1 rounded-full cursor-pointer group bg-blue hover:bg-blue-400">
               <ChevronLeftIcon
                 className="text-slate-200 hover:text-white"
                 width={24}
@@ -195,12 +197,12 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
             </button>
           </div>
         )}
-        <div className="order-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+        <div className="grid order-1 w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {vesting &&
             schedule &&
             schedule.length > 1 &&
             schedule
-              .slice(index + 1, index + 4)
+              .slice(index + 1, index + 1 + PAGE_SIZE)
               .map((period, _index) => (
                 <Block
                   vesting={vesting}
@@ -211,9 +213,9 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                 />
               ))}
         </div>
-        {schedule && index + 4 < schedule.length && (
-          <div className="hidden md:flex absolute -right-12 h-full items-center">
-            <button className="cursor-pointer group p-1 bg-blue hover:bg-blue-400 rounded-full">
+        {schedule && index + 1 + PAGE_SIZE < schedule.length && (
+          <div className="absolute items-center hidden h-full md:flex -right-12">
+            <button className="p-1 rounded-full cursor-pointer group bg-blue hover:bg-blue-400">
               <ChevronRightIcon
                 className="text-slate-200 hover:text-white"
                 width={24}
@@ -222,22 +224,32 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
             </button>
           </div>
         )}
-        <div className="mt-5 order-2 grid grid-cols-2 md:hidden gap-10 justify-center">
+        <div className="grid justify-center order-2 grid-cols-2 gap-10 mt-5 md:hidden">
           <div className="flex justify-end">
-            <button className="cursor-pointer group p-2 bg-blue hover:bg-blue-400 rounded-full">
+            <button className="p-2 rounded-full cursor-pointer group bg-blue hover:bg-blue-400">
               <ChevronLeftIcon
                 className="text-slate-200 group-hover:text-white"
                 width={24}
-                onClick={() => setIndex((prevState) => prevState - 1)}
+                onClick={() => setIndex((prevState) => (prevState - PAGE_SIZE < 0 ? prevState : prevState - PAGE_SIZE))}
               />
             </button>
           </div>
           <div className="flex justify-start">
-            <button className="cursor-pointer group p-2 bg-blue hover:bg-blue-400 rounded-full">
+            <button className="p-2 rounded-full cursor-pointer group bg-blue hover:bg-blue-400">
               <ChevronRightIcon
                 className="text-slate-200 group-hover:text-white"
                 width={24}
-                onClick={() => setIndex((prevState) => prevState + 1)}
+                onClick={() =>
+                  setIndex((prevState) => {
+                    if (!schedule) return prevState
+
+                    // set to start of next page to prevent jankiness
+                    const previousPage = Math.floor(prevState / PAGE_SIZE)
+                    const nextIndex = previousPage * PAGE_SIZE + PAGE_SIZE
+
+                    return schedule.length - 1 < nextIndex ? prevState : nextIndex
+                  })
+                }
               />
             </button>
           </div>

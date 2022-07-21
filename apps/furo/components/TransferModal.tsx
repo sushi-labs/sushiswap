@@ -16,9 +16,14 @@ interface TransferModalProps {
   fn?: string
 }
 
-export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn = 'transferFrom' }) => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+export const TransferModal: FC<TransferModalProps> = ({
+  stream,
+  abi,
+  address: contractAddress,
+  fn = 'transferFrom',
+}) => {
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
   const [error, setError] = useState<string>()
@@ -27,25 +32,21 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
     chainId: ChainId.ETHEREUM,
   })
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite(
-    {
-      addressOrName: address,
-      contractInterface: abi,
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    functionName: fn,
+    onSuccess() {
+      setOpen(false)
     },
-    fn,
-    {
-      onSuccess() {
-        setOpen(false)
-      },
-    }
-  )
+  })
 
   const transferStream = useCallback(async () => {
-    if (!stream || !account || !recipient || !resolvedAddress || !activeChain?.id) return
+    if (!stream || !address || !recipient || !resolvedAddress || !activeChain?.id) return
     setError(undefined)
 
     try {
-      const data = await writeAsync({ args: [account?.address, resolvedAddress, stream?.id] })
+      const data = await writeAsync({ args: [address, resolvedAddress, stream?.id] })
 
       createToast({
         txHash: data.hash,
@@ -62,7 +63,7 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
     }
 
     setRecipient(undefined)
-  }, [account, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
+  }, [address, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
 
   if (!stream || stream?.isEnded) return null
 
@@ -72,17 +73,17 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
         color="gray"
         fullWidth
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
-        disabled={!account || !stream?.canTransfer(account.address) || !stream?.remainingAmount?.greaterThan(ZERO)}
+        disabled={!address || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO)}
         onClick={() => setOpen(true)}
       >
         Transfer
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-6 !max-w-sm">
+        <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
           <Typography variant="xs" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
-            <span className="font-bold text-slate-200">
+            <span className="font-medium text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to the entered recipient.
@@ -92,33 +93,43 @@ export const TransferModal: FC<TransferModalProps> = ({ stream, abi, address, fn
             </p>
           </Typography>
           <Form.Control label="Recipient">
-            <Web3Input.Ens value={recipient} onChange={setRecipient} placeholder="Address or ENS Name" />
+            <Web3Input.Ens
+              id="ens-input"
+              value={recipient}
+              onChange={setRecipient}
+              placeholder="Address or ENS Name"
+              className="ring-offset-slate-800"
+            />
           </Form.Control>
 
-          <Button
-            variant="filled"
-            color="gradient"
-            fullWidth
-            disabled={
-              isWritePending || !resolvedAddress || resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
-            }
-            onClick={transferStream}
-          >
-            {isWritePending ? (
-              <Dots>Confirm Transfer</Dots>
-            ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
-              'Invalid recipient'
-            ) : !resolvedAddress ? (
-              'Enter recipient'
-            ) : (
-              'Transfer'
-            )}
-          </Button>
           {error && (
-            <Typography variant="xs" className="text-center text-red" weight={700}>
+            <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
             </Typography>
           )}
+          <Dialog.Actions>
+            <Button
+              variant="filled"
+              color="gradient"
+              fullWidth
+              disabled={
+                isWritePending ||
+                !resolvedAddress ||
+                resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+              }
+              onClick={transferStream}
+            >
+              {isWritePending ? (
+                <Dots>Confirm Transfer</Dots>
+              ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+                'Invalid recipient'
+              ) : !resolvedAddress ? (
+                'Enter recipient'
+              ) : (
+                'Transfer'
+              )}
+            </Button>
+          </Dialog.Actions>
         </Dialog.Content>
       </Dialog>
     </>
