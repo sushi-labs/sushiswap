@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react'
 import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
@@ -49,9 +50,14 @@ export const Button = <C extends React.ElementType>({
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { connectors, connect, pendingConnector } = hack || useConnect()
-  const { pendingConnection, reconnecting, isConnected } = useWalletState(!!pendingConnector)
+
+  const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState(!!pendingConnector)
 
   useAutoConnect()
+
+  if (connecting && appearOnMount) {
+    return <></>
+  }
 
   return (
     <AppearOnMount enabled={appearOnMount}>
@@ -100,60 +106,73 @@ export const Button = <C extends React.ElementType>({
         }
 
         // Connected state
-        // Show account name and balance
+        // Show account name and balance if no children provided to button
         if (isMounted && !children) {
           return (
-            <div
-              className={classNames(
-                'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-[14px] transform-all',
-                rest.className
-              )}
-            >
-              <div className="hidden px-3 sm:block">
-                <Account.Balance supportedNetworks={supportedNetworks} address={address} />
-              </div>
-              <Menu
-                button={
-                  <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
-                    {/* <Account.Avatar address={data?.address} /> */}
-                    <Account.AddressToEnsResolver address={address}>
-                      {({ data: ens }) => (
-                        <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
-                          {ens ? ens : address ? shortenAddress(address) : ''}
-                        </Typography>
-                      )}
-                    </Account.AddressToEnsResolver>
-                  </Menu.Button>
-                }
-              >
-                <Menu.Items>
-                  <div>
-                    {address && chain?.id && (
-                      <Menu.Item
-                        as="a"
-                        target="_blank"
-                        href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
-                        className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
-                      >
-                        View Portfolio
-                        <ExternalLinkIcon width={16} height={16} />
-                      </Menu.Item>
-                    )}
-                    <Menu.Item
-                      className="flex items-center gap-3 group justify-between !pr-4"
-                      onClick={() => disconnect()}
+            <Account.AddressToEnsResolver address={address}>
+              {({ data: ens }) => (
+                <Account.Balance supportedNetworks={supportedNetworks} address={address}>
+                  {({ content, isLoading }) => (
+                    <Transition
+                      appear
+                      show={Boolean(ens || address) && Boolean(content && !isLoading)}
+                      className="transition-[max-width] overflow-hidden p-1 w-full rounded-xl"
+                      enter="duration-300 ease-in-out"
+                      enterFrom="transform max-w-0"
+                      enterTo="transform max-w-[260px]"
+                      leave="transition-[max-width] duration-250 ease-in-out"
+                      leaveFrom="transform max-w-[260px]"
+                      leaveTo="transform max-w-0"
                     >
-                      Disconnect
-                      <LogoutIcon height={16} />
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Menu>
-            </div>
+                      <div
+                        className={classNames(
+                          'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-xl',
+                          rest.className
+                        )}
+                      >
+                        <div className="hidden px-3 sm:block">{content}</div>
+                        <Menu
+                          className="right-0"
+                          button={
+                            <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
+                              <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
+                                {ens ? ens : address ? shortenAddress(address) : ''}
+                              </Typography>
+                            </Menu.Button>
+                          }
+                        >
+                          <Menu.Items>
+                            <div>
+                              {address && chain?.id && (
+                                <Menu.Item
+                                  as="a"
+                                  target="_blank"
+                                  href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
+                                  className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
+                                >
+                                  View Portfolio
+                                  <ExternalLinkIcon width={16} height={16} />
+                                </Menu.Item>
+                              )}
+                              <Menu.Item
+                                className="flex items-center gap-3 group justify-between !pr-4"
+                                onClick={() => disconnect()}
+                              >
+                                Disconnect
+                                <LogoutIcon height={16} />
+                              </Menu.Item>
+                            </div>
+                          </Menu.Items>
+                        </Menu>
+                      </div>
+                    </Transition>
+                  )}
+                </Account.Balance>
+              )}
+            </Account.AddressToEnsResolver>
           )
         }
 
-        // Placeholder to avoid content jumping
         return <UIButton {...rest}>{children || 'Connect Wallet'}</UIButton>
       }}
     </AppearOnMount>

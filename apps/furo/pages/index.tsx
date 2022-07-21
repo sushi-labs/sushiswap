@@ -99,6 +99,7 @@ export default function Index() {
             {!isMounted || !activeChain || !address ? (
               <>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="blue"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
@@ -106,6 +107,7 @@ export default function Index() {
                   Pay Someone
                 </Wallet.Button>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="gray"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}

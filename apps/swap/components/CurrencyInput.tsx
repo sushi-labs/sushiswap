@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
@@ -182,18 +183,31 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           )}
         </Typography>
 
-        <button
-          type="button"
-          onClick={() => {
-            if (onMax && balance) {
-              onMax(balance.greaterThan(0) ? balance.toFixed() : '')
-            }
-          }}
-          className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs ')}
-          disabled={disableMaxButton}
-        >
-          Balance: {isMounted && balance ? balance.toSignificant(6) : ''}{' '}
-        </button>
+        <div className="h-6">
+          <Transition
+            appear
+            show={Boolean(isMounted && balance)}
+            enter="transition duration-300 origin-center ease-out"
+            enterFrom="transform scale-90 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform opacity-100"
+            leaveTo="transform opacity-0"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                if (onMax && balance) {
+                  onMax(balance.greaterThan(0) ? balance.toFixed() : '')
+                }
+              }}
+              className={classNames(theme.secondary.default, theme.secondary.hover, 'py-1 text-xs')}
+              disabled={disableMaxButton}
+            >
+              {isMounted && balance ? `Balance: ${balance.toSignificant(6)}` : ''}{' '}
+            </button>
+          </Transition>
+        </div>
       </div>
       {!disableNetworkSelect && onNetworkSelect && (
         <NetworkSelectorOverlay
