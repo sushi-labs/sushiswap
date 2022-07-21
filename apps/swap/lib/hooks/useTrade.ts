@@ -18,7 +18,7 @@ import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
 import { PoolState, useConstantProductPools } from './useConstantProductPools'
-import { PairState, usePairs } from './usePairs'
+import { PairState, usePairs } from './usePairs2'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -113,6 +113,8 @@ export function useTrade(
             data.gasPrice.toNumber()
           )
 
+          // console.log(`LEGACY OUT: ${legacyRoute.amountOutBN.toString()}`)
+          // console.log(`TRIDENT OUT: ${tridentRoute.amountOutBN.toString()}`)
           const useLegacy = Amount.fromRawAmount(currencyOut, legacyRoute.amountOutBN.toString()).greaterThan(
             Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
           )
