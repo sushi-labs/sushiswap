@@ -21,20 +21,12 @@ export const defaultTheme: Theme = {
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ETHEREUM,
-  ChainId.BSC,
-  // ChainId.AVALANCHE,
-  ChainId.POLYGON,
   ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
   ChainId.AVALANCHE,
+  ChainId.POLYGON,
   ChainId.FANTOM,
-  // ChainId.FANTOM,
-  // TESTNETS
-  // ChainId.POLYGON_TESTNET,
-  // ChainId.RINKEBY,
-  // ChainId.ROPSTEN,
-  // ChainId.GÖRLI,
-  // ChainId.KOVAN,
+  ChainId.BSC,
+  ChainId.OPTIMISM,
 ]
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
