@@ -170,10 +170,11 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             panel={
                               <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
                                 <Typography variant="xs" weight={700}>
-                                  The max fee is the highest gas price that might be applied for your transaction.
+                                  The max fee is the utmost amount of gas a user can pay for their transaction; you will
+                                  not pay more.
                                 </Typography>
                                 <Typography variant="xs" weight={700}>
-                                  It&apos;s sum of base fee and priority fee.
+                                  It&apos;s calculated as the sum of the base fee and priority fee.
                                 </Typography>
                               </div>
                             }
@@ -201,7 +202,8 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             button={<InformationCircleIcon width={14} height={14} />}
                             panel={
                               <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
-                                This fee goes directly to miners as an incentive to prioritize your transaction
+                                This fee can be seen as an extra “tip” to miners, incentivizing them to prioritize your
+                                transaction
                               </Typography>
                             }
                           />

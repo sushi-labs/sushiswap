@@ -133,8 +133,8 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                   </span>
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-slate-400">
-                  This is a one-time approval when it is your first time using {amount?.currency.symbol} for this
-                  purpose on Sushi. Please give us permission to execute transaction on your behalf. 🍣
+                  We need your approval first to execute this transaction on your behalf; you will only have to approve
+                  the {amount?.currency.symbol} contract once.
                 </Typography>
               </div>
             }

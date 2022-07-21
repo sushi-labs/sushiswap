@@ -18,9 +18,26 @@ export const SlippageToleranceDisclosure: FC = () => {
               <AdjustmentsIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
             </div>
             <div className="flex items-center justify-between w-full gap-1 py-4">
-              <Typography variant="sm" weight={500}>
-                Slippage Tolerance
-              </Typography>
+              <div className="flex items-center gap-1">
+                <Typography variant="sm" weight={500}>
+                  Slippage Tolerance
+                </Typography>
+                <Popover
+                  tabIndex={-1}
+                  hover
+                  button={<InformationCircleIcon width={14} height={14} />}
+                  panel={
+                    <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
+                      <Typography variant="xs" weight={700}>
+                        Slippage tolerance is the utmost percentage of slippage a user is willing to execute a trade
+                        with; if the actual slippage falls outside of the user-designated range, the transaction will
+                        revert. Slippage is the difference between the expected value of output from a trade and the
+                        actual value due to asset volatility and liquidity depth.
+                      </Typography>
+                    </div>
+                  }
+                />
+              </div>
               <div className="flex gap-1">
                 <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
                   {slippageToleranceType === 'auto' ? 'Auto' : `Custom (${slippageTolerance}%)`}
@@ -69,8 +86,10 @@ export const SlippageToleranceDisclosure: FC = () => {
                           panel={
                             <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
                               <Typography variant="xs" weight={700}>
-                                Your transaction will revert if the prices change unfavorably by more than this
-                                percentage
+                                Slippage tolerance is the utmost percentage of slippage a user is willing to execute a
+                                trade with; if the actual slippage falls outside of the user-designated range, the
+                                transaction will revert. Slippage is the difference between the expected value of output
+                                from a trade and the actual value due to asset volatility and liquidity depth.
                               </Typography>
                             </div>
                           }

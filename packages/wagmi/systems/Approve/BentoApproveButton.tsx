@@ -131,13 +131,14 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   </span>
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-slate-400">
-                  This is a one-time approval for Sushi to access your wallet using BentoBox.
+                  We need your approval first to access your wallet using BentoBox; you will only have to approve this
+                  master contract once.
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-slate-400 flex flex-col gap-1">
                   <span className="text-slate-200">Why should I approve this?</span>
                   <span>
-                    BentoBox is a token vault. You can minimize approval transactions, reduce gas costs and earn passive
-                    income from yield strategies with BentoBox.
+                    BentoBox is a token vault that provides its users with passive income on their deposits from yield
+                    strategies while reducing gas costs.
                   </span>
                 </Typography>
               </div>
