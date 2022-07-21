@@ -11,6 +11,7 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
+import { useBentoBoxTotal } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -75,12 +76,17 @@ export function useTrade(
     [pools]
   )
 
+  const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
+  const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
+
   return useMemo(() => {
     if (
       data &&
       data.gasPrice &&
       currencyIn &&
+      currencyInRebase &&
       currencyOut &&
+      currencyOutRebase &&
       currencyIn.wrapped.address !== currencyOut.wrapped.address &&
       chainId &&
       amountSpecified &&
@@ -101,19 +107,23 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.quotient.toString()),
+            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
             filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
             WNATIVE[amountSpecified.currency.chainId],
             data.gasPrice.toNumber()
           )
 
-          const useLegacy = legacyRoute.amountOutBN.gt(tridentRoute.amountOutBN)
+          const useLegacy = Amount.fromRawAmount(currencyOut, legacyRoute.amountOutBN.toString()).greaterThan(
+            Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
+          )
 
           return Trade.exactIn(
             useLegacy ? legacyRoute : tridentRoute,
             amountSpecified,
             currencyOut,
-            useLegacy ? TradeVersion.V1 : TradeVersion.V2
+            useLegacy ? TradeVersion.V1 : TradeVersion.V2,
+            !useLegacy ? currencyInRebase : undefined,
+            !useLegacy ? currencyOutRebase : undefined
           )
         }
 
@@ -137,14 +147,21 @@ export function useTrade(
         const tridentRoute = findMultiRouteExactIn(
           currencyIn.wrapped,
           currencyOut.wrapped,
-          BigNumber.from(amountSpecified.quotient.toString()),
+          BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
           filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
         if (tridentRoute.status === RouteStatus.Success) {
           console.debug('Found trident route', tridentRoute)
-          return Trade.exactIn(tridentRoute, amountSpecified, currencyOut, TradeVersion.V2)
+          return Trade.exactIn(
+            tridentRoute,
+            amountSpecified,
+            currencyOut,
+            TradeVersion.V2,
+            currencyInRebase,
+            currencyOutRebase
+          )
         } else {
           console.debug('No trident route', tridentRoute)
         }
@@ -154,5 +171,16 @@ export function useTrade(
         //
       }
     }
-  }, [data, currencyIn, currencyOut, chainId, amountSpecified, otherCurrency, filteredPools, tradeType])
+  }, [
+    data,
+    currencyIn,
+    currencyInRebase,
+    currencyOut,
+    currencyOutRebase,
+    chainId,
+    amountSpecified,
+    otherCurrency,
+    filteredPools,
+    tradeType,
+  ])
 }
