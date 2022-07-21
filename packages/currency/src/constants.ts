@@ -4,6 +4,37 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const WBTC_ADDRESS: AddressMap = {
+  [ChainId.AVALANCHE]: '0x50b7545627a5162F82A992c33b87aDc75187B218',
+  [ChainId.ARBITRUM]: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+  [ChainId.ETHEREUM]: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+  [ChainId.FANTOM]: '0x321162Cd933E2Be498Cd2267a90534A804051b11',
+  [ChainId.POLYGON]: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
+  [ChainId.OPTIMISM]: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',
+}
+
+export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'WBTC',
+    name: 'Wrapped BTC',
+  },
+  WBTC_ADDRESS
+)
+
+export const LUSD_ADDRESS: AddressMap = {
+  [ChainId.OPTIMISM]: '0xc40F949F8a4e094D1b49a23ea9241D289B7b2819',
+}
+
+export const LUSD: Record<keyof typeof LUSD_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'LUSD',
+    name: 'LUSD Stablecoin',
+  },
+  LUSD_ADDRESS
+)
+
 export const WETH9_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   [ChainId.ROPSTEN]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
@@ -375,4 +406,22 @@ export const FRAX: Record<keyof typeof FRAX_ADDRESS, Token> = addressMapToTokenM
     name: 'Frax',
   },
   FRAX_ADDRESS
+)
+
+export const FXS_ADDRESS: AddressMap = {
+  [ChainId.ETHEREUM]: '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0',
+  [ChainId.FANTOM]: '0x7d016eec9c25232b01F23EF992D98ca97fc2AF5a',
+  [ChainId.BSC]: '0xe48A3d7d0Bc88d552f730B62c006bC925eadB9eE',
+  [ChainId.ARBITRUM]: '0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7',
+  [ChainId.AVALANCHE]: '0x214DB107654fF987AD859F34125307783fC8e387',
+  [ChainId.POLYGON]: '0x3e121107F6F22DA4911079845a470757aF4e1A1b',
+}
+
+export const FXS: Record<keyof typeof FXS_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'FXS',
+    name: 'Frax Share',
+  },
+  FXS_ADDRESS
 )
