@@ -129,17 +129,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
       )}
       <TransactionProgressStep
         comingSoon
-        status={
-          dstTxState
-            ? dstTxState.isSuccess
-              ? 'success'
-              : 'notice'
-            : isError
-            ? 'skipped'
-            : isSuccess
-            ? 'pending'
-            : 'idle'
-        }
+        status={dstTxState ? 'success' : isError ? 'skipped' : isSuccess ? 'pending' : 'idle'}
         header={
           <TransactionProgressStep.Header>
             Send <b>{srcBridgeToken.symbol}</b> to destination chain

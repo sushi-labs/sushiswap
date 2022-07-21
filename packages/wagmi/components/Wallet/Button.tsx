@@ -119,9 +119,9 @@ export const Button = <C extends React.ElementType>({
                       className="transition-[max-width] overflow-hidden p-1 w-full rounded-xl"
                       enter="duration-300 ease-in-out"
                       enterFrom="transform max-w-0"
-                      enterTo="transform max-w-[260px]"
+                      enterTo="transform max-w-[340px]"
                       leave="transition-[max-width] duration-250 ease-in-out"
-                      leaveFrom="transform max-w-[260px]"
+                      leaveFrom="transform max-w-[340px]"
                       leaveTo="transform max-w-0"
                     >
                       <div
