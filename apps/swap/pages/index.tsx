@@ -731,8 +731,8 @@ const Widget: FC<Swap> = ({
             ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)}
           </Typography>
         ) : (
-          <div className="flex justify-end">
-            <Loader size={12} />
+          <div className="flex justify-end items-center">
+            <Loader size={14} />
           </div>
         )}
       </>
