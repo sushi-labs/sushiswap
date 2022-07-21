@@ -176,8 +176,8 @@ const otherChains = [
 const { chains, provider, webSocketProvider } = configureChains(
   [...allChains, ...otherChains],
   [
-    publicProvider(),
     alchemyProvider({ alchemyId }),
+    publicProvider(),
     // infuraProvider({ infuraId }),
   ]
 )
