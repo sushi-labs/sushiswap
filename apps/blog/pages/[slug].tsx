@@ -64,21 +64,20 @@ const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview
     return <ErrorPage statusCode={404} />
   }
 
-  const seo: SeoType =
-    article?.attributes && article?.id
-      ? {
-          id: article.id,
-          slug: article?.attributes.slug,
-          metaTitle: article?.attributes.title,
-          metaDescription: article?.attributes.description,
-          shareImage: article?.attributes.cover,
-          article: true,
-          tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
-            if (el?.attributes?.name) acc.push(el?.attributes.name)
-            return acc
-          }, []),
-        }
-      : undefined
+  const seo: SeoType = article?.attributes
+    ? {
+        id: article?.id as string,
+        slug: article?.attributes.slug,
+        metaTitle: article?.attributes.title,
+        metaDescription: article?.attributes.description,
+        shareImage: article?.attributes.cover,
+        article: true,
+        tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
+          if (el?.attributes?.name) acc.push(el?.attributes.name)
+          return acc
+        }, []),
+      }
+    : undefined
 
   return (
     <>
