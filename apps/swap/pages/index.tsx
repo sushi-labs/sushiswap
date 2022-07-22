@@ -43,7 +43,7 @@ import {
   TransactionProgressOverlay,
 } from 'components'
 import { defaultTheme } from 'config'
-import { useCurrency, useTrade } from 'lib/hooks'
+import { useTrade } from 'lib/hooks'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { nanoid } from 'nanoid'
@@ -95,8 +95,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount } = query
   return {
     props: {
-      srcToken: srcToken ?? Native.onChain(ChainId.ETHEREUM).symbol,
-      dstToken: dstToken ?? Native.onChain(ChainId.ARBITRUM).symbol,
+      srcToken: srcToken ?? null,
+      dstToken: dstToken ?? null,
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
       srcTypedAmount: srcTypedAmount ?? '',
@@ -105,29 +105,27 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
 }
 
-export default function Swap(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  // TODO: Sync from local storage if no query params
-
-  // const { data } = useSWR<SwapCache>('swap-cache', storage, {
-  //   fallbackData: { srcChainId: ChainId.AVALANCHE, dstChainId: ChainId.FANTOM },
-  // })
-  // function mutateSwapCache(value: SwapCache) {
-  //   localStorage.setItem('swap-cache', JSON.stringify(value))
-  //   mutate('swap-cache', value)
-  // }
-  const srcToken = useCurrency({ chainId: props.srcChainId, id: props.srcToken })
-  const dstToken = useCurrency({ chainId: props.dstChainId, id: props.dstToken })
+export default function Swap({
+  srcChainId,
+  dstChainId,
+  srcToken,
+  dstToken,
+  srcTypedAmount,
+  dstTypedAmount,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const srcTokens = useTokens(srcChainId)
+  const dstTokens = useTokens(dstChainId)
   return (
     <Layout>
       <Widget
         theme={theme}
         initialState={{
-          srcToken: srcToken ?? Native.onChain(Number(props.srcChainId)),
-          dstToken: dstToken ?? Native.onChain(Number(props.dstChainId)),
-          srcChainId: Number(props.srcChainId),
-          dstChainId: Number(props.dstChainId),
-          srcTypedAmount: props.srcTypedAmount,
-          dstTypedAmount: props.dstTypedAmount,
+          srcChainId: Number(srcChainId),
+          dstChainId: Number(dstChainId),
+          srcToken: srcToken in srcTokens ? srcTokens[srcToken] : Native.onChain(srcChainId),
+          dstToken: dstToken in dstTokens ? dstTokens[dstToken] : Native.onChain(dstChainId),
+          srcTypedAmount,
+          dstTypedAmount,
         }}
         // swapCache={data}
         // mutateSwapCache={mutateSwapCache}
@@ -177,16 +175,18 @@ const Widget: FC<Swap> = ({
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
-
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+  useEffect(() => {
+    setSrcToken(initialState.srcToken)
+  }, [initialState.srcToken])
+  useEffect(() => {
+    setDstToken(initialState.dstToken)
+  }, [initialState.dstToken])
 
   const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
   const [srcTxHash, setSrcTxHash] = useState<string>()
-
-  useEffect(() => setSrcToken(Native.onChain(srcChainId)), [srcChainId])
-  useEffect(() => setDstToken(Native.onChain(dstChainId)), [dstChainId])
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
@@ -203,13 +203,12 @@ const Widget: FC<Swap> = ({
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
   useEffect(() => {
     // Escape hatch if already synced (could probably pull something like this out to generic...)
+
     console.debug([
       srcChainId === Number(router.query.srcChainId),
       dstChainId === Number(router.query.dstChainId),
-      (srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken) ||
-        srcToken.wrapped.address === router.query.srcToken,
-      (dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken) ||
-        dstToken.wrapped.address === router.query.dstToken,
+      srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+      dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
       srcTypedAmount === router.query.srcTypedAmount,
       dstTypedAmount === router.query.dstTypedAmount,
     ])
@@ -217,28 +216,30 @@ const Widget: FC<Swap> = ({
     if (
       srcChainId === Number(router.query.srcChainId) &&
       dstChainId === Number(router.query.dstChainId) &&
-      ((srcToken && srcToken.isNative && srcToken.symbol === router.query.srcToken) ||
-        srcToken.wrapped.address === router.query.srcToken) &&
-      ((dstToken && dstToken.isNative && dstToken.symbol === router.query.dstToken) ||
-        dstToken.wrapped.address === router.query.dstToken) &&
+      (srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
+      (dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
       srcTypedAmount === router.query.srcTypedAmount &&
       dstTypedAmount === router.query.dstTypedAmount
     ) {
       return
     }
 
-    void router.replace({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.address,
-        dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.address,
-        srcChainId,
-        dstChainId,
-        srcTypedAmount,
-        dstTypedAmount,
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.address,
+          dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.address,
+          srcChainId,
+          dstChainId,
+          srcTypedAmount,
+          dstTypedAmount,
+        },
       },
-    })
+      undefined,
+      { shallow: true }
+    )
   }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, router])
 
   const contract = useSushiXSwapContract(srcChainId)
@@ -738,6 +739,16 @@ const Widget: FC<Swap> = ({
     )
   }, [dstMinimumAmountOut, priceImpact, priceImpactSeverity, srcChainId, srcPrices])
 
+  const onSrcNetworkSelect = useCallback((chainId: number) => {
+    setSrcChainId(chainId)
+    setSrcToken(Native.onChain(chainId))
+  }, [])
+
+  const onDstNetworkSelect = useCallback((chainId: number) => {
+    setDstChainId(chainId)
+    setDstToken(Native.onChain(chainId))
+  }, [])
+
   return (
     <>
       <article
@@ -767,7 +778,7 @@ const Widget: FC<Swap> = ({
           fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
           network={Chain.from(srcChainId)}
-          onNetworkSelect={setSrcChainId}
+          onNetworkSelect={onSrcNetworkSelect}
           tokenList={srcTokens}
           theme={theme}
           onMax={(value) => setSrcTypedAmount(value)}
@@ -787,7 +798,7 @@ const Widget: FC<Swap> = ({
             fundSource={dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
             currency={dstToken}
             network={Chain.from(dstChainId)}
-            onNetworkSelect={setDstChainId}
+            onNetworkSelect={onDstNetworkSelect}
             tokenList={dstTokens}
             theme={theme}
             disableMaxButton

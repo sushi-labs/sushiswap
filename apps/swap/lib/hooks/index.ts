@@ -1,6 +1,4 @@
 export * from './multicall'
 export * from './useConstantProductPoolFactoryContract'
 export * from './useConstantProductPools'
-export * from './useCurrency'
-export * from './usePairs2'
 export * from './useTrade'
