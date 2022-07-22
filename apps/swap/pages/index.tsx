@@ -284,8 +284,8 @@ const Widget: FC<Swap> = ({
   const srcTrade = useTrade(
     srcChainId,
     TradeType.EXACT_INPUT,
-    srcAmount,
-    srcToken,
+    sameChainSwap || crossChainSwap || swapTransfer ? srcAmount : undefined,
+    sameChainSwap || crossChainSwap || swapTransfer ? srcToken : undefined,
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
 
@@ -584,37 +584,37 @@ const Widget: FC<Swap> = ({
   }, [dstMinimumAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   // DEBUG
-  useEffect(() => {
-    console.debug('SRC CHAIN', srcChainId)
-    console.debug('DST CHAIN', dstChainId)
-    console.debug('SRC TOKEN', srcToken)
-    console.debug('DST TOKEN', dstToken)
-    console.debug('SRC TRADE', srcTrade)
-    console.debug('DST TRADE', dstTrade)
-    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-    console.debug('STARGATE FEE', stargateFee?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
-    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
-  }, [
-    srcTrade,
-    dstTrade,
-    srcAmount,
-    srcMinimumAmountOut,
-    stargateFee,
-    srcMinimumAmountOutMinusStargateFee,
-    dstAmountIn,
-    dstMinimumAmountOut,
-    priceImpact,
-    dstChainId,
-    srcToken,
-    dstToken,
-    srcChainId,
-  ])
+  // useEffect(() => {
+  //   console.debug('SRC CHAIN', srcChainId)
+  //   console.debug('DST CHAIN', dstChainId)
+  //   console.debug('SRC TOKEN', srcToken)
+  //   console.debug('DST TOKEN', dstToken)
+  //   console.debug('SRC TRADE', srcTrade)
+  //   console.debug('DST TRADE', dstTrade)
+  //   console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+  //   console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+  //   console.debug('STARGATE FEE', stargateFee?.toFixed())
+  //   console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+  //   console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+  //   console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+  //   console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //   console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //   console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+  // }, [
+  //   srcTrade,
+  //   dstTrade,
+  //   srcAmount,
+  //   srcMinimumAmountOut,
+  //   stargateFee,
+  //   srcMinimumAmountOutMinusStargateFee,
+  //   dstAmountIn,
+  //   dstMinimumAmountOut,
+  //   priceImpact,
+  //   dstChainId,
+  //   srcToken,
+  //   dstToken,
+  //   srcChainId,
+  // ])
 
   const showWrap = false
 
