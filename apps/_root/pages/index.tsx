@@ -143,7 +143,7 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/xsushi.png"
               title="xSUSHI staking"
-              description="Earn governance rights and 0.05% of all swaps from all chains in one simple place."
+              description="Earn governance rights and 0.045% of all swaps from all chains in one simple place."
               cta="Enter SushiBar"
               ctaLink="https://app.sushi.com/stake"
             />
