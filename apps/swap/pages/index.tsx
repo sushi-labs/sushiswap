@@ -346,7 +346,11 @@ const Widget: FC<Swap> = ({
   ])
 
   const dstAmountIn = useMemo(() => {
-    return tryParseAmount(srcAmountOut?.toFixed() ?? '', crossChain ? dstBridgeToken : dstToken)
+    const currency = crossChain ? dstBridgeToken : dstToken
+    if (!srcAmountOut) return
+    return tryParseAmount(
+      Amount.fromFractionalAmount(currency, srcAmountOut.numerator, srcAmountOut.denominator).toFixed()
+    )
   }, [crossChain, dstBridgeToken, dstToken, srcAmountOut])
 
   const dstTrade = useTrade(
