@@ -34,7 +34,7 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
     SushiGuard: { href: 'https://docs.openmev.org', target: '_blank', rel: 'noopener noreferrer' },
   },
   Governance: {
-    'Forum & Proposals': { href: 'https://forum.sushi.com' },
+    'Forum & Proposals': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
     Vote: { href: 'https://snapshot.org/#/sushigov.eth', target: '_blank', rel: 'noopener noreferrer' },
   },
   Protocol: {
