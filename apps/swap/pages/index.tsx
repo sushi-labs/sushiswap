@@ -348,9 +348,9 @@ const Widget: FC<Swap> = ({
   const dstAmountIn = useMemo(() => {
     if (!srcAmountOut) return
     return tryParseAmount(
-      srcAmountOut.currency.decimals > dstBridgeToken.decimals
-        ? srcAmountOut.toFixed(dstBridgeToken.decimals)
-        : srcAmountOut.toFixed(),
+      srcAmountOut.toFixed(
+        srcAmountOut.currency.decimals > dstBridgeToken.decimals ? dstBridgeToken.decimals : undefined
+      ),
       dstBridgeToken
     )
   }, [dstBridgeToken, srcAmountOut])
