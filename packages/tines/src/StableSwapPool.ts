@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+
 import { RPool, RToken } from './PrimaryPools'
 import { getBigNumber } from './Utils'
 
@@ -153,7 +154,7 @@ export class StableSwapRPool extends RPool {
     amountOut *= direction ? this.decimalsCompensation1 : this.decimalsCompensation0
     const x = direction ? this.reserve0 : this.reserve1
     const y = direction ? this.reserve1 : this.reserve0
-    let yNew = y.sub(getBigNumber(Math.ceil(amountOut)))
+    const yNew = y.sub(getBigNumber(Math.ceil(amountOut)))
     if (yNew.lt(this.minLiquidity)) {
       // not possible swap
       return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build --debug",
-    "generate": "graphql-mesh build",
     "dev": "next dev --port 3002",
+    "generate": "graphql-mesh build",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
   },

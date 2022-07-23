@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.6.0",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/core-sdk": "^1.0.0-canary.65",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/sushi-data": "1.0.26",
-    "@sushiswap/chain": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "next": "^12.1.6",
     "numeral": "^2.0.6",
@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "17.0.31",
     "@types/react": "^18.0.9",

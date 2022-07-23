@@ -1,12 +1,7 @@
-import {
-  Pool,
-  PoolType,
-  RHybridPool,
-  RWeightedPool,
-} from './MultiRouterTypes'
+import { BigNumber } from '@ethersproject/bignumber'
 
-import { BigNumber } from "@ethersproject/bignumber";
-import { getBigNumber, revertPositive } from "../Utils";
+import { getBigNumber, revertPositive } from '../Utils'
+import { Pool, PoolType, RHybridPool, RWeightedPool } from './MultiRouterTypes'
 
 const A_PRECISION = 100
 
@@ -51,11 +46,11 @@ export function HybridgetY(pool: RHybridPool, x: BigNumber): BigNumber {
 
   const nA = pool.A * 2
 
-  let c = D.mul(D)
+  const c = D.mul(D)
     .div(x.mul(2))
     .mul(D)
     .div((nA * 2) / A_PRECISION)
-  let b = D.mul(A_PRECISION).div(nA).add(x)
+  const b = D.mul(A_PRECISION).div(nA).add(x)
 
   let yPrev
   let y = D
@@ -104,7 +99,6 @@ export function calcOutByIn(pool: Pool, amountIn: number, direction = true): num
 }
 
 export class OutOfLiquidity extends Error {}
-
 
 export function calcInByOut(pool: Pool, amountOut: number, direction: boolean): number {
   let input = 0

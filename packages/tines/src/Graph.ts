@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
+
 import { RPool, RToken } from './PrimaryPools'
-import { ASSERT, getBigNumber, closeValues, DEBUG } from './Utils'
+import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
 // Routing info about each one swap
 export interface RouteLeg {
@@ -377,7 +378,7 @@ export class Graph {
       const [vFrom, vTo] =
         bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
       if (vTo.price !== 0) continue
-      let p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
       vTo.price = vFrom.price * p
       vTo.gasPrice = vFrom.gasPrice / p
       addVertice(vTo)
@@ -395,7 +396,7 @@ export class Graph {
     edges.forEach(([e, _]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
-      let p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
+      const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
       this.setPrices(v, price * p, gasPrice / p)
     })
   }
