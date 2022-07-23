@@ -93,6 +93,10 @@ const theme: Theme = {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount } = query
+
+  // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client
+  // { chainId, name, symbol, decimals }, to avoid delay from fetching from token list
+
   return {
     props: {
       srcToken: srcToken ?? null,
@@ -391,45 +395,45 @@ const Widget: FC<Swap> = ({
   useEffect(() => setDstTypedAmount(dstAmountOut?.toFixed() ?? ''), [dstAmountOut])
 
   // DEBUG
-  useEffect(() => {
-    // console.debug('SRC CHAIN', srcChainId)
-    // console.debug('DST CHAIN', dstChainId)
-    // console.debug('SRC TOKEN', srcToken)
-    // console.debug('DST TOKEN', dstToken)
-    // console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
-    // console.debug('DST BRIDGE TOKEN', dstBridgeToken)
-    console.debug('SRC TRADE', srcTrade)
-    console.debug('DST TRADE', dstTrade)
+  // useEffect(() => {
+  //   // console.debug('SRC CHAIN', srcChainId)
+  //   // console.debug('DST CHAIN', dstChainId)
+  //   // console.debug('SRC TOKEN', srcToken)
+  //   // console.debug('DST TOKEN', dstToken)
+  //   // console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
+  //   // console.debug('DST BRIDGE TOKEN', dstBridgeToken)
+  //   console.debug('SRC TRADE', srcTrade)
+  //   console.debug('DST TRADE', dstTrade)
 
-    console.debug('SRC AMOUNT', srcAmount?.toFixed())
-    console.debug('SRC AMOUNT MINUS SG FEE', srcAmountMinusStargateFee?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
-    console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
+  //   console.debug('SRC AMOUNT', srcAmount?.toFixed())
+  //   console.debug('SRC AMOUNT MINUS SG FEE', srcAmountMinusStargateFee?.toFixed())
+  //   console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+  //   console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+  //   console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
 
-    // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-    console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
+  //   // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+  //   console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+  //   console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
 
-    // console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-    // console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-    // console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
+  //   // console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //   // console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //   // console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
 
-    // console.debug('STARGATE FEE', stargateFee?.toFixed())
+  //   // console.debug('STARGATE FEE', stargateFee?.toFixed())
 
-    // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
-  }, [
-    srcAmountOut,
-    // dstAmountIn,
-    dstAmountOut,
-    dstMinimumAmountOut,
-    dstTrade,
-    srcAmount,
-    srcAmountMinusStargateFee,
-    srcMinimumAmountOut,
-    srcMinimumAmountOutMinusStargateFee,
-    srcTrade,
-  ])
+  //   // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
+  // }, [
+  //   srcAmountOut,
+  //   // dstAmountIn,
+  //   dstAmountOut,
+  //   dstMinimumAmountOut,
+  //   dstTrade,
+  //   srcAmount,
+  //   srcAmountMinusStargateFee,
+  //   srcMinimumAmountOut,
+  //   srcMinimumAmountOutMinusStargateFee,
+  //   srcTrade,
+  // ])
 
   const price =
     srcAmount && dstMinimumAmountOut
