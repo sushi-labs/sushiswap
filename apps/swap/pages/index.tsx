@@ -368,15 +368,16 @@ const Widget: FC<Swap> = ({
       : undefined
 
   useEffect(() => {
-    if (transfer) {
-      setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed() ?? '')
-    } else if (sameChainSwap || swapTransfer) {
+    if (transfer || swapTransfer) {
+      setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed(dstBridgeToken.decimals) ?? '')
+    } else if (sameChainSwap) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
     } else if (crossChainSwap || transferSwap) {
       setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
     }
   }, [
     crossChainSwap,
+    dstBridgeToken.decimals,
     dstTrade?.outputAmount,
     sameChainSwap,
     srcAmount,
@@ -614,7 +615,6 @@ const Widget: FC<Swap> = ({
       inputUSD && outputUSD && inputUSD?.greaterThan(ZERO)
         ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
         : undefined
-
     return [inputUSD, outputUSD, usdPctChange]
   }, [dstMinimumAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
