@@ -322,28 +322,13 @@ const Widget: FC<Swap> = ({
     crossChainSwap || transferSwap ? dstToken : undefined
   )
 
-  // const dstMinimumAmountOut =
-  //   crossChain && !isStargateBridgeToken(dstToken)
-  //     ? dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
-  //     : srcMinimumAmountOut
-  //     ? Amount.fromRawAmount(dstToken, srcMinimumAmountOut.quotient.toString())
-  //     : undefined
-
   const dstMinimumAmountOut = useMemo(() => {
-    // if (transfer || swapTransfer) {
-    //   return dstAmountIn
-    // } else if (sameChainSwap) {
-    //   return srcMinimumAmountOut
-    // } else if (crossChainSwap || transferSwap) {
-    //   return dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
-    // }
-
-    // return undefined
-
     if (transfer) {
       return dstAmountIn
-    } else if (sameChainSwap || swapTransfer) {
+    } else if (sameChainSwap) {
       return srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+    } else if (swapTransfer) {
+      return srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)?.multiply(_9994)?.divide(_10000)
     } else if (crossChainSwap || transferSwap) {
       return dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
     }
@@ -359,17 +344,16 @@ const Widget: FC<Swap> = ({
     transferSwap,
   ])
 
-  // console.log('dstAmountIn', dstAmountIn?.toFixed())
-  console.log('dstMinimumAmountOut', dstMinimumAmountOut?.toFixed())
-
   const price =
     srcAmount && dstMinimumAmountOut
       ? new Price({ baseAmount: srcAmount, quoteAmount: dstMinimumAmountOut })
       : undefined
 
   useEffect(() => {
-    if (transfer || swapTransfer) {
-      setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed(dstBridgeToken.decimals) ?? '')
+    if (transfer) {
+      setDstTypedAmount(srcAmount?.multiply(_9994)?.divide(_10000)?.toFixed() ?? '')
+    } else if (swapTransfer) {
+      setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed() ?? '')
     } else if (sameChainSwap) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
     } else if (crossChainSwap || transferSwap) {
@@ -637,6 +621,8 @@ const Widget: FC<Swap> = ({
     console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
     console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
     console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+
+    console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
   }, [
     srcTrade,
     dstTrade,
