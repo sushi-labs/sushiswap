@@ -10,37 +10,33 @@ https://pnpm.io/installation
 
 `pnpm install`
 
-### Clean
+### Dev
 
-`pnpm clean`
-
-#### Single Repository
-
-pnpm exec turbo run dev --filter=api/app/package/protocol
+`pnpm exec turbo run dev --filter=swap`
 
 ### Build
 
-pnpn run build
+`pnpn run build`
 
 #### Single Repository
 
-pnpm exec turbo run build --filter=api/app/package/protocol
+`pnpm exec turbo run build --filter=api/app/package/protocol`
 
 ### Test
 
-pnpn run test
+`pnpn run test`
 
 #### Single Repository
 
-pnpm exec turbo run test --filter=api/app/package/protocol
+`pnpm exec turbo run test --filter=api/app/package/protocol`
 
-### Test
+### Clean
 
-pnpn run clean
+`pnpn run clean`
 
 #### Single Repository
 
-pnpm exec turbo run clean --filter=api/app/package/protocol
+`pnpm exec turbo run clean --filter=api/app/package/protocol`
 
 ## APIs
 
