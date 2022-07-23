@@ -284,6 +284,11 @@ const Widget: FC<Swap> = ({
     return tryParseAmount(srcTypedAmount, srcToken)
   }, [srcToken, srcTypedAmount])
 
+  // Parse the dstTypedAmount into a dstAmount
+  const dstAmount = useMemo<Amount<Currency> | undefined>(() => {
+    return tryParseAmount(dstTypedAmount, dstToken)
+  }, [dstToken, dstTypedAmount])
+
   // srcTrade
   const srcTrade = useTrade(
     srcChainId,
@@ -293,26 +298,56 @@ const Widget: FC<Swap> = ({
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
 
-  const srcMinimumAmountOut =
-    sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_SLIPPAGE) : srcAmount
+  const srcMinimumAmountOut = srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)
 
-  const srcMinimumAmountOutMinusStargateFee = useMemo(() => {
-    return crossChain ? srcMinimumAmountOut?.multiply(_9994)?.divide(_10000) : srcMinimumAmountOut
-  }, [crossChain, srcMinimumAmountOut])
+  const srcAmountMinusStargateFee = srcAmount?.multiply(_9994)?.divide(_10000)
 
-  const stargateFee = srcMinimumAmountOutMinusStargateFee
-    ? srcMinimumAmountOut?.subtract(srcMinimumAmountOutMinusStargateFee)
-    : undefined
+  const srcMinimumAmountOutMinusStargateFee = srcMinimumAmountOut?.multiply(_9994)?.divide(_10000)
+
+  const srcAmountOut = useMemo(() => {
+    if (sameChainSwap) {
+      return srcMinimumAmountOut
+    } else if (transfer) {
+      return srcAmountMinusStargateFee
+    } else if (transferSwap) {
+      return srcAmountMinusStargateFee
+    } else if (swapTransfer) {
+      return srcMinimumAmountOutMinusStargateFee
+    } else if (crossChainSwap) {
+      return srcMinimumAmountOutMinusStargateFee
+    }
+  }, [
+    sameChainSwap,
+    transfer,
+    transferSwap,
+    swapTransfer,
+    crossChainSwap,
+    srcMinimumAmountOut,
+    srcAmountMinusStargateFee,
+    srcMinimumAmountOutMinusStargateFee,
+  ])
+
+  const stargateFee = useMemo(() => {
+    if (!srcAmountMinusStargateFee || !srcMinimumAmountOutMinusStargateFee) return
+    if (transfer || transferSwap) {
+      return srcAmount?.subtract(srcAmountMinusStargateFee)
+    } else if (crossChainSwap || swapTransfer) {
+      return srcMinimumAmountOut?.subtract(srcMinimumAmountOutMinusStargateFee)
+    }
+  }, [
+    crossChainSwap,
+    srcAmount,
+    srcAmountMinusStargateFee,
+    srcMinimumAmountOut,
+    srcMinimumAmountOutMinusStargateFee,
+    swapTransfer,
+    transfer,
+    transferSwap,
+  ])
 
   const dstAmountIn = useMemo(() => {
-    if (crossChain && !srcMinimumAmountOutMinusStargateFee) return
-    return tryParseAmount(
-      crossChain
-        ? srcMinimumAmountOutMinusStargateFee?.toFixed(dstBridgeToken.decimals)
-        : srcMinimumAmountOut?.toFixed(),
-      crossChain ? dstBridgeToken : dstToken
-    )
-  }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
+    return tryParseAmount(srcAmountOut?.toFixed() ?? '', crossChain ? dstBridgeToken : dstToken)
+  }, [crossChain, dstBridgeToken, dstToken, srcAmountOut])
 
   const dstTrade = useTrade(
     dstChainId,
@@ -322,23 +357,25 @@ const Widget: FC<Swap> = ({
     crossChainSwap || transferSwap ? dstToken : undefined
   )
 
-  const dstMinimumAmountOut = useMemo(() => {
+  const dstMinimumAmountOut = dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+
+  const dstAmountOut = useMemo(() => {
     if (transfer) {
-      return dstAmountIn
+      return srcAmountMinusStargateFee
     } else if (sameChainSwap) {
-      return srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+      return srcMinimumAmountOut
     } else if (swapTransfer) {
-      return srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)?.multiply(_9994)?.divide(_10000)
+      return srcMinimumAmountOutMinusStargateFee
     } else if (crossChainSwap || transferSwap) {
-      return dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+      return dstMinimumAmountOut
     }
   }, [
-    SWAP_SLIPPAGE,
     crossChainSwap,
-    dstAmountIn,
-    dstTrade,
+    dstMinimumAmountOut,
     sameChainSwap,
-    srcTrade,
+    srcAmountMinusStargateFee,
+    srcMinimumAmountOut,
+    srcMinimumAmountOutMinusStargateFee,
     swapTransfer,
     transfer,
     transferSwap,
@@ -351,22 +388,21 @@ const Widget: FC<Swap> = ({
 
   useEffect(() => {
     if (transfer) {
-      setDstTypedAmount(srcAmount?.multiply(_9994)?.divide(_10000)?.toFixed() ?? '')
+      setDstTypedAmount(srcAmountMinusStargateFee?.toFixed() ?? '')
     } else if (swapTransfer) {
       setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed() ?? '')
     } else if (sameChainSwap) {
-      setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
+      setDstTypedAmount(srcMinimumAmountOut?.toFixed() ?? '')
     } else if (crossChainSwap || transferSwap) {
-      setDstTypedAmount(dstTrade?.outputAmount?.toFixed() ?? '')
+      setDstTypedAmount(dstMinimumAmountOut?.toFixed() ?? '')
     }
   }, [
     crossChainSwap,
-    dstBridgeToken.decimals,
-    dstTrade?.outputAmount,
+    dstMinimumAmountOut,
     sameChainSwap,
-    srcAmount,
+    srcAmountMinusStargateFee,
+    srcMinimumAmountOut,
     srcMinimumAmountOutMinusStargateFee,
-    srcTrade?.outputAmount,
     swapTransfer,
     transfer,
     transferSwap,
@@ -389,24 +425,20 @@ const Widget: FC<Swap> = ({
       !srcChainId,
       !srcAmount,
       !srcMinimumAmountOut,
-      !srcMinimumAmountOutMinusStargateFee,
       !dstChainId,
       !dstMinimumAmountOut,
       !address,
       !srcTokenRebase,
-      // !dstTokenRebase,
       !contract,
     ])
     if (
       !srcChainId ||
       !srcAmount ||
       !srcMinimumAmountOut ||
-      !srcMinimumAmountOutMinusStargateFee ||
       !dstChainId ||
       !dstMinimumAmountOut ||
       !address ||
       !srcTokenRebase ||
-      // !dstTokenRebase ||
       !contract
     ) {
       return
@@ -475,28 +507,27 @@ const Widget: FC<Swap> = ({
         setIsWritePending(false)
       })
   }, [
-    srcChainId,
-    srcAmount,
-    srcMinimumAmountOut,
-    srcMinimumAmountOutMinusStargateFee,
+    address,
+    contract,
+    crossChain,
+    dstBridgeToken,
     dstChainId,
     dstMinimumAmountOut,
-    address,
-    srcTokenRebase,
-    contract,
-    srcToken,
     dstToken,
-    srcTrade,
     dstTrade,
-    srcUseBentoBox,
     dstUseBentoBox,
-    signature,
-    transfer,
-    sameChainSwap,
-    crossChain,
-    srcBridgeToken,
-    dstBridgeToken,
     nanoId,
+    sameChainSwap,
+    signature,
+    srcAmount,
+    srcBridgeToken,
+    srcChainId,
+    srcMinimumAmountOut,
+    srcToken,
+    srcTokenRebase,
+    srcTrade,
+    srcUseBentoBox,
+    transfer,
   ])
 
   const { data: stargatePoolResults } = useContractReads({
@@ -556,13 +587,14 @@ const Widget: FC<Swap> = ({
     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
   }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
-  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
-  const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
   const { data: nativeBalance } = useBalance({
     chainId: srcChainId,
     account: address,
     currency: Native.onChain(srcChainId),
   })
+
+  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -615,7 +647,7 @@ const Widget: FC<Swap> = ({
     console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
     console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
     console.debug('STARGATE FEE', stargateFee?.toFixed())
-    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+    console.debug('SRC AMOUNT OUT MINUS SG FEE', srcAmountMinusStargateFee?.toFixed())
     console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
     console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
     console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
@@ -629,7 +661,7 @@ const Widget: FC<Swap> = ({
     srcAmount,
     srcMinimumAmountOut,
     stargateFee,
-    srcMinimumAmountOutMinusStargateFee,
+    srcAmountMinusStargateFee,
     dstAmountIn,
     dstMinimumAmountOut,
     priceImpact,
