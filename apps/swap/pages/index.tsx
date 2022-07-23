@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, Price, SUSHI, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { _9994, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
@@ -92,7 +92,7 @@ const theme: Theme = {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount } = query
+  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
 
   // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client
   // { chainId, name, symbol, decimals }, to avoid delay from fetching from token list
@@ -104,7 +104,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
       srcTypedAmount: srcTypedAmount ?? '',
-      dstTypedAmount: dstTypedAmount ?? '',
     },
   }
 }
@@ -115,7 +114,6 @@ export default function Swap({
   srcToken,
   dstToken,
   srcTypedAmount,
-  dstTypedAmount,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
@@ -127,9 +125,8 @@ export default function Swap({
           srcChainId: Number(srcChainId),
           dstChainId: Number(dstChainId),
           srcToken: srcToken in srcTokens ? srcTokens[srcToken] : Native.onChain(srcChainId),
-          dstToken: dstToken in dstTokens ? dstTokens[dstToken] : SUSHI[dstChainId],
+          dstToken: dstToken in dstTokens ? dstTokens[dstToken] : Native.onChain(dstChainId),
           srcTypedAmount,
-          dstTypedAmount,
         }}
         // swapCache={data}
         // mutateSwapCache={mutateSwapCache}
@@ -146,7 +143,6 @@ interface Swap {
     srcChainId: number
     dstChainId: number
     srcTypedAmount: string
-    dstTypedAmount: string
     srcToken: Currency
     dstToken: Currency
   }
@@ -196,7 +192,7 @@ const Widget: FC<Swap> = ({
   const [srcTxHash, setSrcTxHash] = useState<string>()
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
-  const [dstTypedAmount, setDstTypedAmount] = useState<string>(initialState.dstTypedAmount)
+  const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
 
   const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
   const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
@@ -217,7 +213,6 @@ const Widget: FC<Swap> = ({
       srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
       dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
       srcTypedAmount === router.query.srcTypedAmount,
-      dstTypedAmount === router.query.dstTypedAmount,
     ])
 
     if (
@@ -225,8 +220,7 @@ const Widget: FC<Swap> = ({
       dstChainId === Number(router.query.dstChainId) &&
       (srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
       (dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
-      srcTypedAmount === router.query.srcTypedAmount &&
-      dstTypedAmount === router.query.dstTypedAmount
+      srcTypedAmount === router.query.srcTypedAmount
     ) {
       return
     }
@@ -241,13 +235,12 @@ const Widget: FC<Swap> = ({
           srcChainId,
           dstChainId,
           srcTypedAmount,
-          dstTypedAmount,
         },
       },
       undefined,
       { shallow: true }
     )
-  }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, dstTypedAmount, router])
+  }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, router])
 
   const contract = useSushiXSwapContract(srcChainId)
 
