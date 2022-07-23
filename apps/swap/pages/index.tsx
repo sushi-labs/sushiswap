@@ -171,7 +171,10 @@ const Widget: FC<Swap> = ({
 
   const [{ expertMode, slippageTolerance }] = useSettings()
 
-  const SWAP_SLIPPAGE = slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE
+  const SWAP_SLIPPAGE = useMemo(
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
+    [slippageTolerance]
+  )
 
   const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
@@ -293,10 +296,6 @@ const Widget: FC<Swap> = ({
   const srcMinimumAmountOut =
     sameChainSwap || swapTransfer || crossChainSwap ? srcTrade?.minimumAmountOut(SWAP_SLIPPAGE) : srcAmount
 
-  const srcAmountOutMinusStargateFee = useMemo(() => {
-    return srcAmount?.multiply(_9994)?.divide(_10000)
-  }, [srcAmount])
-
   const srcMinimumAmountOutMinusStargateFee = useMemo(() => {
     return crossChain ? srcMinimumAmountOut?.multiply(_9994)?.divide(_10000) : srcMinimumAmountOut
   }, [crossChain, srcMinimumAmountOut])
@@ -306,8 +305,11 @@ const Widget: FC<Swap> = ({
     : undefined
 
   const dstAmountIn = useMemo(() => {
+    if (crossChain && !srcMinimumAmountOutMinusStargateFee) return
     return tryParseAmount(
-      crossChain ? srcMinimumAmountOutMinusStargateFee?.toFixed() : srcMinimumAmountOut?.toFixed(),
+      crossChain
+        ? srcMinimumAmountOutMinusStargateFee?.toFixed(dstBridgeToken.decimals)
+        : srcMinimumAmountOut?.toFixed(),
       crossChain ? dstBridgeToken : dstToken
     )
   }, [crossChain, dstBridgeToken, dstToken, srcMinimumAmountOutMinusStargateFee, srcMinimumAmountOut])
@@ -320,69 +322,45 @@ const Widget: FC<Swap> = ({
     crossChainSwap || transferSwap ? dstToken : undefined
   )
 
-  const { data: stargatePoolResults } = useContractReads({
-    contracts: [
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-        functionName: 'getChainPath',
-        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-        functionName: 'feeLibrary',
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-    ],
-    enabled: crossChain,
-  })
+  // const dstMinimumAmountOut =
+  //   crossChain && !isStargateBridgeToken(dstToken)
+  //     ? dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+  //     : srcMinimumAmountOut
+  //     ? Amount.fromRawAmount(dstToken, srcMinimumAmountOut.quotient.toString())
+  //     : undefined
 
-  const { data: equilibriumFee } = useContractRead({
-    addressOrName: String(stargatePoolResults?.[1]),
-    functionName: 'getEquilibriumFee',
-    args: [
-      stargatePoolResults?.[0]?.idealBalance?.toString(),
-      stargatePoolResults?.[0]?.balance?.toString(),
-      srcMinimumAmountOut?.quotient?.toString(),
-    ],
-    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
-    chainId: srcChainId,
-    enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
-  })
+  const dstMinimumAmountOut = useMemo(() => {
+    // if (transfer || swapTransfer) {
+    //   return dstAmountIn
+    // } else if (sameChainSwap) {
+    //   return srcMinimumAmountOut
+    // } else if (crossChainSwap || transferSwap) {
+    //   return dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+    // }
 
-  const bridgeImpact = useMemo(() => {
-    if (!stargateFee || !equilibriumFee || !srcMinimumAmountOut) {
-      return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-    }
-    return new Percent(
-      JSBI.add(stargateFee.quotient, JSBI.BigInt(equilibriumFee[0].toString())),
-      srcMinimumAmountOut.quotient
-    )
-  }, [equilibriumFee, srcMinimumAmountOut, stargateFee])
+    // return undefined
 
-  const priceImpact = useMemo(() => {
     if (transfer) {
-      return bridgeImpact
-    } else if (sameChainSwap && srcTrade) {
-      return srcTrade.priceImpact
-    } else if (crossChainSwap && srcTrade && dstTrade) {
-      return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
-    } else if (transferSwap && !srcTrade && dstTrade) {
-      return dstTrade.priceImpact.add(bridgeImpact)
-    } else if (swapTransfer && srcTrade && !dstTrade) {
-      return srcTrade.priceImpact.add(bridgeImpact)
+      return dstAmountIn
+    } else if (sameChainSwap || swapTransfer) {
+      return srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+    } else if (crossChainSwap || transferSwap) {
+      return dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
     }
-    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-  }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
+  }, [
+    SWAP_SLIPPAGE,
+    crossChainSwap,
+    dstAmountIn,
+    dstTrade,
+    sameChainSwap,
+    srcTrade,
+    swapTransfer,
+    transfer,
+    transferSwap,
+  ])
 
-  const dstMinimumAmountOut =
-    crossChain && !isStargateBridgeToken(dstToken)
-      ? dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
-      : srcMinimumAmountOut
-      ? Amount.fromFractionalAmount(dstToken, srcMinimumAmountOut.numerator, srcMinimumAmountOut.denominator)
-      : undefined
+  // console.log('dstAmountIn', dstAmountIn?.toFixed())
+  console.log('dstMinimumAmountOut', dstMinimumAmountOut?.toFixed())
 
   const price =
     srcAmount && dstMinimumAmountOut
@@ -391,7 +369,7 @@ const Widget: FC<Swap> = ({
 
   useEffect(() => {
     if (transfer) {
-      setDstTypedAmount(srcAmount?.toFixed() ?? '')
+      setDstTypedAmount(srcMinimumAmountOutMinusStargateFee?.toFixed() ?? '')
     } else if (sameChainSwap || swapTransfer) {
       setDstTypedAmount(srcTrade?.outputAmount?.toFixed() ?? '')
     } else if (crossChainSwap || transferSwap) {
@@ -402,6 +380,7 @@ const Widget: FC<Swap> = ({
     dstTrade?.outputAmount,
     sameChainSwap,
     srcAmount,
+    srcMinimumAmountOutMinusStargateFee,
     srcTrade?.outputAmount,
     swapTransfer,
     transfer,
@@ -535,7 +514,62 @@ const Widget: FC<Swap> = ({
     nanoId,
   ])
 
-  const isMounted = useIsMounted()
+  const { data: stargatePoolResults } = useContractReads({
+    contracts: [
+      {
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        functionName: 'getChainPath',
+        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
+        contractInterface: STARGATE_POOL_ABI,
+        chainId: srcChainId,
+      },
+      {
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        functionName: 'feeLibrary',
+        contractInterface: STARGATE_POOL_ABI,
+        chainId: srcChainId,
+      },
+    ],
+    enabled: crossChain,
+  })
+
+  const { data: equilibriumFee } = useContractRead({
+    addressOrName: String(stargatePoolResults?.[1]),
+    functionName: 'getEquilibriumFee',
+    args: [
+      stargatePoolResults?.[0]?.idealBalance?.toString(),
+      stargatePoolResults?.[0]?.balance?.toString(),
+      srcMinimumAmountOut?.quotient?.toString(),
+    ],
+    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
+    chainId: srcChainId,
+    enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
+  })
+
+  const bridgeImpact = useMemo(() => {
+    if (!stargateFee || !equilibriumFee || !srcMinimumAmountOut) {
+      return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+    }
+    return new Percent(
+      JSBI.add(stargateFee.quotient, JSBI.BigInt(equilibriumFee[0].toString())),
+      srcMinimumAmountOut.quotient
+    )
+  }, [equilibriumFee, srcMinimumAmountOut, stargateFee])
+
+  const priceImpact = useMemo(() => {
+    if (transfer) {
+      return bridgeImpact
+    } else if (sameChainSwap && srcTrade) {
+      return srcTrade.priceImpact
+    } else if (crossChainSwap && srcTrade && dstTrade) {
+      return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
+    } else if (transferSwap && !srcTrade && dstTrade) {
+      return dstTrade.priceImpact.add(bridgeImpact)
+    } else if (swapTransfer && srcTrade && !dstTrade) {
+      return srcTrade.priceImpact.add(bridgeImpact)
+    }
+    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
   const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
   const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
@@ -585,39 +619,41 @@ const Widget: FC<Swap> = ({
   }, [dstMinimumAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   // DEBUG
-  // useEffect(() => {
-  //   console.debug('SRC CHAIN', srcChainId)
-  //   console.debug('DST CHAIN', dstChainId)
-  //   console.debug('SRC TOKEN', srcToken)
-  //   console.debug('DST TOKEN', dstToken)
-  //   console.debug('SRC TRADE', srcTrade)
-  //   console.debug('DST TRADE', dstTrade)
-  //   console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
-  //   console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-  //   console.debug('STARGATE FEE', stargateFee?.toFixed())
-  //   console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
-  //   console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-  //   console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-  //   console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-  //   console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-  //   console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
-  // }, [
-  //   srcTrade,
-  //   dstTrade,
-  //   srcAmount,
-  //   srcMinimumAmountOut,
-  //   stargateFee,
-  //   srcMinimumAmountOutMinusStargateFee,
-  //   dstAmountIn,
-  //   dstMinimumAmountOut,
-  //   priceImpact,
-  //   dstChainId,
-  //   srcToken,
-  //   dstToken,
-  //   srcChainId,
-  // ])
-
-  const showWrap = false
+  useEffect(() => {
+    console.debug('SRC CHAIN', srcChainId)
+    console.debug('DST CHAIN', dstChainId)
+    console.debug('SRC TOKEN', srcToken)
+    console.debug('DST TOKEN', dstToken)
+    console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
+    console.debug('DST BRIDGE TOKEN', dstBridgeToken)
+    console.debug('SRC TRADE', srcTrade)
+    console.debug('DST TRADE', dstTrade)
+    console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+    console.debug('STARGATE FEE', stargateFee?.toFixed())
+    console.debug('SRC MINIMUM AMOUNT OUT MINUS SG FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+    console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+    console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+    console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+    console.debug('PRICE IMPACT', priceImpact?.multiply(-1).toFixed(2))
+  }, [
+    srcTrade,
+    dstTrade,
+    srcAmount,
+    srcMinimumAmountOut,
+    stargateFee,
+    srcMinimumAmountOutMinusStargateFee,
+    dstAmountIn,
+    dstMinimumAmountOut,
+    priceImpact,
+    dstChainId,
+    srcToken,
+    dstToken,
+    srcChainId,
+    srcBridgeToken,
+    dstBridgeToken,
+  ])
 
   useEffect(() => {
     if (
@@ -748,6 +784,10 @@ const Widget: FC<Swap> = ({
     setDstChainId(chainId)
     setDstToken(Native.onChain(chainId))
   }, [])
+
+  const isMounted = useIsMounted()
+
+  const showWrap = false
 
   return (
     <>
