@@ -48,7 +48,9 @@ pnpm exec turbo run clear --filter=api/app/package/protocol
 
 ## APIs
 
+- `path-finder`
 - `token-list`
+- `token-price`
 
 ### Creating a new API
 
@@ -59,10 +61,10 @@ pnpm exec turbo run clear --filter=api/app/package/protocol
 - `_root`
 - `analytics`
 - `blog`
-- `docs`
 - `furo`
 - `kashi`
 - `miso`
+- `swap`
 
 ### Creating a new app
 
@@ -72,12 +74,25 @@ pnpm exec turbo run clear --filter=api/app/package/protocol
 
 ## Packages
 
-- `chain`
-- `config`
-- `math`
-- `multicall`
-- `tsconfig`
-- `ui`
+- `@sushiswap/chain`
+- `@sushiswap/cli`
+- `@sushiswap/currency`
+- `@sushiswap/exchange`
+- `@sushiswap/format`
+- `@sushiswap/graph-client`
+- `@sushiswap/hooks`
+- `@sushiswap/math`
+- `@sushiswap/eslint-config`
+- `@sushiswap/hardhat-config`
+- `@sushiswap/prettier-config`
+- `@sushiswap/typescript-config`
+- `@sushiswap/redux-logs`
+- `@sushiswap/redux-token-lists`
+- `@sushiswap/stargate`
+- `@sushiswap/tines`
+- `@sushiswap/token-lists`
+- `@sushiswap/ui`
+- `@sushiswap/wagmi`
 
 ### Creating a new package
 
@@ -85,8 +100,12 @@ pnpm exec turbo run clear --filter=api/app/package/protocol
 
 ## Protocols
 
-- `furo`
-- `miso`
+- `@sushiswap/bentobox`
+- `@sushiswap/furo`
+- `@sushiswap/kashi`
+- `@sushiswap/miso`
+- `@sushiswap/sushiswap`
+- `@sushiswap/sushixswap`
 
 ### Creating a new protocol
 
