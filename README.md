@@ -8,15 +8,11 @@ https://pnpm.io/installation
 
 ### Install
 
-pnpm install
+`pnpm install`
 
-### Execute
+### Clean
 
-pnp exec
-
-### Dev
-
-pnpn run dev
+`pnpm clean`
 
 #### Single Repository
 
@@ -44,7 +40,7 @@ pnpn run clean
 
 #### Single Repository
 
-pnpm exec turbo run clear --filter=api/app/package/protocol
+pnpm exec turbo run clean --filter=api/app/package/protocol
 
 ## APIs
 
@@ -70,7 +66,7 @@ pnpm exec turbo run clear --filter=api/app/package/protocol
 
 `git checkout -b feature/example-app`
 
-`pnpm exec @sushiswap/cli create-app example-app`
+<!-- `pnpm exec @sushiswap/cli create-app example-app` -->
 
 ## Packages
 
