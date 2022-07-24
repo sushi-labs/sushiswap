@@ -365,7 +365,7 @@ const Widget: FC<Swap> = ({
   // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
   const dstAmountOut = useMemo(() => {
     if (sameChainSwap) {
-      return srcMinimumAmountOut
+      return srcTrade?.outputAmount
     } else if (transfer) {
       return dstAmountIn
     } else if (swapTransfer) {
@@ -380,7 +380,7 @@ const Widget: FC<Swap> = ({
     dstAmountIn,
     dstTrade?.outputAmount,
     sameChainSwap,
-    srcMinimumAmountOut,
+    srcTrade?.outputAmount,
     swapTransfer,
     transfer,
     transferSwap,
