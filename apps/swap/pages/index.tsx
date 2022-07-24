@@ -370,7 +370,7 @@ const Widget: FC<Swap> = ({
     } else if (swapTransfer) {
       return dstAmountIn
     } else if (transferSwap) {
-      return dstAmountIn
+      return dstMinimumAmountOut
     } else if (crossChainSwap) {
       return dstMinimumAmountOut
     }
