@@ -1,9 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
 export function ASSERT(f: () => boolean, t?: string) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (!f() && t) console.error(t)
-  }
+  if (process.env.NODE_ENV !== 'production' && (!f() && t)) console.error(t)
 }
 
 let DEBUG_MODE = false
@@ -19,7 +17,7 @@ export function closeValues(a: number, b: number, accuracy: number, logInfoIfFal
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   const res = Math.abs(a / b - 1) < accuracy
   if (!res && logInfoIfFalse) {
-    console.log('Expected close: ', a, b, accuracy, logInfoIfFalse)
+    console.error('Expected close: ', a, b, accuracy, logInfoIfFalse)
     debugger
   }
   return res
@@ -33,12 +31,12 @@ export function calcSquareEquation(a: number, b: number, c: number): [number, nu
 }
 
 // returns such x > 0 that f(x) = out or 0 if there is no such x or f defined not everywhere
-// hint - approximation of x to spead up the algorithm
+// hint - approximation of x to speed up the algorithm
 // f assumed to be continues monotone growth function defined everywhere
 export function revertPositive(f: (x: number) => number, out: number, hint = 1) {
   try {
     if (out <= f(0)) return 0
-    let min, max
+    let min: number, max: number;
     if (f(hint) > out) {
       min = hint / 2
       while (f(min) > out) min /= 2
@@ -67,9 +65,10 @@ export function getBigNumber(value: number): BigNumber {
   if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value))
 
   const exp = Math.floor(Math.log(v) / Math.LN2)
+  // @Error.Internal 314 
   console.assert(exp >= 51, 'Internal Error 314')
   const shift = exp - 51
-  const mant = Math.round(v / Math.pow(2, shift))
+  const mant = Math.round(v / 2 ** shift)
   const res = BigNumber.from(mant).mul(BigNumber.from(2).pow(shift))
   return value > 0 ? res : res.mul(-1)
 }

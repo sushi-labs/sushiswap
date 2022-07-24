@@ -1,7 +1,7 @@
 /// TODO: 
 // 1) Taking into account several parallel pools was not finished
 // 2) Is it possible to redistribute intersected paths, or should they be reduced till not-intersected paths only?
-// 3) Can we find optimal destribution between all output pools of a token, or only between those paths which end in the same token?
+// 3) Can we find optimal distribution between all output pools of a token, or only between those paths which end in the same token?
 //    If only second - then in what sequence this optimization should be? From closer tokens to more far?
 import { revertPositive } from "./Utils";
 import { Vertice, Edge } from "./Graph";

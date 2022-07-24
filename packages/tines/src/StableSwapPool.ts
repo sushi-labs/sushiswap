@@ -1,6 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { RPool, RToken } from './PrimaryPools'
-import { getBigNumber } from './Utils'
+import { BigNumber } from '@ethersproject/bignumber';
+import { RPool } from './PrimaryPools';
+import type { RToken } from './PrimaryPools';
+import { getBigNumber } from './Utils';
 
 export interface Rebase {
   elastic: BigNumber
@@ -20,11 +21,10 @@ function toShareBN(elastic: BigNumber, total: Rebase) {
 class RebaseInternal {
   elastic2Base: number
   rebaseBN: Rebase
-
+  
   constructor(rebase: Rebase) {
     this.rebaseBN = rebase
-    if (rebase.base.isZero() || rebase.elastic.isZero()) this.elastic2Base = 1
-    else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
+    this.elastic2Base = rebase.base.isZero() || rebase.elastic.isZero() ? 1 : parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString());
   }
 
   toAmount(share: number) {
@@ -178,17 +178,17 @@ export class StableSwapRPool extends RPool {
     const k = parseInt(this.computeK().toString())
     const q = k / x / 2
     const qD = -q / x // devivative of q
-    const Q = Math.pow(x, 6) / 27 + q * q
-    const QD = (6 * Math.pow(x, 5)) / 27 + 2 * q * qD // derivative of Q
+    const Q = x ** 6 / 27 + q * q
+    const QD = (6 * x ** 5) / 27 + 2 * q * qD // derivative of Q
     const sqrtQ = Math.sqrt(Q)
     const sqrtQD = (1 / 2 / sqrtQ) * QD // derivative of sqrtQ
     const a = sqrtQ + q
     const aD = sqrtQD + qD
     const b = sqrtQ - q
     const bD = sqrtQD - qD
-    const a3 = Math.pow(a, 1 / 3)
+    const a3 = a ** (1 / 3)
     const a3D = (((1 / 3) * a3) / a) * aD
-    const b3 = Math.pow(b, 1 / 3)
+    const b3 = b ** (1 / 3)
     const b3D = (((1 / 3) * b3) / b) * bD
     const yD = a3D - b3D
     const yDShares = calcDirection

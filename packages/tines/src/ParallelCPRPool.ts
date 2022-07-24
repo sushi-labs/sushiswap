@@ -1,5 +1,5 @@
-import { ASSERT, calcSquareEquation, ConstantProductRPool, getBigNumber, RPool, RToken } from "./";
-
+import { ASSERT, calcSquareEquation, ConstantProductRPool, getBigNumber, RPool } from "./";
+import type { RToken } from "./PrimaryPools";
 interface JumpInfo {
   poolIndex: number;
   input: number;

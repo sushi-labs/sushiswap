@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { RPool, RToken } from './PrimaryPools'
+import { RPool } from './PrimaryPools'
 import { ASSERT, getBigNumber, closeValues, DEBUG } from './Utils'
-
+import type { RToken } from "./PrimaryPools";
 // Routing info about each one swap
 export interface RouteLeg {
   poolAddress: string // which pool use for swap

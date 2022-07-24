@@ -28,7 +28,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.0.0",
+    "@ethersproject/bignumber": "5.6.2",
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
@@ -36,11 +36,20 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^17.0.35",
+    "@types/node": "^18",
     "@types/seedrandom": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "5.x",
+    "@typescript-eslint/parser": "~5.25.0",
+    "@typescript/analyze-trace": "^0.9.0",
     "eslint": "^8.15.0",
+    "eslint-config-prettier": "8.x",
+    "fast-check": "^3.1.0",
+    "prettier": "^2.7.1",
+    "process-tracing": "^1.0.2",
     "seedrandom": "^3.0.5",
     "tsup": "^6.1.2",
-    "typescript": "^4.0.0"
+    "tsutils": "^3.21.0",
+    "typescript": "4.7.4",
+    "typescript-eslint-language-service": "^5.0.0"
   }
 }

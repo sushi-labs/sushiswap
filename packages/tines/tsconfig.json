@@ -1,5 +1,53 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
-  "include": ["."],
-  "exclude": ["node_modules"]
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "formatCodeOptions": {
+    "tabSize": 2,
+    "indentSize": 2
+  },
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": false,
+    "allowUnreachableCode": false,
+    "esModuleInterop": false,
+    "tsBuildInfoFile": "./",
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "preserveValueImports": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "isolatedModules": true,
+    "removeComments": true,
+    "incremental": true,
+    "declaration": true,
+    "sourceMap": false,
+    "moduleResolution": "nodenext",
+    "moduleDetection": "force",
+    "module": "esnext",
+    "target": "ESNext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": [
+     "@types/node"
+    ],
+    "plugins": [
+      {
+        "name": "typescript-eslint-language-service"
+      }
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/.*/",
+    "src/**/*.test.ts"
+  ]
 }

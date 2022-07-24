@@ -10,7 +10,7 @@ export function computeHybridLiquidity(r0: BigNumber, r1: BigNumber, a: number):
 
   const nA = BigNumber.from(a * 2)
 
-  let prevD
+  let prevD: any;
 
   let D = s
   for (let i = 0; i < 256; i++) {
@@ -28,4 +28,4 @@ export function computeHybridLiquidity(r0: BigNumber, r1: BigNumber, a: number):
   }
 
   return D
-}
+};
