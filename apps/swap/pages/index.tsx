@@ -171,7 +171,7 @@ const Widget: FC<Swap> = ({
 
   const [{ expertMode, slippageTolerance }] = useSettings()
 
-  const SWAP_SLIPPAGE = useMemo(
+  const swapSlippage = useMemo(
     () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
     [slippageTolerance]
   )
@@ -295,7 +295,7 @@ const Widget: FC<Swap> = ({
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
 
-  const srcMinimumAmountOut = srcTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+  const srcMinimumAmountOut = srcTrade?.minimumAmountOut(swapSlippage)
 
   const srcAmountMinusStargateFee = srcAmount?.multiply(_9994)?.divide(_10000)
 
@@ -360,8 +360,9 @@ const Widget: FC<Swap> = ({
     crossChainSwap || transferSwap ? dstToken : undefined
   )
 
-  const dstMinimumAmountOut = dstTrade?.minimumAmountOut(SWAP_SLIPPAGE)
+  // const dstMinimumAmountOut = dstTrade?.minimumAmountOut(swapSlippage)
 
+  // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
   const dstAmountOut = useMemo(() => {
     if (sameChainSwap) {
       return srcMinimumAmountOut
@@ -370,16 +371,40 @@ const Widget: FC<Swap> = ({
     } else if (swapTransfer) {
       return dstAmountIn
     } else if (transferSwap) {
-      return dstMinimumAmountOut
+      return dstTrade?.outputAmount
     } else if (crossChainSwap) {
-      return dstMinimumAmountOut
+      return dstTrade?.outputAmount
     }
   }, [
     crossChainSwap,
     dstAmountIn,
-    dstMinimumAmountOut,
+    dstTrade?.outputAmount,
     sameChainSwap,
     srcMinimumAmountOut,
+    swapTransfer,
+    transfer,
+    transferSwap,
+  ])
+
+  const dstMinimumAmountOut = useMemo(() => {
+    if (sameChainSwap) {
+      return srcTrade?.minimumAmountOut(swapSlippage)
+    } else if (transfer) {
+      return dstAmountIn
+    } else if (swapTransfer) {
+      return dstAmountIn
+    } else if (transferSwap) {
+      return dstTrade?.minimumAmountOut(swapSlippage)
+    } else if (crossChainSwap) {
+      return dstTrade?.minimumAmountOut(swapSlippage)
+    }
+  }, [
+    crossChainSwap,
+    dstAmountIn,
+    dstTrade,
+    sameChainSwap,
+    srcTrade,
+    swapSlippage,
     swapTransfer,
     transfer,
     transferSwap,
@@ -716,7 +741,7 @@ const Widget: FC<Swap> = ({
           Min. Received
         </Typography>
         <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
-          {dstAmountOut?.toSignificant(6)} {dstAmountOut?.currency.symbol}
+          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
         </Typography>
         {crossChain && (
           <>
@@ -737,7 +762,7 @@ const Widget: FC<Swap> = ({
         )}
       </>
     )
-  }, [crossChain, dstAmountOut, priceImpact, priceImpactSeverity, srcChainId, srcPrices])
+  }, [crossChain, dstMinimumAmountOut, priceImpact, priceImpactSeverity, srcChainId, srcPrices])
 
   const onSrcNetworkSelect = useCallback((chainId: number) => {
     setSrcChainId(chainId)
@@ -772,8 +797,8 @@ const Widget: FC<Swap> = ({
       console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
 
       // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-      console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
       console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
+      console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
 
       console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
       console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
@@ -988,8 +1013,8 @@ const Widget: FC<Swap> = ({
                         !srcAmount ||
                         !srcAmount.greaterThan(ZERO) ||
                         priceImpactTooHigh ||
-                        !dstAmountOut ||
-                        dstAmountOut?.equalTo(ZERO) ||
+                        !dstMinimumAmountOut ||
+                        dstMinimumAmountOut?.equalTo(ZERO) ||
                         Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
                       }
                       onClick={() => setOpen(true)}
