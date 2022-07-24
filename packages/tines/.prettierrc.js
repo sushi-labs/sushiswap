@@ -1,4 +1,3 @@
-
 /**
  * @file Prettier configuration for Conformance
  * @version 1.1.0
@@ -11,7 +10,7 @@
 module.exports = {
   arrowParens: 'always',
   bracketSameLine: true,
-  bracketSpacing: false,
+  bracketSpacing: true,
   embeddedLanguageFormatting: 'auto',
   htmlWhitespaceSensitivity: 'strict',
   insertPragma: false,
@@ -21,7 +20,7 @@ module.exports = {
   quoteProps: 'consistent',
   requirePragma: false,
   semi: true,
-  singleQuote: true,
+  singleQuote: false,
   tabWidth: 2,
   trailingComma: 'all',
   useTabs: false,
