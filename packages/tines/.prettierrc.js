@@ -19,7 +19,7 @@ module.exports = {
   proseWrap: 'always',
   quoteProps: 'consistent',
   requirePragma: false,
-  semi: true,
+  semi: false,
   singleQuote: false,
   tabWidth: 2,
   trailingComma: 'all',
