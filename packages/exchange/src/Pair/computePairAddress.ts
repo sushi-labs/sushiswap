@@ -1,5 +1,5 @@
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256, pack } from '@ethersproject/solidity'
+import { getCreate2Address } from '@ethersproject/address/lib.esm/index.js'
+import { keccak256, pack } from '@ethersproject/solidity/lib.esm/index.js'
 import { Token } from '@sushiswap/currency'
 
 import { INIT_CODE_HASH } from './constants'

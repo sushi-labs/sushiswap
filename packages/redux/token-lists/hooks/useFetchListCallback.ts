@@ -1,4 +1,4 @@
-import { BaseProvider } from '@ethersproject/providers'
+import { BaseProvider } from '@ethersproject/providers/lib.esm/index.js'
 import { nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'

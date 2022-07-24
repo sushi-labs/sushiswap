@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { SUPPORTED_CHAINS } from 'config'

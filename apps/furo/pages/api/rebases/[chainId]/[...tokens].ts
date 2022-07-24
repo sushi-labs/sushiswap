@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import { isAddress } from '@ethersproject/address/lib.esm/index.js'
 import { getRebases } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 

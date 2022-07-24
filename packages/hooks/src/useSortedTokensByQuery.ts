@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import { isAddress } from '@ethersproject/address/lib.esm/index.js'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { Fraction } from '@sushiswap/math'
 import { useMemo } from 'react'

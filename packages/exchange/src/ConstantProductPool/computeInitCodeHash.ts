@@ -1,5 +1,5 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { keccak256, pack } from '@ethersproject/solidity'
+import { defaultAbiCoder } from '@ethersproject/abi/lib.esm/index.js'
+import { keccak256, pack } from '@ethersproject/solidity/lib.esm/index.js'
 
 export const computeInitCodeHash = ({
   creationCode,

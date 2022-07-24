@@ -1,5 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { AddressZero } from '@ethersproject/constants'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'

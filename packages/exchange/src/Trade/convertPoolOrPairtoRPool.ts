@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 
 import { ConstantProductPool } from '../ConstantProductPool'

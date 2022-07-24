@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import furoExports from '@sushiswap/furo/exports.json'
 import { ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'

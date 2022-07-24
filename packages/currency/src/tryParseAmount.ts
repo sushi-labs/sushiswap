@@ -1,4 +1,4 @@
-import { parseUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units/lib.esm/index.js'
 import { JSBI } from '@sushiswap/math'
 
 import { Amount } from './Amount'

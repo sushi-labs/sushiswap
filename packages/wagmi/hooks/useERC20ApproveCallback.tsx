@@ -1,4 +1,4 @@
-import { AddressZero, MaxUint256 } from '@ethersproject/constants'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants/lib.esm/index.js'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Currency } from '@sushiswap/currency'
 import { createToast, Dots } from '@sushiswap/ui'

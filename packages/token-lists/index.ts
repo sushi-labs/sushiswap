@@ -1,4 +1,4 @@
-import { getAddress, isAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address/lib.esm/index.js'
 import { Token, Type } from '@sushiswap/currency'
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 

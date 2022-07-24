@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { SearchIcon } from '@heroicons/react/outline'
 import { XCircleIcon } from '@heroicons/react/solid'
 import chain from '@sushiswap/chain'

@@ -1,4 +1,4 @@
-import { getAddress, isAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 import { Fraction } from '@sushiswap/math'
 import { parseUnits } from 'ethers/lib/utils'

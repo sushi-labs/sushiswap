@@ -1,6 +1,6 @@
-import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
-import { BaseContract } from '@ethersproject/contracts'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
+import { BaseContract } from '@ethersproject/contracts/lib.esm/index.js'
 import { Amount, Type } from '@sushiswap/currency'
 import { FuroStream, FuroVesting } from '@sushiswap/furo/typechain'
 

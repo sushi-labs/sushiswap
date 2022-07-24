@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import sushiXSwapArtifact from '@sushiswap/sushixswap/artifacts/contracts/SushiXSwap.sol/SushiXSwap.json'
 import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
 import { SushiXSwap } from '@sushiswap/sushixswap/typechain'

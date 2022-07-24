@@ -1,4 +1,4 @@
-import { getAddress } from '@ethersproject/address'
+import { getAddress } from '@ethersproject/address/lib.esm/index.js'
 import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'

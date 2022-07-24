@@ -1,5 +1,5 @@
-import { isAddress } from '@ethersproject/address'
-import { AddressZero } from '@ethersproject/constants'
+import { isAddress } from '@ethersproject/address/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'

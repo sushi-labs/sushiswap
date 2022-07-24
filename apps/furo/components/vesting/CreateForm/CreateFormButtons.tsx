@@ -1,4 +1,4 @@
-import { Signature } from '@ethersproject/bytes'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'

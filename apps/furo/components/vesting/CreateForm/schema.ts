@@ -1,4 +1,4 @@
-import { getAddress } from '@ethersproject/address'
+import { getAddress } from '@ethersproject/address/lib.esm/index.js'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import * as yup from 'yup'

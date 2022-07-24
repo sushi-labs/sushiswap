@@ -1,4 +1,4 @@
-import { ContractInterface } from '@ethersproject/contracts'
+import { ContractInterface } from '@ethersproject/contracts/lib.esm/index.js'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'

@@ -1,4 +1,4 @@
-import { BaseProvider } from '@ethersproject/providers'
+import { BaseProvider } from '@ethersproject/providers/lib.esm/index.js'
 import { useInterval, useIsWindowVisible } from '@sushiswap/hooks'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'

@@ -1,4 +1,4 @@
-import {BigNumber, BigNumberish} from '@ethersproject/bignumber';
+import {BigNumber, BigNumberish} from '@ethersproject/bignumber/lib.esm/index.js';
 import {getBigNumber, StableSwapRPool, closeValues} from '../src';
 
 const token0 = {

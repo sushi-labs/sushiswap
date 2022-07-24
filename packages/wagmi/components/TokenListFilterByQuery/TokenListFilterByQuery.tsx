@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import { isAddress } from '@ethersproject/address/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { filterTokens, FundSource, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'

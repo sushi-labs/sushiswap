@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { LogsContext } from './context'
 import { EventFilter, WithLogsState } from './types'
 import { keyToFilter } from './utils'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { JsonRpcProvider } from '@ethersproject/providers/lib.esm/index.js'
 
 export interface UpdaterProps {
   context: LogsContext

@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'

@@ -1,5 +1,5 @@
-import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { Transition } from '@headlessui/react'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Popover, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'

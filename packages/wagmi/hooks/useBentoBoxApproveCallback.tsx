@@ -1,5 +1,5 @@
-import { Signature, splitSignature } from '@ethersproject/bytes'
-import { AddressZero, HashZero } from '@ethersproject/constants'
+import { Signature, splitSignature } from '@ethersproject/bytes/lib.esm/index.js'
+import { AddressZero, HashZero } from '@ethersproject/constants/lib.esm/index.js'
 import { Chain } from '@sushiswap/chain'
 import { createToast, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'

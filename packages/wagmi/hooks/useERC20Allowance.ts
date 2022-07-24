@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { erc20ABI, useContractRead } from 'wagmi'

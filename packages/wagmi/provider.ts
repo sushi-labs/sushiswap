@@ -6,7 +6,7 @@ import {
   InfuraWebSocketProvider,
   JsonRpcProvider,
   WebSocketProvider,
-} from '@ethersproject/providers'
+} from '@ethersproject/providers/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 
 const providerCache: Partial<Record<ChainId, BaseProvider>> = {}

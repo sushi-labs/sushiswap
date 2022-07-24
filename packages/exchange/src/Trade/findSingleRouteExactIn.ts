@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js'
 import { Token } from '@sushiswap/currency'
 import { findSingleRouteExactIn as TinesFindSingleRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
 

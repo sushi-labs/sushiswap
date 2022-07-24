@@ -8,7 +8,7 @@ import {
   closeValues,
   MultiRoute,
 } from '../src';
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from '@ethersproject/bignumber/lib.esm/index.js';
 
 const gasPrice = 1 * 200 * 1e-9;
 

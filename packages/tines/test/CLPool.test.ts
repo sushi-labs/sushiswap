@@ -1,4 +1,4 @@
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from '@ethersproject/bignumber/lib.esm/index.js';
 import {default as seedrandom} from 'seedrandom';
 import {CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK} from '../src';
 

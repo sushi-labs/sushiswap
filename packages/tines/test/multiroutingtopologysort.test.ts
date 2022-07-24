@@ -1,5 +1,5 @@
 import {Edge, Graph, Vertice} from '../src';
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from '@ethersproject/bignumber/lib.esm/index.js';
 import seedrandom from 'seedrandom';
 import {ConstantProductRPool, RToken} from '../src/PrimaryPools';
 

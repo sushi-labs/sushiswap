@@ -1,4 +1,4 @@
-import { ContractInterface } from '@ethersproject/contracts'
+import { ContractInterface } from '@ethersproject/contracts/lib.esm/index.js'
 import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'

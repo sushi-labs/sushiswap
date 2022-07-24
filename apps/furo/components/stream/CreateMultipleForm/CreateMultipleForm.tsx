@@ -1,5 +1,5 @@
-import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'

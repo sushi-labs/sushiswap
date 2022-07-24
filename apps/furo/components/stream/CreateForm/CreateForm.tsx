@@ -1,5 +1,5 @@
-import { Signature } from '@ethersproject/bytes'
-import { parseUnits } from '@ethersproject/units'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
+import { parseUnits } from '@ethersproject/units/lib.esm/index.js'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'

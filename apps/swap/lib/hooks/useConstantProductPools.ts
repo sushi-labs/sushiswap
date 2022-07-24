@@ -1,4 +1,4 @@
-import { Interface } from '@ethersproject/abi'
+import { Interface } from '@ethersproject/abi/lib.esm/index.js'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { ConstantProductPool } from '@sushiswap/exchange'
 import CONSTANT_PRODUCT_POOL_ABI from 'abis/constant-product-pool.json'

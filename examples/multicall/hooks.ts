@@ -1,6 +1,6 @@
-import { Interface } from '@ethersproject/abi'
-import { Contract } from '@ethersproject/contracts'
-import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers'
+import { Interface } from '@ethersproject/abi/lib.esm/index.js'
+import { Contract } from '@ethersproject/contracts/lib.esm/index.js'
+import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers/lib.esm/index.js'
 import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { useEffect, useMemo, useState } from 'react'
 

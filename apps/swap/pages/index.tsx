@@ -1,5 +1,5 @@
-import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { Signature } from '@ethersproject/bytes/lib.esm/index.js'
+import { AddressZero } from '@ethersproject/constants/lib.esm/index.js'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'

@@ -1,5 +1,5 @@
-import { Interface } from '@ethersproject/abi'
-import { Contract } from '@ethersproject/contracts'
+import { Interface } from '@ethersproject/abi/lib.esm/index.js'
+import { Contract } from '@ethersproject/contracts/lib.esm/index.js'
 import { ChainId } from '@sushiswap/chain'
 import CONSTANT_PRODUCT_POOL_FACTORY_ABI from 'abis/constant-product-pool-factory.json'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'

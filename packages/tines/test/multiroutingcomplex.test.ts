@@ -16,7 +16,7 @@ import {
 } from '../src';
 import {getBigNumber} from '../src';
 import {ConstantProductRPool, HybridRPool, RPool} from '../src/PrimaryPools';
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from '@ethersproject/bignumber/lib.esm/index.js';
 import {checkRouteResult} from './snapshots/snapshot';
 
 const testSeed = '1'; // Change it to change random generator values

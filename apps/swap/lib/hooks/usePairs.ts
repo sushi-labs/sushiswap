@@ -1,4 +1,4 @@
-import { Interface } from '@ethersproject/abi'
+import { Interface } from '@ethersproject/abi/lib.esm/index.js'
 import { Amount, Type as Currency, Type } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
