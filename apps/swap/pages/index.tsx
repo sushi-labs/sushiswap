@@ -180,12 +180,23 @@ const Widget: FC<Swap> = ({
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+
   useEffect(() => {
     setSrcToken(initialState.srcToken)
   }, [initialState.srcToken])
   useEffect(() => {
     setDstToken(initialState.dstToken)
   }, [initialState.dstToken])
+
+  // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
+  // else take first stargate bridge token as srcBridgeToken
+  const srcBridgeToken =
+    srcToken.isToken && isStargateBridgeToken(srcToken) ? srcToken : STARGATE_BRIDGE_TOKENS[srcChainId][0]
+
+  // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
+  // else take first stargate bridge token as dstBridgeToken
+  const dstBridgeToken =
+    dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
 
   const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
@@ -201,6 +212,11 @@ const Widget: FC<Swap> = ({
   const dstTokens = useTokens(dstChainId)
 
   const srcTokenRebase = useBentoBoxTotal(srcChainId, srcToken)
+
+  const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
+  const srcOutputCurrencyRebase = useBentoBoxTotal(srcChainId, srcChainId !== dstChainId ? srcBridgeToken : dstToken)
+
+  // console.log('INDEX', srcTokenRebase?.base?.toString(), srcTokenRebase?.elastic?.toString())
 
   // This effect is responsible for encoding the swap state into the URL, to add statefullness
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
@@ -266,16 +282,6 @@ const Widget: FC<Swap> = ({
   // A transfer swap, no swap on the source, but a swap on the destination
   const transferSwap = crossChain && isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
 
-  // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
-  // else take first stargate bridge token as srcBridgeToken
-  const srcBridgeToken =
-    srcToken.isToken && isStargateBridgeToken(srcToken) ? srcToken : STARGATE_BRIDGE_TOKENS[srcChainId][0]
-
-  // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
-  // else take first stargate bridge token as dstBridgeToken
-  const dstBridgeToken =
-    dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
-
   // Parse the srcTypedAmount into a srcAmount
   const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
@@ -294,6 +300,8 @@ const Widget: FC<Swap> = ({
     sameChainSwap || crossChainSwap || swapTransfer ? srcToken : undefined,
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
+
+  const srcOutputAmount = srcTrade?.outputAmount
 
   const srcMinimumAmountOut = srcTrade?.minimumAmountOut(swapSlippage)
 
@@ -434,7 +442,8 @@ const Widget: FC<Swap> = ({
       !dstChainId,
       !dstMinimumAmountOut,
       !address,
-      !srcTokenRebase,
+      !srcInputCurrencyRebase,
+      !srcOutputCurrencyRebase,
       !contract,
     ])
     if (
@@ -444,15 +453,16 @@ const Widget: FC<Swap> = ({
       !dstChainId ||
       !dstMinimumAmountOut ||
       !address ||
-      !srcTokenRebase ||
+      !srcInputCurrencyRebase ||
+      !srcOutputCurrencyRebase ||
       !contract
     ) {
       return
     }
 
-    const srcShare = srcAmount.toShare(srcTokenRebase)
+    const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
-    const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+    const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcOutputCurrencyRebase)
 
     setIsWritePending(true)
 
@@ -483,6 +493,7 @@ const Widget: FC<Swap> = ({
         srcMinimumAmountOut,
         srcMinimumShareOut,
         dstMinimumAmountOut
+        // TODO: NEED THIS FOR TRIDENT...
         // dstMinimumShareOut
       )
     }
@@ -530,7 +541,8 @@ const Widget: FC<Swap> = ({
     srcChainId,
     srcMinimumAmountOut,
     srcToken,
-    srcTokenRebase,
+    srcInputCurrencyRebase,
+    srcOutputCurrencyRebase,
     srcTrade,
     srcUseBentoBox,
     transfer,
@@ -646,15 +658,16 @@ const Widget: FC<Swap> = ({
       !srcMinimumAmountOut ||
       !dstChainId ||
       !dstMinimumAmountOut ||
-      !srcTokenRebase ||
+      !srcInputCurrencyRebase ||
+      !srcOutputCurrencyRebase ||
       !contractWithProvider
     ) {
       return
     }
 
     const getFee = async () => {
-      const srcShare = srcAmount.toShare(srcTokenRebase)
-      const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcTokenRebase)
+      const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
+      const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcOutputCurrencyRebase)
 
       const sushiXSwap = new SushiXSwap({
         contract: contractWithProvider,
@@ -665,6 +678,7 @@ const Widget: FC<Swap> = ({
         srcUseBentoBox,
         dstUseBentoBox,
         user: AddressZero,
+        debug: false,
       })
 
       if (crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)) {
@@ -708,7 +722,8 @@ const Widget: FC<Swap> = ({
     srcChainId,
     srcMinimumAmountOut,
     srcToken,
-    srcTokenRebase,
+    srcInputCurrencyRebase,
+    srcOutputCurrencyRebase,
     srcTrade,
     srcUseBentoBox,
   ])
@@ -779,54 +794,57 @@ const Widget: FC<Swap> = ({
   const showWrap = false
 
   // DEBUG
+  // useEffect(() => {
+  //   if (
+  //     process.env.NODE_ENV === 'development' &&
+  //     srcTrade?.route?.amountOut &&
+  //     srcInputCurrencyRebase &&
+  //     srcOutputCurrencyRebase
+  //   ) {
+  //     const slippage = 1 - slippageTolerance / 100
+  //     console.log('slippage', slippage)
+  //     console.log('TRADE TOKENS', srcTrade.inputAmount.currency.symbol, srcTrade.outputAmount.currency.symbol)
+  //     console.log('TINES amountOut (share)', srcTrade.route.amountOut.toString())
+  //     console.log('TINES amountOutBN (share)', srcTrade.route.amountOutBN.toString())
+  //     console.log('TRADE outputAmount (amount)', srcTrade?.outputAmount?.quotient.toString())
+  //     console.log(
+  //       'TRADE outputAmount (share)',
+  //       srcTrade?.outputAmount?.toShare(srcOutputCurrencyRebase).quotient.toString()
+  //     )
+  //   }
+  // }, [slippageTolerance, srcInputCurrencyRebase, srcOutputCurrencyRebase, srcTrade])
+
+  // DEBUG
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.debug('SRC CHAIN', srcChainId)
-      console.debug('DST CHAIN', dstChainId)
-      console.debug('SRC TOKEN', srcToken)
-      console.debug('DST TOKEN', dstToken)
-      console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
-      console.debug('DST BRIDGE TOKEN', dstBridgeToken)
-      console.debug('SRC TRADE', srcTrade)
-      console.debug('DST TRADE', dstTrade)
-
-      console.debug('SRC AMOUNT', srcAmount?.toFixed())
-      console.debug('SRC AMOUNT MINUS SG FEE', srcAmountMinusStargateFee?.toFixed())
-      console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-      console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
-      console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
-
+    if (process.env.NODE_ENV === 'development' && srcTokenRebase) {
+      // console.debug('SRC CHAIN', srcChainId)
+      // console.debug('DST CHAIN', dstChainId)
+      // console.debug('SRC TOKEN', srcToken)
+      // console.debug('DST TOKEN', dstToken)
+      // console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
+      // console.debug('DST BRIDGE TOKEN', dstBridgeToken)
+      // console.debug('SRC TRADE', srcTrade)
+      // console.debug('DST TRADE', dstTrade)
+      // console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+      // console.debug('SRC OUTPUT AMOUNT', srcOutputAmount?.toFixed())
+      // console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+      // console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
+      // console.debug('SRC AMOUNT MINUS STARGATE FEE', srcAmountMinusStargateFee?.toFixed())
+      // console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
       // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-      console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
-      console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-
-      console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-      console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-      console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
-
-      console.debug('STARGATE FEE', stargateFee?.toFixed())
-
-      console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
+      // console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
+      // console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+      // console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+      // console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+      // console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
+      // console.debug('STARGATE FEE', stargateFee?.toFixed())
+      // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
     }
-  }, [
-    dstAmountOut,
-    dstBridgeToken,
-    dstChainId,
-    dstMinimumAmountOut,
-    dstToken,
-    dstTrade,
-    priceImpact,
-    srcAmount,
-    srcAmountMinusStargateFee,
-    srcAmountOut,
-    srcBridgeToken,
-    srcChainId,
-    srcMinimumAmountOut,
-    srcMinimumAmountOutMinusStargateFee,
-    srcToken,
-    srcTrade,
-    stargateFee,
-  ])
+  }, [srcAmount, srcMinimumAmountOut, srcOutputAmount, srcTokenRebase])
+
+  // if (srcAmount && srcTokenRebase) {
+  //   console.log('SRC AMOUNT -> SHARE', srcAmount.toShare(srcTokenRebase).toAmount(srcTokenRebase).toExact())
+  // }
 
   return (
     <>

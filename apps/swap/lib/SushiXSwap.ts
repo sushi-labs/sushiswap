@@ -848,11 +848,11 @@ export class SushiXSwap {
     }
 
     try {
-      console.log('Before fee')
+      // console.log('Before fee')
 
       const [fee] = await this.getFee(gasSpent)
 
-      console.log(`Successful Fee`, fee)
+      // console.log(`Successful Fee`, fee)
 
       return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
         value: this.srcCooker.values.reduce((a, b) => a.add(b), fee),
