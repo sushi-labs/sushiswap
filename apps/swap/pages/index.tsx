@@ -211,8 +211,6 @@ const Widget: FC<Swap> = ({
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
 
-  const srcTokenRebase = useBentoBoxTotal(srcChainId, srcToken)
-
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
   const srcOutputCurrencyRebase = useBentoBoxTotal(srcChainId, srcChainId !== dstChainId ? srcBridgeToken : dstToken)
 
@@ -435,21 +433,22 @@ const Widget: FC<Swap> = ({
   }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const execute = useCallback(() => {
-    console.log([
-      !srcChainId,
-      !srcAmount,
-      !srcMinimumAmountOut,
-      !dstChainId,
-      !dstMinimumAmountOut,
-      !address,
-      !srcInputCurrencyRebase,
-      !srcOutputCurrencyRebase,
-      !contract,
-    ])
+    console.log(
+      [
+        !srcChainId,
+        !srcAmount,
+        !dstChainId,
+        !dstMinimumAmountOut,
+        !address,
+        !srcInputCurrencyRebase,
+        !srcOutputCurrencyRebase,
+        !contract,
+      ],
+      srcMinimumAmountOut
+    )
     if (
       !srcChainId ||
       !srcAmount ||
-      !srcMinimumAmountOut ||
       !dstChainId ||
       !dstMinimumAmountOut ||
       !address ||
@@ -461,8 +460,6 @@ const Widget: FC<Swap> = ({
     }
 
     const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
-
-    const srcMinimumShareOut = srcMinimumAmountOut.toShare(srcOutputCurrencyRebase)
 
     setIsWritePending(true)
 
@@ -484,14 +481,18 @@ const Widget: FC<Swap> = ({
 
     if (transfer) {
       sushiXSwap.transfer(srcAmount, srcShare)
-    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length) {
-      sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumShareOut)
-    } else if (crossChain && ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))) {
+    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) {
+      sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumAmountOut.toShare(srcOutputCurrencyRebase))
+    } else if (
+      crossChain &&
+      ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length)) &&
+      srcMinimumAmountOut
+    ) {
       sushiXSwap.crossChainSwap(
         srcAmount,
         srcShare,
         srcMinimumAmountOut,
-        srcMinimumShareOut,
+        srcMinimumAmountOut.toShare(srcOutputCurrencyRebase),
         dstMinimumAmountOut
         // TODO: NEED THIS FOR TRIDENT...
         // dstMinimumShareOut
@@ -816,7 +817,7 @@ const Widget: FC<Swap> = ({
 
   // DEBUG
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && srcTokenRebase) {
+    if (process.env.NODE_ENV === 'development') {
       // console.debug('SRC CHAIN', srcChainId)
       // console.debug('DST CHAIN', dstChainId)
       // console.debug('SRC TOKEN', srcToken)
@@ -840,11 +841,7 @@ const Widget: FC<Swap> = ({
       // console.debug('STARGATE FEE', stargateFee?.toFixed())
       // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
     }
-  }, [srcAmount, srcMinimumAmountOut, srcOutputAmount, srcTokenRebase])
-
-  // if (srcAmount && srcTokenRebase) {
-  //   console.log('SRC AMOUNT -> SHARE', srcAmount.toShare(srcTokenRebase).toAmount(srcTokenRebase).toExact())
-  // }
+  }, [srcAmount, srcMinimumAmountOut, srcOutputAmount])
 
   return (
     <>
