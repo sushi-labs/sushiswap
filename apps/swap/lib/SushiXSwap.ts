@@ -2,7 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
-import { Amount, Currency, Share, Token } from '@sushiswap/currency'
+import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/exchange'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
@@ -764,8 +764,22 @@ export class SushiXSwap {
     srcBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.srcChainId][0],
     dstBridgeToken: Token = STARGATE_BRIDGE_TOKENS[this.dstChainId][0],
     gasSpent = 1000000,
-    id: string
+    id: string,
+    amountMin: Amount<Currency> = Amount.fromRawAmount(dstBridgeToken, 0),
+    dustAmount: Amount<Currency> = Amount.fromRawAmount(Native.onChain(this.dstChainId), 0)
   ): void {
+    // uint16 dstChainId; // stargate dst chain id
+    // address token; // token getting bridged
+    // uint256 srcPoolId; // stargate src pool id
+    // uint256 dstPoolId; // stargate dst pool id
+    // uint256 amount; // amount to bridge
+    // uint256 amountMin; // amount to bridge minimum
+    // uint256 dustAmount; // native token to be received on dst chain
+    // address receiver; // sushiXswap on dst chain
+    // address to; // receiver bridge token incase of transaction reverts on dst chain
+    // uint256 gas; // extra gas to be sent for dst chain operations
+    // bytes32 srcContext; // random bytes32 as source context
+
     const data = defaultAbiCoder.encode(
       [
         'uint16',
@@ -789,8 +803,8 @@ export class SushiXSwap {
         STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address],
         STARGATE_POOL_ID[this.dstCooker.chainId][dstBridgeToken.address],
         0,
-        0,
-        0,
+        amountMin.quotient.toString(),
+        dustAmount.quotient.toString(),
         this.dstCooker.masterContract,
         this.user,
         gasSpent,

@@ -6,15 +6,8 @@ import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { _9994, _10000, JSBI, Percent, ZERO } from '@sushiswap/math'
-import {
-  isStargateBridgeToken,
-  STARGATE_BRIDGE_TOKENS,
-  STARGATE_CHAIN_ID,
-  STARGATE_CONFIRMATION_SECONDS,
-  STARGATE_POOL_ADDRESS,
-  STARGATE_POOL_ID,
-} from '@sushiswap/stargate'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { Button, classNames, Dialog, Dots, Loader, NetworkIcon, Popover, SlideIn, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
@@ -28,8 +21,6 @@ import {
   useSushiXSwapContractWithProvider,
   Wallet,
 } from '@sushiswap/wagmi'
-import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
-import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import {
   Caption,
   ConfirmationComponentController,
@@ -44,6 +35,7 @@ import {
 } from 'components'
 import { defaultTheme } from 'config'
 import { useTrade } from 'lib/hooks'
+import { useBridgeFees } from 'lib/hooks/useBridgeFees'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { nanoid } from 'nanoid'
@@ -51,7 +43,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
-import { useAccount, useContractRead, useContractReads, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { useSettings } from '../lib/state/storage'
 
@@ -306,9 +298,25 @@ const Widget: FC<Swap> = ({
 
   const srcMinimumAmountOut = srcTrade?.minimumAmountOut(swapSlippage)
 
-  const srcAmountMinusStargateFee = srcAmount?.multiply(_9994)?.divide(_10000)
+  const [eqFee, eqReward, lpFee, protocolFee] = useBridgeFees({
+    srcChainId,
+    dstChainId,
+    srcBridgeToken,
+    dstBridgeToken,
+    amount: crossChainSwap || swapTransfer ? srcMinimumAmountOut : srcAmount,
+  })
 
-  const srcMinimumAmountOutMinusStargateFee = srcMinimumAmountOut?.multiply(_9994)?.divide(_10000)
+  const bridgeFee = useMemo(() => {
+    if (!eqFee || !eqReward || !lpFee || !protocolFee) {
+      return undefined
+    }
+    return eqFee.add(lpFee).add(protocolFee).subtract(eqReward)
+  }, [eqFee, eqReward, lpFee, protocolFee])
+
+  const srcAmountMinusStargateFee = (transfer || transferSwap) && bridgeFee ? srcAmount?.subtract(bridgeFee) : undefined
+
+  const srcMinimumAmountOutMinusStargateFee =
+    (crossChainSwap || swapTransfer) && bridgeFee ? srcMinimumAmountOut?.subtract(bridgeFee) : undefined
 
   const srcAmountOut = useMemo(() => {
     if (sameChainSwap) {
@@ -331,24 +339,6 @@ const Widget: FC<Swap> = ({
     srcMinimumAmountOut,
     srcAmountMinusStargateFee,
     srcMinimumAmountOutMinusStargateFee,
-  ])
-
-  const stargateFee = useMemo(() => {
-    if (!srcAmountMinusStargateFee || !srcMinimumAmountOutMinusStargateFee) return
-    if (transfer || transferSwap) {
-      return srcAmount?.subtract(srcAmountMinusStargateFee)
-    } else if (crossChainSwap || swapTransfer) {
-      return srcMinimumAmountOut?.subtract(srcMinimumAmountOutMinusStargateFee)
-    }
-  }, [
-    crossChainSwap,
-    srcAmount,
-    srcAmountMinusStargateFee,
-    srcMinimumAmountOut,
-    srcMinimumAmountOutMinusStargateFee,
-    swapTransfer,
-    transfer,
-    transferSwap,
   ])
 
   const dstAmountIn = useMemo(() => {
@@ -436,20 +426,17 @@ const Widget: FC<Swap> = ({
   }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const execute = useCallback(() => {
-    console.log(
-      [
-        !srcChainId,
-        !srcAmount,
-        !dstChainId,
-        !dstMinimumAmountOut,
-        !address,
-        !srcInputCurrencyRebase,
-        !srcOutputCurrencyRebase,
-        !dstOutputCurrencyRebase,
-        !contract,
-      ],
-      srcMinimumAmountOut
-    )
+    // console.log([
+    //   !srcChainId,
+    //   !srcAmount,
+    //   !dstChainId,
+    //   !dstMinimumAmountOut,
+    //   !address,
+    //   !srcInputCurrencyRebase,
+    //   !srcOutputCurrencyRebase,
+    //   !dstOutputCurrencyRebase,
+    //   !contract,
+    // ])
     if (
       !srcChainId ||
       !srcAmount ||
@@ -503,12 +490,16 @@ const Widget: FC<Swap> = ({
       })
     }
 
-    if (crossChain) {
+    if (crossChain && srcAmountOut && dstAmountIn) {
       sushiXSwap.teleport(
         srcBridgeToken,
         dstBridgeToken,
         dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
         nanoId
+        // Amount.fromRawAmount(dstAmountIn.currency, new Fraction(ONE)
+        // .add(new Percent(100, 10_000))
+        // .invert()
+        // .multiply(srcAmountOut).quotient)
       )
     }
 
@@ -532,6 +523,7 @@ const Widget: FC<Swap> = ({
     address,
     contract,
     crossChain,
+    dstAmountIn,
     dstBridgeToken,
     dstChainId,
     dstMinimumAmountOut,
@@ -543,6 +535,7 @@ const Widget: FC<Swap> = ({
     sameChainSwap,
     signature,
     srcAmount,
+    srcAmountOut,
     srcBridgeToken,
     srcChainId,
     srcInputCurrencyRebase,
@@ -554,47 +547,25 @@ const Widget: FC<Swap> = ({
     transfer,
   ])
 
-  const { data: stargatePoolResults } = useContractReads({
-    contracts: [
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-        functionName: 'getChainPath',
-        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
-        functionName: 'feeLibrary',
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-    ],
-    enabled: crossChain,
-  })
+  // uint256 _srcPoolId,
+  // uint256 _dstPoolId,
+  // uint16 _dstChainId,
+  // address _from,
+  // uint256 _amountSD
 
-  const { data: equilibriumFee } = useContractRead({
-    addressOrName: String(stargatePoolResults?.[1]),
-    functionName: 'getEquilibriumFee',
-    args: [
-      stargatePoolResults?.[0]?.idealBalance?.toString(),
-      stargatePoolResults?.[0]?.balance?.toString(),
-      srcMinimumAmountOut?.quotient?.toString(),
-    ],
-    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
-    chainId: srcChainId,
-    enabled: Boolean(crossChain && stargatePoolResults && srcMinimumAmountOut),
-  })
+  // const bridgeImpact = useMemo(() => {
+  //   if (!stargateFee || !eqFee || !srcMinimumAmountOut) {
+  //     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  //   }
+  //   return new Percent(JSBI.add(stargateFee.quotient, eqFee.quotient), srcMinimumAmountOut.quotient)
+  // }, [eqFee, srcMinimumAmountOut, stargateFee])
 
   const bridgeImpact = useMemo(() => {
-    if (!stargateFee || !equilibriumFee || !srcMinimumAmountOut) {
+    if (!bridgeFee || !srcAmount || !srcMinimumAmountOut) {
       return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
     }
-    return new Percent(
-      JSBI.add(stargateFee.quotient, JSBI.BigInt(equilibriumFee[0].toString())),
-      srcMinimumAmountOut.quotient
-    )
-  }, [equilibriumFee, srcMinimumAmountOut, stargateFee])
+    return new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : srcAmount.quotient)
+  }, [bridgeFee, srcMinimumAmountOut, srcAmount])
 
   const priceImpact = useMemo(() => {
     if (transfer) {
@@ -658,6 +629,17 @@ const Widget: FC<Swap> = ({
   }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
+    console.log('getFee escape hatch', [
+      !srcChainId,
+      !srcAmount,
+      !dstChainId,
+      !dstMinimumAmountOut,
+      !address,
+      !srcInputCurrencyRebase,
+      !srcOutputCurrencyRebase,
+      !dstOutputCurrencyRebase,
+      !contractWithProvider,
+    ])
     if (
       !srcChainId ||
       !srcAmount ||
@@ -706,12 +688,16 @@ const Widget: FC<Swap> = ({
         })
       }
 
-      if (crossChain) {
+      if (crossChain && srcAmountOut && dstAmountIn) {
         sushiXSwap.teleport(
           srcBridgeToken,
           dstBridgeToken,
           dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined,
           nanoId
+          // Amount.fromRawAmount(dstAmountIn.currency, new Fraction(ONE)
+          // .add(new Percent(100, 10_000))
+          // .invert()
+          // .multiply(srcAmountOut).quotient)
         )
       }
 
@@ -728,6 +714,7 @@ const Widget: FC<Swap> = ({
     address,
     contractWithProvider,
     crossChain,
+    dstAmountIn,
     dstBridgeToken,
     dstChainId,
     dstMinimumAmountOut,
@@ -737,7 +724,9 @@ const Widget: FC<Swap> = ({
     dstUseBentoBox,
     nanoId,
     sameChainSwap,
+    slippageTolerance,
     srcAmount,
+    srcAmountOut,
     srcBridgeToken,
     srcChainId,
     srcInputCurrencyRebase,
@@ -746,6 +735,7 @@ const Widget: FC<Swap> = ({
     srcToken,
     srcTrade,
     srcUseBentoBox,
+    swapSlippage,
     transfer,
   ])
 
@@ -782,12 +772,25 @@ const Widget: FC<Swap> = ({
         {crossChain && (
           <>
             <Typography variant="sm" className="text-slate-400">
-              Transaction Fee
+              Bridge Fee
+            </Typography>
+            {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
+              <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
+                ~$
+                {bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)}
+              </Typography>
+            ) : (
+              <div className="flex items-center justify-end">
+                <Loader size={14} />
+              </div>
+            )}
+            <Typography variant="sm" className="text-slate-400">
+              Gas Cost
             </Typography>
             {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
               <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
-                ~$
-                {feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)}
+                {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
+                {/* ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)} */}
               </Typography>
             ) : (
               <div className="flex items-center justify-end">
@@ -798,7 +801,16 @@ const Widget: FC<Swap> = ({
         )}
       </>
     )
-  }, [crossChain, dstMinimumAmountOut, priceImpact, priceImpactSeverity, srcChainId, srcPrices])
+  }, [
+    priceImpactSeverity,
+    priceImpact,
+    srcChainId,
+    dstMinimumAmountOut,
+    crossChain,
+    srcPrices,
+    srcBridgeToken.wrapped.address,
+    bridgeFee,
+  ])
 
   const onSrcNetworkSelect = useCallback((chainId: number) => {
     setSrcChainId(chainId)
@@ -836,32 +848,56 @@ const Widget: FC<Swap> = ({
   // }, [slippageTolerance, srcInputCurrencyRebase, srcOutputCurrencyRebase, srcTrade])
 
   // DEBUG
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      // console.debug('SRC CHAIN', srcChainId)
-      // console.debug('DST CHAIN', dstChainId)
-      // console.debug('SRC TOKEN', srcToken)
-      // console.debug('DST TOKEN', dstToken)
-      // console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
-      // console.debug('DST BRIDGE TOKEN', dstBridgeToken)
-      // console.debug('SRC TRADE', srcTrade)
-      // console.debug('DST TRADE', dstTrade)
-      // console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
-      // console.debug('SRC OUTPUT AMOUNT', srcOutputAmount?.toFixed())
-      // console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
-      // console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
-      // console.debug('SRC AMOUNT MINUS STARGATE FEE', srcAmountMinusStargateFee?.toFixed())
-      // console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
-      // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
-      // console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
-      // console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
-      // console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
-      // console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
-      // console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
-      // console.debug('STARGATE FEE', stargateFee?.toFixed())
-      // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
-    }
-  }, [srcAmount, srcMinimumAmountOut, srcOutputAmount])
+  //   useEffect(() => {
+  //     if (process.env.NODE_ENV === 'development') {
+  //       // console.debug('SRC CHAIN', srcChainId)
+  //       // console.debug('DST CHAIN', dstChainId)
+  //       // console.debug('SRC TOKEN', srcToken)
+  //       // console.debug('DST TOKEN', dstToken)
+  //       // console.debug('SRC BRIDGE TOKEN', srcBridgeToken)
+  //       // console.debug('DST BRIDGE TOKEN', dstBridgeToken)
+  //       console.debug('SRC TRADE', srcTrade)
+  //       console.debug('DST TRADE', dstTrade)
+  //       // console.debug('SRC AMOUNT IN', srcAmount?.toFixed())
+  //       // console.debug('SRC OUTPUT AMOUNT', srcOutputAmount?.toFixed())
+  //       // console.debug('SRC MINIMUM AMOUNT OUT', srcMinimumAmountOut?.toFixed())
+  //       console.debug('SRC AMOUNT OUT', srcAmountOut?.toFixed())
+  //       console.debug('SRC AMOUNT MINUS STARGATE FEE', srcAmountMinusStargateFee?.toFixed())
+
+  //       console.debug('SRC MINIMUM AMOUNT OUT MINUS STARGATE FEE', srcMinimumAmountOutMinusStargateFee?.toFixed())
+  //       // console.debug('DST AMOUNT IN', dstAmountIn?.toFixed())
+  //       // console.debug('DST AMOUNT OUT', dstAmountOut?.toFixed())
+  //       // console.debug('DST MINIMUM AMOUNT OUT', dstMinimumAmountOut?.toFixed())
+  //       // console.debug('SRC TRADE PRICE IMPACT', srcTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //       // console.debug('DST TRADE PRICE IMPACT', dstTrade?.priceImpact?.multiply(-1).toFixed(2))
+  //       // console.debug('PRICE IMPACT COMBINED', priceImpact?.multiply(-1).toFixed(2))
+  //       // console.debug('STARGATE FEE', stargateFee?.toFixed())
+
+  //       console.debug(`
+  // /// STARGATE FEES ///
+  // EQ FEE: ${eqFee?.toFixed()} ${eqFee?.currency?.symbol}
+  // EQ REWARD: ${eqReward?.toFixed()} ${eqReward?.currency?.symbol}
+  // LP FEE: ${lpFee?.toFixed()} ${lpFee?.currency?.symbol}
+  // PROTOCOL FEE: ${protocolFee?.toFixed()} ${protocolFee?.currency?.symbol}
+  // BRIDGE FEE: ${bridgeFee?.toFixed()} ${protocolFee?.currency?.symbol}
+  // BRIDGE IMPACT: ${bridgeImpact?.toFixed()}%
+  // `)
+
+  //       // console.debug('DST TRADE GAS USED', dstTrade?.route?.gasSpent)
+  //     }
+  //   }, [
+  //     bridgeFee,
+  //     bridgeImpact,
+  //     dstTrade,
+  //     eqFee,
+  //     eqReward,
+  //     lpFee,
+  //     protocolFee,
+  //     srcAmountMinusStargateFee,
+  //     srcAmountOut,
+  //     srcMinimumAmountOutMinusStargateFee,
+  //     srcTrade,
+  //   ])
 
   return (
     <>
