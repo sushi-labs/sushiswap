@@ -411,8 +411,7 @@ export const CreateMultipleForm = () => {
                   render={({ approved }) => {
                     return (
                       <Button
-                        type="button"
-                        onClick={() => setReview(true)}
+                        type="submit"
                         color="gradient"
                         disabled={
                           formData?.vestings?.length === 0 || isWritePending || !approved || !isValid || isValidating

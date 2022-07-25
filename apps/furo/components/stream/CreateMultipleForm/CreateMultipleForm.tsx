@@ -353,8 +353,7 @@ export const CreateMultipleForm: FC = () => {
                   render={({ approved }) => {
                     return (
                       <Button
-                        type="button"
-                        onClick={() => setReview(true)}
+                        type="submit"
                         color="gradient"
                         disabled={
                           validatedData?.streams?.length === 0 ||
