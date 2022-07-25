@@ -241,12 +241,10 @@ export const CreateMultipleForm = () => {
                 ))}
                 {formStateErrors.vestings?.map((errors, idx) =>
                   Object.entries(errors).map(([k, v]) => (
-                    <>
-                      <Typography variant="sm" className="text-red flex gap-2 items-center" key={idx}>
-                        <ExclamationCircleIcon width={20} height={20} />
-                        Vesting {idx + 1}: {(v as any).message}
-                      </Typography>
-                    </>
+                    <Typography variant="sm" className="text-red flex gap-2 items-center" key={`${idx}-${k}`}>
+                      <ExclamationCircleIcon width={20} height={20} />
+                      Vesting {idx + 1}: {(v as any).message}
+                    </Typography>
                   ))
                 )}
               </div>
