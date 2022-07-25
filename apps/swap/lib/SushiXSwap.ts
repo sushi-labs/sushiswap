@@ -594,13 +594,21 @@ export class SushiXSwap {
   // X2: Wallet - Swap - Stargate - Swap - Wallet
   // X3: Wallet - Swap - Stargate - Swap - BentoBox
   // X4: BentoBox - Swap - Stargate - Swap - Wallet
-  crossChainSwap(
-    srcAmount: Amount<Currency>,
-    srcShare: Share<Currency>,
-    srcMinimumAmountOut: Amount<Currency>,
-    srcMinimumShareOut: Share<Currency>,
+  crossChainSwap({
+    srcAmount,
+    srcShare,
+    srcMinimumAmountOut,
+    srcMinimumShareOut,
+    dstMinimumAmountOut,
+    dstMinimumShareOut,
+  }: {
+    srcAmount: Amount<Currency>
+    srcShare: Share<Currency>
+    srcMinimumAmountOut?: Amount<Currency>
+    srcMinimumShareOut?: Share<Currency>
     dstMinimumAmountOut: Amount<Currency>
-  ) {
+    dstMinimumShareOut: Share<Currency>
+  }) {
     // X1-X4
     // Src operations...
     if (isStargateBridgeToken(this.srcToken)) {
@@ -616,7 +624,7 @@ export class SushiXSwap {
         srcShare.quotient.toString(),
         true
       )
-    } else if (this.srcTrade && this.srcTrade.isV1() && this.srcTrade.route.legs.length) {
+    } else if (this.srcTrade && this.srcTrade.isV1() && this.srcTrade.route.legs.length && srcMinimumAmountOut) {
       if (!this.srcUseBentoBox) {
         this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, srcAmount.quotient.toString(), 0)
       }
@@ -633,7 +641,13 @@ export class SushiXSwap {
         srcMinimumAmountOut.quotient.toString(),
         this.srcCooker.masterContract
       )
-    } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.route.legs.length) {
+    } else if (
+      this.srcTrade &&
+      this.srcTrade.isV2() &&
+      this.srcTrade.route.legs.length &&
+      srcMinimumAmountOut &&
+      srcMinimumShareOut
+    ) {
       if (this.srcTrade.isSingle()) {
         console.debug('cook trident exact input')
         if (!this.srcUseBentoBox) {
@@ -714,7 +728,7 @@ export class SushiXSwap {
           this.dstTrade,
           this.dstToken.isNative && !this.dstUseBentoBox ? this.dstCooker.masterContract : this.user,
           0,
-          dstMinimumAmountOut.quotient.toString(),
+          dstMinimumShareOut.quotient.toString(),
           this.dstToken.isNative && !this.dstUseBentoBox
         )
         if (this.dstToken.isNative && !this.dstUseBentoBox) {
@@ -726,7 +740,7 @@ export class SushiXSwap {
         this.dstCooker.tridentComplex(
           this.dstTrade,
           this.dstToken.isNative && !this.dstUseBentoBox ? this.dstCooker.masterContract : this.user,
-          dstMinimumAmountOut.quotient.toString(),
+          dstMinimumShareOut.quotient.toString(),
           this.dstToken.isNative && !this.dstUseBentoBox
         )
 
