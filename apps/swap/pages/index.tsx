@@ -310,7 +310,7 @@ const Widget: FC<Swap> = ({
     if (!eqFee || !eqReward || !lpFee || !protocolFee) {
       return undefined
     }
-    return eqFee.add(lpFee).add(protocolFee).subtract(eqReward)
+    return eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
   }, [eqFee, eqReward, lpFee, protocolFee])
 
   const srcAmountMinusStargateFee = (transfer || transferSwap) && bridgeFee ? srcAmount?.subtract(bridgeFee) : undefined
@@ -777,7 +777,9 @@ const Widget: FC<Swap> = ({
             {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
               <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
                 ~$
-                {bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)}
+                {bridgeFee?.greaterThan(0)
+                  ? bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)
+                  : 0}
               </Typography>
             ) : (
               <div className="flex items-center justify-end">
