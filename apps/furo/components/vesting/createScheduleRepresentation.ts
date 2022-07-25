@@ -13,7 +13,7 @@ export type Period = {
 type CreateScheduleRepresentation = (x: {
   currency: Currency
   cliffAmount: Amount<Currency> | undefined
-  stepAmount: Amount<Currency>
+  stepAmount: Amount<Currency> | undefined
   startDate: Date
   cliffEndDate: Date | undefined
   stepPayouts: number
@@ -52,27 +52,29 @@ export const createScheduleRepresentation: CreateScheduleRepresentation = ({
   }
 
   let time = (cliffEndDate ? cliffEndDate : startDate).getTime()
-  for (let i = 0; i < stepPayouts - 1; i++) {
+  if (stepAmount) {
+    for (let i = 0; i < stepPayouts - 1; i++) {
+      time += stepDuration
+      total = total.add(stepAmount)
+      periods.push({
+        id: `step:${i}`,
+        type: PeriodType.STEP,
+        date: new Date(time),
+        amount: stepAmount,
+        total,
+      })
+    }
+
     time += stepDuration
     total = total.add(stepAmount)
     periods.push({
-      id: `step:${i}`,
-      type: PeriodType.STEP,
+      id: 'end',
+      type: PeriodType.END,
       date: new Date(time),
       amount: stepAmount,
       total,
     })
   }
-
-  time += stepDuration
-  total = total.add(stepAmount)
-  periods.push({
-    id: 'end',
-    type: PeriodType.END,
-    date: new Date(time),
-    amount: stepAmount,
-    total,
-  })
 
   return periods
 }
