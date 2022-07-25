@@ -725,6 +725,7 @@ const Widget: FC<Swap> = ({
 
     void getFee()
   }, [
+    address,
     contractWithProvider,
     crossChain,
     dstBridgeToken,
