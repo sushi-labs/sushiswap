@@ -757,7 +757,15 @@ export class Graph {
     return p
   }
 
-  findBestRouteExactIn(from: RToken, to: RToken, amountIn: number, mode: number | number[]): MultiRoute {
+  findBestRouteExactIn(from: RToken, to: RToken, amountIn: BigNumber | number, mode: number | number[]): MultiRoute {
+    let amountInBN: BigNumber
+    if (amountIn instanceof BigNumber) {
+      amountInBN = amountIn
+      amountIn = parseInt(amountIn.toString())
+    } else {
+      amountInBN = getBigNumber(amountIn)
+    }
+
     let routeValues = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
@@ -838,7 +846,7 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: amountIn * totalrouted,
-      amountInBN: getBigNumber(amountIn * totalrouted),
+      amountInBN: status == RouteStatus.Success ? amountInBN : getBigNumber(amountIn * totalrouted),
       amountOut: output,
       amountOutBN: getBigNumber(output),
       legs,
