@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 
-import { ArticleEntity } from '../.graphclient'
+import { ArticleEntity } from '../.mesh'
 import { CardSkeleton } from './Card'
 
 interface ArticleList {

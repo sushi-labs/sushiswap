@@ -87,7 +87,7 @@ export default function Index() {
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
         <div className="flex flex-col justify-center h-[420px] gap-8">
           <div className="flex flex-col gap-3">
-            <div className="text-center font-bold sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
+            <div className="text-center font-medium sm:text-left text-4xl sm:text-5xl text-slate-100 font-stretch leading-[1.125] tracking-[-0.06rem]">
               Welcome to <br />
               <span className="text-blue">Furo</span> Streaming
             </div>
@@ -99,6 +99,7 @@ export default function Index() {
             {!isMounted || !activeChain || !address ? (
               <>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="blue"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
@@ -106,6 +107,7 @@ export default function Index() {
                   Pay Someone
                 </Wallet.Button>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="gray"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}
@@ -146,7 +148,7 @@ export default function Index() {
                           target="_blank"
                           href={Chain.from(activeChain.id)?.getAccountUrl(address ?? '')}
                           variant="sm"
-                          weight={700}
+                          weight={500}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
                           {data ? data : address ? shortenAddress(address) : ''}

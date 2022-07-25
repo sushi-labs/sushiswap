@@ -18,27 +18,33 @@ export class Amount<T extends Type> extends Fraction {
     return new Amount(currency, rawAmount)
   }
 
-  public static fromShare<T extends Token>(
+  public static fromShare<T extends Type>(
     currency: T,
     shares: BigintIsh,
-    rebase: { base: JSBI; elastic: JSBI }
+    rebase: { base: JSBI; elastic: JSBI },
+    roundUp = false
   ): Amount<T> {
-    return new Amount(
-      currency,
-      JSBI.GT(rebase.base, 0) ? JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base) : ZERO
-    )
+    if (JSBI.EQ(rebase.base, ZERO)) return new Amount(currency, shares)
+
+    const elastic = JSBI.divide(JSBI.multiply(JSBI.BigInt(shares), rebase.elastic), rebase.base)
+
+    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic), JSBI.BigInt(shares))) {
+      return new Amount(currency, JSBI.add(elastic, JSBI.BigInt(1)))
+    }
+
+    return new Amount(currency, elastic)
   }
 
   public toShare(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
-    return Share.fromRawShare(
-      this.currency,
-      JSBI.GT(rebase.elastic, 0)
-        ? JSBI[roundUp ? 'add' : 'subtract'](
-            JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic),
-            JSBI.BigInt(1)
-          )
-        : ZERO
-    )
+    if (JSBI.EQ(rebase.elastic, ZERO)) return Share.fromRawShare(this.currency, this.quotient)
+
+    const base = JSBI.divide(JSBI.multiply(this.quotient, rebase.base), rebase.elastic)
+
+    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(base, rebase.elastic), rebase.base), this.quotient)) {
+      return Share.fromRawShare(this.currency, JSBI.add(base, JSBI.BigInt(1)))
+    }
+
+    return Share.fromRawShare(this.currency, base)
   }
 
   /**

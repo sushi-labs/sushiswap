@@ -138,7 +138,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="Inter"
+            fontFamily="InterVariable"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -151,8 +151,8 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontWeight={700}
-            fontFamily="Inter"
+            fontWeight={500}
+            fontFamily="InterVariable"
             fontSize={40}
             x={width / 2}
             y={width / 2}
@@ -163,7 +163,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             <tspan
               textAnchor="middle"
               fill="currentColor"
-              fontWeight={700}
+              fontWeight={500}
               fontSize={24}
               dx={2}
               className="text-slate-300"
@@ -179,7 +179,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             x={width / 2}
             y={width / 2}
             className="text-slate-500"
-            fontWeight={700}
+            fontWeight={500}
           >
             / {stream?.withdrawnAmount ? stream.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
@@ -190,7 +190,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontFamily="Inter"
+            fontFamily="InterVariable"
             fontSize={12}
             x={width / 2}
             y={width / 2}
@@ -203,8 +203,8 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
           <text
             textAnchor="middle"
             fill="currentColor"
-            fontWeight={700}
-            fontFamily="Inter"
+            fontWeight={500}
+            fontFamily="InterVariable"
             fontSize={40}
             x={width / 2}
             y={width / 2}
@@ -215,7 +215,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             <tspan
               textAnchor="middle"
               fill="currentColor"
-              fontWeight={700}
+              fontWeight={500}
               fontSize={24}
               dx={2}
               className="text-slate-300"
@@ -231,7 +231,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             x={width / 2}
             y={width / 2}
             className="text-slate-500"
-            fontWeight={700}
+            fontWeight={500}
           >
             / {stream?.balance ? stream?.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>

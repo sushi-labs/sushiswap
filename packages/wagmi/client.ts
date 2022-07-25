@@ -1,3 +1,4 @@
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
@@ -5,7 +6,6 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
-
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
@@ -176,8 +176,8 @@ const otherChains = [
 const { chains, provider, webSocketProvider } = configureChains(
   [...allChains, ...otherChains],
   [
-    publicProvider(),
     alchemyProvider({ alchemyId }),
+    publicProvider(),
     // infuraProvider({ infuraId }),
   ]
 )
@@ -185,11 +185,14 @@ const { chains, provider, webSocketProvider } = configureChains(
 const config: CreateClientConfig = {
   provider,
   webSocketProvider,
-  autoConnect: true,
+  autoConnect: false,
   connectors() {
     return [
       new InjectedConnector({
         chains,
+        options: {
+          shimDisconnect: true,
+        },
       }),
       new WalletConnectConnector({
         chains,
@@ -206,6 +209,7 @@ const config: CreateClientConfig = {
           appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
         },
       }),
+      new SafeConnector({ chains }),
     ]
   },
 }

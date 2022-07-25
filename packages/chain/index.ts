@@ -98,6 +98,7 @@ export enum ChainId {
   OPTIMISM = 10,
   OPTIMISM_KOVAN_TESTNET = 69,
   KAVA = 2222,
+  METIS = 1088,
 }
 
 export enum ChainKey {
@@ -132,6 +133,8 @@ export enum ChainKey {
   TELOS = 'telos',
   GNOSIS = 'gnosis',
   OPTIMISM = 'optimism',
+  KAVA = 'kava',
+  METIS = 'metis',
 }
 
 export class Chain implements Chain {

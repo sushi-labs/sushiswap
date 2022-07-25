@@ -46,6 +46,39 @@ body {
   display: none;
 }
 
+div.scroll {
+  overflow-y: overlay;
+}
+
+div.scroll::-webkit-scrollbar {
+  width: 14px;
+  height: 18px;
+}
+
+div.scroll::-webkit-scrollbar-thumb {
+  height: 6px;
+  border: 4px solid rgba(255, 255, 255, 0);
+  background-clip: padding-box;
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-border-radius: 7px;
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
+  inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+}
+
+div.scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+div.scroll::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 @layer utilities {
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {

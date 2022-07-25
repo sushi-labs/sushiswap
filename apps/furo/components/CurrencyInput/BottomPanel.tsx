@@ -16,7 +16,7 @@ export const BottomPanel: FC<BottomPanel> = ({ loading, amount, label, onChange 
         {label}
       </Typography>
       {loading ? (
-        <Loader size="12px" />
+        <Loader size={12} />
       ) : (
         <Typography
           variant="xs"

@@ -70,7 +70,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
                 'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -91,8 +91,8 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
                 'ring-1 bg-slate-800 rounded-2xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
             >
-              <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-200">
-                Bentobox
+              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+                BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
                 Receive funds in your BentoBox
@@ -106,12 +106,12 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
           </div>
           <Typography variant="xs" weight={400} className="italic text-center text-slate-400">
             This will send the remaining amount of <br />{' '}
-            <span className="font-bold text-slate-200">
+            <span className="font-medium text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
             </span>{' '}
             to your{' '}
-            <span className="font-bold text-slate-200">
-              {fundSource === FundSource.BENTOBOX ? 'Bentobox' : 'Wallet'}
+            <span className="font-medium text-slate-200">
+              {fundSource === FundSource.BENTOBOX ? 'BentoBox' : 'Wallet'}
             </span>
           </Typography>
           <Dialog.Actions>

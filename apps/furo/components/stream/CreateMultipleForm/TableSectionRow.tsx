@@ -52,7 +52,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   )}
                   onClick={() => setDialogOpen(true)}
                 >
-                  <span className="text-sm font-bold truncate">{data?.currency?.symbol || 'Select'}</span>
+                  <span className="text-sm font-medium truncate">{data?.currency?.symbol || 'Select'}</span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                 </button>
                 <TokenSelector
@@ -64,7 +64,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   onSelect={(currency) => {
                     if (currency.isNative) {
                       // @ts-ignore
-                      setValue(`vesting.${index}.fundSource`, FundSource.WALLET)
+                      setValue(`streams.${index}.fundSource`, FundSource.WALLET)
                     }
 
                     onChange(currency)
@@ -86,9 +86,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
         <Controller
           control={control as never}
           name={`streams.${index}.fundSource`}
-          render={({ field: { onChange }, fieldState: { error } }) => (
+          render={({ field: { onChange } }) => (
             <Select
-              error={!!error?.message}
               button={
                 <Listbox.Button
                   type="button"
@@ -101,7 +100,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   }
                   value={data?.fundSource}
                 >
-                  <span className="text-sm capitalize font-bold truncate">
+                  <span className="text-sm capitalize font-medium truncate">
                     {data?.fundSource?.toLowerCase() || 'Select'}
                   </span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
@@ -134,7 +133,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 currency={data?.currency as Type | undefined}
                 error={!!error?.message}
                 hideSymbol={true}
-                className="ring-offset-slate-900 bg-transparent shadow-none h-full"
+                className="ring-offset-slate-700 bg-transparent shadow-none h-full !rounded-md"
               />
             )
           }}
@@ -154,7 +153,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 error={!!error?.message}
                 placeholder="0x..."
                 className="shadow-none rounded-md !ring-offset-0 h-[54px] ring-offset-slate-700 flex justify-center !bg-slate-700"
-                inputClassName="placeholder:font-bold placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
+                inputClassName="placeholder:font-medium placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
               />
             )
           }}

@@ -6,7 +6,7 @@ import { DatetimeLocal } from './DatetimeLocal'
 import { Input as Numeric } from './Numeric'
 
 // Base classes
-export const DEFAULT_INPUT_FONT = 'font-bold text-left text-sm'
+export const DEFAULT_INPUT_FONT = 'text-left text-base md:text-sm placeholder:font-normal font-medium'
 export const DEFAULT_INPUT_BG = 'bg-white bg-opacity-[0.12]'
 export const DEFAULT_INPUT_HOVER_BG = 'hover:bg-white hover:bg-opacity-[0.12]'
 export const DEFAULT_INPUT_RING =
@@ -18,7 +18,7 @@ export const DEFAULT_INPUT_APPEARANCE = 'rounded-xl shadow-md min-h-[44px] w-ful
 // Unstyled input
 export const DEFAULT_INPUT_UNSTYLED = classNames(
   DEFAULT_INPUT_FONT,
-  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate'
+  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium'
 )
 
 // Default class without padding

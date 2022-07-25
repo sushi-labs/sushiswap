@@ -1,5 +1,5 @@
 import { classNames, Dialog, Overlay, SlideIn } from '@sushiswap/ui'
-import { FC, ReactElement, useState } from 'react'
+import { FC, ReactElement, useCallback, useState } from 'react'
 
 interface RenderProps {
   open: boolean
@@ -11,6 +11,7 @@ interface ConfirmationComponentController {
   trigger(payload: RenderProps): ReactElement
   children: ReactElement | ReactElement[] | ((payload: RenderProps) => ReactElement)
   className?: string
+  onClose?(): void
 }
 
 export const ConfirmationComponentController: FC<ConfirmationComponentController> = ({
@@ -18,27 +19,30 @@ export const ConfirmationComponentController: FC<ConfirmationComponentController
   trigger,
   children,
   className,
+  onClose,
 }) => {
   const [open, setOpen] = useState(false)
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    onClose && onClose()
+  }, [onClose])
 
   return (
     <>
       {trigger({ setOpen, open })}
       {variant === 'overlay' ? (
         <SlideIn>
-          <SlideIn.FromBottom show={open} onClose={() => setOpen(false)}>
-            <Overlay.Content className={classNames(className, 'flex flex-col flex-grow !bg-slate-800')}>
-              <Overlay.Header arrowDirection="bottom" onClose={() => setOpen(false)} title="Confirm Swap" />
+          <SlideIn.FromBottom show={open} onClose={handleClose}>
+            <Overlay.Content className={classNames(className, 'flex flex-col flex-grow !bg-slate-800 !pb-0 px-4')}>
+              <Overlay.Header arrowDirection="bottom" onClose={handleClose} title="Confirm Swap" />
               {typeof children === 'function' ? children({ setOpen, open }) : children}
             </Overlay.Content>
           </SlideIn.FromBottom>
         </SlideIn>
       ) : (
-        <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
-          <Dialog.Content className={className}>
-            <Dialog.Header title="Confirm Swap" onClose={() => setOpen(false)} />
-            {typeof children === 'function' ? children({ setOpen, open }) : children}
-          </Dialog.Content>
+        <Dialog open={open} unmount={false} onClose={() => setOpen(false)} afterLeave={() => onClose && onClose()}>
+          {typeof children === 'function' ? children({ setOpen, open }) : children}
         </Dialog>
       )}
     </>

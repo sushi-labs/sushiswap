@@ -1,7 +1,7 @@
 import { Button, Container } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../.graphclient'
+import { ArticleEntity } from '../.mesh'
 import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {
@@ -11,7 +11,7 @@ interface Hero {
 export const Hero: FC<Hero> = ({ article }) => {
   return (
     <section className="bg-gradient-to-b from-slate-900 via-slate-800/15 to-blue/5">
-      <Container maxWidth="5xl" className="py-20 mx-auto px-4 z-10">
+      <Container maxWidth="5xl" className="z-10 px-4 py-20 mx-auto">
         <div className="relative pt-10">
           <ArticleHeader article={article} />
           <ArticleAuthors article={article} />

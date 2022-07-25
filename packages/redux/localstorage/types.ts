@@ -14,7 +14,9 @@ export enum GasPrice {
 export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string; name?: string; decimals: number }
 
 export type StorageState = {
+  expertMode: boolean
   slippageTolerance: number
+  slippageToleranceType: 'auto' | 'custom'
   gasPrice: GasPrice
   maxFeePerGas: undefined | number
   maxPriorityFeePerGas: undefined | number
@@ -24,6 +26,14 @@ export type StorageState = {
 
 export interface UpdateSlippageTolerancePayload {
   slippageTolerance: number
+}
+
+export interface UpdateExpertMode {
+  expertMode: boolean
+}
+
+export interface UpdateSlippageToleranceTypePayload {
+  slippageToleranceType: 'auto' | 'custom'
 }
 
 export interface UpdateGasPrice {

@@ -1,7 +1,7 @@
 import { ButtonColor, ButtonSize, ButtonVariant } from './Button'
 
 export const BUTTON_CLASSES: Record<string, string> = {
-  btn: 'font-bold flex hover:ring-2 focus:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer',
+  btn: 'font-medium flex hover:ring-2 focus:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer',
   'btn-disabled': 'cursor-not-allowed opacity-40 !ring-0',
   'btn-filled': '',
   'btn-empty': '!ring-0',
@@ -21,10 +21,10 @@ export const BUTTON_CLASSES: Record<string, string> = {
     'bg-gradient-to-r hover:ring-4 ring-slate-600 ring-purple/30 from-blue to-pink focus:border-blue-700',
   'btn-filled-gray': 'bg-slate-700 ring-slate-600',
   'btn-xs': 'px-2 h-[28px] text-xs',
-  'btn-sm': 'px-3 h-[36px] text-sm rounded-lg',
-  'btn-default': 'px-3 h-[44px] text-sm',
-  'btn-md': 'px-4 h-[52px]',
-  'btn-lg': 'px-6 h-[60px]',
+  'btn-sm': 'px-3 h-[36px] text-sm rounded-lg font-semibold',
+  'btn-default': 'px-3 h-[44px] rounded-lg text-sm font-semibold',
+  'btn-md': 'px-4 h-[52px] rounded-2xl text-base font-semibold',
+  'btn-lg': 'px-6 h-[60px] rounded-2xl text-base font-semibold',
   'btn-empty-red': 'text-red hover:text-red-300',
   'btn-empty-pink': 'text-pink hover:text-pink-300',
   'btn-empty-blue': 'text-blue hover:text-blue-300',

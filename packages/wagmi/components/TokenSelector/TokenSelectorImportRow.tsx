@@ -41,7 +41,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               </Typography>
             </div>
           </div>
-          <Button color="blue" size="xs">
+          <Button as="div" color="blue" size="xs">
             Import
           </Button>
         </div>
@@ -81,7 +81,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               </Typography>
             </div>
           </div>
-          <Button onClick={onImport} className="absolute bottom-3 left-3 right-3">
+          <Button as="div" onClick={onImport} className="absolute bottom-3 left-3 right-3">
             Import
           </Button>
         </Overlay.Content>

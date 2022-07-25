@@ -29,22 +29,22 @@ export const TableSection = () => {
             'bg-slate-800 rounded-t-xl grid grid-cols-[120px_110px_110px_192px_185px_185px_60px] gap-y-3 gap-x-2 py-[18px] px-6'
           )}
         >
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Currency
           </Typography>
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Fund Source
           </Typography>
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Amount
           </Typography>
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Recipient
           </Typography>
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             Start Date
           </Typography>
-          <Typography variant="sm" weight={700} className="text-slate-500">
+          <Typography variant="sm" weight={500} className="text-slate-500">
             End Date
           </Typography>
           <div />

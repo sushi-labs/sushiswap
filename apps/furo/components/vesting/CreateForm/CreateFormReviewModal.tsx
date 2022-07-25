@@ -23,7 +23,7 @@ const Item: FC<Item> = ({ title, value, className }) => {
       <Typography variant="xs" className="whitespace-nowrap text-slate-500">
         {title}
       </Typography>
-      <Typography variant="xs" weight={700} className={classNames(className, 'whitespace-nowrap text-slate-200')}>
+      <Typography variant="xs" weight={500} className={classNames(className, 'whitespace-nowrap text-slate-200')}>
         {value}
       </Typography>
     </div>
@@ -95,12 +95,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
   return (
-    <Dialog open={open} onClose={onDismiss} unmount={true}>
-      <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden border border-slate-700">
+    <Dialog open={open} onClose={onDismiss} unmount={false}>
+      <Dialog.Content className="!space-y- min-h-[300px] !max-w-sm relative overflow-hidden bg-slate-900 !pb-3">
         <Dialog.Header title="Review Details" onClose={onDismiss} />
-        <Typography variant="xs" className="!leading-5 text-slate-400">
+        <Typography variant="xs" className="!leading-5 text-slate-400 mt-3">
           This will create a stream to{' '}
-          <span className="font-bold text-slate-50 hover:text-blue">
+          <span className="font-medium text-slate-50 hover:text-blue">
             {activeChain && recipient && (
               <a target="_blank" href={Chain.from(activeChain.id).getAccountUrl(recipient)} rel="noreferrer">
                 {shortenAddress(recipient)}
@@ -108,11 +108,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             )}
           </span>{' '}
           consisting of{' '}
-          <span className="font-bold text-slate-50">
+          <span className="font-medium text-slate-50">
             {totalAmount?.toSignificant(6)} {totalAmount?.currency.symbol}
           </span>{' '}
-          from <span className="font-bold text-slate-50">{!!startDate && format(startDate, 'dd MMM yyyy hh:mm')}</span>{' '}
-          until <span className="font-bold text-slate-50">{!!endDate && format(endDate, 'dd MMM yyyy hh:mm')}</span>
+          from{' '}
+          <span className="font-medium text-slate-50">{!!startDate && format(startDate, 'dd MMM yyyy hh:mm')}</span>{' '}
+          until <span className="font-medium text-slate-50">{!!endDate && format(endDate, 'dd MMM yyyy hh:mm')}</span>
         </Typography>
         <div className="flex flex-col w-full">
           <div className="border px-2 rounded-lg border-slate-800 overflow-auto max-h-[240px] mt-2 hide-scrollbar divide-y divide-slate-800">
@@ -136,22 +137,22 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                   acc[1] = acc[1].add(period.amount)
                   acc[0].push(
                     <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-                      <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
+                      <Typography className="tracking-wider capitalize text-slate-200" weight={500} variant="xxs">
                         {period.type.toLowerCase()}
                       </Typography>
                       <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
                         {format(period.date, 'dd MMM yyyy')}
                         <Typography as="span" variant="xxs" className="text-slate-500">
-                          {format(period.date, 'hh:maaa')}
+                          {format(period.date, 'hh:mmaaa')}
                         </Typography>
                       </Typography>
-                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
+                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>
                         {period.amount.toSignificant(6)}
                         <Typography as="span" variant="xxs" className="text-slate-500">
                           {period?.amount.currency?.symbol}
                         </Typography>
                       </Typography>
-                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
+                      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>
                         {acc[1].toSignificant(6)}
                         <Typography as="span" variant="xxs" className="text-slate-500">
                           {period?.amount.currency?.symbol}
@@ -167,7 +168,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             }
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mt-3">
           <Table title="Details">
             <Item title="Funds Source" value={fundSource.toLowerCase()} className="capitalize" />
             <Item
@@ -221,17 +222,16 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           leaveTo="opacity-0"
         >
           <div className="!my-0 flex flex-col gap-1 absolute inset-0 bg-slate-900 flex items-center justify-center">
-            <Typography variant="lg" weight={700} className="text-slate-200">
+            <Typography variant="lg" weight={500} className="text-slate-200">
               Start date has expired
             </Typography>
-            <Typography variant="xs" weight={700} className="text-slate-400">
+            <Typography variant="xs" weight={500} className="text-slate-400">
               Please change the start date of your stream
             </Typography>
           </div>
         </Transition>
-        <div className="border-t border-slate-800">
-          <CreateFormButtons formData={formData} onDismiss={onDismiss} />
-        </div>
+        <div className="border-t border-slate-200/5 w-full pt-3" />
+        <CreateFormButtons formData={formData} onDismiss={onDismiss} />
       </Dialog.Content>
     </Dialog>
   )

@@ -1,21 +1,11 @@
-import { App, SushiIcon } from '@sushiswap/ui'
+import { App } from '@sushiswap/ui'
+import { AppType } from '@sushiswap/ui/app/Header'
 import { Wallet } from '@sushiswap/wagmi'
-import NextLink from 'next/link'
 
 export const Header = () => {
   return (
-    <App.Header
-      withScrollBackground
-      brand={
-        <NextLink href="/">
-          <a className="flex flex-row items-center gap-1">
-            <SushiIcon width={32} height={32} className="mr-1 hover:animate-spin hover:text-pink" />
-            <span className="font-black">Swap</span>
-          </a>
-        </NextLink>
-      }
-    >
-      <Wallet.Button className="border-none shadow-md !h-[36px] whitespace-nowrap" />
+    <App.Header appType={AppType.Swap} withScrollBackground>
+      <Wallet.Button size="sm" className="border-none shadow-md whitespace-nowrap" />
     </App.Header>
   )
 }

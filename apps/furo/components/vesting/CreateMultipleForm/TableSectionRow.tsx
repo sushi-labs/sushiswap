@@ -16,6 +16,7 @@ import {
   Typography,
 } from '@sushiswap/ui'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
 import React, { FC, useState } from 'react'
 import { Control, Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
@@ -46,7 +47,13 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
     control,
   } as never) as CreateVestingFormData
 
-  const { totalAmount } = transformVestingFormData(data)
+  const { totalAmount, cliff, cliffEndDate, startDate, stepConfig, stepPayouts } = transformVestingFormData(data)
+  const endDate =
+    ((cliff && cliffEndDate) || startDate) && stepPayouts
+      ? new Date(
+          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
+        )
+      : undefined
 
   return (
     <Disclosure>
@@ -70,7 +77,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                         )}
                         onClick={() => setDialogOpen(true)}
                       >
-                        <span className="text-sm font-bold truncate">{data?.currency?.symbol || 'Select'}</span>
+                        <span className="text-sm font-medium truncate">{data?.currency?.symbol || 'Select'}</span>
                         <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <TokenSelector
@@ -114,7 +121,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                       error={!!error?.message}
                       placeholder="0x..."
                       className="shadow-none rounded-md !ring-offset-0 h-[54px] ring-offset-slate-700 flex justify-center !bg-slate-700"
-                      inputClassName="placeholder:font-bold placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
+                      inputClassName="placeholder:font-medium placeholder-slate-500 !bg-slate-700 !rounded-md !text-sm"
                     />
                   )
                 }}
@@ -124,9 +131,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
               <Controller
                 control={control as never}
                 name={`vestings.${index}.fundSource`}
-                render={({ field: { onChange }, fieldState: { error } }) => (
+                render={({ field: { onChange } }) => (
                   <Select
-                    error={!!error?.message}
                     button={
                       <Listbox.Button
                         type="button"
@@ -139,7 +145,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                         }
                         value={data?.fundSource}
                       >
-                        <span className="text-sm capitalize font-bold truncate">
+                        <span className="text-sm capitalize font-medium truncate">
                           {data?.fundSource?.toLowerCase() || 'Select'}
                         </span>
                         <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
@@ -177,14 +183,14 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Typography variant="sm" weight={700} className="flex gap-2 items-center h-full px-4">
+              <Typography variant="sm" weight={500} className="flex gap-2 items-center h-full px-4">
                 {totalAmount ? totalAmount.toSignificant(6) : '0.00'} {totalAmount?.currency.symbol}
               </Typography>
             </div>
             <div className="flex flex-col gap-2">
               <Disclosure.Button className="flex gap-2 items-center h-full px-2" as="div">
                 <IconButton className="py-0.5 px-1 flex items-center gap-2">
-                  <span className="text-sm font-bold">
+                  <span className="text-sm font-medium">
                     {data?.cliff
                       ? `Cliff, ${data?.stepConfig?.label}`
                       : data?.stepConfig?.label
@@ -212,7 +218,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
             <div className="flex gap-5">
               <div className="flex flex-col flex-grow gap-10 p-6">
                 <div className="flex gap-6 items-center">
-                  <Typography weight={700} variant="sm">
+                  <Typography weight={500} variant="sm">
                     Vesting Schedule
                   </Typography>
                   <div className="flex gap-2 items-center">
@@ -334,9 +340,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <>
                           <Select
-                            error={!!error?.message}
                             button={
-                              <Select.Button className="ring-offset-slate-800" type="button">
+                              <Select.Button error={!!error?.message} className="ring-offset-slate-800" type="button">
                                 {value?.label}
                               </Select.Button>
                             }
@@ -357,6 +362,17 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                     />
                   </Form.Control>
                 </div>
+                <Form.Control label="End Date">
+                  {endDate instanceof Date && !isNaN(endDate?.getTime()) ? (
+                    <Typography variant="sm" className="text-slate-50" weight={500}>
+                      {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                    </Typography>
+                  ) : (
+                    <Typography variant="sm" className="italic text-slate-500">
+                      Not available
+                    </Typography>
+                  )}
+                </Form.Control>
               </div>
               <div className="mr-6 mb-6 flex justify-end items-end">
                 <Button type="button" onClick={() => close()} size="sm" className="px-6">

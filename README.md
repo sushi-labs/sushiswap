@@ -8,53 +8,41 @@ https://pnpm.io/installation
 
 ### Install
 
-pnpm install
-
-### Execute
-
-pnp exec
+`pnpm install`
 
 ### Dev
 
-pnpn run dev
-
-### Beast Mode
-
-Runs dev for all apps and composes under localhost:3000
-
-pnpm exec turbo run dev --filter=...{./apps/\*}
-
-#### Single Repository
-
-pnpm exec turbo run dev --scope=api/app/package/protocol
+`pnpm exec turbo run dev --filter=swap`
 
 ### Build
 
-pnpn run build
+`pnpn run build`
 
 #### Single Repository
 
-pnpm exec turbo run build --scope=api/app/package/protocol
+`pnpm exec turbo run build --filter=api/app/package/protocol`
 
 ### Test
 
-pnpn run test
+`pnpn run test`
 
 #### Single Repository
 
-pnpm exec turbo run test --scope=api/app/package/protocol
+`pnpm exec turbo run test --filter=api/app/package/protocol`
 
-### Test
+### Clean
 
-pnpn run clean
+`pnpn run clean`
 
 #### Single Repository
 
-pnpm exec turbo run clear --scope=api/app/package/protocol
+`pnpm exec turbo run clean --filter=api/app/package/protocol`
 
 ## APIs
 
+- `path-finder`
 - `token-list`
+- `token-price`
 
 ### Creating a new API
 
@@ -65,25 +53,38 @@ pnpm exec turbo run clear --scope=api/app/package/protocol
 - `_root`
 - `analytics`
 - `blog`
-- `docs`
 - `furo`
 - `kashi`
 - `miso`
+- `swap`
 
 ### Creating a new app
 
 `git checkout -b feature/example-app`
 
-`pnpm exec @sushiswap/cli create-app example-app`
+<!-- `pnpm exec @sushiswap/cli create-app example-app` -->
 
 ## Packages
 
-- `chain`
-- `config`
-- `math`
-- `multicall`
-- `tsconfig`
-- `ui`
+- `@sushiswap/chain`
+- `@sushiswap/cli`
+- `@sushiswap/currency`
+- `@sushiswap/exchange`
+- `@sushiswap/format`
+- `@sushiswap/graph-client`
+- `@sushiswap/hooks`
+- `@sushiswap/math`
+- `@sushiswap/eslint-config`
+- `@sushiswap/hardhat-config`
+- `@sushiswap/prettier-config`
+- `@sushiswap/typescript-config`
+- `@sushiswap/redux-logs`
+- `@sushiswap/redux-token-lists`
+- `@sushiswap/stargate`
+- `@sushiswap/tines`
+- `@sushiswap/token-lists`
+- `@sushiswap/ui`
+- `@sushiswap/wagmi`
 
 ### Creating a new package
 
@@ -91,8 +92,12 @@ pnpm exec turbo run clear --scope=api/app/package/protocol
 
 ## Protocols
 
-- `furo`
-- `miso`
+- `@sushiswap/bentobox`
+- `@sushiswap/furo`
+- `@sushiswap/kashi`
+- `@sushiswap/miso`
+- `@sushiswap/sushiswap`
+- `@sushiswap/sushixswap`
 
 ### Creating a new protocol
 

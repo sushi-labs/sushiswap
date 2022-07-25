@@ -7,13 +7,13 @@
   },
   "dependencies": {
     "@sushiswap/chainlink-token-list": "^0.1.0",
-    "@sushiswap/default-token-list": "^29.0.0",
+    "@sushiswap/default-token-list": "^29.1.0",
     "@vercel/node": "^2.2.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*"
   }
 }

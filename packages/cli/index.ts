@@ -1,6 +1,6 @@
 import { program } from 'commander'
 
-import { bar, chef, maker } from './actions'
+import { bar, chef, maker, serve } from './actions'
 import { MAKER_SUPPORTED_CHAIN_NAMES } from './config'
 
 program.version('0.0.0').description('Sushi CLI')
@@ -20,6 +20,13 @@ program
   .option('-n,--network <NETWORK>', 'network available: '.concat(Object.keys(MAKER_SUPPORTED_CHAIN_NAMES).join(', ')))
   .option('-v,--verbose', 'includes table data')
   .action(maker)
+
+program
+  .command('serve')
+  .description('serve LPs fees for a specific network')
+  .option('-n,--network <NETWORK>', 'network available: '.concat(Object.keys(MAKER_SUPPORTED_CHAIN_NAMES).join(', ')))
+  .option('-v,--verbose', 'verbose')
+  .action(serve)
 
 program.parse(process.argv)
 

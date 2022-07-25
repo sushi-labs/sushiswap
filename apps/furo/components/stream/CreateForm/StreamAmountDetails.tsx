@@ -41,7 +41,7 @@ export const StreamAmountDetails = () => {
                 <Select.Button
                   error={!!error?.message}
                   standalone
-                  className="!cursor-pointer"
+                  className="!cursor-pointer ring-offset-slate-900"
                   onClick={() => setDialogOpen(true)}
                 >
                   {currency?.symbol || <span className="text-slate-500">Select a currency</span>}
@@ -89,12 +89,12 @@ export const StreamAmountDetails = () => {
                       'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                     )}
                   >
-                    <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                      Bentobox
+                    <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                      BentoBox
                     </Typography>
                     <div className="flex flex-col gap-1">
                       <Typography variant="xs">Available Balance</Typography>
-                      <Typography weight={700} variant="xs" className="text-slate-200">
+                      <Typography weight={500} variant="xs" className="text-slate-200">
                         {isMounted ? (
                           <>
                             {balance?.[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX].toSignificant(6) : '0.00'}{' '}
@@ -120,12 +120,12 @@ export const StreamAmountDetails = () => {
                     'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
                   )}
                 >
-                  <Typography weight={700} variant="sm" className="!leading-5 tracking-widest text-slate-300">
+                  <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
                     Wallet
                   </Typography>
                   <div className="flex flex-col gap-1">
                     <Typography variant="xs">Available Balance</Typography>
-                    <Typography weight={700} variant="xs" className="text-slate-200">
+                    <Typography weight={500} variant="xs" className="text-slate-200">
                       {isMounted ? (
                         <>
                           {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'}{' '}

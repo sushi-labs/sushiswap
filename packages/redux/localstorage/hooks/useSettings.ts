@@ -8,10 +8,12 @@ type UseSettingsReturn = [
   Omit<StorageState, 'customTokens'>,
   {
     updateSlippageTolerance(slippageTolerance: number): void
+    updateSlippageToleranceType(slippageToleranceType: 'auto' | 'custom'): void
     updateMaxFeePerGas(updateMaxFeePerGas: number | string | undefined): void
     updateMaxPriorityFeePerGas(maxPriorityFeePerGas: number | string | undefined): void
     updateGasPrice(gasPrice: GasPrice): void
     updateGasType(gasType: 'preset' | 'custom'): void
+    updateExpertMode(expertMode: boolean): void
   }
 ]
 
@@ -22,9 +24,23 @@ export const useSettings: UseSettings = (context) => {
   const { customTokens, ...settings } = useSelector((state: WithStorageState) => state[reducerPath])
   const dispatch = useDispatch()
 
+  const updateExpertMode = useCallback(
+    (expertMode: boolean) => {
+      dispatch(actions.updateExpertMode({ expertMode }))
+    },
+    [actions, dispatch]
+  )
+
   const updateSlippageTolerance = useCallback(
     (slippageTolerance: number) => {
       dispatch(actions.updateSlippageTolerance({ slippageTolerance }))
+    },
+    [actions, dispatch]
+  )
+
+  const updateSlippageToleranceType = useCallback(
+    (slippageToleranceType: 'auto' | 'custom') => {
+      dispatch(actions.updateSlippageToleranceType({ slippageToleranceType }))
     },
     [actions, dispatch]
   )
@@ -60,7 +76,9 @@ export const useSettings: UseSettings = (context) => {
   return [
     settings,
     {
+      updateExpertMode,
       updateSlippageTolerance,
+      updateSlippageToleranceType,
       updateMaxFeePerGas,
       updateMaxPriorityFeePerGas,
       updateGasPrice,

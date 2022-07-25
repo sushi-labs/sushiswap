@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { FC } from 'react'
 
-import { ComponentSharedSeo, GlobalEntity } from '../.graphclient'
+import { ComponentSharedSeo, GlobalEntity } from '../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 export type SeoType = (ComponentSharedSeo & { slug: string; article: boolean; tags: string[] | undefined }) | undefined
@@ -19,18 +19,18 @@ export const Seo: FC<Seo> = ({ global, seo }) => {
   const fullSeo = {
     ...seoWithDefaults,
     metaTitle: `${seoWithDefaults.metaTitle} | ${global?.attributes?.siteName}`,
-    shareMedia: getOptimizedMedia({ metadata: seoWithDefaults?.shareImage?.data?.attributes?.provider_metadata }),
+    shareMedia: getOptimizedMedia({ metadata: seo?.shareImage?.data?.attributes?.provider_metadata }),
     shareMediaAsImage: getOptimizedMedia({
-      metadata: seoWithDefaults?.shareImage?.data?.attributes?.provider_metadata,
+      metadata: seo?.shareImage?.data?.attributes?.provider_metadata,
       asImage: true,
     }),
     shareMediaWidth: Math.floor(
-      (seoWithDefaults?.shareImage?.data?.attributes?.width || 0) *
-        (Math.max(seoWithDefaults?.shareImage?.data?.attributes?.height || 0, 1280) / 1280)
+      (seo?.shareImage?.data?.attributes?.width || 0) *
+        (Math.max(seo?.shareImage?.data?.attributes?.height || 0, 1280) / 1280)
     ),
-    shareMediaHeight: Math.max(seoWithDefaults?.shareImage?.data?.attributes?.height || 0, 1280),
-    shareMediaAlt: seoWithDefaults?.shareImage?.data?.attributes?.alternativeText,
-    twitterCardType: isMediaVideo(seoWithDefaults?.shareImage?.data?.attributes?.provider_metadata)
+    shareMediaHeight: Math.max(seo?.shareImage?.data?.attributes?.height || 0, 1280),
+    shareMediaAlt: seo?.shareImage?.data?.attributes?.alternativeText,
+    twitterCardType: isMediaVideo(seo?.shareImage?.data?.attributes?.provider_metadata)
       ? 'player'
       : 'summary_large_image',
   }

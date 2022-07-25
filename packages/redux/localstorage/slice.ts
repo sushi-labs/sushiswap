@@ -5,27 +5,39 @@ import {
   GasPrice,
   RemoveCustomToken,
   StorageState,
+  UpdateExpertMode,
   UpdateGasPrice,
   UpdateGasType,
   UpdateMaxFeePerGas,
   UpdateMaxPriorityFeePerGas,
   UpdateSlippageTolerancePayload,
+  UpdateSlippageToleranceTypePayload,
 } from './types'
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
 const initialState: StorageState = {
-  slippageTolerance: parsedState?.slippageTolerance || 1,
+  slippageTolerance: parsedState?.slippageTolerance || 0.5,
+  slippageToleranceType: parsedState?.slippageToleranceType || 'auto',
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
   maxFeePerGas: parsedState?.maxFeePerGas || undefined,
   maxPriorityFeePerGas: parsedState?.maxPriorityFeePerGas || undefined,
   gasType: parsedState?.gasType || 'preset',
   customTokens: parsedState?.customTokens || {},
+  expertMode: parsedState?.expertMode || false,
 }
 
 const reducers = {
+  updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
+    const { expertMode } = action.payload
+    state.expertMode = expertMode
+  },
   updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
     const { slippageTolerance } = action.payload
     state.slippageTolerance = slippageTolerance
+  },
+  updateSlippageToleranceType: (state: StorageState, action: PayloadAction<UpdateSlippageToleranceTypePayload>) => {
+    const { slippageToleranceType } = action.payload
+    state.slippageToleranceType = slippageToleranceType
   },
   updateGasPrice: (state: StorageState, action: PayloadAction<UpdateGasPrice>) => {
     const { gasPrice } = action.payload

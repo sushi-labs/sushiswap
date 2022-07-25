@@ -7,11 +7,17 @@ import { getBentoBoxContractConfig } from './useBentoBoxContract'
 
 type UseBentoBoxTotals = (
   chainId: number,
-  tokens: (Currency | undefined)[]
+  currencies: (Currency | undefined)[]
 ) => Record<string, { base: JSBI; elastic: JSBI }> | undefined
 
-export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, tokens) => {
-  const addresses = useMemo(() => tokens.map((token) => [token?.wrapped.address]), [tokens])
+export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
+  const addresses = useMemo(
+    () =>
+      currencies
+        .filter((currency): currency is Currency => Boolean(currency && currency.wrapped))
+        .map((token) => token.wrapped.address),
+    [currencies]
+  )
   const contracts = useMemo(
     () =>
       addresses.map((address) => ({
@@ -25,31 +31,30 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, tokens) => {
 
   const { data: totals } = useContractReads({
     contracts,
-    cacheTime: 20_000,
-    keepPreviousData: true,
   })
-
   return useMemo(() => {
-    return totals?.reduce((previousValue, currentValue) => {
+    return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue, i) => {
+      if (!currentValue) return previousValue
       const { base, elastic } = currentValue
       const rebase = { base: JSBI.BigInt(base), elastic: JSBI.BigInt(elastic) }
-      return { ...previousValue, [currentValue.address]: rebase }
-    })
-  }, [totals])
+      previousValue[addresses[i]] = rebase
+      return previousValue
+    }, {})
+  }, [totals, addresses])
 }
 
 export const useBentoBoxTotal = (
   chainId: number,
-  token: Currency | undefined
+  currency: Currency | undefined
 ): { base: JSBI; elastic: JSBI } | undefined => {
   const totals = useBentoBoxTotals(
     chainId,
-    useMemo(() => [token], [token])
+    useMemo(() => [currency], [currency])
   )
   return useMemo(() => {
-    if (!totals || !token || !(token.wrapped.address in totals)) {
+    if (!totals || !currency) {
       return undefined
     }
-    return totals[token.wrapped.address]
-  }, [token, totals])
+    return totals[currency.wrapped.address]
+  }, [currency, totals])
 }

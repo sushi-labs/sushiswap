@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-import { ComponentSharedRichText } from '../.graphclient'
+import { ComponentSharedRichText } from '../.mesh'
 
 interface RichText {
   block: ComponentSharedRichText

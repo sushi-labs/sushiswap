@@ -119,8 +119,11 @@ export const GradedVestingDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
                 <Select
-                  error={!!error?.message}
-                  button={<Select.Button className="ring-offset-slate-900">{value.label}</Select.Button>}
+                  button={
+                    <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                      {value.label}
+                    </Select.Button>
+                  }
                   value={value}
                   onChange={onChange}
                 >
@@ -164,8 +167,8 @@ export const GradedVestingDetailsSection = () => {
       </Form.Control>
       <Form.Control label="End Date">
         {endDate ? (
-          <Typography variant="sm" className="text-slate-50" weight={700}>
-            {format(endDate, 'dd MMM yyyy hh:maaa')}
+          <Typography variant="sm" className="text-slate-50" weight={500}>
+            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
           </Typography>
         ) : (
           <Typography variant="sm" className="italic text-slate-500">

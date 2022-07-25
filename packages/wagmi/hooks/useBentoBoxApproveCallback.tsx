@@ -19,12 +19,15 @@ import { ApprovalState } from './useERC20ApproveCallback'
 export function useBentoBoxApproveCallback({
   masterContract,
   watch,
+  onSignature,
 }: {
   masterContract?: string
   watch: boolean
+  onSignature?(payload: Signature): void
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address } = useAccount()
   const { chain } = useNetwork()
+
   const { writeAsync } = useContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
@@ -112,6 +115,7 @@ export function useBentoBoxApproveCallback({
       })
 
       setSignature(splitSignature(data))
+      onSignature && onSignature(splitSignature(data))
     } catch (e: unknown) {
       // Regular approval as fallback
       if (!(e instanceof UserRejectedRequestError)) {
@@ -128,7 +132,7 @@ export function useBentoBoxApproveCallback({
         })
       }
     }
-  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, writeAsync])
+  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync])
 
-  return [approvalState, signature, approveBentoBox]
+  return useMemo(() => [approvalState, signature, approveBentoBox], [approvalState, approveBentoBox, signature])
 }

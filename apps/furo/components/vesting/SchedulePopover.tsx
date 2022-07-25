@@ -22,7 +22,7 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
       button={
         <Button color="gray">
           <CalendarIcon width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-slate-200">
+          <Typography variant="sm" weight={500} className="text-slate-200">
             Schedule
           </Typography>
         </Button>
@@ -33,7 +33,7 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
             <div className="flex items-start gap-10">
               <Typography variant="xs" className="!leading-5 text-slate-300">
                 This stream to{' '}
-                <span className="font-bold text-slate-200 hover:text-blue">
+                <span className="font-medium text-slate-200 hover:text-blue">
                   <a
                     target="_blank"
                     href={Chain.from(vesting.amount.currency.chainId).getAccountUrl(vesting.recipient.id)}
@@ -43,15 +43,15 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
                   </a>
                 </span>{' '}
                 for a total of{' '}
-                <span className="font-bold text-slate-200">
+                <span className="font-medium text-slate-200">
                   {vesting.amount?.toSignificant(6)} {vesting.amount?.currency.symbol}
                 </span>{' '}
                 <br /> runs from{' '}
-                <span className="font-bold text-slate-200">
+                <span className="font-medium text-slate-200">
                   {format(new Date(vesting.startTime), 'dd MMM yyyy hh:mm')}
                 </span>{' '}
                 until{' '}
-                <span className="font-bold text-slate-200">
+                <span className="font-medium text-slate-200">
                   {format(new Date(vesting.endTime), 'dd MMM yyyy hh:mm')}
                 </span>
               </Typography>
@@ -65,16 +65,16 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
               </a>
             </div>
             <div className="mt-6 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-              <Typography weight={700} className="tracking-wider capitalize text-slate-400" variant="xxs">
+              <Typography weight={500} className="tracking-wider capitalize text-slate-400" variant="xxs">
                 Schedule
               </Typography>
-              <Typography weight={700} className="tracking-wider capitalize text-slate-400" variant="xxs">
+              <Typography weight={500} className="tracking-wider capitalize text-slate-400" variant="xxs">
                 Date
               </Typography>
-              <Typography weight={700} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
+              <Typography weight={500} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
                 Amount
               </Typography>
-              <Typography weight={700} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
+              <Typography weight={500} className="tracking-wider text-right capitalize text-slate-400" variant="xxs">
                 Total
               </Typography>
             </div>
@@ -99,16 +99,16 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
 const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ vesting, period }) => {
   return (
     <div key={period.id} className="py-2 grid grid-cols-[60px_80px_80px_auto] gap-2 items-center">
-      <Typography className="tracking-wider capitalize text-slate-200" weight={700} variant="xxs">
+      <Typography className="tracking-wider capitalize text-slate-200" weight={500} variant="xxs">
         {period.type.toLowerCase()}
       </Typography>
       <Typography variant="xs" className="flex flex-col text-left text-slate-200" weight={500}>
         {format(period.date, 'dd MMM yyyy')}
         <Typography as="span" variant="xxs" className="text-slate-500">
-          {format(period.date, 'hh:maaa')}
+          {format(period.date, 'hh:mmaaa')}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
+      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>
         {period.type === PeriodType.START
           ? `0`
           : period.type === PeriodType.CLIFF
@@ -123,7 +123,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
           {period?.amount.currency?.symbol}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={700}>
+      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>
         <span>
           {period?.total.toSignificant(6)} <span className="text-slate-500">/ {vesting?.amount.toSignificant(6)}</span>
         </span>

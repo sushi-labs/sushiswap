@@ -78,7 +78,7 @@ export class Edge {
   }
 
   reserve(v: Vertice): BigNumber {
-    return v === this.vert0 ? this.pool.reserve0 : this.pool.reserve1
+    return v === this.vert0 ? this.pool.getReserve0() : this.pool.getReserve1()
   }
 
   calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
@@ -165,14 +165,14 @@ export class Edge {
 
   checkMinimalLiquidityExceededAfterSwap(from: Vertice, amountOut: number): boolean {
     if (from === this.vert0) {
-      const r1 = parseInt(this.pool.reserve1.toString())
+      const r1 = parseInt(this.pool.getReserve1().toString())
       if (this.direction) {
         return r1 - amountOut - this.amountOutPrevious < this.pool.minLiquidity
       } else {
         return r1 - amountOut + this.amountOutPrevious < this.pool.minLiquidity
       }
     } else {
-      const r0 = parseInt(this.pool.reserve0.toString())
+      const r0 = parseInt(this.pool.getReserve0().toString())
       if (this.direction) {
         return r0 - amountOut + this.amountInPrevious < this.pool.minLiquidity
       } else {
@@ -245,17 +245,20 @@ export class Edge {
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
-      if (this.direction)
+      if (this.direction) {
+        const granularity = this.pool.granularity1()
         return closeValues(
-          this.amountOutPrevious,
-          this.pool.calcOutByIn(this.amountInPrevious, this.direction).out,
-          1e-6
+          this.amountOutPrevious / granularity,
+          this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
+          1e-4
         )
-      else {
+      } else {
+        const granularity = this.pool.granularity0()
         return closeValues(
-          this.amountInPrevious,
-          this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out,
-          1e-6
+          this.amountInPrevious / granularity,
+          this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
+          1e-4,
+          `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
       }
     }, `Error 225`)
@@ -556,6 +559,7 @@ export class Graph {
           if (!isFinite(out) || !isFinite(gasSpent))
             // Math errors protection
             return
+
           newIncome = out
           gas = gasSpent
         } catch (e) {
@@ -783,9 +787,9 @@ export class Graph {
         //totalOutput += p.totalOutput
         this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
         totalrouted += routeValues[step]
-        if (step === 0) {
-          primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
-        }
+        // if (step === 0) {
+        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        // }
       }
     }
     if (step == 0)
@@ -818,6 +822,9 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = output / amountIn
+      const priceTo = this.tokens.get(to.address)?.price
+      const priceFrom = this.tokens.get(from.address)?.price
+      primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
@@ -871,9 +878,9 @@ export class Graph {
         //totalOutput += p.totalOutput
         this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
         totalrouted += routeValues[step]
-        if (step === 0) {
-          primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
-        }
+        // if (step === 0) {
+        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        // }
       }
     }
     if (step == 0)
@@ -906,6 +913,9 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = amountOut / input
+      const priceTo = this.tokens.get(to.address)?.price
+      const priceFrom = this.tokens.get(from.address)?.price
+      primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
       /* skip division by 0 errors*/
@@ -1081,7 +1091,6 @@ export class Graph {
         minOutput = out
       }
     })
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     minVert.getOutputEdges().forEach((e) => {
       if (minVert.getNeibour(e) !== minVertNext) return

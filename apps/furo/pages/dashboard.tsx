@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <div className="flex flex-col items-center h-full gap-12 pt-20">
           <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
             <div className="h-[78px] flex justify-center items-center">
-              <Loader size="40px" />
+              <Loader size={40} />
             </div>
             <div className="flex flex-col gap-3">
               <Typography variant="xl" className="text-slate-200">

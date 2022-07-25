@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { ComponentSharedMedia } from '../.graphclient'
+import { ComponentSharedMedia } from '../.mesh'
 import { Image } from './Image'
 
 interface MediaBlock {
@@ -16,11 +16,11 @@ export const MediaBlock: FC<MediaBlock> = ({ block }) => {
             layout="responsive"
             objectFit="contain"
             image={block.file.data}
-            className="rounded-xl overflow-hidden"
+            className="overflow-hidden rounded-xl"
           />
         </div>
       )}
-      {block.caption && <span className="text-xs font-bold text-slate-400">{block.caption}</span>}
+      {block.caption && <span className="text-xs font-medium text-slate-400">{block.caption}</span>}
     </div>
   )
 }

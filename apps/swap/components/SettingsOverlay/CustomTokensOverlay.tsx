@@ -1,8 +1,8 @@
-import { ChevronRightIcon } from '@heroicons/react/outline'
+import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import { CurrencyDollarIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Currency, Overlay, SlideIn, Typography } from '@sushiswap/ui'
+import { Currency, Overlay, Popover, SlideIn, Typography } from '@sushiswap/ui'
 import { TokenSelectorCustomTokenRow } from '@sushiswap/wagmi'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -28,8 +28,8 @@ export const CustomTokensOverlay: FC = () => {
   if (!isMounted) return <></>
 
   return (
-    <>
-      <button
+    <div className="border-b border-slate-200/5">
+      <div
         onClick={() => setOpen(true)}
         className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
       >
@@ -37,11 +37,26 @@ export const CustomTokensOverlay: FC = () => {
           <CurrencyDollarIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
         </div>
         <div className="flex gap-1 w-full justify-between items-center py-4">
-          <Typography variant="sm" weight={700}>
-            Custom Tokens
-          </Typography>
+          <div className="flex gap-1 items-center">
+            <Typography variant="sm" weight={700}>
+              Custom Tokens
+            </Typography>
+            <Popover
+              tabIndex={-1}
+              hover
+              button={<InformationCircleIcon width={14} height={14} />}
+              panel={
+                <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
+                  <Typography variant="xs" weight={700}>
+                    Import a token that is not currently on the list by pasting its address here to add it. Custom
+                    tokens are stored locally in your browser.
+                  </Typography>
+                </div>
+              }
+            />
+          </div>
           <div className="flex gap-1">
-            <Typography variant="sm" className="group-hover:text-slate-200 text-slate-300">
+            <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
               {ids.length || '0'} Tokens
             </Typography>
             <div className="w-5 h-5 -mr-1.5 flex items-center">
@@ -49,7 +64,7 @@ export const CustomTokensOverlay: FC = () => {
             </div>
           </div>
         </div>
-      </button>
+      </div>
       <SlideIn.FromLeft show={open} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Custom Tokens" />
@@ -77,6 +92,6 @@ export const CustomTokensOverlay: FC = () => {
           )}
         </Overlay.Content>
       </SlideIn.FromLeft>
-    </>
+    </div>
   )
 }

@@ -1,14 +1,37 @@
-query TokenPrices($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
-  legacy_exchange_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+query SushiSwapTokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
+    liquidity
     derivedETH
   }
 
-  legacy_exchange_bundle(id: 1, block: $block) {
+  bundle(id: 1, block: $block) {
     ethPrice
   }
 
-  legacy_exchange__meta {
+  _meta {
+    block {
+      number
+    }
+  }
+}
+
+query TridentTokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height, $native: String!) {
+  tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    derivedNative
+    token {
+      kpi {
+        liquidity
+      }
+    }
+  }
+
+  native:tokenPrice(id: $native, block: $block) {
+    derivedUSD
+  }
+
+  _meta {
     block {
       number
     }

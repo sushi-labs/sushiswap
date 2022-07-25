@@ -7,13 +7,14 @@ import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
-type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+  afterLeave?(): void
   children?: React.ReactNode
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
   return (
-    <Transition show={open} as={Fragment}>
+    <Transition show={open} as={Fragment} afterLeave={afterLeave}>
       <HeadlessDialog className="relative z-[100]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
@@ -24,11 +25,11 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) =
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/50" />
+          <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
         </Transition.Child>
 
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+          <div className="flex items-end sm:items-center justify-center min-h-full text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -38,7 +39,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) =
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <HeadlessDialog.Panel className="sm:max-w-md sm:w-full">{children}</HeadlessDialog.Panel>
+              <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
             </Transition.Child>
           </div>
         </div>

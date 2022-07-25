@@ -1,15 +1,6 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import React, {
-  Children,
-  cloneElement,
-  FC,
-  isValidElement,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
+import { classNames } from '@sushiswap/ui'
+import React, { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
 
 import { ApprovalState } from '../../hooks'
 import { BentoApproveButton } from './BentoApproveButton'
@@ -18,25 +9,61 @@ import { TokenApproveButton } from './TokenApproveButton'
 import { ApproveButton } from './types'
 
 interface Props {
+  className?: string
   components: ReactElement<ApproveButton<'button'>>
-  render({ approved, isUnknown }: { approved: boolean; isUnknown: boolean }): ReactNode
+  render({ isUnknown, approved }: { approved: boolean | undefined; isUnknown: boolean | undefined }): ReactNode
 }
 
-const Controller: FC<Props> = ({ components, render }) => {
-  const [state, setState] = useState<ApprovalState[]>([])
-  const isMounted = useIsMounted()
+export interface State {
+  approvals: ([ApprovalState, ReactElement | undefined, boolean] | undefined)[]
+  length: number
+  isUnknown: boolean
+  isApproved: boolean
+  isPending: boolean
+}
 
-  const handleUpdate = useCallback((value: ApprovalState, index: number) => {
-    setState((state) => {
-      const newState = [...state]
-      if (value === undefined) {
-        newState.splice(index, 1)
-      } else {
-        newState[index] = value
-      }
-      return newState
-    })
-  }, [])
+export type ApprovalAction =
+  | { type: 'update'; payload: { state: [ApprovalState, ReactElement | undefined, boolean]; index: number } }
+  | { type: 'remove'; payload: { index: number } }
+
+const reducer = (state: State, action: ApprovalAction) => {
+  switch (action.type) {
+    case 'update': {
+      const approvals = [...state.approvals]
+      approvals[action.payload.index] = action.payload.state
+      const isUnknown = approvals.some((el) => el?.[0] === ApprovalState.UNKNOWN)
+      const isPending = approvals.some((el) => el?.[0] === ApprovalState.PENDING)
+      const isApproved = approvals.every(
+        (el) => el?.[0] === ApprovalState.APPROVED || (el?.[0] === ApprovalState.PENDING && el?.[2])
+      )
+      return { ...state, approvals, isUnknown, isApproved, isPending }
+    }
+    case 'remove': {
+      const approvals = [...state.approvals]
+      approvals.splice(action.payload.index, 1)
+      const isUnknown = approvals.some((el) => el?.[0] === ApprovalState.UNKNOWN)
+      const isPending = approvals.some((el) => el?.[0] === ApprovalState.PENDING)
+      const isApproved = approvals.every(
+        (el) => el?.[0] === ApprovalState.APPROVED || (el?.[0] === ApprovalState.PENDING && el?.[2])
+      )
+      return { ...state, approvals, isUnknown, isApproved, isPending }
+    }
+  }
+}
+
+const Controller: FC<Props> = ({ className, components, render }) => {
+  const isMounted = useIsMounted()
+  const [state, dispatch] = useReducer(reducer, {
+    approvals: [],
+    length: Children.count(components.props.children),
+    isApproved: false,
+    isUnknown: true,
+    isPending: false,
+  })
+
+  const initialized =
+    state.approvals.length === Children.toArray(components.props.children).length &&
+    !state.approvals.some((el) => el?.[0] === ApprovalState.UNKNOWN)
 
   const children = useMemo(() => {
     return cloneElement(
@@ -45,38 +72,33 @@ const Controller: FC<Props> = ({ components, render }) => {
       Children.map(components.props.children, (component, index) => {
         if (isValidElement<TokenApproveButton | BentoApproveButton>(component)) {
           return cloneElement(component, {
-            setState: (value: ApprovalState) => handleUpdate(value, index),
+            dispatch,
+            index,
+            allApproved: state.isApproved,
+            initialized,
           })
         }
       })
     )
-  }, [components, handleUpdate])
+  }, [components, initialized, state.isApproved])
 
-  const isUnknown =
-    state.some((el) => el === ApprovalState.UNKNOWN) && Children.count(components.props.children) === state.length
-  const approved =
-    state.every((el) => el === ApprovalState.APPROVED || el === ApprovalState.PENDING) &&
-    Children.count(components.props.children) === state.length
+  const button = useMemo(() => {
+    const index = state.approvals.findIndex((el) => el?.[0] === ApprovalState.NOT_APPROVED)
+    if (state.approvals && index !== undefined && index >= 0 && state.approvals[index]) {
+      return state.approvals[index]?.[1]
+    }
+
+    return render({ approved: state.isApproved && initialized, isUnknown: state.isUnknown && initialized })
+  }, [initialized, render, state.approvals, state.isApproved, state.isUnknown])
 
   // Only render renderProp since we can't get approval states on the server anyway
-  if (!isMounted)
-    return (
-      <>
-        {render({
-          isUnknown: true,
-          approved: false,
-        })}
-      </>
-    )
+  if (!isMounted) return <>{render({ approved: state.isApproved, isUnknown: true })}</>
 
   return (
-    <>
+    <div className={classNames(className, 'flex flex-col justify-center items-center w-full')}>
       {children}
-      {render({
-        isUnknown,
-        approved,
-      })}
-    </>
+      {button}
+    </div>
   )
 }
 

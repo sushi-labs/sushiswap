@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
 import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
@@ -52,6 +53,7 @@ export const CreateMultipleForm: FC = () => {
   // @ts-ignore
   const streams = watch('streams')
 
+  console.log(streams)
   const onSubmit: SubmitHandler<CreateMultipleStreamFormData> = useCallback(
     async (data) => {
       if (!contract || !address || !activeChain?.id || !data.streams) return
@@ -143,13 +145,32 @@ export const CreateMultipleForm: FC = () => {
   //     })
   //   })
 
+  const summedAmounts = Object.values(
+    streams.reduce<Record<string, Amount<Type>>>((acc, cur) => {
+      if (!cur.amount || !cur.currency) return acc
+      const parsedAmount = tryParseAmount(cur.amount, cur.currency)
+      const address = cur.currency.isNative ? AddressZero : cur.currency.address
+
+      if (parsedAmount) {
+        if (acc[address]) {
+          const amount = tryParseAmount(acc[address].asFraction.add(parsedAmount.asFraction).toString(), cur.currency)
+          if (amount) acc[address] = amount
+        } else {
+          acc[address] = parsedAmount
+        }
+      }
+
+      return acc
+    }, {})
+  )
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="flex flex-col mt-10 gap-20">
           <Link href="/vesting/create" passHref={true}>
             <a>
-              <button className="group hover:text-white text-slate-200 flex gap-3 font-bold">
+              <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
                 <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
               </button>
             </a>
@@ -157,17 +178,21 @@ export const CreateMultipleForm: FC = () => {
           <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
             <ImportZone />
             <div className="flex flex-col gap-4 col-span-2">
-              <Typography weight={700}>Streams</Typography>
+              <Typography weight={500}>Streams</Typography>
               <TableSection />
-              <Form.Buttons>
+              {/*<div>*/}
+              {/*  <Button className="w-[134px]" onClick={() => setReview(true)}>Review</Button>*/}
+              {/*</div>*/}
+              <Form.Buttons className="flex flex-col items-end gap-3">
                 <Approve
+                  className="!items-end"
                   components={
                     <Approve.Components>
                       <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
-                      {streams.map((stream, index) => (
+                      {summedAmounts.map((amount, index) => (
                         <Approve.Token
                           key={index}
-                          amount={tryParseAmount(stream.amount, stream.currency)}
+                          amount={amount}
                           address={activeChain?.id ? BENTOBOX_ADDRESS[activeChain.id] : undefined}
                         />
                       ))}
@@ -179,6 +204,7 @@ export const CreateMultipleForm: FC = () => {
                         type="submit"
                         variant="filled"
                         color="gradient"
+                        className="whitespace-nowrap"
                         disabled={isWritePending || !approved || !isValid || isValidating}
                       >
                         {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Streams'}

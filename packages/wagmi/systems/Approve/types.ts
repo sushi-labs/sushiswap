@@ -2,6 +2,7 @@ import { ButtonProps } from '@sushiswap/ui'
 import { ReactElement } from 'react'
 
 import { ApprovalState } from '../../hooks'
+import { ApprovalAction } from './Approve'
 
 export type ApprovalButtonRenderProp = {
   onApprove(): void
@@ -9,6 +10,9 @@ export type ApprovalButtonRenderProp = {
 }
 
 export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'> {
-  setState?(state: ApprovalState | undefined): void
+  dispatch?(payload: ApprovalAction): void
+  index?: number
   render?: (renderProps: T) => ReactElement
+  initialized?: boolean
+  allApproved?: boolean
 }
