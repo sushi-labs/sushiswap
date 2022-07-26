@@ -13,7 +13,6 @@ additionalTypeDefs: |
     crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
   }
 
-
 additionalResolvers:
   - ./resolvers.ts
 

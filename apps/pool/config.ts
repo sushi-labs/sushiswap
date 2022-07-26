@@ -2,11 +2,16 @@ import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAIN_IDS = [ChainId.AVALANCHE, ChainId.ETHEREUM]
 
-export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
-export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
+const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
+const PENDING_GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
 
-export const KAVA_HOST = 'api.thegraph.com/subgraphs/name'
-export const PENDING_KAVA_HOST = 'api.thegraph.com/subgraphs/id'
+const KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
+const PENDING_KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
+
+export const GRAPH_HOST = {
+  [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
+}
 
 export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'Ethereum',
