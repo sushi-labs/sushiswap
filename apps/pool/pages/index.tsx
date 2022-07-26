@@ -1,22 +1,30 @@
 import { ChainId } from '@sushiswap/chain'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-import { getBuiltGraphSDK } from '.graphclient'
-
 export const getServerSideProps: GetServerSideProps = async () => {
-  // const { getBuiltGraphSDK } = await import('.graphclient')
+  const { getBuiltGraphSDK } = await import('.graphclient')
   const sdk = await getBuiltGraphSDK()
-  const { crossChainPairs: data } = await sdk.CrossChainPairs({
+  const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
     chainIds: [ChainId.ETHEREUM, ChainId.ARBITRUM],
   })
-  console.log({ data })
+  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+    chainIds: [ChainId.ETHEREUM, ChainId.ARBITRUM],
+  })
   return {
     props: {
-      data,
+      bundles,
+      pairs,
     },
   }
 }
 
-export default function Index({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <pre>{JSON.stringify(data, null, 2)}</pre>
+export default function Index({ bundles, pairs }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <div>
+      <h1>Cross Chain Budnles</h1>
+      <pre>{JSON.stringify(bundles, null, 2)}</pre>
+      <h1>Cross Chain Pairs</h1>
+      <pre>{JSON.stringify(pairs, null, 2)}</pre>
+    </div>
+  )
 }

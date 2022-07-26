@@ -9,8 +9,13 @@ additionalTypeDefs: |
     chainId: BigInt!
     chainName: String!
   }
+  extend type Bundle {
+    chainId: BigInt!
+    chainName: String!
+  }
   extend type Query {
     crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
+    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
   }
 
 additionalResolvers:
