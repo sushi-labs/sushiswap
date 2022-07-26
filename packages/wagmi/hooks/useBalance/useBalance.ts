@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import { useBalance as useWagmiBalance,useContractReads } from 'wagmi'
+import { useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
 import { BalanceMap } from './types'
 import { useBentoBalance, useBentoBalances } from './useBentoBalance'
