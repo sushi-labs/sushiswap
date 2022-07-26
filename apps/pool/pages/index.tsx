@@ -2,8 +2,6 @@ import { ChainId } from '@sushiswap/chain'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  // const sdk = await getBuiltGraphSDK()
-
   const { getBuiltGraphSDK } = await import('.graphclient')
   const sdk = await getBuiltGraphSDK()
   const { crossChainPairs: data } = await sdk.CrossChainPairs({

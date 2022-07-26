@@ -1,4 +1,4 @@
-import { GRAPH_HOST, EXCHANGE_SUBGRAPH_NAME } from 'config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST } from 'config'
 
 import { CHAIN_NAME } from './config'
 import { Resolvers } from '.graphclient'
