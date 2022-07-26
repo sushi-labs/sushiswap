@@ -278,7 +278,7 @@ export abstract class Cooker implements Cooker {
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(trade.route.amountIn).sub(
+                          ? trade.route.amountInBN.sub(
                               initialPath.reduce(
                                 (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
@@ -882,8 +882,9 @@ export class SushiXSwap {
 
       // console.log(`Successful Fee`, fee)
 
+      const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee)
       return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
-        value: this.srcCooker.values.reduce((a, b) => a.add(b), fee),
+        value
       })
     } catch (error) {
       console.error('SushiXSwap Fee Error', error)

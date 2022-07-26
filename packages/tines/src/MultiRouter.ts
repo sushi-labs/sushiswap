@@ -127,10 +127,6 @@ export function findSingleRouteExactIn(
     g.setPricesStable(fromV, 1, 0)
   }
 
-  if (amountIn instanceof BigNumber) {
-    amountIn = parseInt(amountIn.toString())
-  }
-
   const out = g.findBestRouteExactIn(from, to, amountIn, 1)
   return out
 }
