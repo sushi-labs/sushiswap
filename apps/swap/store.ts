@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { tokenLists } from 'lib/state/token-lists'
+
 import { multicall } from './lib/state/multicall'
 import { storage, storageMiddleware } from './lib/state/storage'
 

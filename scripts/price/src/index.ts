@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/chain'
-import { WNATIVE_ADDRESS } from '@sushiswap/core-sdk'
+import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { getUnixTime } from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient'

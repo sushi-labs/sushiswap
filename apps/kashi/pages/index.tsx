@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { Table } from '@sushiswap/ui'
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import get from 'lodash.get'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-import { getBuiltGraphSDK, KashiPair as KashiPairDTO } from '.graphclient'
+import { getBuiltGraphSDK } from '.graphclient'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const orderBy = query.orderBy || 'kpi.supplyAPR'
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
 }
 
-const columns: ColumnDef<KashiPairDTO>[] = [
+const columns = [
   // Data Column
   {
     accessorKey: 'chainName',

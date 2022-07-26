@@ -43,6 +43,6 @@
     "hardhat-deploy": "^0.11.10",
     "hardhat-deploy-ethers": "0.3.0-beta.13",
     "ts-node": "^10.7.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.7.0"
   }
 }

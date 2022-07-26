@@ -10,6 +10,8 @@ export enum AppType {
   Furo = 'Streaming & Vesting',
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
+  Internal = 'Internal',
+  Kashi = 'Kashi',
 }
 
 const LINK = {
@@ -17,6 +19,8 @@ const LINK = {
   [AppType.Furo]: '/furo',
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
+  [AppType.Internal]: '/internal',
+  [AppType.Kashi]: '/internal',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -50,10 +54,10 @@ export function Header({
         leaveFrom="translate-y-0"
         leaveTo="translate-y-[-100%]"
       >
-        <div className="bg-slate-900 border-slate-200/10 border-b absolute inset-0 pointer-events-none" />
+        <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
       <div className="grid grid-cols-3 items-center max-w-5xl w-full mx-auto z-[101] px-4">
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">
               <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
@@ -64,7 +68,7 @@ export function Header({
             button={
               <Listbox.Button
                 type="button"
-                className="flex gap-2 items-center font-semibold hover:text-slate-200 text-slate-300"
+                className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
                 <span className="text-sm capitalize truncate">
                   {appType === AppType.Swap ? 'Explore Apps' : appType}

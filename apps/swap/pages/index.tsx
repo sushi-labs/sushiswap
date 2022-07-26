@@ -259,8 +259,8 @@ const Widget: FC<Swap> = ({
         pathname: router.pathname,
         query: {
           ...router.query,
-          srcToken: srcToken && srcToken.isNative ? srcToken.symbol : srcToken.address,
-          dstToken: dstToken && dstToken.isNative ? dstToken.symbol : dstToken.address,
+          srcToken: srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
+          dstToken: dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
           srcChainId,
           dstChainId,
           srcTypedAmount,
