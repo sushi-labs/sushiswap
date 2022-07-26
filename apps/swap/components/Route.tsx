@@ -35,7 +35,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
         <Popover
           hover
           panel={
-            <div className="relative flex items-center mt-1 bg-slate-800 border border-slate-200/10 rounded-2xl px-4 py-3">
+            <div className="relative flex items-center px-4 py-3 mt-1 border bg-slate-800 border-slate-200/10 rounded-2xl">
               <div className="flex flex-grow items-center gap-3 z-[1]">
                 <div className="flex items-center w-6 h-6">
                   <Badge
@@ -144,11 +144,11 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                   </Badge>
                 </div>
               </div>
-              <div className="absolute z-0 left-4 right-4 border border-dashed pointer-events-none border-slate-600" />
+              <div className="absolute z-0 border border-dashed pointer-events-none left-4 right-4 border-slate-600" />
             </div>
           }
           button={
-            <Typography variant="sm" weight={500} className="cursor-pointer text-blue text-right">
+            <Typography variant="sm" weight={500} className="text-right cursor-pointer text-blue">
               View Route
             </Typography>
           }
@@ -168,7 +168,7 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <div className="relative flex">
       {trade.route.legs.map((leg, i) => (
-        <div key={i} className="z-10 flex gap-1 items-center text-sm font-medium leading-4 text-slate-400">
+        <div key={i} className="z-10 flex items-center gap-1 text-sm font-medium leading-4 text-slate-400">
           {i === 0 ? (
             <Typography variant="xs" weight={700}>
               {leg.tokenFrom.symbol}
@@ -202,7 +202,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   return (
     <>
       {initialPaths.map((initialPath, i) => (
-        <div key={i} className="z-10 flex gap-1 items-center text-xs font-medium leading-4 text-slate-300">
+        <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
           {Number(initialPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>
@@ -217,7 +217,7 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
       {percentPaths.map((percentPath, i) => (
-        <div key={i} className="z-10 flex gap-1 items-center text-xs font-medium leading-4 text-slate-300">
+        <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
           {Number(percentPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={700}>
@@ -249,12 +249,10 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
           <Popover
             hover
             panel={
-              <div className="relative flex items-center mt-1 bg-slate-800 border border-slate-200/10 rounded-2xl px-4 py-3">
-                <ComplexRoute trade={trade} />
-              </div>
+              <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">{<ComplexRoute trade={trade} />}</div>
             }
             button={
-              <Typography variant="sm" weight={500} className="cursor-pointer text-blue text-right">
+              <Typography variant="sm" weight={500} className="text-right cursor-pointer text-blue">
                 View Route
               </Typography>
             }
