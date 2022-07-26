@@ -1,0 +1,24 @@
+sources:
+  - name: Exchange
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+
+additionalTypeDefs: |
+  extend type Pair {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Query {
+    crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
+  }
+
+
+additionalResolvers:
+  - ./resolvers.ts
+
+documents:
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'

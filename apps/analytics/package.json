@@ -20,10 +20,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.0.2",
-    "@graphql-mesh/transform-prefix": "0.11.56",
-    "@graphql-mesh/transform-rename": "0.12.57",
-    "@graphql-mesh/transform-type-merging": "0.4.11",
+    "@graphprotocol/client-cli": "^2.1.0",
+    "@graphql-mesh/transform-prefix": "^0.11.60",
+    "@graphql-mesh/transform-rename": "^0.12.61",
+    "@graphql-mesh/transform-type-merging": "^0.4.15",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

@@ -16,7 +16,6 @@
       "cache": true
     },
     "build": {
-      "cache": true,
       "outputs": [
         ".next/**",
         "dist/**",
@@ -41,7 +40,6 @@
       "cache": false
     },
     "generate": {
-      "cache": true,
       "dependsOn": [
         "^build",
         "$REDIS_URL"
@@ -51,10 +49,10 @@
         ".graphclient/**",
         ".mesh/**",
         "typechain/**"
-      ]
+      ],
+      "cache": true
     },
-    "test": {
-      "cache": true,      
+    "test": {    
       "outputs": [
         "coverage/**"
       ],
@@ -73,28 +71,23 @@
       "cache": false
     },
     "export": {
-      "cache": true,
       "dependsOn": [
         "build"
       ],
       "outputs": [
         "exports.json"
-      ]
+      ],
+      "cache": true
     },
     "node": {
-      "cache": true,
       "dependsOn": [
         "build"
       ],
       "outputs": [
         "deployments/**"
-      ]
+      ],
+      "cache": true
     }
   },
-  "globalDependencies": [
-    ".env",
-    "tsconfig.json",
-    "$NODE_ENV"
-  ],
   "baseBranch": "origin/master"
 }

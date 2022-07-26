@@ -1,0 +1,8 @@
+query CrossChainPairs($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainPairs(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    name
+  }
+}

@@ -18,8 +18,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "^1.0.1",
-    "@graphprotocol/client-cli": "^2.0.0",
+    "@graphprotocol/client-cli": "^2.1.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

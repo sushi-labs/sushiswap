@@ -12,6 +12,8 @@ export enum AppType {
   Legacy = 'Sushi 1.0',
   Internal = 'Internal',
   Kashi = 'Kashi',
+  Analytics = 'Analytics',
+  Pool = 'Pool',
 }
 
 const LINK = {
@@ -21,6 +23,7 @@ const LINK = {
   [AppType.Legacy]: '/',
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/internal',
+  [AppType.Analytics]: '/analytics',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
