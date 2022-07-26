@@ -1,0 +1,17 @@
+query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainBundles(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    ethPrice
+  }
+}
+
+query CrossChainPairs(($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height, $chainIds: [BigInt!]!) {
+  crossChainPairs(first: $first, skip: $skip, where: $where, block: $block, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    name
+  }
+}
