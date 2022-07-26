@@ -4,7 +4,7 @@ const Row: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>,
   children,
   ...props
 }) => (
-  <tr {...props} className="w-full cursor-pointer even:bg-slate-800/30">
+  <tr {...props} className="w-full even:bg-slate-800/30">
     {children}
   </tr>
 )

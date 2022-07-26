@@ -36,7 +36,8 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@uniswap/v3-periphery": "1.4.1"
+    "@uniswap/v3-periphery": "1.4.1",
+    "@wagmi/core": "^0.4.9"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
