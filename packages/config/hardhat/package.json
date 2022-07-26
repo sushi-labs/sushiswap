@@ -45,7 +45,6 @@
     "typechain": "8.x"
   },
   "devDependencies": {
-    "@ethersproject/hardware-wallets": "^5.6.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
