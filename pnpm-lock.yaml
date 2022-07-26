@@ -49,7 +49,7 @@ importers:
       lodash.flatmap: ^4.5.0
     dependencies:
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/tines': 1.0.0-canary.109
+      '@sushiswap/tines': link:../../packages/tines
       '@vercel/node': 1.15.4
       lodash.flatmap: 4.5.0
     devDependencies:
@@ -62,7 +62,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^29.1.0
+      '@sushiswap/default-token-list': ^29.2.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -70,7 +70,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 29.1.0
+      '@sushiswap/default-token-list': 29.2.0
       '@vercel/node': 2.4.5
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -7423,8 +7423,8 @@ packages:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: true
 
-  /@sushiswap/default-token-list/29.1.0:
-    resolution: {integrity: sha512-MWxe+AkMiCbFdeSF0kc1QyX9piFsVb8GDSU9BA8m6NjvhmSnRQ2sTBjIUzHQj4nf7MJX49RE6idUsT1aG2URYg==}
+  /@sushiswap/default-token-list/29.2.0:
+    resolution: {integrity: sha512-f+YS8x1iCqLP4NPRH9McWGt97aQP3GlYUZTKjUPnaOq9v1WLvqJ/HqbWHAEUGHkM8ILDONcDys7dF4KJWkG3VQ==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -7445,13 +7445,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
-
-  /@sushiswap/tines/1.0.0-canary.109:
-    resolution: {integrity: sha512-OBGXiFekKUddbpa52jEsAOcHYRF0aYBGEccheBUgP3CSO7m89H3To40r9X49eGztDSH2cjZ1aK0N/t1XkTNqLQ==}
-    dependencies:
-      '@ethersproject/bignumber': 5.6.2
-      '@sushiswap/currency': link:packages/currency
     dev: false
 
   /@sushiswap/trident/1.0.0-canary.36:
@@ -9257,7 +9250,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -13617,15 +13610,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.1:
-    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
@@ -19869,7 +19853,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
