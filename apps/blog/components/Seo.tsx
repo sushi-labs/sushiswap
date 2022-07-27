@@ -28,7 +28,7 @@ export const Seo: FC<Seo> = ({ global, seo }) => {
       (seo?.shareImage?.data?.attributes?.width || 0) *
         (Math.max(seo?.shareImage?.data?.attributes?.height || 0, 1280) / 1280)
     ),
-    shareMediaHeight: Math.max(seo?.shareImage?.data?.attributes?.height || 0, 1280),
+    shareMediaHeight: Math.min(seo?.shareImage?.data?.attributes?.height || Infinity, 1280),
     shareMediaAlt: seo?.shareImage?.data?.attributes?.alternativeText,
     twitterCardType: isMediaVideo(seo?.shareImage?.data?.attributes?.provider_metadata)
       ? 'player'
