@@ -9,6 +9,7 @@ import { PoolsTableRewardsCell } from './PoolsTableRewardsCell'
 import { PoolsTableTVLCell } from './PoolsTableTVLCell'
 
 export const ICON_SIZE = 26
+
 export const PAGE_SIZE = 20
 
 export const POOL_TABLE_COLUMNS: ColumnDef<Pair>[] = [
