@@ -12,17 +12,24 @@ import {
   Loader,
   Menu,
   MetamaskIcon,
+  OperaIcon,
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
 import React, { ReactNode } from 'react'
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
-
+import * as env from 'detect-browser'
 import { useAutoConnect, useWalletState } from '../../hooks'
 import { Account } from '..'
 
+function isOpera() {
+  const browser = env.detect()
+  if (browser && browser.name === 'opera') {
+    return true
+  }
+}
 const Icons: Record<string, ReactNode> = {
-  Injected: <ChevronDoubleDownIcon width={16} height={16} />,
+  Injected: isOpera() ? <OperaIcon width={16} height={16} /> : <ChevronDoubleDownIcon width={16} height={16} />,
   MetaMask: <MetamaskIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
