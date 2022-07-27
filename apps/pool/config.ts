@@ -23,4 +23,19 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
 }
 
-export const ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.ARBITRUM]
+export const ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.GNOSIS,
+  ChainId.POLYGON,
+  ChainId.FANTOM,
+  ChainId.BSC,
+  ChainId.HARMONY,
+  ChainId.AVALANCHE,
+  ChainId.CELO,
+  ChainId.ARBITRUM,
+  ChainId.MOONRIVER,
+  ChainId.OKEX,
+  ChainId.HECO,
+  ChainId.FUSE,
+  ChainId.MOONBEAM,
+]
