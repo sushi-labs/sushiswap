@@ -1,19 +1,18 @@
-import { getBuiltGraphSDK, OrderDirection, Pair_filter, Pair_orderBy } from '../.graphclient'
+import { OrderDirection, Pair_filter, Pair_orderBy } from '../.graphclient'
 import { ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
-  const sdk = await getBuiltGraphSDK()
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
 
   const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
     chainIds: ENABLED_NETWORKS,
   })
 
-  const _bundles = bundles.reduce((acc, cur) => {
+  return bundles.reduce((acc, cur) => {
     acc[cur.chainId] = cur
     return acc
   }, {})
-
-  return _bundles
 }
 
 type GetPoolsQuery = Partial<{
@@ -23,7 +22,8 @@ type GetPoolsQuery = Partial<{
 }>
 
 export const getPools = async (query?: GetPoolsQuery) => {
-  const sdk = await getBuiltGraphSDK()
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
 
   const where = query?.where || {}
   const orderBy = query?.orderBy || 'reserveETH'

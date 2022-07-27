@@ -23,16 +23,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
-  [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
-  [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
-  [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
 }
 
-export const ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.POLYGON,
-  ChainId.AVALANCHE,
-  ChainId.ARBITRUM,
-  ChainId.MOONBEAM,
-]
+export const ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.AVALANCHE]
