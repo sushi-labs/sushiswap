@@ -1,12 +1,12 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.0-canary.109",
+  "version": "0.0.0",
   "private": true,
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
   },
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "Ilya Lyalin",
   "sideEffects": false,
   "main": "dist/index.js",
