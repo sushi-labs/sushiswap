@@ -7,11 +7,25 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainPairs(($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height, $chainIds: [BigInt!]!) {
-  crossChainPairs(first: $first, skip: $skip, where: $where, block: $block, chainIds: $chainIds) {
+query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
+  crossChainPairs(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds) {
     id
     chainId
     chainName
     name
+    token0 {
+      name
+      id
+      decimals
+      symbol
+    }
+    token1 {
+      name
+      id
+      decimals
+      symbol
+    }
+    reserveETH
   }
 }
+

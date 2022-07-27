@@ -22,3 +22,5 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
 }
+
+export const ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.ARBITRUM]
