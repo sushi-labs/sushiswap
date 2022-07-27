@@ -7,7 +7,7 @@ import { classNames, Link, Select, SushiIcon } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
-  Furo = 'Streaming & Vesting',
+  Furo = 'Streaming',
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
   Internal = 'Internal',
