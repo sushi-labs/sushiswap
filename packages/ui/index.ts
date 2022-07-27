@@ -30,6 +30,7 @@ export * from './table'
 export * from './tabs'
 export * from './theme'
 export * from './toast'
+export * from './tooltip'
 export * from './types'
 export * from './typography'
 // Re-export classnames for convenience

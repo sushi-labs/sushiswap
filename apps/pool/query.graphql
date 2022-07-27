@@ -29,3 +29,27 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
   }
 }
 
+query Pair($id: String!) {
+  pair(id: $id) {
+    id
+    chainId
+    chainName
+    name
+    reserve0
+    reserve1
+    token0 {
+      name
+      id
+      decimals
+      symbol
+    }
+    token1 {
+      name
+      id
+      decimals
+      symbol
+    }
+    reserveETH
+    volumeUSD
+  }
+}
