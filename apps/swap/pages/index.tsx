@@ -224,7 +224,7 @@ const Widget: FC<Swap> = ({
   const transferSwap = crossChain && isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
 
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
-  const srcOutputCurrencyRebase = useBentoBoxTotal(srcChainId, sameChainSwap ? srcBridgeToken : dstToken)
+  const srcOutputCurrencyRebase = useBentoBoxTotal(srcChainId, sameChainSwap ? dstToken : srcBridgeToken)
 
   const dstInputCurrencyRebase = useBentoBoxTotal(dstChainId, dstBridgeToken)
   const dstOutputCurrencyRebase = useBentoBoxTotal(dstChainId, dstToken)
