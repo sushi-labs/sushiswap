@@ -63,10 +63,10 @@ export const resolvers: Resolvers = {
           )
         )
       ).then((bundles) => bundles.flat()),
-    crossChainUsers: async (root, args, context, info) =>
+    crossChainUser: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
-          context.Exchange.Query.users({
+          context.Exchange.Query.user({
             root,
             args,
             context: {
@@ -77,14 +77,14 @@ export const resolvers: Resolvers = {
               subgraphHost: GRAPH_HOST[chainId],
             },
             info,
-          }).then((bundles) =>
-            bundles.map((bundle) => ({
-              ...bundle,
+          }).then((users) =>
+            users.map((user) => ({
+              ...user,
               chainId,
               chainName: CHAIN_NAME[chainId],
             }))
           )
         )
-      ).then((bundles) => bundles.flat()),
+      ).then((users) => users.flat()),
   },
 }

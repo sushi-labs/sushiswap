@@ -37,7 +37,7 @@ additionalTypeDefs: |
     crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
-    crossChainUsers(first: Int!, chainIds: [BigInt!]!): [User!]!
+    crossChainUser(id: String!, chainIds: [BigInt!]!): [User!]!
   }
 
 additionalResolvers:

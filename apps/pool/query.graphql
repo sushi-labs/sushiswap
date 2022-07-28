@@ -29,6 +29,32 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
   }
 }
 
+query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
+  crossChainUser(id: $id, block: $block, chainIds: $chainIds) {
+    liquidityPositions {
+      pair {
+        id
+        chainId
+        chainName
+        name
+        token0 {
+          id
+          name
+          decimals
+          symbol
+        }
+        token1 {
+          id
+          name
+          decimals
+          symbol
+        }
+        reserveETH
+      }
+    }
+  }
+}
+
 query CrossChainUsers($first: Int = 1000, $skip: Int = 0, $where: User_filter, $orderBy: User_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
   crossChainUsers(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds) {
     liquidityPositions {
@@ -38,14 +64,14 @@ query CrossChainUsers($first: Int = 1000, $skip: Int = 0, $where: User_filter, $
         chainName
         name
         token0 {
-          name
           id
+          name
           decimals
           symbol
         }
         token1 {
-          name
           id
+          name
           decimals
           symbol
         }
