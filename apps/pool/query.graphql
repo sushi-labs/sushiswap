@@ -73,26 +73,6 @@ query Pair($id: String!, $now: Int!) {
   }
 }
 
-query PairHourDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $where: PairHourData_filter) {
-  pairHourDatas(first: $first, skip: $skip, block: $block, where: $where, orderBy: date, orderDirection: desc) {
-    id
-    date
-    volumeUSD
-    reserve0
-    reserve1
-  }
-}
-
-query PairDayDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $where: PairDayData_filter) {
-  pairDayDatas(first: $first, skip: $skip, block: $block, where: $where, orderBy: date, orderDirection: desc) {
-    id
-    date
-    volumeUSD
-    reserve0
-    reserve1
-  }
-}
-
 # query Farms($where: Incentive_filter) {
 #   farms {
 #     id

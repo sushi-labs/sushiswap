@@ -1,4 +1,4 @@
-import { OrderDirection, Pair_filter, Pair_orderBy, PairHourDatasQueryVariables } from '../.graphclient'
+import { OrderDirection, Pair_orderBy } from '../.graphclient'
 import { ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
@@ -16,7 +16,7 @@ export const getBundles = async () => {
 }
 
 type GetPoolsQuery = Partial<{
-  where: Pair_filter
+  where: string
   first: number
   skip: number
   orderBy: Pair_orderBy
@@ -27,7 +27,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const where = query?.where || {}
+  const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
   const orderBy = query?.orderBy || 'reserveETH'
@@ -49,12 +49,4 @@ export const getPool = async (id: string) => {
 
   const { pair } = await sdk.Pair({ id, now: Math.round(new Date().getTime() / 1000) })
   return pair
-}
-
-export const getPairHourDatas = async (query?: PairHourDatasQueryVariables) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
-  const { pairHourDatas } = await sdk.PairHourDatas(query)
-  return pairHourDatas
 }
