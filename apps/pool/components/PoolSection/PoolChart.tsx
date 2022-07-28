@@ -10,10 +10,10 @@ import tailwindConfig from '../../tailwind.config.js'
 
 const tailwind = resolveConfig(tailwindConfig)
 
-import { Pair } from '../../.graphclient'
+import { PairWithAlias } from '../../types'
 
 interface PoolChartProps {
-  pair: Pair
+  pair: PairWithAlias
 }
 
 enum PoolChartType {

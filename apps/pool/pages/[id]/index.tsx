@@ -4,10 +4,18 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { Pair } from '../.graphclient'
-import { Layout, PoolButtons, PoolChart, PoolComposition, PoolHeader, PoolPosition, PoolRewards } from '../components'
-import { PoolStats } from '../components'
-import { getPool } from '../lib/api'
+import {
+  Layout,
+  PoolButtons,
+  PoolChart,
+  PoolComposition,
+  PoolHeader,
+  PoolPosition,
+  PoolRewards,
+  PoolStats,
+} from '../../components'
+import { getPool } from '../../lib/api'
+import { PairWithAlias } from '../../types'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -35,11 +43,10 @@ const _Pool = () => {
   const isMounted = useIsMounted()
   const {
     data: { pair },
-  } = useSWR<{ pair: Pair }>(`/pool/api/pool/${router.query.id}`, (url) =>
+  } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
-  console.log(pair)
   // TODO REMOVE
   if (!isMounted) return <></>
 

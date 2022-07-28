@@ -4,19 +4,10 @@ import { Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
+import { PairWithAlias } from '../../types'
 
 interface PoolStats {
-  pair: Pair & {
-    // Note: should be handled by graphclient
-    dayChangeData: {
-      id: string
-      date: number
-      volumeUSD: number
-      reserveUSD: number
-      txCount: number
-    }[]
-  }
+  pair: PairWithAlias
 }
 
 // TODO MAKE DYNAMIC

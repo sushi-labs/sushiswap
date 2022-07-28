@@ -4,11 +4,11 @@ import { Currency, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
+import { PairWithAlias } from '../../types'
 
 interface PoolCompositionProps {
-  pair: Pair
+  pair: PairWithAlias
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
