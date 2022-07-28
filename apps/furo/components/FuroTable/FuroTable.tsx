@@ -213,7 +213,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             {instance.getRowModel().rows.length === 0 &&
               !initialized &&
               Array.from(Array(4)).map((_, i) => (
-                <Table.tr>
+                <Table.tr key={i}>
                   <Table.td className="h-12">
                     <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                   </Table.td>
