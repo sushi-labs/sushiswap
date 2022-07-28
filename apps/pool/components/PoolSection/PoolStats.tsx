@@ -16,7 +16,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Liquidity

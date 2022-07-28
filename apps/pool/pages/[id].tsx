@@ -1,10 +1,11 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { Pair } from '../.graphclient'
-import { Layout, PoolButtons, PoolComposition, PoolHeader, PoolPosition, PoolRewards } from '../components'
+import { Layout, PoolButtons, PoolChart, PoolComposition, PoolHeader, PoolPosition, PoolRewards } from '../components'
 import { PoolStats } from '../components'
 import { getPool } from '../lib/api'
 
@@ -30,20 +31,26 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
 
 const _Pool = () => {
   const router = useRouter()
+  const isMounted = useIsMounted()
   const { data: pair } = useSWR<Pair>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
+  // TODO REMOVE
+  if (!isMounted) return <></>
+
   return (
     <Layout>
-      <div className="grid grid-cols-[568px_auto] gap-12">
-        <div className="flex flex-col gap-9">
+      <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+        <div className="flex flex-col gap-9 order-2 lg:order-1">
           <PoolHeader pair={pair} />
+          <hr className="border-t border-slate-200/5 my-3" />
+          <PoolChart pair={pair} />
           <PoolStats pair={pair} />
           <PoolComposition pair={pair} />
           <PoolRewards pair={pair} />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 order-1 lg:order-2">
           <PoolPosition pair={pair} />
           <PoolButtons pair={pair} />
         </div>
