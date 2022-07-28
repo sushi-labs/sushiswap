@@ -10,7 +10,7 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "turbo run dev --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
-    "enabled-remote-caching": "turbo link",
+    "enable-remote-caching": "turbo link",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
     "lint": "turbo run lint",
     "prepare": "husky install ",
@@ -47,9 +47,9 @@
     "ts-jest": "^28.0.0",
     "turbo": "latest"
   },
+  "packageManager": "pnpm@7.6.0",
   "engines": {
     "node": ">=16.x",
     "pnpm": ">=6.x"
-  },
-  "packageManager": "pnpm@7.6.0"
+  }
 }
