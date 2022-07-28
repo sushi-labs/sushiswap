@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       fallback: {
         [unstable_serialize({
-          url: `${process.env.NEXT_PUBLIC_HOST}/pool/api/pools`,
+          url: '/pool/api/pools',
           args: {
             sorting: [
               {
