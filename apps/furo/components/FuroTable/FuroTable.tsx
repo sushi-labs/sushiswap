@@ -2,14 +2,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
+import { Chip, LoadingOverlay, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 
-import { LoadingOverlay } from '../Overlay'
 import { Placeholder } from './Placeholder'
 import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
@@ -252,6 +251,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             {instance.getRowModel().rows.map((row) => {
               return (
                 <Table.tr
+                  className="cursor-pointer"
                   key={row.id}
                   onClick={() => {
                     setShowOverlay(true)

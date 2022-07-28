@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, Table } from '@sushiswap/ui'
+import { classNames, LoadingOverlay, Table } from '@sushiswap/ui'
 import {
   flexRender,
   getCoreRowModel,
@@ -63,6 +63,7 @@ const fetcher = ({
 export const PoolsTable: FC = () => {
   const router = useRouter()
   const { query, extraQuery } = usePoolFilters()
+  const [showOverlay, setShowOverlay] = useState(false)
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -91,6 +92,7 @@ export const PoolsTable: FC = () => {
 
   return (
     <>
+      <LoadingOverlay show={showOverlay} />
       <Table.container>
         <Table.table>
           <Table.thead>
@@ -125,7 +127,14 @@ export const PoolsTable: FC = () => {
           <Table.tbody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <Table.tr key={row.id} onClick={() => router.push(`/${row.original.id}`)} className="cursor-pointer">
+                <Table.tr
+                  key={row.id}
+                  onClick={() => {
+                    setShowOverlay(true)
+                    void router.push(`/${row.original.id}`)
+                  }}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <Table.td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.td>
