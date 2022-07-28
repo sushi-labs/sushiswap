@@ -92,3 +92,285 @@ query PairDayDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $wh
     reserve1
   }
 }
+
+# query Farms($where: Incentive_filter) {
+#   farms {
+#     id
+#     stakeToken {
+#       id
+#       name
+#       symbol
+#       decimals
+#       type
+#       assets
+#     }
+#     incentives(where: $where) {
+#       id
+#       rewardsAccrued
+#       rewardsRemaining
+#       liquidityStaked
+#       stakeToken {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#         assets
+#       }
+#       rewardToken {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#       }
+#       createdBy {
+#         id
+#       }
+#       startTime
+#       endTime
+#       createdAtBlock
+#       createdAtTimestamp
+#       modifiedAtBlock
+#       modifiedAtTimestamp
+#       rewardsUpdatedAtBlock
+#       rewardsUpdatedAtTimestamp
+#     }
+#   }
+# }
+
+# query UserSubscribedIncentives($id: ID!) {
+#   user(id: $id) {
+#     id
+#     activeSubscriptionCount
+#     subscriptions {
+#       token {
+#         id
+#         name
+#         symbol
+#         decimals
+#         incentives {
+#           id
+#           rewardsAccrued
+#           rewardsRemaining
+#           liquidityStaked
+#           stakeToken {
+#             id
+#             name
+#             symbol
+#             decimals
+#             type
+#             assets
+#           }
+#           rewardToken {
+#             id
+#             name
+#             symbol
+#             decimals
+#             type
+#           }
+#           createdBy {
+#             id
+#           }
+#           startTime
+#           endTime
+#           createdAtBlock
+#           createdAtTimestamp
+#           modifiedAtBlock
+#           modifiedAtTimestamp
+#           rewardsUpdatedAtBlock
+#           rewardsUpdatedAtTimestamp
+#         }
+#       }
+#       incentive {
+#         id
+#       }
+#     }
+#   }
+# }
+
+# query UserSubscriptions($id: ID!) {
+#   user(id: $id) {
+#     subscriptions {
+#       incentive {
+#         id
+#         farm {
+#           id
+#         }
+#       }
+#     }
+#   }
+# }
+
+# query UserFarms($id: ID!) {
+#   user(id: $id) {
+#     id
+#     stakePositions {
+#       id
+#       token {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#         assets
+#       }
+#       liquidity
+#       user {
+#         id
+#       }
+#       farm {
+#         stakeToken {
+#           id
+#           name
+#           symbol
+#           decimals
+#           type
+#           assets
+#         }
+#         incentives {
+#           id
+#           rewardsAccrued
+#           rewardsRemaining
+#           liquidityStaked
+#           stakeToken {
+#             id
+#             name
+#             symbol
+#             decimals
+#             type
+#             assets
+#           }
+#           rewardToken {
+#             id
+#             name
+#             symbol
+#             decimals
+#             type
+#           }
+#           createdBy {
+#             id
+#           }
+#           startTime
+#           endTime
+#           createdAtBlock
+#           createdAtTimestamp
+#           modifiedAtBlock
+#           modifiedAtTimestamp
+#           rewardsUpdatedAtBlock
+#           rewardsUpdatedAtTimestamp
+#         }
+#       }
+#       createdAtBlock
+#       createdAtTimestamp
+#     }
+#   }
+# }
+
+# query StakePosition($id: ID!) {
+#   stakePosition(id: $id) {
+#     id
+#     token {
+#       id
+#       name
+#       symbol
+#       decimals
+#       type
+#       assets
+#     }
+#     liquidity
+#     user {
+#       id
+#     }
+#     createdAtBlock
+#     createdAtTimestamp
+#   }
+# }
+
+# query UserRewards($id: ID!) {
+#   user(id: $id) {
+#     id
+#     rewards {
+#       id
+#       claimedAmount
+#       claimableAmount
+#       modifiedAtBlock
+#       modifiedAtTimestamp
+#       createdAtBlock
+#       createdAtTimestamp
+#       user {
+#         id
+#       }
+#       token {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#         assets
+#       }
+#       incentive {
+#         id
+#         rewardsAccrued
+#         rewardsRemaining
+#         liquidityStaked
+#         stakeToken {
+#           id
+#           name
+#           symbol
+#           decimals
+#           type
+#           assets
+#         }
+#         rewardToken {
+#           id
+#           name
+#           symbol
+#           decimals
+#           type
+#         }
+#         createdBy {
+#           id
+#         }
+#         startTime
+#         endTime
+#         createdAtBlock
+#         createdAtTimestamp
+#         modifiedAtBlock
+#         modifiedAtTimestamp
+#         rewardsUpdatedAtBlock
+#         rewardsUpdatedAtTimestamp
+#       }
+#     }
+#   }
+# }
+
+# query UserStakingTransactions($id: ID!, $farmId: ID!) {
+#   user(id: $id) {
+#     id
+#     transactions(where: { farm: $farmId }) {
+#       type
+#       incentive {
+#         id
+#       }
+#       amount
+#       user {
+#         id
+#       }
+#       to {
+#         id
+#       }
+#       token {
+#           id
+#           name
+#           symbol
+#           decimals
+#           type
+#           assets
+#       }
+#       txHash
+#       createdAtBlock
+#       createdAtTimestamp
+#     }
+#   }
+# }

@@ -3,6 +3,10 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+  # - name: Staking
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
 
 additionalTypeDefs: |
   extend type Pair {
