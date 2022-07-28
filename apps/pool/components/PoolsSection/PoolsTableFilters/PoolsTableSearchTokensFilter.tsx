@@ -9,8 +9,8 @@ import { usePoolFilters } from '../../PoolsProvider'
 export const PoolsTableSearchTokensFilter: FC = () => {
   const { setFilters } = usePoolFilters()
 
-  const [_query, setQuery] = useState<string>()
-  const [_extraQuery, setExtraQuery] = useState<string>()
+  const [_query, setQuery] = useState<string>('')
+  const [_extraQuery, setExtraQuery] = useState<string>('')
   const [extra, setExtra] = useState(false)
 
   const debouncedQuery = useDebounce(_query, 400)
@@ -33,7 +33,7 @@ export const PoolsTableSearchTokensFilter: FC = () => {
   }, [extra, setFilters])
 
   return (
-    <div className="flex gap-3 items-center bg-slate-800 rounded-2xl h-11 pr-4">
+    <div className="flex items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-11">
       <div
         className={classNames(
           _query ? 'pr-8' : 'pr-4',
@@ -67,7 +67,7 @@ export const PoolsTableSearchTokensFilter: FC = () => {
           </IconButton>
         </Transition>
       </div>
-      <div className="py-3 h-full">
+      <div className="h-full py-3">
         <div className="w-px h-full bg-slate-200/20" />
       </div>
       <Transition
