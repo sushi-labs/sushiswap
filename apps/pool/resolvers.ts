@@ -63,5 +63,28 @@ export const resolvers: Resolvers = {
           )
         )
       ).then((bundles) => bundles.flat()),
+    crossChainUsers: async (root, args, context, info) =>
+      Promise.all(
+        args.chainIds.map((chainId) =>
+          context.Exchange.Query.users({
+            root,
+            args,
+            context: {
+              ...context,
+              chainId,
+              chainName: CHAIN_NAME[chainId],
+              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+              subgraphHost: GRAPH_HOST[chainId],
+            },
+            info,
+          }).then((bundles) =>
+            bundles.map((bundle) => ({
+              ...bundle,
+              chainId,
+              chainName: CHAIN_NAME[chainId],
+            }))
+          )
+        )
+      ).then((bundles) => bundles.flat()),
   },
 }
