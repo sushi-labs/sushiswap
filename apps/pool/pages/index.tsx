@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Button, OnsenIcon } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
-import { SWRConfig } from 'swr'
+import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
 import { getBundles, getPools } from '../lib/api'
@@ -14,7 +14,23 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   return {
     props: {
       fallback: {
-        [`/pool/api/pools`]: pairs,
+        [unstable_serialize({
+          url: '/pool/api/pools',
+          args: {
+            sorting: [
+              {
+                id: 'reserveETH',
+                desc: true,
+              },
+            ],
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+            query: '',
+            extraQuery: '',
+          },
+        })]: pairs,
         [`/pool/api/bundles`]: bundles,
       },
     },
@@ -33,14 +49,14 @@ const _Pools = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-16">
-        <section className="flex flex-col lg:flex-row gap-6">
-          <div className="space-y-4 max-w-md">
-            <h2 className="font-bold text-2xl text-slate-50">Sushi Yield</h2>
+        <section className="flex flex-col gap-6 lg:flex-row">
+          <div className="max-w-md space-y-4">
+            <h2 className="text-2xl font-bold text-slate-50">Sushi Yield</h2>
             <p className="text-slate-300">
               Onsen is back with a new contract, allowing for more yield opportunities and functionalities.{' '}
             </p>
           </div>
-          <div className="not-prose flex flex-grow justify-end">
+          <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
               <Button fullWidth color="blue" startIcon={<PlusIcon width={20} height={20} />}>
                 New Pool

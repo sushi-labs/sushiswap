@@ -71,10 +71,7 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
-  const { data: pools } = useSWR<Pair[]>(
-    { url: `${typeof window !== 'undefined' ? window.location : ''}/api/pools`, args },
-    fetcher
-  )
+  const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
 
   const table = useReactTable({
     data: pools ?? [],
@@ -150,7 +147,7 @@ export const PoolsTable: FC = () => {
                     <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
                   </Table.td>
                   <Table.td
-                    className="flex gap-2 items-center"
+                    className="flex items-center gap-2"
                     style={{ maxWidth: POOL_TABLE_COLUMNS[1].size, width: POOL_TABLE_COLUMNS[1].size }}
                   >
                     <div className="flex items-center">
