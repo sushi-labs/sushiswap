@@ -9,7 +9,7 @@ interface PoolButtonsProps {
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
       <Link.Internal href={`/${pair.id}/earn`} passHref={true}>
         <Button as="a">Earn</Button>
       </Link.Internal>

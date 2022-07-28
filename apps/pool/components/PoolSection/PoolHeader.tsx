@@ -46,7 +46,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">

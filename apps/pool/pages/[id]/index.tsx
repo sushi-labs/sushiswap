@@ -14,17 +14,18 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { getPool } from '../../lib/api'
+import { getPool, getSushiBar } from '../../lib/api'
 import { PairWithAlias } from '../../types'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pair] = await Promise.all([getPool(query.id as string)])
+  const [pair, stats] = await Promise.all([getPool(query.id as string), getSushiBar()])
 
   return {
     props: {
       fallback: {
         [`/pool/api/pool/${query.id}`]: { pair },
+        [`/pool/api/bar`]: { stats },
       },
     },
   }
@@ -53,7 +54,7 @@ const _Pool = () => {
   return (
     <Layout>
       <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-        <div className="flex flex-col gap-9 order-2 lg:order-1">
+        <div className="flex flex-col gap-9 order-1">
           <PoolHeader pair={pair} />
           <hr className="border-t border-slate-200/5 my-3" />
           <PoolChart pair={pair} />
@@ -61,7 +62,7 @@ const _Pool = () => {
           <PoolComposition pair={pair} />
           <PoolRewards pair={pair} />
         </div>
-        <div className="flex flex-col gap-4 order-1 lg:order-2">
+        <div className="flex flex-col gap-4 order-2">
           <PoolPosition pair={pair} />
           <PoolButtons pair={pair} />
         </div>
