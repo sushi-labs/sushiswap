@@ -40,7 +40,7 @@ export const PoolsTableNameCell: FC<CellProps> = ({ pair }) => {
                 </div>
                 <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
                   <Chip color="gray" size="sm" label="Classic" />
-                  0.5%
+                  Fee 0.5%
                 </Typography>
               </div>
               <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
