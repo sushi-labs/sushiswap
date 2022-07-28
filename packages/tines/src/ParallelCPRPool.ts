@@ -42,7 +42,7 @@ export class ParallelCPRPool extends RPool {
     direction: boolean,
     prevJump?: JumpInfo
   ): JumpInfo | undefined {
-    const dir = (this.token0.address === pool.token0.address) === direction
+    const dir = (this.token0.tokenId === pool.token0.tokenId) === direction
     const poolPrice = pool.calcPrice(0, dir, true)
     const y = dir ? pool.reserve1Number : pool.reserve0Number
     if (prevJump === undefined)
