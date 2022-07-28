@@ -7,6 +7,14 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
+  - name: Bar
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/bar}
+  - name: Blocks-ethereum
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
 
 additionalTypeDefs: |
   extend type Pair {

@@ -1,4 +1,5 @@
-import { FarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
+import { getUnixTime, subMonths } from 'date-fns'
+import { CrossChainFarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
@@ -52,7 +53,28 @@ export const getPool = async (id: string) => {
 }
 
 
-export const getFarms = async (query?: FarmsQuery) => {
+
+export const getOneMonthBlock = async () => {
+
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+  const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
+
+    return await (
+      await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
+    ).blocks
+
+}
+
+export const getSushiBar = async (blockNumber?: number) => {
+
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+    return blockNumber ? (await sdk.Bar({ block: { number: blockNumber } })).bar : (await sdk.Bar()).bar
+
+}
+
+export const getFarms = async (query?: CrossChainFarmsQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 

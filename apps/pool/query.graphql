@@ -73,6 +73,28 @@ query Pair($id: String!, $now: Int!) {
   }
 }
 
+query EthereumBlocks($where: Block_filter) {
+  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Bar($block: Block_height, $id: String = "0x8798249c2e607446efb7ad49ec89dd1865ff4272") {
+  bar(block: $block, id: $id) {
+    id
+    decimals
+    sushi
+    totalSupply
+    ratio
+    xSushiMinted
+    xSushiBurned
+    sushiStaked
+    sushiHarvested
+  }
+}
+
 query CrossChainFarms($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
   farms {
     id
