@@ -16,7 +16,19 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
-  ({ watch = true, amount, address, render, dispatch, disabled, index, allApproved, initialized, ...props }) => {
+  ({
+    watch = true,
+    amount,
+    address,
+    render,
+    dispatch,
+    disabled,
+    index,
+    allApproved,
+    hideIcon,
+    initialized,
+    ...props
+  }) => {
     const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
 
     // Set to undefined on unmount
@@ -65,6 +77,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     ])
 
     if (render) return render({ approvalState, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition

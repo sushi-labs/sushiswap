@@ -33,7 +33,7 @@ const _Pools = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-16">
-        <section className="flex">
+        <section className="flex flex-col lg:flex-row gap-6">
           <div className="space-y-4 max-w-md">
             <h2 className="font-bold text-2xl text-slate-50">Sushi Yield</h2>
             <p className="text-slate-300">
@@ -41,7 +41,7 @@ const _Pools = () => {
             </p>
           </div>
           <div className="not-prose flex flex-grow justify-end">
-            <div className="flex flex-col gap-3 w-[200px]">
+            <div className="flex flex-col gap-3 w-full lg:w-[200px]">
               <Button fullWidth color="blue" startIcon={<PlusIcon width={20} height={20} />}>
                 New Pool
               </Button>

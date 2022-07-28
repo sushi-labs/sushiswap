@@ -37,6 +37,7 @@ query Pair($id: String!, $now: Int!) {
     name
     reserve0
     reserve1
+    totalSupply
     token0 {
       name
       id
