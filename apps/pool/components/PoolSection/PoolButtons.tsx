@@ -13,7 +13,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
       <Link.Internal href={`/${pair.id}/earn`} passHref={true}>
         <Button as="a">Earn</Button>
       </Link.Internal>
-      <Button variant="outlined" as="a" href={`/swap/srcToken=${pair.id}&srcChainId=${pair.chainId}`}>
+      <Button variant="outlined" as="a" href={`/swap?srcToken=${pair.id}&srcChainId=${pair.chainId}`}>
         Trade
       </Button>
     </div>
