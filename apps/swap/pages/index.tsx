@@ -747,7 +747,7 @@ const Widget: FC<Swap> = ({
         </Typography>
         <Typography
           variant="sm"
-          weight={700}
+          weight={500}
           className={classNames(
             priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
             'text-right truncate'
@@ -758,7 +758,7 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Est. Processing Time
         </Typography>
-        <Typography variant="sm" weight={700} className="text-right truncate text-slate-200">
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
           ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
           minutes
         </Typography>
@@ -766,7 +766,7 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Min. Received
         </Typography>
-        <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
         </Typography>
         {crossChain && (
@@ -775,7 +775,7 @@ const Widget: FC<Swap> = ({
               Bridge Fee
             </Typography>
             {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
-              <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
                 ~$
                 {bridgeFee?.greaterThan(0)
                   ? bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)
@@ -790,7 +790,7 @@ const Widget: FC<Swap> = ({
               Gas Cost
             </Typography>
             {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
-              <Typography variant="sm" weight={700} className="text-right truncate text-slate-400">
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
                 {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
                 {/* ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)} */}
               </Typography>
@@ -1125,7 +1125,7 @@ const Widget: FC<Swap> = ({
                               <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex items-center gap-2">
                                   <div className="flex items-center justify-between w-full gap-2">
-                                    <Typography variant="h3" weight={700} className="truncate text-slate-50">
+                                    <Typography variant="h3" weight={500} className="truncate text-slate-50">
                                       {srcAmount?.toSignificant(6)}{' '}
                                     </Typography>
                                     <div className="flex items-center justify-end gap-2 text-right">
@@ -1141,7 +1141,7 @@ const Widget: FC<Swap> = ({
                                   </div>
                                 </div>
                                 <div className="flex justify-between gap-2">
-                                  <Typography variant="sm" weight={700} className="text-slate-500">
+                                  <Typography variant="sm" weight={500} className="text-slate-500">
                                     {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
                                   </Typography>
                                   {srcAmount && (
@@ -1169,7 +1169,7 @@ const Widget: FC<Swap> = ({
                               <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                 <div className="flex items-center gap-2">
                                   <div className="flex items-center justify-between w-full gap-2">
-                                    <Typography variant="h3" weight={700} className="truncate text-slate-50">
+                                    <Typography variant="h3" weight={500} className="truncate text-slate-50">
                                       {dstAmountOut?.toSignificant(6)}{' '}
                                     </Typography>
                                     <div className="flex items-center justify-end gap-2 text-right">
@@ -1185,7 +1185,7 @@ const Widget: FC<Swap> = ({
                                   </div>
                                 </div>
                                 <div className="flex justify-between gap-2">
-                                  <Typography variant="sm" weight={700} className="text-slate-500">
+                                  <Typography variant="sm" weight={500} className="text-slate-500">
                                     {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
                                     {usdPctChange && (
                                       <span

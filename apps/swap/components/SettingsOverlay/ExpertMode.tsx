@@ -22,7 +22,7 @@ export const ExpertMode = () => {
               hover
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
-                <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
+                <Typography variant="xs" weight={500} className="bg-slate-600 !rounded-lg w-40 p-3">
                   WARNING: Enabling Expert Mode will bypass all confirmation messages and will allow for high slippage
                   trades. ONLY use if you are an advanced user and know what you are doing. Use at your own risk.
                 </Typography>
