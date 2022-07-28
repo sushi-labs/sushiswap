@@ -9,7 +9,7 @@ export const PoolsTableFilters: FC = () => {
 
   return (
     <div className="flex justify-between gap-3">
-      <PoolsTableSearchTokensFilter isLoading={true} />
+      <PoolsTableSearchTokensFilter />
       <div className="flex gap-3">
         <Button
           variant="outlined"
