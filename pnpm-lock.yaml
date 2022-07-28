@@ -601,6 +601,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
+      date-fns: ^2.29.1
       echarts: ^5.3.3
       echarts-for-react: ^3.0.2
       eslint: ^8.20.0
@@ -641,6 +642,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      date-fns: 2.29.1
       echarts: 5.3.3
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.6.9

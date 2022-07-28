@@ -11,11 +11,12 @@ import { getPool } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const pair = await getPool(query.id as string)
+  const [pair] = await Promise.all([getPool(query.id as string)])
+
   return {
     props: {
       fallback: {
-        [`/pool/api/pool/${query.id}`]: pair,
+        [`/pool/api/pool/${query.id}`]: { pair },
       },
     },
   }
@@ -32,10 +33,13 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
 const _Pool = () => {
   const router = useRouter()
   const isMounted = useIsMounted()
-  const { data: pair } = useSWR<Pair>(`/pool/api/pool/${router.query.id}`, (url) =>
+  const {
+    data: { pair },
+  } = useSWR<{ pair: Pair }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
+  console.log(pair)
   // TODO REMOVE
   if (!isMounted) return <></>
 

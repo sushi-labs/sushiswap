@@ -29,7 +29,7 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
   }
 }
 
-query Pair($id: String!) {
+query Pair($id: String!, $now: Int!) {
   pair(id: $id) {
     id
     chainId
@@ -51,5 +51,44 @@ query Pair($id: String!) {
     }
     reserveETH
     volumeUSD
+    hourData(first: 168, orderBy: date, orderDirection: desc) {
+      id
+      date
+      volumeUSD
+      reserveUSD
+    }
+    dayData(first: 730, orderBy: date, orderDirection: desc) {
+      id
+      date
+      volumeUSD
+      reserveUSD
+    }
+    dayChangeData: dayData(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+      id
+      date
+      volumeUSD
+      reserveUSD
+      txCount
+    }
+  }
+}
+
+query PairHourDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $where: PairHourData_filter) {
+  pairHourDatas(first: $first, skip: $skip, block: $block, where: $where, orderBy: date, orderDirection: desc) {
+    id
+    date
+    volumeUSD
+    reserve0
+    reserve1
+  }
+}
+
+query PairDayDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $where: PairDayData_filter) {
+  pairDayDatas(first: $first, skip: $skip, block: $block, where: $where, orderBy: date, orderDirection: desc) {
+    id
+    date
+    volumeUSD
+    reserve0
+    reserve1
   }
 }

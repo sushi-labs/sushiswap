@@ -1,5 +1,6 @@
 import { formatUSD } from '@sushiswap/format'
 import { classNames, Typography } from '@sushiswap/ui'
+import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -18,7 +19,7 @@ interface PoolChartProps {
 enum PoolChartType {
   Volume,
   TVL,
-  Price,
+  Fees,
 }
 
 enum PoolChartPeriod {
@@ -29,107 +30,142 @@ enum PoolChartPeriod {
   All,
 }
 
-const DEFAULT_OPTION: EChartsOption = {
-  tooltip: {
-    trigger: 'axis',
-    responsive: true,
-    backgroundColor: tailwind.theme.colors.slate['700'],
-    textStyle: {
-      color: tailwind.theme.colors.slate['50'],
-      fontSize: 12,
-      fontWeight: 600,
-    },
-    borderWidth: 0,
-  },
-  toolbox: {
-    show: false,
-  },
-  grid: {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  dataZoom: {
-    show: false,
-    start: 0,
-    end: 100,
-  },
-  visualMap: {
-    show: false,
-    color: [tailwind.theme.colors.blue['500']],
-  },
-  xAxis: [
-    {
-      show: false,
-      type: 'category',
-      boundaryGap: true,
-      data: (function () {
-        let now = new Date()
-        const res = []
-        let len = 50
-        while (len--) {
-          res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''))
-          now = new Date(now - 2000)
-        }
-        return res
-      })(),
-    },
-  ],
-  yAxis: [
-    {
-      show: false,
-      type: 'value',
-      scale: true,
-      name: 'Volume',
-      max: 'dataMax',
-      min: 'dataMin',
-    },
-  ],
-  series: [
-    {
-      name: 'Volume',
-      type: 'bar',
-      xAxisIndex: 0,
-      yAxisIndex: 0,
-      itemStyle: {
-        color: 'blue',
-        normal: {
-          barBorderRadius: 2,
-        },
-      },
-      animationEasing: 'elasticOut',
-      animationDelay: function (idx) {
-        return idx * 10
-      },
-      animationDelayUpdate: function (idx) {
-        return idx * 10
-      },
-      data: (function () {
-        const res = []
-        let len = 50
-        while (len--) {
-          res.push(Math.round(Math.random() * 1000))
-        }
-        return res
-      })(),
-    },
-  ],
+// TODO MAKE DYNAMIC
+const FEE_BPS = 0.0005
+
+const chartTimespans: Record<PoolChartPeriod, number> = {
+  [PoolChartPeriod.Day]: 86400 * 1000,
+  [PoolChartPeriod.Week]: 604800 * 1000,
+  [PoolChartPeriod.Month]: 2629746 * 1000,
+  [PoolChartPeriod.Year]: 31556952 * 1000,
+  [PoolChartPeriod.All]: Infinity,
 }
 
 export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.All)
 
-  // Transient update for performance
-  const onMouseOver = useCallback(({ name, value }) => {
-    const valueNodes = document.getElementsByClassName('hoveredItemValue')
-    const nameNodes = document.getElementsByClassName('hoveredItemName')
+  const [xData, yData] = useMemo(() => {
+    const data = chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourData : pair.dayData
+    const currentDate = Math.round(Date.now())
+    const [x, y] = data.reduce<[number[], number[]]>(
+      (acc, cur) => {
+        if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
+          acc[0].push(cur.date)
+          acc[1].push(
+            Number(
+              chartType === PoolChartType.Fees
+                ? cur.volumeUSD * FEE_BPS
+                : chartType === PoolChartType.Volume
+                ? cur.volumeUSD
+                : cur.reserveUSD
+            )
+          )
+        }
 
-    valueNodes[0].innerHTML = formatUSD(value)
-    valueNodes[1].innerHTML = formatUSD(value * 0.05)
-    nameNodes[0].innerHTML = name
-  }, [])
+        return acc
+      },
+      [[], []]
+    )
+
+    return [x.reverse(), y.reverse()]
+  }, [chartPeriod, pair.hourData, pair.dayData, chartType])
+
+  const DEFAULT_OPTION: EChartsOption = useMemo(
+    () => ({
+      tooltip: {
+        trigger: 'axis',
+        responsive: true,
+        backgroundColor: tailwind.theme.colors.slate['700'],
+        textStyle: {
+          color: tailwind.theme.colors.slate['50'],
+          fontSize: 12,
+          fontWeight: 600,
+        },
+        formatter: (params) => {
+          const date = new Date(Number(params[0].name * 1000))
+          return `<div class="flex flex-col gap-0.5">
+            <span class="text-sm text-slate-50 font-bold">${formatUSD(params[0].value)}</span>
+            <span class="text-xs text-slate-400 font-medium">${
+              date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
+            }</span>
+          </div>`
+        },
+        borderWidth: 0,
+      },
+      toolbox: {
+        show: false,
+      },
+      grid: {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      },
+      dataZoom: {
+        show: false,
+        start: 0,
+        end: 100,
+      },
+      visualMap: {
+        show: false,
+        color: [tailwind.theme.colors.blue['500']],
+      },
+      xAxis: [
+        {
+          show: false,
+          type: 'category',
+          boundaryGap: true,
+          data: xData,
+        },
+      ],
+      yAxis: [
+        {
+          show: false,
+          type: 'value',
+          scale: true,
+          name: 'Volume',
+          max: 'dataMax',
+          min: 'dataMin',
+        },
+      ],
+      series: [
+        {
+          name: 'Volume',
+          type: 'bar',
+          xAxisIndex: 0,
+          yAxisIndex: 0,
+          itemStyle: {
+            color: 'blue',
+            normal: {
+              barBorderRadius: 2,
+            },
+          },
+          animationEasing: 'elasticOut',
+          animationDelayUpdate: function (idx) {
+            return idx * 2
+          },
+          data: yData,
+        },
+      ],
+    }),
+    [xData, yData]
+  )
+
+  // Transient update for performance
+  const onMouseOver = useCallback(
+    ({ name, value }) => {
+      const valueNodes = document.getElementsByClassName('hoveredItemValue')
+      const nameNodes = document.getElementsByClassName('hoveredItemName')
+
+      valueNodes[0].innerHTML = formatUSD(value)
+      if (chartType === PoolChartType.Volume) {
+        valueNodes[1].innerHTML = formatUSD(value * FEE_BPS)
+      }
+      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+    },
+    [chartType]
+  )
 
   const onEvents = useMemo(() => {
     return {
@@ -160,13 +196,13 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             TVL
           </button>
           <button
-            onClick={() => setChartType(PoolChartType.Price)}
+            onClick={() => setChartType(PoolChartType.Fees)}
             className={classNames(
               'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Price ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              chartType === PoolChartType.Fees ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
             )}
           >
-            Price
+            Fees
           </button>
         </div>
         <div className="flex gap-4">
@@ -219,14 +255,16 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       </div>
       <div className="flex flex-col">
         <Typography variant="xl" weight={500} className="text-slate-50">
-          <span className="hoveredItemValue">$0.00</span>{' '}
-          <span className="font-medium text-sm text-slate-300">
-            <span className="text-xs top-[-2px] relative">•</span> <span className="hoveredItemValue">$0.00</span>{' '}
-            earned
-          </span>
+          <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1])}</span>{' '}
+          {chartType === PoolChartType.Volume && (
+            <span className="font-medium text-sm text-slate-300">
+              <span className="text-xs top-[-2px] relative">•</span>{' '}
+              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * FEE_BPS)}</span> earned
+            </span>
+          )}
         </Typography>
         <Typography variant="sm" className="text-slate-500 hoveredItemName">
-          00:00:00
+          {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
         </Typography>
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} onEvents={onEvents} />

@@ -1,5 +1,5 @@
 import { Native, tryParseAmount } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatUSD } from '@sushiswap/format'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
@@ -55,11 +55,11 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 </div>
               </Table.td>
               <Table.td>
-                <Typography weight={500} className="text-slate-400">
+                <Typography weight={500} variant="sm" className="text-slate-400">
                   {tryParseAmount(pair.reserve0, token0)?.toSignificant(6)}
                 </Typography>
               </Table.td>
-              <Table.td>{formatNumber(pair.reserve0 * Number(prices?.[token0.address].toFixed(10)))}</Table.td>
+              <Table.td>{formatUSD(pair.reserve0 * Number(prices?.[token0.address].toFixed(10)))}</Table.td>
             </Table.tr>
             <Table.tr>
               <Table.td>
@@ -71,11 +71,11 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 </div>
               </Table.td>
               <Table.td>
-                <Typography weight={500} className="text-slate-400">
+                <Typography weight={500} variant="sm" className="text-slate-400">
                   {tryParseAmount(pair.reserve1, token1)?.toSignificant(6)}
                 </Typography>
               </Table.td>
-              <Table.td>{formatNumber(pair.reserve1 * Number(prices?.[token1.address].toFixed(10)))}</Table.td>
+              <Table.td>{formatUSD(pair.reserve1 * Number(prices?.[token1.address].toFixed(10)))}</Table.td>
             </Table.tr>
           </Table.tbody>
         </Table.table>

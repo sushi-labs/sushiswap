@@ -1,4 +1,4 @@
-import { OrderDirection, Pair_filter, Pair_orderBy } from '../.graphclient'
+import { OrderDirection, Pair_filter, Pair_orderBy, PairHourDatasQueryVariables } from '../.graphclient'
 import { ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
@@ -47,6 +47,14 @@ export const getPool = async (id: string) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const { pair } = await sdk.Pair({ id })
+  const { pair } = await sdk.Pair({ id, now: Math.round(new Date().getTime() / 1000) })
   return pair
+}
+
+export const getPairHourDatas = async (query?: PairHourDatasQueryVariables) => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { pairHourDatas } = await sdk.PairHourDatas(query)
+  return pairHourDatas
 }
