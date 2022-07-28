@@ -19,6 +19,7 @@ export const GRAPH_HOST = {
 export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'Ethereum',
   [ChainId.AVALANCHE]: 'Avalanche',
+  [ChainId.ARBITRUM]: 'Arbitrum',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -26,4 +27,10 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
 }
 
-export const ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.AVALANCHE]
+
+export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ARBITRUM]: 'olastenberg/staking-arbitrum',
+}
+export const STAKING_ENABLED_NETWORKS = [ChainId.ARBITRUM]
+
+export const AMM_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.AVALANCHE]

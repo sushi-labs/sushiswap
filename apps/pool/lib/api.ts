@@ -1,12 +1,12 @@
-import { OrderDirection, Pair_orderBy } from '../.graphclient'
-import { ENABLED_NETWORKS } from '../config'
+import { FarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
+import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
   const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
-    chainIds: ENABLED_NETWORKS,
+    chainIds: AMM_ENABLED_NETWORKS,
   })
 
   return bundles.reduce((acc, cur) => {
@@ -34,7 +34,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
-    chainIds: ENABLED_NETWORKS,
+    chainIds: AMM_ENABLED_NETWORKS,
     first: 20,
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),
@@ -49,4 +49,19 @@ export const getPool = async (id: string) => {
 
   const { pair } = await sdk.Pair({ id, now: Math.round(new Date().getTime() / 1000) })
   return pair
+}
+
+
+export const getFarms = async (query?: FarmsQuery) => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { farms } = await sdk.CrossChainFarms({
+    chainIds: STAKING_ENABLED_NETWORKS,
+    first: 20,
+    skip: 0,
+    ...(query),
+  })
+
+  return farms
 }

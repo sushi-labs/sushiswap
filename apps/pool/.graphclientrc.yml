@@ -3,10 +3,10 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
-  # - name: Staking
-  #   handler:
-  #     graphql:
-  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
+  - name: Staking
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
 
 additionalTypeDefs: |
   extend type Pair {
@@ -20,6 +20,13 @@ additionalTypeDefs: |
   extend type Query {
     crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
+  }
+  extend type Farm {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Query {
+    crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
   }
 
 additionalResolvers:
