@@ -1,4 +1,5 @@
 import { getUnixTime, subMonths } from 'date-fns'
+
 import { CrossChainFarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
 
@@ -52,26 +53,20 @@ export const getPool = async (id: string) => {
   return pair
 }
 
-
-
 export const getOneMonthBlock = async () => {
-
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
 
-    return await (
-      await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
-    ).blocks
-
+  return await (
+    await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
+  ).blocks
 }
 
 export const getSushiBar = async (blockNumber?: number) => {
-
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
-    return blockNumber ? (await sdk.Bar({ block: { number: blockNumber } })).bar : (await sdk.Bar()).bar
-
+  return blockNumber ? (await sdk.Bar({ block: { number: blockNumber } })).bar : (await sdk.Bar()).bar
 }
 
 export const getFarms = async (query?: CrossChainFarmsQuery) => {
@@ -82,8 +77,23 @@ export const getFarms = async (query?: CrossChainFarmsQuery) => {
     chainIds: STAKING_ENABLED_NETWORKS,
     first: 20,
     skip: 0,
-    ...(query),
+    ...query,
   })
 
   return farms
+}
+
+export const getUser = async (id: string) => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const data = await sdk.CrossChainUsers({
+    chainIds: AMM_ENABLED_NETWORKS,
+    where: {
+      id: id.toLowerCase(),
+    },
+  })
+
+  console.log(data)
+  return data
 }

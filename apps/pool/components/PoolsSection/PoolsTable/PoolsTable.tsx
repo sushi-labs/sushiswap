@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'next/router'
 import React, { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import { Pair } from '../../../.graphclient'
 import { usePoolFilters } from '../../PoolsProvider'
@@ -66,6 +67,7 @@ const fetcher = ({
 
 export const PoolsTable: FC = () => {
   const router = useRouter()
+  const { address } = useAccount()
   const { query, extraQuery } = usePoolFilters()
   const [showOverlay, setShowOverlay] = useState(false)
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
@@ -76,6 +78,12 @@ export const PoolsTable: FC = () => {
 
   const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
   const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
+
+  const { data: user } = useSWR<Pair[]>(`/pool/api/user/${address}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
+
+  console.log(user)
 
   const table = useReactTable({
     data: pools ?? [],

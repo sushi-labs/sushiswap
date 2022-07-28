@@ -25,16 +25,19 @@ additionalTypeDefs: |
     chainId: BigInt!
     chainName: String!
   }
-  extend type Query {
-    crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
-    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
-  }
   extend type Farm {
     chainId: BigInt!
     chainName: String!
   }
+  extend type User {
+    chainId: BigInt!
+    chainName: String!
+  }
   extend type Query {
+    crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
+    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
+    crossChainUsers(first: Int!, chainIds: [BigInt!]!): [User!]!
   }
 
 additionalResolvers:

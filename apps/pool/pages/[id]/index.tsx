@@ -48,9 +48,6 @@ const _Pool = () => {
     fetch(url).then((response) => response.json())
   )
 
-  // TODO REMOVE
-  if (!isMounted) return <></>
-
   return (
     <Layout>
       <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
