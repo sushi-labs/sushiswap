@@ -7,7 +7,8 @@ import { SWRConfig } from 'swr'
 import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
 import { getBundles, getPools } from '../lib/api'
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const [pairs, bundles] = await Promise.all([getPools(query), getBundles()])
 
   return {

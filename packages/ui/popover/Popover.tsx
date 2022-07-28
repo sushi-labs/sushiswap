@@ -14,6 +14,9 @@ type Popover = ExtractProps<typeof HeadlessPopover> & {
   options?: Omit<Partial<PopperJS.Options>, 'modifiers'>
 }
 
+/**
+ * @deprecated Use Tooltip component instead
+ */
 export const Popover: FC<Popover> = ({ button, panel, hover, tabIndex, disableClickListener, options, ...props }) => {
   const [show, setShow] = useState(false)
   const { styles, attributes, setReferenceElement, setPopperElement } = usePopover(options)

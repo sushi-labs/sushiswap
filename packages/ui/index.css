@@ -6,6 +6,7 @@
 @tailwind utilities;
 
 @import "./variables.css";
+@import './tooltip/Tooltip.css';
 
 *,
 *:before,

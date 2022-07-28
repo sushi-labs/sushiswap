@@ -6,16 +6,7 @@ export type TableContainerProps = {
 }
 
 function Container({ children, className }: TableContainerProps): JSX.Element {
-  return (
-    <div
-      className={classNames(
-        'overflow-hidden overflow-x-auto border bg-slate-900 border-slate-800 rounded-2xl z-10',
-        className
-      )}
-    >
-      {children}
-    </div>
-  )
+  return <div className={classNames(className)}>{children}</div>
 }
 
 export default Container
