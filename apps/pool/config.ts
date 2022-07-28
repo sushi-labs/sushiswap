@@ -23,10 +23,9 @@ export const CHAIN_NAME: Record<number | string, string> = {
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
+  [ChainId.ETHEREUM]: 'sushiswap/exchange',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
 }
-
 
 export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM]: 'olastenberg/staking-arbitrum',
