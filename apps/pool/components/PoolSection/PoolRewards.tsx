@@ -1,11 +1,11 @@
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
+import { PairWithAlias } from '../../types'
 
 interface PoolRewardsProps {
-  pair: Pair
+  pair: PairWithAlias
 }
 
 // TODO rewards

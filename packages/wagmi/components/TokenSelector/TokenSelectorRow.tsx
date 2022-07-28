@@ -33,7 +33,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
               <Icon currency={currency} width={40} height={40} />
             </div>
             <div className="flex flex-col items-start">
-              <Typography variant="xs" weight={700} className="text-slate-200 group-hover:text-slate-50">
+              <Typography variant="xs" weight={500} className="text-slate-200 group-hover:text-slate-50">
                 {currency.symbol}
               </Typography>
               <Typography variant="xxs" className="text-slate-500 group-hover:text-blue-100">
@@ -47,7 +47,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
               hover
               button={
                 <div className="flex flex-col">
-                  <Typography variant="xs" weight={700} className="text-right text-slate-200">
+                  <Typography variant="xs" weight={500} className="text-right text-slate-200">
                     {balance?.[fundSource]?.toSignificant(6)}
                   </Typography>
                   <Typography variant="xxs" className="text-right text-slate-400">
@@ -58,10 +58,10 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
               panel={
                 <div className="flex gap-5 p-3 bg-slate-700 !rounded-lg min-w-40">
                   <div className="flex flex-col gap-1">
-                    <Typography variant="xs" weight={700} className="text-slate-300">
+                    <Typography variant="xs" weight={500} className="text-slate-300">
                       Wallet
                     </Typography>
-                    <Typography variant="xs" weight={700} className="flex items-center gap-1">
+                    <Typography variant="xs" weight={500} className="flex items-center gap-1">
                       <Icon currency={currency} width={14} height={14} />
                       {balance[FundSource.WALLET] ? balance[FundSource.WALLET]?.toSignificant(6) : '0.00'}{' '}
                     </Typography>
@@ -72,10 +72,10 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                     </Typography>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Typography variant="xs" weight={700} className="text-slate-300">
+                    <Typography variant="xs" weight={500} className="text-slate-300">
                       BentoBox
                     </Typography>
-                    <Typography variant="xs" weight={700} className="flex items-center gap-1">
+                    <Typography variant="xs" weight={500} className="flex items-center gap-1">
                       <Icon currency={currency} width={14} height={14} />
                       {balance[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX]?.toSignificant(6) : '0.00'}{' '}
                     </Typography>

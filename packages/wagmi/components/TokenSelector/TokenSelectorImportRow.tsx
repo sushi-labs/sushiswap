@@ -33,7 +33,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               <Icon currency={currency} width={28} height={28} />
             </div>
             <div className="flex flex-col items-start">
-              <Typography variant="xs" weight={700} className="text-slate-200">
+              <Typography variant="xs" weight={500} className="text-slate-200">
                 {currency.symbol}
               </Typography>
               <Typography variant="xxs" className="text-slate-500">
@@ -56,21 +56,21 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   <ShieldExclamationIcon width={36} height={36} className="text-red-300" />
                 </div>
               )}
-              <Typography weight={700} className="text-red-300">
+              <Typography weight={500} className="text-red-300">
                 Trade at your own risk!
               </Typography>
-              <Typography variant="xs" weight={700} className="text-red-100 text-center">
+              <Typography variant="xs" weight={500} className="text-red-100 text-center">
                 This token {"doesn't"} appear on the active token list(s). Anyone can create a token, including creating
                 fake versions of existing tokens that claim to represent projects
               </Typography>
             </div>
             <div className="flex flex-col p-4 items-center bg-slate-700 rounded-2xl p-6">
-              <Typography weight={700} variant="lg">
+              <Typography weight={500} variant="lg">
                 {currency.symbol}
               </Typography>
               <Typography
                 variant="sm"
-                weight={700}
+                weight={500}
                 as="a"
                 rel="noopener noreferrer"
                 target="_blank"

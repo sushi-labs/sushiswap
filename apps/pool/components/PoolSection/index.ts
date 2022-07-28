@@ -1,4 +1,5 @@
 export * from './PoolButtons'
+export * from './PoolChart'
 export * from './PoolComposition'
 export * from './PoolHeader'
 export * from './PoolPosition'

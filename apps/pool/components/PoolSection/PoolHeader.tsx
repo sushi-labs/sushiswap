@@ -2,11 +2,11 @@ import { formatNumber } from '@sushiswap/format'
 import { Chip, Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
+import { PairWithAlias } from '../../types'
 
 interface PoolHeader {
-  pair: Pair
+  pair: PairWithAlias
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
