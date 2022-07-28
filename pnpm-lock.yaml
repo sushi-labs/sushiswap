@@ -62,7 +62,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^29.2.0
+      '@sushiswap/default-token-list': ^30.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -70,7 +70,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 29.2.0
+      '@sushiswap/default-token-list': 30.0.0
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -6819,8 +6819,8 @@ packages:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: true
 
-  /@sushiswap/default-token-list/29.2.0:
-    resolution: {integrity: sha512-f+YS8x1iCqLP4NPRH9McWGt97aQP3GlYUZTKjUPnaOq9v1WLvqJ/HqbWHAEUGHkM8ILDONcDys7dF4KJWkG3VQ==}
+  /@sushiswap/default-token-list/30.0.0:
+    resolution: {integrity: sha512-z9UBzg3tOnV4dbhbJup0TRYJuQKz6L1nonVC4AQmILJcfn4kT2AjmByRL6u0MXYS2wBmjwYyknsi7h+xQbHYFw==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
