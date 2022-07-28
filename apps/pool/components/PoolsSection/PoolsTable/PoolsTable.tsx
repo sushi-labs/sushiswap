@@ -71,7 +71,7 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
-  const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
+  const { data: pools } = useSWR<Pair[]>({ url: `${process.env.NEXT_PUBLIC_HOST}/pool/api/pools`, args }, fetcher)
 
   const table = useReactTable({
     data: pools ?? [],
