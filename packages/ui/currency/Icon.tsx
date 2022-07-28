@@ -1,8 +1,9 @@
+import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
-import { FC, useMemo, useState } from 'react'
+import { FC, useMemo } from 'react'
 
 const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ETHEREUM]: 'ethereum',
@@ -80,8 +81,6 @@ export interface IconProps extends Omit<ImageProps, 'src'> {
 }
 
 export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
-  const [error, setError] = useState(false)
-
   const src = useMemo(() => {
     if (currency.isNative) {
       return LOGO[currency.chainId]
@@ -101,17 +100,15 @@ export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
     }/${currency.wrapped.address}.jpg`
   }, [currency])
 
-  return (
-    <div className="rounded-full inline-flex shadow-md shadow-black/20 z-10">
-      <Image
-        placeholder="blur"
-        blurDataURL="blurred_icon.png"
-        onError={() => setError(true)}
-        src={error || !src ? 'not_found_icon.png' : src}
-        alt={currency.name}
-        className="rounded-full"
-        {...rest}
+  if (!src) {
+    return (
+      <QuestionMarkCircleIcon
+        width={rest.width}
+        height={rest.height}
+        className="rounded-full bg-white bg-opacity-[0.12]"
       />
-    </div>
-  )
+    )
+  }
+
+  return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
 }

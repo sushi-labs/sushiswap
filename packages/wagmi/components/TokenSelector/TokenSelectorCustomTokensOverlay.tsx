@@ -22,7 +22,7 @@ export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: T
             <Icon currency={currency} width={28} height={28} />
           </div>
           <div className="flex flex-col items-start">
-            <Typography variant="xs" weight={700} className="text-slate-200">
+            <Typography variant="xs" weight={500} className="text-slate-200">
               {currency.symbol}
             </Typography>
             <div className="flex gap-1">
@@ -82,7 +82,7 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
           <CurrencyDollarIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
         </div>
         <div className="flex gap-1 w-full justify-between items-center py-4">
-          <Typography variant="sm" weight={700}>
+          <Typography variant="sm" weight={500}>
             Custom Tokens
           </Typography>
           <div className="flex gap-1">

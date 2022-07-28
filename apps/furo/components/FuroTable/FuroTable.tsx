@@ -2,14 +2,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Chip, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
+import { Chip, LoadingOverlay, ProgressBar, ProgressColor, Table, Typography } from '@sushiswap/ui'
 import { createTable, FilterFn, getCoreRowModel, getFilteredRowModel, useTableInstance } from '@tanstack/react-table'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 
-import { LoadingOverlay } from '../Overlay'
 import { Placeholder } from './Placeholder'
 import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
@@ -213,7 +212,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             {instance.getRowModel().rows.length === 0 &&
               !initialized &&
               Array.from(Array(4)).map((_, i) => (
-                <Table.tr key={i} className="flex">
+                <Table.tr key={i}>
                   <Table.td className="h-12">
                     <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                   </Table.td>
@@ -240,7 +239,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
                   colSpan={columns.length}
                   className="h-[192px] py-4 !text-xs italic text-center text-slate-500"
                 >
-                  <div className="flex justify-center">
+                  <div className="flex justify-center w-full">
                     <div>
                       <Placeholder height={140} />
                     </div>
@@ -252,6 +251,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             {instance.getRowModel().rows.map((row) => {
               return (
                 <Table.tr
+                  className="cursor-pointer"
                   key={row.id}
                   onClick={() => {
                     setShowOverlay(true)

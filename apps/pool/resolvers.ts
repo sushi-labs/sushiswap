@@ -12,6 +12,10 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
+  Farm: {
+    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Arbitrum',
+  },
   Query: {
     crossChainPairs: async (root, args, context, info) =>
       Promise.all(

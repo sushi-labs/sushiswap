@@ -70,7 +70,7 @@
     text-align: left;
     text-decoration: none;
     min-height: 34px;
-    @apply border border-slate-700 bg-slate-900 shadow-md rounded-lg shadow-black/50;
+    @apply border border-slate-800 shadow-md rounded-lg shadow-black/50;
 }
 .rc-tooltip-arrow,
 .rc-tooltip-arrow-inner {
@@ -86,7 +86,7 @@
     bottom: -5px;
     margin-left: -6px;
     border-width: 6px 6px 0;
-    @apply border-t-slate-700;
+    @apply border-t-slate-800;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow-inner,
@@ -94,7 +94,7 @@
     bottom: 1px;
     margin-left: -6px;
     border-width: 6px 6px 0;
-    @apply border-t-slate-900;
+    @apply border-t-slate-800;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow {
     left: 50%;
@@ -111,7 +111,7 @@
     left: -5px;
     margin-top: -6px;
     border-width: 6px 6px 6px 0;
-    @apply border-r-slate-700;
+    @apply border-r-slate-800;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-rightTop .rc-tooltip-arrow-inner,
@@ -119,7 +119,7 @@
     left: 1px;
     margin-top: -6px;
     border-width: 6px 6px 6px 0;
-    @apply border-r-slate-900;
+    @apply border-r-slate-800;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow {
     top: 50%;
@@ -137,7 +137,7 @@
     right: -5px;
     margin-top: -6px;
     border-width: 6px 0 6px 6px;
-    @apply border-l-slate-700;
+    @apply border-l-slate-800;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-leftTop .rc-tooltip-arrow-inner,
@@ -145,7 +145,7 @@
     right: 1px;
     margin-top: -6px;
     border-width: 6px 0 6px 6px;
-    @apply border-l-slate-900;
+    @apply border-l-slate-800;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow {
     top: 50%;
@@ -164,7 +164,7 @@
     margin-left: -6px;
     border-width: 0 6px 6px;
     border-bottom-color: #b1b1b1;
-    @apply border-b-slate-700;
+    @apply border-b-slate-800;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow-inner,
@@ -172,7 +172,7 @@
     top: 1px;
     margin-left: -6px;
     border-width: 0 6px 6px;
-    @apply border-b-slate-900;
+    @apply border-b-slate-800;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow {
     left: 50%;

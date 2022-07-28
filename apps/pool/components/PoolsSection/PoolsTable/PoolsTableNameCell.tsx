@@ -1,4 +1,4 @@
-import { Button, Chip, Currency, Tooltip, Typography } from '@sushiswap/ui'
+import { Button, Chip, Currency, Link, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
@@ -40,7 +40,7 @@ export const PoolsTableNameCell: FC<CellProps> = ({ pair }) => {
                 </div>
                 <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
                   <Chip color="gray" size="sm" label="Classic" />
-                  0.5%
+                  Fee 0.5%
                 </Typography>
               </div>
               <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
@@ -65,10 +65,12 @@ export const PoolsTableNameCell: FC<CellProps> = ({ pair }) => {
                 </Typography>
               </div>
             </div>
-            <div className="flex gap-2 mt-2">
-              <Button variant="empty" className="!p-0">
-                Deposit
-              </Button>
+            <div className="flex gap-2 mt-4 mb-2">
+              <Link.Internal href={`/${pair.id}/earn`} passHref={true}>
+                <Button as="a" className="px-6" size="sm">
+                  Earn
+                </Button>
+              </Link.Internal>
             </div>
           </div>
         }

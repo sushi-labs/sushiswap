@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, Table } from '@sushiswap/ui'
+import { classNames, LoadingOverlay, Table } from '@sushiswap/ui'
 import {
   flexRender,
   getCoreRowModel,
@@ -13,9 +13,16 @@ import React, { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../.graphclient'
+import { usePoolFilters } from '../../PoolsProvider'
 import { PAGE_SIZE, POOL_TABLE_COLUMNS } from './contants'
 
-const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: { sorting: SortingState; pagination: PaginationState; query: string; extraQuery: string }
+}) => {
   const _url = new URL(url)
 
   if (args.sorting[0]) {
@@ -28,6 +35,26 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
+  let where = {}
+  if (args.query) {
+    where = {
+      token0_: { symbol_contains_nocase: args.query },
+      token1_: { symbol_contains_nocase: args.query },
+    }
+
+    _url.searchParams.set('where', JSON.stringify(where))
+  }
+
+  if (args.extraQuery) {
+    where = {
+      ...where,
+      token0_: { symbol_contains_nocase: args.extraQuery },
+      token1_: { symbol_contains_nocase: args.extraQuery },
+    }
+
+    _url.searchParams.set('where', JSON.stringify(where))
+  }
+
   return fetch(_url.href)
     .then((res) => res.json())
     .catch((e) => console.log(JSON.stringify(e)))
@@ -35,13 +62,15 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
 export const PoolsTable: FC = () => {
   const router = useRouter()
+  const { query, extraQuery } = usePoolFilters()
+  const [showOverlay, setShowOverlay] = useState(false)
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
   })
 
-  const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
+  const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
   const { data: pools } = useSWR<Pair[]>(
     { url: `${typeof window !== 'undefined' ? window.location : ''}/api/pools`, args },
     fetcher
@@ -63,6 +92,7 @@ export const PoolsTable: FC = () => {
 
   return (
     <>
+      <LoadingOverlay show={showOverlay} />
       <Table.container>
         <Table.table>
           <Table.thead>
@@ -97,7 +127,14 @@ export const PoolsTable: FC = () => {
           <Table.tbody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <Table.tr key={row.id} onClick={() => router.push(`/${row.original.id}`)} className="cursor-pointer">
+                <Table.tr
+                  key={row.id}
+                  onClick={() => {
+                    setShowOverlay(true)
+                    void router.push(`/${row.original.id}`)
+                  }}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <Table.td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.td>
@@ -141,15 +178,15 @@ export const PoolsTable: FC = () => {
               ))}
           </Table.tbody>
         </Table.table>
-        <Table.Paginator
-          hasPrev={table.getCanPreviousPage()}
-          hasNext={table.getCanNextPage()}
-          page={table.getState().pagination.pageIndex + 1}
-          onPage={table.setPageIndex}
-          pages={table.getPageCount()}
-          pageSize={PAGE_SIZE}
-          count={1000}
-        />
+        {/*<Table.Paginator*/}
+        {/*  hasPrev={table.getCanPreviousPage()}*/}
+        {/*  hasNext={table.getCanNextPage()}*/}
+        {/*  page={table.getState().pagination.pageIndex + 1}*/}
+        {/*  onPage={table.setPageIndex}*/}
+        {/*  pages={table.getPageCount()}*/}
+        {/*  pageSize={PAGE_SIZE}*/}
+        {/*  count={1000}*/}
+        {/*/>*/}
       </Table.container>
     </>
   )
