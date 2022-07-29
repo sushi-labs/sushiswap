@@ -87,13 +87,10 @@ export const getUser = async (id: string) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const data = await sdk.CrossChainUsers({
+  const { crossChainUser: user } = await sdk.CrossChainUser({
     chainIds: AMM_ENABLED_NETWORKS,
-    where: {
-      id: id.toLowerCase(),
-    },
+    id: id.toLowerCase(),
   })
 
-  console.log(data)
-  return data
+  return user
 }

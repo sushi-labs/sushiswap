@@ -4,11 +4,13 @@ enum Filters {
   myTokensOnly = 'myTokensOnly',
   singleSidedStakingOnly = 'singleSidedStakingOnly',
   stablePairsOnly = 'stablePairsOnly',
+  myPositionsOnly = 'myPositionsOnly',
 }
 
 interface FilterContext {
   query: string
   extraQuery: string
+  [Filters.myPositionsOnly]: boolean
   [Filters.myTokensOnly]: boolean
   [Filters.singleSidedStakingOnly]: boolean
   [Filters.stablePairsOnly]: boolean
@@ -28,6 +30,7 @@ export const PoolsProvider: FC<PoolsProvider> = ({ children }) => {
     [Filters.myTokensOnly]: false,
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
+    [Filters.myPositionsOnly]: false,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

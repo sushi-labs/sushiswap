@@ -77,14 +77,24 @@ export const resolvers: Resolvers = {
               subgraphHost: GRAPH_HOST[chainId],
             },
             info,
-          }).then((users) =>
-            users.map((user) => ({
-              ...user,
-              chainId,
-              chainName: CHAIN_NAME[chainId],
-            }))
-          )
+          }).then((user) => ({
+            ...user,
+            id: args.id,
+            chainId,
+            chainName: CHAIN_NAME[chainId],
+            liquidityPositions: user ? user.liquidityPositions : [],
+          }))
         )
-      ).then((users) => users.flat()),
+      ).then((users) => {
+        return users.flat().reduce(
+          (acc, cur) => {
+            return {
+              ...acc,
+              liquidityPositions: [...acc.liquidityPositions, ...cur.liquidityPositions],
+            }
+          },
+          { liquidityPositions: [] }
+        )
+      }),
   },
 }

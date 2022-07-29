@@ -13,7 +13,7 @@ import React, { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { Pair } from '../../../.graphclient'
+import { Pair, User } from '../../../.graphclient'
 import { usePoolFilters } from '../../PoolsProvider'
 import { PAGE_SIZE, POOL_TABLE_COLUMNS } from './contants'
 
@@ -68,7 +68,7 @@ const fetcher = ({
 export const PoolsTable: FC = () => {
   const router = useRouter()
   const { address } = useAccount()
-  const { query, extraQuery } = usePoolFilters()
+  const { query, extraQuery, myPositionsOnly } = usePoolFilters()
   const [showOverlay, setShowOverlay] = useState(false)
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
@@ -79,14 +79,17 @@ export const PoolsTable: FC = () => {
   const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
   const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
 
-  const { data: user } = useSWR<Pair[]>(`/pool/api/user/${address}`, (url) =>
+  const { data: user } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
-  console.log(user)
+  const liquidityPositions = useMemo(() => {
+    if (!user) return []
+    return user.liquidityPositions.map((el) => el.pair)
+  }, [user])
 
   const table = useReactTable({
-    data: pools ?? [],
+    data: myPositionsOnly ? liquidityPositions : pools ?? [],
     columns: POOL_TABLE_COLUMNS,
     state: {
       sorting,
