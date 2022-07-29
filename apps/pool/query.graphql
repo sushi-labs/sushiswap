@@ -26,6 +26,7 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
       symbol
     }
     reserveETH
+    reserveUSD
   }
 }
 
@@ -50,6 +51,7 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
           symbol
         }
         reserveETH
+        reserveUSD
       }
     }
   }

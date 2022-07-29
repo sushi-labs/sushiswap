@@ -39,7 +39,17 @@ export const resolvers: Resolvers = {
             }))
           )
         )
-      ).then((pools) => pools.flat()),
+      ).then((pools) =>
+        pools.flat().sort((a, b) => {
+          if (args.orderDirection === 'asc') {
+            return a.reserveUSD - b.reserveUSD
+          } else if (args.orderDirection === 'desc') {
+            return b.reserveUSD - a.reserveUSD
+          }
+
+          return 0
+        })
+      ),
     crossChainBundles: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>

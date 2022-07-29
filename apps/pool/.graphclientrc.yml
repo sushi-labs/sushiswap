@@ -34,7 +34,7 @@ additionalTypeDefs: |
     chainName: String!
   }
   extend type Query {
-    crossChainPairs(first: Int!, chainIds: [BigInt!]!): [Pair!]!
+    crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [Pair!]!
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
     crossChainUser(id: String!, chainIds: [BigInt!]!): User!
