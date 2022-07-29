@@ -5,8 +5,8 @@ import { useTokensFromPair } from '../../../lib/hooks'
 import { ICON_SIZE } from './contants'
 import { CellProps } from './types'
 
-export const PairNameCell: FC<CellProps> = ({ pair }) => {
-  const [token0, token1] = useTokensFromPair(pair)
+export const PairNameCell: FC<CellProps> = ({ row }) => {
+  const [token0, token1] = useTokensFromPair(row)
 
   return (
     <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export const PairNameCell: FC<CellProps> = ({ pair }) => {
               </div>
             </div>
             <div className="flex gap-2 mt-4 mb-2">
-              <Link.Internal href={`/${pair.id}/earn`} passHref={true}>
+              <Link.Internal href={`/${row.id}/earn`} passHref={true}>
                 <Button as="a" className="px-6" size="sm">
                   Deposit
                 </Button>
