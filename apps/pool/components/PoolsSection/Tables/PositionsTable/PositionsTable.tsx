@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { User } from '../../../../.graphclient'
+import { Pair, User } from '../../../../.graphclient'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, REWARDS_COLUMN, TVL_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 
@@ -26,5 +26,5 @@ export const PositionsTable: FC = () => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  return <GenericTable table={table} columns={COLUMNS} />
+  return <GenericTable<Pair> table={table} columns={COLUMNS} />
 }

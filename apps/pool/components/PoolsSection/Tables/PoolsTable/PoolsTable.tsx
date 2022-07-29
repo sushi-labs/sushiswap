@@ -82,5 +82,5 @@ export const PoolsTable: FC = () => {
     manualPagination: true,
   })
 
-  return <GenericTable table={table} columns={COLUMNS} />
+  return <GenericTable<Pair> table={table} columns={COLUMNS} />
 }
