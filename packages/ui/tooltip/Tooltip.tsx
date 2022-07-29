@@ -1,44 +1,33 @@
 import { default as RcTooltip } from 'rc-tooltip'
+import { TooltipProps } from 'rc-tooltip/lib/Tooltip'
 import { FC, ReactElement } from 'react'
 
-interface TooltipProps {
+interface ExtendTooltipProps extends Omit<TooltipProps, 'overlay' | 'arrowContent'> {
   button: ReactElement
   panel: ReactElement
-  placement:
-    | 'left'
-    | 'top'
-    | 'bottom'
-    | 'right'
-    | 'leftTop'
-    | 'leftBottom'
-    | 'rightTop'
-    | 'rightBottom'
-    | 'topLeft'
-    | 'topRight'
-    | 'bottomLeft'
-    | 'bottomRight'
 }
 
-export const Tooltip: FC<TooltipProps> = ({ button, panel, placement }) => {
+export const Tooltip: FC<ExtendTooltipProps> = ({ button, panel, placement, mouseEnterDelay = 0 }) => {
   const offset = [0, 0]
-  if (placement.includes('left')) {
+  if (placement?.includes('left')) {
     offset[0] -= 12
   }
 
-  if (placement.includes('top')) {
+  if (placement?.includes('top')) {
     offset[1] -= 12
   }
 
-  if (placement.includes('bottom')) {
+  if (placement?.includes('bottom')) {
     offset[1] += 12
   }
 
-  if (placement.includes('right')) {
+  if (placement?.includes('right')) {
     offset[0] += 12
   }
 
   return (
     <RcTooltip
+      mouseEnterDelay={mouseEnterDelay}
       align={{ offset }}
       arrowContent={<div className="rc-tooltip-arrow-inner" />}
       overlay={panel}

@@ -7,6 +7,7 @@ import { Pair, User } from '../../../../.graphclient'
 import { PairWithBalance } from '../../../../types'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, REWARDS_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
+import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
@@ -31,6 +32,8 @@ export const PositionsTable: FC = () => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  // @ts-ignore
-  return <GenericTable<Pair | PairWithBalance> table={table} columns={COLUMNS} />
+  return (
+    // @ts-ignore
+    <GenericTable<Pair | PairWithBalance> table={table} columns={COLUMNS} HoverElement={PositionQuickHoverTooltip} />
+  )
 }

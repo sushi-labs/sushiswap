@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, LoadingOverlay, Table } from '@sushiswap/ui'
+import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
 import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -9,9 +9,10 @@ import { PAGE_SIZE } from './contants'
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   columns: ColumnDef<C>[]
+  HoverElement?: React.FunctionComponent<{ row: C }>
 }
 
-export const GenericTable = <T extends { id: string }>({ table, columns }: GenericTableProps<T>) => {
+export const GenericTable = <T extends { id: string }>({ table, columns, HoverElement }: GenericTableProps<T>) => {
   const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -51,6 +52,35 @@ export const GenericTable = <T extends { id: string }>({ table, columns }: Gener
           </Table.thead>
           <Table.tbody>
             {table.getRowModel().rows.map((row) => {
+              if (HoverElement) {
+                return (
+                  <Tooltip
+                    trigger={['hover']}
+                    mouseEnterDelay={0.5}
+                    placement="top"
+                    button={
+                      <Table.tr
+                        key={row.id}
+                        onClick={() => {
+                          setShowOverlay(true)
+                          void router.push(`/${row.original.id}`)
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <Table.td key={cell.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </Table.td>
+                          )
+                        })}
+                      </Table.tr>
+                    }
+                    panel={<HoverElement row={row.original} />}
+                  />
+                )
+              }
+
               return (
                 <Table.tr
                   key={row.id}

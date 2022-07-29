@@ -6,6 +6,7 @@ import { Pair } from '../../../../.graphclient'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
+import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
@@ -82,5 +83,5 @@ export const PoolsTable: FC = () => {
     manualPagination: true,
   })
 
-  return <GenericTable<Pair> table={table} columns={COLUMNS} />
+  return <GenericTable<Pair> table={table} columns={COLUMNS} HoverElement={PairQuickHoverTooltip} />
 }

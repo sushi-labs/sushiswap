@@ -21,7 +21,7 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
       return [undefined, undefined]
     }
 
-    return [balance.divide(totalSupply).multiply(reserve0), balance.divide(totalSupply).multiply(reserve1)]
+    return [reserve0.multiply(balance.divide(totalSupply)), reserve1.multiply(balance.divide(totalSupply))]
   }, [row.liquidityTokenBalance, row.reserve0, row.reserve1, row.totalSupply, slpToken, token0, token1])
 
   const value = useMemo(() => {
