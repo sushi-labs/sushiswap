@@ -1,13 +1,19 @@
-import { Chip, classNames } from '@sushiswap/ui'
+import { Chip, classNames, Loader } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { FC } from 'react'
+import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
+import { User } from '../../../.graphclient'
 import { usePoolFilters } from '../../PoolsProvider'
 import { PoolsTableSearchTokensFilter } from './PoolsTableSearchTokensFilter'
 
 export const PoolsTableFilters: FC = () => {
-  const positions = 2
+  const { address } = useAccount()
   const { myTokensOnly, myPositionsOnly, singleSidedStakingOnly, stablePairsOnly, setFilters } = usePoolFilters()
+  const { data: user, isValidating } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
 
   return (
     <>
@@ -20,9 +26,17 @@ export const PoolsTableFilters: FC = () => {
         </button>
         <button
           onClick={() => setFilters({ myPositionsOnly: !myPositionsOnly })}
-          className={classNames(myPositionsOnly ? 'text-slate-50' : 'text-slate-500', 'font-medium')}
+          className={classNames(
+            myPositionsOnly ? 'text-slate-50' : 'text-slate-500',
+            'flex items-center gap-2 font-medium'
+          )}
         >
-          My Positions {positions > 0 && <Chip label="4" color="blue" />}
+          My Positions{' '}
+          {isValidating ? (
+            <Loader size={16} />
+          ) : (
+            <Chip label={user?.liquidityPositions?.length || '0'} size="sm" color="blue" />
+          )}
         </button>
       </div>
       <div className="flex justify-between gap-3">

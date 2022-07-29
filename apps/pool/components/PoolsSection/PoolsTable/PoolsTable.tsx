@@ -84,7 +84,7 @@ export const PoolsTable: FC = () => {
   )
 
   const liquidityPositions = useMemo(() => {
-    if (!user) return []
+    if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => el.pair)
   }, [user])
 
