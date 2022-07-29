@@ -30,6 +30,7 @@ export const External: FC<ExternalLinkProps> = ({
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       // don't prevent default, don't redirect if it's a new tab
       if (target === '_blank' || event.ctrlKey || event.metaKey) {
+        event.stopPropagation()
         // window.gtag('event', href, {
         //   event_category: 'Outbound Link',
         //   event_label: href,

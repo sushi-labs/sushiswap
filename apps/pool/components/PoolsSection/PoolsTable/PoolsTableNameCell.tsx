@@ -68,7 +68,7 @@ export const PoolsTableNameCell: FC<CellProps> = ({ pair }) => {
             <div className="flex gap-2 mt-4 mb-2">
               <Link.Internal href={`/${pair.id}/earn`} passHref={true}>
                 <Button as="a" className="px-6" size="sm">
-                  Earn
+                  Deposit
                 </Button>
               </Link.Internal>
             </div>
