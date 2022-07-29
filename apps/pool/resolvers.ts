@@ -82,7 +82,15 @@ export const resolvers: Resolvers = {
             id: args.id,
             chainId,
             chainName: CHAIN_NAME[chainId],
-            liquidityPositions: user ? user.liquidityPositions : [],
+            liquidityPositions: user
+              ? user.liquidityPositions.map((el) => ({
+                  pair: {
+                    ...el.pair,
+                    chainId,
+                    chainName: CHAIN_NAME[chainId],
+                  },
+                }))
+              : [],
           }))
         )
       ).then((users) => {
