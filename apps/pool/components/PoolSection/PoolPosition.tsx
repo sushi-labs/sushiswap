@@ -16,8 +16,8 @@ interface PoolPositionProps {
 export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
   const { address } = useAccount()
   const [token0, token1, slpToken] = useTokensFromPair(pair)
-  const { data: prices } = usePrices({ chainId: pair.chainId })
   const { data: balance } = useBalance({ chainId: pair.chainId, currency: slpToken, account: address })
+  const { data: prices } = usePrices({ chainId: pair.chainId })
 
   const [underlying0, underlying1] = useMemo(() => {
     const totalSupply = tryParseAmount(pair.totalSupply, slpToken)

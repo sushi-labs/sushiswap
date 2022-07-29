@@ -18,12 +18,22 @@ export const PoolsSection: FC = () => {
     <section className="flex flex-col gap-6">
       <Tab.Group>
         <div className="flex gap-6 items-center">
-          <Tab className={({ selected }) => classNames(selected ? 'text-slate-50' : 'text-slate-500', 'font-medium')}>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                selected ? 'text-slate-200' : 'text-slate-500',
+                'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
+              )
+            }
+          >
             All Yields
           </Tab>
           <Tab
             className={({ selected }) =>
-              classNames(selected ? 'text-slate-50' : 'text-slate-500', 'flex items-center gap-2 font-medium')
+              classNames(
+                selected ? 'text-slate-200' : 'text-slate-500',
+                'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
+              )
             }
           >
             My Positions <Chip label={user?.liquidityPositions?.length || '0'} size="sm" color="blue" />
@@ -31,10 +41,10 @@ export const PoolsSection: FC = () => {
         </div>
         <TableFilters />
         <Tab.Panels>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <PoolsTable />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <PositionsTable />
           </Tab.Panel>
         </Tab.Panels>

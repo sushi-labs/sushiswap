@@ -1,5 +1,10 @@
 import { Pair } from '../../../.graphclient'
+import { PairWithBalance } from '../../../types'
 
 export interface CellProps {
-  pair: Pair
+  row: Pair
+}
+
+export interface CellWithBalanceProps {
+  row: PairWithBalance
 }

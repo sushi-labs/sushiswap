@@ -94,6 +94,7 @@ export const resolvers: Resolvers = {
             chainName: CHAIN_NAME[chainId],
             liquidityPositions: user
               ? user.liquidityPositions.map((el) => ({
+                  ...el,
                   pair: {
                     ...el.pair,
                     chainId,

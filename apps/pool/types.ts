@@ -9,3 +9,7 @@ export interface PairWithAlias extends Pair {
     txCount: number
   }[]
 }
+
+export interface PairWithBalance extends Pair {
+  liquidityTokenBalance: string
+}
