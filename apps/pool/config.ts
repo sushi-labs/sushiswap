@@ -10,7 +10,10 @@ const PENDING_KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
 
 export const GRAPH_HOST = {
   [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
   [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
+  [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
 }
 
 export const CHAIN_NAME: Record<number | string, string> = {
@@ -22,3 +25,5 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
 }
+
+export const ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.AVALANCHE]

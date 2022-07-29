@@ -1,11 +1,14 @@
 import { ChainId } from '@sushiswap/chain'
-import { BackgroundVector, Dashboard, Layout } from 'components'
+import { BackgroundVector, Layout } from 'components'
 import { getUserStreams, getUserVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
 import { Streams, Vestings } from 'types'
+
+const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
 
