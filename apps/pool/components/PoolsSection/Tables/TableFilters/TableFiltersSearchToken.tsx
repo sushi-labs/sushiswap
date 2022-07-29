@@ -33,11 +33,15 @@ export const TableFiltersSearchToken: FC = () => {
   }, [extra, setFilters])
 
   return (
-    <div className="flex items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-11">
+    <div
+      className={classNames(
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12 shadow-md shadow-black/20'
+      )}
+    >
       <div
         className={classNames(
           _query ? 'pr-8' : 'pr-4',
-          'w-[220px] pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
+          'w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
         )}
       >
         <div className="min-w-[24px] w-6 h-6 min-h-[24px] flex flex-grow items-center justify-center">
@@ -83,7 +87,7 @@ export const TableFiltersSearchToken: FC = () => {
       >
         <input
           placeholder="... other token"
-          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[120px] !text-base placeholder:text-sm')}
+          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
           type="text"
           onInput={(e) => setExtraQuery(e.currentTarget.value)}
         />
