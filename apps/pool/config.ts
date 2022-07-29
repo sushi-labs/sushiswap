@@ -17,12 +17,6 @@ export const GRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
 }
 
-export const CHAIN_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'Ethereum',
-  [ChainId.AVALANCHE]: 'Avalanche',
-  [ChainId.ARBITRUM]: 'Arbitrum',
-}
-
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap/exchange',
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',

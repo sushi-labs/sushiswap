@@ -1,12 +1,13 @@
+import { chainName, chainShortName } from '@sushiswap/chain'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST } from 'config'
 
-import { CHAIN_NAME } from './config'
 import { Resolvers } from '.graphclient'
 
 export const resolvers: Resolvers = {
   Pair: {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
   },
   Bundle: {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
@@ -14,9 +15,30 @@ export const resolvers: Resolvers = {
   },
   Farm: {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Arbitrum',
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
   Query: {
+    crossChainPair: async (root, args, context, info) =>
+      context.Exchange.Query.pair({
+        root,
+        args,
+        context: {
+          ...context,
+          now: args.now,
+          chainId: args.chainId,
+          chainName: chainName[args.chainId],
+          chainShortName: chainShortName[args.chainId],
+          subgraphName: EXCHANGE_SUBGRAPH_NAME[args.chainId],
+          subgraphHost: GRAPH_HOST[args.chainId],
+        },
+        info,
+      }).then((pool) => ({
+        ...pool,
+        id: `${chainShortName[args.chainId]}:${pool.id}`,
+        chainId: args.chainId,
+        chainName: chainName[args.chainId],
+        chainShortName: chainShortName[args.chainId],
+      })),
     crossChainPairs: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
@@ -26,7 +48,8 @@ export const resolvers: Resolvers = {
             context: {
               ...context,
               chainId,
-              chainName: CHAIN_NAME[chainId],
+              chainName: chainName[chainId],
+              chainShortName: chainShortName[chainId],
               subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
               subgraphHost: GRAPH_HOST[chainId],
             },
@@ -34,8 +57,10 @@ export const resolvers: Resolvers = {
           }).then((pools) =>
             pools.map((pool) => ({
               ...pool,
+              id: `${chainShortName[chainId]}:${pool.id}`,
               chainId,
-              chainName: CHAIN_NAME[chainId],
+              chainName: chainName[chainId],
+              chainShortName: chainShortName[chainId],
             }))
           )
         )
@@ -59,7 +84,7 @@ export const resolvers: Resolvers = {
             context: {
               ...context,
               chainId,
-              chainName: CHAIN_NAME[chainId],
+              chainName: chainName[chainId],
               subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
               subgraphHost: GRAPH_HOST[chainId],
             },
@@ -68,7 +93,7 @@ export const resolvers: Resolvers = {
             bundles.map((bundle) => ({
               ...bundle,
               chainId,
-              chainName: CHAIN_NAME[chainId],
+              chainName: chainName[chainId],
             }))
           )
         )
@@ -82,7 +107,7 @@ export const resolvers: Resolvers = {
             context: {
               ...context,
               chainId,
-              chainName: CHAIN_NAME[chainId],
+              chainName: chainName[chainId],
               subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
               subgraphHost: GRAPH_HOST[chainId],
             },
@@ -91,13 +116,14 @@ export const resolvers: Resolvers = {
             ...user,
             id: args.id,
             chainId,
-            chainName: CHAIN_NAME[chainId],
+            chainName: chainName[chainId],
             liquidityPositions: user
               ? user.liquidityPositions.map((el) => ({
                   pair: {
                     ...el.pair,
                     chainId,
-                    chainName: CHAIN_NAME[chainId],
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
                   },
                 }))
               : [],

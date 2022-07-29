@@ -1,3 +1,4 @@
+import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths } from 'date-fns'
 
 import { CrossChainFarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
@@ -49,7 +50,12 @@ export const getPool = async (id: string) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const { pair } = await sdk.Pair({ id, now: Math.round(new Date().getTime() / 1000) })
+  const { crossChainPair: pair } = await sdk.CrossChainPair({
+    id: id.includes(':') ? id.split(':')[1] : id,
+    chainId: chainShortNameToChainId[id.split(':')[0]],
+    now: Math.round(new Date().getTime() / 1000),
+  })
+
   return pair
 }
 
