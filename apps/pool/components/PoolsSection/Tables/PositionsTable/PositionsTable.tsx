@@ -26,9 +26,11 @@ export const PositionsTable: FC = () => {
 
   const table = useReactTable<Pair | PairWithBalance>({
     data: liquidityPositions ?? [],
+    // @ts-ignore
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })
 
+  // @ts-ignore
   return <GenericTable<Pair | PairWithBalance> table={table} columns={COLUMNS} />
 }
