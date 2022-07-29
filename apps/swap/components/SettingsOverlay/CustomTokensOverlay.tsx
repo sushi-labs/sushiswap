@@ -38,7 +38,7 @@ export const CustomTokensOverlay: FC = () => {
         </div>
         <div className="flex gap-1 w-full justify-between items-center py-4">
           <div className="flex gap-1 items-center">
-            <Typography variant="sm" weight={700}>
+            <Typography variant="sm" weight={500}>
               Custom Tokens
             </Typography>
             <Popover
@@ -47,7 +47,7 @@ export const CustomTokensOverlay: FC = () => {
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
                 <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                  <Typography variant="xs" weight={700}>
+                  <Typography variant="xs" weight={500}>
                     Import a token that is not currently on the list by pasting its address here to add it. Custom
                     tokens are stored locally in your browser.
                   </Typography>

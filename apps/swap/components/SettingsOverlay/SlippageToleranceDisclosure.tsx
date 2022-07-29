@@ -31,7 +31,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                   button={<InformationCircleIcon width={14} height={14} />}
                   panel={
                     <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                      <Typography variant="xs" weight={700}>
+                      <Typography variant="xs" weight={500}>
                         Slippage tolerance is the utmost percentage of slippage a user is willing to execute a trade
                         with; if the actual slippage falls outside of the user-designated range, the transaction will
                         revert. Slippage is the difference between the expected value of output from a trade and the
@@ -80,7 +80,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                   <Tab.Panel />
                   <Tab.Panel>
                     <div className="mt-2 flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                      <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
+                      <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                         Custom Slippage
                         <Popover
                           tabIndex={-1}
@@ -88,7 +88,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                           button={<InformationCircleIcon width={14} height={14} />}
                           panel={
                             <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                              <Typography variant="xs" weight={700}>
+                              <Typography variant="xs" weight={500}>
                                 Slippage tolerance is the utmost percentage of slippage a user is willing to execute a
                                 trade with; if the actual slippage falls outside of the user-designated range, the
                                 transaction will revert. Slippage is the difference between the expected value of output
@@ -106,7 +106,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                           placeholder="1"
                           className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                         />
-                        <Typography variant="xs" weight={700} className="text-slate-400">
+                        <Typography variant="xs" weight={500} className="text-slate-400">
                           %
                         </Typography>
                       </div>

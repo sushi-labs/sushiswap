@@ -4,11 +4,11 @@ import { useBalance } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
+import { PairWithAlias } from '../../types'
 
 interface PoolPositionProps {
-  pair: Pair
+  pair: PairWithAlias
 }
 
 export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
