@@ -1,2 +1,2 @@
 export * from './PoolsSection'
-export * from './PoolsTable'
+export * from './Tables'

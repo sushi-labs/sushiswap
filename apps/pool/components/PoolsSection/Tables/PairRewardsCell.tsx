@@ -5,7 +5,7 @@ import { useTokensFromPair } from '../../../lib/hooks'
 import { ICON_SIZE } from './contants'
 import { CellProps } from './types'
 
-export const PoolsTableRewardsCell: FC<CellProps> = ({ pair }) => {
+export const PairRewardsCell: FC<CellProps> = ({ pair }) => {
   const [token0, token1] = useTokensFromPair(pair)
 
   return (

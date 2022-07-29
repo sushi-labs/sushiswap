@@ -6,7 +6,7 @@ import useSWR from 'swr'
 import { Bundle } from '../../../.graphclient'
 import { CellProps } from './types'
 
-export const PoolsTableTVLCell: FC<CellProps> = ({ pair }) => {
+export const PairTVLCell: FC<CellProps> = ({ pair }) => {
   const { data: bundles } = useSWR<Record<number, Bundle>>(`/pool/api/bundles`, (url) =>
     fetch(url).then((response) => response.json())
   )

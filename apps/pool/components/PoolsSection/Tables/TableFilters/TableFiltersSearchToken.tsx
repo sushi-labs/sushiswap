@@ -4,9 +4,9 @@ import { useDebounce } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
-import { usePoolFilters } from '../../PoolsProvider'
+import { usePoolFilters } from '../../../PoolsProvider'
 
-export const PoolsTableSearchTokensFilter: FC = () => {
+export const TableFiltersSearchToken: FC = () => {
   const { setFilters } = usePoolFilters()
 
   const [_query, setQuery] = useState<string>('')

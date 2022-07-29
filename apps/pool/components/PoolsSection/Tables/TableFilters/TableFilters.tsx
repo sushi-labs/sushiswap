@@ -1,41 +1,23 @@
-import { Chip, classNames } from '@sushiswap/ui'
 import Button from '@sushiswap/ui/button/Button'
 import { FC } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { User } from '../../../.graphclient'
-import { usePoolFilters } from '../../PoolsProvider'
-import { PoolsTableSearchTokensFilter } from './PoolsTableSearchTokensFilter'
+import { User } from '../../../../.graphclient'
+import { usePoolFilters } from '../../../PoolsProvider'
+import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
-export const PoolsTableFilters: FC = () => {
+export const TableFilters: FC = () => {
   const { address } = useAccount()
-  const { myTokensOnly, myPositionsOnly, singleSidedStakingOnly, stablePairsOnly, setFilters } = usePoolFilters()
+  const { myTokensOnly, singleSidedStakingOnly, stablePairsOnly, setFilters } = usePoolFilters()
   const { data: user } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
   return (
     <>
-      <div className="flex gap-6 items-center">
-        <button
-          onClick={() => setFilters({ myPositionsOnly: false })}
-          className={classNames(!myPositionsOnly ? 'text-slate-50' : 'text-slate-500', 'font-medium')}
-        >
-          All Yields
-        </button>
-        <button
-          onClick={() => setFilters({ myPositionsOnly: !myPositionsOnly })}
-          className={classNames(
-            myPositionsOnly ? 'text-slate-50' : 'text-slate-500',
-            'flex items-center gap-2 font-medium'
-          )}
-        >
-          My Positions <Chip label={user?.liquidityPositions?.length || '0'} size="sm" color="blue" />
-        </button>
-      </div>
       <div className="flex justify-between gap-3">
-        <PoolsTableSearchTokensFilter />
+        <TableFiltersSearchToken />
         <div className="flex gap-3">
           <Button
             variant="outlined"
