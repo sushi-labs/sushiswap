@@ -32,13 +32,13 @@
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.30",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@uniswap/token-lists": "^1.0.0-beta.29",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "typescript": "^4.0.0"
+    "typescript": "^4.7.0"
   },
   "peerDependencies": {
     "@reduxjs/toolkit": "^1.8.1",
@@ -46,8 +46,8 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@uniswap/token-lists": "^1.0.0-beta.29",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-redux": "^8.0.1"
   }
 }

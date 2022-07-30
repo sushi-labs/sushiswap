@@ -1,4 +1,6 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js'
+
+import { RPool, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
 
 import type { RToken } from "./PrimaryPools"
 import { RPool, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from "./PrimaryPools"

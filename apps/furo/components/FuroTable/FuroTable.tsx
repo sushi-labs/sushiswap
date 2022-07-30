@@ -213,7 +213,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
             {instance.getRowModel().rows.length === 0 &&
               !initialized &&
               Array.from(Array(4)).map((_, i) => (
-                <Table.tr key={i} className="flex">
+                <Table.tr key={i}>
                   <Table.td className="h-12">
                     <div className="h-4 rounded-full animate-pulse bg-slate-700" />
                   </Table.td>
@@ -240,7 +240,7 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
                   colSpan={columns.length}
                   className="h-[192px] py-4 !text-xs italic text-center text-slate-500"
                 >
-                  <div className="flex justify-center">
+                  <div className="flex justify-center w-full">
                     <div>
                       <Placeholder height={140} />
                     </div>

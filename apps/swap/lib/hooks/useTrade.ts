@@ -100,22 +100,32 @@ export function useTrade(
             currencyIn.wrapped,
             currencyOut.wrapped,
             BigNumber.from(amountSpecified.quotient.toString()),
-            filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof Pair),
-            WNATIVE[amountSpecified.currency.chainId],
-            data.gasPrice.toNumber()
-          )
-          const tridentRoute = findMultiRouteExactIn(
-            currencyIn.wrapped,
-            currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-            filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
+            filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
             WNATIVE[amountSpecified.currency.chainId],
             data.gasPrice.toNumber()
           )
 
-          // console.log(`LEGACY OUT: ${legacyRoute.amountOutBN.toString()}`)
-          // console.log(`TRIDENT OUT: ${tridentRoute.amountOutBN.toString()}`)
-          const useLegacy = Amount.fromRawAmount(currencyOut, legacyRoute.amountOutBN.toString()).greaterThan(
+          // console.log([
+          //   currencyIn.wrapped,
+          //   currencyOut.wrapped,
+          //   BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()).toString(),
+          //   filteredPools
+          //     .filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool)
+          //     .map((pool) => [pool.liquidityToken.address, pool.reserve0.toExact(), pool.reserve1.toExact()]),
+          //   WNATIVE[amountSpecified.currency.chainId],
+          //   data.gasPrice.toNumber(),
+          // ])
+
+          const tridentRoute = findMultiRouteExactIn(
+            currencyIn.wrapped,
+            currencyOut.wrapped,
+            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+            filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+            WNATIVE[amountSpecified.currency.chainId],
+            data.gasPrice.toNumber()
+          )
+
+          const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
             Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
           )
 
@@ -133,16 +143,16 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof Pair),
+          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
 
         if (legacyRoute.status === RouteStatus.Success) {
-          console.debug('Found legacy route', legacyRoute)
+          // console.debug('Found legacy route', legacyRoute)
           return Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1)
         } else {
-          console.debug('No legacy route', legacyRoute)
+          // console.debug('No legacy route', legacyRoute)
         }
 
         // TODO: Switch to shares
@@ -150,12 +160,12 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
+          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
         if (tridentRoute.status === RouteStatus.Success) {
-          console.debug('Found trident route', tridentRoute)
+          // console.debug('Found trident route', tridentRoute)
           return Trade.exactIn(
             tridentRoute,
             amountSpecified,
@@ -165,7 +175,7 @@ export function useTrade(
             currencyOutRebase
           )
         } else {
-          console.debug('No trident route', tridentRoute)
+          // console.debug('No trident route', tridentRoute)
         }
 
         // TODO: Use best trade if both available

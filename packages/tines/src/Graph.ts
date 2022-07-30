@@ -1,5 +1,4 @@
 import { BigNumber } from "@ethersproject/bignumber/lib.esm/index.js"
-
 import type { RToken } from "./PrimaryPools"
 import { RPool } from "./PrimaryPools"
 import { ASSERT, closeValues, DEBUG, getBigNumber } from "./Utils"
@@ -250,15 +249,17 @@ export class Edge {
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-4,
+  //      1e-4,
+          1e-9
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-4,
-          `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`,
+//        1e-4,
+          1e-9,
+          `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
       }
     }, `Error 225`)
@@ -758,7 +759,15 @@ export class Graph {
     return p
   }
 
-  findBestRouteExactIn(from: RToken, to: RToken, amountIn: number, mode: number | number[]): MultiRoute {
+  findBestRouteExactIn(from: RToken, to: RToken, amountIn: BigNumber | number, mode: number | number[]): MultiRoute {
+    let amountInBN: BigNumber
+    if (amountIn instanceof BigNumber) {
+      amountInBN = amountIn
+      amountIn = parseInt(amountIn.toString())
+    } else {
+      amountInBN = getBigNumber(amountIn)
+    }
+
     let routeValues = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
@@ -839,7 +848,7 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: amountIn * totalrouted,
-      amountInBN: getBigNumber(amountIn * totalrouted),
+      amountInBN: status == RouteStatus.Success ? amountInBN : getBigNumber(amountIn * totalrouted),
       amountOut: output,
       amountOutBN: getBigNumber(output),
       legs,

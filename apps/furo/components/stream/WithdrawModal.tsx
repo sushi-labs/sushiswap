@@ -80,7 +80,12 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
         fullWidth
         variant="filled"
         color="gradient"
-        disabled={!address || !stream?.canWithdraw(address) || !balance?.greaterThan(ZERO)}
+        disabled={
+          !address ||
+          stream?.chainId !== activeChain?.id ||
+          !stream?.canWithdraw(address) ||
+          !balance?.greaterThan(ZERO)
+        }
         onClick={() => {
           setOpen(true)
         }}

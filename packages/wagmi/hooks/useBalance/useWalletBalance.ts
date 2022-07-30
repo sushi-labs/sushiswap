@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { erc20ABI, useBalance, useContractInfiniteReads, useContractReads } from 'wagmi'
+import { erc20ABI, useBalance, useContractReads } from 'wagmi'
 
 type UseWalletBalancesParams = {
   account: string | undefined
@@ -12,10 +12,10 @@ type UseWalletBalancesParams = {
   chainId?: ChainId
 }
 
-type UseWalletBalances = (params: UseWalletBalancesParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseWalletBalances = (params: UseWalletBalancesParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useBalance>, 'isError' | 'isLoading'>
+) & {
   data: Record<string, Amount<Type>> | undefined
 }
 
@@ -87,7 +87,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
         ..._data,
       },
       isLoading: isTokensLoading ?? isNativeLoading,
-      isError: isTokensError ?? isNativeError,
+      isError: Boolean(isTokensError ?? isNativeError),
     }
   }, [
     account,
@@ -108,10 +108,10 @@ type UseWalletBalanceParams = {
   chainId?: ChainId
 }
 
-type UseTokenBalance = (params: UseWalletBalanceParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseTokenBalance = (params: UseWalletBalanceParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useBalance>, 'isError' | 'isLoading'>
+) & {
   data: Record<string, Amount<Type>> | undefined
 }
 

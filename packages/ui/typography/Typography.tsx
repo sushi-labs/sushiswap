@@ -10,7 +10,7 @@ const WEIGHTS: Record<string, string> = {
   400: 'font-normal',
   500: 'font-medium',
   600: 'font-semibold',
-  700: 'font-medium',
+  700: 'font-bold',
   800: 'font-extrabold',
   900: 'font-black',
 }

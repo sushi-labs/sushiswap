@@ -1,6 +1,6 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber/lib.esm/index.js"
 
-import { A_PRECISION } from "../constants"
+import { A_PRECISION } from '../constants'
 
 export function computeHybridLiquidity(r0: BigNumber, r1: BigNumber, a: number): BigNumber {
   if (r0.isZero() && r1.isZero()) {

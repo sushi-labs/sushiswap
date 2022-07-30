@@ -13,9 +13,10 @@ jobs:
       runs-on: ${{ matrix.os }}
       # To use Remote Caching, uncomment the next lines and follow the steps below.
       env:
-        NODE_OPTIONS: --max-old-space-size=8192
-      #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
       strategy:
         matrix:
           os: [ubuntu-latest, macos-latest]

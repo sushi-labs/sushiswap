@@ -1,0 +1,24 @@
+sources:
+  - name: Kashi
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/kashi-polygon}
+
+additionalTypeDefs: |
+  extend type KashiPair {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Query {
+    crossChainKashiPairs(first: Int!, chainIds: [BigInt!]!): [KashiPair!]!
+  }
+
+
+additionalResolvers:
+  - ./resolvers.ts
+
+documents:
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'

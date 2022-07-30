@@ -13,3 +13,5 @@ export type AppProps = {
 }
 
 export const App = { Header, Shell, Nav, Main, Footer }
+
+export { AppType } from './Header'

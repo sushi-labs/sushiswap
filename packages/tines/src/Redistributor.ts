@@ -88,7 +88,7 @@ export class Redistributor {
             if (pools !== undefined) {
               paths.push(...pools)
             } else {
-              console.assert(0, "Internal Error 81")
+              console.assert(0, 'Internal Error 81')
             }
           }
         }
@@ -154,7 +154,7 @@ export class Redistributor {
         const out = this.calcOutput(paths[0].to, to, p, amountOut)
         return out
       } else {
-        console.assert(0, "Internal Error 78")
+        console.assert(0, 'Internal Error 78')
         return -1
       }
     } else {

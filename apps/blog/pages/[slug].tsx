@@ -43,7 +43,9 @@ export async function getStaticProps({
 
   return {
     props: {
+      // @ts-ignore
       article: data?.articles?.data?.[0],
+      // @ts-ignore
       latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },

@@ -6,6 +6,7 @@ import { default as container, TableContainerProps } from './Container'
 import { default as thead } from './Head'
 import { default as th } from './HeadCell'
 import { default as thr } from './HeadRow'
+import { Paginator, PaginatorProps } from './Paginator'
 import { default as table } from './Root'
 import { default as tr } from './Row'
 
@@ -18,6 +19,7 @@ export type TableProps = {
   th: FC<React.DetailedHTMLProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>>
   td: FC<React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>>
   tbody: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
+  Paginator: FC<PaginatorProps>
 }
 
-export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody }
+export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody, Paginator }
