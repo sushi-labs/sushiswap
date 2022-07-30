@@ -62,7 +62,7 @@ export const SushiBarSectionMobile: FC = () => {
   }, [])
 
   return (
-    <section className="flex sm:hidden">
+    <section className="flex md:hidden">
       <div className="flex flex-col w-full gap-6 rounded-2xl bg-slate-800 p-6">
         <div className="flex flex gap-3">
           <div className="min-w-[44px] min-h-[44px] mt-1">

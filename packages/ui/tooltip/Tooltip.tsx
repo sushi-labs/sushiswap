@@ -27,6 +27,7 @@ export const Tooltip: FC<ExtendTooltipProps> = ({ button, panel, placement, mous
 
   return (
     <RcTooltip
+      transitionName="rc-tooltip-zoom"
       mouseEnterDelay={mouseEnterDelay}
       align={{ offset }}
       arrowContent={<div className="rc-tooltip-arrow-inner" />}
