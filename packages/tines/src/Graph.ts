@@ -1,4 +1,4 @@
-import { BigNumber } from "@ethersproject/bignumber"
+import { BigNumber } from "@ethersproject/bignumber/lib.esm/index.js"
 
 import type { RToken } from "./PrimaryPools"
 import { RPool } from "./PrimaryPools"
@@ -82,7 +82,7 @@ export class Edge {
   }
 
   calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
-    let res, gas
+    let res: number, gas: number
     if (v === this.vert1) {
       if (this.direction) {
         if (amountIn < this.amountOutPrevious) {
@@ -186,7 +186,7 @@ export class Edge {
     console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
     const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
     const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
-    const to = from.getNeibour(this)
+    const to = from.getNeighbor(this)
     let directionNew,
       amountInNew = 0,
       amountOutNew = 0
@@ -225,7 +225,7 @@ export class Edge {
     console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
     const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
     const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
-    const to = from.getNeibour(this)
+    const to = from.getNeighbor(this)
     if (to) {
       const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
       const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
@@ -277,6 +277,7 @@ export class Vertice {
   bestTotal: number // temp data used for findBestPath algorithm
   bestSource?: Edge // temp data used for findBestPath algorithm
   checkLine: number // debug data
+  static bestSource: never
 
   constructor(t: RToken) {
     this.token = t
@@ -298,7 +299,7 @@ export class Vertice {
     this.checkLine = -1
   }
 
-  getNeibour(e?: Edge) {
+  getNeighbor(e?: Edge) {
     if (!e) return
     return e.vert0 === this ? e.vert1 : e.vert0
   }
@@ -360,7 +361,7 @@ export class Graph {
     const value = (e: Edge): number => edgeValues.get(e) as number
 
     function addVertice(v: Vertice) {
-      const newEdges = v.edges.filter((e) => v.getNeibour(e)?.price == 0)
+      const newEdges = v.edges.filter((e) => v.getNeighbor(e)?.price == 0)
       newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())))
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
@@ -537,8 +538,8 @@ export class Graph {
 
       if (closestVert === finish) {
         const bestPath = []
-        for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeibour(v.bestSource)) {
-          bestPath.unshift(v.bestSource)
+        for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeighbor(v.bestSource)) {
+          bestPath.unshift(Vertice.bestSource)
         }
         DEBUG(() => console.log(debug_info))
         return {
@@ -650,8 +651,8 @@ export class Graph {
 
       if (closestVert === finish) {
         const bestPath = []
-        for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeibour(v.bestSource)) {
-          bestPath.push(v.bestSource)
+        for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeighbor(v.bestSource)) {
+          bestPath.push(Vertice.bestSource)
         }
         DEBUG(() => console.log(debug_info))
         return {
@@ -709,7 +710,7 @@ export class Graph {
     path.forEach((e) => {
       if (_from) {
         e.applySwap(_from)
-        _from = _from.getNeibour(e)
+        _from = _from.getNeighbor(e)
       } else {
         console.error("Unexpected 315")
       }
@@ -752,7 +753,7 @@ export class Graph {
       const direction = edge.vert0 === prevToken
       const edgePrice = edge.pool.calcCurrentPriceWithoutFee(direction)
       p *= edgePrice
-      prevToken = prevToken.getNeibour(edge) as Vertice
+      prevToken = prevToken.getNeighbor(edge) as Vertice
     })
     return p
   }
@@ -968,7 +969,7 @@ export class Graph {
           poolAddress: edge.pool.address,
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
-          tokenTo: (n.getNeibour(edge) as Vertice).token,
+          tokenTo: (n.getNeighbor(edge) as Vertice).token,
           assumedAmountIn: edge.direction ? edge.amountInPrevious : edge.amountOutPrevious,
           assumedAmountOut: edge.direction ? edge.amountOutPrevious : edge.amountInPrevious,
           swapPortion: quantity,
@@ -1007,7 +1008,7 @@ export class Graph {
       amounts.set(l.tokenFrom.address, (inputTotal as number) - input)
       const output = pool.calcOutByIn(input, direction).out
 
-      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
+      const vertNext = (vert as Vertice).getNeighbor(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.address)
       amounts.set(vertNext.token.address, (prevAmount || 0) + output)
     })
@@ -1040,7 +1041,7 @@ export class Graph {
       const output = ((outputTotal as number) * l.assumedAmountOut) / (totalAssumed as number)
       const input = pool.calcInByOut(output, direction).inp
 
-      const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
+      const vertNext = (vert as Vertice).getNeighbor(edge) as Vertice
       const prevAmount = amounts.get(vertNext.token.address)
       amounts.set(vertNext.token.address, (prevAmount || 0) + input)
     }
@@ -1084,7 +1085,7 @@ export class Graph {
       const v2 = i === 0 ? verts[verts.length - 1] : verts[i - 1]
       let out = 0
       v1.getOutputEdges().forEach((e) => {
-        if (v1.getNeibour(e) !== v2) return
+        if (v1.getNeighbor(e) !== v2) return
         out += e.direction ? e.amountOutPrevious : e.amountInPrevious
       })
       if (out < minOutput) {
@@ -1095,7 +1096,7 @@ export class Graph {
     })
     // @ts-ignore
     minVert.getOutputEdges().forEach((e) => {
-      if (minVert.getNeibour(e) !== minVertNext) return
+      if (minVert.getNeighbor(e) !== minVertNext) return
       e.canBeUsed = false
     })
   }
@@ -1129,7 +1130,7 @@ export class Graph {
       const outEdges = current.getOutputEdges()
       for (let i = 0; i < outEdges.length; ++i) {
         const e = outEdges[i]
-        const res = topSortRecursive(current.getNeibour(e) as Vertice)
+        const res = topSortRecursive(current.getNeighbor(e) as Vertice)
         if (res === 0) return 0
         if (res === 1) {
           if (foundCycle[0] === current) return 0
