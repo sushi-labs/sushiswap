@@ -21,7 +21,7 @@ export const useTokensFromPair = (pair: Pair) => {
         chainId: pair.chainId,
       }),
       new Token({
-        address: pair.id,
+        address: pair.id.includes(':') ? pair.id.split(':')[1] : pair.id,
         name: 'SLP Token',
         decimals: 18,
         symbol: 'SLP',

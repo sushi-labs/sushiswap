@@ -84,7 +84,7 @@ export const Button = <C extends React.ElementType>({
                 </Menu.Button>
               }
             >
-              <Menu.Items>
+              <Menu.Items className="z-[100]">
                 <div>
                   {isMounted &&
                     connectors.map((connector) => (

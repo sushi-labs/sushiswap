@@ -7,7 +7,7 @@ interface SushiBarInputProps {
   balance: Amount<Type> | undefined
   value: string
   onChange(value: string): void
-  disabled: boolean
+  disabled?: boolean
 }
 
 export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onChange, value, disabled }) => {
@@ -20,7 +20,7 @@ export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onCha
 
   return (
     <div className="flex flex-col flex-grow gap-2">
-      <div className="rounded-2xl bg-slate-700 h-11 flex w-full gap-2 items-center px-4 shadow-md">
+      <div className="rounded-2xl bg-slate-700 h-12 flex w-full gap-2 items-center px-4 shadow-md">
         <Currency.Icon currency={currency} width={24} height={24} />
         <p className="font-bold text-sm">{currency.symbol}</p>
         <Input.Numeric

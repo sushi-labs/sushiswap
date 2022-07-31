@@ -1,17 +1,28 @@
 import { Transition } from '@headlessui/react'
 import { PlusIcon, SearchIcon, XCircleIcon } from '@heroicons/react/solid'
-import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton, Loader } from '@sushiswap/ui'
+import { useDebounce } from '@sushiswap/hooks'
+import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
-import { usePoolFilters } from '../../PoolsProvider'
+import { usePoolFilters } from '../../../PoolsProvider'
 
-interface PoolsTableSearchTokensFilterProps {
-  isLoading: boolean
-}
+export const TableFiltersSearchToken: FC = () => {
+  const { setFilters } = usePoolFilters()
 
-export const PoolsTableSearchTokensFilter: FC<PoolsTableSearchTokensFilterProps> = ({ isLoading }) => {
-  const { query, setFilters } = usePoolFilters()
+  const [_query, setQuery] = useState<string>('')
+  const [_extraQuery, setExtraQuery] = useState<string>('')
   const [extra, setExtra] = useState(false)
+
+  const debouncedQuery = useDebounce(_query, 400)
+  const debouncedExtraQuery = useDebounce(_extraQuery, 400)
+
+  useEffect(() => {
+    setFilters({ query: debouncedQuery })
+  }, [debouncedQuery, setFilters])
+
+  useEffect(() => {
+    setFilters({ extraQuery: debouncedExtraQuery })
+  }, [debouncedExtraQuery, setFilters])
 
   useEffect(() => {
     if (!extra) {
@@ -22,31 +33,31 @@ export const PoolsTableSearchTokensFilter: FC<PoolsTableSearchTokensFilterProps>
   }, [extra, setFilters])
 
   return (
-    <div className="flex gap-3 items-center bg-slate-800 rounded-2xl h-11 pr-4">
+    <div
+      className={classNames(
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12 shadow-md shadow-black/20'
+      )}
+    >
       <div
         className={classNames(
-          query ? 'pr-8' : 'pr-4',
-          'w-[220px] pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
+          _query ? 'pr-8' : 'pr-4',
+          'w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
         )}
       >
         <div className="min-w-[24px] w-6 h-6 min-h-[24px] flex flex-grow items-center justify-center">
-          {isLoading ? (
-            <Loader size={16} strokeWidth={3} className="animate-spin-slow text-slate-500" />
-          ) : (
-            <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
-          )}
+          <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
         </div>
 
         <input
-          value={query}
+          value={_query}
           placeholder="Search a token"
           className={classNames(DEFAULT_INPUT_UNSTYLED, 'flex flex-grow !text-base placeholder:text-sm')}
           type="text"
-          onInput={(e) => setFilters({ query: e.currentTarget.value })}
+          onInput={(e) => setQuery(e.currentTarget.value)}
         />
         <Transition
           appear
-          show={query?.length > 0}
+          show={_query?.length > 0}
           className="absolute top-0 bottom-0 right-0 flex items-center"
           enter="transition duration-300 origin-center ease-out"
           enterFrom="transform scale-90 opacity-0"
@@ -55,12 +66,12 @@ export const PoolsTableSearchTokensFilter: FC<PoolsTableSearchTokensFilterProps>
           leaveFrom="transform opacity-100"
           leaveTo="transform opacity-0"
         >
-          <IconButton onClick={() => setFilters({ query: '' })}>
+          <IconButton onClick={() => setQuery('')}>
             <XCircleIcon width={20} height={20} className="cursor-pointer text-slate-500 hover:text-slate-300" />
           </IconButton>
         </Transition>
       </div>
-      <div className="py-3 h-full">
+      <div className="h-full py-3">
         <div className="w-px h-full bg-slate-200/20" />
       </div>
       <Transition
@@ -76,9 +87,9 @@ export const PoolsTableSearchTokensFilter: FC<PoolsTableSearchTokensFilterProps>
       >
         <input
           placeholder="... other token"
-          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[120px] !text-base placeholder:text-sm')}
+          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
           type="text"
-          onInput={(e) => setFilters({ extraQuery: e.currentTarget.value })}
+          onInput={(e) => setExtraQuery(e.currentTarget.value)}
         />
       </Transition>
       <IconButton onClick={() => setExtra((prev) => !prev)}>

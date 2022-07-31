@@ -148,7 +148,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               )}
             >
               <div className="w-5 h-5">
-                <Icon layout="responsive" currency={currency} width={20} height={20} />
+                <Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
               </div>
               <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
               <div className="w-5 h-5">
