@@ -42,14 +42,14 @@ export function Header({
   ...props
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
-  const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
 
   // Show when:
   // 1. We scroll down for 45px
   // 2. When body has a negative top set for body lock for Dialogs on small screens
   const showBackground =
     (scrollY > 45 && withScrollBackground) ||
-    (typeof window !== 'undefined' && isSm
+    (typeof window !== 'undefined' && !isMd
       ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
       : false)
 

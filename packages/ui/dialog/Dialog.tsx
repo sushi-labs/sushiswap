@@ -14,13 +14,13 @@ export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
 }
 
 const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
-  const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
 
   // iOS body lock fix
   // This gets the current scroll position and sets it as negative top margin before setting position fixed on body
   // This is necessary because adding position fixed to body scrolls the page to the top
   useEffect(() => {
-    if (isSm) {
+    if (!isMd) {
       if (open) {
         document.body.style.top = `-${window.scrollY}px`
         document.body.style.position = 'fixed'
@@ -35,7 +35,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
         window.scrollTo(0, parseInt(scrollY || '0') * -1)
       }
     }
-  }, [isSm, open])
+  }, [isMd, open])
 
   return (
     <Transition show={open} as={Fragment} afterLeave={afterLeave}>
