@@ -48,7 +48,6 @@ const _Pool = () => {
   } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-  console.log(pair)
 
   return (
     <Layout>

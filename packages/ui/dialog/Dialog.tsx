@@ -1,5 +1,5 @@
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
-import React, { FC, Fragment, FunctionComponent } from 'react'
+import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
 import { ExtractProps } from '../types'
 import DialogActions, { DialogActionProps } from './DialogActions'
@@ -13,9 +13,24 @@ export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
 }
 
 const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
+  // iOS body lock fix
+  // This gets the current scroll position and sets it as negative top margin before setting position fixed on body
+  // This is necessary because adding position fixed to body scrolls the page to the top
+  useEffect(() => {
+    if (open) {
+      document.body.style.top = `-${window.scrollY}px`
+      document.body.style.position = 'fixed'
+    } else {
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      window.scrollTo(0, parseInt(scrollY || '0') * -1)
+    }
+  }, [open])
+
   return (
     <Transition show={open} as={Fragment} afterLeave={afterLeave}>
-      <HeadlessDialog className="relative z-[100]" onClose={onClose} {...rest}>
+      <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
