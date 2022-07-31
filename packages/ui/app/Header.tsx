@@ -48,7 +48,7 @@ export function Header({
   // 2. When body has a negative top set for body lock on Dialog
   const showBackground =
     (scrollY > 45 && withScrollBackground) ||
-    (typeof window !== 'undefined' ? document.body.style.top.slice(0, -2) < 0 && withScrollBackground : false)
+    (typeof window !== 'undefined' ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground : false)
 
   return (
     <header
