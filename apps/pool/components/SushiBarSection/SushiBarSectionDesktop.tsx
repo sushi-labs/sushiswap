@@ -64,7 +64,7 @@ export const SushiBarSectionDesktop: FC = () => {
       <div className="flex w-full flex-col gap-6">
         <h4 className="text-slate-50 font-bold">Earn trading fees from all pools on Sushi!</h4>
         <div className="p-5 flex flex-col lg:flex-row rounded-2xl bg-white bg-opacity-[0.02]">
-          <div className="lg:border-r border-slate-200/5 grid grid-cols-[72px_auto] items-center gap-4 px-5">
+          <div className="grid grid-cols-[72px_auto] items-center gap-4 px-5">
             <div className="relative w-[72px] h-[72px]">
               <Image src={xSushiSign} layout="fill" />
             </div>
