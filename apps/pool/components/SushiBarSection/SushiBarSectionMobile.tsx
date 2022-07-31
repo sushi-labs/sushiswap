@@ -63,7 +63,7 @@ export const SushiBarSectionMobile: FC = () => {
 
   return (
     <section className="flex md:hidden">
-      <div className="flex flex-col w-full gap-6 rounded-2xl bg-slate-800 p-6">
+      <div className="flex flex-col w-full gap-6 rounded-2xl bg-white bg-opacity-[0.02] p-6">
         <div className="flex flex gap-3">
           <div className="min-w-[44px] min-h-[44px] mt-1">
             <UICurrency.Icon currency={XSUSHI_TOKEN} width={44} height={44} />

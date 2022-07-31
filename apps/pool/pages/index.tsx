@@ -49,7 +49,7 @@ const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
 const _Pools = () => {
   return (
     <Layout>
-      <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
             <h2 className="text-2xl font-bold text-slate-50">Sushi Yield</h2>
