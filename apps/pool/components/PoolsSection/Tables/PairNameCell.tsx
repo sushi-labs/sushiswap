@@ -1,4 +1,4 @@
-import { Currency, Typography } from '@sushiswap/ui'
+import { Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
@@ -10,11 +10,14 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <div>
+      <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
           <Currency.Icon currency={token0} />
           <Currency.Icon currency={token1} />
         </Currency.IconList>
+      </div>
+      <div className="flex sm:hidden">
+        <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
       </div>
       <div className="flex flex-col">
         <Typography variant="sm" weight={500} className="text-slate-50 flex gap-1">

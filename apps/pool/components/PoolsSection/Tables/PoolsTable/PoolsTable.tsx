@@ -1,5 +1,6 @@
+import { useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
@@ -60,7 +61,10 @@ const fetcher = ({
 
 export const PoolsTable: FC = () => {
   const { query, extraQuery } = usePoolFilters()
+  const { isSm } = useBreakpoint('sm')
+
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
+  const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
@@ -74,6 +78,7 @@ export const PoolsTable: FC = () => {
     columns: COLUMNS,
     state: {
       sorting,
+      columnVisibility,
     },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
@@ -82,6 +87,14 @@ export const PoolsTable: FC = () => {
     manualSorting: true,
     manualPagination: true,
   })
+
+  useEffect(() => {
+    if (isSm) {
+      setColumnVisibility({})
+    } else {
+      setColumnVisibility({ network: false, rewards: false })
+    }
+  }, [isSm])
 
   return <GenericTable<Pair> table={table} columns={COLUMNS} HoverElement={PairQuickHoverTooltip} />
 }
