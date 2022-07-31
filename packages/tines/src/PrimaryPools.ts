@@ -9,6 +9,14 @@ export interface RToken {
   name: string
   symbol: string
   address: string
+  chainId?: number | string
+  tokenId?: string // if tokens' ids are equal then tokens are the same
+}
+
+export function setTokenId(...tokens: RToken[]) {
+  tokens.forEach((t) => {
+    if (!t.tokenId) t.tokenId = `${t.address}_${t.chainId}_${t.name}`
+  })
 }
 
 export abstract class RPool {
@@ -32,7 +40,9 @@ export abstract class RPool {
     swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
     this.address = address
-    ;(this.token0 = token0), (this.token1 = token1)
+    this.token0 = token0
+    this.token1 = token1
+    setTokenId(this.token0, this.token1)
     this.fee = fee
     this.minLiquidity = minLiquidity
     this.swapGasCost = swapGasCost

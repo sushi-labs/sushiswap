@@ -347,13 +347,13 @@ function simulateRouting(network: Network, route: MultiRoute) {
   let gasSpentTotal = 0
   const amounts = new Map<string, number>()
   const diff = new Map<string, number>()
-  amounts.set(route.fromToken.address, route.amountIn)
-  diff.set(route.fromToken.address, 0)
+  amounts.set(route.fromToken.tokenId as string, route.amountIn)
+  diff.set(route.fromToken.tokenId as string, 0)
   route.legs.forEach((l) => {
     // Take swap parms
     const pool = network.pools.find((p) => p.address == l.poolAddress)
     expect(pool).toBeDefined()
-    const direction = pool.token0.address == l.tokenFrom.address
+    const direction = pool.token0.tokenId == l.tokenFrom.tokenId
     const granularityOut = direction ? pool?.granularity1() : pool?.granularity0()
 
     // Check assumedAmountIn <-> assumedAmountOut correspondance
@@ -361,33 +361,33 @@ function simulateRouting(network: Network, route: MultiRoute) {
     expectCloseValues(expectedOut / granularityOut, l.assumedAmountOut / granularityOut, 1e-11)
 
     // Calc legInput
-    const inputTokenAmount = amounts.get(l.tokenFrom.address)
+    const inputTokenAmount = amounts.get(l.tokenFrom.tokenId as string)
     expect(inputTokenAmount).toBeGreaterThan(0) // Very important check !!!! That we don't have idle legs
     const legInput = inputTokenAmount * l.swapPortion
-    amounts.set(l.tokenFrom.address, inputTokenAmount - legInput)
+    amounts.set(l.tokenFrom.tokenId as string, inputTokenAmount - legInput)
 
     // Check assumedAmountIn
-    const inputTokenDiff = diff.get(l.tokenFrom.address)
+    const inputTokenDiff = diff.get(l.tokenFrom.tokenId as string)
     const legInputDiff = inputTokenDiff * l.swapPortion
     expect(Math.abs(legInput - l.assumedAmountIn) <= legInputDiff)
-    diff.set(l.tokenFrom.address, inputTokenDiff - legInputDiff)
+    diff.set(l.tokenFrom.tokenId as string, inputTokenDiff - legInputDiff)
 
     // check assumedAmountOut
     const { out: legOutput, gasSpent } = pool?.calcOutByIn(legInput, direction)
     const precision = legInputDiff / l.assumedAmountIn
     expectCloseValues(legOutput / granularityOut, l.assumedAmountOut / granularityOut, precision + 1e-11)
     gasSpentTotal += gasSpent
-    const outputTokenAmount = amounts.get(l.tokenTo.address) || 0
-    amounts.set(l.tokenTo.address, outputTokenAmount + legOutput)
+    const outputTokenAmount = amounts.get(l.tokenTo.tokenId as string) || 0
+    amounts.set(l.tokenTo.tokenId as string, outputTokenAmount + legOutput)
 
     const legDiff = Math.abs(l.assumedAmountOut - legOutput)
-    const prevDiff = diff.get(l.tokenTo.address) || 0
-    diff.set(l.tokenTo.address, prevDiff + legDiff)
+    const prevDiff = diff.get(l.tokenTo.tokenId as string) || 0
+    diff.set(l.tokenTo.tokenId as string, prevDiff + legDiff)
   })
 
-  amounts.forEach((amount, address) => {
-    if (address == route.toToken.address) {
-      const finalDiff = diff.get(address)
+  amounts.forEach((amount, tokenId) => {
+    if (tokenId == route.toToken.tokenId) {
+      const finalDiff = diff.get(tokenId)
       expect(finalDiff).toBeGreaterThanOrEqual(0)
       expect(Math.abs(amount - route.amountOut) <= finalDiff)
       expect(finalDiff / route.amountOut).toBeLessThan(1e-4)
@@ -397,7 +397,7 @@ function simulateRouting(network: Network, route: MultiRoute) {
   })
   expect(route.gasSpent).toEqual(gasSpentTotal)
 
-  return { out: amounts.get(route.toToken.address), gasSpent: gasSpentTotal }
+  return { out: amounts.get(route.toToken.tokenId as string), gasSpent: gasSpentTotal }
 }
 
 function checkRoute(
@@ -594,7 +594,7 @@ function printRoute(route: MultiRoute, network: Network) {
   route.legs.forEach((l, i) => {
     const pool = network.pools.find((p) => p.address == l.poolAddress)
     const inp = liquidity.get(parseInt(l.tokenFrom.name)) * l.absolutePortion
-    const { out } = pool.calcOutByIn(inp, pool.token0.address == l.tokenFrom.address)
+    const { out } = pool.calcOutByIn(inp, pool.token0.tokenId == l.tokenFrom.tokenId)
     const price_in = atomPrice(l.tokenFrom) / atomPrice(route.fromToken)
     const price_out = atomPrice(l.tokenTo) / atomPrice(route.fromToken)
     const diff = numberPrecision(100 * ((out * price_out) / inp / price_in - 1))
