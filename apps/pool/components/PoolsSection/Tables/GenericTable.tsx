@@ -55,7 +55,7 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
               if (HoverElement) {
                 return (
                   <Tooltip
-                    trigger={['hover']}
+                    trigger="hover"
                     mouseEnterDelay={0.5}
                     placement="top"
                     button={
@@ -69,7 +69,7 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
                       >
                         {row.getVisibleCells().map((cell) => {
                           return (
-                            <Table.td key={cell.id}>
+                            <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </Table.td>
                           )
@@ -92,7 +92,9 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Table.td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.td>
+                      <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Table.td>
                     )
                   })}
                 </Table.tr>

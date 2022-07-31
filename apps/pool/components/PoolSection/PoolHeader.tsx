@@ -14,7 +14,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
         <div className="flex">
           <Currency.IconList iconWidth={44} iconHeight={44}>
             <Currency.Icon currency={token0} />
@@ -33,7 +33,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <Typography weight={400} as="span" className="text-slate-400 text-right">
+          <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
             APY: <span className="font-bold text-slate-50">22.27%</span>
           </Typography>
           <div className="flex gap-2">

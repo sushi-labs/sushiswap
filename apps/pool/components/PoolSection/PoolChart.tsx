@@ -75,6 +75,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     () => ({
       tooltip: {
         trigger: 'axis',
+        extraCssText: 'z-index: 1000',
         responsive: true,
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {

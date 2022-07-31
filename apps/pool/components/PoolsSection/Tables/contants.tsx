@@ -24,7 +24,7 @@ export const NAME_COLUMN: ColumnDef<Pair> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PairNameCell row={props.row.original} />,
-  size: 220,
+  size: 160,
 }
 
 export const TVL_COLUMN: ColumnDef<Pair> = {

@@ -45,7 +45,7 @@ export function Header({
 
   return (
     <header
-      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[100] h-[54px]', className)}
+      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[1070] h-[54px]', className)}
       {...props}
     >
       <Transition
