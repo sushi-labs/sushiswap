@@ -99,7 +99,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
 
   return (
     <>
-      <div className="fixed bottom-6 left-0 right-0 flex justify-center">
+      <div className="lg:hidden fixed bottom-6 left-0 right-0 flex justify-center">
         <button
           onClick={() => setOpen(true)}
           className="inline-flex bg-blue cursor-pointer rounded-full shadow-md shadow-black/50 px-6 py-3"
@@ -166,7 +166,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
           </div>
         </Dialog.Content>
       </Dialog>
-      <div className="hidden sm:flex bg-slate-800 flex flex-col rounded-2xl shadow-md shadow-black/30">{content}</div>
+      <div className="hidden lg:flex bg-slate-800 flex flex-col rounded-2xl shadow-md shadow-black/30">{content}</div>
     </>
   )
 }
