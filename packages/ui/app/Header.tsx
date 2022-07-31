@@ -3,7 +3,7 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Link, Select, SushiIcon } from '../index'
+import { classNames, Link, Select, SushiIcon, useBreakpoint } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -42,13 +42,16 @@ export function Header({
   ...props
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
+  const { isSm } = useBreakpoint('sm')
 
   // Show when:
   // 1. We scroll down for 45px
-  // 2. When body has a negative top set for body lock on Dialog
+  // 2. When body has a negative top set for body lock for Dialogs on small screens
   const showBackground =
     (scrollY > 45 && withScrollBackground) ||
-    (typeof window !== 'undefined' ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground : false)
+    (typeof window !== 'undefined' && isSm
+      ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
+      : false)
 
   return (
     <header
