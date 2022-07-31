@@ -19,10 +19,10 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   useEffect(() => {
     if (open) {
       document.body.style.top = `-${window.scrollY}px`
-      document.body.style.position = 'fixed'
+      document.body.classList.add('overflow-hidden')
     } else {
       const scrollY = document.body.style.top
-      document.body.style.position = ''
+      document.body.classList.remove('overflow-hidden')
       document.body.style.top = ''
       window.scrollTo(0, parseInt(scrollY || '0') * -1)
     }
