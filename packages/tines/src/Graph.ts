@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
+
 import { RPool, RToken } from './PrimaryPools'
-import { ASSERT, getBigNumber, closeValues, DEBUG } from './Utils'
+import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
 // Routing info about each one swap
 export interface RouteLeg {
@@ -249,14 +250,14 @@ export class Edge {
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-4
+          1e-9
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-4,
+          1e-9,
           `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
       }
@@ -377,7 +378,7 @@ export class Graph {
       const [vFrom, vTo] =
         bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
       if (vTo.price !== 0) continue
-      let p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
       vTo.price = vFrom.price * p
       vTo.gasPrice = vFrom.gasPrice / p
       addVertice(vTo)
@@ -395,7 +396,7 @@ export class Graph {
     edges.forEach(([e, _]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0
       if (v.price !== 0) return
-      let p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
+      const p = e.pool.calcCurrentPriceWithoutFee(from === e.vert1)
       this.setPrices(v, price * p, gasPrice / p)
     })
   }
@@ -756,7 +757,15 @@ export class Graph {
     return p
   }
 
-  findBestRouteExactIn(from: RToken, to: RToken, amountIn: number, mode: number | number[]): MultiRoute {
+  findBestRouteExactIn(from: RToken, to: RToken, amountIn: BigNumber | number, mode: number | number[]): MultiRoute {
+    let amountInBN: BigNumber
+    if (amountIn instanceof BigNumber) {
+      amountInBN = amountIn
+      amountIn = parseInt(amountIn.toString())
+    } else {
+      amountInBN = getBigNumber(amountIn)
+    }
+
     let routeValues = []
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
@@ -837,7 +846,7 @@ export class Graph {
       swapPrice,
       priceImpact,
       amountIn: amountIn * totalrouted,
-      amountInBN: getBigNumber(amountIn * totalrouted),
+      amountInBN: status == RouteStatus.Success ? amountInBN : getBigNumber(amountIn * totalrouted),
       amountOut: output,
       amountOutBN: getBigNumber(output),
       legs,

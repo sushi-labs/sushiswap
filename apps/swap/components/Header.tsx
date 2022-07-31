@@ -1,5 +1,4 @@
-import { App } from '@sushiswap/ui'
-import { AppType } from '@sushiswap/ui/app/Header'
+import { App, AppType } from '@sushiswap/ui'
 import { Wallet } from '@sushiswap/wagmi'
 
 export const Header = () => {

@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+
 import { getBigNumber, revertPositive } from './Utils'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
@@ -94,7 +95,7 @@ export class ConstantProductRPool extends RPool {
       // not possible swap
       return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
-    let input = (x * amountOut) / (1 - this.fee) / (y - amountOut)
+    const input = (x * amountOut) / (1 - this.fee) / (y - amountOut)
     return { inp: input, gasSpent: this.swapGasCost }
   }
 
@@ -182,11 +183,11 @@ export class HybridRPool extends RPool {
 
     const nA = this.A * 2
 
-    let c = D.mul(D)
+    const c = D.mul(D)
       .div(x.mul(2))
       .mul(D)
       .div((nA * 2) / this.A_PRECISION)
-    let b = D.mul(this.A_PRECISION).div(nA).add(x)
+    const b = D.mul(this.A_PRECISION).div(nA).add(x)
 
     let yPrev
     let y = D
@@ -220,7 +221,7 @@ export class HybridRPool extends RPool {
       yNewBN = BigNumber.from(1)
 
     const xNewBN = this.computeY(yNewBN)
-    let input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee))
+    const input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee))
 
     //if (input < 1) input = 1
     return { inp: input, gasSpent: this.swapGasCost }

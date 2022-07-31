@@ -128,4 +128,3 @@ export class RConcentratedLiquidityPool extends Pool {
     this.ticks = info.ticks
   }
 }
-
