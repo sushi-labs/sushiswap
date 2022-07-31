@@ -63,7 +63,9 @@ const _Pool = () => {
         </div>
         <div className="flex flex-col order-2 gap-4">
           <PoolPosition pair={pair} />
-          <PoolButtons pair={pair} />
+          <div className="hidden sm:flex">
+            <PoolButtons pair={pair} />
+          </div>
         </div>
       </div>
     </Layout>
