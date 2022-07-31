@@ -41,6 +41,13 @@ export interface MultiRoute {
   totalAmountOutBN: BigNumber
 }
 
+export interface NetworkInfo {
+  chainId?: number | string
+  baseToken: RToken
+  baseTokenPrice: number
+  gasPrice: number
+}
+
 export class Edge {
   pool: RPool
   vert0: Vertice
@@ -328,12 +335,22 @@ export class Graph {
   edges: Edge[]
   private tokens: Map<string, Vertice>
 
-  constructor(pools: RPool[], baseToken: RToken | RToken[], gasPrice: number | number[], price?: number | number[]) {
-    const baseToks: RToken[] = baseToken instanceof Array ? baseToken : [baseToken]
-    const gasPrices: number[] = gasPrice instanceof Array ? gasPrice : [gasPrice]
-    const prices: number[] = price == undefined ? [1] : price instanceof Array ? price : [price]
+  // Single network usage: (pools, baseToken, gasPrice)
+  // Multiple Network usage: (pools, networks)
+  constructor(pools: RPool[], baseTokenOrNetworks: RToken | NetworkInfo[], gasPriceSingleNetwork?: number) {
+    const networks: NetworkInfo[] =
+      baseTokenOrNetworks instanceof Array
+        ? baseTokenOrNetworks
+        : [
+            {
+              chainId: baseTokenOrNetworks.chainId,
+              baseToken: baseTokenOrNetworks,
+              baseTokenPrice: 1,
+              gasPrice: gasPriceSingleNetwork || 0,
+            },
+          ]
 
-    setTokenId(...baseToks)
+    setTokenId(...networks.map((n) => n.baseToken))
     this.vertices = []
     this.edges = []
     this.tokens = new Map()
@@ -345,10 +362,10 @@ export class Graph {
       v1.edges.push(edge)
       this.edges.push(edge)
     })
-    baseToks.forEach((t, i) => {
-      const baseVert = this.getVert(t)
+    networks.forEach((n) => {
+      const baseVert = this.getVert(n.baseToken)
       if (baseVert) {
-        this.setPricesStable(baseVert, prices[i], gasPrices[i])
+        this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice)
       }
     })
   }
