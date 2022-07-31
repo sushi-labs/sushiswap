@@ -139,7 +139,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-5 h-5">
-                      <Icon currency={dstBridgeToken.wrapped} width={20} height={20} />
+                      <Icon currency={outputAmount.currency} width={20} height={20} />
                     </div>
                   </Badge>
                 </div>
