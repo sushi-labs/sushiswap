@@ -328,8 +328,12 @@ export class Graph {
   edges: Edge[]
   private tokens: Map<string, Vertice>
 
-  constructor(pools: RPool[], baseToken: RToken, gasPrice: number) {
-    setTokenId(baseToken)
+  constructor(pools: RPool[], baseToken: RToken | RToken[], gasPrice: number | number[], price?: number | number[]) {
+    const baseToks: RToken[] = baseToken instanceof Array ? baseToken : [baseToken]
+    const gasPrices: number[] = gasPrice instanceof Array ? gasPrice : [gasPrice]
+    const prices: number[] = price == undefined ? [1] : price instanceof Array ? price : [price]
+
+    setTokenId(...baseToks)
     this.vertices = []
     this.edges = []
     this.tokens = new Map()
@@ -341,10 +345,12 @@ export class Graph {
       v1.edges.push(edge)
       this.edges.push(edge)
     })
-    const baseVert = this.getVert(baseToken)
-    if (baseVert) {
-      this.setPricesStable(baseVert, 1, gasPrice)
-    }
+    baseToks.forEach((t, i) => {
+      const baseVert = this.getVert(t)
+      if (baseVert) {
+        this.setPricesStable(baseVert, prices[i], gasPrices[i])
+      }
+    })
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -358,15 +364,19 @@ export class Graph {
 
   // Set prices using greedy algorithm
   setPricesStable(from: Vertice, price: number, gasPrice: number) {
-    this.vertices.forEach((v) => (v.price = 0)) // initialization
     from.price = price
     from.gasPrice = gasPrice
 
+    const processedVert = new Set()
+    let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
-    const value = (e: Edge): number => edgeValues.get(e) as number
 
+    const value = (e: Edge): number => edgeValues.get(e) as number
     function addVertice(v: Vertice) {
-      const newEdges = v.edges.filter((e) => v.getNeibour(e)?.price == 0)
+      const newEdges = v.edges.filter((e) => {
+        const newV = v.getNeibour(e)
+        return newV?.token.chainId === v.token.chainId && !processedVert.has(v.getNeibour(e) as Vertice)
+      })
       newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())))
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
@@ -375,9 +385,9 @@ export class Graph {
         else res.push(newEdges.shift() as Edge)
       }
       nextEdges = [...res, ...nextEdges, ...newEdges]
+      processedVert.add(v)
     }
 
-    let nextEdges: Edge[] = []
     addVertice(from)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
