@@ -25,6 +25,7 @@ import {
   Caption,
   ConfirmationComponentController,
   CrossChainRoute,
+  CurrencyInputWithNetworkSelector,
   Layout,
   Rate,
   SameChainRoute,
@@ -45,8 +46,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { CurrencyInput } from '../../../packages/widget/components'
-import { useSettings } from '../lib/state/storage'
+import { useCustomTokens, useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -178,6 +178,10 @@ const Widget: FC<Swap> = ({
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+  const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
+    useCustomTokens(srcChainId)
+  const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
+    useCustomTokens(dstChainId)
 
   useEffect(() => {
     setSrcToken(initialState.srcToken)
@@ -921,36 +925,39 @@ const Widget: FC<Swap> = ({
             <SettingsOverlay chainId={srcChainId} />
           </div>
         </div>
-        <CurrencyInput
+        <CurrencyInputWithNetworkSelector
+          onNetworkSelect={onSrcNetworkSelect}
           value={srcTypedAmount}
           onChange={setSrcTypedAmount}
-          onCurrencySelect={setSrcToken}
+          onSelect={setSrcToken}
           currency={srcToken}
-          network={Chain.from(srcChainId)}
-          onNetworkSelect={onSrcNetworkSelect}
-          tokenList={srcTokens}
-          theme={theme}
-          onMax={(value) => setSrcTypedAmount(value)}
+          chainId={srcChainId}
+          tokenMap={srcTokens}
+          customTokenMap={srcCustomTokenMap}
           balance={srcBalance?.[FundSource.WALLET]}
+          onAddToken={onAddSrcCustomToken}
+          onRemoveToken={onRemoveSrcCustomToken}
         />
         <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
           <SwitchCurrenciesButton onClick={switchCurrencies} />
         </div>
         <div className="bg-slate-800">
-          <CurrencyInput
-            className="pb-1"
+          <CurrencyInputWithNetworkSelector
+            className="!pb-1"
             disabled
+            disableMaxButton
+            onNetworkSelect={onDstNetworkSelect}
             value={dstTypedAmount}
             onChange={setDstTypedAmount}
-            onCurrencySelect={setDstToken}
+            onSelect={setDstToken}
             currency={dstToken}
-            network={Chain.from(dstChainId)}
-            onNetworkSelect={onDstNetworkSelect}
-            tokenList={dstTokens}
-            theme={theme}
-            disableMaxButton
+            chainId={dstChainId}
+            tokenMap={dstTokens}
+            customTokenMap={dstCustomTokenMap}
             balance={dstBalance?.[FundSource.WALLET]}
             usdPctChange={usdPctChange}
+            onAddToken={onAddDstCustomToken}
+            onRemoveToken={onRemoveDstCustomToken}
           />
 
           <div className="p-3">

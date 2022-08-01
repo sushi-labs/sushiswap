@@ -6839,7 +6839,7 @@ packages:
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: true
-  
+
   /@sushiswap/default-token-list/30.0.2:
     resolution: {integrity: sha512-brKyx4RqASSmS9ik1k4iP28n8ywvjs0aExStsLnSpsJvyIs1ZZ8R73bW7q1GwAkaPw4nl3igwQiPblyVVQ7lfA==}
     dev: false
