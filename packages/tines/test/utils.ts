@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { ConstantProductRPool, getBigNumber, HybridRPool, RPool, RToken, StableSwapRPool } from '../src'
+import { ConstantProductRPool, getBigNumber, HybridRPool, NetworkInfo, RPool, RToken, StableSwapRPool } from '../src'
 
 const MIN_TOKEN_PRICE = 1e-6
 const MAX_TOKEN_PRICE = 1e6
@@ -255,4 +255,60 @@ function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
     getBigNumber(reserve0),
     getBigNumber(reserve1)
   )
+}
+
+export interface NetworkCreateData {
+  tokenNumber: number
+  density: number
+  gasPrice: number
+}
+
+function chooseRandomToken(rnd: () => number, network: Network): TToken {
+  const num = network.tokens.length
+  return network.tokens[Math.floor(rnd() * num)]
+}
+
+function createBridge(rnd: () => number, net1: Network, net2: Network) {
+  const token0 = chooseRandomToken(rnd, net1)
+  const token1 = chooseRandomToken(rnd, net2)
+  return getCPPool(rnd, token0, token1)
+}
+
+export function createMultipleNetworks(
+  rnd: () => number,
+  networkData: NetworkCreateData[],
+  bridgeNumber = 1
+): { networks: NetworkInfo[]; pools: RPool[] } {
+  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice))
+
+  let pools: RPool[] = []
+  networks.forEach((n) => (pools = pools.concat(n.pools)))
+
+  const n = networkData.length
+  for (let i = 0; i < n; ++i) {
+    for (let j = i + 1; j < n; ++j) {
+      for (let k = 0; k < bridgeNumber; ++k) {
+        pools.push(createBridge(rnd, networks[i], networks[j]))
+      }
+    }
+  }
+
+  networks.forEach((n, i) => {
+    n.tokens.forEach((t) => {
+      t.chainId = i
+    })
+  })
+
+  return {
+    networks: networks.map((n, i) => {
+      const baseToken = chooseRandomToken(rnd, n)
+      return {
+        chainId: i,
+        baseToken,
+        baseTokenPrice: baseToken.price,
+        gasPrice: n.gasPrice,
+      }
+    }),
+    pools,
+  }
 }
