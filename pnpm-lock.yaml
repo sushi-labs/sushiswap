@@ -753,7 +753,7 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
-      '@sushiswap/swap-widget': link:../../packages/widget
+      '@sushiswap/swap-widget': link:../../packages/widget/swap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/ui': link:../../packages/ui
@@ -1772,19 +1772,13 @@ importers:
       typechain: 8.1.0_typescript@4.7.4
       typescript: 4.7.4
 
-  packages/widget:
+  packages/widget/swap:
     specifiers:
-      '@headlessui/react': ^1.6.6
-      '@heroicons/react': ^1.0.6
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
-      '@sushiswap/wagmi': workspace:*
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       react: ^18.2.0
@@ -1792,18 +1786,12 @@ importers:
       tsup: ^6.2.0
       typescript: ^4.7.0
     dependencies:
-      '@sushiswap/ui': link:../ui
+      '@sushiswap/ui': link:../../ui
     devDependencies:
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
-      '@sushiswap/chain': link:../chain
-      '@sushiswap/currency': link:../currency
-      '@sushiswap/eslint-config': link:../config/eslint
-      '@sushiswap/hooks': link:../hooks
-      '@sushiswap/jest-config': link:../config/jest
-      '@sushiswap/prettier-config': link:../config/prettier
-      '@sushiswap/typescript-config': link:../config/typescript
-      '@sushiswap/wagmi': link:../wagmi
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
       react: 18.2.0
@@ -5852,6 +5840,7 @@ packages:
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /@heroicons/react/1.0.6_react@18.2.0:
     resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
