@@ -23,9 +23,9 @@ export const getAllArticlesBySlug = async () => {
   return await sdk.getAllArticlesWithSlug()
 }
 
-export const getGlobalPage = async () => {
+export const getGlobalSEO = async () => {
   const sdk = getMeshSDK()
-  return await sdk.getGlobalPage()
+  return await sdk.getGlobalSEO()
 }
 
 export const getPreviewPostBySlug = async (slug: string) => {

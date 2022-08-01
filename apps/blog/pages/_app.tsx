@@ -9,8 +9,9 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { useEffect } from 'react'
 
-import { Header } from '../components'
-import { getGlobalPage } from '../lib/api'
+import { DefaultSeo, Header } from '../components'
+import { getGlobalSEO } from '../lib/api'
+import { Global } from '.mesh'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -24,7 +25,7 @@ declare global {
   }
 }
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
   const router = useRouter()
   useEffect(() => {
     const handler = (page) =>
@@ -57,8 +58,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       />
       <ThemeProvider>
         <App.Shell>
+          <DefaultSeo seo={seo} />
           <Header />
-          <Component {...pageProps} />
+          <Component {...pageProps} seo={seo} />
           <App.Footer />
         </App.Shell>
       </ThemeProvider>
@@ -74,9 +76,9 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await NextApp.getInitialProps(ctx)
   // Fetch global site settings from Strapi
-  const globalRes = await getGlobalPage()
+  const globalSEO = await getGlobalSEO()
   // Pass the data to our page via props
-  return { ...appProps, pageProps: { global: globalRes.global?.data } }
+  return { ...appProps, seo: globalSEO.global?.data.attributes }
 }
 
 export default MyApp
