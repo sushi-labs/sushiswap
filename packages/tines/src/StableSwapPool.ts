@@ -164,11 +164,7 @@ export class StableSwapRPool extends RPool {
     const inp0 = parseInt(xNew.sub(x).toString()) / (1 - this.fee)
     const inp1 = direction ? this.total1.toShare(inp0) : this.total0.toShare(inp0)
     const inp2 = inp1 / (direction ? this.decimalsCompensation0 : this.decimalsCompensation1)
-    const inp = Math.round(inp2) + 1 // with precision loss compensation
-    // const inp0 = parseInt(xNew.sub(x).toString()) / (1 - this.fee)
-    // const inp1 = Math.round(inp0) + 1 // with precision loss compensation
-    // const inp2 = direction ? this.total1.toShare(inp1) : this.total0.toShare(inp1)
-    // const inp = inp2 / (direction ? this.decimalsCompensation0 : this.decimalsCompensation1)
+    const inp = Math.max(inp2, 1)
     return { inp, gasSpent: this.swapGasCost }
   }
 

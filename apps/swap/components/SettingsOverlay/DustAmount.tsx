@@ -20,7 +20,7 @@ export const DustAmount = () => {
               hover
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
-                <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
+                <Typography variant="xs" weight={500} className="bg-slate-600 !rounded-lg w-40 p-3">
                   Native token to be received on destination chain
                 </Typography>
               }

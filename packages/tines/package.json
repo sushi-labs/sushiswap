@@ -22,7 +22,8 @@
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

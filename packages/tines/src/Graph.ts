@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken, setTokenId } from './PrimaryPools'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
 // Routing info about each one swap
@@ -250,14 +250,14 @@ export class Edge {
         return closeValues(
           this.amountOutPrevious / granularity,
           this.pool.calcOutByIn(this.amountInPrevious, this.direction).out / granularity,
-          1e-4
+          1e-9
         )
       } else {
         const granularity = this.pool.granularity0()
         return closeValues(
           this.amountInPrevious / granularity,
           this.pool.calcOutByIn(this.amountOutPrevious, this.direction).out / granularity,
-          1e-4,
+          1e-9,
           `"${this.pool.address}" ${inPrev} ${to?.bestIncome} ${from.bestIncome}`
         )
       }
@@ -280,6 +280,7 @@ export class Vertice {
 
   constructor(t: RToken) {
     this.token = t
+    setTokenId(this.token)
     this.edges = []
     this.price = 0
     this.gasPrice = 0
@@ -325,9 +326,10 @@ export class Vertice {
 export class Graph {
   vertices: Vertice[]
   edges: Edge[]
-  tokens: Map<string, Vertice>
+  private tokens: Map<string, Vertice>
 
   constructor(pools: RPool[], baseToken: RToken, gasPrice: number) {
+    setTokenId(baseToken)
     this.vertices = []
     this.edges = []
     this.tokens = new Map()
@@ -339,10 +341,14 @@ export class Graph {
       v1.edges.push(edge)
       this.edges.push(edge)
     })
-    const baseVert = this.tokens.get(baseToken.address)
+    const baseVert = this.getVert(baseToken)
     if (baseVert) {
       this.setPricesStable(baseVert, 1, gasPrice)
     }
+  }
+
+  getVert(t: RToken): Vertice | undefined {
+    return this.tokens.get(t.tokenId as string)
   }
 
   cleanTmpData() {
@@ -402,18 +408,18 @@ export class Graph {
   }
 
   getOrCreateVertice(token: RToken) {
-    let vert = this.tokens.get(token.address)
+    let vert = this.getVert(token)
     if (vert) return vert
     vert = new Vertice(token)
     this.vertices.push(vert)
-    this.tokens.set(token.address, vert)
+    this.tokens.set(token.tokenId as string, vert)
     return vert
   }
 
   /*exportPath(from: RToken, to: RToken) {
 
-    const fromVert = this.tokens.get(from) as Vertice
-    const toVert = this.tokens.get(to) as Vertice
+    const fromVert = this.getVert(from) as Vertice
+    const toVert = this.getVert(to) as Vertice
     const initValue = (fromVert.bestIncome * fromVert.price) / toVert.price
 
     const route = new Set<Edge>()
@@ -495,8 +501,8 @@ export class Graph {
         totalOutput: number
       }
     | undefined {
-    const start = this.tokens.get(from.address)
-    const finish = this.tokens.get(to.address)
+    const start = this.getVert(from)
+    const finish = this.getVert(to)
     if (!start || !finish) return
 
     const gasPrice = _gasPrice !== undefined ? _gasPrice : finish.gasPrice
@@ -608,8 +614,8 @@ export class Graph {
         totalInput: number
       }
     | undefined {
-    const start = this.tokens.get(to.address)
-    const finish = this.tokens.get(from.address)
+    const start = this.getVert(to)
+    const finish = this.getVert(from)
     if (!start || !finish) return
 
     const gasPrice = _gasPrice !== undefined ? _gasPrice : finish.gasPrice
@@ -793,10 +799,10 @@ export class Graph {
         output += p.output
         gasSpentInit += p.gasSpent
         //totalOutput += p.totalOutput
-        this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
+        this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
         // if (step === 0) {
-        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        //   primaryPrice = this.getPrimaryPriceForPath(this.getVert(from) as Vertice, p.path)
         // }
       }
     }
@@ -818,8 +824,8 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
-    const fromVert = this.tokens.get(from.address) as Vertice
-    const toVert = this.tokens.get(to.address) as Vertice
+    const fromVert = this.getVert(from) as Vertice
+    const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
@@ -830,8 +836,8 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = output / amountIn
-      const priceTo = this.tokens.get(to.address)?.price
-      const priceFrom = this.tokens.get(from.address)?.price
+      const priceTo = this.getVert(to)?.price
+      const priceFrom = this.getVert(from)?.price
       primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
@@ -884,10 +890,10 @@ export class Graph {
         input += p.input
         gasSpentInit += p.gasSpent
         //totalOutput += p.totalOutput
-        this.addPath(this.tokens.get(from.address), this.tokens.get(to.address), p.path)
+        this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
         // if (step === 0) {
-        //   primaryPrice = this.getPrimaryPriceForPath(this.tokens.get(from.address) as Vertice, p.path)
+        //   primaryPrice = this.getPrimaryPriceForPath(this.getVert(from) as Vertice, p.path)
         // }
       }
     }
@@ -909,8 +915,8 @@ export class Graph {
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
 
-    const fromVert = this.tokens.get(from.address) as Vertice
-    const toVert = this.tokens.get(to.address) as Vertice
+    const fromVert = this.getVert(from) as Vertice
+    const toVert = this.getVert(to) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
@@ -921,8 +927,8 @@ export class Graph {
     let swapPrice, priceImpact
     try {
       swapPrice = amountOut / input
-      const priceTo = this.tokens.get(to.address)?.price
-      const priceFrom = this.tokens.get(from.address)?.price
+      const priceTo = this.getVert(to)?.price
+      const priceFrom = this.getVert(from)?.price
       primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact = primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
     } catch (e) {
@@ -998,59 +1004,59 @@ export class Graph {
   // TODO: make full test coverage!
   calcLegsAmountOut(legs: RouteLeg[], amountIn: number) {
     const amounts = new Map<string, number>()
-    amounts.set(legs[0].tokenFrom.address, amountIn)
+    amounts.set(legs[0].tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
-      const vert = this.tokens.get(l.tokenFrom.address)
+      const vert = this.getVert(l.tokenFrom)
       console.assert(vert !== undefined, 'Internal Error 570')
       const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
       console.assert(edge !== undefined, 'Internel Error 569')
       const pool = (edge as Edge).pool
       const direction = vert === (edge as Edge).vert0
 
-      const inputTotal = amounts.get(l.tokenFrom.address)
+      const inputTotal = amounts.get(l.tokenFrom.tokenId as string)
       console.assert(inputTotal !== undefined, 'Internal Error 564')
       const input = (inputTotal as number) * l.swapPortion
-      amounts.set(l.tokenFrom.address, (inputTotal as number) - input)
+      amounts.set(l.tokenFrom.tokenId as string, (inputTotal as number) - input)
       const output = pool.calcOutByIn(input, direction).out
 
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
-      const prevAmount = amounts.get(vertNext.token.address)
-      amounts.set(vertNext.token.address, (prevAmount || 0) + output)
+      const prevAmount = amounts.get(vertNext.token.tokenId as string)
+      amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + output)
     })
-    return amounts.get(legs[legs.length - 1].tokenTo.address) || 0
+    return amounts.get(legs[legs.length - 1].tokenTo.tokenId as string) || 0
   }
 
   // TODO: make full test coverage!
   calcLegsAmountIn(legs: RouteLeg[], amountOut: number) {
     const totalOutputAssumed = new Map<string, number>()
     legs.forEach((l) => {
-      const prevValue = totalOutputAssumed.get(l.tokenFrom.address) || 0
-      totalOutputAssumed.set(l.tokenFrom.address, prevValue + l.assumedAmountOut)
+      const prevValue = totalOutputAssumed.get(l.tokenFrom.tokenId as string) || 0
+      totalOutputAssumed.set(l.tokenFrom.tokenId as string, prevValue + l.assumedAmountOut)
     })
 
     const amounts = new Map<string, number>()
-    amounts.set(legs[legs.length - 1].tokenTo.address, amountOut)
+    amounts.set(legs[legs.length - 1].tokenTo.tokenId as string, amountOut)
     for (let i = legs.length - 1; i >= 0; --i) {
       const l = legs[i]
-      const vert = this.tokens.get(l.tokenTo.address)
+      const vert = this.getVert(l.tokenTo)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
       console.assert(edge !== undefined, 'Internel Error 888')
       const pool = (edge as Edge).pool
       const direction = vert === (edge as Edge).vert1
 
-      const outputTotal = amounts.get(l.tokenTo.address)
+      const outputTotal = amounts.get(l.tokenTo.tokenId as string)
       console.assert(outputTotal !== undefined, 'Internal Error 893')
-      const totalAssumed = totalOutputAssumed.get(l.tokenFrom.address)
+      const totalAssumed = totalOutputAssumed.get(l.tokenFrom.tokenId as string)
       console.assert(totalAssumed !== undefined, 'Internal Error 903')
       const output = ((outputTotal as number) * l.assumedAmountOut) / (totalAssumed as number)
       const input = pool.calcInByOut(output, direction).inp
 
       const vertNext = (vert as Vertice).getNeibour(edge) as Vertice
-      const prevAmount = amounts.get(vertNext.token.address)
-      amounts.set(vertNext.token.address, (prevAmount || 0) + input)
+      const prevAmount = amounts.get(vertNext.token.tokenId as string)
+      amounts.set(vertNext.token.tokenId as string, (prevAmount || 0) + input)
     }
-    return amounts.get(legs[0].tokenFrom.address) || 0
+    return amounts.get(legs[0].tokenFrom.tokenId as string) || 0
   }
 
   // removes all cycles if there are any, then removes all dead end could appear after cycle removing

@@ -170,14 +170,14 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
       {trade.route.legs.map((leg, i) => (
         <div key={i} className="z-10 flex items-center gap-1 text-sm font-medium leading-4 text-slate-400">
           {i === 0 ? (
-            <Typography variant="xs" weight={700}>
+            <Typography variant="xs" weight={500}>
               {leg.tokenFrom.symbol}
             </Typography>
           ) : null}
 
           <DotsHorizontalIcon width={12} className="text-slate-600" />
 
-          <Typography variant="xs" weight={700}>
+          <Typography variant="xs" weight={500}>
             {leg.tokenTo.symbol}
           </Typography>
         </div>
@@ -205,13 +205,13 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
           {Number(initialPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
-          <Typography variant="xs" weight={700}>
+          <Typography variant="xs" weight={500}>
             {initialPath.tokenFrom.symbol}
           </Typography>
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           {initialPath.poolFee * 100}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
-          <Typography variant="xs" weight={700}>
+          <Typography variant="xs" weight={500}>
             {initialPath.tokenTo.symbol}
           </Typography>
         </div>
@@ -220,13 +220,13 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
           {Number(percentPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
-          <Typography variant="xs" weight={700}>
+          <Typography variant="xs" weight={500}>
             {percentPath.tokenFrom.symbol}
           </Typography>
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           {percentPath.poolFee * 100}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
-          <Typography variant="xs" weight={700}>
+          <Typography variant="xs" weight={500}>
             {percentPath.tokenTo.symbol}
           </Typography>
         </div>
