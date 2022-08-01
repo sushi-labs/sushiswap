@@ -1,4 +1,6 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
@@ -7,6 +9,9 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
   theme: {
+    screens: {
+      ...defaultTheme.screens,
+    },
     extend: {
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops))',

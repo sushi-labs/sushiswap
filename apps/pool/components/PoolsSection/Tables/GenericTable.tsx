@@ -1,68 +1,24 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, Table } from '@sushiswap/ui'
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  PaginationState,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table'
+import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
+import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
-import React, { FC, useMemo, useState } from 'react'
-import useSWR from 'swr'
+import React, { useState } from 'react'
 
-import { Pair } from '../../../.graphclient'
-import { PAGE_SIZE, POOL_TABLE_COLUMNS } from './contants'
+import { PAGE_SIZE } from './contants'
 
-const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
-  const _url = new URL(url)
-
-  if (args.sorting[0]) {
-    _url.searchParams.set('orderBy', args.sorting[0].id)
-    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
-  }
-
-  if (args.pagination) {
-    _url.searchParams.set('first', args.pagination.pageSize.toString())
-    _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
-  }
-
-  return fetch(_url.href)
-    .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+interface GenericTableProps<C> {
+  table: ReactTableType<C>
+  columns: ColumnDef<C>[]
+  HoverElement?: React.FunctionComponent<{ row: C }>
 }
 
-export const PoolsTable: FC = () => {
+export const GenericTable = <T extends { id: string }>({ table, columns, HoverElement }: GenericTableProps<T>) => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: PAGE_SIZE,
-  })
-
-  const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pools } = useSWR<Pair[]>(
-    { url: `${typeof window !== 'undefined' ? window.location : ''}/api/pools`, args },
-    fetcher
-  )
-
-  const table = useReactTable({
-    data: pools ?? [],
-    columns: POOL_TABLE_COLUMNS,
-    state: {
-      sorting,
-    },
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    manualPagination: true,
-  })
+  const [showOverlay, setShowOverlay] = useState(false)
 
   return (
     <>
+      <LoadingOverlay show={showOverlay} />
       <Table.container>
         <Table.table>
           <Table.thead>
@@ -96,11 +52,49 @@ export const PoolsTable: FC = () => {
           </Table.thead>
           <Table.tbody>
             {table.getRowModel().rows.map((row) => {
+              if (HoverElement) {
+                return (
+                  <Tooltip
+                    trigger="hover"
+                    mouseEnterDelay={0.5}
+                    placement="top"
+                    button={
+                      <Table.tr
+                        key={row.id}
+                        onClick={() => {
+                          setShowOverlay(true)
+                          void router.push(`/${row.original.id}`)
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </Table.td>
+                          )
+                        })}
+                      </Table.tr>
+                    }
+                    panel={<HoverElement row={row.original} />}
+                  />
+                )
+              }
+
               return (
-                <Table.tr key={row.id} onClick={() => router.push(`/${row.original.id}`)} className="cursor-pointer">
+                <Table.tr
+                  key={row.id}
+                  onClick={() => {
+                    setShowOverlay(true)
+                    void router.push(`/${row.original.id}`)
+                  }}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Table.td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Table.td>
+                      <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Table.td>
                     )
                   })}
                 </Table.tr>
@@ -109,12 +103,12 @@ export const PoolsTable: FC = () => {
             {table.getRowModel().rows.length === 0 &&
               Array.from(Array(PAGE_SIZE)).map((el, index) => (
                 <Table.tr key={index} className="!max-h-[48px]">
-                  <Table.td style={{ maxWidth: POOL_TABLE_COLUMNS[0].size, width: POOL_TABLE_COLUMNS[0].size }}>
+                  <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }}>
                     <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
                   </Table.td>
                   <Table.td
-                    className="flex gap-2 items-center"
-                    style={{ maxWidth: POOL_TABLE_COLUMNS[1].size, width: POOL_TABLE_COLUMNS[1].size }}
+                    className="flex items-center gap-2"
+                    style={{ maxWidth: columns[1].size, width: columns[1].size }}
                   >
                     <div className="flex items-center">
                       <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
@@ -124,16 +118,13 @@ export const PoolsTable: FC = () => {
                       <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
                     </div>
                   </Table.td>
-                  <Table.td style={{ maxWidth: POOL_TABLE_COLUMNS[2].size, width: POOL_TABLE_COLUMNS[2].size }}>
+                  <Table.td style={{ maxWidth: columns[2].size, width: columns[2].size }}>
                     <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
                   </Table.td>
-                  <Table.td style={{ maxWidth: POOL_TABLE_COLUMNS[3].size, width: POOL_TABLE_COLUMNS[3].size }}>
+                  <Table.td style={{ maxWidth: columns[3].size, width: columns[3].size }}>
                     <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
                   </Table.td>
-                  <Table.td
-                    className="flex items-center"
-                    style={{ maxWidth: POOL_TABLE_COLUMNS[4].size, width: POOL_TABLE_COLUMNS[4].size }}
-                  >
+                  <Table.td className="flex items-center" style={{ maxWidth: columns[4].size, width: columns[4].size }}>
                     <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
                     <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse -ml-[12px]" />
                   </Table.td>
@@ -141,15 +132,6 @@ export const PoolsTable: FC = () => {
               ))}
           </Table.tbody>
         </Table.table>
-        <Table.Paginator
-          hasPrev={table.getCanPreviousPage()}
-          hasNext={table.getCanNextPage()}
-          page={table.getState().pagination.pageIndex + 1}
-          onPage={table.setPageIndex}
-          pages={table.getPageCount()}
-          pageSize={PAGE_SIZE}
-          count={1000}
-        />
       </Table.container>
     </>
   )

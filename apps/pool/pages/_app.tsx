@@ -16,7 +16,16 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <Provider store={store}>
         <ThemeProvider>
           <App.Shell>
-            <App.Header appType={AppType.Pool} withScrollBackground>
+            <App.Header
+              appType={AppType.Pool}
+              withScrollBackground
+              nav={
+                <App.NavItemList>
+                  <App.NavItem href="/swap" label="Swap" />
+                  <App.NavItem href="/pool" label="Liquidity" />
+                </App.NavItemList>
+              }
+            >
               <Wallet.Button size="sm" className="border-none shadow-md whitespace-nowrap" />
             </App.Header>
             <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />

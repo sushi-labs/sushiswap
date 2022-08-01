@@ -10,7 +10,10 @@ type Props = {
 
 export function Layout({ children, maxWidth = '5xl', backdrop, className }: Props) {
   return (
-    <Container maxWidth={maxWidth} className={classNames(className, 'lg:mx-auto px-4 h-full pb-4 mb-40 mt-4 lg:mt-20')}>
+    <Container
+      maxWidth={maxWidth}
+      className={classNames(className, 'lg:mx-auto px-4 h-full pb-4 mb-4 lg:mb-40 lg:mt-20 mt-10')}
+    >
       <Backdrop backdrop={backdrop}>{children}</Backdrop>
     </Container>
   )

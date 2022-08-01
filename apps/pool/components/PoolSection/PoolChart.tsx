@@ -75,6 +75,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     () => ({
       tooltip: {
         trigger: 'axis',
+        extraCssText: 'z-index: 1000',
         responsive: true,
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {
@@ -132,7 +133,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       series: [
         {
           name: 'Volume',
-          type: 'bar',
+          type: chartType === PoolChartType.TVL ? 'line' : 'bar',
           xAxisIndex: 0,
           yAxisIndex: 0,
           itemStyle: {
@@ -140,6 +141,9 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             normal: {
               barBorderRadius: 2,
             },
+          },
+          areaStyle: {
+            color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
           animationDelayUpdate: function (idx) {
@@ -149,7 +153,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         },
       ],
     }),
-    [xData, yData]
+    [chartType, xData, yData]
   )
 
   // Transient update for performance

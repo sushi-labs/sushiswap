@@ -1,9 +1,11 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
 import { FC, useMemo } from 'react'
+
+import { Link } from '../link'
 
 const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ETHEREUM]: 'ethereum',
@@ -78,9 +80,10 @@ const LOGO: Record<number, string> = {
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
   currency: Currency
+  disableLink?: boolean
 }
 
-export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
+export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const src = useMemo(() => {
     if (currency.isNative) {
       return LOGO[currency.chainId]
@@ -110,5 +113,13 @@ export const Icon: FC<IconProps> = ({ currency, ...rest }) => {
     )
   }
 
-  return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
+  if (disableLink) {
+    return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
+  }
+
+  return (
+    <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
+      <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
+    </Link.External>
+  )
 }

@@ -29,6 +29,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     onSignature,
     allApproved,
     initialized,
+    hideIcon,
     ...props
   }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract, onSignature })
@@ -67,6 +68,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     }, [approvalState, disabled, dispatch, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition

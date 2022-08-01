@@ -3,7 +3,7 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Link, Select, SushiIcon } from '../index'
+import { classNames, Link, Select, SushiIcon, useBreakpoint } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -13,7 +13,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Kashi',
   Analytics = 'Analytics',
-  Pool = 'Pool',
+  Pool = 'Liquidity',
 }
 
 const LINK = {
@@ -24,6 +24,7 @@ const LINK = {
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/internal',
   [AppType.Analytics]: '/analytics',
+  [AppType.Pool]: '/pool',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -41,15 +42,25 @@ export function Header({
   ...props
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
+  const { isMd } = useBreakpoint('md')
+
+  // Show when:
+  // 1. We scroll down for 45px
+  // 2. When body has a negative top set for body lock for Dialogs on small screens
+  const showBackground =
+    (scrollY > 45 && withScrollBackground) ||
+    (typeof window !== 'undefined' && !isMd
+      ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
+      : false)
 
   return (
     <header
-      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[100] h-[54px]', className)}
+      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[1070] h-[54px]', className)}
       {...props}
     >
       <Transition
         as={Fragment}
-        show={scrollY > 45 && withScrollBackground}
+        show={showBackground}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"

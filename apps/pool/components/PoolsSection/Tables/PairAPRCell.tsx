@@ -4,7 +4,7 @@ import { FC } from 'react'
 
 import { CellProps } from './types'
 
-export const PoolsTableAPRCell: FC<CellProps> = () => {
+export const PairAPRCell: FC<CellProps> = () => {
   return (
     <Typography variant="sm" className="text-slate-400 flex items-center gap-1">
       14.32%

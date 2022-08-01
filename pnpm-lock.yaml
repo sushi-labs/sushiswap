@@ -62,7 +62,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^30.0.1
+      '@sushiswap/default-token-list': ^30.0.2
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -70,7 +70,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 30.0.1
+      '@sushiswap/default-token-list': 30.0.2
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -598,6 +598,7 @@ importers:
       '@sushiswap/wagmi': workspace:*
       '@tanstack/react-table': 8.5.0
       '@types/node': ^17.0.30
+      '@types/numeral': ^2.0.2
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
@@ -609,6 +610,7 @@ importers:
       graphql: ^16.5.0
       next: ^12.2.0
       next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -647,6 +649,7 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.6.9
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -660,6 +663,7 @@ importers:
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@types/node': 17.0.45
+      '@types/numeral': 2.0.2
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
       autoprefixer: 10.4.7_postcss@8.4.14
@@ -6824,9 +6828,9 @@ packages:
   /@sushiswap/core/1.4.2:
     resolution: {integrity: sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==}
     dev: true
-
-  /@sushiswap/default-token-list/30.0.1:
-    resolution: {integrity: sha512-pYNkWGOe6w+FAHB5bhQkjPO4YqTjdI0h+pLdN0ft8M3HembvqL/8+XlWO/IZKUE3yn3H8e24nw97QnSJaSTsKA==}
+  
+  /@sushiswap/default-token-list/30.0.2:
+    resolution: {integrity: sha512-brKyx4RqASSmS9ik1k4iP28n8ywvjs0aExStsLnSpsJvyIs1ZZ8R73bW7q1GwAkaPw4nl3igwQiPblyVVQ7lfA==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
