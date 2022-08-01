@@ -3,22 +3,17 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Input, NetworkIcon, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
-import { TokenSelector } from '@sushiswap/wagmi'
-import { usePrices } from '@sushiswap/wagmi/hooks/usePrices'
-import { NetworkSelectorOverlay } from 'components'
+import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
+import { TokenSelector, usePrices } from '@sushiswap/wagmi'
 import { FC, useCallback, useRef, useState } from 'react'
 
+import { Theme } from '../../types'
 import { useCustomTokens } from '../lib/state/storage'
-import { Theme } from '../types'
 
 interface CurrencyInputBase {
   value: string
   disabled?: boolean
   onChange(value: string): void
-  onFundSourceSelect(source?: FundSource): void
-  fundSource: FundSource
   currency: Type
   network: Chain
   tokenList: Record<string, Token>
@@ -71,8 +66,6 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   currency,
   onCurrencySelect,
   onNetworkSelect,
-  fundSource,
-  onFundSourceSelect,
   network,
   tokenList,
   disableNetworkSelect = false,
@@ -101,25 +94,25 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   return (
     <div className={classNames(className, 'p-3')} onClick={focusInput}>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-between">
-          {!disableNetworkSelect && (
-            <button
-              type="button"
-              className={classNames(
-                theme.secondary.default,
-                theme.secondary.hover,
-                `relative flex items-center gap-1 py-1 text-xs font-medium`
-              )}
-              onClick={(e) => {
-                setNetworkSelectorOpen(true)
-                e.stopPropagation()
-              }}
-            >
-              <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />
-              {network.name} <ChevronDownIcon width={16} height={16} />
-            </button>
-          )}
-        </div>
+        {/*<div className="flex flex-row justify-between">*/}
+        {/*  {!disableNetworkSelect && (*/}
+        {/*    <button*/}
+        {/*      type="button"*/}
+        {/*      className={classNames(*/}
+        {/*        theme.secondary.default,*/}
+        {/*        theme.secondary.hover,*/}
+        {/*        `relative flex items-center gap-1 py-1 text-xs font-medium`*/}
+        {/*      )}*/}
+        {/*      onClick={(e) => {*/}
+        {/*        setNetworkSelectorOpen(true)*/}
+        {/*        e.stopPropagation()*/}
+        {/*      }}*/}
+        {/*    >*/}
+        {/*      <NetworkIcon chainId={network.chainId} width="16px" height="16px" className="mr-1" />*/}
+        {/*      {network.name} <ChevronDownIcon width={16} height={16} />*/}
+        {/*    </button>*/}
+        {/*  )}*/}
+        {/*</div>*/}
         <div className="flex flex-col">
           <div className="relative flex items-center gap-1">
             <Input.Numeric
@@ -148,7 +141,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
               )}
             >
               <div className="w-5 h-5">
-                <Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
+                <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
               </div>
               <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
               <div className="w-5 h-5">
@@ -209,14 +202,14 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           </Transition>
         </div>
       </div>
-      {!disableNetworkSelect && onNetworkSelect && (
-        <NetworkSelectorOverlay
-          open={networkSelectorOpen}
-          onClose={() => setNetworkSelectorOpen(false)}
-          onSelect={onNetworkSelect}
-          selected={network.chainId}
-        />
-      )}
+      {/*{!disableNetworkSelect && onNetworkSelect && (*/}
+      {/*  <NetworkSelectorOverlay*/}
+      {/*    open={networkSelectorOpen}*/}
+      {/*    onClose={() => setNetworkSelectorOpen(false)}*/}
+      {/*    onSelect={onNetworkSelect}*/}
+      {/*    selected={network.chainId}*/}
+      {/*  />*/}
+      {/*)}*/}
       {!disableCurrencySelect && onCurrencySelect && (
         <TokenSelector
           variant="dialog"
@@ -229,7 +222,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
           onSelect={onCurrencySelect}
           onAddToken={addCustomToken}
           onRemoveToken={removeCustomToken}
-          fundSource={fundSource}
+          fundSource={FundSource.WALLET}
         />
       )}
     </div>

@@ -55,12 +55,12 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
               if (HoverElement) {
                 return (
                   <Tooltip
+                    key={row.id}
                     trigger="hover"
                     mouseEnterDelay={0.5}
                     placement="top"
                     button={
                       <Table.tr
-                        key={row.id}
                         onClick={() => {
                           setShowOverlay(true)
                           void router.push(`/${row.original.id}`)

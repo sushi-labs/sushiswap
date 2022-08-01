@@ -25,7 +25,6 @@ import {
   Caption,
   ConfirmationComponentController,
   CrossChainRoute,
-  CurrencyInput,
   Layout,
   Rate,
   SameChainRoute,
@@ -45,6 +44,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
+import { CurrencyInput } from '../../../packages/widget/components'
 import { useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
@@ -196,9 +196,6 @@ const Widget: FC<Swap> = ({
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
-
-  const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
-  const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
 
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
@@ -461,8 +458,8 @@ const Widget: FC<Swap> = ({
       dstToken,
       srcTrade,
       dstTrade,
-      srcUseBentoBox,
-      dstUseBentoBox,
+      srcUseBentoBox: false,
+      dstUseBentoBox: false,
       user: address,
       debug: true,
     })
@@ -530,7 +527,6 @@ const Widget: FC<Swap> = ({
     dstOutputCurrencyRebase,
     dstToken,
     dstTrade,
-    dstUseBentoBox,
     nanoId,
     sameChainSwap,
     signature,
@@ -543,7 +539,6 @@ const Widget: FC<Swap> = ({
     srcOutputCurrencyRebase,
     srcToken,
     srcTrade,
-    srcUseBentoBox,
     transfer,
   ])
 
@@ -663,8 +658,8 @@ const Widget: FC<Swap> = ({
         dstToken,
         srcTrade,
         dstTrade,
-        srcUseBentoBox,
-        dstUseBentoBox,
+        srcUseBentoBox: false,
+        dstUseBentoBox: false,
         user: AddressZero,
         debug: false,
       })
@@ -721,7 +716,6 @@ const Widget: FC<Swap> = ({
     dstOutputCurrencyRebase,
     dstToken,
     dstTrade,
-    dstUseBentoBox,
     nanoId,
     sameChainSwap,
     slippageTolerance,
@@ -734,7 +728,6 @@ const Widget: FC<Swap> = ({
     srcOutputCurrencyRebase,
     srcToken,
     srcTrade,
-    srcUseBentoBox,
     swapSlippage,
     transfer,
   ])
@@ -926,15 +919,13 @@ const Widget: FC<Swap> = ({
           value={srcTypedAmount}
           onChange={setSrcTypedAmount}
           onCurrencySelect={setSrcToken}
-          onFundSourceSelect={(source) => setSrcUseBentoBox(source === FundSource.BENTOBOX)}
-          fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
           currency={srcToken}
           network={Chain.from(srcChainId)}
           onNetworkSelect={onSrcNetworkSelect}
           tokenList={srcTokens}
           theme={theme}
           onMax={(value) => setSrcTypedAmount(value)}
-          balance={srcBalance?.[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          balance={srcBalance?.[FundSource.WALLET]}
         />
         <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
           <SwitchCurrenciesButton onClick={switchCurrencies} />
@@ -946,15 +937,13 @@ const Widget: FC<Swap> = ({
             value={dstTypedAmount}
             onChange={setDstTypedAmount}
             onCurrencySelect={setDstToken}
-            onFundSourceSelect={(source) => setDstUseBentoBox(source === FundSource.BENTOBOX)}
-            fundSource={dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
             currency={dstToken}
             network={Chain.from(dstChainId)}
             onNetworkSelect={onDstNetworkSelect}
             tokenList={dstTokens}
             theme={theme}
             disableMaxButton
-            balance={dstBalance?.[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+            balance={dstBalance?.[FundSource.WALLET]}
             usdPctChange={usdPctChange}
           />
 
@@ -1062,8 +1051,7 @@ const Widget: FC<Swap> = ({
                 feeRef.current &&
                 nativeBalance &&
                 feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
-                (srcBalance &&
-                  srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]))) ? (
+                (srcBalance && srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
               <Button size="md" fullWidth disabled>
                 Insufficient Balance
               </Button>
