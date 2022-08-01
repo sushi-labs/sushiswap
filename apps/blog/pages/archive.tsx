@@ -7,10 +7,9 @@ import Link from 'next/link'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, CmsTypes } from '../.mesh'
-import { ArticleList, ArticleListItem, Categories, Pagination, Seo } from '../components'
+import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection } from '../.mesh'
+import { ArticleList, ArticleListItem, Categories, Pagination } from '../components'
 import { getArticles, getCategories } from '../lib/api'
-import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticProps() {
   const articles = await getArticles()
@@ -27,18 +26,15 @@ export async function getStaticProps() {
   }
 }
 
-const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps> & { global: GlobalEntity }> = ({
-  global,
-  fallback,
-}) => {
+const Archive: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Archive global={global} />
+      <_Archive />
     </SWRConfig>
   )
 }
 
-const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
+const _Archive: FC = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
@@ -78,7 +74,6 @@ const _Archive: FC<{ global: GlobalEntity }> = ({ global }) => {
 
   return (
     <>
-      <Seo global={global} />
       <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
         <Link href="/" passHref={true}>
           <a className="flex items-center gap-3 group">
