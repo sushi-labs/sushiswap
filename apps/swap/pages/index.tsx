@@ -40,6 +40,7 @@ import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
 import { nanoid } from 'nanoid'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
@@ -111,6 +112,11 @@ export default function Swap({
   const dstTokens = useTokens(dstChainId)
   return (
     <Layout>
+      <Head>
+        <title>SushiSwap | Sushi</title>
+        <meta property="og:title" content="SushiSwap | Sushi" key="title" />
+      </Head>
+
       <Widget
         theme={theme}
         initialState={{
