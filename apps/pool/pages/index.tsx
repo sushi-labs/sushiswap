@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, OnsenIcon } from '@sushiswap/ui'
+import { Button, Link, OnsenIcon } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
@@ -59,9 +59,11 @@ const _Pools = () => {
           </div>
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
-              <Button fullWidth color="blue" startIcon={<PlusIcon width={20} height={20} />}>
-                New Pool
-              </Button>
+              <Link.Internal href="/add" passHref={true}>
+                <Button as="a" fullWidth color="blue" startIcon={<PlusIcon width={16} height={16} />}>
+                  New Position
+                </Button>
+              </Link.Internal>
               <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
                 Join Onsen
               </Button>

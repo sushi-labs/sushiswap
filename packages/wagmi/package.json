@@ -23,11 +23,13 @@
     "@ethersproject/bytes": "^5.0.0",
     "@ethersproject/constants": "^5.0.0",
     "@ethersproject/providers": "^5.0.0",
+    "@gnosis.pm/safe-apps-wagmi": "^1.0.1",
     "@headlessui/react": "^1.6.3",
     "@heroicons/react": "^1.0.6",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/exchange": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/furo": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
@@ -35,9 +37,9 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "wagmi": "^0.5.12",
-    "@gnosis.pm/safe-apps-wagmi": "^1.0.1"
+    "wagmi": "^0.5.12"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

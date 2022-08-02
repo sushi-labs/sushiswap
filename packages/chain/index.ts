@@ -212,4 +212,10 @@ export const chains = Object.fromEntries(
   (json as Chain[]).map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
 )
 
+export const chainsL2 = Object.fromEntries(
+  (json as Chain[])
+    .filter((data) => data.parent?.type === Type.L2)
+    .map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+)
+
 export default chains

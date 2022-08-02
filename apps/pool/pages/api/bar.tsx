@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getOneMonthBlock, getSushiBar } from '../../lib/api'
 import numeral from 'numeral'
+
+import { getOneMonthBlock, getSushiBar } from '../../lib/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const blocks = await getOneMonthBlock()
@@ -8,10 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!blockNumber) {
     res.status(204).send({})
   }
-  const [currentBar, oneMonthBar] = await Promise.all([
-    await getSushiBar(),
-    await getSushiBar(blockNumber),
-  ])
+  const [currentBar, oneMonthBar] = await Promise.all([await getSushiBar(), await getSushiBar(blockNumber)])
   if (!currentBar || !oneMonthBar) {
     res.status(204).send({})
   }

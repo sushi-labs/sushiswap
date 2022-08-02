@@ -585,6 +585,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -635,6 +636,7 @@ importers:
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
@@ -1713,6 +1715,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/furo': workspace:*
       '@sushiswap/hooks': workspace:*
@@ -1726,6 +1729,7 @@ importers:
       '@typechain/ethers-v5': ^10.1.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@uniswap/v2-core': ^1.0.1
       '@uniswap/v3-periphery': 1.4.1
       ethers: ^5.0.0
       react: ^18.2.0
@@ -1747,6 +1751,7 @@ importers:
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
+      '@sushiswap/exchange': link:../exchange
       '@sushiswap/format': link:../format
       '@sushiswap/furo': link:../../protocols/furo
       '@sushiswap/hooks': link:../hooks
@@ -1754,6 +1759,7 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/ui': link:../ui
+      '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       wagmi: 0.5.12_um4cugg2i3ywhvigsmvsir7hgy
     devDependencies:

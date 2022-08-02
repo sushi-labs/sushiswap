@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "1.0.2",
-    "@graphprotocol/client-cli": "2.1.1",
     "@graphprotocol/client-auto-pagination": "1.1.0",
+    "@graphprotocol/client-cli": "2.1.1",
     "@graphql-mesh/cache-localforage": "^0.6.21",
     "@graphql-mesh/cross-helpers": "^0.2.0",
     "@graphql-mesh/graphql": "^0.29.5",

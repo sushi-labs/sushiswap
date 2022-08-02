@@ -934,7 +934,6 @@ const Widget: FC<Swap> = ({
           chainId={srcChainId}
           tokenMap={srcTokens}
           customTokenMap={srcCustomTokenMap}
-          balance={srcBalance?.[FundSource.WALLET]}
           onAddToken={onAddSrcCustomToken}
           onRemoveToken={onRemoveSrcCustomToken}
         />
@@ -954,7 +953,6 @@ const Widget: FC<Swap> = ({
             chainId={dstChainId}
             tokenMap={dstTokens}
             customTokenMap={dstCustomTokenMap}
-            balance={dstBalance?.[FundSource.WALLET]}
             usdPctChange={usdPctChange}
             onAddToken={onAddDstCustomToken}
             onRemoveToken={onRemoveDstCustomToken}

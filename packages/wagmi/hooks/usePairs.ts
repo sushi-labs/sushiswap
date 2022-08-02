@@ -54,6 +54,7 @@ export function usePairs(
   })
 
   return useMemo(() => {
+    if (pairAddresses.length === 0) return [[PairState.INVALID, null]]
     if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = tokens[i][0]

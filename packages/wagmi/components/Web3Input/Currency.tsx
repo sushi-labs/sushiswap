@@ -1,11 +1,12 @@
 import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { Amount, Currency, tryParseAmount, Type } from '@sushiswap/currency'
+import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { FC, useCallback, useRef, useState } from 'react'
+import { useAccount } from 'wagmi'
 
-import { usePrices } from '../../hooks'
+import { useBalance, usePrices } from '../../hooks'
 import { TokenSelector, TokenSelectorProps } from '../TokenSelector'
 
 export interface CurrencyInputProps
@@ -16,10 +17,11 @@ export interface CurrencyInputProps
   value: string
   disabled?: boolean
   onChange(value: string): void
-  currency: Type
+  currency?: Type
   usdPctChange?: number
-  balance?: Amount<Currency>
   disableMaxButton?: boolean
+  className?: string
+  fundSource?: FundSource
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -34,14 +36,17 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   tokenMap,
   customTokenMap,
   disableMaxButton = false,
-  balance,
   usdPctChange,
+  className,
+  fundSource = FundSource.WALLET,
 }) => {
+  const { address } = useAccount()
   const isMounted = useIsMounted()
   const inputRef = useRef<HTMLInputElement>(null)
-  const { data: tokenPrices } = usePrices({ chainId: currency.chainId })
+  const { data: tokenPrices } = usePrices({ chainId: currency?.chainId })
+  const { data: balance } = useBalance({ chainId: currency?.chainId, currency, account: address })
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
-  const price = tokenPrices?.[currency.wrapped.address]
+  const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = tryParseAmount(value, currency)
 
   const focusInput = useCallback(() => {
@@ -54,7 +59,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   }, [])
 
   return (
-    <div onClick={focusInput}>
+    <div className={className} onClick={focusInput}>
       <div className="relative flex items-center gap-1">
         <Input.Numeric
           ref={inputRef}
@@ -70,12 +75,21 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             setTokenSelectorOpen(true)
             e.stopPropagation()
           }}
-          className="text-slate-200 hover:text-slate-100 transition-all hover:ring-2 ring-slate-500 shadow-md flex flex-row items-center gap-1 text-xl font-medium bg-white bg-opacity-[0.12] rounded-full px-2 py-1"
+          className={classNames(
+            currency ? 'bg-white bg-opacity-[0.12] ring-slate-500' : 'bg-blue ring-blue-700',
+            'text-slate-200 hover:text-slate-100 transition-all hover:ring-2 shadow-md flex flex-row items-center gap-1 text-xl font-medium rounded-full px-2 py-1'
+          )}
         >
-          <div className="w-5 h-5">
-            <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
-          </div>
-          <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
+          {currency ? (
+            <>
+              <div className="w-5 h-5">
+                <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
+              </div>
+              <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
+            </>
+          ) : (
+            <div className="ml-0.5 -mr-0.5 pl-1">Select</div>
+          )}
           <div className="w-5 h-5">
             <ChevronDownIcon width={20} height={20} />
           </div>
@@ -119,11 +133,11 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           >
             <button
               type="button"
-              onClick={() => onChange(balance?.greaterThan(0) ? balance.toFixed() : '')}
+              onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
               className="text-slate-400 hover:text-slate-300 py-1 text-xs"
               disabled={disableMaxButton}
             >
-              {isMounted && balance ? `Balance: ${balance.toSignificant(6)}` : ''}
+              {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
             </button>
           </Transition>
         </div>

@@ -14,6 +14,7 @@ type UseSettingsReturn = [
     updateGasPrice(gasPrice: GasPrice): void
     updateGasType(gasType: 'preset' | 'custom'): void
     updateExpertMode(expertMode: boolean): void
+    updateTransactionDeadline(deadline: number): void
   }
 ]
 
@@ -73,6 +74,13 @@ export const useSettings: UseSettings = (context) => {
     [actions, dispatch]
   )
 
+  const updateTransactionDeadline = useCallback(
+    (transactionDeadline: number) => {
+      dispatch(actions.updateTransactionDeadline({ transactionDeadline }))
+    },
+    [actions, dispatch]
+  )
+
   return [
     settings,
     {
@@ -83,6 +91,7 @@ export const useSettings: UseSettings = (context) => {
       updateMaxPriorityFeePerGas,
       updateGasPrice,
       updateGasType,
+      updateTransactionDeadline,
     },
   ]
 }
