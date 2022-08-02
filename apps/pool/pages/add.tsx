@@ -136,7 +136,6 @@ const AddPage = () => {
           deadline.toHexString(),
         ]
 
-        console.log(contract.address, contract.interface.encodeFunctionData('addLiquidity', args))
         const gasLimit = await contract.estimateGas.addLiquidity(...args, {})
         data = await sendTransactionAsync({
           request: {
