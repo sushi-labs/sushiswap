@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { Graph, MultiRoute, RouteStatus } from './Graph'
+import { Graph, MultiRoute, NetworkInfo, RouteStatus } from './Graph'
 import { RPool, RToken, setTokenId } from './PrimaryPools'
 
 // Assumes route is a single path
@@ -46,11 +46,11 @@ export function findMultiRouteExactIn(
   to: RToken,
   amountIn: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number,
+  baseToken: RToken | NetworkInfo[],
+  gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
+  setTokenId(from, to)
   const g = new Graph(pools, baseToken, gasPrice)
   const fromV = g.getVert(from)
   if (fromV?.price === 0) {
@@ -86,11 +86,11 @@ export function findMultiRouteExactOut(
   to: RToken,
   amountOut: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number,
+  baseToken: RToken | NetworkInfo[],
+  gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
+  setTokenId(from, to)
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString())
   }
@@ -112,7 +112,7 @@ export function findMultiRouteExactOut(
   if (bestFlowNumber === 1) return inSingle
 
   const inMulti = g.findBestRouteExactOut(from, to, amountOut, bestFlowNumber)
-  return getBetterRouteExactOut(inSingle, inMulti, gasPrice)
+  return getBetterRouteExactOut(inSingle, inMulti, fromV?.gasPrice || 0)
 }
 
 export function findSingleRouteExactIn(
@@ -120,10 +120,10 @@ export function findSingleRouteExactIn(
   to: RToken,
   amountIn: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number
+  baseToken: RToken | NetworkInfo[],
+  gasPrice?: number
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
+  setTokenId(from, to)
   const g = new Graph(pools, baseToken, gasPrice)
   const fromV = g.getVert(from)
   if (fromV?.price === 0) {
@@ -139,10 +139,10 @@ export function findSingleRouteExactOut(
   to: RToken,
   amountOut: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
+  baseToken: RToken | NetworkInfo[],
   gasPrice: number
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
+  setTokenId(from, to)
   const g = new Graph(pools, baseToken, gasPrice)
   const fromV = g.getVert(from)
   if (fromV?.price === 0) {

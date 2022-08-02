@@ -263,9 +263,18 @@ export interface NetworkCreateData {
   gasPrice: number
 }
 
-function chooseRandomToken(rnd: () => number, network: Network): TToken {
+export function chooseRandomToken(rnd: () => number, network: Network): TToken {
   const num = network.tokens.length
   return network.tokens[Math.floor(rnd() * num)]
+}
+
+export function chooseRandomTokensForSwap(rnd: () => number, network: Network): [TToken, TToken, TToken] {
+  const num = network.tokens.length
+  const token0 = Math.floor(rnd() * num)
+  const token1 = (token0 + 1 + Math.floor(rnd() * (num - 1))) % num
+  expect(token0).not.toEqual(token1)
+  const tokenBase = Math.floor(rnd() * num)
+  return [network.tokens[token0], network.tokens[token1], network.tokens[tokenBase]]
 }
 
 function createBridge(rnd: () => number, net1: Network, net2: Network) {
