@@ -1,11 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
-import { PlusIcon } from '@heroicons/react/solid'
+import { ExternalLinkIcon, PlusIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, SUSHI, SUSHI_ADDRESS, tryParseAmount } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, Container, createToast, Dialog, Dots, Link, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
 import {
@@ -271,7 +271,7 @@ const AddPage = ({
 
   return (
     <Layout>
-      <div className="flex flex-col gap-10 pb-40">
+      <div className="flex flex-col gap-6 pb-40">
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
             <Widget.Header title="Add Liquidity" />
@@ -333,6 +333,17 @@ const AddPage = ({
             </div>
           </Widget.Content>
         </Widget>
+        <Container className="mx-auto max-w-[400px]">
+          <Link.External
+            href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+            className="flex justify-center px-6 py-4 decoration-slate-500 bg-white bg-opacity-[0.04] hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+          >
+            <Typography variant="sm" weight={500} className="text-slate-400 flex gap-1 items-center">
+              Learn more about liquidity and yield farming
+              <ExternalLinkIcon width={16} height={16} className="text-slate-400" />
+            </Typography>
+          </Link.External>
+        </Container>
       </div>
       <Dialog open={review} onClose={() => setReview(false)}>
         <Dialog.Content className="max-w-sm !pb-4">
@@ -389,7 +400,7 @@ const AddPage = ({
             </div>
           </div>
           <div className="p-4 flex justify-center">
-            <Rate price={pair.token0Price}>
+            <Rate price={pair?.token0Price}>
               {({ toggleInvert, content, usdPrice }) => (
                 <Typography
                   as="button"

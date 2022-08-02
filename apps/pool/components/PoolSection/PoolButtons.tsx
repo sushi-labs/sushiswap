@@ -15,11 +15,11 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
       <Link.Internal
         href={`/add?token0=${
           Native.onChain(pair.chainId).wrapped.address === getAddress(pair.token0.id)
-            ? pair.token0.symbol
+            ? Native.onChain(pair.chainId).symbol
             : getAddress(pair.token0.id)
         }&token1=${
           Native.onChain(pair.chainId).wrapped.address === getAddress(pair.token1.id)
-            ? pair.token1.symbol
+            ? Native.onChain(pair.chainId).symbol
             : getAddress(pair.token1.id)
         }&chainId=${pair.chainId}`}
         passHref={true}
