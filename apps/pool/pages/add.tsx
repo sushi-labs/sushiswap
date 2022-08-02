@@ -1,46 +1,94 @@
 import { AddressZero } from '@ethersproject/constants'
 import { PlusIcon } from '@heroicons/react/solid'
-import { Chain } from '@sushiswap/chain'
-import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { Amount, Currency, Native, SUSHI, SUSHI_ADDRESS, tryParseAmount } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots } from '@sushiswap/ui'
+import { Button, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import { Approve, calculateGasMargin, PairState, useBalances, usePair, Wallet, Web3Input } from '@sushiswap/wagmi'
+import {
+  Approve,
+  calculateGasMargin,
+  PairState,
+  useBalances,
+  usePair,
+  usePrices,
+  Wallet,
+  Web3Input,
+} from '@sushiswap/wagmi'
 import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
-import { useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError } from 'wagmi'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ProviderRpcError, useSwitchNetwork } from 'wagmi'
 import { useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
-import { Layout } from '../components'
+import { Layout, Rate } from '../components'
 import { useTransactionDeadline } from '../lib/hooks'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
-const AddPage = () => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { token0, token1, chainId } = query
+
+  const _token0 = token0 ?? Native.onChain(Number(chainId as string) || ChainId.ETHEREUM).symbol
+  const _chainId = chainId ?? ChainId.ETHEREUM
+  const _token1 = token1 ?? SUSHI_ADDRESS[Number(chainId as string) || ChainId.ETHEREUM]
+
+  const redirect = {
+    permanent: false,
+    destination: `/add?token0=${_token0}&token1=${_token1}&chainId=${_chainId}`,
+  }
+
+  return {
+    ...((!token0 || !token1 || !chainId) && { redirect: { ...redirect } }),
+    props: {
+      token0: _token0,
+      token1: _token1,
+      chainId: _chainId,
+    },
+  }
+}
+
+const AddPage = ({
+  token0: _token0,
+  token1: _token1,
+  chainId: _chainId,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const chainId = Number(_chainId)
+  const tokens = useTokens(chainId)
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const { chain: activeChain } = useNetwork()
-  const contract = useV2RouterContract(activeChain?.id)
-  const tokenMap = useTokens(activeChain?.id)
+  const { chain } = useNetwork()
+  const contract = useV2RouterContract(chainId)
+  const tokenMap = useTokens(chainId)
   const deadline = useTransactionDeadline()
+  const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
+  const router = useRouter()
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: activeChain?.id })
+  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId })
 
   const [error, setError] = useState<string>()
   const [review, setReview] = useState(false)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
-  const [token0, setToken0] = useState<Currency>()
-  const [token1, setToken1] = useState<Currency>()
-  const [pairState, pair] = usePair(activeChain?.id, token0, token1)
-  const { data: balances } = useBalances({ chainId: activeChain?.id, account: address, currencies: [token0, token1] })
+
+  const [token0, setToken0] = useState<Currency>(_token0 in tokens ? tokens[_token0] : Native.onChain(chainId))
+  // Check if Sushi address to avoid token flash on init since useTokens isn't available on server
+  const [token1, setToken1] = useState<Currency>(
+    _token1 === SUSHI_ADDRESS[chainId] ? SUSHI[chainId] : _token1 in tokens ? tokens[_token1] : Native.onChain(chainId)
+  )
+
+  const [pairState, pair] = usePair(chainId, token0, token1)
+  const { data: balances } = useBalances({ chainId, account: address, currencies: [token0, token1] })
+  const { data: prices } = usePrices({ chainId })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -98,7 +146,7 @@ const AddPage = () => {
   )
 
   const execute = useCallback(async () => {
-    if (!activeChain?.id || !contract || !parsedInput0 || !parsedInput1 || !address) return
+    if (!chain?.id || !contract || !parsedInput0 || !parsedInput1 || !address) return
     const withNative = token0.isNative || token1.isNative
 
     try {
@@ -149,7 +197,7 @@ const AddPage = () => {
 
       createToast({
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        href: Chain.from(chain.id).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
           pending: (
@@ -169,7 +217,7 @@ const AddPage = () => {
       console.log(e)
     }
   }, [
-    activeChain?.id,
+    chain?.id,
     contract,
     parsedInput0,
     parsedInput1,
@@ -188,12 +236,45 @@ const AddPage = () => {
     (parsedInput1 &&
       balances?.[token1.isNative ? AddressZero : token1.wrapped.address][FundSource.WALLET]?.lessThan(parsedInput1))
 
+  const [inputUsd, outputUsd] = useMemo(() => {
+    const token0Price = prices?.[token0.wrapped.address]
+    const token1Price = prices?.[token1.wrapped.address]
+
+    const inputUSD = parsedInput0 && token0Price ? parsedInput0.multiply(token0Price.asFraction) : undefined
+    const outputUSD = parsedInput1 && token1Price ? parsedInput1.multiply(token1Price.asFraction) : undefined
+    return [inputUSD, outputUSD]
+  }, [parsedInput0, parsedInput1, prices, token0.wrapped.address, token1.wrapped.address])
+
+  useEffect(() => {
+    if (
+      chainId === Number(router.query.chainId) &&
+      (token0.symbol === router.query.token0 || token0.wrapped.address === router.query.token0) &&
+      (token1.symbol === router.query.token1 || token1.wrapped.address === router.query.token1)
+    ) {
+      return
+    }
+
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          chainId,
+          token0: token0 && token0.isToken ? token0.address : token0.symbol,
+          token1: token1 && token1.isToken ? token1.address : token1.symbol,
+        },
+      },
+      undefined,
+      { shallow: true }
+    )
+  }, [router, chainId, token0, token1])
+
   return (
     <Layout>
       <div className="flex flex-col gap-10 pb-40">
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title={pairState === PairState.EXISTS ? 'Add Liquidity' : 'Create Pool'} />
+            <Widget.Header title="Add Liquidity" />
             <Web3Input.Currency
               className="p-3"
               value={input0}
@@ -203,7 +284,7 @@ const AddPage = () => {
               customTokenMap={customTokensMap}
               onAddToken={addCustomToken}
               onRemoveToken={removeCustomToken}
-              chainId={activeChain?.id}
+              chainId={chainId}
               tokenMap={tokenMap}
             />
             <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
@@ -221,7 +302,7 @@ const AddPage = () => {
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
-                chainId={activeChain?.id}
+                chainId={chainId}
                 tokenMap={tokenMap}
               />
               <div className="p-3">
@@ -229,6 +310,10 @@ const AddPage = () => {
                   <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
                     Connect Wallet
                   </Wallet.Button>
+                ) : isMounted && chain && chain.id !== chainId ? (
+                  <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
+                    Switch to {Chain.from(chainId).name}
+                  </Button>
                 ) : insufficientBalance ? (
                   <Button size="md" fullWidth disabled>
                     Insufficient Balance
@@ -250,13 +335,76 @@ const AddPage = () => {
         </Widget>
       </div>
       <Dialog open={review} onClose={() => setReview(false)}>
-        <Dialog.Content>
-          <Dialog.Header
-            title={pairState === PairState.EXISTS ? 'Add Liquidity' : 'Create Pool'}
-            onClose={() => setReview(false)}
-          />
+        <Dialog.Content className="max-w-sm !pb-4">
+          <Dialog.Header border={false} title="Add Liquidity" onClose={() => setReview(false)} />
+          <div className="!my-0 grid grid-cols-12 items-center">
+            <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                    {parsedInput0?.toSignificant(6)}{' '}
+                  </Typography>
+                  <div className="flex items-center justify-end gap-2 text-right">
+                    {parsedInput0 && (
+                      <div className="w-5 h-5">
+                        <Icon currency={parsedInput0.currency} width={20} height={20} />
+                      </div>
+                    )}
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                      {parsedInput0?.currency.symbol}
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+              <Typography variant="sm" weight={500} className="text-slate-500">
+                {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
+              </Typography>
+            </div>
+            <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+              <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                <PlusIcon width={18} height={18} className="text-slate-200" />
+              </div>
+            </div>
+            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                    {parsedInput1?.toSignificant(6)}{' '}
+                  </Typography>
+                  <div className="flex items-center justify-end gap-2 text-right">
+                    {parsedInput1 && (
+                      <div className="w-5 h-5">
+                        <Icon currency={parsedInput1.currency} width={20} height={20} />
+                      </div>
+                    )}
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                      {parsedInput1?.currency.symbol}
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+              <Typography variant="sm" weight={500} className="text-slate-500">
+                {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
+              </Typography>
+            </div>
+          </div>
+          <div className="p-4 flex justify-center">
+            <Rate price={pair.token0Price}>
+              {({ toggleInvert, content, usdPrice }) => (
+                <Typography
+                  as="button"
+                  onClick={() => toggleInvert()}
+                  variant="sm"
+                  weight={600}
+                  className="flex items-center gap-1 text-slate-100"
+                >
+                  {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
+                </Typography>
+              )}
+            </Rate>
+          </div>
           <Approve
-            className="flex-grow !justify-end pt-4"
+            className="flex-grow !justify-end"
             components={
               <Approve.Components>
                 <Approve.Token
@@ -264,21 +412,21 @@ const AddPage = () => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput0}
-                  address={getV2RouterContractConfig(activeChain?.id).addressOrName}
+                  address={getV2RouterContractConfig(chainId).addressOrName}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput1}
-                  address={getV2RouterContractConfig(activeChain?.id).addressOrName}
+                  address={getV2RouterContractConfig(chainId).addressOrName}
                 />
               </Approve.Components>
             }
             render={({ approved }) => {
               return (
                 <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
-                  Confirm Add Liquidity
+                  Add
                 </Button>
               )
             }}

@@ -1,4 +1,6 @@
+import { Native } from '@sushiswap/currency'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
+import { getAddress } from 'ethers/lib/utils'
 import { FC } from 'react'
 
 import { Pair } from '../../../.graphclient'
@@ -58,7 +60,18 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </div>
       </div>
       <div className="flex gap-2 mt-8 mb-2 justify-end">
-        <Link.Internal href={`/${row.id}/earn`} passHref={true}>
+        <Link.Internal
+          href={`/add?token0=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
+              ? row.token0.symbol
+              : getAddress(row.token0.id)
+          }&token1=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
+              ? row.token1.symbol
+              : getAddress(row.token1.id)
+          }&chainId=${row.chainId}`}
+          passHref={true}
+        >
           <Button as="a" className="px-6" size="sm">
             Deposit
           </Button>

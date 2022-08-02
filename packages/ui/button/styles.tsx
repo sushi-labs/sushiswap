@@ -17,8 +17,7 @@ export const BUTTON_CLASSES: Record<string, string> = {
   'btn-filled-pink': 'bg-pink ring-pink-700',
   'btn-filled-blue': 'bg-blue ring-blue-700',
   'btn-filled-purple': 'bg-purple ring-purple-700',
-  'btn-filled-gradient':
-    'bg-gradient-to-r hover:ring-4 ring-slate-600 ring-purple/30 from-blue to-pink focus:border-blue-700',
+  'btn-filled-gradient': 'bg-gradient-to-r hover:ring-4 !ring-pink/20 from-blue-600 to-pink-600 focus:border-blue-700',
   'btn-filled-gray': 'bg-slate-700 ring-slate-600',
   'btn-xs': 'px-2 h-[28px] text-xs',
   'btn-sm': 'px-3 h-[36px] text-sm rounded-lg font-semibold',
