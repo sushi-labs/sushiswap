@@ -70,7 +70,7 @@
     text-align: left;
     text-decoration: none;
     min-height: 34px;
-    @apply border border-slate-800 shadow-md rounded-lg shadow-black/50;
+    @apply border border-slate-700 shadow-[0px_0px_30px_5px_rgba(0,0,0,0.30)] rounded-lg;
 }
 .rc-tooltip-arrow,
 .rc-tooltip-arrow-inner {
@@ -80,20 +80,21 @@
     border-color: transparent;
     border-style: solid;
 }
+
 .rc-tooltip-placement-top .rc-tooltip-arrow,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow,
 .rc-tooltip-placement-topRight .rc-tooltip-arrow {
-    bottom: -5px;
+    bottom: -6px;
     margin-left: -6px;
     border-width: 6px 6px 0;
-    @apply border-t-slate-800;
+    @apply border-t-slate-700;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topRight .rc-tooltip-arrow-inner {
-    bottom: 1px;
-    margin-left: -6px;
-    border-width: 6px 6px 0;
+    bottom: 2px;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
     @apply border-t-slate-800;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow {
@@ -108,17 +109,17 @@
 .rc-tooltip-placement-right .rc-tooltip-arrow,
 .rc-tooltip-placement-rightTop .rc-tooltip-arrow,
 .rc-tooltip-placement-rightBottom .rc-tooltip-arrow {
-    left: -5px;
+    left: -6px;
     margin-top: -6px;
     border-width: 6px 6px 6px 0;
-    @apply border-r-slate-800;
+    @apply border-r-slate-700;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-rightTop .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-rightBottom .rc-tooltip-arrow-inner {
-    left: 1px;
-    margin-top: -6px;
-    border-width: 6px 6px 6px 0;
+    left: 2px;
+    margin-top: -5px;
+    border-width: 5px 5px 5px 0;
     @apply border-r-slate-800;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow {
@@ -134,17 +135,17 @@
 .rc-tooltip-placement-left .rc-tooltip-arrow,
 .rc-tooltip-placement-leftTop .rc-tooltip-arrow,
 .rc-tooltip-placement-leftBottom .rc-tooltip-arrow {
-    right: -5px;
+    right: -6px;
     margin-top: -6px;
     border-width: 6px 0 6px 6px;
-    @apply border-l-slate-800;
+    @apply border-l-slate-700;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-leftTop .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-leftBottom .rc-tooltip-arrow-inner {
-    right: 1px;
-    margin-top: -6px;
-    border-width: 6px 0 6px 6px;
+    right: 2px;
+    margin-top: -5px;
+    border-width: 5px 0 5px 5px;
     @apply border-l-slate-800;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow {
@@ -160,18 +161,17 @@
 .rc-tooltip-placement-bottom .rc-tooltip-arrow,
 .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow,
 .rc-tooltip-placement-bottomRight .rc-tooltip-arrow {
-    top: -5px;
+    top: -6px;
     margin-left: -6px;
     border-width: 0 6px 6px;
-    border-bottom-color: #b1b1b1;
-    @apply border-b-slate-800;
+    @apply border-b-slate-700;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-bottomRight .rc-tooltip-arrow-inner {
-    top: 1px;
-    margin-left: -6px;
-    border-width: 0 6px 6px;
+    top: 2px;
+    margin-left: -5px;
+    border-width: 0 5px 5px;
     @apply border-b-slate-800;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow {
