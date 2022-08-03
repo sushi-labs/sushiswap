@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { Amount, Currency } from '@sushiswap/currency'
-import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Popover, Typography } from '@sushiswap/ui'
+import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
 import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
@@ -97,10 +97,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         leaveTo="opacity-0 scale-95"
       >
         <DefaultButton as="div" {...props}>
-          <Popover
-            as="div"
-            disableClickListener
-            hover
+          <Tooltip
             button={
               <Badge
                 badgeContent={
@@ -129,7 +126,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
               </Badge>
             }
             panel={
-              <div className="flex flex-col gap-2 bg-slate-800 max-w-[200px] p-3">
+              <div className="flex flex-col gap-2 max-w-[200px]">
                 <Typography variant="xs" weight={500}>
                   Status:
                   <span
