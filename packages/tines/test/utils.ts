@@ -1,5 +1,17 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { ConstantProductRPool, getBigNumber, HybridRPool, NetworkInfo, RPool, RToken, StableSwapRPool } from '../src'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import {
+  closeValues,
+  ConstantProductRPool,
+  getBigNumber,
+  HybridRPool,
+  MultiRoute,
+  NetworkInfo,
+  RouteLeg,
+  RouteStatus,
+  RPool,
+  RToken,
+  StableSwapRPool,
+} from '../src'
 
 const MIN_TOKEN_PRICE = 1e-6
 const MAX_TOKEN_PRICE = 1e6
@@ -287,7 +299,7 @@ export function createMultipleNetworks(
   rnd: () => number,
   networkData: NetworkCreateData[],
   bridgeNumber = 1
-): { networks: NetworkInfo[]; pools: RPool[] } {
+): { networksInfo: NetworkInfo[]; networks: Network[]; pools: RPool[] } {
   const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice))
 
   let pools: RPool[] = []
@@ -309,7 +321,7 @@ export function createMultipleNetworks(
   })
 
   return {
-    networks: networks.map((n, i) => {
+    networksInfo: networks.map((n, i) => {
       const baseToken = chooseRandomToken(rnd, n)
       return {
         chainId: i,
@@ -318,6 +330,167 @@ export function createMultipleNetworks(
         gasPrice: n.gasPrice,
       }
     }),
+    networks,
     pools,
   }
+}
+
+function getTokenPools(network: Network): Map<RToken, RPool[]> {
+  const tokenPools = new Map<RToken, RPool[]>()
+  network.pools.forEach((p) => {
+    const pools0 = tokenPools.get(p.token0)
+    if (pools0) {
+      pools0.push(p)
+    } else {
+      tokenPools.set(p.token0, [p])
+    }
+    const pools1 = tokenPools.get(p.token1)
+    if (pools1) {
+      pools1.push(p)
+    } else {
+      tokenPools.set(p.token1, [p])
+    }
+  })
+  return tokenPools
+}
+
+function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>): Set<RToken> {
+  const connected = new Set<RToken>()
+  const nextTokens = [start]
+  while (nextTokens.length) {
+    const token = nextTokens.pop() as RToken
+    if (connected.has(token)) {
+      continue
+    }
+    connected.add(token)
+    tokenPools.get(token)?.forEach((p) => {
+      const token2 = token == p.token0 ? p.token1 : p.token0
+      nextTokens.push(token2)
+    })
+  }
+  return connected
+}
+
+export function expectCloseValues(
+  v1: BigNumberish,
+  v2: BigNumberish,
+  precision: number,
+  description = '',
+  additionalInfo = ''
+) {
+  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
+  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+  const res = closeValues(a, b, precision)
+  if (!res) {
+    console.log(
+      `Close values expectation failed: ${description}` +
+        `\n v1 = ${a}` +
+        `\n v2 = ${b}` +
+        `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
+        `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
+    )
+    debugger
+  }
+  expect(res).toBeTruthy()
+  return res
+}
+
+export function atomPrice(token: TToken) {
+  return token.price / Math.pow(10, token.decimals)
+}
+
+export function checkRoute(
+  network: Network,
+  from: TToken,
+  to: TToken,
+  amountIn: number,
+  baseToken: TToken,
+  gasPrice: number,
+  route: MultiRoute
+) {
+  const tokenPools = getTokenPools(network)
+  const connectedTokens = getAllConnectedTokens(from, tokenPools)
+  if (!connectedTokens.has(to)) {
+    expect(route.status).toEqual(RouteStatus.NoWay)
+    return
+  }
+  const basePricesAreSet = connectedTokens.has(baseToken)
+
+  // amountIn checks
+  if (route.status === RouteStatus.Success) expectCloseValues(route.amountIn, amountIn, 1e-13)
+  else if (route.status === RouteStatus.Partial) {
+    expect(route.amountIn).toBeLessThan(amountIn)
+    expect(route.amountIn).toBeGreaterThan(0)
+  }
+
+  // amountOut checks
+  if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
+  const outPriceToIn = atomPrice(to) / atomPrice(from)
+  // Slippage can be arbitrary
+  // Slippage is always not-negative
+  // const maxGrow = Math.pow(MAX_POOL_IMBALANCE, route.legs.length)
+  // const maxGranularity = network.pools.reduce((a, p) => Math.max(a, p.granularity0(), p.granularity1()), 1)
+  // if (route.amountOut > maxGranularity * MIN_LIQUIDITY * 10) {
+  //   expect(route.amountOut).toBeLessThanOrEqual((route.amountIn / outPriceToIn) * maxGrow)
+  // }
+
+  // gasSpent checks
+  const poolMap = new Map<string, RPool>()
+  network.pools.forEach((p) => poolMap.set(p.address, p))
+  const expectedGasSpent = route.legs.reduce((a, b) => a + (poolMap.get(b.poolAddress)?.swapGasCost as number), 0)
+  expect(route.gasSpent).toEqual(expectedGasSpent)
+
+  // totalAmountOut checks
+  if (route.status === RouteStatus.NoWay) {
+    expect(route.totalAmountOut).toEqual(0)
+  } else if (basePricesAreSet) {
+    const outPriceToBase = atomPrice(baseToken) / atomPrice(to)
+    const expectedTotalAmountOut = route.amountOut - route.gasSpent * gasPrice * outPriceToBase
+
+    expectCloseValues(route.totalAmountOut, expectedTotalAmountOut, 2 * (MAX_POOL_IMBALANCE - 1) + 1e-7)
+  } else {
+    expect(route.totalAmountOut).toEqual(route.amountOut)
+  }
+
+  // legs checks
+  if (route.status !== RouteStatus.NoWay) expect(route.legs.length).toBeGreaterThan(0)
+  const usedPools = new Map<string, boolean>()
+  const usedTokens = new Map<RToken, RouteLeg[]>()
+  route.legs.forEach((l) => {
+    expect(usedPools.get(l.poolAddress)).toBeUndefined()
+    usedPools.set(l.poolAddress, true)
+    const pool = poolMap.get(l.poolAddress) as RPool
+    usedTokens.set(pool.token0, usedTokens.get(pool.token0) || [])
+    usedTokens.get(pool.token0)?.push(l)
+    usedTokens.set(pool.token1, usedTokens.get(pool.token1) || [])
+    usedTokens.get(pool.token1)?.push(l)
+  })
+  usedTokens.forEach((legs, t) => {
+    if (t === from) {
+      expect(legs.length).toBeGreaterThan(0)
+      expect(legs.every((l) => l.tokenFrom === from)).toBeTruthy()
+      expect(legs[legs.length - 1].swapPortion).toEqual(1)
+    } else if (t === to) {
+      expect(legs.length).toBeGreaterThan(0)
+      expect(legs.some((l) => l.tokenFrom === to)).toBeFalsy()
+    } else {
+      expect(legs.length).toBeGreaterThanOrEqual(2)
+      expect(legs[0].tokenFrom).not.toEqual(t)
+      expect(legs[legs.length - 1].tokenFrom).toEqual(t)
+      expect(legs[legs.length - 1].swapPortion).toEqual(1)
+      let inputFlag = true
+      let absolutePortion = 0
+      legs.forEach((l) => {
+        if (l.tokenFrom !== t) {
+          expect(inputFlag).toBeTruthy()
+        } else {
+          inputFlag = false
+          absolutePortion += l.absolutePortion
+          expect(l.swapPortion).toBeGreaterThan(0)
+          expect(l.swapPortion).toBeLessThanOrEqual(1)
+        }
+      })
+      expectCloseValues(absolutePortion, 1, 1e-12)
+    }
+  })
 }
