@@ -19,7 +19,6 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
   return (
     <Tooltip
       naked
-      popupVisible={true}
       button={
         <Button color="gray">
           <CalendarIcon width={18} height={18} />
