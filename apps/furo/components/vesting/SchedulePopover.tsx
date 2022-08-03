@@ -19,6 +19,7 @@ export const SchedulePopover: FC<Props> = ({ vesting, schedule }) => {
   return (
     <Tooltip
       naked
+      popupVisible={true}
       button={
         <Button color="gray">
           <CalendarIcon width={18} height={18} />
@@ -108,7 +109,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
           {format(period.date, 'hh:mmaaa')}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="flex flex-col text-right text-slate-200" weight={500}>
+      <Typography variant="xs" className="flex flex-col text-right text-slate-200 truncate" weight={500}>
         {period.type === PeriodType.START
           ? `0`
           : period.type === PeriodType.CLIFF
