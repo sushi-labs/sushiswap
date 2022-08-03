@@ -113,7 +113,6 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {dstTrade && (
                     <Tooltip
-                      className="z-[10000]"
                       button={
                         <Chip
                           color="gray"
