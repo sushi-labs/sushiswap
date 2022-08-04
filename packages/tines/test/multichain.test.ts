@@ -1,7 +1,7 @@
 // @ts-nocheck
 import seedrandom from 'seedrandom'
 import { findMultiRouteExactIn, NetworkInfo } from '../src'
-import { chooseRandomToken, createMultipleNetworks, getRandom, Network, TToken } from './utils'
+import { checkRoute, createMultipleNetworks, getRandom, Network } from './utils'
 
 function chooseRandomTokenWithChainId(rnd: () => number, network: Network, chainId?: number) {
   const tokens = network.tokens.filter((t) => t.chainId == chainId)
@@ -15,13 +15,13 @@ function setRandomBaseTokenInNetworkInfo(
   networksInfo: NetworkInfo,
   gasPrice: number
 ) {
-  const randomToken = chooseRandomTokenWithChainId(rnd, network, networksInfo)
+  const randomToken = chooseRandomTokenWithChainId(rnd, network, networksInfo.chainId)
   networksInfo.baseToken = randomToken
   networksInfo.baseTokenPrice = randomToken.price
-  networksInfo.gasPrice = gasPrice * Math.pow(10, t.decimals - 18)
+  networksInfo.gasPrice = gasPrice * Math.pow(10, randomToken.decimals - 18)
 }
 
-it.skip('two chains', () => {
+it('two chains', () => {
   const testSeed = '0' // Change it to change random generator values
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 

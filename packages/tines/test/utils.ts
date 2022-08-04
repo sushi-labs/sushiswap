@@ -321,6 +321,7 @@ export function createMultipleNetworks(
   networks.forEach((n, i) => {
     n.tokens.forEach((t) => {
       t.chainId = i
+      delete t.tokenId // should be recreated after chainId change
     })
   })
 
