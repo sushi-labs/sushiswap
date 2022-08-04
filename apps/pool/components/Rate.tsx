@@ -1,6 +1,5 @@
-import { InformationCircleIcon } from '@heroicons/react/outline'
 import { Price, Type } from '@sushiswap/currency'
-import { classNames, Popover, Typography } from '@sushiswap/ui'
+import { classNames, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
@@ -53,11 +52,6 @@ export const Rate: FC<Rate> = ({ children, price }) => {
       )}
     >
       <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
-        <Popover
-          hover
-          panel={<div className="bg-slate-800 p-3"></div>}
-          button={<InformationCircleIcon width={16} height={16} />}
-        />
         Rate
       </Typography>
       <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center ')}>
