@@ -239,14 +239,14 @@ it(`Multirouter for ${network.tokens.length} tokens and ${network.pools.length} 
     const gasPrice = getBasePrice(network, tBase)
 
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
-    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
+    checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     checkRouteResult('top20-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
       // otherwise exactOut could return too bad value
       const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
+      checkRoute(routeOut, network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice)
       checkExactOut(route, routeOut)
     }
   }
@@ -259,14 +259,14 @@ it(`Multirouter-100 for ${network.tokens.length} tokens and ${network.pools.leng
     const gasPrice = getBasePrice(network, tBase)
 
     const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, 100)
-    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
+    checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     checkRouteResult('m100-' + i, route.totalAmountOut)
 
     if (route.priceImpact !== undefined && route.priceImpact < 0.1) {
       // otherwise exactOut could return too bad value
       const routeOut = findMultiRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice, 100)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
+      checkRoute(routeOut, network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice)
       checkExactOut(route, routeOut)
     }
   }
@@ -283,7 +283,7 @@ it(`Multirouter path quantity check`, () => {
     let prevAmountOut = -1
     steps.forEach((s) => {
       const route = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice, s)
-      checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
+      checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
       simulateRouting(network, route)
       expect(route.totalAmountOut).toBeGreaterThan(prevAmountOut / 1.001)
       prevAmountOut = route.totalAmountOut
@@ -318,7 +318,7 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
     if (testSeed == '1') if (i == 11 || i == 60 || i == 80) continue
 
     const route = findSingleRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
-    checkRoute(network, t0, t1, amountIn, tBase, gasPrice, route)
+    checkRoute(route, network, t0, t1, amountIn, tBase, gasPrice)
     simulateRouting(network, route)
     const route2 = findMultiRouteExactIn(t0, t1, amountIn, network.pools, tBase, gasPrice)
     expect(route.amountOut).toBeLessThanOrEqual(route2.amountOut * 1.001)
@@ -326,13 +326,13 @@ it(`Singlerouter for ${network.tokens.length} tokens and ${network.pools.length}
 
     if (route.status !== RouteStatus.NoWay) {
       const routeOut = findSingleRouteExactOut(t0, t1, route.amountOut, network.pools, tBase, gasPrice)
-      checkRoute(network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice, routeOut)
+      checkRoute(routeOut, network, t0, t1, routeOut.amountIn * (1 + 1e-14), tBase, gasPrice)
       checkExactOut(route, routeOut)
     } else {
       const routeOut = findSingleRouteExactOut(t0, t1, 1e6, network.pools, tBase, gasPrice)
       if (routeOut.status !== RouteStatus.NoWay) {
         const route3 = findSingleRouteExactIn(t0, t1, routeOut.amountIn, network.pools, tBase, gasPrice)
-        checkRoute(network, t0, t1, route3.amountIn, tBase, gasPrice, route3)
+        checkRoute(route3, network, t0, t1, route3.amountIn, tBase, gasPrice)
         simulateRouting(network, route3)
         checkExactOut(route3, routeOut)
       }

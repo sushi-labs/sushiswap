@@ -299,11 +299,15 @@ export function createMultipleNetworks(
   rnd: () => number,
   networkData: NetworkCreateData[],
   bridgeNumber = 1
-): { networksInfo: NetworkInfo[]; networks: Network[]; pools: RPool[] } {
+): { networksInfo: NetworkInfo[]; network: Network; pools: RPool[] } {
   const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice))
 
   let pools: RPool[] = []
-  networks.forEach((n) => (pools = pools.concat(n.pools)))
+  let tokens: TToken[] = []
+  networks.forEach((n) => {
+    pools = pools.concat(n.pools)
+    tokens = tokens.concat(n.tokens)
+  })
 
   const n = networkData.length
   for (let i = 0; i < n; ++i) {
@@ -330,7 +334,7 @@ export function createMultipleNetworks(
         gasPrice: n.gasPrice,
       }
     }),
-    networks,
+    network: { tokens, pools, gasPrice: -1 },
     pools,
   }
 }
@@ -400,13 +404,13 @@ export function atomPrice(token: TToken) {
 }
 
 export function checkRoute(
+  route: MultiRoute,
   network: Network,
   from: TToken,
   to: TToken,
   amountIn: number,
-  baseToken: TToken,
-  gasPrice: number,
-  route: MultiRoute
+  baseTokenOrNetworks: TToken | NetworkInfo[],
+  gasPrice?: number
 ) {
   const tokenPools = getTokenPools(network)
   const connectedTokens = getAllConnectedTokens(from, tokenPools)
@@ -414,7 +418,9 @@ export function checkRoute(
     expect(route.status).toEqual(RouteStatus.NoWay)
     return
   }
-  const basePricesAreSet = connectedTokens.has(baseToken)
+
+  const multiChain = baseTokenOrNetworks instanceof Array
+  const basePricesAreSet = multiChain ? true : connectedTokens.has(baseTokenOrNetworks as TToken)
 
   // amountIn checks
   if (route.status === RouteStatus.Success) expectCloseValues(route.amountIn, amountIn, 1e-13)
@@ -444,10 +450,14 @@ export function checkRoute(
   if (route.status === RouteStatus.NoWay) {
     expect(route.totalAmountOut).toEqual(0)
   } else if (basePricesAreSet) {
-    const outPriceToBase = atomPrice(baseToken) / atomPrice(to)
-    const expectedTotalAmountOut = route.amountOut - route.gasSpent * gasPrice * outPriceToBase
+    if (multiChain) {
+      expect(route.totalAmountOut).toBeLessThanOrEqual(route.amountOut)
+    } else {
+      const outPriceToBase = atomPrice(baseTokenOrNetworks as TToken) / atomPrice(to)
+      const expectedTotalAmountOut = route.amountOut - route.gasSpent * (gasPrice as number) * outPriceToBase
 
-    expectCloseValues(route.totalAmountOut, expectedTotalAmountOut, 2 * (MAX_POOL_IMBALANCE - 1) + 1e-7)
+      expectCloseValues(route.totalAmountOut, expectedTotalAmountOut, 2 * (MAX_POOL_IMBALANCE - 1) + 1e-7)
+    }
   } else {
     expect(route.totalAmountOut).toEqual(route.amountOut)
   }
