@@ -26,7 +26,6 @@ contract FuroVesting is
     error NotOwner();
     error NotVestReceiver();
     error InvalidStepSetting();
-    error InsufficientShares();
 
     constructor(IBentoBoxMinimal _bentoBox, address _wETH) {
         bentoBox = _bentoBox;
@@ -84,9 +83,6 @@ contract FuroVesting is
             vestParams.amount,
             vestParams.fromBentoBox
         );
-
-        if(depositedShares < vestParams.minShare) revert InsufficientShares();
-
         stepShares = uint128(
             (vestParams.stepPercentage * depositedShares) / PERCENTAGE_PRECISION
         );

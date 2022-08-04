@@ -26,7 +26,6 @@ contract FuroStream is
     error InvalidWithdrawTooMuch();
     error NotSender();
     error Overflow();
-    error InsufficientShares();
 
     constructor(IBentoBoxMinimal _bentoBox, address _wETH) {
         bentoBox = _bentoBox;
@@ -66,8 +65,7 @@ contract FuroStream is
         uint64 startTime,
         uint64 endTime,
         uint256 amount, /// @dev in token amount and not in shares
-        bool fromBentoBox,
-        uint256 minShare
+        bool fromBentoBox
     )
         external
         payable
@@ -84,8 +82,6 @@ contract FuroStream is
             amount,
             fromBentoBox
         );
-
-        if(depositedShares < minShare) revert InsufficientShares();
 
         streamId = streamIds++;
 
