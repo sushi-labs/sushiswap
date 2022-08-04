@@ -29,7 +29,7 @@ contract SushiBar is ERC20("SushiBar", "xSUSHI"){
         if (totalShares == 0 || totalSushi == 0) {
             _mint(msg.sender, _amount);
         } 
-        // Calculate and mint the amount of xSushi the Sushi is worth. The ratio will change overtime, as xSushi is burned/minted and Sushi deposited + gained from fees / withdrawn.
+       // Calculate and mint the amount of xSushi the Sushi is worth. The ratio will change overtime, as xSushi is burned/minted and Sushi deposited + gained from fees / withdrawn.
         else {
             uint256 what = _amount.mul(totalShares).div(totalSushi);
             _mint(msg.sender, what);
@@ -41,6 +41,7 @@ contract SushiBar is ERC20("SushiBar", "xSUSHI"){
     // Leave the bar. Claim back your SUSHIs.
     // Unlocks the staked + gained Sushi and burns xSushi
     function leave(uint256 _share) public {
+        
         // Gets the amount of xSushi in existence
         uint256 totalShares = totalSupply();
         // Calculates the amount of Sushi the xSushi is worth
