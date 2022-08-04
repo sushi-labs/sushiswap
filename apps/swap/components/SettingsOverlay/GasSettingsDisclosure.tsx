@@ -3,7 +3,7 @@ import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outlin
 import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { GasPrice } from '@sushiswap/redux-localstorage'
-import { classNames, DEFAULT_INPUT_UNSTYLED, GasIcon, Input, Popover, Tab, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, GasIcon, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useFeeData } from 'wagmi'
 
@@ -163,17 +163,15 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
                         <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Fee
-                          <Popover
-                            tabIndex={-1}
-                            hover
+                          <Tooltip
                             button={<InformationCircleIcon width={14} height={14} />}
                             panel={
-                              <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                                <Typography variant="xs" weight={500}>
+                              <div className="w-80 flex flex-col gap-2">
+                                <Typography variant="xs" weight={500} className="text-slate-300">
                                   The max fee is the utmost amount of gas a user can pay for their transaction; you will
                                   not pay more.
                                 </Typography>
-                                <Typography variant="xs" weight={500}>
+                                <Typography variant="xs" weight={500} className="text-slate-300">
                                   It&apos;s calculated as the sum of the base fee and priority fee.
                                 </Typography>
                               </div>
@@ -196,12 +194,10 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
                         <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Priority Fee
-                          <Popover
-                            tabIndex={-1}
-                            hover
+                          <Tooltip
                             button={<InformationCircleIcon width={14} height={14} />}
                             panel={
-                              <Typography variant="xs" weight={500} className="bg-slate-600 !rounded-lg w-40 p-3">
+                              <Typography variant="xs" weight={500} className="w-80">
                                 This fee can be seen as an extra “tip” to miners, incentivizing them to prioritize your
                                 transaction
                               </Typography>

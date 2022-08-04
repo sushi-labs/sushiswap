@@ -236,6 +236,7 @@ importers:
       eslint: ^8.20.0
       graphql: ^16.5.0
       next: ^12.2.0
+      next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
       qs: ^6.10.3
@@ -253,6 +254,7 @@ importers:
       date-fns: 2.29.1
       graphql: 16.5.0
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
       qs: 6.11.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -17069,6 +17071,18 @@ packages:
   /negotiator/0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
+
+  /next-seo/5.5.0_53oqlnqnxhbetdy4ljlkkvmoby:
+    resolution: {integrity: sha512-5ouBHFtx8YrSDW44lj0qIEQ+oMcz6stgoITB+SqHUZbhgizoJsyLmq73gJ0lxtEKpcN8vG2QgRIJfdb8OAPChw==}
+    peerDependencies:
+      next: ^8.1.1-canary.54 || >=9.0.0
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+    dependencies:
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /next-tick/1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}

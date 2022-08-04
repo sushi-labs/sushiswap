@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { AdjustmentsIcon, ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Popover, Tab, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useSettings } from '../../lib/state/storage'
@@ -25,17 +25,18 @@ export const SlippageToleranceDisclosure: FC = () => {
                 <Typography variant="sm" weight={500}>
                   Slippage Tolerance
                 </Typography>
-                <Popover
-                  tabIndex={-1}
-                  hover
+                <Tooltip
                   button={<InformationCircleIcon width={14} height={14} />}
                   panel={
-                    <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                      <Typography variant="xs" weight={500}>
+                    <div className="w-80 flex flex-col gap-2">
+                      <Typography variant="xs" weight={500} className="text-slate-300">
                         Slippage tolerance is the utmost percentage of slippage a user is willing to execute a trade
                         with; if the actual slippage falls outside of the user-designated range, the transaction will
-                        revert. Slippage is the difference between the expected value of output from a trade and the
-                        actual value due to asset volatility and liquidity depth.
+                        revert.
+                      </Typography>
+                      <Typography variant="xs" weight={500} className="text-slate-300">
+                        Slippage is the difference between the expected value of output from a trade and the actual
+                        value due to asset volatility and liquidity depth.
                       </Typography>
                     </div>
                   }
@@ -82,21 +83,6 @@ export const SlippageToleranceDisclosure: FC = () => {
                     <div className="mt-2 flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
                       <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                         Custom Slippage
-                        <Popover
-                          tabIndex={-1}
-                          hover
-                          button={<InformationCircleIcon width={14} height={14} />}
-                          panel={
-                            <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                              <Typography variant="xs" weight={500}>
-                                Slippage tolerance is the utmost percentage of slippage a user is willing to execute a
-                                trade with; if the actual slippage falls outside of the user-designated range, the
-                                transaction will revert. Slippage is the difference between the expected value of output
-                                from a trade and the actual value due to asset volatility and liquidity depth.
-                              </Typography>
-                            </div>
-                          }
-                        />
                       </Typography>
                       <div className="flex items-center gap-2">
                         <Input.Numeric

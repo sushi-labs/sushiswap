@@ -1,7 +1,7 @@
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { classNames, Popover, Typography } from '@sushiswap/ui'
+import { classNames, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC, memo } from 'react'
 
@@ -43,8 +43,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
           </div>
 
           {balance && balance?.[fundSource]?.greaterThan(ZERO) && (
-            <Popover
-              hover
+            <Tooltip
               button={
                 <div className="flex flex-col">
                   <Typography variant="xs" weight={500} className="text-right text-slate-200">
@@ -56,7 +55,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                 </div>
               }
               panel={
-                <div className="flex gap-5 p-3 bg-slate-700 !rounded-lg min-w-40">
+                <div className="flex gap-5 min-w-40">
                   <div className="flex flex-col gap-1">
                     <Typography variant="xs" weight={500} className="text-slate-300">
                       Wallet

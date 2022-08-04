@@ -8,7 +8,7 @@ import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { Button, classNames, Dialog, Dots, Loader, NetworkIcon, Popover, SlideIn, Typography } from '@sushiswap/ui'
+import { Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
@@ -980,13 +980,8 @@ const Widget: FC<Swap> = ({
                             className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
                             onClick={toggleInvert}
                           >
-                            <Popover
-                              hover
-                              panel={
-                                <div className="grid grid-cols-2 gap-1 p-3 border bg-slate-800 border-slate-200/10">
-                                  {stats}
-                                </div>
-                              }
+                            <Tooltip
+                              panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
                               button={<InformationCircleIcon width={16} height={16} />}
                             />{' '}
                             <>
