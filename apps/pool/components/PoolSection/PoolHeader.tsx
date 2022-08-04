@@ -11,7 +11,7 @@ interface PoolHeader {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
-  const [token0, token1] = useTokensFromPair(pair)
+  const { token0, token1 } = useTokensFromPair(pair)
 
   return (
     <div className="flex flex-col gap-5">

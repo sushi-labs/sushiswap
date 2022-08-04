@@ -46,7 +46,7 @@ export function usePairs(
   const { data } = useContractReads({
     contracts: pairAddresses.map((addressOrName) => ({
       chainId,
-      addressOrName,
+      addressOrName: addressOrName,
       contractInterface: PAIR_INTERFACE,
       functionName: 'getReserves',
     })),

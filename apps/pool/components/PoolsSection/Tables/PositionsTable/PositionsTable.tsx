@@ -1,3 +1,4 @@
+import { chainShortName } from '@sushiswap/chain'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
@@ -22,6 +23,7 @@ export const PositionsTable: FC = () => {
     return user.liquidityPositions.map((el) => ({
       ...el.pair,
       liquidityTokenBalance: el.liquidityTokenBalance,
+      id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
     }))
   }, [user])
 

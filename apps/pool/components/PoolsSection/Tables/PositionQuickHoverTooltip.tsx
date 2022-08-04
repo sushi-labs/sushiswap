@@ -1,10 +1,10 @@
-import { tryParseAmount } from '@sushiswap/currency'
+import { Native, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
+import { getAddress } from 'ethers/lib/utils'
 import { FC, useMemo } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
+import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
 import { ICON_SIZE } from './contants'
 
@@ -13,27 +13,14 @@ interface PositionQuickHoverTooltipProps {
 }
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
-  const [token0, token1, slpToken] = useTokensFromPair(row)
-  const { data: prices } = usePrices({ chainId: row.chainId })
-
-  const [underlying0, underlying1] = useMemo(() => {
-    const totalSupply = tryParseAmount(row.totalSupply, slpToken)
-    const reserve0 = tryParseAmount(row.reserve0, token0)
-    const reserve1 = tryParseAmount(row.reserve1, token1)
-    const balance = tryParseAmount(row.liquidityTokenBalance, slpToken)
-
-    if (!balance || !totalSupply || !reserve0 || !reserve1) {
-      return [undefined, undefined]
-    }
-
-    return [reserve0.multiply(balance.divide(totalSupply)), reserve1.multiply(balance.divide(totalSupply))]
-  }, [row.liquidityTokenBalance, row.reserve0, row.reserve1, row.totalSupply, slpToken, token0, token1])
-
-  const [value0, value1] = useMemo(() => {
-    const v0 = Number(underlying0?.toExact()) * Number(prices?.[token0.wrapped.address].toFixed(10))
-    const v1 = Number(underlying1?.toExact()) * Number(prices?.[token1.wrapped.address].toFixed(10))
-    return [v0, v1]
-  }, [prices, token0.wrapped.address, token1.wrapped.address, underlying0, underlying1])
+  const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(row)
+  const balance = useMemo(
+    () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
+    [row.liquidityTokenBalance, liquidityToken]
+  )
+  const underlying = useUnderlyingTokenBalanceFromPair({ reserve0, reserve1, totalSupply, balance })
+  const [underlying0, underlying1] = underlying
+  const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -91,13 +78,35 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         </div>
       </div>
       <div className="flex gap-2 mt-8 mb-2 justify-end">
-        <Link.Internal href={`/${row.id}/earn`} passHref={true}>
-          <Button as="a" variant="empty" className="px-6" size="sm">
+        <Link.Internal
+          href={`/remove?token0=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token0.id)
+          }&token1=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token1.id)
+          }&chainId=${row.chainId}`}
+          passHref={true}
+        >
+          <Button as="a" size="sm" variant="outlined" fullWidth>
             Withdraw
           </Button>
         </Link.Internal>
-        <Link.Internal href={`/${row.id}/earn`} passHref={true}>
-          <Button as="a" className="px-6" size="sm">
+        <Link.Internal
+          href={`/add?token0=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token0.id)
+          }&token1=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token1.id)
+          }&chainId=${row.chainId}`}
+          passHref={true}
+        >
+          <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>
         </Link.Internal>

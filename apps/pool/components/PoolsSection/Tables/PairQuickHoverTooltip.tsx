@@ -12,7 +12,7 @@ interface PairQuickHoverTooltipProps {
 }
 
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
-  const [token0, token1] = useTokensFromPair(row)
+  const { token0, token1 } = useTokensFromPair(row)
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -63,16 +63,16 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         <Link.Internal
           href={`/add?token0=${
             Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? row.token0.symbol
+              ? Native.onChain(row.chainId).symbol
               : getAddress(row.token0.id)
           }&token1=${
             Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? row.token1.symbol
+              ? Native.onChain(row.chainId).symbol
               : getAddress(row.token1.id)
           }&chainId=${row.chainId}`}
           passHref={true}
         >
-          <Button as="a" className="px-6" size="sm">
+          <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>
         </Link.Internal>

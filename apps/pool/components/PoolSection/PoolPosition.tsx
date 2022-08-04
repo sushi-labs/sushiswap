@@ -1,12 +1,11 @@
-import { tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Currency, Dialog, Typography } from '@sushiswap/ui'
-import { useBalance, usePrices } from '@sushiswap/wagmi'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { useBalance } from '@sushiswap/wagmi'
+import { FC, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useTokensFromPair } from '../../lib/hooks'
+import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { PoolButtons } from './PoolButtons'
 
@@ -17,30 +16,16 @@ interface PoolPositionProps {
 export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
-  const [token0, token1, slpToken] = useTokensFromPair(pair)
-  const { data: balance } = useBalance({ chainId: pair.chainId, currency: slpToken, account: address })
-  const { data: prices } = usePrices({ chainId: pair.chainId })
-
-  const [underlying0, underlying1] = useMemo(() => {
-    const totalSupply = tryParseAmount(pair.totalSupply, slpToken)
-    const reserve0 = tryParseAmount(pair.reserve0, token0)
-    const reserve1 = tryParseAmount(pair.reserve1, token1)
-
-    if (!balance?.[FundSource.WALLET] || !totalSupply || !reserve0 || !reserve1) {
-      return [undefined, undefined]
-    }
-
-    return [
-      balance[FundSource.WALLET].divide(totalSupply).multiply(reserve0),
-      balance[FundSource.WALLET].divide(totalSupply).multiply(reserve1),
-    ]
-  }, [balance, pair.reserve0, pair.reserve1, pair.totalSupply, slpToken, token0, token1])
-
-  const [value0, value1, valueSum] = useMemo(() => {
-    const v0 = Number(underlying0?.toExact()) * Number(prices?.[token0.wrapped.address].toFixed(10))
-    const v1 = Number(underlying1?.toExact()) * Number(prices?.[token1.wrapped.address].toFixed(10))
-    return [v0, v1, v0 + v1]
-  }, [prices, token0.wrapped.address, token1.wrapped.address, underlying0, underlying1])
+  const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
+  const { data: balance } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account: address })
+  const underlying = useUnderlyingTokenBalanceFromPair({
+    reserve0,
+    reserve1,
+    totalSupply,
+    balance: balance?.[FundSource.WALLET].wrapped,
+  })
+  const [underlying0, underlying1] = underlying
+  const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: underlying })
 
   const handleClose = useCallback(() => {
     setOpen(false)
@@ -54,7 +39,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
         </Typography>
         <div className="flex flex-col">
           <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-            {formatUSD(valueSum)}
+            {formatUSD(value0 + value1)}
           </Typography>
           <Typography variant="xxs" weight={600} className="text-slate-400 text-right">
             {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'} SLP
@@ -118,7 +103,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
             </Typography>
             <div className="flex flex-col">
               <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-                {formatUSD(valueSum)}
+                {formatUSD(value0 + value1)}
               </Typography>
               <Typography variant="xxs" weight={600} className="text-slate-400 text-right">
                 {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'} SLP

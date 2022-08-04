@@ -6,7 +6,7 @@ import { ICON_SIZE } from './contants'
 import { CellProps } from './types'
 
 export const PairNameCell: FC<CellProps> = ({ row }) => {
-  const [token0, token1] = useTokensFromPair(row)
+  const { token0, token1 } = useTokensFromPair(row)
 
   return (
     <div className="flex items-center gap-2">

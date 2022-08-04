@@ -6,7 +6,7 @@ import { ICON_SIZE } from './contants'
 import { CellProps } from './types'
 
 export const PairRewardsCell: FC<CellProps> = ({ row }) => {
-  const [token0, token1] = useTokensFromPair(row)
+  const { token0, token1 } = useTokensFromPair(row)
 
   return (
     <Currency.IconList iconHeight={ICON_SIZE} iconWidth={ICON_SIZE}>

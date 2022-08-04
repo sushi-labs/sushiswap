@@ -10,7 +10,7 @@ interface PoolRewardsProps {
 
 // TODO rewards
 export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
-  const [token0] = useTokensFromPair(pair)
+  const { token0 } = useTokensFromPair(pair)
 
   return (
     <div className="flex flex-col gap-4 w-full">
