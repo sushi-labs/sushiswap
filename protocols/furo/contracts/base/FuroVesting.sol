@@ -4,6 +4,9 @@ pragma solidity 0.8.10;
 
 import "../interfaces/IFuroVesting.sol";
 
+// Use the FuroStreamVesting to create Vesting and do not create vesting directly.
+
+
 contract FuroVesting is
     IFuroVesting,
     ERC721("Furo Vesting", "FUROVEST"),
