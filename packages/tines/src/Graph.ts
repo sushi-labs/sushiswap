@@ -381,20 +381,19 @@ export class Graph {
 
   // Set prices using greedy algorithm
   setPricesStable(from: Vertice, price: number, gasPrice: number) {
-    from.price = price
-    from.gasPrice = gasPrice
-
     const processedVert = new Set()
     let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
-
     const value = (e: Edge): number => edgeValues.get(e) as number
-    function addVertice(v: Vertice) {
+
+    function addVertice(v: Vertice, price: number, gasPrice: number) {
+      v.price = price
+      v.gasPrice = gasPrice
       const newEdges = v.edges.filter((e) => {
         const newV = v.getNeibour(e)
         return newV?.token.chainId === v.token.chainId && !processedVert.has(v.getNeibour(e) as Vertice)
       })
-      newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())))
+      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
@@ -405,16 +404,15 @@ export class Graph {
       processedVert.add(v)
     }
 
-    addVertice(from)
+    addVertice(from, price, gasPrice)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
-      const [vFrom, vTo] =
-        bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
-      if (vTo.price !== 0) continue
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      vTo.price = vFrom.price * p
-      vTo.gasPrice = vFrom.gasPrice / p
-      addVertice(vTo)
+      addVertice(vTo, vFrom.price * p, vFrom.gasPrice / p)
     }
   }
 
