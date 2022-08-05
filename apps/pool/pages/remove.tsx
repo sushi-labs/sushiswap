@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Transition } from '@headlessui/react'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Native, SUSHI, SUSHI_ADDRESS } from '@sushiswap/currency'
+import { Amount, Native, SUSHI_ADDRESS } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
@@ -17,11 +17,19 @@ import {
   Typography,
 } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Approve, calculateGasMargin, useBalance, usePair, usePairTotalSupply, Wallet } from '@sushiswap/wagmi'
+import {
+  Approve,
+  calculateGasMargin,
+  PairState,
+  useBalance,
+  usePair,
+  usePairTotalSupply,
+  Wallet,
+} from '@sushiswap/wagmi'
 import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
   useAccount,
@@ -69,7 +77,7 @@ const RemovePage = ({
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const tokens = useTokens(chainId)
-  const deadline = useTransactionDeadline()
+  const deadline = useTransactionDeadline(chainId)
   const contract = useV2RouterContract(chainId)
   const { switchNetwork } = useSwitchNetwork()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId })
@@ -83,11 +91,20 @@ const RemovePage = ({
   const [percentage, setPercentage] = useState<number>(0)
   const percentageEntity = useMemo(() => new Percent(percentage, 10_000), [percentage])
 
-  const token0 = _token0 in tokens ? tokens[_token0] : Native.onChain(chainId)
+  const token0 =
+    _token0 === Native.onChain(chainId).symbol
+      ? Native.onChain(chainId)
+      : _token0 in tokens
+      ? tokens[_token0]
+      : undefined
   const token1 =
-    _token1 === SUSHI_ADDRESS[chainId] ? SUSHI[chainId] : _token1 in tokens ? tokens[_token1] : Native.onChain(chainId)
+    _token1 === Native.onChain(chainId).symbol
+      ? Native.onChain(chainId)
+      : _token1 in tokens
+      ? tokens[_token1]
+      : undefined
 
-  const [, pair] = usePair(chainId, token0, token1)
+  const [pairState, pair] = usePair(chainId, token0, token1)
   const { data: balance } = useBalance({ chainId, account: address, currency: pair?.liquidityToken })
   const totalSupply = usePairTotalSupply(pair?.liquidityToken.address, chainId)
 
@@ -114,7 +131,19 @@ const RemovePage = ({
   }, [slippagePercent, underlying0, underlying1])
 
   const execute = useCallback(async () => {
-    if (!chain?.id || !contract || !underlying0 || !underlying1 || !address || !pair || !balance?.[FundSource.WALLET]) {
+    if (
+      !token0 ||
+      !token1 ||
+      !chain?.id ||
+      !contract ||
+      !underlying0 ||
+      !underlying1 ||
+      !address ||
+      !pair ||
+      !balance?.[FundSource.WALLET] ||
+      !minAmount0 ||
+      !minAmount1
+    ) {
       return
     }
 
@@ -199,45 +228,22 @@ const RemovePage = ({
       console.log(e)
     }
   }, [
-    chain.id,
+    token0,
+    token1,
+    chain?.id,
     contract,
     underlying0,
     underlying1,
     address,
     pair,
     balance,
-    percentageEntity,
     minAmount0,
     minAmount1,
+    chainId,
+    percentageEntity,
     deadline,
     sendTransactionAsync,
-    token0.symbol,
-    token1.symbol,
   ])
-
-  useEffect(() => {
-    if (
-      chainId === Number(router.query.chainId) &&
-      (token0.symbol === router.query.token0 || token0.wrapped.address === router.query.token0) &&
-      (token1.symbol === router.query.token1 || token1.wrapped.address === router.query.token1)
-    ) {
-      return
-    }
-
-    void router.replace(
-      {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          chainId,
-          token0: token0 && token0.isToken ? token0.address : token0.symbol,
-          token1: token1 && token1.isToken ? token1.address : token1.symbol,
-        },
-      },
-      undefined,
-      { shallow: true }
-    )
-  }, [router, chainId, token0, token1])
 
   return (
     <Layout>
@@ -284,7 +290,7 @@ const RemovePage = ({
                   leaveTo="transform opacity-0"
                 >
                   <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
-                    {formatUSD((value0 + value1) * (percentage / 100))}
+                    {formatUSD((Number(value0) + Number(value1)) * (percentage / 100))}
                   </Typography>
                 </Transition>
                 <Transition
@@ -310,7 +316,7 @@ const RemovePage = ({
                 </Transition>
               </div>
               <Transition
-                show={percentage > 0}
+                show={Boolean(percentage > 0 && pair)}
                 unmount={false}
                 className="transition-[max-height] overflow-hidden"
                 enter="duration-300 ease-in-out"
@@ -326,31 +332,31 @@ const RemovePage = ({
                   </Typography>
 
                   <div className="flex items-center justify-between">
-                    <Typography weight={500} className="flex gap-2 items-center text-slate-50">
-                      <UICurrency.Icon currency={token0} width={20} height={20} />
+                    <Typography variant="sm" weight={500} className="flex gap-2 items-center text-slate-50">
+                      {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
                       <span className="text-slate-400">
                         <span className="text-slate-50">{underlying0?.toSignificant(6)}</span>{' '}
-                        {Native.onChain(chainId).wrapped === pair.token0
+                        {Native.onChain(chainId).wrapped === pair?.token0
                           ? Native.onChain(chainId).symbol
                           : underlying0?.currency.symbol}
                       </span>
                     </Typography>
                     <Typography variant="xs" className="text-slate-400">
-                      {formatUSD(value0)}
+                      {formatUSD(Number(value0))}
                     </Typography>
                   </div>
                   <div className="flex items-center justify-between">
-                    <Typography weight={500} className="flex gap-2 items-center text-slate-50">
-                      <UICurrency.Icon currency={token1} width={20} height={20} />
+                    <Typography variant="sm" weight={500} className="flex gap-2 items-center text-slate-50">
+                      {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
                       <span className="text-slate-400">
                         <span className="text-slate-50">{underlying1?.toSignificant(6)}</span>{' '}
-                        {Native.onChain(chainId).wrapped === pair.token1
+                        {Native.onChain(chainId).wrapped === pair?.token1
                           ? Native.onChain(chainId).symbol
                           : underlying1?.currency.symbol}
                       </span>
                     </Typography>
                     <Typography variant="xs" className="text-slate-400">
-                      {formatUSD(value1)}
+                      {formatUSD(Number(value1))}
                     </Typography>
                   </div>
                 </div>
@@ -359,7 +365,11 @@ const RemovePage = ({
                 <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
                   Connect Wallet
                 </Wallet.Button>
-              ) : isMounted && chain && chain.id !== chainId ? (
+              ) : isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(pairState) ? (
+                <Button size="md" color="gray" fullWidth disabled={true}>
+                  Pool Not Found
+                </Button>
+              ) : chain && chain.id !== chainId ? (
                 <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
                   Switch to {Chain.from(chainId).name}
                 </Button>

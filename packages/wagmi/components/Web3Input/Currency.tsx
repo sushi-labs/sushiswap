@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
+import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Loader, Typography } from '@sushiswap/ui'
 import { FC, useCallback, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -22,6 +22,7 @@ export interface CurrencyInputProps
   disableMaxButton?: boolean
   className?: string
   fundSource?: FundSource
+  loading?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -39,6 +40,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   className,
   fundSource = FundSource.WALLET,
+  loading,
 }) => {
   const { address } = useAccount()
   const isMounted = useIsMounted()
@@ -76,11 +78,15 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             e.stopPropagation()
           }}
           className={classNames(
-            currency ? 'bg-white bg-opacity-[0.12] ring-slate-500' : 'bg-blue ring-blue-700',
-            'text-slate-200 hover:text-slate-100 transition-all hover:ring-2 shadow-md flex flex-row items-center gap-1 text-xl font-medium rounded-full px-2 py-1'
+            currency || loading ? 'bg-white bg-opacity-[0.12] ring-slate-500' : 'bg-blue ring-blue-700',
+            'h-[36px] text-slate-200 hover:text-slate-100 transition-all hover:ring-2 shadow-md flex flex-row items-center gap-1 text-xl font-medium rounded-full px-2 py-1'
           )}
         >
-          {currency ? (
+          {loading ? (
+            <div className="pr-12 pl-1">
+              <Loader />
+            </div>
+          ) : currency ? (
             <>
               <div className="w-5 h-5">
                 <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />

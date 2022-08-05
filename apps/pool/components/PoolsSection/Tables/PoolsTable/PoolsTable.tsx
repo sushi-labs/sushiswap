@@ -18,45 +18,41 @@ const fetcher = ({
   url: string
   args: { sorting: SortingState; pagination: PaginationState; query: string; extraQuery: string }
 }) => {
-  try {
-    const _url = new URL(url, window.location.origin)
+  const _url = new URL(url, window.location.origin)
 
-    if (args.sorting[0]) {
-      _url.searchParams.set('orderBy', args.sorting[0].id)
-      _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
-    }
-
-    if (args.pagination) {
-      _url.searchParams.set('first', args.pagination.pageSize.toString())
-      _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
-    }
-
-    let where = {}
-    if (args.query) {
-      where = {
-        token0_: { symbol_contains_nocase: args.query },
-        token1_: { symbol_contains_nocase: args.query },
-      }
-
-      _url.searchParams.set('where', JSON.stringify(where))
-    }
-
-    if (args.extraQuery) {
-      where = {
-        ...where,
-        token0_: { symbol_contains_nocase: args.extraQuery },
-        token1_: { symbol_contains_nocase: args.extraQuery },
-      }
-
-      _url.searchParams.set('where', JSON.stringify(where))
-    }
-
-    return fetch(_url.href)
-      .then((res) => res.json())
-      .catch((e) => console.log(JSON.stringify(e)))
-  } catch (e) {
-    console.log(e)
+  if (args.sorting[0]) {
+    _url.searchParams.set('orderBy', args.sorting[0].id)
+    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
   }
+
+  if (args.pagination) {
+    _url.searchParams.set('first', args.pagination.pageSize.toString())
+    _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
+  }
+
+  let where = {}
+  if (args.query) {
+    where = {
+      token0_: { symbol_contains_nocase: args.query },
+      token1_: { symbol_contains_nocase: args.query },
+    }
+
+    _url.searchParams.set('where', JSON.stringify(where))
+  }
+
+  if (args.extraQuery) {
+    where = {
+      ...where,
+      token0_: { symbol_contains_nocase: args.extraQuery },
+      token1_: { symbol_contains_nocase: args.extraQuery },
+    }
+
+    _url.searchParams.set('where', JSON.stringify(where))
+  }
+
+  return fetch(_url.href)
+    .then((res) => res.json())
+    .catch((e) => console.log(JSON.stringify(e)))
 }
 
 export const PoolsTable: FC = () => {

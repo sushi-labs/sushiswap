@@ -62,7 +62,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(value0)}
+            {formatUSD(Number(value0))}
           </Typography>
         </div>
         <div className="flex justify-between items-center gap-2">
@@ -73,7 +73,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(value1)}
+            {formatUSD(Number(value1))}
           </Typography>
         </div>
       </div>

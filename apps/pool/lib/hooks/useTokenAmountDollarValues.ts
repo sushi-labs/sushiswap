@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 
 interface Params {
   chainId: ChainId
-  amounts: Amount<Token>[]
+  amounts: (Amount<Token> | undefined)[]
 }
 
 type UseTokenAmountDollarValues = (params: Params) => (number | undefined)[]

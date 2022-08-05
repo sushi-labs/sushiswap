@@ -2,9 +2,9 @@ import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
 interface Params {
-  totalSupply: Amount<Token>
-  reserve0: Amount<Token>
-  reserve1: Amount<Token>
+  totalSupply: Amount<Token> | undefined
+  reserve0: Amount<Token> | undefined
+  reserve1: Amount<Token> | undefined
   balance: Amount<Token> | undefined
 }
 

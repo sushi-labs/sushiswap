@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ExternalLinkIcon, PlusIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, SUSHI, SUSHI_ADDRESS, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Currency, Native, tryParseAmount } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
@@ -33,21 +33,17 @@ import { useTokens } from '../lib/state/token-lists'
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { token0, token1, chainId } = query
 
-  const _token0 = token0 ?? Native.onChain(Number(chainId as string) || ChainId.ETHEREUM).symbol
-  const _chainId = chainId ?? ChainId.ETHEREUM
-  const _token1 = token1 ?? SUSHI_ADDRESS[Number(chainId as string) || ChainId.ETHEREUM]
-
-  const redirect = {
-    permanent: false,
-    destination: `/add?token0=${_token0}&token1=${_token1}&chainId=${_chainId}`,
-  }
-
   return {
-    ...((!token0 || !token1 || !chainId) && { redirect: { ...redirect } }),
+    ...((!token0 || !token1 || !chainId) && {
+      redirect: {
+        permanent: false,
+        destination: `/add&chainId=${ChainId.ETHEREUM}`,
+      },
+    }),
     props: {
-      token0: _token0,
-      token1: _token1,
-      chainId: _chainId,
+      token0,
+      token1,
+      chainId,
     },
   }
 }
@@ -64,7 +60,7 @@ const AddPage = ({
   const { chain } = useNetwork()
   const contract = useV2RouterContract(chainId)
   const tokenMap = useTokens(chainId)
-  const deadline = useTransactionDeadline()
+  const deadline = useTransactionDeadline(chainId)
   const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
   const router = useRouter()
@@ -80,11 +76,25 @@ const AddPage = ({
   const [review, setReview] = useState(false)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
 
-  const [token0, setToken0] = useState<Currency>(_token0 in tokens ? tokens[_token0] : Native.onChain(chainId))
-  // Check if Sushi address to avoid token flash on init since useTokens isn't available on server
-  const [token1, setToken1] = useState<Currency>(
-    _token1 === SUSHI_ADDRESS[chainId] ? SUSHI[chainId] : _token1 in tokens ? tokens[_token1] : Native.onChain(chainId)
+  const [token0, setToken0] = useState<Currency | undefined>(
+    _token0 === Native.onChain(chainId).symbol
+      ? Native.onChain(chainId)
+      : _token0 in tokens
+      ? tokens[_token0]
+      : undefined
   )
+
+  // Check if Sushi address to avoid token flash on init since useTokens isn't available on server
+  const [token1, setToken1] = useState<Currency | undefined>(
+    _token1 === Native.onChain(chainId).symbol
+      ? Native.onChain(chainId)
+      : _token1 in tokens
+      ? tokens[_token1]
+      : undefined
+  )
+
+  const loadingToken0 = _token0 && !token0
+  const loadingToken1 = _token1 && !token1
 
   const [pairState, pair] = usePair(chainId, token0, token1)
   const { data: balances } = useBalances({ chainId, account: address, currencies: [token0, token1] })
@@ -116,7 +126,7 @@ const AddPage = ({
           ...prev,
           input0: value,
         }))
-      } else if (token0) {
+      } else if (token0 && pair) {
         const parsedAmount = tryParseAmount(value, token0)
         setTypedAmounts({
           input0: value,
@@ -134,7 +144,7 @@ const AddPage = ({
           ...prev,
           input1: value,
         }))
-      } else if (token1) {
+      } else if (token1 && pair) {
         const parsedAmount = tryParseAmount(value, token1)
         setTypedAmounts({
           input0: parsedAmount ? pair.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
@@ -146,7 +156,18 @@ const AddPage = ({
   )
 
   const execute = useCallback(async () => {
-    if (!chain?.id || !contract || !parsedInput0 || !parsedInput1 || !address) return
+    if (
+      !token0 ||
+      !token1 ||
+      !chain?.id ||
+      !contract ||
+      !parsedInput0 ||
+      !parsedInput1 ||
+      !address ||
+      !minAmount0 ||
+      !minAmount1
+    )
+      return
     const withNative = token0.isNative || token1.isNative
 
     try {
@@ -231,22 +252,29 @@ const AddPage = ({
   ])
 
   const insufficientBalance =
-    (parsedInput0 &&
-      balances?.[token0.isNative ? AddressZero : token0.wrapped.address][FundSource.WALLET]?.lessThan(parsedInput0)) ||
-    (parsedInput1 &&
-      balances?.[token1.isNative ? AddressZero : token1.wrapped.address][FundSource.WALLET]?.lessThan(parsedInput1))
+    token0 && token1
+      ? (parsedInput0 &&
+          balances?.[token0.isNative ? AddressZero : token0.wrapped.address][FundSource.WALLET]?.lessThan(
+            parsedInput0
+          )) ||
+        (parsedInput1 &&
+          balances?.[token1.isNative ? AddressZero : token1.wrapped.address][FundSource.WALLET]?.lessThan(parsedInput1))
+      : undefined
 
   const [inputUsd, outputUsd] = useMemo(() => {
+    if (!token0 || !token1) return [undefined, undefined]
     const token0Price = prices?.[token0.wrapped.address]
     const token1Price = prices?.[token1.wrapped.address]
 
     const inputUSD = parsedInput0 && token0Price ? parsedInput0.multiply(token0Price.asFraction) : undefined
     const outputUSD = parsedInput1 && token1Price ? parsedInput1.multiply(token1Price.asFraction) : undefined
     return [inputUSD, outputUSD]
-  }, [parsedInput0, parsedInput1, prices, token0.wrapped.address, token1.wrapped.address])
+  }, [parsedInput0, parsedInput1, prices, token0, token1])
 
   useEffect(() => {
     if (
+      token0 &&
+      token1 &&
       chainId === Number(router.query.chainId) &&
       (token0.symbol === router.query.token0 || token0.wrapped.address === router.query.token0) &&
       (token1.symbol === router.query.token1 || token1.wrapped.address === router.query.token1)
@@ -254,20 +282,41 @@ const AddPage = ({
       return
     }
 
-    void router.replace(
-      {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          chainId,
-          token0: token0 && token0.isToken ? token0.address : token0.symbol,
-          token1: token1 && token1.isToken ? token1.address : token1.symbol,
+    if (token0 && token1) {
+      void router.replace(
+        {
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            chainId,
+            token0: token0 && token0.isToken ? token0.address : token0.symbol,
+            token1: token1 && token1.isToken ? token1.address : token1.symbol,
+          },
         },
-      },
-      undefined,
-      { shallow: true }
-    )
+        undefined,
+        { shallow: true }
+      )
+    }
   }, [router, chainId, token0, token1])
+
+  useEffect(() => {
+    setToken0(
+      _token0 === Native.onChain(chainId).symbol
+        ? Native.onChain(chainId)
+        : _token0 in tokens
+        ? tokens[_token0]
+        : undefined
+    )
+  }, [_token0, chainId, tokens])
+  useEffect(() => {
+    setToken1(
+      _token1 === Native.onChain(chainId).symbol
+        ? Native.onChain(chainId)
+        : _token1 in tokens
+        ? tokens[_token1]
+        : undefined
+    )
+  }, [_token1, chainId, tokens])
 
   return (
     <Layout>
@@ -277,6 +326,7 @@ const AddPage = ({
             <Widget.Header title="Add Liquidity" />
             <Web3Input.Currency
               className="p-3"
+              loading={loadingToken0}
               value={input0}
               onChange={onChangeToken0TypedAmount}
               currency={token0}
@@ -296,6 +346,7 @@ const AddPage = ({
               <Web3Input.Currency
                 className="p-3 !pb-1"
                 value={input1}
+                loading={loadingToken1}
                 onChange={onChangeToken1TypedAmount}
                 currency={token1}
                 onSelect={setToken1}
@@ -313,6 +364,10 @@ const AddPage = ({
                 ) : isMounted && chain && chain.id !== chainId ? (
                   <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
                     Switch to {Chain.from(chainId).name}
+                  </Button>
+                ) : !parsedInput0 || !parsedInput1 ? (
+                  <Button size="md" fullWidth disabled>
+                    Enter Amounts
                   </Button>
                 ) : insufficientBalance ? (
                   <Button size="md" fullWidth disabled>
