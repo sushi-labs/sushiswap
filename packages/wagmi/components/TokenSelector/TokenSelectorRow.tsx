@@ -44,6 +44,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
 
           {balance && balance?.[fundSource]?.greaterThan(ZERO) && (
             <Tooltip
+              placement="left"
               button={
                 <div className="flex flex-col">
                   <Typography variant="xs" weight={500} className="text-right text-slate-200">

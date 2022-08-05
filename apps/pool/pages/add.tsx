@@ -31,19 +31,11 @@ import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { token0, token1, chainId } = query
-
   return {
-    ...((!token0 || !token1 || !chainId) && {
-      redirect: {
-        permanent: false,
-        destination: `/add&chainId=${ChainId.ETHEREUM}`,
-      },
-    }),
     props: {
-      token0,
-      token1,
-      chainId,
+      ...(query.token0 && { token0: query.token0 }),
+      ...(query.token1 && { token1: query.token1 }),
+      ...(query.chainId && { chainId: query.chainId }),
     },
   }
 }
@@ -53,11 +45,11 @@ const AddPage = ({
   token1: _token1,
   chainId: _chainId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const chainId = Number(_chainId)
+  const { chain } = useNetwork()
+  const chainId = Number(_chainId ?? chain?.id ?? ChainId.ETHEREUM)
   const tokens = useTokens(chainId)
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const { chain } = useNetwork()
   const contract = useV2RouterContract(chainId)
   const tokenMap = useTokens(chainId)
   const deadline = useTransactionDeadline(chainId)
