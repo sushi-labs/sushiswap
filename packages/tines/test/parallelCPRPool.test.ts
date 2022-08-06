@@ -35,7 +35,7 @@ function getPool(reserve: number, price: number, fee: number) {
 
 // }
 
-describe('Parallel ConstuntProduct Combo Pool', () => {
+describe.skip('Parallel ConstuntProduct Combo Pool', () => {
   it('One pool', () => {
     const pool = getPool(1e18, 2, 0.003)
     const comboPool1 = new ParallelCPRPool(token0, [pool], gasPrice)
