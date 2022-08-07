@@ -237,6 +237,7 @@ importers:
       graphql: ^16.5.0
       next: ^12.2.0
       next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
       qs: ^6.10.3
@@ -255,6 +256,7 @@ importers:
       graphql: 16.5.0
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.16_next@12.2.3
       qs: 6.11.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -3070,6 +3072,10 @@ packages:
     dependencies:
       chalk: 4.1.2
     dev: true
+
+  /@corex/deepmerge/4.0.29:
+    resolution: {integrity: sha512-q/yVUnqckA8Do+EvAfpy7RLdumnBy9ZsducMUtZTvpdbJC7azEf1hGtnYYxm0QfphYxjwggv6XtH64prvS1W+A==}
+    dev: false
 
   /@cspotcode/source-map-support/0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -17076,6 +17082,19 @@ packages:
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /next-sitemap/3.1.16_next@12.2.3:
+    resolution: {integrity: sha512-kczTKLB1ifqi44mMImv/sLRsqxy/O4DXJ4mx/1l23vyx6QFWqeuHxS0duEL/EsChcVJUMWV4FNg2pIiX31xxmg==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      '@next/env': '*'
+      next: '*'
+    dependencies:
+      '@corex/deepmerge': 4.0.29
+      minimist: 1.2.6
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /next-tick/1.1.0:
