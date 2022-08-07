@@ -1,13 +1,11 @@
-import nextConfig from './next.config.mjs'
-
 // @ts-check
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: `${process.env.NEXT_PUBLIC_VERCEL_URL}${nextConfig.basePath}`,
+  siteUrl: `https://sushi.com/blog`,
   changefreq: 'daily',
   generateRobotsTxt: true,
   robotsTxtOptions: {
-    additionalSitemaps: [`${process.env.NEXT_PUBLIC_VERCEL_URL}${nextConfig.basePath}/article-sitemap.xml`],
+    additionalSitemaps: [`https://sushi.com/blog/article-sitemap.xml`],
   },
   transform: (config, path) => {
     // Ignore articles, they'll be added dynamically
