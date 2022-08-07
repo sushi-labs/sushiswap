@@ -4,7 +4,9 @@ const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chai
 
 const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL } = process.env
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -106,4 +108,6 @@ export default withTranspileModules({
       },
     ]
   },
-})
+}
+
+export default withTranspileModules(nextConfig)
