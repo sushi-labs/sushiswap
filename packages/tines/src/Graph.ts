@@ -45,7 +45,7 @@ export interface MultiRoute {
 export interface NetworkInfo {
   chainId?: number | string
   baseToken: RToken // native coin of the blockchain, or its wrapper, for example: WETH, MATIC
-  baseTokenPrice: number // price of baseToke, in $ for example
+  //baseTokenPrice: number // price of baseToke, in $ for example
   gasPrice: number // current gas price, in baseToken. For example, if gas costs 17Gwei then gasPrice is 17*1e9
 }
 
@@ -338,7 +338,12 @@ export class Graph {
 
   // Single network usage: (pools, baseToken, gasPrice)
   // Multiple Network usage: (pools, networks)
-  constructor(pools: RPool[], baseTokenOrNetworks: RToken | NetworkInfo[], gasPriceSingleNetwork?: number) {
+  constructor(
+    pools: RPool[],
+    start: RToken,
+    baseTokenOrNetworks: RToken | NetworkInfo[],
+    gasPriceSingleNetwork?: number
+  ) {
     const networks: NetworkInfo[] =
       baseTokenOrNetworks instanceof Array
         ? baseTokenOrNetworks
@@ -346,7 +351,7 @@ export class Graph {
             {
               chainId: baseTokenOrNetworks.chainId,
               baseToken: baseTokenOrNetworks,
-              baseTokenPrice: 1,
+              //baseTokenPrice: 1,
               gasPrice: gasPriceSingleNetwork || 0,
             },
           ]
@@ -363,12 +368,14 @@ export class Graph {
       v1.edges.push(edge)
       this.edges.push(edge)
     })
-    networks.forEach((n) => {
-      const baseVert = this.getVert(n.baseToken)
-      if (baseVert) {
-        this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice)
-      }
-    })
+    // networks.forEach((n) => {
+    //   const baseVert = this.getVert(n.baseToken)
+    //   if (baseVert) {
+    //     this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice, true)
+    //   }
+    // })
+    const startV = this.getVert(start)
+    if (startV !== undefined) this.setPricesStable(startV, 1, networks)
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -381,7 +388,52 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  setPricesStable(from: Vertice, price: number, gasPrice: number) {
+  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[]) {
+    const processedVert = new Set<Vertice>()
+    let nextEdges: Edge[] = []
+    const edgeValues = new Map<Edge, number>()
+    const value = (e: Edge): number => edgeValues.get(e) as number
+
+    function addVertice(v: Vertice, price: number) {
+      v.price = price
+      const newEdges = v.edges.filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
+      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
+      newEdges.sort((e1, e2) => value(e1) - value(e2))
+      const res: Edge[] = []
+      while (nextEdges.length && newEdges.length) {
+        if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge)
+        else res.push(newEdges.shift() as Edge)
+      }
+      nextEdges = [...res, ...nextEdges, ...newEdges]
+      processedVert.add(v)
+    }
+
+    addVertice(from, price)
+    while (nextEdges.length > 0) {
+      const bestEdge = nextEdges.pop() as Edge
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      addVertice(vTo, vFrom.price * p) //, vFrom.gasPrice / p)
+    }
+
+    const gasPrice = new Map<number | string | undefined, number>()
+    networks.forEach((n) => {
+      const vPrice = this.getVert(n.baseToken)?.price || 0
+      gasPrice.set(n.chainId, n.gasPrice * vPrice)
+    })
+    processedVert.forEach((v) => {
+      const gasPriceChainId = gasPrice.get(v.token.chainId) as number
+      console.assert(gasPriceChainId !== undefined, 'Error 427')
+      console.assert(v.price !== 0, 'Error 428')
+      v.gasPrice = gasPriceChainId / v.price
+    })
+  }
+
+  // Set prices using greedy algorithm
+  setPricesStableInsideChain(from: Vertice, price: number, gasPrice: number) {
     const processedVert = new Set()
     let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
@@ -570,6 +622,9 @@ export class Graph {
           bestPath.unshift(v.bestSource)
         }
         DEBUG(() => console.log(debug_info))
+        if (Number.isNaN(finish.bestTotal)) {
+          debugger
+        }
         return {
           path: bestPath,
           output: finish.bestIncome,
@@ -603,6 +658,9 @@ export class Graph {
         const price = v2.price / finish.price
         const gasPrice = v2.gasPrice * price
         const newTotal = newIncome * price - newGasSpent * gasPrice
+        if (Number.isNaN(newTotal)) {
+          debugger
+        }
 
         console.assert(e.bestEdgeIncome === 0, 'Error 373')
         e.bestEdgeIncome = newIncome * price
@@ -879,7 +937,7 @@ export class Graph {
       amountOutBN: getBigNumber(output),
       legs,
       gasSpent,
-      totalAmountOut: totalOutput,
+      totalAmountOut: totalOutput, // TODO: should be recalculated if topologyWasChanged
       totalAmountOutBN: getBigNumber(totalOutput),
     }
   }

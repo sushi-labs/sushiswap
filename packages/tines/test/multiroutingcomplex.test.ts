@@ -130,7 +130,7 @@ function exportPrices(network: Network, baseTokenIndex: number) {
   const allPools = new Map<string, RPool>()
   network.pools.forEach((p) => allPools.set(p.address, p))
 
-  const g = new Graph(network.pools, baseToken, network.gasPrice)
+  const g = new Graph(network.pools, baseToken, baseToken, network.gasPrice)
   const tokenPriceMap = new Map<string, number>()
   g.vertices.forEach((v) => {
     tokenPriceMap.set(v.token.name, v.price)
@@ -220,7 +220,7 @@ it('Token price calculation is correct', () => {
   const baseTokenIndex = 0
   const baseToken = network.tokens[baseTokenIndex]
   const gasPrice = getBasePrice(network, baseToken)
-  const g = new Graph(network.pools, baseToken, gasPrice)
+  const g = new Graph(network.pools, baseToken, baseToken, gasPrice)
   g.vertices.forEach((v) => {
     const tokenIndex = parseInt(v.token.name)
     if (tokenIndex === baseTokenIndex) {

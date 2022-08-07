@@ -14,7 +14,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   const pools = t[1].map((e, i) => {
     return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
   })
-  const g = new Graph(pools, tokens[0], 0) // just a dummy
+  const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   g.edges.forEach((e) => {
     e.amountInPrevious = 1
     e.amountOutPrevious = 1
@@ -37,7 +37,7 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
   const pools = t[1].map((e, i) => {
     return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
   })
-  const g = new Graph(pools, tokens[0], 0) // just a dummy
+  const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
   const from = g.getOrCreateVertice(tokens[0])
   const to = g.getOrCreateVertice(tokens[tokens.length - 1])
   for (let i = 0; i < paths; ++i) {
