@@ -12,7 +12,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const fields = slugs.map<ISitemapField>((slug) => ({
     loc: `https://sushi.com/blog/${slug}`,
-    changeFreq: 'never',
+    changefreq: 'never',
   }))
 
   return getServerSideSitemap(ctx, fields)
