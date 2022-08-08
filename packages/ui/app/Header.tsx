@@ -14,6 +14,7 @@ export enum AppType {
   Kashi = 'Kashi',
   Analytics = 'Analytics',
   Pool = 'Liquidity',
+  Partner = 'Partner',
 }
 
 const LINK = {
@@ -25,6 +26,7 @@ const LINK = {
   [AppType.Kashi]: '/internal',
   [AppType.Analytics]: '/analytics',
   [AppType.Pool]: '/pool',
+  [AppType.Partner]: '/partner',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
