@@ -1,10 +1,18 @@
 import { Typography, useBreakpoint } from '@sushiswap/ui'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import {
+  getCoreRowModel,
+  getSortedRowModel,
+  PaginationState,
+  Row,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table'
+import { useRouter } from 'next/router'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
-import { BORROW_APR_COLUMN, COLLATERAL_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE } from '../Tables'
+import { BORROW_APR_COLUMN, COLLATERAL_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE } from '../../Table'
 
 const COLUMNS = [NETWORK_COLUMN, COLLATERAL_COLUMN, BORROW_APR_COLUMN]
 
@@ -27,6 +35,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 }
 
 export const BorrowTable: FC = () => {
+  const router = useRouter()
   const { isSm } = useBreakpoint('sm')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'borrowAPR', desc: true }])
@@ -37,10 +46,10 @@ export const BorrowTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pools } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+  const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
 
   const table = useReactTable({
-    data: pools ?? [],
+    data: pairs ?? [],
     columns: COLUMNS,
     state: {
       sorting,
@@ -53,6 +62,13 @@ export const BorrowTable: FC = () => {
     manualSorting: true,
     manualPagination: true,
   })
+
+  const onClick = useCallback(
+    (row: Row<KashiPair>) => {
+      void router.push(`/borrow/${row.original.collateral.symbol.toLowerCase()}`)
+    },
+    [router]
+  )
 
   useEffect(() => {
     if (isSm) {
@@ -67,7 +83,7 @@ export const BorrowTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Borrow
       </Typography>
-      <GenericTable<KashiPair> table={table} columns={COLUMNS} HoverElement={() => <span />} />
+      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={() => <span />} />
     </div>
   )
 }

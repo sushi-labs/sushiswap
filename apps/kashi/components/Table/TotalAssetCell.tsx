@@ -2,7 +2,7 @@ import { Amount } from '@sushiswap/currency'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromKashiPair } from '../../../lib/hooks'
+import { useTokensFromKashiPair } from '../../lib/hooks'
 import { CellProps } from './types'
 
 export const TotalAssetCell: FC<CellProps> = ({ row }) => {

@@ -1,7 +1,7 @@
 import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromKashiPair } from '../../../lib/hooks'
+import { useTokensFromKashiPair } from '../../lib/hooks'
 import { ICON_SIZE } from './constants'
 import { CellProps } from './types'
 

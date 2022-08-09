@@ -1,18 +1,24 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
-import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
+import { ColumnDef, flexRender, Row, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { PAGE_SIZE } from './constants'
 
-interface GenericTableProps<C> {
-  table: ReactTableType<C>
-  columns: ColumnDef<C>[]
-  HoverElement?: React.FunctionComponent<{ row: C }>
+interface GenericTableProps<T> {
+  table: ReactTableType<T>
+  columns: ColumnDef<T>[]
+  onClick(row: Row<T>): void
+  HoverElement?: React.FunctionComponent<{ row: T }>
 }
 
-export const GenericTable = <T extends { id: string }>({ table, columns, HoverElement }: GenericTableProps<T>) => {
+export const GenericTable = <T extends { id: string }>({
+  table,
+  columns,
+  onClick,
+  HoverElement,
+}: GenericTableProps<T>) => {
   const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -63,7 +69,7 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
                       <Table.tr
                         onClick={() => {
                           setShowOverlay(true)
-                          void router.push(`/${row.original.id}`)
+                          onClick(row)
                         }}
                         className="cursor-pointer"
                       >

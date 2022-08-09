@@ -10,7 +10,7 @@ additionalTypeDefs: |
     chainName: String!
   }
   extend type Query {
-    crossChainKashiPairs(first: Int!, orderBy: KashiPair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [KashiPair!]!
+    crossChainKashiPairs(first: Int!, orderBy: KashiPair_orderBy, orderDirection: OrderDirection, where: KashiPair_filter, chainIds: [BigInt!]!): [KashiPair!]!
   }
 
 

@@ -12,12 +12,33 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
-import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
-import { LendTableHoverElement } from './LendTableHoverElement'
+import {
+  BORROW_APR_COLUMN,
+  GenericTable,
+  LEND_ASSET_COLUMN,
+  NETWORK_COLUMN,
+  PAGE_SIZE,
+  SUPPLY_APR_COLUMN,
+  TOTAL_ASSET_COLUMN,
+  TOTAL_BORROW_COLUMN,
+} from '../../Table'
 
-const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
+const COLUMNS = [
+  NETWORK_COLUMN,
+  LEND_ASSET_COLUMN,
+  SUPPLY_APR_COLUMN,
+  TOTAL_ASSET_COLUMN,
+  TOTAL_BORROW_COLUMN,
+  BORROW_APR_COLUMN,
+]
 
-const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: { sorting: SortingState; pagination: PaginationState; where: string }
+}) => {
   const _url = new URL(url, window.location.origin)
 
   if (args.sorting[0]) {
@@ -30,12 +51,16 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
+  if (args.where) {
+    _url.searchParams.set('where', args.where)
+  }
+
   return fetch(_url.href)
     .then((res) => res.json())
     .catch((e) => console.log(JSON.stringify(e)))
 }
 
-export const LendTable: FC = () => {
+export const LendTableForSymbol: FC = () => {
   const router = useRouter()
   const { isSm } = useBreakpoint('sm')
 
@@ -47,8 +72,10 @@ export const LendTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
-
+  const { data: pairs } = useSWR<KashiPair[]>(
+    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}`, args },
+    fetcher
+  )
   const table = useReactTable({
     data: pairs ?? [],
     columns: COLUMNS,
@@ -66,7 +93,7 @@ export const LendTable: FC = () => {
 
   const onClick = useCallback(
     (row: Row<KashiPair>) => {
-      void router.push(`/lend/${row.original.asset.symbol.toLowerCase()}`)
+      void router.push(`/${row.original.id}`)
     },
     [router]
   )
@@ -84,7 +111,7 @@ export const LendTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Lend
       </Typography>
-      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={LendTableHoverElement} />
+      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={() => <span />} />
     </div>
   )
 }

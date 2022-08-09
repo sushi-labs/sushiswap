@@ -1,5 +1,5 @@
-query CrossChainKashiPairs($first: Int = 1000, $orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $chainIds: [BigInt!]!) {
-  crossChainKashiPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds) {
+query CrossChainKashiPairs($first: Int = 1000, $orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
+  crossChainKashiPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, chainIds: $chainIds) {
     id
     chainId
     chainName

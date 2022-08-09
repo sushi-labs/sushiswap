@@ -1,10 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { KashiPair } from '../../../.graphclient'
+import { KashiPair } from '../../.graphclient'
 import { AssetCell } from './AssetCell'
 import { BorrowAPRCell } from './BorrowAPRCell'
 import { CollateralCell } from './CollateralCell'
+import { LendAssetCell } from './LendAssetCell'
 import { NetworkCell } from './NetworkCell'
 import { SupplyAPRCell } from './SupplyAPRCell'
 import { TotalAssetCell } from './TotalAssetCell'
@@ -25,9 +26,13 @@ export const ASSET_COLUMN: ColumnDef<KashiPair> = {
   header: 'Lend Asset',
   cell: (props) => <AssetCell row={props.row.original} />,
   size: 50,
-  meta: {
-    align: 'left',
-  },
+}
+
+export const LEND_ASSET_COLUMN: ColumnDef<KashiPair> = {
+  id: 'asset',
+  header: 'Lend Asset',
+  cell: (props) => <LendAssetCell row={props.row.original} />,
+  size: 50,
 }
 
 export const COLLATERAL_COLUMN: ColumnDef<KashiPair> = {
@@ -35,9 +40,6 @@ export const COLLATERAL_COLUMN: ColumnDef<KashiPair> = {
   header: 'Borrow Asset',
   cell: (props) => <CollateralCell row={props.row.original} />,
   size: 50,
-  meta: {
-    align: 'left',
-  },
 }
 
 export const TOTAL_ASSET_COLUMN: ColumnDef<KashiPair> = {
@@ -48,7 +50,7 @@ export const TOTAL_ASSET_COLUMN: ColumnDef<KashiPair> = {
 }
 
 export const SUPPLY_APR_COLUMN: ColumnDef<KashiPair> = {
-  id: 'supplyAPR',
+  id: 'supply',
   header: 'Deposit APR',
   accessorFn: (row) => row.supplyAPR,
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
@@ -63,7 +65,7 @@ export const TOTAL_BORROW_COLUMN: ColumnDef<KashiPair> = {
 }
 
 export const BORROW_APR_COLUMN: ColumnDef<KashiPair> = {
-  id: 'borrowAPR',
+  id: 'borrow',
   header: 'Borrow APR',
   accessorFn: (row) => row.borrowAPR,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
