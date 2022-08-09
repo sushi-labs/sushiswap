@@ -11,7 +11,7 @@ export enum AppType {
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
   Internal = 'Internal',
-  Kashi = 'Kashi',
+  Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
   Pool = 'Liquidity',
 }
@@ -112,6 +112,28 @@ export function Header({
                   className="!border-slate-700 !cursor-pointer"
                 >
                   {AppType.Furo}
+                </Select.Option>
+              )}
+              {appType !== AppType.Pool && (
+                <Select.Option
+                  as="a"
+                  href="https://sushi.com/pool"
+                  key={AppType.Pool}
+                  value={AppType.Pool}
+                  className="!border-slate-700 !cursor-pointer"
+                >
+                  {AppType.Pool}
+                </Select.Option>
+              )}
+              {appType !== AppType.Kashi && (
+                <Select.Option
+                  as="a"
+                  href="https://sushi.com/kashi"
+                  key={AppType.Kashi}
+                  value={AppType.Kashi}
+                  className="!border-slate-700 !cursor-pointer"
+                >
+                  {AppType.Kashi}
                 </Select.Option>
               )}
               <Select.Option
