@@ -52,7 +52,6 @@ interface IFuroVesting {
         uint128 stepPercentage;
         uint128 amount;
         bool fromBentoBox;
-        uint256 minShare;
     }
 
     struct Vest {
