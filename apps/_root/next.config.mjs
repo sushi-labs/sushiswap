@@ -91,10 +91,6 @@ const nextConfig = {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
-      {
-        source: '/legacy',
-        destination: `${LEGACY_URL}/legacy`,
-      },
     ]
   },
 }
