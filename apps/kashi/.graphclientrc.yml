@@ -2,7 +2,7 @@ sources:
   - name: Kashi
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/kashi-polygon}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/kashi-arbitrum}
 
 additionalTypeDefs: |
   extend type KashiPair {
@@ -10,7 +10,7 @@ additionalTypeDefs: |
     chainName: String!
   }
   extend type Query {
-    crossChainKashiPairs(first: Int!, chainIds: [BigInt!]!): [KashiPair!]!
+    crossChainKashiPairs(first: Int!, orderBy: KashiPair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [KashiPair!]!
   }
 
 

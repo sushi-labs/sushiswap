@@ -50,6 +50,7 @@ export const TOTAL_ASSET_COLUMN: ColumnDef<KashiPair> = {
 export const SUPPLY_APR_COLUMN: ColumnDef<KashiPair> = {
   id: 'supplyAPR',
   header: 'Deposit APR',
+  accessorFn: (row) => row.supplyAPR,
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
 }
@@ -64,6 +65,7 @@ export const TOTAL_BORROW_COLUMN: ColumnDef<KashiPair> = {
 export const BORROW_APR_COLUMN: ColumnDef<KashiPair> = {
   id: 'borrowAPR',
   header: 'Borrow APR',
+  accessorFn: (row) => row.borrowAPR,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
 }

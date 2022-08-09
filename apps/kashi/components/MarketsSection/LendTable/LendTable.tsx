@@ -29,7 +29,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 export const LendTable: FC = () => {
   const { isSm } = useBreakpoint('sm')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'kpi.supplyAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,

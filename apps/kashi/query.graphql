@@ -1,5 +1,5 @@
-query CrossChainKashiPairs($first: Int = 1000, $chainIds: [BigInt!]!) {
-  crossChainKashiPairs(first: $first, chainIds: $chainIds) {
+query CrossChainKashiPairs($first: Int = 1000, $orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $chainIds: [BigInt!]!) {
+  crossChainKashiPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds) {
     id
     chainId
     chainName
@@ -38,11 +38,9 @@ query CrossChainKashiPairs($first: Int = 1000, $chainIds: [BigInt!]!) {
       lastAccrued
       feesEarnedFraction
     }
-    kpi {
-      supplyAPR
-      borrowAPR
-      utilization
-      totalFeesEarnedFraction
-    }
+    supplyAPR
+    borrowAPR
+    utilization
+    totalFeesEarnedFraction
   }
 }

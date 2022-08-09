@@ -11,10 +11,8 @@ import { getPairs } from '../lib/api'
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const [pairs] = await Promise.all([
-    // @ts-ignore
-    getPairs({ orderBy: 'kpi.supplyAPR', orderDirection: 'desc' }),
-    // @ts-ignore
-    getPairs({ orderBy: 'kpi.borrowAPR', orderDirection: 'desc' }),
+    getPairs({ orderBy: 'supplyAPR', orderDirection: 'desc' }),
+    getPairs({ orderBy: 'borrowAPR', orderDirection: 'desc' }),
   ])
 
   return {
@@ -25,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'kpi.supplyAPR',
+                id: 'supplyAPR',
                 desc: true,
               },
             ],
@@ -40,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'kpi.borrowAPR',
+                id: 'borrowAPR',
                 desc: true,
               },
             ],

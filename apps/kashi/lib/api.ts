@@ -1,6 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-
 import { KashiPair_orderBy, OrderDirection } from '../.graphclient'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 type GetPoolsQuery = Partial<{
   where: string
@@ -17,11 +16,11 @@ export const getPairs = async (query?: GetPoolsQuery) => {
   const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
-  const orderBy = query?.orderBy || 'kpi.supplyAPR'
+  const orderBy = query?.orderBy || 'supplyAPR'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainKashiPairs: pairs } = await sdk.CrossChainKashiPairs({
-    chainIds: [ChainId.ARBITRUM, ChainId.POLYGON],
+    chainIds: SUPPORTED_CHAIN_IDS,
     first: 20,
     ...(query && { where, orderBy, orderDirection }),
   })
