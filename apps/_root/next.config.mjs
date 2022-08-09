@@ -92,6 +92,10 @@ const nextConfig = {
         destination: `${FURO_URL}/furo/:path*`,
       },
       {
+        source: '/partner',
+        destination: `${PARTNER_URL}/partner`,
+      },
+      {
         source: '/partner/:path*',
         destination: `${PARTNER_URL}/partner/:path*`,
       },
