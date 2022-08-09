@@ -68,22 +68,6 @@ const nextConfig = {
         destination: `${BLOG_URL}/blog/:path*`,
       },
       {
-        source: '/dao',
-        destination: `${DAO_URL}/dao`,
-      },
-      {
-        source: '/dao/:path*',
-        destination: `${DAO_URL}/dao/:path*`,
-      },
-      {
-        source: '/docs',
-        destination: `${DOCS_URL}/docs`,
-      },
-      {
-        source: '/docs/:path*',
-        destination: `${DOCS_URL}/docs/:path*`,
-      },
-      {
         source: '/furo',
         destination: `${FURO_URL}/furo`,
       },
@@ -110,10 +94,6 @@ const nextConfig = {
       {
         source: '/legacy',
         destination: `${LEGACY_URL}/legacy`,
-      },
-      {
-        source: '/legacy/:path*',
-        destination: `${LEGACY_URL}/legacy/:path*`,
       },
     ]
   },
