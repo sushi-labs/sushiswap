@@ -8,7 +8,9 @@ const withTranspileModules = transpileModules([
   '@sushiswap/ui',
 ])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/kashi',
   reactStrictMode: true,
   swcMinify: true,
@@ -19,4 +21,6 @@ export default withTranspileModules({
   experimental: {
     nextScriptWorkers: true,
   },
-})
+}
+
+export default withTranspileModules(nextConfig)

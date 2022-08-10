@@ -2,9 +2,12 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
 
-const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL } = process.env
+const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL, PARTNER_URL } =
+  process.env
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -65,28 +68,20 @@ export default withTranspileModules({
         destination: `${BLOG_URL}/blog/:path*`,
       },
       {
-        source: '/dao',
-        destination: `${DAO_URL}/dao`,
-      },
-      {
-        source: '/dao/:path*',
-        destination: `${DAO_URL}/dao/:path*`,
-      },
-      {
-        source: '/docs',
-        destination: `${DOCS_URL}/docs`,
-      },
-      {
-        source: '/docs/:path*',
-        destination: `${DOCS_URL}/docs/:path*`,
-      },
-      {
         source: '/furo',
         destination: `${FURO_URL}/furo`,
       },
       {
         source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
+      },
+      {
+        source: '/partner',
+        destination: `${PARTNER_URL}/partner`,
+      },
+      {
+        source: '/partner/:path*',
+        destination: `${PARTNER_URL}/partner/:path*`,
       },
       {
         source: '/swap',
@@ -96,14 +91,8 @@ export default withTranspileModules({
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
-      {
-        source: '/legacy',
-        destination: `${LEGACY_URL}/legacy`,
-      },
-      {
-        source: '/legacy/:path*',
-        destination: `${LEGACY_URL}/legacy/:path*`,
-      },
     ]
   },
-})
+}
+
+export default withTranspileModules(nextConfig)
