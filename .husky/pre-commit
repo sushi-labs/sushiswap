@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm build
-pnpm sort
-pnpm format
-pnpm lint
-pnpm test
+#pnpm build
+#pnpm sort
+#pnpm format
+#pnpm lint
+#pnpm test
