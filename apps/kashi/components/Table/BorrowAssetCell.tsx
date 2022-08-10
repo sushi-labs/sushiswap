@@ -5,7 +5,7 @@ import { useTokensFromKashiPair } from '../../lib/hooks'
 import { ICON_SIZE } from './constants'
 import { CellProps } from './types'
 
-export const LendAssetCell: FC<CellProps> = ({ row }) => {
+export const BorrowAssetCell: FC<CellProps> = ({ row }) => {
   const { asset, collateral } = useTokensFromKashiPair(row)
 
   return (
@@ -30,7 +30,7 @@ export const LendAssetCell: FC<CellProps> = ({ row }) => {
   )
 }
 
-export const LendAssetCellPopover: FC<CellProps> = ({ row }) => {
+export const BorrowAssetCellPopover: FC<CellProps> = ({ row }) => {
   const { asset, collateral } = useTokensFromKashiPair(row)
 
   return (

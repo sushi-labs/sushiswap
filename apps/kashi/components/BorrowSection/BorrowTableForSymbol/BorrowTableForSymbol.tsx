@@ -14,8 +14,8 @@ import useSWR from 'swr'
 import { KashiPair } from '../../../.graphclient'
 import {
   BORROW_APR_COLUMN,
+  BORROW_ASSET_COLUMN,
   GenericTable,
-  LEND_ASSET_COLUMN,
   NETWORK_COLUMN,
   PAGE_SIZE,
   SUPPLY_APR_COLUMN,
@@ -25,7 +25,7 @@ import {
 
 const COLUMNS = [
   NETWORK_COLUMN,
-  LEND_ASSET_COLUMN,
+  BORROW_ASSET_COLUMN,
   SUPPLY_APR_COLUMN,
   TOTAL_ASSET_COLUMN,
   TOTAL_BORROW_COLUMN,
@@ -60,7 +60,7 @@ const fetcher = ({
     .catch((e) => console.log(JSON.stringify(e)))
 }
 
-export const LendTableForSymbol: FC = () => {
+export const BorrowTableForSymbol: FC = () => {
   const router = useRouter()
   const { isSm } = useBreakpoint('sm')
 
@@ -73,7 +73,7 @@ export const LendTableForSymbol: FC = () => {
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
   const { data: pairs } = useSWR<KashiPair[]>(
-    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=true`, args },
+    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=false`, args },
     fetcher
   )
   const table = useReactTable({

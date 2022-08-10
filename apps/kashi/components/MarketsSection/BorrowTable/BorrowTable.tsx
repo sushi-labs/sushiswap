@@ -13,6 +13,7 @@ import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
 import { BORROW_APR_COLUMN, COLLATERAL_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE } from '../../Table'
+import { BorrowTableHoverElement } from './BorrowTableHoverElement'
 
 const COLUMNS = [NETWORK_COLUMN, COLLATERAL_COLUMN, BORROW_APR_COLUMN]
 
@@ -83,7 +84,12 @@ export const BorrowTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Borrow
       </Typography>
-      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={() => <span />} />
+      <GenericTable<KashiPair>
+        table={table}
+        columns={COLUMNS}
+        onClick={onClick}
+        HoverElement={BorrowTableHoverElement}
+      />
     </div>
   )
 }

@@ -5,21 +5,21 @@ import React, { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
-import { GenericTable, LEND_ASSET_COLUMN_POPOVER, NETWORK_COLUMN, SUPPLY_APR_COLUMN } from '../../Table'
+import { BORROW_APR_COLUMN, BORROW_ASSET_COLUMN_POPOVER, GenericTable, NETWORK_COLUMN } from '../../Table'
 
-interface LendTableHoverElementProps {
+interface BorrowTableHoverElementProps {
   row: KashiPair
 }
 
-const COLUMNS = [NETWORK_COLUMN, LEND_ASSET_COLUMN_POPOVER, SUPPLY_APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, BORROW_ASSET_COLUMN_POPOVER, BORROW_APR_COLUMN]
 
-export const LendTableHoverElement: FC<LendTableHoverElementProps> = ({ row }) => {
+export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row }) => {
   const router = useRouter()
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
 
   const { data: pairs } = useSWR<KashiPair[]>(
-    `/kashi/api/pairs?symbol=${(row.asset.symbol as string).toLowerCase()}&asset=true`,
+    `/kashi/api/pairs?symbol=${(row.collateral.symbol as string).toLowerCase()}&asset=false`,
     (url) => fetch(url).then((response) => response.json())
   )
 

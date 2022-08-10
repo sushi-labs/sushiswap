@@ -30,13 +30,14 @@ export const getPairs = async (query?: GetPoolsQuery) => {
 
 type GetPoolsForSymbolQuery = Partial<{
   symbol: string
+  asset: boolean
   first: number
   skip: number
   orderBy: KashiPair_orderBy
   orderDirection: OrderDirection
 }>
 
-export const getPairsForSymbol = async (query?: GetPoolsForSymbolQuery) => {
+export const getPairsForSymbol = async (query: GetPoolsForSymbolQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
@@ -49,5 +50,12 @@ export const getPairsForSymbol = async (query?: GetPoolsForSymbolQuery) => {
     ...(query && { where: { symbol_contains_nocase: query.symbol }, orderBy, orderDirection }),
   })
 
-  return pairs.filter((el) => el.asset.symbol.toLowerCase() === query.symbol)
+  console.log(query.asset)
+  return pairs.filter((el) => {
+    if (query.asset) {
+      return el.asset.symbol.toLowerCase() === query.symbol
+    } else {
+      return el.collateral.symbol.toLowerCase() === query.symbol
+    }
+  })
 }

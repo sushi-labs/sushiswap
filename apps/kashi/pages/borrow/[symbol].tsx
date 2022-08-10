@@ -3,7 +3,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { LendSection } from '../../components'
+import { BorrowSection } from '../../components'
 import { getPairsForSymbol } from '../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
@@ -11,8 +11,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   const [pairs] = await Promise.all([
     getPairsForSymbol({
       symbol: (query.symbol as string).toLowerCase(),
-      asset: true,
-      orderBy: 'supplyAPR',
+      asset: false,
+      orderBy: 'borrowAPR',
       orderDirection: 'desc',
     }),
   ])
@@ -21,11 +21,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       fallback: {
         [unstable_serialize({
-          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=true`,
+          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=false`,
           args: {
             sorting: [
               {
-                id: 'supplyAPR',
+                id: 'borrowAPR',
                 desc: true,
               },
             ],
@@ -40,20 +40,20 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   }
 }
 
-const Lend: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Borrow: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Lend />
+      <_Borrow />
     </SWRConfig>
   )
 }
 
-const _Lend = () => {
+const _Borrow = () => {
   return (
     <Layout>
-      <LendSection />
+      <BorrowSection />
     </Layout>
   )
 }
 
-export default Lend
+export default Borrow

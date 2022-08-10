@@ -1,3 +1,4 @@
+export * from './BorrowSection'
 export * from './Layout'
 export * from './LendSection'
 export * from './MarketsSection'

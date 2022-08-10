@@ -7,6 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.query.symbol) {
     pairs = await getPairsForSymbol({
       ...req.query,
+      asset: req.query.asset === 'true',
       symbol: (req.query.symbol as string).toLowerCase(),
     })
   } else {

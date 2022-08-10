@@ -1,14 +1,17 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
-import { ColumnDef, flexRender, Row, Table as ReactTableType } from '@tanstack/react-table'
+import { flexRender, Row, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { PAGE_SIZE } from './constants'
+import { ExtendedColumnDef } from './types'
 
 interface GenericTableProps<T> {
+  variant?: 'default' | 'popover'
+  size?: 'default' | 'lg'
   table: ReactTableType<T>
-  columns: ColumnDef<T>[]
+  columns: ExtendedColumnDef<T>[]
   onClick(row: Row<T>): void
   HoverElement?: React.FunctionComponent<{ row: T }>
 }
@@ -18,6 +21,8 @@ export const GenericTable = <T extends { id: string }>({
   columns,
   onClick,
   HoverElement,
+  variant = 'default',
+  size = 'default',
 }: GenericTableProps<T>) => {
   const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
@@ -26,7 +31,7 @@ export const GenericTable = <T extends { id: string }>({
     <>
       <LoadingOverlay show={showOverlay} />
       <Table.container>
-        <Table.table>
+        <Table.table className={variant === 'popover' ? '!rounded-none bg-slate-900' : ''}>
           <Table.thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.thr key={headerGroup.id}>
@@ -39,6 +44,7 @@ export const GenericTable = <T extends { id: string }>({
                     <div
                       {...{
                         className: classNames(
+                          variant === 'popover' ? 'text-xs' : '',
                           header.column.getCanSort() ? 'cursor-pointer select-none' : '',
                           'h-full flex items-center gap-2'
                         ),
@@ -61,12 +67,14 @@ export const GenericTable = <T extends { id: string }>({
               if (HoverElement) {
                 return (
                   <Tooltip
+                    naked
                     key={row.id}
                     trigger="hover"
                     mouseEnterDelay={0.5}
                     placement="top"
                     button={
                       <Table.tr
+                        size={size}
                         onClick={() => {
                           setShowOverlay(true)
                           onClick(row)
@@ -89,6 +97,7 @@ export const GenericTable = <T extends { id: string }>({
 
               return (
                 <Table.tr
+                  size={size}
                   key={row.id}
                   onClick={() => {
                     setShowOverlay(true)
@@ -107,26 +116,13 @@ export const GenericTable = <T extends { id: string }>({
               )
             })}
             {table.getRowModel().rows.length === 0 &&
-              Array.from(Array(PAGE_SIZE)).map((el, index) => (
-                <Table.tr key={index} className="!max-h-[48px]">
-                  <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }}>
-                    <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
-                  </Table.td>
-                  <Table.td
-                    className="flex items-center gap-2"
-                    style={{ maxWidth: columns[1].size, width: columns[1].size }}
-                  >
-                    <div className="flex items-center">
-                      <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
-                      <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse -ml-[12px]" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
-                    </div>
-                  </Table.td>
-                  <Table.td style={{ maxWidth: columns[2].size, width: columns[2].size }}>
-                    <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
-                  </Table.td>
+              Array.from(Array(variant === 'popover' ? 3 : PAGE_SIZE)).map((el, index) => (
+                <Table.tr key={index} size={size}>
+                  {columns.map((column) => (
+                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }}>
+                      {column.skeleton}
+                    </Table.td>
+                  ))}
                 </Table.tr>
               ))}
           </Table.tbody>
