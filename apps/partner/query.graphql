@@ -1,0 +1,13 @@
+query Token($id: String!) {
+  token(id: $id) {
+    derivedETH
+    liquidity
+    volumeUSD
+  }
+}
+
+query Bundle {
+  bundles(first: 1) {
+    ethPrice
+  }
+}

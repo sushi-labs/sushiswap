@@ -1,4 +1,6 @@
-module.exports = {
+// @ts-check
+/** @type {import('eslint').ESLint.ConfigData} */
+const eslintConfig = {
   extends: ['@sushiswap/eslint-config', 'plugin:cypress/recommended', 'next/core-web-vitals'],
   plugins: ['cypress', 'testing-library'],
   settings: {
@@ -18,3 +20,5 @@ module.exports = {
     },
   ],
 }
+
+module.exports = eslintConfig

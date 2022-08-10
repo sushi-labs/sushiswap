@@ -9,7 +9,9 @@ const withTranspileModules = transpileModules([
   '@sushiswap/graph-client',
 ])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/furo',
   reactStrictMode: true,
   swcMinify: true,
@@ -20,4 +22,6 @@ export default withTranspileModules({
   typescript: {
     ignoreBuildErrors: true,
   },
-})
+}
+
+export default withTranspileModules(nextConfig)

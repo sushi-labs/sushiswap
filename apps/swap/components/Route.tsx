@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Badge, Chip, NetworkIcon, Popover, Typography } from '@sushiswap/ui'
+import { Badge, Chip, NetworkIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { FC } from 'react'
 
@@ -32,10 +32,10 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
         Optimized Route
       </Typography>
       <div className="flex justify-end">
-        <Popover
-          hover
+        <Tooltip
+          placement="top"
           panel={
-            <div className="relative flex items-center px-4 py-3 mt-1 border bg-slate-800 border-slate-200/10 rounded-2xl">
+            <div className="relative flex items-center px-4 py-1">
               <div className="flex flex-grow items-center gap-3 z-[1]">
                 <div className="flex items-center w-6 h-6">
                   <Badge
@@ -52,8 +52,8 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {srcTrade && (
-                    <Popover
-                      hover
+                    <Tooltip
+                      placement="top"
                       button={
                         <Chip
                           color="gray"
@@ -112,8 +112,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                 </div>
                 <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
                   {dstTrade && (
-                    <Popover
-                      hover
+                    <Tooltip
                       button={
                         <Chip
                           color="gray"
@@ -246,11 +245,8 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
       <div className="flex justify-end">
         {trade.isSingle() && <SingleRoute trade={trade} />}
         {trade.isComplex() && (
-          <Popover
-            hover
-            panel={
-              <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">{<ComplexRoute trade={trade} />}</div>
-            }
+          <Tooltip
+            panel={<div className="flex flex-col gap-1">{<ComplexRoute trade={trade} />}</div>}
             button={
               <Typography variant="sm" weight={500} className="text-right cursor-pointer text-blue">
                 View Route

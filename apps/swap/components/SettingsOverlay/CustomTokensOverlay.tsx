@@ -2,7 +2,7 @@ import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outlin
 import { CurrencyDollarIcon } from '@heroicons/react/solid'
 import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Currency, Overlay, Popover, SlideIn, Typography } from '@sushiswap/ui'
+import { Currency, Overlay, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { TokenSelectorCustomTokenRow } from '@sushiswap/wagmi'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -41,12 +41,10 @@ export const CustomTokensOverlay: FC = () => {
             <Typography variant="sm" weight={500}>
               Custom Tokens
             </Typography>
-            <Popover
-              tabIndex={-1}
-              hover
+            <Tooltip
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
-                <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
+                <div className="w-80 flex flex-col gap-2">
                   <Typography variant="xs" weight={500}>
                     Import a token that is not currently on the list by pasting its address here to add it. Custom
                     tokens are stored locally in your browser.

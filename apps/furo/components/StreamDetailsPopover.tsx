@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
-import { Button, NotepadIcon, Popover, Typography } from '@sushiswap/ui'
+import { Button, NotepadIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FuroStatus, Stream, Vesting } from 'lib'
 import { FC, useState } from 'react'
@@ -36,8 +36,8 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
   if (!stream) return null
 
   return (
-    <Popover
-      hover
+    <Tooltip
+      naked
       button={
         <Button color="gray" as="div">
           <NotepadIcon width={18} height={18} />
@@ -47,7 +47,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
         </Button>
       }
       panel={
-        <div className="max-w-[530px] gap-4 z-10 shadow-md overflow-hidden rounded-xl flex flex-col bg-slate-800">
+        <div className="max-w-[530px] gap-4 flex flex-col rounded-lg overflow-hidden">
           <div className="flex justify-between gap-4 p-4 bg-slate-700">
             <div className="flex gap-6">
               <div className="flex items-center justify-end gap-2">

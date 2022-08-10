@@ -19,19 +19,14 @@ interface Props {
   }
 }
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (typeof query.chainId !== 'string' || typeof query.address !== 'string') return { props: {} }
+  if (typeof query.address !== 'string') return { props: { fallback: {} } }
+  const chainId = ((query.chainId as string) || ChainId.ETHEREUM).toString()
 
   return {
     props: {
       fallback: {
-        [`/api/user/${query.chainId}/${query.address}/streams`]: (await getUserStreams(
-          query.chainId,
-          query.address
-        )) as Streams,
-        [`/api/user/${query.chainId}/${query.address}/vestings`]: (await getUserVestings(
-          query.chainId,
-          query.address
-        )) as Vestings,
+        [`/api/user/${chainId}/${query.address}/streams`]: (await getUserStreams(chainId, query.address)) as Streams,
+        [`/api/user/${chainId}/${query.address}/vestings`]: (await getUserVestings(chainId, query.address)) as Vestings,
       },
     },
   }
@@ -39,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
 
 const UserDashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   const router = useRouter()
-  const chainId = Number(router.query.chainId) || ChainId.ETHEREUM
+  const chainId = router.query.chainId ? Number(router.query.chainId) : ChainId.ETHEREUM
   const address = router.query.address as string
   const show = router.query.show
 

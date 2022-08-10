@@ -5,9 +5,17 @@ import { FC, ReactElement } from 'react'
 interface ExtendTooltipProps extends Omit<TooltipProps, 'overlay' | 'arrowContent'> {
   button: ReactElement
   panel: ReactElement
+  naked?: boolean
 }
 
-export const Tooltip: FC<ExtendTooltipProps> = ({ button, panel, placement, mouseEnterDelay = 0 }) => {
+export const Tooltip: FC<ExtendTooltipProps> = ({
+  button,
+  panel,
+  placement = 'top',
+  mouseEnterDelay = 0,
+  naked,
+  ...props
+}) => {
   const offset = [0, 0]
   if (placement?.includes('left')) {
     offset[0] -= 12
@@ -27,12 +35,14 @@ export const Tooltip: FC<ExtendTooltipProps> = ({ button, panel, placement, mous
 
   return (
     <RcTooltip
+      {...(naked && { overlayInnerStyle: { padding: 0 } })}
       transitionName="rc-tooltip-zoom"
       mouseEnterDelay={mouseEnterDelay}
       align={{ offset }}
       arrowContent={<div className="rc-tooltip-arrow-inner" />}
       overlay={panel}
       placement={placement}
+      {...props}
     >
       {button}
     </RcTooltip>
