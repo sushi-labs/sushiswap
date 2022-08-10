@@ -37,8 +37,7 @@ export const EXCHANGE = {
 }
 
 export const TRIDENT = {
-  [ChainId.POLYGON]: 'matthewlilley/trident-polygon',
-  [ChainId.KOVAN]: 'sushiswap/trident-kovan',
+  [ChainId.POLYGON]: 'sushiswap/trident-polygon',
   [ChainId.OPTIMISM]: 'olastenberg/trident-optimism',
   [ChainId.KAVA]: 'sushiswap/trident-kava',
   [ChainId.METIS]: 'sushiswap/trident-metis',

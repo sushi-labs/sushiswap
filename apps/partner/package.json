@@ -20,6 +20,8 @@
     "@hookform/resolvers": "^2.8.10",
     "@octokit/auth-app": "^4.0.4",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "cookie-cutter": "^0.2.0",

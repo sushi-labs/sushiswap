@@ -1,8 +1,23 @@
 sources:
+  - name: Trident
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.name:olastenberg/trident-optimism}
+    transforms:
+      - prefix:
+          value: Trident_
+          includeRootOperations: true
+          includeTypes: true
+
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/exchange-ethereum}
+    transforms:
+      - prefix:
+          value: Exchange_
+          includeRootOperations: true
+          includeTypes: true
 
 documents:
   - ./query.graphql
