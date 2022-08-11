@@ -5,9 +5,11 @@ import { useContract, useProvider } from 'wagmi'
 
 export const getFuroVestingRouterContractConfig = (chainId: number | undefined) => ({
   addressOrName:
+    // @ts-ignore
     furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVestingRouter
       ?.address ?? AddressZero,
   contractInterface:
+    // @ts-ignore
     furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroVestingRouter
       ?.abi ?? furoVestingArtifact.abi,
 })
