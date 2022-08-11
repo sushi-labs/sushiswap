@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 
 import './interfaces/IFuroStream.sol';
 
-contract FuroStreamWrapper is Multicall {
+contract FuroStreamRouter is Multicall {
   IBentoBoxMinimal public immutable bentoBox;
   IFuroStream public immutable furoStream;
 
