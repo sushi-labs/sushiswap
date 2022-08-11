@@ -14,8 +14,8 @@ contract FuroVestingRouter is Multicall {
   constructor(IBentoBoxMinimal _bentoBox, IFuroVesting _furoVesting) {
     bentoBox = _bentoBox;
     furoVesting = _furoVesting;
-    _bentoBox.registerProtocol();
     _bentoBox.setMasterContractApproval(address(this), address(_furoVesting), true, 0, bytes32(0), bytes32(0));
+    _bentoBox.registerProtocol();
   }
 
   function setBentoBoxApproval(

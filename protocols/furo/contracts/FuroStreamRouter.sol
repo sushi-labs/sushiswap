@@ -14,8 +14,8 @@ contract FuroStreamRouter is Multicall {
   constructor(IBentoBoxMinimal _bentoBox, IFuroStream _furoStream) {
     bentoBox = _bentoBox;
     furoStream = _furoStream;
-    _bentoBox.registerProtocol();
     _bentoBox.setMasterContractApproval(address(this), address(_furoStream), true, 0, bytes32(0), bytes32(0));
+    _bentoBox.registerProtocol();
   }
 
   function setBentoBoxApproval(
