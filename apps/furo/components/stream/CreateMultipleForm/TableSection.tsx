@@ -55,7 +55,7 @@ export const TableSection = () => {
           ))}
         </div>
       </div>
-      <div className="flex px-2 mt-1">
+      <div className="flex px-2 mt-3">
         <Button
           type="button"
           variant="empty"
