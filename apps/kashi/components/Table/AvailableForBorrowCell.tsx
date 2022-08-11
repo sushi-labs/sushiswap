@@ -1,13 +1,15 @@
-import { formatPercent } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { useTokensFromKashiPair } from '../../lib/hooks'
 import { CellProps } from './types'
 
-export const TotalBorrowCell: FC<CellProps> = ({ row }) => {
+export const AvailableForBorrowCell: FC<CellProps> = ({ row }) => {
+  const { asset } = useTokensFromKashiPair(row)
+
   return (
     <Typography variant="sm" weight={500} className="text-slate-50 truncate">
-      {formatPercent(row.utilization)}%
+      {'0.00'} {asset.symbol}
     </Typography>
   )
 }

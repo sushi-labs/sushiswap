@@ -1,4 +1,5 @@
-import { useBreakpoint } from '@sushiswap/ui'
+import { chainShortName } from '@sushiswap/chain'
+import { Chip, Typography, useBreakpoint } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -13,24 +14,16 @@ import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
 import {
-  BORROW_APR_COLUMN,
+  AVAILABLE_FOR_BORROW_COLUMN,
   BORROW_ASSET_COLUMN,
   GenericTable,
   NETWORK_COLUMN,
   PAGE_SIZE,
-  SUPPLY_APR_COLUMN,
+  TOTAL_APR_COLUMN,
   TOTAL_ASSET_COLUMN,
-  TOTAL_BORROW_COLUMN,
 } from '../../Table'
 
-const COLUMNS = [
-  NETWORK_COLUMN,
-  BORROW_ASSET_COLUMN,
-  SUPPLY_APR_COLUMN,
-  TOTAL_ASSET_COLUMN,
-  TOTAL_BORROW_COLUMN,
-  BORROW_APR_COLUMN,
-]
+const COLUMNS = [NETWORK_COLUMN, BORROW_ASSET_COLUMN, TOTAL_APR_COLUMN, TOTAL_ASSET_COLUMN, AVAILABLE_FOR_BORROW_COLUMN]
 
 const fetcher = ({
   url,
@@ -63,6 +56,8 @@ const fetcher = ({
 export const BorrowTableForSymbol: FC = () => {
   const router = useRouter()
   const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
+  const { isLg } = useBreakpoint('lg')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -93,22 +88,33 @@ export const BorrowTableForSymbol: FC = () => {
 
   const onClick = useCallback(
     (row: Row<KashiPair>) => {
-      void router.push(`/${row.original.id}`)
+      void router.push(`/borrow/${chainShortName[row.original.chainId]}:${row.original.id}`)
     },
     [router]
   )
 
   useEffect(() => {
-    if (isSm) {
+    if (isSm && !isMd && !isLg) {
+      setColumnVisibility({ reward: false, supply: false, totalAsset: false })
+    } else if (isSm && isMd && !isLg) {
+      setColumnVisibility({ reward: false, supply: false })
+    } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ network: false, rewards: false })
+      setColumnVisibility({ network: false, reward: false, supply: false, totalAsset: false })
     }
-  }, [isSm])
+  }, [isLg, isMd, isSm])
 
   return (
-    <div className="flex flex-col gap-4">
-      <GenericTable<KashiPair> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
-    </div>
+    <>
+      <div className="flex w-full flex-col gap-6">
+        <Typography variant="h3" weight={500} className="flex gap-2 items-center text-slate-50 font-semibold">
+          Borrow Markets <Chip label={pairs?.length} color="blue" />
+        </Typography>
+      </div>
+      <div className="flex flex-col gap-4">
+        <GenericTable<KashiPair> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
+      </div>
+    </>
   )
 }

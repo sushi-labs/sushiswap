@@ -2,6 +2,7 @@ import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromKashiPair } from '../../lib/hooks'
+import { IconListVariableSizes } from '../IconListVariableSizes'
 import { ICON_SIZE } from './constants'
 import { CellProps } from './types'
 
@@ -10,14 +11,7 @@ export const LendAssetCell: FC<CellProps> = ({ row }) => {
 
   return (
     <div className="flex items-center">
-      <div className="flex items-baseline min-w-[54px] min-h-[40px]">
-        <div className="z-[1] w-[32px] h-[32px]">
-          <Currency.Icon currency={asset} width={32} height={32} />
-        </div>
-        <div className="-ml-2.5 w-[20px] h-[20px]">
-          <Currency.Icon currency={collateral} width={20} height={20} />
-        </div>
-      </div>
+      <IconListVariableSizes token0={asset} token1={collateral} />
       <div className="flex flex-col">
         <Typography variant="sm" weight={600} className="text-slate-50">
           {asset.symbol}

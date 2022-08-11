@@ -44,3 +44,50 @@ query CrossChainKashiPairs($first: Int = 1000, $orderBy: KashiPair_orderBy, $ord
     totalFeesEarnedFraction
   }
 }
+
+query CrossChainKashiPair($id: String!, $now: Int!, $chainId: BigInt!) {
+  crossChainKashiPair(id: $id, now: $now, chainId: $chainId) {
+    id
+    chainId
+    chainName
+    masterContract {
+      id
+    }
+    name
+    symbol
+    decimals
+    collateral {
+      id
+      name
+      symbol
+      decimals
+    }
+    asset {
+      id
+      name
+      symbol
+      decimals
+    }
+    oracle
+    oracleData
+    totalCollateralShare
+    totalAsset {
+      base
+      elastic
+    }
+    totalBorrow {
+      base
+      elastic
+    }
+    exchangeRate
+    accrueInfo {
+      interestPerSecond
+      lastAccrued
+      feesEarnedFraction
+    }
+    supplyAPR
+    borrowAPR
+    utilization
+    totalFeesEarnedFraction
+  }
+}

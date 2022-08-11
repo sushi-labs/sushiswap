@@ -11,7 +11,7 @@ interface GenericTableProps<T> {
   variant?: 'default' | 'popover'
   size?: 'default' | 'lg'
   table: ReactTableType<T>
-  columns: ExtendedColumnDef<T>[]
+  columns: ExtendedColumnDef<T, unknown>[]
   onClick(row: Row<T>): void
   HoverElement?: React.FunctionComponent<{ row: T }>
 }
@@ -101,7 +101,7 @@ export const GenericTable = <T extends { id: string }>({
                   key={row.id}
                   onClick={() => {
                     setShowOverlay(true)
-                    void router.push(`/${row.original.id}`)
+                    onClick(row)
                   }}
                   className="cursor-pointer"
                 >

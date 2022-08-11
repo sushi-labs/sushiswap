@@ -1,4 +1,4 @@
-import { Typography, useBreakpoint } from '@sushiswap/ui'
+import { Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
@@ -37,10 +37,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
 export const BorrowTable: FC = () => {
   const router = useRouter()
-  const { isSm } = useBreakpoint('sm')
-
   const [sorting, setSorting] = useState<SortingState>([{ id: 'borrowAPR', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
@@ -54,7 +51,6 @@ export const BorrowTable: FC = () => {
     columns: COLUMNS,
     state: {
       sorting,
-      columnVisibility,
     },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
@@ -66,18 +62,10 @@ export const BorrowTable: FC = () => {
 
   const onClick = useCallback(
     (row: Row<KashiPair>) => {
-      void router.push(`/borrow/${row.original.collateral.symbol.toLowerCase()}`)
+      void router.push(`/borrow/markets/${row.original.collateral.symbol.toLowerCase()}`)
     },
     [router]
   )
-
-  useEffect(() => {
-    if (isSm) {
-      setColumnVisibility({})
-    } else {
-      setColumnVisibility({ network: false, rewards: false })
-    }
-  }, [isSm])
 
   return (
     <div className="flex flex-col gap-4">
