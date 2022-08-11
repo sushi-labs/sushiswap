@@ -13,7 +13,7 @@ export const transformVestingFormData: TransformVestingFormData = (payload) => {
     ? new Token({
         chainId: currency.chainId,
         decimals: currency.decimals,
-        address: currency.address,
+        address: currency.wrapped.address,
         name: currency.name,
         symbol: currency.symbol,
       })
