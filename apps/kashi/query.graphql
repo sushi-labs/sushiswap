@@ -1,0 +1,48 @@
+query CrossChainKashiPairs($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainKashiPairs(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    masterContract {
+      id
+    }
+    name
+    symbol
+    decimals
+    collateral {
+      id
+      name
+      symbol
+      decimals
+    }
+    asset {
+      id
+      name
+      symbol
+      decimals
+    }
+    oracle
+    oracleData
+    totalCollateralShare
+    totalAsset {
+      base
+      elastic
+    }
+    totalBorrow {
+      base
+      elastic
+    }
+    exchangeRate
+    accrueInfo {
+      interestPerSecond
+      lastAccrued
+      feesEarnedFraction
+    }
+    kpi {
+      supplyAPR
+      borrowAPR
+      utilization
+      totalFeesEarnedFraction
+    }
+  }
+}

@@ -18,7 +18,7 @@ import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
 import { PoolState, useConstantProductPools } from './useConstantProductPools'
-import { PairState, usePairs } from './usePairs'
+import { PairState, usePairs } from './usePairs2'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -143,7 +143,7 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof Pair),
+          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )
@@ -160,7 +160,7 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          filteredPools.filter((pool): pool is Pair | ConstantProductPool => pool instanceof ConstantProductPool),
+          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
           data.gasPrice.toNumber()
         )

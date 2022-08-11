@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useMemo } from 'react'
-import { useContractInfiniteReads } from 'wagmi'
+import { useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
 import { BalanceMap } from './types'
 import { useBentoBalance, useBentoBalances } from './useBentoBalance'
@@ -15,10 +15,10 @@ type UseBalancesParams = {
   chainId?: ChainId
 }
 
-type UseBalances = (params: UseBalancesParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseBalances = (params: UseBalancesParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useWagmiBalance>, 'isError' | 'isLoading'>
+) & {
   data: BalanceMap
 }
 
@@ -61,10 +61,10 @@ type UseBalanceParams = {
   chainId?: ChainId
 }
 
-type UseBalance = (params: UseBalanceParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseBalance = (params: UseBalanceParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useWagmiBalance>, 'isError' | 'isLoading'>
+) & {
   data: Record<FundSource, Amount<Type>> | undefined
 }
 

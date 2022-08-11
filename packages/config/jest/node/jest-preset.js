@@ -1,4 +1,6 @@
-module.exports = {
+// @ts-check
+/** @type {import('jest').Config} */
+const jestConfig = {
   roots: ['<rootDir>'],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -7,3 +9,5 @@ module.exports = {
   modulePathIgnorePatterns: ['<rootDir>/test/__fixtures__', '<rootDir>/node_modules', '<rootDir>/dist'],
   preset: 'ts-jest',
 }
+
+module.exports = jestConfig

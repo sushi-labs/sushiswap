@@ -2,7 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/solid'
 import { useInterval } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { classNames, Popover, ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import { classNames, ProgressBar, ProgressColor, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FuroStatus, PeriodType, Vesting } from 'lib'
 import { FC, useState } from 'react'
@@ -88,8 +88,7 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
   const progress = Math.min(Math.max(now - start, 0) / (end - start), 1)
 
   return (
-    <Popover
-      hover
+    <Tooltip
       button={
         <div
           className={classNames(
@@ -117,7 +116,7 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
         </div>
       }
       panel={
-        <div className="flex flex-col gap-3 p-3 bg-slate-700">
+        <div className="flex flex-col gap-3">
           <Typography variant="xxs" weight={500} className="text-slate-300">
             {vesting.status === FuroStatus.CANCELLED ? 'Cancelled' : 'Unlocks In'}
           </Typography>
@@ -157,7 +156,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   </Typography>
                 </Typography>
                 <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {vesting?.withdrawnAmount ? vesting.amount.toExact() : '0.000'} {vesting?.token.symbol} Total
+                  / {vesting?.withdrawnAmount ? vesting.amount.toSignificant(6) : '0.000'} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>

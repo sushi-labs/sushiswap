@@ -258,6 +258,19 @@ export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToToke
   SUSHI_ADDRESS
 )
 
+export const XSUSHI_ADDRESS: AddressMap = {
+  [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
+}
+
+export const XSUSHI: Record<keyof typeof XSUSHI_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'XSUSHI',
+    name: 'SushiBar',
+  },
+  XSUSHI_ADDRESS
+)
+
 export const USDC_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
   [ChainId.RINKEBY]: '0x1717A0D5C8705EE89A8aD6E808268D6A826C97A4',

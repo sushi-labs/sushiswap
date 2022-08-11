@@ -1,0 +1,52 @@
+sources:
+  - name: Exchange
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+  - name: Staking
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
+  - name: Bar
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/bar}
+  - name: Blocks-ethereum
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+
+additionalTypeDefs: |
+  extend type Pair {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+  }
+  extend type Bundle {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Farm {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type User {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Query {
+    crossChainPair(id: String!, now: Int!, chainId: BigInt!): Pair!
+    crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [Pair!]!
+    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
+    crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
+    crossChainUser(id: String!, chainIds: [BigInt!]!): User!
+  }
+
+additionalResolvers:
+  - ./resolvers.ts
+
+documents:
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'

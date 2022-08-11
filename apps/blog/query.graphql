@@ -167,7 +167,7 @@ query getAllArticlesWithSlug {
     }
 }
 
-query getGlobalPage {
+query getGlobalSEO {
     global {
         data {
             id

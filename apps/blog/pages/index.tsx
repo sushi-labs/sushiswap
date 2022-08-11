@@ -1,14 +1,14 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { Button, Container } from '@sushiswap/ui'
+import { BlogSeo } from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, CmsTypes } from '../.mesh'
-import { ArticleList, Card, Categories, Hero, Seo } from '../components'
+import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
+import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
-import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 10 } })
@@ -25,18 +25,15 @@ export async function getStaticProps() {
   }
 }
 
-const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { global: GlobalEntity }> = ({
-  global,
-  fallback,
-}) => {
+const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Global }> = ({ fallback, seo }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Home global={global} />
+      <_Home seo={seo} />
     </SWRConfig>
   )
 }
 
-const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
+const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 200)
 
@@ -72,7 +69,7 @@ const _Home: FC<{ global: GlobalEntity }> = ({ global }) => {
 
   return (
     <>
-      <Seo global={global} />
+      <BlogSeo seo={seo} />
       <div className="flex flex-col divide-y divide-slate-800">
         {articles?.[0] && <Hero article={articles[0]} />}
         <section className="py-10 pb-60">

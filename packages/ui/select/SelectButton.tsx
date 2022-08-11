@@ -32,7 +32,7 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(
       <>
         <Typography
           variant="sm"
-          weight={children ? 700 : 400}
+          weight={children ? 500 : 400}
           className={classNames(children ? '' : 'text-slate-600', 'block truncate')}
         >
           {children}

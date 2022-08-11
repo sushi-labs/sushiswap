@@ -1,5 +1,5 @@
 import { CashIcon, InformationCircleIcon } from '@heroicons/react/outline'
-import { Popover, Switch, Typography } from '@sushiswap/ui'
+import { Switch, Tooltip, Typography } from '@sushiswap/ui'
 import { useState } from 'react'
 
 export const DustAmount = () => {
@@ -15,12 +15,11 @@ export const DustAmount = () => {
             <Typography variant="sm" weight={500}>
               Dust Amount
             </Typography>
-            <Popover
-              tabIndex={-1}
-              hover
+            <Tooltip
+              placement="top"
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
-                <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
+                <Typography variant="xs" weight={500}>
                   Native token to be received on destination chain
                 </Typography>
               }

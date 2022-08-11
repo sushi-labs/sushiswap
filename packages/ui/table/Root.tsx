@@ -4,9 +4,11 @@ const Root: FC<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElemen
   children,
   ...props
 }) => (
-  <table {...props} className="w-full border-collapse">
-    {children}
-  </table>
+  <div className="overflow-hidden overflow-x-auto rounded-xl sm:rounded-2xl z-10 shadow-md shadow-black/20">
+    <table {...props} className="w-full border-collapse">
+      {children}
+    </table>
+  </div>
 )
 
 export default Root

@@ -3,21 +3,19 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, CmsTypes, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
+import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
   ArticleHeader,
   ArticleLinks,
+  ArticleSeo,
   Breadcrumb,
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
-  Seo,
-  SeoType,
 } from '../components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
-import GlobalEntity = CmsTypes.GlobalEntity
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
@@ -43,7 +41,9 @@ export async function getStaticProps({
 
   return {
     props: {
+      // @ts-ignore
       article: data?.articles?.data?.[0],
+      // @ts-ignore
       latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },
@@ -52,36 +52,20 @@ export async function getStaticProps({
 }
 
 interface ArticlePage {
-  global: GlobalEntity
   article?: ArticleEntity
   latestArticles?: ArticleEntity[]
   preview: boolean
 }
 
-const ArticlePage: FC<ArticlePage> = ({ global, article, latestArticles, preview }) => {
+const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
   if (!router.isFallback && !article?.attributes?.slug) {
     return <ErrorPage statusCode={404} />
   }
 
-  const seo: SeoType = article?.attributes
-    ? {
-        id: article?.id as string,
-        slug: article?.attributes.slug,
-        metaTitle: article?.attributes.title,
-        metaDescription: article?.attributes.description,
-        shareImage: article?.attributes.cover,
-        article: true,
-        tags: article?.attributes.categories?.data.reduce<string[]>((acc, el) => {
-          if (el?.attributes?.name) acc.push(el?.attributes.name)
-          return acc
-        }, []),
-      }
-    : undefined
-
   return (
     <>
-      <Seo global={global} seo={seo} />
+      <ArticleSeo article={article?.attributes} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
       <Container maxWidth="2xl" className="px-4 mx-auto my-16">

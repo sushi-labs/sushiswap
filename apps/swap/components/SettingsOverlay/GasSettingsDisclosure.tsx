@@ -3,7 +3,7 @@ import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outlin
 import { ChainId } from '@sushiswap/chain'
 import { useIsMounted } from '@sushiswap/hooks'
 import { GasPrice } from '@sushiswap/redux-localstorage'
-import { classNames, DEFAULT_INPUT_UNSTYLED, GasIcon, Input, Popover, Tab, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, GasIcon, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useFeeData } from 'wagmi'
 
@@ -108,7 +108,7 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             <Typography variant="xs" weight={500} className="text-slate-400">
                               Instant
                             </Typography>
-                            <Typography variant="sm" weight={700} className="text-slate-200">
+                            <Typography variant="sm" weight={500} className="text-slate-200">
                               {data && (Number(data.formatted.gasPrice) * 2).toFixed(1)} Gwei
                             </Typography>
                             <Typography variant="xxs" weight={500} className="text-slate-400">
@@ -121,7 +121,7 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             <Typography variant="xs" weight={500} className="text-slate-400">
                               Fast
                             </Typography>
-                            <Typography variant="sm" weight={700} className="text-slate-200">
+                            <Typography variant="sm" weight={500} className="text-slate-200">
                               {data && (Number(data.formatted.gasPrice) * 1.5).toFixed(1)} Gwei
                             </Typography>
                             <Typography variant="xxs" weight={500} className="text-slate-400">
@@ -134,7 +134,7 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             <Typography variant="xs" weight={500} className="text-slate-400">
                               Standard
                             </Typography>
-                            <Typography variant="sm" weight={700} className="text-slate-200">
+                            <Typography variant="sm" weight={500} className="text-slate-200">
                               {data && (Number(data.formatted.gasPrice) * 1).toFixed(1)} Gwei
                             </Typography>
                             <Typography variant="xxs" weight={500} className="text-slate-400">
@@ -147,7 +147,7 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             <Typography variant="xs" weight={500} className="text-slate-400">
                               Slow
                             </Typography>
-                            <Typography variant="sm" weight={700} className="text-slate-200">
+                            <Typography variant="sm" weight={500} className="text-slate-200">
                               {data && (Number(data.formatted.gasPrice) * 0.75).toFixed(1)} Gwei
                             </Typography>
                             <Typography variant="xxs" weight={500} className="text-slate-400">
@@ -161,19 +161,17 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                   <Tab.Panel>
                     <div className="flex gap-1 mt-2">
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                        <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
+                        <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Fee
-                          <Popover
-                            tabIndex={-1}
-                            hover
+                          <Tooltip
                             button={<InformationCircleIcon width={14} height={14} />}
                             panel={
-                              <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                                <Typography variant="xs" weight={700}>
+                              <div className="w-80 flex flex-col gap-2">
+                                <Typography variant="xs" weight={500} className="text-slate-300">
                                   The max fee is the utmost amount of gas a user can pay for their transaction; you will
                                   not pay more.
                                 </Typography>
-                                <Typography variant="xs" weight={700}>
+                                <Typography variant="xs" weight={500} className="text-slate-300">
                                   It&apos;s calculated as the sum of the base fee and priority fee.
                                 </Typography>
                               </div>
@@ -188,20 +186,18 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             placeholder={data?.formatted.maxFeePerGas || ''}
                             className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                           />
-                          <Typography variant="xs" weight={700} className="text-slate-400">
+                          <Typography variant="xs" weight={500} className="text-slate-400">
                             Gwei
                           </Typography>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                        <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
+                        <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Priority Fee
-                          <Popover
-                            tabIndex={-1}
-                            hover
+                          <Tooltip
                             button={<InformationCircleIcon width={14} height={14} />}
                             panel={
-                              <Typography variant="xs" weight={700} className="bg-slate-600 !rounded-lg w-40 p-3">
+                              <Typography variant="xs" weight={500} className="w-80">
                                 This fee can be seen as an extra “tip” to miners, incentivizing them to prioritize your
                                 transaction
                               </Typography>
@@ -216,7 +212,7 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) =>
                             placeholder={data?.formatted.maxPriorityFeePerGas || ''}
                             className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                           />
-                          <Typography variant="xs" weight={700} className="text-slate-400">
+                          <Typography variant="xs" weight={500} className="text-slate-400">
                             Gwei
                           </Typography>
                         </div>

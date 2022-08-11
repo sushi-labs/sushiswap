@@ -3,13 +3,18 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Link, Select, SushiIcon } from '../index'
+import { classNames, Link, Select, SushiIcon, useBreakpoint } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
-  Furo = 'Streaming & Vesting',
+  Furo = 'Streaming',
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
+  Internal = 'Internal',
+  Kashi = 'Kashi',
+  Analytics = 'Analytics',
+  Pool = 'Liquidity',
+  Partner = 'Partner',
 }
 
 const LINK = {
@@ -17,6 +22,11 @@ const LINK = {
   [AppType.Furo]: '/furo',
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
+  [AppType.Internal]: '/internal',
+  [AppType.Kashi]: '/internal',
+  [AppType.Analytics]: '/analytics',
+  [AppType.Pool]: '/pool',
+  [AppType.Partner]: '/partner',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -34,15 +44,25 @@ export function Header({
   ...props
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
+  const { isMd } = useBreakpoint('md')
+
+  // Show when:
+  // 1. We scroll down for 45px
+  // 2. When body has a negative top set for body lock for Dialogs on small screens
+  const showBackground =
+    (scrollY > 45 && withScrollBackground) ||
+    (typeof window !== 'undefined' && !isMd
+      ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
+      : false)
 
   return (
     <header
-      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[100] h-[54px]', className)}
+      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[1070] h-[54px]', className)}
       {...props}
     >
       <Transition
         as={Fragment}
-        show={scrollY > 45 && withScrollBackground}
+        show={showBackground}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"
@@ -50,10 +70,10 @@ export function Header({
         leaveFrom="translate-y-0"
         leaveTo="translate-y-[-100%]"
       >
-        <div className="bg-slate-900 border-slate-200/10 border-b absolute inset-0 pointer-events-none" />
+        <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
       <div className="grid grid-cols-3 items-center max-w-5xl w-full mx-auto z-[101] px-4">
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">
               <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
@@ -64,7 +84,7 @@ export function Header({
             button={
               <Listbox.Button
                 type="button"
-                className="flex gap-2 items-center font-semibold hover:text-slate-200 text-slate-300"
+                className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
                 <span className="text-sm capitalize truncate">
                   {appType === AppType.Swap ? 'Explore Apps' : appType}

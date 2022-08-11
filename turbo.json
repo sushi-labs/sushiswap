@@ -52,7 +52,7 @@
       ],
       "cache": true
     },
-    "test": {
+    "test": {    
       "outputs": [
         "coverage/**"
       ],
@@ -76,22 +76,18 @@
       ],
       "outputs": [
         "exports.json"
-      ]
+      ],
+      "cache": true
     },
     "node": {
-      "cache": true,
       "dependsOn": [
         "build"
       ],
       "outputs": [
         "deployments/**"
-      ]
+      ],
+      "cache": true
     }
   },
-  "globalDependencies": [
-    ".env",
-    "tsconfig.json",
-    "$NODE_ENV"
-  ],
   "baseBranch": "origin/master"
 }

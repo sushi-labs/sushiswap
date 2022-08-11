@@ -4,6 +4,9 @@ pragma solidity 0.8.10;
 
 import "../interfaces/IFuroStream.sol";
 
+
+// Use the FuroStreamRouter to create Streams and do not create streams directly.
+
 contract FuroStream is
     IFuroStream,
     ERC721("Furo Stream", "FUROSTREAM"),

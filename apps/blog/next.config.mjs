@@ -2,7 +2,9 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
@@ -10,4 +12,6 @@ export default withTranspileModules({
   basePath: '/blog',
   reactStrictMode: true,
   swcMinify: false,
-})
+}
+
+export default withTranspileModules(nextConfig)

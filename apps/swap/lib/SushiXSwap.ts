@@ -99,24 +99,24 @@ export abstract class Cooker implements Cooker {
   }
 
   srcDepositToBentoBox(
-    token: Currency,
+    currency: Currency,
     recipient = this.user,
     amount: BigNumberish = Zero,
     share: BigNumberish = Zero
   ): void {
     if (this.debug)
       console.debug('cook src depoit to bentobox', {
-        token,
+        currency,
         recipient,
         amount,
         share,
       })
     const data = defaultAbiCoder.encode(
       ['address', 'address', 'uint256', 'uint256'],
-      [token.isNative ? AddressZero : token.address, recipient, BigNumber.from(amount), BigNumber.from(share)]
+      [currency.isToken ? currency.address : AddressZero, recipient, BigNumber.from(amount), BigNumber.from(share)]
     )
 
-    const value = token.isNative ? amount : Zero
+    const value = currency.isNative ? amount : Zero
 
     this.add(Action.SRC_DEPOSIT_TO_BENTOBOX, data, value)
   }
@@ -155,7 +155,7 @@ export abstract class Cooker implements Cooker {
       Action.DST_DEPOSIT_TO_BENTOBOX,
       defaultAbiCoder.encode(
         ['address', 'address', 'uint256', 'uint256'],
-        [token.isNative ? AddressZero : token.address, to, BigNumber.from(amount), BigNumber.from(share)]
+        [token.isToken ? token.address : AddressZero, to, BigNumber.from(amount), BigNumber.from(share)]
       ),
       token.isNative ? amount : Zero
     )
@@ -177,7 +177,7 @@ export abstract class Cooker implements Cooker {
   ): void {
     const data = defaultAbiCoder.encode(
       ['address', 'address', 'uint256', 'uint256', 'bool'],
-      [token.isNative ? AddressZero : token.address, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
+      [token.isToken ? token.address : AddressZero, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
     )
     const value = token.isNative ? amount : Zero
     this.add(Action.DST_WITHDRAW_FROM_BENTOBOX, data, value)
@@ -278,7 +278,7 @@ export abstract class Cooker implements Cooker {
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? getBigNumber(trade.route.amountIn).sub(
+                          ? trade.route.amountInBN.sub(
                               initialPath.reduce(
                                 (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
@@ -882,8 +882,9 @@ export class SushiXSwap {
 
       // console.log(`Successful Fee`, fee)
 
+      const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee)
       return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
-        value: this.srcCooker.values.reduce((a, b) => a.add(b), fee),
+        value
       })
     } catch (error) {
       console.error('SushiXSwap Fee Error', error)

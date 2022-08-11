@@ -1,7 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
-import { Badge, BentoboxIcon, Button, classNames, IconButton, Popover, Typography } from '@sushiswap/ui'
+import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
@@ -29,6 +29,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     onSignature,
     allApproved,
     initialized,
+    hideIcon,
     ...props
   }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract, onSignature })
@@ -67,6 +68,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     }, [approvalState, disabled, dispatch, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition
@@ -80,10 +82,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
         leaveTo="opacity-0 scale-95"
       >
         <DefaultButton as="div" {...props}>
-          <Popover
-            as="div"
-            hover
-            disableClickListener
+          <Tooltip
             button={
               <Badge
                 badgeContent={
@@ -114,7 +113,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
               </Badge>
             }
             panel={
-              <div className="bg-slate-800 p-3 flex flex-col gap-3 max-w-[200px]">
+              <div className="flex flex-col gap-3 max-w-[200px]">
                 <Typography variant="xs" weight={500}>
                   Status:
                   <span

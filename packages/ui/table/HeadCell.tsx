@@ -9,7 +9,7 @@ const HeadCell: FC<
     {...props}
     className={classNames(
       className,
-      'h-12 px-4 text-sm font-medium border-b border-slate-800 text-slate-400 hover:text-high-emphesis'
+      'h-12 px-3 sm:px-4 text-sm font-medium text-slate-400 hover:text-high-emphesis whitespace-nowrap'
     )}
   >
     {children}

@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI, ZERO } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { useContractInfiniteReads, useContractReads } from 'wagmi'
+import { useContractReads } from 'wagmi'
 
 import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 
@@ -15,7 +15,7 @@ type UseBentoBalancesParams = {
 }
 
 type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
+  ReturnType<typeof useContractReads>,
   'isError' | 'isLoading'
 > & {
   data: Record<string, Amount<Type>> | undefined
@@ -144,7 +144,7 @@ type UseBentoBalanceParams = {
 }
 
 type UseBentoBalance = (params: UseBentoBalanceParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
+  ReturnType<typeof useContractReads>,
   'isError' | 'isLoading'
 > & {
   data: Record<string, Amount<Type>> | undefined

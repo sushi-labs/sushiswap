@@ -84,7 +84,7 @@ export const Button = <C extends React.ElementType>({
                 </Menu.Button>
               }
             >
-              <Menu.Items>
+              <Menu.Items className="z-[100]">
                 <div>
                   {isMounted &&
                     connectors.map((connector) => (
@@ -135,7 +135,7 @@ export const Button = <C extends React.ElementType>({
                           className="right-0"
                           button={
                             <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
-                              <Typography variant="sm" weight={700} className="tracking-wide text-slate-50">
+                              <Typography variant="sm" weight={500} className="tracking-wide text-slate-50">
                                 {ens ? ens : address ? shortenAddress(address) : ''}
                               </Typography>
                             </Menu.Button>

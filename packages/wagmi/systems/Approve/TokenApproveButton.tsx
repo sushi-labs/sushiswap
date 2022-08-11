@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { Amount, Currency } from '@sushiswap/currency'
-import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Popover, Typography } from '@sushiswap/ui'
+import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
 import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
@@ -16,7 +16,19 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
-  ({ watch = true, amount, address, render, dispatch, disabled, index, allApproved, initialized, ...props }) => {
+  ({
+    watch = true,
+    amount,
+    address,
+    render,
+    dispatch,
+    disabled,
+    index,
+    allApproved,
+    hideIcon,
+    initialized,
+    ...props
+  }) => {
     const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
 
     // Set to undefined on unmount
@@ -65,6 +77,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     ])
 
     if (render) return render({ approvalState, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition
@@ -84,10 +97,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         leaveTo="opacity-0 scale-95"
       >
         <DefaultButton as="div" {...props}>
-          <Popover
-            as="div"
-            disableClickListener
-            hover
+          <Tooltip
             button={
               <Badge
                 badgeContent={
@@ -111,12 +121,12 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                   )}
                   onClick={onApprove}
                 >
-                  {amount && <CurrencyFromUi.Icon currency={amount?.currency} width="100%" height="100%" />}
+                  {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />}
                 </IconButton>
               </Badge>
             }
             panel={
-              <div className="flex flex-col gap-2 bg-slate-800 max-w-[200px] p-3">
+              <div className="flex flex-col gap-2 max-w-[200px]">
                 <Typography variant="xs" weight={500}>
                   Status:
                   <span
