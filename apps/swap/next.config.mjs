@@ -10,7 +10,9 @@ const withTranspileModules = transpileModules([
   '@sushiswap/swap-widget',
 ])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: true,
@@ -34,4 +36,6 @@ export default withTranspileModules({
       },
     ]
   },
-})
+}
+
+export default withTranspileModules(nextConfig)

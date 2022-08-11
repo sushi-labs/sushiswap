@@ -1,0 +1,27 @@
+query TridentToken($id: String!, $native: String!) {
+  Trident_token(id: $id) {
+    kpi {
+      liquidity
+        volumeUSD
+    }
+    price {
+      derivedNative
+    }
+  }
+
+  native:Trident_tokenPrice(id: $native) {
+    derivedUSD
+  }
+}
+
+query ExchangeToken($id: String!) {
+  Exchange_token(id: $id) {
+    derivedETH
+    liquidity
+    volumeUSD
+  }
+
+  Exchange_bundles(first: 1) {
+    ethPrice
+  }
+}

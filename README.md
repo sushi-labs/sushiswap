@@ -57,6 +57,7 @@ https://pnpm.io/installation
 - `kashi`
 - `miso`
 - `swap`
+- `partner`
 
 ### Creating a new app
 
