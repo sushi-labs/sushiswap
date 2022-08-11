@@ -153,6 +153,8 @@ export const CreateMultipleForm: FC = () => {
             failed: 'Something went wrong creating streams',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         log.tenderly({
           chainId: activeChain?.id,

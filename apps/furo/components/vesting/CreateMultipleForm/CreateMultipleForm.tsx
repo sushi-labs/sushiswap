@@ -181,6 +181,8 @@ export const CreateMultipleForm = () => {
             failed: 'Something went wrong creating vestings',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         console.log(contract.address, batchAction({ contract, actions }), summedValue.quotient.toString())
         log.tenderly({

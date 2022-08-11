@@ -99,7 +99,6 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
       : undefined
   }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
-  console.log({ cliffAmount, stepAmount })
   return (
     <Dialog open={open} onClose={onDismiss} unmount={false}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-sm relative overflow-hidden bg-slate-900 !pb-3">
