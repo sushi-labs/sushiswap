@@ -30,7 +30,9 @@
     "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
     "export": "hardhat export --export-all exports.json",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "compile": "hardhat compile",
+    "test": "hardhat test"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.0.0",
@@ -51,7 +53,9 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
+    "@types/chai": "^4.3.3",
     "@types/node": "^17.0.33",
+    "chai": "^4.3.6",
     "ethers": "^5.0.0",
     "hardhat": "^2.9.5",
     "hardhat-deploy": "^0.11.10",
