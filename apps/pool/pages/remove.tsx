@@ -28,7 +28,6 @@ import {
 } from '@sushiswap/wagmi'
 import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
@@ -71,7 +70,6 @@ const RemovePage = ({
   token1: _token1,
   chainId: _chainId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter()
   const chainId = Number(_chainId)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()

@@ -41,7 +41,7 @@ export const SushiBarSectionMobile: FC = () => {
   const amount = tryParseAmount(value, selectedIndex === 0 ? SUSHI_TOKEN : XSUSHI_TOKEN)
 
   const execute = useCallback(async () => {
-    if (!activeChain?.id || !amount.greaterThan(ZERO)) return
+    if (!activeChain?.id || !amount?.greaterThan(ZERO)) return
 
     const data = await writeAsync({ args: [amount.quotient.toString()] })
 

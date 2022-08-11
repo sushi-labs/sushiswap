@@ -17,7 +17,7 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
 
   return (
     <Typography variant="sm" weight={600} className="text-slate-50">
-      {formatUSD(value0 + value1)}
+      {formatUSD(Number(value0) + Number(value1))}
     </Typography>
   )
 }
