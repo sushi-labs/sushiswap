@@ -2,12 +2,12 @@ import { Signature } from '@ethersproject/bytes'
 import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
-import { Amount } from '@sushiswap/currency'
+import { Amount, Currency } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, createToast, Dots, Form } from '@sushiswap/ui'
-import { BENTOBOX_ADDRESS, useFuroStreamContract } from '@sushiswap/wagmi'
+import { BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -23,7 +23,7 @@ export const CreateForm: FC = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const [error, setError] = useState<string>()
-  const contract = useFuroStreamContract(activeChain?.id)
+  const contract = useFuroStreamRouterContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
 
@@ -50,12 +50,12 @@ export const CreateForm: FC = () => {
   // @ts-ignore
   const [currency, amount] = watch(['currency', 'amount'])
 
-  const amountAsEntity = useMemo(() => {
+  const amountAsEntity = useMemo<Amount<Currency> | undefined>(() => {
     if (!currency || !amount) return undefined
 
     let value = undefined
     try {
-      value = Amount.fromRawAmount(currency, JSBI.BigInt(parseUnits(amount, currency.decimals).toString()))
+      value = Amount.fromRawAmount(currency, JSBI.BigInt(parseUnits(String(amount), currency.decimals).toString()))
     } catch (e) {
       console.debug(e)
     }
@@ -63,9 +63,11 @@ export const CreateForm: FC = () => {
     return value
   }, [amount, currency])
 
+  const rebase = useBentoBoxTotal(activeChain?.id, amountAsEntity?.currency)
+
   const onSubmit: SubmitHandler<CreateStreamFormData> = useCallback(
     async (data) => {
-      if (!amountAsEntity || !contract || !address || !activeChain?.id) return
+      if (!amountAsEntity || !contract || !address || !activeChain?.id || !rebase) return
 
       // Can cast here safely since input must have been validated already
       const _data = data as CreateStreamFormDataValidated
@@ -82,8 +84,11 @@ export const CreateForm: FC = () => {
           endDate: new Date(_data.endDate),
           amount: amountAsEntity,
           fromBentobox: _data.fundSource === FundSource.BENTOBOX,
+          minShare: amountAsEntity.toShare(rebase),
         }),
       ]
+
+      console.log({ value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0' })
 
       try {
         const data = await sendTransactionAsync({
@@ -123,7 +128,7 @@ export const CreateForm: FC = () => {
         })
       }
     },
-    [address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature]
+    [address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature, rebase]
   )
 
   useEffect(() => {

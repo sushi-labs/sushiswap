@@ -58,6 +58,8 @@ export type CreateVestingFormDataTransformedAndValidated = Omit<
   cliffDuration: JSBI
   stepPercentage: JSBI
   totalAmount: Amount<Type> | undefined
+  cliffAmount: Amount<Type> | undefined
+  stepAmount: Amount<Type> | undefined
 }
 
 export type CreateMultipleVestingFormData = {

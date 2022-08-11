@@ -8,7 +8,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, classNames, createToast, Currency, Dots, Form, Link as UILink, Table, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useFuroStreamContract, usePrices } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroStreamRouterContract, usePrices } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -25,7 +25,7 @@ import { transformStreamFormData } from './transformStreamFormData'
 export const CreateMultipleForm: FC = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
-  const contract = useFuroStreamContract(activeChain?.id)
+  const contract = useFuroStreamRouterContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
@@ -59,24 +59,36 @@ export const CreateMultipleForm: FC = () => {
   // @ts-ignore
   const streams = watch('streams')
 
+  const rebases = useBentoBoxTotals(
+    activeChain?.id,
+    streams.map((stream) => stream.currency)
+  )
+
   const onSubmit: SubmitHandler<CreateMultipleStreamFormData> = useCallback(
     async (data) => {
-      if (!contract || !address || !activeChain?.id || !data.streams) return
+      if (!contract || !address || !activeChain?.id || !data.streams || !rebases) return
 
       const summedValue = data.streams.reduce<Amount<Native>>((acc, cur) => {
         if (cur.currency?.isNative) {
-          const amount = tryParseAmount(cur.amount, cur.currency as Native)
-          if (amount) acc.add(amount)
+          const amount = tryParseAmount(String(cur.amount), cur.currency as Native)
+          if (amount) {
+            return acc.add(amount)
+          }
         }
-
         return acc
       }, Amount.fromRawAmount(Native.onChain(activeChain.id), '0'))
 
-      const actions = [
-        approveBentoBoxAction({ contract, user: address, signature }),
-        ...data.streams.reduce<string[]>((acc, { recipient, currency, startDate, endDate, amount, fundSource }) => {
-          if (recipient && amount && startDate && endDate) {
-            const parsedAmount = tryParseAmount(amount, currency as Type)
+      const actions = []
+
+      if (signature) {
+        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
+      }
+
+      data.streams
+        .reduce<string[]>((acc, { recipient, currency, startDate, endDate, amount, fundSource }) => {
+          if (recipient && amount && startDate && endDate && rebases?.[currency.wrapped.address]) {
+            const parsedAmount = tryParseAmount(String(amount), currency)
+            console.log('test', amount, currency, parsedAmount)
             if (parsedAmount) {
               acc.push(
                 streamCreationAction({
@@ -87,14 +99,15 @@ export const CreateMultipleForm: FC = () => {
                   endDate: new Date(endDate),
                   amount: parsedAmount,
                   fromBentobox: fundSource === FundSource.BENTOBOX,
+                  minShare: parsedAmount.toShare(rebases[currency.wrapped.address]),
                 })
               )
             }
           }
 
           return acc
-        }, []),
-      ]
+        }, [])
+        .forEach((action) => actions.push(action))
 
       try {
         const resp = await sendTransactionAsync({
@@ -130,7 +143,7 @@ export const CreateMultipleForm: FC = () => {
         })
       }
     },
-    [address, activeChain?.id, contract, sendTransactionAsync, signature]
+    [address, activeChain?.id, contract, sendTransactionAsync, signature, rebases]
   )
 
   useEffect(() => {
@@ -162,13 +175,12 @@ export const CreateMultipleForm: FC = () => {
     ? Object.values(
         validatedData.streams.reduce<Record<string, Amount<Type>>>((acc, cur) => {
           if (!cur.amount) return acc
-          const address = cur.amount.currency.isNative ? AddressZero : cur.amount.currency.address
+          const address = cur.amount.currency.isToken ? cur.amount.currency.address : AddressZero
           if (acc[address]) {
             acc[address] = acc[address].add(cur.amount)
           } else {
             acc[address] = cur.amount
           }
-
           return acc
         }, {})
       )
@@ -178,7 +190,7 @@ export const CreateMultipleForm: FC = () => {
     <div className={classNames('flex flex-col gap-10')}>
       <Link href="/stream/create" passHref={true}>
         <a>
-          <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
+          <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
           </button>
         </a>
@@ -192,18 +204,18 @@ export const CreateMultipleForm: FC = () => {
             )}
           >
             <ImportZone onErrors={setErrors} />
-            <div className="flex flex-col gap-4 col-span-2">
+            <div className="flex flex-col col-span-2 gap-4">
               <Typography weight={500}>Streams</Typography>
               <div className="flex flex-col">
                 {errors.map((el, idx) => (
-                  <Typography variant="sm" className="text-red flex gap-2 items-center" key={idx}>
+                  <Typography variant="sm" className="flex items-center gap-2 text-red" key={idx}>
                     <ExclamationCircleIcon width={20} height={20} />
                     {el}
                   </Typography>
                 ))}
                 {formStateErrors.streams?.map((errors, idx) =>
                   Object.entries(errors).map(([k, v]) => (
-                    <Typography variant="sm" className="text-red flex gap-2 items-center" key={`${idx}-${k}`}>
+                    <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
                       <ExclamationCircleIcon width={20} height={20} />
                       Stream {idx + 1}: {(v as any).message}
                     </Typography>
@@ -284,7 +296,7 @@ export const CreateMultipleForm: FC = () => {
                             <Table.td>
                               {activeChain && (
                                 <UILink.External
-                                  className="text-blue hover:underline-none hover:text-blue-400 flex items-center gap-1"
+                                  className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
                                   href={Chain.from(activeChain.id).getAccountUrl(el.recipient)}
                                 >
                                   {shortenAddress(el.recipient)} <ExternalLinkIcon width={16} height={16} />
@@ -329,7 +341,7 @@ export const CreateMultipleForm: FC = () => {
                   type="button"
                   variant="empty"
                   color="gray"
-                  className="whitespace-nowrap flex items-center gap-1"
+                  className="flex items-center gap-1 whitespace-nowrap"
                   onClick={() => setReview(false)}
                 >
                   <ArrowLeftIcon width={16} height={16} /> Go Back and Edit

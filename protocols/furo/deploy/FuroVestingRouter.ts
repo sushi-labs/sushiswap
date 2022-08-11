@@ -8,15 +8,18 @@ const func: DeployFunction = async ({
   getChainId,
   tenderly,
   run,
+  ethers,
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts()
   const { deploy } = deployments
 
   const chainId = Number(await getChainId())
 
-  const args = [BENTOBOX_ADDRESS[chainId], WNATIVE_ADDRESS[chainId]]
+  const { address: furoVestingAddress } = await deployments.get('FuroVesting')
 
-  const { address } = await deploy('FuroVesting', {
+  const args = [BENTOBOX_ADDRESS[chainId], furoVestingAddress, WNATIVE_ADDRESS[chainId]]
+
+  const { address } = await deploy('FuroVestingRouter', {
     from: deployer,
     args,
     waitConfirmations: 10,
@@ -27,26 +30,20 @@ const func: DeployFunction = async ({
       address,
       constructorArguments: args,
     })
+
     await tenderly.persistArtifacts([
       {
-        name: 'FuroVesting',
+        name: 'FuroVestingRouter',
         address,
       },
     ])
-
-    // await tenderly.verify([
-    //   {
-    //     name: 'FuroVesting',
-    //     address,
-    //   },
-    // ])
   } catch (error) {
     console.error(error)
   }
 
-  console.log(`Furo Vesting deployed to ${address}`)
+  console.log(`Furo Vesting Router deployed to ${address}`)
 }
 
-func.tags = ['FuroVesting']
+func.tags = ['FuroVestingRouter']
 
 export default func

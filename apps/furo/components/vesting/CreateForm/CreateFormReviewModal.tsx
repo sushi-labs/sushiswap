@@ -76,7 +76,11 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     return [
       cliff,
       step,
-      cliff && step ? step.multiply(stepPayouts).add(cliff) : step ? step.multiply(stepPayouts) : undefined,
+      cliff && stepAmount
+        ? stepAmount.multiply(stepPayouts).add(cliffAmount)
+        : stepAmount
+        ? stepAmount.multiply(stepPayouts)
+        : undefined,
       endDate,
     ]
   }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, currency])
@@ -95,6 +99,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
       : undefined
   }, [_cliffAmount, _stepAmount, cliffEndDate, open, startDate, stepConfig, stepPayouts, currency])
 
+  console.log({ cliffAmount, stepAmount })
   return (
     <Dialog open={open} onClose={onDismiss} unmount={false}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-sm relative overflow-hidden bg-slate-900 !pb-3">
@@ -140,7 +145,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                   title="Cliff Amount"
                   value={
                     <>
-                      {cliffAmount} {currency.symbol}
+                      {cliffAmount.toSignificant(6)} {currency.symbol}
                     </>
                   }
                 />
@@ -154,7 +159,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               title="Payment per Period"
               value={
                 <>
-                  {stepAmount} {currency.symbol}
+                  {stepAmount.toSignificant(6)} {currency.symbol}
                 </>
               }
             />
@@ -172,7 +177,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="!my-0 flex flex-col gap-1 absolute inset-0 bg-slate-900 flex items-center justify-center">
+          <div className="!my-0 flex flex-col gap-1 absolute inset-0 bg-slate-900 items-center justify-center">
             <Typography variant="lg" weight={500} className="text-slate-200">
               Start date has expired
             </Typography>
@@ -181,7 +186,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
             </Typography>
           </div>
         </Transition>
-        <div className="border-t border-slate-200/5 w-full pt-3" />
+        <div className="w-full pt-3 border-t border-slate-200/5" />
         <CreateFormButtons formData={formData} onDismiss={onDismiss} />
       </Dialog.Content>
     </Dialog>
