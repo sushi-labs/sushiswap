@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 
 import './interfaces/IFuroStream.sol';
 
-contract FuroStreamWrapper is Multicall {
+contract FuroStreamRouter is Multicall {
   IBentoBoxMinimal public immutable bentoBox;
   IFuroStream public immutable furoStream;
 
@@ -14,6 +14,7 @@ contract FuroStreamWrapper is Multicall {
   constructor(IBentoBoxMinimal _bentoBox, IFuroStream _furoStream) {
     bentoBox = _bentoBox;
     furoStream = _furoStream;
+    _bentoBox.registerProtocol();
     _bentoBox.setMasterContractApproval(address(this), address(_furoStream), true, 0, bytes32(0), bytes32(0));
   }
 
