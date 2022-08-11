@@ -67,21 +67,21 @@ yup.addMethod(yup.string, 'isAddress', function (msg: Message<{ address: string 
 
 export const createVestingSchema = yup.object({
   // @ts-ignore
-  currency: yup.mixed<Token>().currency().required('This field is required'),
-  cliff: yup.boolean().required('This field is required'),
+  currency: yup.mixed<Token>().currency().required('Currency is required'),
+  cliff: yup.boolean().required(),
   startDate: yup
     .date()
     .when('cliffEndDate', (cliffEndDate, schema) => {
       if (cliffEndDate instanceof Date && !isNaN(cliffEndDate?.getTime())) {
         const dayAfter = new Date(cliffEndDate.getTime() - 1)
-        return schema.max(dayAfter, 'Date must be earlier than cliff end date')
+        return schema.max(dayAfter, 'Start date must be earlier than cliff end date')
       }
       return schema
     })
     .min(new Date(Date.now() + 5 * 60 * 1000), 'Start date must be at least 5 minutes from now')
-    .required('This field is required'),
+    .required('Start date is required'),
   // @ts-ignore
-  recipient: yup.string().isAddress('Invalid recipient address').required('This field is required'),
+  recipient: yup.string().isAddress('Recipient address is invalid').required('Recipient address is required'),
   cliffEndDate: yup.date().when('cliff', {
     is: (value: boolean) => value,
     then: yup
@@ -90,11 +90,11 @@ export const createVestingSchema = yup.object({
       .when('startDate', (startDate, schema) => {
         if (startDate instanceof Date && !isNaN(startDate?.getTime())) {
           const dayAfter = new Date(startDate.getTime() + 1)
-          return schema.min(dayAfter, 'Date must be later than start date')
+          return schema.min(dayAfter, 'Cliff end date must be later than start date')
         }
         return schema
       })
-      .required('This field is required'),
+      .required('Cliff end date is required'),
     otherwise: yup.date().nullable().notRequired(),
   }),
   cliffAmount: yup
@@ -107,15 +107,15 @@ export const createVestingSchema = yup.object({
     }),
   stepPayouts: yup
     .number()
-    .min(1, 'Must be at least 1')
-    .integer('Must be a whole number')
-    .typeError('This field is required')
-    .required('This field is required'),
+    .min(1, 'Amount of periods must be at least 1')
+    .integer('Amount of periods must be a whole number')
+    .typeError('Amount of periods is required')
+    .required('Amount of periods is required'),
   stepAmount: yup
     .number()
-    .typeError('Target must be a number')
-    .min(0, 'Must be a positive number')
-    .required('This field is required'),
-  stepConfig: yup.mixed<StepConfig>().required('This field is required'),
-  fundSource: yup.mixed<FundSource>().required('This field is required'),
+    .typeError('Payout per period must be a number')
+    .min(0, 'Payout per period must be a positive number')
+    .required('Payout per period is required'),
+  stepConfig: yup.mixed<StepConfig>().required('Period length is required'),
+  fundSource: yup.mixed<FundSource>().required('Fund source is required'),
 })

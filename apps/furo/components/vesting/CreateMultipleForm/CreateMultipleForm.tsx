@@ -1,15 +1,35 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { ArrowCircleLeftIcon } from '@heroicons/react/outline'
+import {
+  ArrowCircleLeftIcon,
+  ArrowLeftIcon,
+  ExclamationCircleIcon,
+  ExternalLinkIcon,
+  TableIcon,
+} from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
-import { Button, createToast, Dots, Form, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useFuroVestingContract } from '@sushiswap/wagmi'
+import {
+  Button,
+  classNames,
+  createToast,
+  Currency,
+  Dots,
+  Form,
+  IconButton,
+  Link as UILink,
+  Popover,
+  Table,
+  Typography,
+} from '@sushiswap/ui'
+import { Approve, BENTOBOX_ADDRESS, useFuroVestingContract, usePrices } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
 
@@ -18,9 +38,11 @@ import {
   CreateMultipleVestingFormData,
   CreateMultipleVestingFormDataTransformed,
   CreateVestingFormData,
+  ScheduleReview,
   stepConfigurations,
   transformVestingFormData,
 } from '../CreateForm'
+import { createScheduleRepresentation } from '../createScheduleRepresentation'
 import { ImportZone } from './ImportZone'
 import { createMultipleVestingSchema } from './schema'
 import { TableSection } from './TableSection'
@@ -31,6 +53,9 @@ export const CreateMultipleForm = () => {
   const contract = useFuroVestingContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
+  const [errors, setErrors] = useState<string[]>([])
+  const [review, setReview] = useState(false)
+  const { data: prices } = usePrices({ chainId: activeChain?.id })
 
   const methods = useForm<CreateMultipleVestingFormData>({
     // @ts-ignore
@@ -56,7 +81,7 @@ export const CreateMultipleForm = () => {
   })
 
   const {
-    formState: { isValid, isValidating },
+    formState: { isValid, isValidating, errors: formStateErrors },
     reset,
     watch,
   } = methods
@@ -188,22 +213,185 @@ export const CreateMultipleForm = () => {
     : []
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(() => onSubmit(validatedData))}>
-        <div className="flex flex-col mt-10 gap-20">
-          <Link href="/vesting/create" passHref={true}>
-            <a>
-              <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
-                <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
-              </button>
-            </a>
-          </Link>
-          <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
-            <ImportZone />
+    <div className={classNames('flex flex-col gap-10')}>
+      <Link href="/vesting/create" passHref={true}>
+        <a>
+          <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
+            <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
+          </button>
+        </a>
+      </Link>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(() => onSubmit(validatedData))}>
+          <div
+            className={classNames(
+              review ? 'hidden md:hidden' : 'flex',
+              'flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20'
+            )}
+          >
+            <ImportZone onErrors={setErrors} />
             <div className="flex flex-col gap-4 col-span-2">
               <Typography weight={500}>Vestings</Typography>
+              <div className="flex flex-col">
+                {errors.map((el, idx) => (
+                  <Typography variant="sm" className="text-red flex gap-2 items-center" key={idx}>
+                    <ExclamationCircleIcon width={20} height={20} />
+                    {el}
+                  </Typography>
+                ))}
+                {formStateErrors.vestings?.map((errors, idx) =>
+                  Object.entries(errors).map(([k, v]) => (
+                    <Typography variant="sm" className="text-red flex gap-2 items-center" key={`${idx}-${k}`}>
+                      <ExclamationCircleIcon width={20} height={20} />
+                      Vesting {idx + 1}: {(v as any).message}
+                    </Typography>
+                  ))
+                )}
+              </div>
               <TableSection />
-              <Form.Buttons className="flex flex-col items-end gap-3">
+              <Form.Buttons className="flex flex-col items-end gap-3 mt-[-68px]">
+                <Button
+                  type="button"
+                  onClick={() => setReview(true)}
+                  disabled={formData?.vestings?.length === 0 || !isValid || isValidating}
+                >
+                  Review Details
+                </Button>
+              </Form.Buttons>
+            </div>
+          </div>
+          {review && (
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-col bg-white bg-opacity-[0.01] rounded-2xl p-6 gap-10">
+                <div className="flex flex-col gap-4">
+                  <Typography variant="h3" className="text-slate-50" weight={500}>
+                    Review Vestings
+                  </Typography>
+                  <Typography variant="sm" className="text-slate-400" weight={500}>
+                    Created vestings can be cancelled anytime by the owner of the stream.
+                  </Typography>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <Table.container>
+                    <Table.table>
+                      <Table.thead>
+                        <Table.thr>
+                          <Table.th className="text-left">Token</Table.th>
+                          <Table.th className="text-left">Amount</Table.th>
+                          <Table.th className="text-left">Value</Table.th>
+                        </Table.thr>
+                      </Table.thead>
+                      <Table.tbody>
+                        {summedAmounts.map((el, idx) => (
+                          <Table.tr key={idx}>
+                            <Table.td className="flex items-center gap-2">
+                              <Currency.Icon currency={el.currency} width={20} height={20} />
+                              {el.currency.symbol}
+                            </Table.td>
+                            <Table.td>
+                              {el.toSignificant(6)} {el.currency.symbol}
+                            </Table.td>
+                            <Table.td>
+                              {prices && prices?.[el.currency.wrapped.address]
+                                ? `$${el.multiply(prices[el.currency.wrapped.address].asFraction).toFixed(2)}`
+                                : '-'}
+                            </Table.td>
+                          </Table.tr>
+                        ))}
+                      </Table.tbody>
+                    </Table.table>
+                  </Table.container>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <Typography variant="sm">Recipient List</Typography>
+                  <Table.container>
+                    <Table.table>
+                      <Table.thead>
+                        <Table.thr>
+                          <Table.th className="text-left">Recipient</Table.th>
+                          <Table.th className="text-left">Token</Table.th>
+                          <Table.th className="text-left">Total Amount</Table.th>
+                          <Table.th className="text-left">End Date</Table.th>
+                          <Table.th className="text-left">Vesting Schedule</Table.th>
+                        </Table.thr>
+                      </Table.thead>
+                      <Table.tbody>
+                        {validatedData?.vestings.map((el, idx) => (
+                          <Table.tr key={idx}>
+                            <Table.td>
+                              {activeChain && (
+                                <UILink.External
+                                  className="text-blue hover:underline-none hover:text-blue-400 flex items-center gap-1"
+                                  href={Chain.from(activeChain.id).getAccountUrl(el.recipient)}
+                                >
+                                  {shortenAddress(el.recipient)} <ExternalLinkIcon width={16} height={16} />
+                                </UILink.External>
+                              )}
+                            </Table.td>
+                            <Table.td>{el.currency?.symbol}</Table.td>
+                            <Table.td>
+                              {el.totalAmount?.toSignificant(6)} {el.totalAmount?.currency.symbol}
+                            </Table.td>
+                            <Table.td>
+                              {el.endDate instanceof Date && !isNaN(el.endDate?.getTime()) ? (
+                                <Typography variant="sm" className="text-slate-50" weight={500}>
+                                  {format(el.endDate, 'dd MMM yyyy hh:mmaaa')}
+                                </Typography>
+                              ) : (
+                                <Typography variant="sm" className="italic text-slate-500">
+                                  Not available
+                                </Typography>
+                              )}
+                            </Table.td>
+                            <Table.td className="flex items-center gap-2">
+                              {el.cliff ? `Cliff, ${el.stepConfig?.label}` : el.stepConfig.label}
+                              <Popover
+                                hover
+                                button={
+                                  <IconButton as="div">
+                                    <TableIcon width={16} height={16} />
+                                  </IconButton>
+                                }
+                                panel={
+                                  el.currency && el.stepPayouts ? (
+                                    <div className="bg-slate-800 p-1">
+                                      <ScheduleReview
+                                        currency={el.currency}
+                                        schedule={createScheduleRepresentation({
+                                          currency: el.currency,
+                                          cliffAmount: el.cliffAmount,
+                                          stepAmount: el.stepAmount,
+                                          stepDuration: el.stepConfig.time * 1000,
+                                          startDate: el.startDate,
+                                          cliffEndDate: el.cliffEndDate,
+                                          stepPayouts: el.stepPayouts,
+                                        })}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div />
+                                  )
+                                }
+                              />
+                            </Table.td>
+                          </Table.tr>
+                        ))}
+                      </Table.tbody>
+                    </Table.table>
+                  </Table.container>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <Button
+                  type="button"
+                  variant="empty"
+                  color="gray"
+                  className="whitespace-nowrap flex items-center gap-1"
+                  onClick={() => setReview(false)}
+                >
+                  <ArrowLeftIcon width={16} height={16} /> Go Back and Edit
+                </Button>
                 <Approve
                   className="!items-end"
                   components={
@@ -222,7 +410,6 @@ export const CreateMultipleForm = () => {
                     return (
                       <Button
                         type="submit"
-                        variant="filled"
                         color="gradient"
                         disabled={
                           formData?.vestings?.length === 0 || isWritePending || !approved || !isValid || isValidating
@@ -233,11 +420,11 @@ export const CreateMultipleForm = () => {
                     )
                   }}
                 />
-              </Form.Buttons>
+              </div>
             </div>
-          </div>
-        </div>
-      </form>
-    </FormProvider>
+          )}
+        </form>
+      </FormProvider>
+    </div>
   )
 }

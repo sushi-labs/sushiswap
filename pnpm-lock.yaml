@@ -585,7 +585,9 @@ importers:
       '@hookform/resolvers': ^2.8.10
       '@octokit/auth-app': ^4.0.4
       '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -628,6 +630,8 @@ importers:
       '@hookform/resolvers': 2.9.7_react-hook-form@7.33.1
       '@octokit/auth-app': 4.0.4
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/format': link:../../packages/format
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       cookie-cutter: 0.2.0

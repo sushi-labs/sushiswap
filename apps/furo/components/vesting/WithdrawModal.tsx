@@ -119,7 +119,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
                 DEFAULT_INPUT_BG,
                 'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
               )}
