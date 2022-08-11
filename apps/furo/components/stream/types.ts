@@ -1,4 +1,4 @@
-import { Currency, Type } from '@sushiswap/currency'
+import { Amount, Currency, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 
 export type CreateStreamFormData = {
@@ -21,4 +21,13 @@ export type CreateStreamFormDataValidated = {
 
 export type CreateMultipleStreamFormData = {
   streams: CreateStreamFormData[]
+}
+
+export type CreateStreamFormDataTransformed = Omit<
+  CreateStreamFormDataValidated,
+  'startDate' | 'endDate' | 'amount'
+> & {
+  startDate: Date
+  endDate: Date
+  amount: Amount<Type> | undefined
 }

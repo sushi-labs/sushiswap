@@ -5,14 +5,18 @@ import { Native, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dropzone, Typography } from '@sushiswap/ui'
-import { useCallback, useRef } from 'react'
+import { FC, useCallback, useRef } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
 import { CreateMultipleStreamFormData, CreateStreamFormData } from '../types'
 
-export const ImportZone = () => {
+interface ImportZone {
+  onErrors(errors: string[]): void
+}
+
+export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
   const { chain } = useNetwork()
   const { control, trigger } = useFormContext<CreateMultipleStreamFormData>()
   const errors = useRef<string[][]>([])
@@ -75,22 +79,22 @@ export const ImportZone = () => {
               if (cur !== '') {
                 const [tokenAddress, fundSource, amount, recipient, startDate, endDate] = cur.split(',')
 
+                if (!errors.current[index]) {
+                  errors.current[index] = []
+                }
+
                 let _startDate = ''
                 try {
                   _startDate = new Date(Number(startDate) * 1000).toISOString().slice(0, 16)
                 } catch (e) {
-                  errors.current[index].push('Start date must be in unix timestamp')
+                  errors.current[index].push(`Stream ${index}: Start date must be in unix timestamp`)
                 }
 
                 let _endDate = ''
                 try {
                   _endDate = new Date(Number(endDate) * 1000).toISOString().slice(0, 16)
                 } catch (e) {
-                  errors.current[index].push('End date must be in unix timestamp')
-                }
-
-                if (![0, 1].includes(Number(fundSource))) {
-                  errors.current[index].push('Fund source must be either 0 for Wallet or 1 for BentoBox')
+                  errors.current[index].push(`Stream ${index}: End date must be in unix timestamp`)
                 }
 
                 rows.push({
@@ -109,6 +113,7 @@ export const ImportZone = () => {
 
             append(rows)
             await trigger()
+            onErrors(errors.current.flat())
           }
         }
 
