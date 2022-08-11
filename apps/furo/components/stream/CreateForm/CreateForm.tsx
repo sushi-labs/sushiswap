@@ -88,8 +88,6 @@ export const CreateForm: FC = () => {
         }),
       ]
 
-      console.log({ value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0' })
-
       try {
         const data = await sendTransactionAsync({
           request: {
@@ -116,6 +114,8 @@ export const CreateForm: FC = () => {
             failed: 'Something went wrong creating a new stream',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         setError(e.message)
 

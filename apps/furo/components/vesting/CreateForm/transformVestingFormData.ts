@@ -7,16 +7,16 @@ type TransformVestingFormData = (x: CreateVestingFormData) => CreateVestingFormD
 
 export const transformVestingFormData: TransformVestingFormData = (payload) => {
   const { startDate, cliffEndDate, cliff, currency, cliffAmount, stepAmount, stepPayouts, stepConfig } = payload
-  const _currency = currency?.isNative
-    ? Native.onChain(currency.chainId)
-    : currency
-    ? new Token({
-        chainId: currency.chainId,
-        decimals: currency.decimals,
-        address: currency.wrapped.address,
-        name: currency.name,
-        symbol: currency.symbol,
-      })
+  const _currency = currency
+    ? currency.isNative
+      ? Native.onChain(currency.chainId)
+      : new Token({
+          chainId: currency.chainId,
+          decimals: currency.decimals,
+          address: (currency as Token).address,
+          name: currency.name,
+          symbol: currency.symbol,
+        })
     : undefined
 
   const _startDate = new Date(startDate)
