@@ -14,10 +14,8 @@ export class Stream extends Furo {
 
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
     super({ chainId, furo, rebase })
-    this.totalAmount = Amount.fromShare(
-      this.token,
-      JSBI.add(JSBI.BigInt(furo.initialShares), JSBI.BigInt(furo.extendedShares)),
-      this.rebase
+    this.totalAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase).add(
+      this.withdrawnAmount
     )
     this.inititalShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))
     this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
