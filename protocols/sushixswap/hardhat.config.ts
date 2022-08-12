@@ -22,6 +22,7 @@ task('approve', 'Approve to router').setAction(async function (_, { ethers, getC
 
 const config: HardhatUserConfig = {
   ...defaultConfig,
+  //defaultNetwork: 'ethereum',
   solidity: {
     version: '0.8.11',
     settings: {
@@ -40,6 +41,19 @@ const config: HardhatUserConfig = {
   //     },
   //   ],
   // },
+  networks: {
+    ethereum: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      live: true,
+      chainId: 1,
+      saveDeployments: true,
+      tags: ['mainnet'],
+      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    },
+  },
+  mocha: {
+    timeout: 3_600_000,
+  },
 }
 
 export default config

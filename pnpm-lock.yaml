@@ -2094,14 +2094,17 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/stargate': workspace:*
       '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/chai': ^4.3.3
       '@types/node': ^17.0.33
+      '@types/seedrandom': ^3.0.1
       chai: ^4.3.6
       ethers: ^5.0.0
       hardhat: ^2.9.5
       hardhat-deploy: ^0.11.10
+      seedrandom: ^3.0.5
       ts-node: ^10.7.0
       typescript: ^4.7.0
     devDependencies:
@@ -2121,14 +2124,17 @@ importers:
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/stargate': link:../../packages/stargate
       '@sushiswap/sushiswap': link:../sushiswap
+      '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@tenderly/hardhat-tenderly': 1.1.4_hardhat@2.10.1
       '@types/chai': 4.3.3
       '@types/node': 17.0.45
+      '@types/seedrandom': 3.0.2
       chai: 4.3.6
       ethers: 5.6.9
       hardhat: 2.10.1_6oasmw356qmm23djlsjgkwvrtm
       hardhat-deploy: 0.11.12
+      seedrandom: 3.0.5
       ts-node: 10.9.1_x2utdhayajzrh747hktprshhby
       typescript: 4.7.4
 
@@ -3189,6 +3195,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    dev: true
 
   /@edge-runtime/format/1.0.0:
     resolution: {integrity: sha512-mxi0n00nJwnjaXUQIfTS7l64yvwGXs435gEjuDhzTHZyrmnCYdELXdJr3Q+6v4DO1mmmtNTYFHUvIlpCmMUC6g==}
@@ -6298,6 +6305,7 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
 
   /@json-rpc-tools/provider/1.7.6:
     resolution: {integrity: sha512-z7D3xvJ33UfCGv77n40lbzOYjZKVM3k2+5cV7xS8G6SCvKTzMkhkUYuD/qzQUNT4cG/lv0e9mRToweEEVLVVmA==}
@@ -6505,7 +6513,7 @@ packages:
       hardhat: ^2.0.0
     dependencies:
       ethers: 5.6.9
-      hardhat: 2.10.1_6oasmw356qmm23djlsjgkwvrtm
+      hardhat: 2.10.1_typescript@4.7.4
 
   /@nomiclabs/hardhat-etherscan/3.1.0_hardhat@2.10.1:
     resolution: {integrity: sha512-JroYgfN1AlYFkQTQ3nRwFi4o8NtZF7K/qFR2dxDUgHbCtIagkUseca9L4E/D2ScUm4XT40+8PbCdqZi+XmHyQA==}
@@ -7394,7 +7402,7 @@ packages:
       axios: 0.21.4
       ethers: 5.6.9
       fs-extra: 9.1.0
-      hardhat: 2.10.1_6oasmw356qmm23djlsjgkwvrtm
+      hardhat: 2.10.1_typescript@4.7.4
       hardhat-deploy: 0.11.12
       js-yaml: 3.14.1
     transitivePeerDependencies:
@@ -7414,15 +7422,19 @@ packages:
 
   /@tsconfig/node10/1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
+    dev: true
 
   /@tsconfig/node12/1.0.11:
     resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
+    dev: true
 
   /@tsconfig/node14/1.0.3:
     resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
+    dev: true
 
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
+    dev: true
 
   /@typechain/ethers-v5/10.1.0_3a2z4xo3ofaclmnvqkkolsxa2u:
     resolution: {integrity: sha512-3LIb+eUpV3mNCrjUKT5oqp8PBsZYSnVrkfk6pY/ZM0boRs2mKxjFZ7bktx42vfDye8PPz3NxtW4DL5NsNsFqlg==}
@@ -8729,6 +8741,7 @@ packages:
   /acorn-walk/8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
     engines: {node: '>=0.4.0'}
+    dev: true
 
   /acorn/6.4.2:
     resolution: {integrity: sha512-XtGIhXwF8YM8bJhGxG5kXgjkEuNGLTkoYqVE+KMR+aspr4KGYmKYg7yUe3KghyQ9yheNwLnjmzh/7+gfDBmHCQ==}
@@ -11056,6 +11069,7 @@ packages:
 
   /create-require/1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+    dev: true
 
   /cross-fetch/2.2.6:
     resolution: {integrity: sha512-9JZz+vXCmfKUZ68zAptS7k4Nu8e2qcibe7WVZYps7sAgk5R8GYTc+T1WR0v1rlP9HxgARmOX1UTIJZFytajpNA==}
@@ -14233,7 +14247,7 @@ packages:
       hardhat: ^2.0.0
     dependencies:
       ethers: 5.6.9
-      hardhat: 2.10.1_6oasmw356qmm23djlsjgkwvrtm
+      hardhat: 2.10.1_typescript@4.7.4
 
   /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.10.1:
     resolution: {integrity: sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==}
@@ -14340,6 +14354,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /hardhat/2.10.1_typescript@4.7.4:
     resolution: {integrity: sha512-0FN9TyCtn7Lt25SB2ei2G7nA2rZjP+RN6MvFOm+zYwherxLZNo6RbD8nDz88eCbhRapevmXqOiL2nM8INKsjmA==}
@@ -21354,6 +21369,7 @@ packages:
       typescript: 4.7.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
 
   /ts-node/8.9.1_typescript@4.3.4:
     resolution: {integrity: sha512-yrq6ODsxEFTLz0R3BX2myf0WBCSQh9A+py8PBo1dCzWIOcvisbyH6akNKqDHMgXePF2kir5mm5JXJTH3OUJYOQ==}
@@ -22166,6 +22182,7 @@ packages:
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
+    dev: true
 
   /v8-compile-cache/2.3.0:
     resolution: {integrity: sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==}
