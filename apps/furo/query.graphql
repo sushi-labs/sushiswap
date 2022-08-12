@@ -11,6 +11,8 @@ query userVestings($block: Block_height, $id: ID!) {
     stepDuration
     stepShares
     cliffShares
+    initialAmount
+    initialShares
     remainingShares
     withdrawnAmount
     fromBentoBox
@@ -39,6 +41,8 @@ query userVestings($block: Block_height, $id: ID!) {
     stepDuration
     stepShares
     cliffShares
+    initialAmount
+    initialShares
     remainingShares
     withdrawnAmount
     fromBentoBox
@@ -136,11 +140,11 @@ query userStreams($block: Block_height, $id: ID!) {
     expiresAt
     extendedAtTimestamp
     modifiedAtTimestamp
-    initialAmount
     initialShares
+    initialAmount
+    extendedShares
     remainingShares
     withdrawnAmount
-    extendedShares
     recipient {
       id
     }
