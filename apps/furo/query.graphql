@@ -9,9 +9,9 @@ query userVestings($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     cliffDuration
     stepDuration
-    stepAmount
-    cliffAmount
-    totalAmount
+    stepShares
+    cliffShares
+    remainingShares
     withdrawnAmount
     fromBentoBox
     token {
@@ -37,9 +37,9 @@ query userVestings($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     cliffDuration
     stepDuration
-    stepAmount
-    cliffAmount
-    totalAmount
+    stepShares
+    cliffShares
+    remainingShares
     withdrawnAmount
     fromBentoBox
     token {
@@ -68,9 +68,11 @@ query vesting($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     cliffDuration
     stepDuration
-    stepAmount
-    cliffAmount
-    totalAmount
+    stepShares
+    cliffShares
+    initialShares
+    initialAmount
+    remainingShares
     withdrawnAmount
     fromBentoBox
     txHash
@@ -132,11 +134,13 @@ query userStreams($block: Block_height, $id: ID!) {
     status
     startedAt
     expiresAt
+    extendedAtTimestamp
     modifiedAtTimestamp
-    totalAmount
-    withdrawnAmount
     initialAmount
-    extendedAmount
+    initialShares
+    remainingShares
+    withdrawnAmount
+    extendedShares
     recipient {
       id
     }
@@ -156,11 +160,13 @@ query userStreams($block: Block_height, $id: ID!) {
     status
     startedAt
     expiresAt
+    extendedAtTimestamp
     modifiedAtTimestamp
-    totalAmount
-    withdrawnAmount
+    initialShares
     initialAmount
-    extendedAmount
+    extendedShares
+    remainingShares
+    withdrawnAmount
     recipient {
       id
     }
@@ -183,11 +189,13 @@ query stream($block: Block_height, $id: ID!) {
     status
     startedAt
     expiresAt
+    extendedAtTimestamp
     modifiedAtTimestamp
-    totalAmount
-    withdrawnAmount
+    initialShares
     initialAmount
-    extendedAmount
+    extendedShares
+    remainingShares
+    withdrawnAmount
     txHash
     recipient {
       id

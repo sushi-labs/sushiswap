@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
-import { JSBI, Percent } from '@sushiswap/math'
+import { JSBI } from '@sushiswap/math'
 
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
@@ -14,7 +14,8 @@ export abstract class Furo {
   public readonly chainId: ChainId
   public readonly type: FuroType
   public readonly status: FuroStatus
-  public readonly amount: Amount<Token>
+  public readonly _remainingAmount: Amount<Token>
+  public readonly inititalAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
   public readonly modifiedAtTimestamp: Date
@@ -35,7 +36,8 @@ export abstract class Furo {
     // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
-    this.amount = Amount.fromShare(this.token, JSBI.BigInt(furo.totalAmount), this.rebase)
+    this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
+    this._remainingAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase)
     this.startTime = new Date(parseInt(furo.startedAt) * 1000)
     this.endTime = new Date(parseInt(furo.expiresAt) * 1000)
     this.modifiedAtTimestamp = new Date(parseInt(furo.modifiedAtTimestamp) * 1000)
@@ -43,7 +45,7 @@ export abstract class Furo {
     this.recipient = furo.recipient
     this.createdBy = furo.createdBy
     this.txHash = furo.txHash
-    this._withdrawnAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.withdrawnAmount), this.rebase)
+    this._withdrawnAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.withdrawnAmount))
     this._balance = Amount.fromRawAmount(this.token, 0)
   }
 
@@ -106,15 +108,10 @@ export abstract class Furo {
     return { days, hours, minutes, seconds }
   }
 
-  public get withdrawnPercentage(): Percent {
-    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
-    return new Percent(this._withdrawnAmount.quotient, this.amount.quotient)
-  }
-
   public get remainingAmount(): Amount<Token> {
-    if (!this.isStarted) return this.amount
+    if (!this.isStarted) return this._remainingAmount
     if (this.status === FuroStatus.CANCELLED) return Amount.fromRawAmount(this.token, 0)
-    return this.amount.subtract(this._withdrawnAmount).subtract(this._balance)
+    return this._remainingAmount.subtract(this._balance)
   }
 
   public get isStarted(): boolean {

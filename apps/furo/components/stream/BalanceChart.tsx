@@ -181,7 +181,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
@@ -233,7 +233,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.balance ? stream?.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {stream?.balance ? stream?.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}

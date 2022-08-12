@@ -18,7 +18,7 @@ export const SUPPORTED_CHAINS = [
 export const GRAPH_HOST = 'api.thegraph.com'
 
 export const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.ETHEREUM]: 'sushi-labs/furo-ethereum',
+  [ChainId.ETHEREUM]: 'olastenberg/furo-ethereum',
   [ChainId.GÖRLI]: 'sushi-labs/furo-goerli',
   [ChainId.ARBITRUM]: 'sushi-labs/furo-arbitrum',
   [ChainId.AVALANCHE]: 'sushi-labs/furo-avalanche',

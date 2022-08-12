@@ -1,5 +1,4 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { FURO_SUBGRAPH_NAME, SUPPORTED_CHAINS } from 'config'
 

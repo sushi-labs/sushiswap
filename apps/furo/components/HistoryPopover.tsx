@@ -1,4 +1,3 @@
-import { Amount } from '@sushiswap/currency'
 import { Button, HistoryIcon, Popover, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Stream, Transaction, Vesting } from 'lib'
@@ -75,7 +74,7 @@ const HistoryPopoverTransaction: FC<{ stream: Stream | Vesting; transaction: Tra
           </Typography>
         </Typography>
         <Typography variant="xs" weight={500} className="flex flex-col text-right text-slate-200">
-          {Amount.fromShare(transaction.amount.currency, transaction.amount.quotient, stream.rebase).toSignificant(6)}{' '}
+          {transaction.amount.toSignificant(6)}{' '}
           <span className="text-xs font-medium text-slate-500">{transaction.amount.currency.symbol}</span>
         </Typography>
       </div>
