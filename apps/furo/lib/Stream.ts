@@ -34,7 +34,7 @@ export class Stream extends Furo {
         this.token,
         JSBI.divide(JSBI.multiply(this.totalAmount.quotient, passed), duration)
       )
-      return balance.lessThan(this.remainingAmount) ? balance : this.remainingAmount
+      return balance.lessThan(this.totalAmount) ? balance : this.totalAmount
     } else {
       const duration = JSBI.subtract(
         JSBI.BigInt(this.endTime.getTime()),
@@ -46,7 +46,7 @@ export class Stream extends Furo {
         JSBI.divide(JSBI.multiply(this.remainingAmount.quotient, passed), duration)
       ).add(this.withdrawnAmount)
 
-      return balance.lessThan(this.remainingAmount) ? balance : this.remainingAmount
+      return balance.lessThan(this.totalAmount) ? balance : this.totalAmount
     }
   }
 
