@@ -16,11 +16,11 @@ const _Tab: React.ForwardRefExoticComponent<React.PropsWithoutRef<TabButton> & R
       <HeadlessTab as={Fragment} ref={ref}>
         {({ selected }) => (
           <Button
-            {...props}
             size="sm"
             className={classNames('hover:ring-0 focus:ring-0', className)}
             color="gray"
             variant={selected ? 'filled' : 'empty'}
+            {...props}
           >
             {/* @ts-ignore*/}
             {children}

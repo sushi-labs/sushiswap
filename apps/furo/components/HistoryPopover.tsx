@@ -1,4 +1,5 @@
-import { Button, HistoryIcon, Popover, Typography } from '@sushiswap/ui'
+import { Amount } from '@sushiswap/currency'
+import { Button, HistoryIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Stream, Transaction, Vesting } from 'lib'
 import { FC, memo, useMemo } from 'react'
@@ -18,8 +19,8 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
   )
 
   return (
-    <Popover
-      hover
+    <Tooltip
+      naked
       button={
         <Button color="gray" as="div">
           <HistoryIcon width={18} height={18} />
@@ -29,7 +30,7 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
         </Button>
       }
       panel={
-        <div className="z-10 flex flex-col overflow-hidden shadow-md rounded-xl bg-slate-800">
+        <div className="flex flex-col overflow-hidden rounded-lg bg-slate-800">
           <div className="p-4 bg-slate-700">
             <div className="grid grid-cols-[80px_80px_100px] gap-2 items-center">
               <Typography weight={500} className="tracking-wider capitalize text-slate-400" variant="xxs">
@@ -56,7 +57,7 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
           </div>
         </div>
       }
-    ></Popover>
+    ></Tooltip>
   )
 }
 

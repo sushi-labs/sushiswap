@@ -69,6 +69,8 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             payload
         );
 
+        stargateWidget.partnerSwap(0x0001);
+
         emit StargateSushiXSwapSrc(params.srcContext);
     }
 
@@ -123,8 +125,8 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             bytes32 srcContext
         ) = abi.decode(payload, (address, uint8[], uint256[], bytes[], bytes32));
 
-        // 100000 -> exit gas
-        uint256 limit = gasleft() - 100000;
+        // 200000 -> exit gas
+        uint256 limit = gasleft() - 200000;
         bool failed;
         /// @dev incase the actions fail, transfer bridge token to the to address
         try

@@ -7,6 +7,7 @@ import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
 import { SUPPORTED_CHAINS } from 'config'
 import { FuroStatus, FuroType, Stream } from 'lib'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -84,6 +85,11 @@ export default function Index() {
         </div>
       }
     >
+      <Head>
+        <title>Furo Streaming & Vesting | Sushi</title>
+        <meta property="og:title" content="Furo Streaming & Vesting | Sushi" key="title" />
+      </Head>
+
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
         <div className="flex flex-col justify-center h-[420px] gap-8">
           <div className="flex flex-col gap-3">
@@ -99,6 +105,7 @@ export default function Index() {
             {!isMounted || !activeChain || !address ? (
               <>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="blue"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
@@ -106,6 +113,7 @@ export default function Index() {
                   Pay Someone
                 </Wallet.Button>
                 <Wallet.Button
+                  appearOnMount={false}
                   color="gray"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}

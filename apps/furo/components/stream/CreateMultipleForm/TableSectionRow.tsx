@@ -86,9 +86,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
         <Controller
           control={control as never}
           name={`streams.${index}.fundSource`}
-          render={({ field: { onChange }, fieldState: { error } }) => (
+          render={({ field: { onChange } }) => (
             <Select
-              error={!!error?.message}
               button={
                 <Listbox.Button
                   type="button"

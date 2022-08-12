@@ -29,7 +29,12 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
   const innerRadius = width / 2 - 3 * strokeWidth
 
   return (
-    <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`}>
+    <svg
+      width={width}
+      height={width}
+      viewBox={`0 0 ${width} ${width}`}
+      style={{ '-webkit-tap-highlight-color': 'transparent' } as unknown}
+    >
       <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
       <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
       <LinearGradient id="gpink" to={'#FFA6E7'} from={'#f43fc5'} vertical={false} />

@@ -3,7 +3,7 @@ import { ButtonColor, ButtonSize, ButtonVariant } from './Button'
 export const BUTTON_CLASSES: Record<string, string> = {
   btn: 'font-medium flex hover:ring-2 focus:ring-2 items-center justify-center gap-2 rounded-xl cursor-pointer',
   'btn-disabled': 'cursor-not-allowed opacity-40 !ring-0',
-  'btn-filled': '',
+  'btn-filled': 'text-slate-50',
   'btn-empty': '!ring-0',
   'btn-outlined': 'border-2 hover:ring-2 border-opacity-20 ring-offset-2 ring-offset-slate-900 rounded-xl',
   'btn-outlined-red': 'border-2 hover:ring-2 border-opacity-20 ring-offset-2 ring-offset-slate-900 rounded-xl',

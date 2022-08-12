@@ -1,7 +1,6 @@
+import { Edge, Graph, Vertice } from '../src'
 import { BigNumber } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
-
-import { Edge, Graph, Vertice } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
@@ -26,7 +25,7 @@ function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   })
   g.getOrCreateVertice(tokens[0])
   g.getOrCreateVertice(tokens[tokens.length - 1])
-  return [g, g.tokens.get(tokens[0].address) as Vertice, g.tokens.get(tokens[tokens.length - 1].address) as Vertice]
+  return [g, g.getVert(tokens[0]) as Vertice, g.getVert(tokens[tokens.length - 1]) as Vertice]
 }
 
 function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Vertice] {

@@ -6,6 +6,7 @@
 @tailwind utilities;
 
 @import "./variables.css";
+@import './tooltip/Tooltip.css';
 
 *,
 *:before,
@@ -73,6 +74,10 @@ div.scroll::-webkit-scrollbar-button {
 
 div.scroll::-webkit-scrollbar-corner {
   background-color: transparent;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 @layer utilities {

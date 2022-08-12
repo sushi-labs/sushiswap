@@ -1,20 +1,45 @@
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
-import React, { FC, Fragment, FunctionComponent } from 'react'
+import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
 import { ExtractProps } from '../types'
+import { useBreakpoint } from '../useBreakpoint'
 import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
+  afterLeave?(): void
   children?: React.ReactNode
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
+  const { isMd } = useBreakpoint('md')
+
+  // iOS body lock fix
+  // This gets the current scroll position and sets it as negative top margin before setting position fixed on body
+  // This is necessary because adding position fixed to body scrolls the page to the top
+  useEffect(() => {
+    if (!isMd) {
+      if (open) {
+        document.body.style.top = `-${window.scrollY}px`
+        document.body.style.position = 'fixed'
+        document.body.style.left = '0'
+        document.body.style.right = '0'
+      } else {
+        const scrollY = document.body.style.top
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.left = ''
+        document.body.style.right = ''
+        window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      }
+    }
+  }, [isMd, open])
+
   return (
-    <Transition show={open} as={Fragment}>
-      <HeadlessDialog className="relative z-[100]" onClose={onClose} {...rest}>
+    <Transition show={open} as={Fragment} afterLeave={afterLeave}>
+      <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

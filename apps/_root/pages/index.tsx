@@ -39,7 +39,7 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
         <meta key="twitter:description" name="twitter:description" content="Sushi" />
         <meta key="og:description" property="og:description" content="Sushi" />
       </Head>
-      <div className="relative min-h-screen overflow-hidden bg-[#0D0415] ">
+      <div className="relative min-h-screen overflow-hidden bg-[#0D0415] space-y-10 pb-16">
         <div className="relative pt-6">
           <Image
             layout="fill"
@@ -52,6 +52,7 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
             placeholder="blur"
           />
           <Menu setIsOpen={setIsOpen} isOpen={isOpen} />
+          {/*//TODO: Actually make it work on mobile (doesn't overlay the Sushi logo and text correctly) */}
           <MobileMenu setIsOpen={setIsOpen} isOpen={isOpen} />
           <div className="relative max-w-2xl px-5 pt-6 mx-auto sm:px-4">
             <div className="flex flex-col items-center space-y-4">
@@ -113,23 +114,21 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
           </div>
           {/* Closing */}
         </div>
-        <div className="max-w-3xl px-4 pt-10 pb-4 mx-auto sm:pt-28">
+        <div className="max-w-3xl px-4 mx-auto sm:pt-16">
           <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]" ref={ref}>
             Michelin star-worthy DeFi innovations crafted by our master chefs
           </div>
         </div>
-        <div className="pt-10 mx-auto 2xl:max-w-screen-2xl">
-          <div className="flex flex-row items-center justify-center px-10 pt-20 pb-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
+        <div className="flex justify-center">
+          <div className="flex flex-row items-center px-10 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/chopsticks.png"
-              marginLeft={true}
               title="Multi-chain AMM"
               description={
                 'The most competitive rates for DeFi bluechips anywhere. Switch to other chains in one click.'
               }
               cta="Enter Exchange"
               ctaLink="https://app.sushi.com"
-              customSize="w-20 h-22"
             />
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/kashi-color-flat.png"
@@ -143,7 +142,7 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/xsushi.png"
               title="xSUSHI staking"
-              description="Earn governance rights and 0.05% of all swaps from all chains in one simple place."
+              description="Earn governance rights and 0.045% of all swaps from all chains in one simple place."
               cta="Enter SushiBar"
               ctaLink="https://app.sushi.com/stake"
             />
@@ -153,20 +152,18 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
               description="Accelerate your project with onsen. Find the best yields anywhere in DeFi hands down."
               cta="Browse Yields"
               ctaLink="https://app.sushi.com/farm"
-              paddingRight={true}
             />
           </div>
         </div>
-        <div className="max-w-2xl px-4 pt-10 mx-auto sm:pt-28">
+        <div className="flex justify-center px-4 sm:pt-16">
           <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]">
             An evolving community for an evolving DeFi landscape
           </div>
         </div>
-        <div className="pt-10 mx-auto 2xl:max-w-screen-2xl">
-          <div className="flex flex-row items-center justify-center px-10 py-8 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
+        <div className="flex justify-center">
+          <div className="flex flex-row items-center px-10 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
             <FeatureCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/wallet.png"
-              marginLeft={true}
               title="20+"
               description="Wallets Supported"
             />
@@ -184,17 +181,16 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/sushi-outline.png"
               title="150k+"
               description="Sushi Holders"
-              paddingRight={true}
             />
           </div>
         </div>
-        <div className="max-w-2xl px-4 pt-10 mx-auto sm:pt-28">
+        <div className="flex justify-center px-4 sm:pt-16">
           <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]">
             Meet the partners helping us cook up the tastiest dishes in DeFi.
           </div>
         </div>
-        <div className="max-w-6xl pt-10 pb-32 mx-auto">
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-6">
+        <div className="flex justify-center">
+          <div className="grid w-full grid-cols-2 gap-6 lg:grid-cols-6">
             <PartnerCard
               logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/yearn-neon.png"
               name="Yearn Finance"

@@ -15,4 +15,5 @@ export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'>
   render?: (renderProps: T) => ReactElement
   initialized?: boolean
   allApproved?: boolean
+  hideIcon?: boolean
 }

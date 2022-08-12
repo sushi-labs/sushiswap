@@ -7,17 +7,23 @@ export function ASSERT(f: () => boolean, t?: string) {
 }
 
 let DEBUG_MODE = false
-export function DEBUG(f: () => any) {
+export function DEBUG(f: () => unknown) {
   if (DEBUG_MODE) f()
 }
 export function DEBUG_MODE_ON(on: boolean) {
   DEBUG_MODE = on
 }
 
-export function closeValues(a: number, b: number, accuracy: number): boolean {
+export function closeValues(a: number, b: number, accuracy: number, logInfoIfFalse = ''): boolean {
   if (accuracy === 0) return a === b
-  if (a < 1 / accuracy) return Math.abs(a - b) <= 10
-  return Math.abs(a / b - 1) < accuracy
+  if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
+  if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  const res = Math.abs(a / b - 1) < accuracy
+  if (!res) {
+    console.log('Expected close: ', a, b, accuracy, logInfoIfFalse)
+    // debugger
+  }
+  return res
 }
 
 export function calcSquareEquation(a: number, b: number, c: number): [number, number] {

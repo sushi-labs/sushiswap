@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { erc20ABI, useBalance, useContractInfiniteReads, useContractReads } from 'wagmi'
+import { erc20ABI, useBalance, useContractReads } from 'wagmi'
 
 type UseWalletBalancesParams = {
   account: string | undefined
@@ -12,10 +12,10 @@ type UseWalletBalancesParams = {
   chainId?: ChainId
 }
 
-type UseWalletBalances = (params: UseWalletBalancesParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseWalletBalances = (params: UseWalletBalancesParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useBalance>, 'isError' | 'isLoading'>
+) & {
   data: Record<string, Amount<Type>> | undefined
 }
 
@@ -24,7 +24,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId })
+  } = useBalance({ addressOrName: account, chainId, keepPreviousData: true })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -44,15 +44,13 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
 
   const contracts = useMemo(
     () =>
-      account
-        ? validatedTokenAddresses.map((token) => ({
-            chainId,
-            addressOrName: token,
-            contractInterface: erc20ABI,
-            functionName: 'balanceOf',
-            args: [account],
-          }))
-        : [],
+      validatedTokenAddresses.map((token) => ({
+        chainId,
+        addressOrName: token,
+        contractInterface: erc20ABI,
+        functionName: 'balanceOf',
+        args: [account],
+      })),
     [validatedTokenAddresses, chainId, account]
   )
 
@@ -63,7 +61,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
-    cacheTime: 20_000,
+    enabled: Boolean(account && validatedTokenAddresses.length),
     keepPreviousData: true,
   })
 
@@ -89,7 +87,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
         ..._data,
       },
       isLoading: isTokensLoading ?? isNativeLoading,
-      isError: isTokensError ?? isNativeError,
+      isError: Boolean(isTokensError ?? isNativeError),
     }
   }, [
     account,
@@ -110,18 +108,13 @@ type UseWalletBalanceParams = {
   chainId?: ChainId
 }
 
-type UseTokenBalance = (params: UseWalletBalanceParams) => Pick<
-  ReturnType<typeof useContractInfiniteReads>,
-  'isError' | 'isLoading'
-> & {
+type UseTokenBalance = (params: UseWalletBalanceParams) => (
+  | Pick<ReturnType<typeof useContractReads>, 'isError' | 'isLoading'>
+  | Pick<ReturnType<typeof useBalance>, 'isError' | 'isLoading'>
+) & {
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useWalletBalance: UseTokenBalance = (params) => {
-  const _params = useMemo(
-    () => ({ chainId: params.chainId, currencies: [params.currency], account: params.account }),
-    [params.chainId, params.account, params.currency]
-  )
-
-  return useWalletBalances(_params)
+export const useWalletBalance: UseTokenBalance = ({ chainId, currency, account }) => {
+  return useWalletBalances(useMemo(() => ({ chainId, currencies: [currency], account }), [chainId, currency, account]))
 }

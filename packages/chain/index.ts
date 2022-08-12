@@ -141,6 +141,13 @@ export class Chain implements Chain {
   public static from(chainId: number) {
     return chains[chainId]
   }
+  public static fromShortName(shortName: string) {
+    return chains[chainShortName[shortName]]
+  }
+  public static fromChainId(chainId: number) {
+    return chains[chainId]
+  }
+
   constructor(data: Chain) {
     Object.assign(this, data)
   }
@@ -182,7 +189,23 @@ export class Chain implements Chain {
   }
 }
 
+// ChainId array
 export const chainIds = json.map((chain) => chain.chainId)
+
+// Chain Short Name => Chain Id mapping
+export const chainShortNameToChainId = Object.fromEntries(
+  (json as Chain[]).map((data): [string, number] => [data.shortName, data.chainId])
+)
+
+// Chain Id => Short Name mapping
+export const chainShortName = Object.fromEntries(
+  (json as Chain[]).map((data): [number, string] => [data.chainId, data.shortName])
+)
+
+// Chain Id => Chain Name mapping
+export const chainName = Object.fromEntries(
+  (json as Chain[]).map((data): [number, string] => [data.chainId, data.name])
+)
 
 // Chain Id => Chain mapping
 export const chains = Object.fromEntries(

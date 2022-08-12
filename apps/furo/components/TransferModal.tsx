@@ -73,7 +73,12 @@ export const TransferModal: FC<TransferModalProps> = ({
         color="gray"
         fullWidth
         startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
-        disabled={!address || !stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO)}
+        disabled={
+          !address ||
+          stream?.chainId !== activeChain?.id ||
+          !stream?.canTransfer(address) ||
+          !stream?.remainingAmount?.greaterThan(ZERO)
+        }
         onClick={() => setOpen(true)}
       >
         Transfer

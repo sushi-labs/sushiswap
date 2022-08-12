@@ -27,7 +27,7 @@ export const GeneralDetailsSection = () => {
   return (
     <Form.Section
       title="General Details"
-      description="Furo allows for creating a vested stream using your Bentobox balance."
+      description="Furo allows for creating a vested stream using your BentoBox balance."
     >
       <Form.Control label="Token">
         <Controller
@@ -125,7 +125,7 @@ export const GeneralDetailsSection = () => {
                     )}
                   >
                     <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                      Bentobox
+                      BentoBox
                     </Typography>
                     <div className="flex flex-col gap-1">
                       <Typography variant="xs">Available Balance</Typography>

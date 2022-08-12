@@ -61,7 +61,9 @@ const Controller: FC<Props> = ({ className, components, render }) => {
     isPending: false,
   })
 
-  const initialized = state.approvals.length === Children.toArray(components.props.children).length
+  const initialized =
+    state.approvals.length === Children.toArray(components.props.children).length &&
+    !state.approvals.some((el) => el?.[0] === ApprovalState.UNKNOWN)
 
   const children = useMemo(() => {
     return cloneElement(

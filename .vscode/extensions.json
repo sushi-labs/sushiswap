@@ -7,6 +7,7 @@
     "NomicFoundation.hardhat-solidity",
     "VisualStudioExptTeam.vscodeintellicode",
     "wix.vscode-import-cost",
-    "GraphQL.vscode-graphql"
+    "GraphQL.vscode-graphql",
+    "mattpocock.ts-error-translator"
   ]
 }

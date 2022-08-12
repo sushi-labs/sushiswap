@@ -1,4 +1,5 @@
 {
+  "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "root#build": {
       "dependsOn": [
@@ -11,7 +12,8 @@
         "$SWAP_URL",
         "$LEGACY_URL"
       ],
-      "outputs": [".next/**"]
+      "outputs": [".next/**"],
+      "cache": true
     },
     "build": {
       "outputs": [
@@ -24,7 +26,8 @@
       "dependsOn": [
         "^build",
         "generate"
-      ]
+      ],
+      "cache": true
     },
     "clean": {
       "cache": false
@@ -44,23 +47,25 @@
       "outputs": [
         "^build",
         ".graphclient/**",
+        ".mesh/**",
         "typechain/**"
       ],
       "cache": true
     },
-    "test": {
+    "test": {    
       "outputs": [
         "coverage/**"
       ],
       "dependsOn": [
         "^build"
-      ]
+      ],
+      "cache": true
     },
     "lint": {
       "outputs": [],
       "dependsOn": [
         "^build"
-      ]  
+      ]
     },
     "validate": {
       "cache": false
@@ -71,16 +76,17 @@
       ],
       "outputs": [
         "exports.json"
-      ]
+      ],
+      "cache": true
     },
     "node": {
-      "cache": true,
       "dependsOn": [
         "build"
       ],
       "outputs": [
         "deployments/**"
-      ]
+      ],
+      "cache": true
     }
   },
   "baseBranch": "origin/master"

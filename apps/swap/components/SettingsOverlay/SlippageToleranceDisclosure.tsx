@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { AdjustmentsIcon, ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
-import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Popover, Tab, Typography } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useSettings } from '../../lib/state/storage'
@@ -13,14 +13,35 @@ export const SlippageToleranceDisclosure: FC = () => {
     <Disclosure>
       {({ open }) => (
         <div className="border-b border-slate-200/5">
-          <Disclosure.Button className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
+          <Disclosure.Button
+            as="div"
+            className="relative flex items-center justify-between w-full gap-3 group rounded-xl"
+          >
             <div className="flex items-center justify-center w-5 h-5">
               <AdjustmentsIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
             </div>
             <div className="flex items-center justify-between w-full gap-1 py-4">
-              <Typography variant="sm" weight={500}>
-                Slippage Tolerance
-              </Typography>
+              <div className="flex items-center gap-1">
+                <Typography variant="sm" weight={500}>
+                  Slippage Tolerance
+                </Typography>
+                <Tooltip
+                  button={<InformationCircleIcon width={14} height={14} />}
+                  panel={
+                    <div className="w-80 flex flex-col gap-2">
+                      <Typography variant="xs" weight={500} className="text-slate-300">
+                        Slippage tolerance is the utmost percentage of slippage a user is willing to execute a trade
+                        with; if the actual slippage falls outside of the user-designated range, the transaction will
+                        revert.
+                      </Typography>
+                      <Typography variant="xs" weight={500} className="text-slate-300">
+                        Slippage is the difference between the expected value of output from a trade and the actual
+                        value due to asset volatility and liquidity depth.
+                      </Typography>
+                    </div>
+                  }
+                />
+              </div>
               <div className="flex gap-1">
                 <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
                   {slippageToleranceType === 'auto' ? 'Auto' : `Custom (${slippageTolerance}%)`}
@@ -60,21 +81,8 @@ export const SlippageToleranceDisclosure: FC = () => {
                   <Tab.Panel />
                   <Tab.Panel>
                     <div className="mt-2 flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                      <Typography variant="xs" weight={700} className="flex items-center gap-1 text-slate-300">
+                      <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                         Custom Slippage
-                        <Popover
-                          tabIndex={-1}
-                          hover
-                          button={<InformationCircleIcon width={14} height={14} />}
-                          panel={
-                            <div className="bg-slate-600 !rounded-lg w-40 flex flex-col gap-2 p-3">
-                              <Typography variant="xs" weight={700}>
-                                Your transaction will revert if the prices change unfavorably by more than this
-                                percentage
-                              </Typography>
-                            </div>
-                          }
-                        />
                       </Typography>
                       <div className="flex items-center gap-2">
                         <Input.Numeric
@@ -84,7 +92,7 @@ export const SlippageToleranceDisclosure: FC = () => {
                           placeholder="1"
                           className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                         />
-                        <Typography variant="xs" weight={700} className="text-slate-400">
+                        <Typography variant="xs" weight={500} className="text-slate-400">
                           %
                         </Typography>
                       </div>

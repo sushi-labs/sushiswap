@@ -5,7 +5,6 @@ import { FC, useState } from 'react'
 
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { ExpertMode } from './ExpertMode'
-import { GasSettingsDisclosure } from './GasSettingsDisclosure'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
 interface SettingsOverlay {
@@ -14,7 +13,6 @@ interface SettingsOverlay {
 
 export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
-
   return (
     <>
       <IconButton className="hover:animate-spin-slow" onClick={() => setOpen(true)}>
@@ -23,13 +21,14 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
       <SlideIn>
         <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
           <Overlay.Content className="!bg-slate-800 !pb-0">
-            <div className="overflow-y-auto overflow-x-hidden scroll h-full -ml-3 -mr-3 px-3">
+            <div className="h-full px-3 -ml-3 -mr-3 overflow-x-hidden overflow-y-auto scroll">
               <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
-              <div className="py-1 px-1">
-                <GasSettingsDisclosure chainId={chainId} />
+              <div className="px-1 py-1">
+                {/*<GasSettingsDisclosure chainId={chainId} />*/}
                 <SlippageToleranceDisclosure />
                 <CustomTokensOverlay />
                 <ExpertMode />
+                {/* <DustAmount /> */}
               </div>
             </div>
           </Overlay.Content>

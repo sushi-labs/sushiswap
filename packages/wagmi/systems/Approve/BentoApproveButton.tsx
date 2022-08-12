@@ -1,7 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
-import { Badge, BentoboxIcon, Button, classNames, IconButton, Popover, Typography } from '@sushiswap/ui'
+import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
@@ -29,6 +29,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     onSignature,
     allApproved,
     initialized,
+    hideIcon,
     ...props
   }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract, onSignature })
@@ -67,6 +68,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     }, [approvalState, disabled, dispatch, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition
@@ -80,10 +82,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
         leaveTo="opacity-0 scale-95"
       >
         <DefaultButton as="div" {...props}>
-          <Popover
-            as="div"
-            hover
-            disableClickListener
+          <Tooltip
             button={
               <Badge
                 badgeContent={
@@ -114,7 +113,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
               </Badge>
             }
             panel={
-              <div className="bg-slate-800 p-3 flex flex-col gap-3 max-w-[200px]">
+              <div className="flex flex-col gap-3 max-w-[200px]">
                 <Typography variant="xs" weight={500}>
                   Status:
                   <span
@@ -131,13 +130,14 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   </span>
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-slate-400">
-                  This is a one-time approval for Sushi to access your wallet using BentoBox.
+                  We need your approval first to access your wallet using BentoBox; you will only have to approve this
+                  master contract once.
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-slate-400 flex flex-col gap-1">
                   <span className="text-slate-200">Why should I approve this?</span>
                   <span>
-                    BentoBox is a token vault. You can minimize approval transactions, reduce gas costs and earn passive
-                    income from yield strategies with BentoBox.
+                    BentoBox is a token vault that provides its users with passive income on their deposits from yield
+                    strategies while reducing gas costs.
                   </span>
                 </Typography>
               </div>

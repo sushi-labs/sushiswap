@@ -10,7 +10,9 @@ const withTranspileModules = transpileModules([
   '@sushiswap/swap-widget',
 ])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: true,
@@ -24,4 +26,16 @@ export default withTranspileModules({
   experimental: {
     nextScriptWorkers: true,
   },
-})
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/swap',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
+}
+
+export default withTranspileModules(nextConfig)

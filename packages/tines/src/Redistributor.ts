@@ -17,7 +17,7 @@ class Pool {
     this.from = fromIndex
     this.to = toIndex
     this.edge = edge
-    this.direction = edge.pool.token0.address === from.token.address
+    this.direction = edge.pool.token0.tokenId === from.token.tokenId
   }
 
   calcOutByIn(amountIn: number): number {

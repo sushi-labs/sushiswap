@@ -1,12 +1,13 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.0-canary.88",
+  "version": "0.0.0",
+  "private": true,
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
   },
-  "license": "MIT",
-  "author": "Ilya",
+  "license": "UNLICENSED",
+  "author": "Ilya Lyalin",
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -21,7 +22,8 @@
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test_debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
@@ -37,9 +39,9 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.35",
     "@types/seedrandom": "^3.0.1",
-    "eslint": "^8.15.0",
+    "eslint": "^8.20.0",
     "seedrandom": "^3.0.5",
-    "tsup": "^6.1.2",
-    "typescript": "^4.0.0"
+    "tsup": "^6.2.0",
+    "typescript": "^4.7.0"
   }
 }

@@ -1,0 +1,37 @@
+query CrossChainBentoBoxKpis($chainIds: [BigInt!]!) {
+  crossChainBentoBoxKpis(first: 1000, chainIds: $chainIds) {
+    chainId
+    depositCount
+    withdrawCount
+    transferCount
+    protocolCount
+    userCount
+    tokenCount
+    masterContractCount
+    cloneCount
+    flashloanCount
+    transactionCount
+    strategyCount
+    activeStrategyCount
+    pendingStrategyCount
+  }
+}
+
+query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
+  crossChainStrategyKpis(first: 1000, chainIds: $chainIds) {
+    id
+    chainId
+    harvestCount
+    investOrDivestCount
+    investCount
+    invested
+    divestCount
+    divested
+    profitOrLossCount
+    profitCount
+    lossCount
+    profitAndLoss
+    apr
+    utilization
+  }
+}

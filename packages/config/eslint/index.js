@@ -1,4 +1,6 @@
-module.exports = {
+// @ts-check
+/** @type {import('eslint').ESLint.ConfigData} */
+const eslintConfig = {
   root: true,
   env: {
     node: true,
@@ -30,3 +32,5 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'warn',
   },
 }
+
+module.exports = eslintConfig

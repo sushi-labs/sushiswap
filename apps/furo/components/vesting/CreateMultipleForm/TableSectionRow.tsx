@@ -47,19 +47,13 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
     control,
   } as never) as CreateVestingFormData
 
-  const { totalAmount, cliff, cliffEndDate, startDate, stepConfig, stepPayouts } = transformVestingFormData(data)
-  const endDate =
-    ((cliff && cliffEndDate) || startDate) && stepPayouts
-      ? new Date(
-          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
-        )
-      : undefined
+  const { totalAmount, endDate } = transformVestingFormData(data)
 
   return (
     <Disclosure>
       {({ close }) => (
         <div className="flex flex-col">
-          <div className="relative grid grid-cols-[100px_160px_100px_160px_160px_160px_80px] gap-y-3 gap-x-2 px-2 py-0.5">
+          <div className="relative grid grid-cols-[100px_160px_100px_160px_160px_160px_40px] gap-y-3 gap-x-2 px-2 py-0.5">
             <div className="flex flex-col gap-2">
               <Controller
                 control={control as never}
@@ -131,9 +125,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
               <Controller
                 control={control as never}
                 name={`vestings.${index}.fundSource`}
-                render={({ field: { onChange }, fieldState: { error } }) => (
+                render={({ field: { onChange } }) => (
                   <Select
-                    error={!!error?.message}
                     button={
                       <Listbox.Button
                         type="button"
@@ -341,9 +334,8 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <>
                           <Select
-                            error={!!error?.message}
                             button={
-                              <Select.Button className="ring-offset-slate-800" type="button">
+                              <Select.Button error={!!error?.message} className="ring-offset-slate-800" type="button">
                                 {value?.label}
                               </Select.Button>
                             }

@@ -1,0 +1,42 @@
+# sources:
+#   - name: BentoBox
+#     handler:
+#       graphql:
+#         endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:matthewlilley/bentobox-ethereum}
+#     transforms:
+#       - addSourceName: true
+#       - prefix:
+#           value: bentobox_
+#           includeRootOperations: true
+#           includeTypes: false
+#       - autoPagination:
+#           validateSchema: true
+
+sources:
+  - name: BentoBox
+    handler:
+      graphql:
+        # Default value is bentobox-polygon
+        # This is needed for the initial introspection on buildtime
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/bentobox-polygon}
+
+additionalTypeDefs: |
+  extend type BentoBoxKpi {
+    chainId: BigInt
+  }
+  extend type StrategyKpi {
+    chainId: BigInt
+  }
+  extend type Query {
+    crossChainBentoBoxKpis(first: Int!, chainIds: [BigInt!]!): [BentoBoxKpi!]!
+    crossChainStrategyKpis(first: Int!, chainIds: [BigInt!]!): [StrategyKpi!]!
+  }
+
+additionalResolvers:
+  - ./resolvers.ts
+
+documents:
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; name: string; host: string }'

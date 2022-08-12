@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon, ExclamationCircleIcon, XCircleIcon } from '@heroicons/react/solid'
-import { CircleIcon, classNames, Loader, Popover, Typography } from '@sushiswap/ui'
+import { CircleIcon, classNames, Loader, Tooltip, Typography } from '@sushiswap/ui'
 import Link from 'next/link'
 import { FC, ReactNode } from 'react'
 
@@ -29,6 +29,7 @@ interface TransactionProgressStep {
   subheader: ReactNode
   lastStep?: boolean
   link?: string
+  comingSoon?: boolean
 }
 
 type TransactionProgressStepType<P> = FC<P> & {
@@ -42,19 +43,19 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
   subheader,
   lastStep = false,
   link,
+  comingSoon = false,
 }) => {
   return (
     <div className={classNames('grid grid-cols-[60px_320px] mx-auto')}>
       <div className="flex flex-col items-center">
         <div className="w-6 h-6 flex justify-center items-center">
           {status === 'pending' && <Loader width={21} height={21} />}
-          {status === 'success' && <CheckCircleIcon className="text-blue" width={24} height={24} />}
+          {status === 'success' && <CheckCircleIcon className="text-slate-400" width={24} height={24} />}
           {status === 'skipped' && (
-            <Popover
-              hover
+            <Tooltip
               button={<ExclamationCircleIcon className="text-slate-500 hover:text-slate-300" width={24} height={24} />}
               panel={
-                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
+                <div className="text-xs rounded-2xl text-slate-300">
                   <b>Skipped</b> due to an earlier failure.
                 </div>
               }
@@ -62,25 +63,15 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
           )}
           {status === 'idle' && <CircleIcon className="text-slate-500" width={24} height={24} />}
           {status === 'failed' && (
-            <Popover
-              hover
+            <Tooltip
               button={<XCircleIcon className="text-red" width={24} height={24} />}
-              panel={
-                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
-                  Transaction Failed
-                </div>
-              }
+              panel={<div className="text-xs rounded-2xl text-slate-300">Transaction Failed</div>}
             />
           )}
           {status === 'notice' && (
-            <Popover
-              hover
+            <Tooltip
               button={<ExclamationCircleIcon className="text-yellow" width={24} height={24} />}
-              panel={
-                <div className="bg-slate-800 border border-slate-200/10 p-3 text-xs rounded-2xl">
-                  Non expected result.
-                </div>
-              }
+              panel={<div className="text-xs rounded-2xl text-slate-300">Non expected result.</div>}
             />
           )}
         </div>
@@ -88,7 +79,7 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
           <div
             className={classNames(
               status === 'success'
-                ? 'border-blue'
+                ? 'border-slate-400'
                 : status === 'failed'
                 ? 'border-red'
                 : status === 'notice'
@@ -112,6 +103,14 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
               <ExternalLinkIcon width={16} className="text-inherit" />
             </a>
           </Link>
+        ) : comingSoon ? (
+          <div className="text-slate-200 flex items-center gap-1 hover:text-slate-50">
+            {header}{' '}
+            <Tooltip
+              button={<ExternalLinkIcon width={16} className="text-inherit opacity-40" />}
+              panel={<div className="text-xs rounded-2xl text-slate-300">LzScan coming soon!</div>}
+            />
+          </div>
         ) : (
           <div className="text-slate-200">{header}</div>
         )}

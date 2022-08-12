@@ -9,6 +9,14 @@ export interface RToken {
   name: string
   symbol: string
   address: string
+  chainId?: number | string
+  tokenId?: string // if tokens' ids are equal then tokens are the same
+}
+
+export function setTokenId(...tokens: RToken[]) {
+  tokens.forEach((t) => {
+    if (!t.tokenId) t.tokenId = `${t.address}_${t.chainId}_${t.name}`
+  })
 }
 
 export abstract class RPool {
@@ -32,7 +40,9 @@ export abstract class RPool {
     swapGasCost = TYPICAL_SWAP_GAS_COST
   ) {
     this.address = address
-    ;(this.token0 = token0), (this.token1 = token1)
+    this.token0 = token0
+    this.token1 = token1
+    setTokenId(this.token0, this.token1)
     this.fee = fee
     this.minLiquidity = minLiquidity
     this.swapGasCost = swapGasCost
@@ -44,13 +54,25 @@ export abstract class RPool {
     this.reserve0 = res0
     this.reserve1 = res1
   }
+  getReserve0() {
+    return this.reserve0
+  }
+  getReserve1() {
+    return this.reserve1
+  }
 
   // Returns [<output amount>, <gas consumption estimation>]
   abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
   abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
-  // abstract calcPrice(amountIn: number, direction: boolean, takeFeeIntoAccount: boolean): number;
-  // abstract calcInputByPrice(price: number, direction: boolean, takeFeeIntoAccount: boolean, hint: number): number;
+
+  // precision of calcOutByIn
+  granularity0() {
+    return 1
+  }
+  granularity1() {
+    return 1
+  }
 }
 
 export class ConstantProductRPool extends RPool {

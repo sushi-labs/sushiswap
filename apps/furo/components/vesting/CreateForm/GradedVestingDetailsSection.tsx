@@ -119,8 +119,11 @@ export const GradedVestingDetailsSection = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
                 <Select
-                  error={!!error?.message}
-                  button={<Select.Button className="ring-offset-slate-900">{value.label}</Select.Button>}
+                  button={
+                    <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                      {value.label}
+                    </Select.Button>
+                  }
                   value={value}
                   onChange={onChange}
                 >

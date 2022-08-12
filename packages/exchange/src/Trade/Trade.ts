@@ -41,6 +41,15 @@ export class Trade<
   public readonly outputAmount: Amount<TOutput>
 
   /**
+   * The input share for the trade assuming no slippage.
+   */
+  // public readonly inputShare: Share<TInput>
+  /**
+   * The output share for the trade assuming no slippage.
+   */
+  // public readonly outputShare: Share<TOutput>
+
+  /**
    * The price expressed in terms of output amount/input amount.
    */
   public readonly executionPrice: Price<TInput, TOutput>
@@ -49,6 +58,9 @@ export class Trade<
    * The percent difference between the mid price before the trade and the trade execution price.
    */
   public readonly priceImpact: Percent = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+
+  public readonly currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+  public readonly currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
 
   /**
    * Constructs an exact in trade with the given amount in and route
@@ -60,12 +72,16 @@ export class Trade<
     route: MultiRoute,
     amountIn: Amount<TInput>,
     currencyOut: TOutput,
-    version: TVersion
+    version: TVersion,
+    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
+    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
   ): Trade<TInput, TOutput, Type.EXACT_INPUT, TVersion> {
     return new Trade(
       { ...route, fromToken: amountIn.currency as RToken, toToken: currencyOut as RToken },
       Type.EXACT_INPUT,
-      version
+      version,
+      currencyInRebase,
+      currencyOutRebase
     )
   }
 
@@ -79,23 +95,35 @@ export class Trade<
     route: MultiRoute,
     currencyIn: TInput,
     amountOut: Amount<TOutput>,
-    version: TVersion
+    version: TVersion,
+    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
+    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
   ): Trade<TInput, TOutput, Type.EXACT_OUTPUT, TVersion> {
     return new Trade(
       { ...route, fromToken: currencyIn as RToken, toToken: amountOut.currency as RToken },
       Type.EXACT_OUTPUT,
-      version
+      version,
+      currencyInRebase,
+      currencyOutRebase
     )
   }
 
-  public constructor(route: MultiRoute, tradeType: TradeType, tradeVersion: TradeVersion) {
+  public constructor(
+    route: MultiRoute,
+    tradeType: TradeType,
+    tradeVersion: TradeVersion,
+    currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
+    currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+  ) {
     this.route = route
     this.tradeType = tradeType
     this.tradeVersion = tradeVersion
+    this.currencyInRebase = currencyInRebase
+    this.currencyOutRebase = currencyOutRebase
 
-    const amountIn = Amount.fromRawAmount(route.fromToken as TInput, route.amountInBN.toString())
+    const amountIn = Amount.fromShare(route.fromToken as TInput, route.amountInBN.toString(), currencyInRebase)
 
-    const amountOut = Amount.fromRawAmount(route.toToken as TOutput, route.amountOutBN.toString())
+    const amountOut = Amount.fromShare(route.toToken as TOutput, route.amountOutBN.toString(), currencyOutRebase)
 
     if (tradeType === Type.EXACT_INPUT) {
       this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)
@@ -124,6 +152,7 @@ export class Trade<
    */
   public minimumAmountOut(slippageTolerance: Percent): Amount<TOutput> {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+
     if (this.tradeType === Type.EXACT_OUTPUT) {
       return this.outputAmount
     } else {
