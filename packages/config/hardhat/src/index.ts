@@ -168,7 +168,7 @@ export const defaultConfig: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     gnosis: {
-      url: 'https://rpc.xdaichain.com',
+      url: 'https://rpc.ankr.com/gnosis',
       accounts,
       chainId: 100,
       live: true,

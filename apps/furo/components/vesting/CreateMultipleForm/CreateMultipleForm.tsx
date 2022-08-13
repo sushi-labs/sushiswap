@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -22,11 +22,11 @@ import {
   Form,
   IconButton,
   Link as UILink,
-  Popover,
   Table,
+  Tooltip,
   Typography,
 } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useFuroVestingContract, usePrices } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroVestingRouterContract, usePrices } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -50,7 +50,7 @@ import { TableSection } from './TableSection'
 export const CreateMultipleForm = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
-  const contract = useFuroVestingContract(activeChain?.id)
+  const contract = useFuroVestingRouterContract(activeChain?.id)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
@@ -88,22 +88,45 @@ export const CreateMultipleForm = () => {
 
   const formData = watch()
 
+  // @ts-ignore
+  const vestings = watch('vestings')
+
+  const rebases = useBentoBoxTotals(
+    activeChain?.id,
+    vestings.map(({ currency }) => {
+      if (!currency) return undefined
+      return currency.isNative
+        ? Native.onChain(currency.chainId)
+        : new Token({
+            chainId: currency.chainId,
+            decimals: currency.decimals,
+            address: (currency as Token).address,
+            name: currency.name,
+            symbol: currency.symbol,
+          })
+    })
+  )
+
   const onSubmit = useCallback(
     async (data: CreateMultipleVestingFormDataTransformed | undefined) => {
       if (!contract || !address || !activeChain?.id || !data) return
 
       const summedValue = data.vestings.reduce<Amount<Native>>((acc, cur) => {
         if (cur.totalAmount?.currency?.isNative) {
-          console.log(acc.currency, cur.totalAmount.currency)
           acc = acc.add(cur.totalAmount as Amount<Native>)
         }
 
         return acc
       }, Amount.fromRawAmount(Native.onChain(activeChain.id), '0'))
 
-      const actions = [
-        approveBentoBoxAction({ contract, user: address, signature }),
-        ...data.vestings.reduce<string[]>((acc, cur) => {
+      const actions = []
+
+      if (signature) {
+        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
+      }
+
+      data.vestings
+        .reduce<string[]>((acc, cur) => {
           if (
             cur?.recipient &&
             cur?.currency &&
@@ -126,12 +149,13 @@ export const CreateMultipleForm = () => {
                 stepPercentage: cur.stepPercentage.toString(),
                 amount: cur.totalAmount.quotient.toString(),
                 fromBentobox: cur.fundSource === FundSource.BENTOBOX,
+                minShare: cur.totalAmount.toShare(rebases[cur.currency.wrapped.address]),
               })
             )
           }
           return acc
-        }, []),
-      ]
+        }, [])
+        .forEach((vesting) => actions.push(vesting))
 
       try {
         const resp = await sendTransactionAsync({
@@ -157,6 +181,8 @@ export const CreateMultipleForm = () => {
             failed: 'Something went wrong creating vestings',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         console.log(contract.address, batchAction({ contract, actions }), summedValue.quotient.toString())
         log.tenderly({
@@ -168,7 +194,7 @@ export const CreateMultipleForm = () => {
         })
       }
     },
-    [address, activeChain?.id, contract, sendTransactionAsync, signature]
+    [address, activeChain?.id, contract, sendTransactionAsync, signature, rebases]
   )
 
   const validatedData: CreateMultipleVestingFormDataTransformed | undefined = useMemo(() => {
@@ -200,7 +226,7 @@ export const CreateMultipleForm = () => {
     ? Object.values(
         validatedData.vestings.reduce<Record<string, Amount<Type>>>((acc, cur) => {
           if (!cur.totalAmount) return acc
-          const address = cur.totalAmount.currency.isNative ? AddressZero : cur.totalAmount.currency.address
+          const address = cur.totalAmount.currency.isToken ? cur.totalAmount.currency.address : AddressZero
           if (acc[address]) {
             acc[address] = acc[address].add(cur.totalAmount)
           } else {
@@ -216,7 +242,7 @@ export const CreateMultipleForm = () => {
     <div className={classNames('flex flex-col gap-10')}>
       <Link href="/vesting/create" passHref={true}>
         <a>
-          <button className="group hover:text-white text-slate-200 flex gap-3 font-medium">
+          <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
           </button>
         </a>
@@ -230,23 +256,25 @@ export const CreateMultipleForm = () => {
             )}
           >
             <ImportZone onErrors={setErrors} />
-            <div className="flex flex-col gap-4 col-span-2">
+            <div className="flex flex-col col-span-2 gap-4">
               <Typography weight={500}>Vestings</Typography>
               <div className="flex flex-col">
                 {errors.map((el, idx) => (
-                  <Typography variant="sm" className="text-red flex gap-2 items-center" key={idx}>
+                  <Typography variant="sm" className="flex items-center gap-2 text-red" key={idx}>
                     <ExclamationCircleIcon width={20} height={20} />
                     {el}
                   </Typography>
                 ))}
-                {formStateErrors.vestings?.map((errors, idx) =>
-                  Object.entries(errors).map(([k, v]) => (
-                    <Typography variant="sm" className="text-red flex gap-2 items-center" key={`${idx}-${k}`}>
-                      <ExclamationCircleIcon width={20} height={20} />
-                      Vesting {idx + 1}: {(v as any).message}
-                    </Typography>
-                  ))
-                )}
+                <>
+                  {formStateErrors.vestings?.map((errors, idx) =>
+                    Object.entries(errors).map(([k, v]) => (
+                      <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
+                        <ExclamationCircleIcon width={20} height={20} />
+                        Vesting {idx + 1}: {(v as any).message}
+                      </Typography>
+                    ))
+                  )}
+                </>
               </div>
               <TableSection />
               <Form.Buttons className="flex flex-col items-end gap-3 mt-[-68px]">
@@ -322,7 +350,7 @@ export const CreateMultipleForm = () => {
                             <Table.td>
                               {activeChain && (
                                 <UILink.External
-                                  className="text-blue hover:underline-none hover:text-blue-400 flex items-center gap-1"
+                                  className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
                                   href={Chain.from(activeChain.id).getAccountUrl(el.recipient)}
                                 >
                                   {shortenAddress(el.recipient)} <ExternalLinkIcon width={16} height={16} />
@@ -346,8 +374,7 @@ export const CreateMultipleForm = () => {
                             </Table.td>
                             <Table.td className="flex items-center gap-2">
                               {el.cliff ? `Cliff, ${el.stepConfig?.label}` : el.stepConfig.label}
-                              <Popover
-                                hover
+                              <Tooltip
                                 button={
                                   <IconButton as="div">
                                     <TableIcon width={16} height={16} />
@@ -355,7 +382,7 @@ export const CreateMultipleForm = () => {
                                 }
                                 panel={
                                   el.currency && el.stepPayouts ? (
-                                    <div className="bg-slate-800 p-1">
+                                    <div className="p-1 bg-slate-800">
                                       <ScheduleReview
                                         currency={el.currency}
                                         schedule={createScheduleRepresentation({
@@ -387,7 +414,7 @@ export const CreateMultipleForm = () => {
                   type="button"
                   variant="empty"
                   color="gray"
-                  className="whitespace-nowrap flex items-center gap-1"
+                  className="flex items-center gap-1 whitespace-nowrap"
                   onClick={() => setReview(false)}
                 >
                   <ArrowLeftIcon width={16} height={16} /> Go Back and Edit

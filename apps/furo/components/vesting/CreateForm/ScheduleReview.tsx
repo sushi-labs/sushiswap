@@ -57,7 +57,6 @@ export const ScheduleReview: FC<ScheduleReview> = ({ schedule, currency }) => {
                   </Typography>
                 </div>
               )
-
               return acc
             },
             [[], Amount.fromRawAmount(currency, '0')]

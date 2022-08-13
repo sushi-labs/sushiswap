@@ -51,13 +51,15 @@ export type CreateVestingFormDataTransformed = Omit<
 }
 export type CreateVestingFormDataTransformedAndValidated = Omit<
   CreateVestingFormDataValidated,
-  'startDate' | 'cliffEndDate' | 'stepEndDate'
+  'startDate' | 'cliffEndDate' | 'stepEndDate' | 'cliffAmount' | 'stepAmount'
 > & {
   startDate: Date
   cliffEndDate: Date | undefined
   cliffDuration: JSBI
   stepPercentage: JSBI
   totalAmount: Amount<Type> | undefined
+  cliffAmount: Amount<Type> | undefined
+  stepAmount: Amount<Type> | undefined
 }
 
 export type CreateMultipleVestingFormData = {
