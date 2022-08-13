@@ -2,7 +2,7 @@ sources:
   - name: FuroStream
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:olastenberg/furo-ethereum}
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushi-labs/furo-ethereum}
     transforms:
       - autoPagination:
           validateSchema: true
