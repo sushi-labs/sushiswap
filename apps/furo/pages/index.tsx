@@ -24,7 +24,10 @@ const exampleStream = new Stream({
     id: '0',
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
-    totalAmount: '119994000000',
+    remainingShares: '50000000000',
+    initialShares: '119940000000',
+    initialAmount: '117994000000',
+    extendedShares: '0',
     withdrawnAmount: '69308282750',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -35,6 +38,7 @@ const exampleStream = new Stream({
     expiresAt: Math.floor(new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     startedAt: Math.floor(new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
     modifiedAtTimestamp: Math.floor(new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    extendedAtTimestamp: Math.floor(new Date().getTime() / 1000).toString(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     token: {

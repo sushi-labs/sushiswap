@@ -69,7 +69,7 @@ export const VestingChart: FC<Props> = ({ vesting, schedule }) => {
                 type: 'time',
                 domain: [vesting?.startTime, vesting?.endTime],
               }}
-              yScale={{ type: 'linear', domain: [0, Number(vesting?.amount.toExact())] }}
+              yScale={{ type: 'linear', domain: [0, Number(vesting?.remainingAmount.toExact())] }}
               theme={customTheme}
             >
               <AnimatedAxis

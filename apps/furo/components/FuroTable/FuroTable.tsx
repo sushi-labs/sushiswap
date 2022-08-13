@@ -84,7 +84,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
       />
     ),
   }),
-  table.createDataColumn('amount', {
+  table.createDataColumn('totalAmount', {
     header: () => <div className="w-full text-right">Amount</div>,
     cell: (props) => {
       return (

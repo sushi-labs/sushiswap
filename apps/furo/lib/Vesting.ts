@@ -10,6 +10,7 @@ export class Vesting extends Furo {
   public readonly steps: number
   public readonly cliffAmount: Amount<Token>
   public readonly stepAmount: Amount<Token>
+  public readonly totalAmount: Amount<Token>
   public readonly cliffDuration: number
   public readonly stepDuration: number
   public readonly vestingType: VestingType
@@ -17,8 +18,12 @@ export class Vesting extends Furo {
   public constructor({ chainId, furo: vesting, rebase }: { chainId: ChainId; furo: VestingDTO; rebase: Rebase }) {
     super({ chainId, furo: vesting, rebase })
     this.steps = parseInt(vesting.steps)
-    this.cliffAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.cliffAmount), this.rebase)
-    this.stepAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.stepAmount), this.rebase)
+    this.cliffAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.cliffShares), this.rebase)
+    this.stepAmount = Amount.fromShare(this.token, JSBI.BigInt(vesting.stepShares), this.rebase)
+    this.totalAmount = Amount.fromRawAmount(
+      this.token,
+      JSBI.add(JSBI.BigInt(this._remainingAmount.quotient), JSBI.BigInt(vesting.withdrawnAmount))
+    )
     this.cliffDuration = parseInt(vesting.cliffDuration)
     this.stepDuration = parseInt(vesting.stepDuration)
     if (this.stepDuration && this.cliffDuration) {
@@ -116,9 +121,14 @@ export class Vesting extends Furo {
     return sum
   }
 
+  public get withdrawnPercentage(): Percent {
+    if (this._withdrawnAmount.toExact() === '0') return new Percent(0, 100)
+    return new Percent(this._withdrawnAmount.quotient, this.totalAmount.quotient)
+  }
+
   public get streamedPercentage(): Percent {
     if (!this.isStarted) return new Percent(0, 100)
-    const percent = new Percent(this.streamedAmount.quotient, this.amount.quotient)
+    const percent = new Percent(this.streamedAmount.quotient, this.inititalAmount.quotient)
     return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
   }
 }
