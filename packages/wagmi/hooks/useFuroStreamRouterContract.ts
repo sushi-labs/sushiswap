@@ -6,11 +6,11 @@ import { useContract, useProvider } from 'wagmi'
 export const getFuroStreamRouterContractConfig = (chainId: number | undefined) => ({
   addressOrName:
     // @ts-ignore
-    furoExports[chainId as unknown as keyof Pick<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStreamRouter
+    furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStreamRouter
       ?.address ?? AddressZero,
   contractInterface:
     // @ts-ignore
-    furoExports[chainId as unknown as keyof Pick<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStreamRouter?.abi ??
+    furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStreamRouter?.abi ??
     furoStreamArtifact.abi,
 })
 
