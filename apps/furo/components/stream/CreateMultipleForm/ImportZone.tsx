@@ -52,14 +52,16 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
                 if (cur !== '') {
                   const [tokenAddress] = cur.split(',')
                   if (tokenAddress !== AddressZero) {
-                    fetchToken({ address: tokenAddress, chainId: chain.id }).catch(() => {
-                      if (!errors.current[index]) {
-                        errors.current[index] = []
-                      }
-                      errors.current[index].push(
-                        `${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
-                      )
-                    })
+                    acc.push(
+                      fetchToken({ address: tokenAddress, chainId: chain.id }).catch(() => {
+                        if (!errors.current[index]) {
+                          errors.current[index] = []
+                        }
+                        errors.current[index].push(
+                          `${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
+                        )
+                      })
+                    )
                   }
                 }
 
@@ -126,7 +128,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
 
   const downloadExample = useCallback(() => {
     const encodedUri = encodeURI(
-      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Amount,Recipient,Start Date (Unix Epoch Timestamp),End Date (Unix Epoch Timestamp)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,10-08-2022'
+      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET 1 = BentoBox),Amount,Recipient,Start Date (Unix Epoch Timestamp),End Date (Unix Epoch Timestamp)\n0x0000000000000000000000000000000000000000,0,0.0001,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,1661440124,1661872124'
     )
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)

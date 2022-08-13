@@ -51,7 +51,7 @@ export type CreateVestingFormDataTransformed = Omit<
 }
 export type CreateVestingFormDataTransformedAndValidated = Omit<
   CreateVestingFormDataValidated,
-  'startDate' | 'cliffEndDate' | 'stepEndDate'
+  'startDate' | 'cliffEndDate' | 'stepEndDate' | 'cliffAmount' | 'stepAmount'
 > & {
   startDate: Date
   cliffEndDate: Date | undefined

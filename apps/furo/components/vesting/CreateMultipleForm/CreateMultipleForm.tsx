@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -88,11 +88,23 @@ export const CreateMultipleForm = () => {
 
   const formData = watch()
 
+  // @ts-ignore
   const vestings = watch('vestings')
 
   const rebases = useBentoBoxTotals(
     activeChain?.id,
-    vestings.map((vesting) => vesting.currency)
+    vestings.map(({ currency }) => {
+      if (!currency) return undefined
+      return currency.isNative
+        ? Native.onChain(currency.chainId)
+        : new Token({
+            chainId: currency.chainId,
+            decimals: currency.decimals,
+            address: (currency as Token).address,
+            name: currency.name,
+            symbol: currency.symbol,
+          })
+    })
   )
 
   const onSubmit = useCallback(
@@ -101,7 +113,6 @@ export const CreateMultipleForm = () => {
 
       const summedValue = data.vestings.reduce<Amount<Native>>((acc, cur) => {
         if (cur.totalAmount?.currency?.isNative) {
-          console.log(acc.currency, cur.totalAmount.currency)
           acc = acc.add(cur.totalAmount as Amount<Native>)
         }
 
@@ -170,6 +181,8 @@ export const CreateMultipleForm = () => {
             failed: 'Something went wrong creating vestings',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         console.log(contract.address, batchAction({ contract, actions }), summedValue.quotient.toString())
         log.tenderly({

@@ -121,6 +121,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
           failed: 'Something went wrong creating a vesting schedule',
         },
       })
+
+      setSignature(undefined)
     } catch (e: any) {
       log.tenderly({
         chainId: activeChain?.id,

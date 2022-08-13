@@ -69,7 +69,6 @@ export const streamCreationAction = ({
   fromBentobox,
   minShare,
 }: StreamCreationActionProps): string => {
-  console.log('minShare', minShare.quotient.toString())
   return contract.interface.encodeFunctionData('createStream', [
     recipient,
     currency.isNative ? AddressZero : currency.wrapped.address,

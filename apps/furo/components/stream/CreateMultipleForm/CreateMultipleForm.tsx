@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ArrowCircleLeftIcon, ArrowLeftIcon, ExclamationCircleIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
+import { Amount, Native, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -61,7 +61,18 @@ export const CreateMultipleForm: FC = () => {
 
   const rebases = useBentoBoxTotals(
     activeChain?.id,
-    streams.map((stream) => stream.currency)
+    streams.map(({ currency }) => {
+      if (!currency) return undefined
+      return currency.isNative
+        ? Native.onChain(currency.chainId)
+        : new Token({
+            chainId: currency.chainId,
+            decimals: currency.decimals,
+            address: (currency as Token).address,
+            name: currency.name,
+            symbol: currency.symbol,
+          })
+    })
   )
 
   const onSubmit: SubmitHandler<CreateMultipleStreamFormData> = useCallback(
@@ -86,20 +97,29 @@ export const CreateMultipleForm: FC = () => {
 
       data.streams
         .reduce<string[]>((acc, { recipient, currency, startDate, endDate, amount, fundSource }) => {
-          if (recipient && amount && startDate && endDate && rebases?.[currency.wrapped.address]) {
-            const parsedAmount = tryParseAmount(String(amount), currency)
-            console.log('test', amount, currency, parsedAmount)
+          const _currency = currency.isNative
+            ? Native.onChain(currency.chainId)
+            : new Token({
+                chainId: currency.chainId,
+                decimals: currency.decimals,
+                address: (currency as Token).address,
+                name: currency.name,
+                symbol: currency.symbol,
+              })
+
+          if (recipient && amount && startDate && endDate && rebases?.[_currency.wrapped.address]) {
+            const parsedAmount = tryParseAmount(String(amount), _currency)
             if (parsedAmount) {
               acc.push(
                 streamCreationAction({
                   contract,
                   recipient,
-                  currency: currency as Type,
+                  currency: _currency,
                   startDate: new Date(startDate),
                   endDate: new Date(endDate),
                   amount: parsedAmount,
                   fromBentobox: fundSource === FundSource.BENTOBOX,
-                  minShare: parsedAmount.toShare(rebases[currency.wrapped.address]),
+                  minShare: parsedAmount.toShare(rebases[_currency.wrapped.address]),
                 })
               )
             }
@@ -133,6 +153,8 @@ export const CreateMultipleForm: FC = () => {
             failed: 'Something went wrong creating streams',
           },
         })
+
+        setSignature(undefined)
       } catch (e: any) {
         log.tenderly({
           chainId: activeChain?.id,
@@ -161,7 +183,7 @@ export const CreateMultipleForm: FC = () => {
   }, [isValid, isValidating, streams])
 
   // createMultipleStreamSchema
-  //   .validate(data, { abortEarly: false })
+  //   .validate(validatedData, { abortEarly: false })
   //   .then(function () {
   //     console.log('valid')
   //   })

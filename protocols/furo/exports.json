@@ -1030,6 +1030,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0x95bd909A9cB3002992E2993846b035545F15ff37",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -1980,6 +2156,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x8E190A2173334c67734119791CF63299A7570877",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
@@ -5390,6 +5774,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -6340,6 +6900,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
@@ -7378,6 +8146,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -8328,6 +9272,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
@@ -10495,6 +11647,214 @@
               "type": "function"
             }
           ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
         }
       }
     }
@@ -11530,6 +12890,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -12480,6 +14016,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
@@ -13518,6 +15262,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -14468,6 +16388,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
@@ -16635,6 +18763,214 @@
               "type": "function"
             }
           ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
         }
       }
     }
@@ -18799,6 +21135,214 @@
               "type": "function"
             }
           ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
         }
       }
     }
@@ -19841,6 +22385,182 @@
             }
           ]
         },
+        "FuroStreamRouter": {
+          "address": "0xf30CF8D373D78D7964A2F7793b730BF7ae0970a8",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "_furoStream",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "recipient",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "endTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "fromBentoBox",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createStream",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "streamId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoStream",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroStream",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        },
         "FuroVesting": {
           "address": "0x0689640d190b10765f09310fCfE9C670eDe4E25B",
           "abi": [
@@ -20791,6 +23511,214 @@
               "name": "withdraw",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
+        "FuroVestingRouter": {
+          "address": "0x312A8E33d78d3Ab79E62971E86e5e8c9c5E28D64",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "_bentoBox",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "_furoVesting",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_wETH",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "inputs": [],
+              "name": "InsufficientShares",
+              "type": "error"
+            },
+            {
+              "inputs": [],
+              "name": "bentoBox",
+              "outputs": [
+                {
+                  "internalType": "contract IBentoBoxMinimal",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "contract IERC20",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "recipient",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "start",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "cliffDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "stepDuration",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint32",
+                      "name": "steps",
+                      "type": "uint32"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "stepPercentage",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "uint128",
+                      "name": "amount",
+                      "type": "uint128"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "fromBentoBox",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IFuroVesting.VestParams",
+                  "name": "vestParams",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minShare",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVesting",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "depositedShares",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "vestId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "stepShares",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "cliffShares",
+                  "type": "uint128"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "furoVesting",
+              "outputs": [
+                {
+                  "internalType": "contract IFuroVesting",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "data",
+                  "type": "bytes[]"
+                }
+              ],
+              "name": "multicall",
+              "outputs": [
+                {
+                  "internalType": "bytes[]",
+                  "name": "results",
+                  "type": "bytes[]"
+                }
+              ],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "approved",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "setBentoBoxApproval",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "wETH",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             }
           ]
