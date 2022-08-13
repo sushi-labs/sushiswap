@@ -761,13 +761,17 @@ const Widget: FC<Swap> = ({
         >
           {priceImpact?.multiply(-1).toFixed(2)}%
         </Typography>
-        <Typography variant="sm" className="text-slate-400">
-          Est. Processing Time
-        </Typography>
-        <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
-          ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
-          minutes
-        </Typography>
+        {crossChain && (
+          <>
+            <Typography variant="sm" className="text-slate-400">
+              Est. Processing Time
+            </Typography>
+            <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
+              minutes
+            </Typography>
+          </>
+        )}
         <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
         <Typography variant="sm" className="text-slate-400">
           Min. Received
