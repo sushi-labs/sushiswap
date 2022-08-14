@@ -33,12 +33,12 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
-  const orderBy = query?.orderBy || 'reserveETH'
+  const orderBy = query?.orderBy || 'liquidityUSD'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
     chainIds: AMM_ENABLED_NETWORKS,
-    first: 20,
+    first: 1000,
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),
   })

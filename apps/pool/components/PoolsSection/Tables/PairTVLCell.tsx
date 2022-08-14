@@ -11,7 +11,7 @@ export const PairTVLCell: FC<CellProps> = ({ row }) => {
     fetch(url).then((response) => response.json())
   )
 
-  const tvl = formatUSD(row.reserveETH * bundles[row.chainId].ethPrice)
+  const tvl = formatUSD(row.liquidityUSD)
 
   return (
     <Typography variant="sm" weight={600} className="text-slate-50">

@@ -67,9 +67,9 @@ export const resolvers: Resolvers = {
       ).then((pools) =>
         pools.flat().sort((a, b) => {
           if (args.orderDirection === 'asc') {
-            return a.reserveUSD - b.reserveUSD
+            return a.liquidityUSD - b.liquidityUSD
           } else if (args.orderDirection === 'desc') {
-            return b.reserveUSD - a.reserveUSD
+            return b.liquidityUSD - a.liquidityUSD
           }
 
           return 0

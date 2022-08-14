@@ -16,8 +16,8 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
   const [token0, token1] = useTokensFromPair(pair)
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-between items-center px-2">
+    <div className="flex flex-col w-full gap-4">
+      <div className="flex items-center justify-between px-2">
         <Typography weight={700} className="text-slate-50">
           Pool Composition
         </Typography>
@@ -25,7 +25,9 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
           Total Assets:{' '}
           <span className="font-bold text-slate-50">
             {' '}
-            {formatUSD(pair.reserveETH * Number(prices?.[Native.onChain(pair.chainId).wrapped.address].toFixed(10)))}
+            {formatUSD(
+              pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address].toFixed(10))
+            )}
           </span>
         </Typography>
       </div>
@@ -47,7 +49,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
           <Table.tbody>
             <Table.tr>
               <Table.td>
-                <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
                   <Currency.Icon currency={token0} width={24} height={24} />
                   <Typography weight={700} variant="sm" className="text-slate-50">
                     {token0.symbol}
@@ -63,7 +65,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
             </Table.tr>
             <Table.tr>
               <Table.td>
-                <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
                   <Currency.Icon currency={token1} width={24} height={24} />
                   <Typography weight={700} variant="sm" className="text-slate-50">
                     {token1.symbol}

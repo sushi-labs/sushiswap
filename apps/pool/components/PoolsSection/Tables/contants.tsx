@@ -29,8 +29,8 @@ export const NAME_COLUMN: ColumnDef<Pair> = {
 
 export const TVL_COLUMN: ColumnDef<Pair> = {
   header: 'TVL',
-  id: 'reserveETH',
-  accessorFn: (row) => row.reserveETH,
+  id: 'liquidityUSD',
+  accessorFn: (row) => row.liquidityUSD,
   cell: (props) => <PairTVLCell row={props.row.original} />,
   size: 100,
 }

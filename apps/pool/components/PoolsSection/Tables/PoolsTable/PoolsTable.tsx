@@ -63,7 +63,7 @@ export const PoolsTable: FC = () => {
   const { query, extraQuery } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -87,6 +87,8 @@ export const PoolsTable: FC = () => {
     manualSorting: true,
     manualPagination: true,
   })
+
+  console.log({ pools })
 
   useEffect(() => {
     if (isSm) {

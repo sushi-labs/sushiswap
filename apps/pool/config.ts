@@ -1,6 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUPPORTED_CHAIN_IDS = [ChainId.AVALANCHE, ChainId.ETHEREUM, ChainId.ARBITRUM]
+export const SUPPORTED_CHAIN_IDS = [
+  // ChainId.AVALANCHE,
+  // ChainId.ARBITRUM,
+  ChainId.MOONBEAM,
+  ChainId.FUSE,
+  // ChainId.MOONRIVER,
+  // ChainId.FANTOM,
+  // ChainId.BSC,
+  // ChainId.GNOSIS,
+]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
 const PENDING_GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
@@ -18,9 +27,15 @@ export const GRAPH_HOST = {
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushiswap/exchange',
-  [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
-  [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
+  // [ChainId.ETHEREUM]: 'sushiswap/exchange',
+  [ChainId.AVALANCHE]: 'sushi-labs/sushiswap-avalanche',
+  // [ChainId.ARBITRUM]: 'sushi-labs/sushiswap-arbitrum',
+  [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
+  [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
+  // [ChainId.FANTOM]: 'sushi-labs/sushiswap-fantom',
+  // [ChainId.BSC]: 'sushi-labs/sushiswap-bsc',
+  [ChainId.GNOSIS]: 'sushi-labs/sushiswap-gnosis',
 }
 
 export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -28,4 +43,13 @@ export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 export const STAKING_ENABLED_NETWORKS = [ChainId.ARBITRUM]
 
-export const AMM_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.AVALANCHE, ChainId.ARBITRUM]
+export const AMM_ENABLED_NETWORKS = [
+  ChainId.AVALANCHE,
+  // ChainId.ARBITRUM,
+  ChainId.MOONBEAM,
+  ChainId.FUSE,
+  ChainId.MOONRIVER,
+  // ChainId.FANTOM,
+  // ChainId.BSC,
+  ChainId.GNOSIS,
+]

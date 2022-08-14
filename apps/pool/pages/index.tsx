@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'reserveETH',
+                id: 'liquidityUSD',
                 desc: true,
               },
             ],
