@@ -250,7 +250,9 @@ const AddPage = ({
             parsedInput0
           )) ||
         (parsedInput1 &&
-          balances?.[token1.isNative ? AddressZero : token1.wrapped.address]?.[FundSource.WALLET]?.lessThan(parsedInput1))
+          balances?.[token1.isNative ? AddressZero : token1.wrapped.address]?.[FundSource.WALLET]?.lessThan(
+            parsedInput1
+          ))
       : undefined
 
   const [inputUsd, outputUsd] = useMemo(() => {
@@ -385,7 +387,7 @@ const AddPage = ({
             href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
             className="flex justify-center px-6 py-4 decoration-slate-500 bg-white bg-opacity-[0.04] hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
           >
-            <Typography variant="sm" weight={500} className="text-slate-400 flex gap-1 items-center">
+            <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-400">
               Learn more about liquidity and yield farming
               <ExternalLinkIcon width={16} height={16} className="text-slate-400" />
             </Typography>
@@ -446,7 +448,7 @@ const AddPage = ({
               </Typography>
             </div>
           </div>
-          <div className="p-4 flex justify-center">
+          <div className="flex justify-center p-4">
             <Rate price={pair?.token0Price}>
               {({ toggleInvert, content, usdPrice }) => (
                 <Typography

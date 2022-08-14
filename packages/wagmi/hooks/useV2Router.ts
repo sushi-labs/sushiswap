@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import sushiswapArtifact from '@sushiswap/sushiswap/artifacts/contracts/UniswapV2Router02.sol/UniswapV2Router02.json'
 import sushiswapExports from '@sushiswap/sushiswap/exports.json'
-import { useContract, useProvider } from 'wagmi'
+import { useContract, useSigner } from 'wagmi'
 
 // TODO CELO NOT FOUND?
 export const getV2RouterContractConfig = (chainId: number | undefined) => ({
@@ -14,8 +14,9 @@ export const getV2RouterContractConfig = (chainId: number | undefined) => ({
 })
 
 export function useV2RouterContract(chainId: number | undefined) {
+  const { data: signerOrProvider } = useSigner()
   return useContract({
     ...getV2RouterContractConfig(chainId),
-    signerOrProvider: useProvider({ chainId }),
+    signerOrProvider,
   })
 }
