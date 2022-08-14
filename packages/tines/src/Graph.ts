@@ -646,14 +646,15 @@ export class Graph {
 
           newIncome = out
           gas = gasSpent
-        } catch (e) {
+        } catch (err) {
           // Any arithmetic error or out-of-liquidity
-          return
-        }
-        if (e.checkMinimalLiquidityExceededAfterSwap(closestVert as Vertice, newIncome)) {
           e.bestEdgeIncome = -1
           return
         }
+        // if (e.checkMinimalLiquidityExceededAfterSwap(closestVert as Vertice, newIncome)) {
+        //   e.bestEdgeIncome = -1
+        //   return
+        // }
         const newGasSpent = (closestVert as Vertice).gasSpent + gas
         const price = v2.price / finish.price
         const gasPrice = v2.gasPrice * price
