@@ -36,12 +36,12 @@ const func: DeployFunction = async ({
       },
     ])
 
-    await tenderly.verify([
-      {
-        name: 'FuroStream',
-        address,
-      },
-    ])
+    // await tenderly.verify([
+    //   {
+    //     name: 'FuroStream',
+    //     address,
+    //   },
+    // ])
   } catch (error) {
     console.error(error)
   }

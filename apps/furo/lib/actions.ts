@@ -1,8 +1,8 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { BaseContract } from '@ethersproject/contracts'
-import { Amount, Type } from '@sushiswap/currency'
-import { FuroStream, FuroVesting } from '@sushiswap/furo/typechain'
+import { Amount, Share, Type } from '@sushiswap/currency'
+import { FuroStreamRouter, FuroVestingRouter } from '@sushiswap/furo/typechain'
 
 interface Batch<T> {
   contract: T
@@ -49,13 +49,14 @@ export const approveBentoBoxAction = <T extends BaseContract>({
 }
 
 export interface StreamCreationActionProps {
-  contract: FuroStream
+  contract: FuroStreamRouter
   recipient: string
   currency: Type
   startDate: Date
   endDate: Date
   amount: Amount<Type>
   fromBentobox: boolean
+  minShare: Share<Type>
 }
 
 export const streamCreationAction = ({
@@ -66,19 +67,21 @@ export const streamCreationAction = ({
   endDate,
   amount,
   fromBentobox,
+  minShare,
 }: StreamCreationActionProps): string => {
   return contract.interface.encodeFunctionData('createStream', [
     recipient,
-    currency.isNative ? AddressZero : currency.address,
+    currency.isNative ? AddressZero : currency.wrapped.address,
     startDate.getTime() / 1000,
     endDate.getTime() / 1000,
     amount.quotient.toString(),
     fromBentobox,
+    minShare.quotient.toString(),
   ])
 }
 
 export interface VestingCreationProps {
-  contract: FuroVesting
+  contract: FuroVestingRouter
   recipient: string
   currency: Type
   startDate: Date
@@ -88,6 +91,7 @@ export interface VestingCreationProps {
   stepPercentage: string
   amount: string
   fromBentobox: boolean
+  minShare: Share<Type>
 }
 
 export const vestingCreationAction = ({
@@ -101,10 +105,11 @@ export const vestingCreationAction = ({
   stepPercentage,
   amount,
   fromBentobox,
+  minShare,
 }: VestingCreationProps): string => {
   return contract.interface.encodeFunctionData('createVesting', [
     {
-      token: currency.isNative ? AddressZero : currency.address,
+      token: currency.isNative ? AddressZero : currency.wrapped.address,
       recipient: recipient,
       start: startDate.getTime() / 1000,
       cliffDuration: cliffDuration,
@@ -114,5 +119,6 @@ export const vestingCreationAction = ({
       amount: amount,
       fromBentoBox: fromBentobox,
     },
+    minShare.quotient.toString(),
   ])
 }

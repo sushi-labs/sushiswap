@@ -36,10 +36,10 @@ yup.addMethod(
       params: { address },
       test(value: Maybe<Type>) {
         if (value?.isNative) return true
-        if (value?.address?.length === 0) return true
+        if ((value as Token)?.address?.length === 0) return true
 
         try {
-          return !!(value && getAddress(value.address))
+          return !!(value && getAddress((value as Token).address))
         } catch {
           return false
         }
