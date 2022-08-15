@@ -40,7 +40,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
     chainIds: networks,
-    first: 20,
+    first: Math.ceil(60 / networks.length),
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),
   })
