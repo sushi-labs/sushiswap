@@ -24,6 +24,7 @@ type GetPoolsQuery = Partial<{
   skip: number
   orderBy: Pair_orderBy
   orderDirection: OrderDirection
+  networks: string
 }>
 
 export const getPools = async (query?: GetPoolsQuery) => {
@@ -33,11 +34,12 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
+  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
   const orderBy = query?.orderBy || 'reserveETH'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
-    chainIds: AMM_ENABLED_NETWORKS,
+    chainIds: networks,
     first: 20,
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),

@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
@@ -16,7 +17,13 @@ const fetcher = ({
   args,
 }: {
   url: string
-  args: { sorting: SortingState; pagination: PaginationState; query: string; extraQuery: string }
+  args: {
+    sorting: SortingState
+    pagination: PaginationState
+    query: string
+    extraQuery: string
+    selectedNetworks: ChainId[]
+  }
 }) => {
   const _url = new URL(url, window.location.origin)
 
@@ -28,6 +35,10 @@ const fetcher = ({
   if (args.pagination) {
     _url.searchParams.set('first', args.pagination.pageSize.toString())
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
+  }
+
+  if (args.selectedNetworks) {
+    _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
   }
 
   let where = {}
@@ -56,7 +67,7 @@ const fetcher = ({
 }
 
 export const PoolsTable: FC = () => {
-  const { query, extraQuery } = usePoolFilters()
+  const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
@@ -66,7 +77,10 @@ export const PoolsTable: FC = () => {
     pageSize: PAGE_SIZE,
   })
 
-  const args = useMemo(() => ({ sorting, pagination, query, extraQuery }), [sorting, pagination, query, extraQuery])
+  const args = useMemo(
+    () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
+    [sorting, pagination, selectedNetworks, query, extraQuery]
+  )
   const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
 
   const table = useReactTable({
