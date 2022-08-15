@@ -45,7 +45,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
             // Split and remove header
             const arr = result.split(/\r?\n/)
 
-            // If the CSV has no header, remove the first line
+            // If the CSV has a header, remove the first line
             if (arr.length > 0) {
               const [tokenAddress] = arr[0].split(',')
               try {
