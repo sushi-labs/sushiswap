@@ -1,14 +1,15 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
-import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
+import { flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { PAGE_SIZE } from './contants'
+import { ExtendedColumnDef } from './types'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
-  columns: ColumnDef<C>[]
+  columns: ExtendedColumnDef<C, unknown>[]
   HoverElement?: React.FunctionComponent<{ row: C }>
 }
 
@@ -102,32 +103,12 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
             })}
             {table.getRowModel().rows.length === 0 &&
               Array.from(Array(PAGE_SIZE)).map((el, index) => (
-                <Table.tr key={index} className="!max-h-[48px]">
-                  <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }}>
-                    <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
-                  </Table.td>
-                  <Table.td
-                    className="flex items-center gap-2"
-                    style={{ maxWidth: columns[1].size, width: columns[1].size }}
-                  >
-                    <div className="flex items-center">
-                      <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
-                      <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse -ml-[12px]" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
-                    </div>
-                  </Table.td>
-                  <Table.td style={{ maxWidth: columns[2].size, width: columns[2].size }}>
-                    <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
-                  </Table.td>
-                  <Table.td style={{ maxWidth: columns[3].size, width: columns[3].size }}>
-                    <div className="rounded-full bg-slate-700 w-[120px] h-[20px] animate-pulse" />
-                  </Table.td>
-                  <Table.td className="flex items-center" style={{ maxWidth: columns[4].size, width: columns[4].size }}>
-                    <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />
-                    <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse -ml-[12px]" />
-                  </Table.td>
+                <Table.tr key={index}>
+                  {columns.map((column) => (
+                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }}>
+                      {column.skeleton}
+                    </Table.td>
+                  ))}
                 </Table.tr>
               ))}
           </Table.tbody>
