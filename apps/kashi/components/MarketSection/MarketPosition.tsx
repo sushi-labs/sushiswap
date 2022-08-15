@@ -8,9 +8,10 @@ import { MarketButtons } from './MarketButtons'
 
 interface MarketPositionProps {
   pair: KashiPair
+  side: 'borrow' | 'lend'
 }
 
-export const MarketPosition: FC<MarketPositionProps> = ({ pair }) => {
+export const MarketPosition: FC<MarketPositionProps> = ({ pair, side }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
   const [open, setOpen] = useState(false)
   const { data: prices } = usePrices({ chainId: pair.chainId })
@@ -133,7 +134,7 @@ export const MarketPosition: FC<MarketPositionProps> = ({ pair }) => {
             </div>
           </div>
           <div className="px-2">
-            <MarketButtons pair={pair} />
+            <MarketButtons side={side} pair={pair} />
           </div>
         </Dialog.Content>
       </Dialog>

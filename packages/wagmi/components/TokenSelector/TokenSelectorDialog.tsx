@@ -53,7 +53,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
 
   const handleSelect = useCallback(
     (currency: Type) => {
-      onSelect(currency)
+      onSelect && onSelect(currency)
       onClose()
     },
     [onClose, onSelect]
@@ -62,7 +62,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   const handleImport = useCallback(
     (currency: Token) => {
       onAddToken(currency)
-      onSelect(currency)
+      onSelect && onSelect(currency)
       onClose()
     },
     [onAddToken, onClose, onSelect]

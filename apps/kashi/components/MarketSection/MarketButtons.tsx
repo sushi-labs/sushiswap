@@ -1,4 +1,5 @@
 import { Button, Link } from '@sushiswap/ui'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
 
 import { KashiPair } from '../../.graphclient'
@@ -10,11 +11,12 @@ interface MarketButtonsProps {
 }
 
 export const MarketButtons: FC<MarketButtonsProps> = ({ pair, side }) => {
+  const router = useRouter()
   const { asset, collateral } = useTokensFromKashiPair(pair)
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Link.Internal href="/earn" passHref={true}>
+      <Link.Internal href={`/lend/${router.query.id}/deposit`} passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
           Earn
         </Button>
