@@ -24,7 +24,7 @@ type GetPoolsQuery = Partial<{
   skip: number
   orderBy: Pair_orderBy
   orderDirection: OrderDirection
-  networks: string
+  networks?: string
 }>
 
 export const getPools = async (query?: GetPoolsQuery) => {
@@ -91,13 +91,20 @@ export const getFarms = async (query?: CrossChainFarmsQuery) => {
   return farms
 }
 
-export const getUser = async (id: string) => {
+type GetUserQuery = Partial<{
+  id: string
+  networks: string
+}>
+
+export const getUser = async (query?: GetUserQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
+  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
+
   const { crossChainUser: user } = await sdk.CrossChainUser({
-    chainIds: AMM_ENABLED_NETWORKS,
-    id: id.toLowerCase(),
+    chainIds: networks,
+    id: query?.id?.toLowerCase(),
   })
 
   return user

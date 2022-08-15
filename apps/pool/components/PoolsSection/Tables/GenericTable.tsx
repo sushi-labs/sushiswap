@@ -1,19 +1,26 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, LoadingOverlay, Table, Tooltip } from '@sushiswap/ui'
+import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 
-import { PAGE_SIZE } from './contants'
 import { ExtendedColumnDef } from './types'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   columns: ExtendedColumnDef<C, unknown>[]
   HoverElement?: React.FunctionComponent<{ row: C }>
+  loading?: boolean
+  placeholder: ReactNode
 }
 
-export const GenericTable = <T extends { id: string }>({ table, columns, HoverElement }: GenericTableProps<T>) => {
+export const GenericTable = <T extends { id: string }>({
+  table,
+  columns,
+  HoverElement,
+  loading,
+  placeholder,
+}: GenericTableProps<T>) => {
   const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -21,7 +28,7 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
     <>
       <LoadingOverlay show={showOverlay} />
       <Table.container>
-        <Table.table>
+        <Table.table className="min-h-[312px]">
           <Table.thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.thr key={headerGroup.id}>
@@ -52,57 +59,58 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
             ))}
           </Table.thead>
           <Table.tbody>
-            {table.getRowModel().rows.map((row) => {
-              if (HoverElement) {
-                return (
-                  <Tooltip
-                    key={row.id}
-                    trigger="hover"
-                    mouseEnterDelay={0.5}
-                    placement="top"
-                    button={
-                      <Table.tr
-                        onClick={() => {
-                          setShowOverlay(true)
-                          void router.push(`/${row.original.id}`)
-                        }}
-                        className="cursor-pointer"
-                      >
-                        {row.getVisibleCells().map((cell) => {
-                          return (
-                            <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </Table.td>
-                          )
-                        })}
-                      </Table.tr>
-                    }
-                    panel={<HoverElement row={row.original} />}
-                  />
-                )
-              }
+            {!loading &&
+              table.getRowModel().rows.map((row) => {
+                if (HoverElement) {
+                  return (
+                    <Tooltip
+                      key={row.id}
+                      trigger="hover"
+                      mouseEnterDelay={0.5}
+                      placement="top"
+                      button={
+                        <Table.tr
+                          onClick={() => {
+                            setShowOverlay(true)
+                            void router.push(`/${row.original.id}`)
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {row.getVisibleCells().map((cell) => {
+                            return (
+                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </Table.td>
+                            )
+                          })}
+                        </Table.tr>
+                      }
+                      panel={<HoverElement row={row.original} />}
+                    />
+                  )
+                }
 
-              return (
-                <Table.tr
-                  key={row.id}
-                  onClick={() => {
-                    setShowOverlay(true)
-                    void router.push(`/${row.original.id}`)
-                  }}
-                  className="cursor-pointer"
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Table.td>
-                    )
-                  })}
-                </Table.tr>
-              )
-            })}
-            {table.getRowModel().rows.length === 0 &&
-              Array.from(Array(PAGE_SIZE)).map((el, index) => (
+                return (
+                  <Table.tr
+                    key={row.id}
+                    onClick={() => {
+                      setShowOverlay(true)
+                      void router.push(`/${row.original.id}`)
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Table.td>
+                      )
+                    })}
+                  </Table.tr>
+                )
+              })}
+            {loading &&
+              Array.from(Array(5)).map((el, index) => (
                 <Table.tr key={index}>
                   {columns.map((column) => (
                     <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }}>
@@ -111,6 +119,15 @@ export const GenericTable = <T extends { id: string }>({ table, columns, HoverEl
                   ))}
                 </Table.tr>
               ))}
+            {!loading && table.getRowModel().rows.length === 0 && (
+              <Table.tr className="!h-[260px]">
+                <Table.td colSpan={table.getAllColumns().length} className="!h-[260px]">
+                  <Typography variant="xs" className="text-slate-400 italic w-full text-center">
+                    {placeholder}
+                  </Typography>
+                </Table.td>
+              </Table.tr>
+            )}
           </Table.tbody>
         </Table.table>
       </Table.container>

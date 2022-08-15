@@ -81,7 +81,7 @@ export const PoolsTable: FC = () => {
     () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
-  const { data: pools } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher)
+  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const table = useReactTable({
     data: pools ?? [],
@@ -106,5 +106,13 @@ export const PoolsTable: FC = () => {
     }
   }, [isSm])
 
-  return <GenericTable<Pair> table={table} columns={COLUMNS} HoverElement={PairQuickHoverTooltip} />
+  return (
+    <GenericTable<Pair>
+      table={table}
+      columns={COLUMNS}
+      loading={isValidating && !error && !pools}
+      HoverElement={PairQuickHoverTooltip}
+      placeholder="No pools found"
+    />
+  )
 }
