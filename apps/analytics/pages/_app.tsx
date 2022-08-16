@@ -7,7 +7,7 @@ import { FC } from 'react'
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <App.Shell>
-      <App.Header appType={AppType.Analytics}>
+      <App.Header maxWidth="6xl" appType={AppType.Analytics} withScrollBackground>
         <App.Nav />
       </App.Header>
       <Component {...pageProps} />

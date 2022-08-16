@@ -1,41 +1,46 @@
-import { FactoryQuery } from '../.graphclient'
-import { KPI } from '../components'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { FC } from 'react'
+import { SWRConfig } from 'swr'
 
-export default function Analytics(props: FactoryQuery) {
-  const { liquidityUSD, volumeUSD, txCount, pairCount, userCount, tokenCount } = Object.values(props).reduce(
-    (previousValue, currentValue) => ({
-      liquidityUSD: previousValue.liquidityUSD + Number(currentValue.liquidityUSD),
-      volumeUSD: previousValue.volumeUSD + Number(currentValue.volumeUSD),
-      txCount: previousValue.txCount + Number(currentValue.txCount),
-      pairCount: previousValue.pairCount + Number(currentValue.pairCount),
-      userCount: previousValue.userCount + Number(currentValue.userCount),
-      tokenCount: previousValue.tokenCount + Number(currentValue.tokenCount),
-    }),
-    { liquidityUSD: 0, volumeUSD: 0, txCount: 0, pairCount: 0, userCount: 0, tokenCount: 0 }
-  )
+import { Layout, PairsProvider, PairTable, PairTableSection } from '../components'
+import { ChartSection } from '../components/ChartSection'
+import { getPairs, getStats } from '../lib/api'
 
-  return (
-    <div className="px-2 pt-16">
-      <h1 className="py-4 text-2xl font-bold">Overview</h1>
-      <div className="grid grid-cols-2 gap-2">
-        <KPI label="TVL" value={`$${liquidityUSD.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} />
-        <KPI label="VOLUME" value={`$${volumeUSD.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} />
-        <KPI label="TRANSACTIONS" value={txCount.toLocaleString()} />
-        <KPI label="POOLS" value={pairCount.toLocaleString()} />
-        <KPI label="USERS" value={userCount.toLocaleString()} />
-        <KPI label="TOKENS" value={tokenCount.toLocaleString()} />
-      </div>
-    </div>
-  )
-}
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const [pairs, stats] = await Promise.all([getPairs(), getStats()])
 
-export async function getStaticProps() {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = await getBuiltGraphSDK()
   return {
     props: {
-      ...(await sdk.Factory()),
+      fallback: {
+        [`/analytics/api/pairs`]: pairs,
+        [`/analytics/api/stats`]: stats,
+      },
     },
-    revalidate: 60,
   }
 }
+
+const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_Index />
+    </SWRConfig>
+  )
+}
+
+const _Index = () => {
+  return (
+    <Layout>
+      <div className="flex flex-col gap-4">
+        <PairsProvider>
+          <ChartSection />
+          <PairTableSection>
+            <PairTable />
+          </PairTableSection>
+        </PairsProvider>
+      </div>
+    </Layout>
+  )
+}
+
+export default Index

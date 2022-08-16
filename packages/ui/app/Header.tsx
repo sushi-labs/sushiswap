@@ -3,7 +3,7 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Link, Select, SushiIcon, useBreakpoint } from '../index'
+import { classNames, Container, Link, MaxWidth, Select, SushiIcon, useBreakpoint } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -33,6 +33,7 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
   nav?: JSX.Element
   withScrollBackground?: boolean
   appType: AppType
+  maxWidth?: MaxWidth
 }
 
 export function Header({
@@ -41,6 +42,7 @@ export function Header({
   className,
   nav,
   withScrollBackground = false,
+  maxWidth = '5xl',
   ...props
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
@@ -72,7 +74,7 @@ export function Header({
       >
         <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
-      <div className="grid grid-cols-3 items-center max-w-5xl w-full mx-auto z-[101] px-4">
+      <Container maxWidth={maxWidth} className="grid grid-cols-3 items-center w-full mx-auto z-[101] px-4">
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">
@@ -153,7 +155,7 @@ export function Header({
         </div>
         <div className="flex justify-center">{nav}</div>
         <div className="flex justify-end">{children}</div>
-      </div>
+      </Container>
     </header>
   )
 }

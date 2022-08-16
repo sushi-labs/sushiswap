@@ -1,0 +1,70 @@
+query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!, $now: Int!) {
+    crossChainPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds, now: $now) {
+        volume7d
+        volume24h
+        fees7d
+        fees24h
+        id
+        chainId
+        chainName
+        chainShortName
+        name
+        reserve0
+        reserve1
+        liquidity
+        token0 {
+            name
+            id
+            decimals
+            symbol
+            price {
+                lastUsdPrice
+            }
+        }
+        token1 {
+            name
+            id
+            decimals
+            symbol
+            price {
+                lastUsdPrice
+            }
+        }
+        volumeUSD
+        hourSnapshots(skip: 1, first: 24, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+            id
+            date
+            volumeUSD
+            feesUSD
+        }
+        daySnapshots(skip:1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+            id
+            date
+            volumeUSD
+            feesUSD
+        }
+        liquidityUSD
+        feesUSD
+        apr
+    }
+}
+
+query CrossChainStats($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!, $now: Int!) {
+    crossChainStats(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds, now: $now) {
+        chainId
+        chainName
+        chainShortName
+        hourSnapshots(skip: 1, first: 168, orderBy: date, orderDirection: desc) {
+            id
+            date
+            volumeUSD
+            liquidityUSD
+        }
+        daySnapshots(skip:1, first: 730, orderBy: date, orderDirection: desc) {
+            id
+            date
+            volumeUSD
+            liquidityUSD
+        }
+    }
+}
