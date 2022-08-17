@@ -503,6 +503,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -553,6 +554,7 @@ importers:
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
@@ -23124,7 +23126,7 @@ packages:
     dev: true
 
   github.com/boringcrypto/BoringSolidity/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc:
-    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
+    resolution: {commit: 8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc, repo: git+ssh://git@github.com/boringcrypto/BoringSolidity.git, type: git}
     name: '@boringcrypto/boring-solidity'
     version: 1.2.0
     dev: true

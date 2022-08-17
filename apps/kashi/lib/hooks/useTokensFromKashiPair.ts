@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/currency'
+import { Native, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
 import { KashiPair } from '../../.graphclient'
@@ -6,20 +6,26 @@ import { KashiPair } from '../../.graphclient'
 export const useTokensFromKashiPair = (pair: KashiPair) => {
   return useMemo(
     () => ({
-      asset: new Token({
-        address: pair.asset.id,
-        name: pair.asset.name,
-        decimals: Number(pair.asset.decimals),
-        symbol: pair.asset.symbol,
-        chainId: pair.chainId,
-      }),
-      collateral: new Token({
-        address: pair.collateral.id,
-        name: pair.collateral.name,
-        decimals: Number(pair.collateral.decimals),
-        symbol: pair.collateral.symbol,
-        chainId: pair.chainId,
-      }),
+      asset:
+        Native.onChain(pair.chainId).wrapped.address.toLowerCase() === pair.asset.id.toLowerCase()
+          ? Native.onChain(pair.chainId)
+          : new Token({
+              address: pair.asset.id,
+              name: pair.asset.name,
+              decimals: Number(pair.asset.decimals),
+              symbol: pair.asset.symbol,
+              chainId: pair.chainId,
+            }),
+      collateral:
+        Native.onChain(pair.chainId).wrapped.address.toLowerCase() === pair.collateral.id.toLowerCase()
+          ? Native.onChain(pair.chainId)
+          : new Token({
+              address: pair.collateral.id,
+              name: pair.collateral.name,
+              decimals: Number(pair.collateral.decimals),
+              symbol: pair.collateral.symbol,
+              chainId: pair.chainId,
+            }),
     }),
     [
       pair.chainId,

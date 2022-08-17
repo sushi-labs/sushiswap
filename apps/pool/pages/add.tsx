@@ -246,11 +246,11 @@ const AddPage = ({
   const insufficientBalance =
     token0 && token1
       ? (parsedInput0 &&
-          balances?.[token0.isNative ? AddressZero : token0.wrapped.address][FundSource.WALLET]?.lessThan(
+          balances?.[token0.isNative ? AddressZero : token0.wrapped.address]?.[FundSource.WALLET]?.lessThan(
             parsedInput0
           )) ||
         (parsedInput1 &&
-          balances?.[token1.isNative ? AddressZero : token1.wrapped.address][FundSource.WALLET]?.lessThan(parsedInput1))
+          balances?.[token1.isNative ? AddressZero : token1.wrapped.address]?.[FundSource.WALLET]?.lessThan(parsedInput1))
       : undefined
 
   const [inputUsd, outputUsd] = useMemo(() => {

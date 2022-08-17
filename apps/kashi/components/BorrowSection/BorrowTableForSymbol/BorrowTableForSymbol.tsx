@@ -23,6 +23,7 @@ import {
   TOTAL_ASSET_COLUMN,
 } from '../../Table'
 
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, BORROW_ASSET_COLUMN, TOTAL_APR_COLUMN, TOTAL_ASSET_COLUMN, AVAILABLE_FOR_BORROW_COLUMN]
 
 const fetcher = ({
