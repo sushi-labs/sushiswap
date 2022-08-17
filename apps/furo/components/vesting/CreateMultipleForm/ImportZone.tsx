@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
 import chains from '@sushiswap/chain'
@@ -43,7 +44,16 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
           if (typeof result === 'string') {
             // Split and remove header
             const arr = result.split(/\r?\n/)
-            arr.shift()
+
+            // If the CSV has a header, remove the first line
+            if (arr.length > 0) {
+              const [tokenAddress] = arr[0].split(',')
+              try {
+                getAddress(tokenAddress)
+              } catch (e) {
+                arr.shift()
+              }
+            }
 
             const rows: CreateVestingFormData[] = []
 
