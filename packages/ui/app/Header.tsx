@@ -23,7 +23,7 @@ const LINK = {
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
   [AppType.Internal]: '/internal',
-  [AppType.Kashi]: '/internal',
+  [AppType.Kashi]: '/kashi',
   [AppType.Analytics]: '/analytics',
   [AppType.Pool]: '/pool',
   [AppType.Partner]: '/partner',

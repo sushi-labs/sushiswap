@@ -21,8 +21,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               withScrollBackground
               nav={
                 <App.NavItemList>
-                  <App.NavItem href="/lend" label="Lend" />
-                  <App.NavItem href="/borrow" label="Borrow" />
+                  <App.NavItem href="/swap" label="Swap" />
+                  <App.NavItem href="/pool" label="Pools" />
                 </App.NavItemList>
               }
             >
