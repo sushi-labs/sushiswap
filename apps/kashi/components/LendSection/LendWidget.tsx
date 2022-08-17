@@ -17,9 +17,9 @@ interface LendWidget {
 }
 
 export const LendWidget: FC<LendWidget> = ({ pair }) => {
-  const { collateral } = useTokensFromKashiPair(pair)
+  const { asset } = useTokensFromKashiPair(pair)
   const [value, setValue] = useState('')
-  const valueAsEntity = useMemo(() => tryParseAmount(value, collateral), [collateral, value])
+  const valueAsEntity = useMemo(() => tryParseAmount(value, asset), [asset, value])
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
   const tokenMap = useTokens(pair.chainId)
   const [review, setReview] = useState(false)
@@ -37,7 +37,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
             loading={false}
             value={value}
             onChange={setValue}
-            currency={collateral}
+            currency={asset}
             customTokenMap={customTokensMap}
             onAddToken={addCustomToken}
             onRemoveToken={removeCustomToken}
@@ -74,8 +74,8 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
                 </div>
               </div>
               <Typography variant="sm" weight={500} className="text-slate-500">
-                {valueAsEntity && prices?.[collateral.wrapped.address]
-                  ? formatUSD(valueAsEntity?.multiply(prices?.[collateral.wrapped.address].asFraction).toFixed(2))
+                {valueAsEntity && prices?.[asset.wrapped.address]
+                  ? formatUSD(valueAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
                   : '-'}
               </Typography>
             </div>

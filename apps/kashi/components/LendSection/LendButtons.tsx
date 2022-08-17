@@ -5,25 +5,24 @@ import { FC } from 'react'
 import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 
-interface MarketButtonsProps {
+interface LendButtons {
   pair: KashiPair
-  side: 'borrow' | 'lend'
 }
 
-export const MarketButtons: FC<MarketButtonsProps> = ({ pair, side }) => {
+export const LendButtons: FC<LendButtons> = ({ pair }) => {
   const router = useRouter()
-  const { asset, collateral } = useTokensFromKashiPair(pair)
+  const { asset } = useTokensFromKashiPair(pair)
 
   return (
     <div className="flex flex-col gap-2 w-full">
       <Link.Internal href={`/lend/${router.query.id}/deposit`} passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
-          Earn
+          Lend {asset.symbol}
         </Button>
       </Link.Internal>
-      <Link.Internal href={`/${side === 'borrow' ? 'lend' : 'borrow'}/${pair.id}`} passHref={true}>
+      <Link.Internal href={`/borrow/${pair.id}`} passHref={true}>
         <Button as="a" color="blue" variant="empty" fullWidth>
-          {`${side === 'borrow' ? 'Lend' : 'Borrow'} ${side === 'borrow' ? asset.symbol : collateral.symbol} Instead`}
+          Borrow {asset.symbol} Instead
         </Button>
       </Link.Internal>
     </div>

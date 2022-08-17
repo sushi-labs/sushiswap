@@ -15,20 +15,12 @@ interface Payload {
   borrowAmount?: Amount<Type>
   collateralAmount?: Amount<Type>
   trade?: Trade<Type, Type, TradeType.EXACT_INPUT, Version.V1> | null
-  invert: boolean
   reduce: boolean
 }
 
-type UseLiquidationPrice = (x: Payload) => string
+type UseLiquidationPrice = (x: Payload) => Price<Type, Type> | null | undefined
 
-export const useLiquidationPrice: UseLiquidationPrice = ({
-  pair,
-  borrowAmount,
-  collateralAmount,
-  invert,
-  trade,
-  reduce,
-}) => {
+export const useLiquidationPrice: UseLiquidationPrice = ({ pair, borrowAmount, collateralAmount, trade, reduce }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
@@ -57,7 +49,7 @@ export const useLiquidationPrice: UseLiquidationPrice = ({
       ? currentBorrowedAmount[reduce ? 'subtract' : 'add'](borrowAmount)
       : currentBorrowedAmount
 
-    if (totalBorrowed.equalTo(ZERO)) return 'None'
+    if (totalBorrowed.equalTo(ZERO)) return undefined
 
     const liquidationPrice =
       totalBorrowed && totalCollateral && totalBorrowed.greaterThan(ZERO)
@@ -68,20 +60,17 @@ export const useLiquidationPrice: UseLiquidationPrice = ({
     const assetPriceNumber = Number(collateralAssetPrice?.toSignificant(6))
 
     if (liqPriceNumber > assetPriceNumber || Number(liquidationPrice?.invert().toSignificant(6)) < 0) {
-      return 'Instant liquidation'
+      // Instant
+      return null
     } else if (!liqPriceNumber) {
-      return 'None'
+      // None
+      return undefined
     }
 
-    return invert
-      ? `1 ${totalBorrowed?.currency.symbol} = ${liquidationPrice?.toSignificant(6)} ${
-          totalCollateral?.currency.symbol
-        }`
-      : `1 ${totalCollateral?.currency.symbol} = ${liquidationPrice?.invert().toSignificant(6)} ${
-          totalBorrowed?.currency.symbol
-        }`
+    return liquidationPrice
   } catch (e) {
     console.log(e)
-    return 'Instant liquidation'
+    // Instant
+    return null
   }
 }

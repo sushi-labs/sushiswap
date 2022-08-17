@@ -69,7 +69,7 @@ export const BorrowTableForSymbol: FC = () => {
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
   const { data: pairs } = useSWR<KashiPair[]>(
-    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=false`, args },
+    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=true`, args },
     fetcher
   )
   const table = useReactTable({

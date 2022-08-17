@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   const [pairs] = await Promise.all([
     getPairsForSymbol({
       symbol: (query.symbol as string).toLowerCase(),
-      asset: false,
+      asset: true,
       orderBy: 'borrowAPR',
       orderDirection: 'desc',
     }),
@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       fallback: {
         [unstable_serialize({
-          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=false`,
+          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=true`,
           args: {
             sorting: [
               {

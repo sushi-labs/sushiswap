@@ -33,7 +33,7 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
           Network
         </Typography>
         <Typography variant="sm" weight={500} className="text-slate-100">
-          Market Asset
+          Market Collateral
         </Typography>
         <Typography variant="sm" weight={500} className="text-slate-100 text-right">
           APR
