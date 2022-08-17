@@ -46,7 +46,11 @@ contract FuroStreamRouter is Multicall {
     depositedShares = _depositToken(token, msg.sender, address(this), amount, fromBentoBox);
 
     if (depositedShares < minShare) revert InsufficientShares();
-
+    
+    if (startTime < block.timestamp) {
+      startTime = uint64(block.timestamp);
+    }
+    
     (streamId, ) = furoStream.createStream(
       recipient,
       token == address(0) ? wETH : token,
