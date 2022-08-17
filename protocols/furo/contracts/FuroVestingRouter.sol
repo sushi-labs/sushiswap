@@ -57,6 +57,11 @@ contract FuroVestingRouter is Multicall {
     if (address(vestParams.token) == address(0)) {
       vestParams.token = IERC20(wETH);
     }
+
+    if (vestParams.start < block.timestamp) {
+      vestParams.start = uint32(block.timestamp);
+    }
+
     vestParams.fromBentoBox = true;
 
     (depositedShares, vestId, stepShares, cliffShares) = furoVesting.createVesting(vestParams);
