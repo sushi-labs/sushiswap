@@ -1,5 +1,4 @@
 export * from './BorrowSection'
-export * from './DepositSection'
 export * from './IconListVariableSizes'
 export * from './Layout'
 export * from './LendSection'

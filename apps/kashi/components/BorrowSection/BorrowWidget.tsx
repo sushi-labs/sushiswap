@@ -1,27 +1,33 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
-import { Button, classNames, Typography } from '@sushiswap/ui'
+import { formatUSD } from '@sushiswap/format'
+import { Button, classNames, Dialog, Typography } from '@sushiswap/ui'
+import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import { Web3Input } from '@sushiswap/wagmi'
-import { FC, useState } from 'react'
+import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
+import { getV2RouterContractConfig } from '@sushiswap/wagmi/hooks/useV2Router'
+import { FC, useCallback, useState } from 'react'
 
 import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
+import { useBorrowContext } from '../BorrowProvider'
 
-interface DepositWidget {
+interface BorrowWidget {
   pair: KashiPair
-  side: 'lend' | 'borrow'
 }
 
-export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
+export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
+  const { collateralValue, setCollateralValue, setBorrowValue, borrowValue, collateralAsEntity, borrowAsEntity } =
+    useBorrowContext()
   const tokenMap = useTokens(pair.chainId)
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
-  const [value, setValue] = useState('')
-  const [lendValue, setLendValue] = useState('')
   const { collateral, asset } = useTokensFromKashiPair(pair)
   const [leverage, setLeverage] = useState<number>(0)
+  const [review, setReview] = useState(false)
+  const { data: prices } = usePrices({ chainId: pair.chainId })
+  const execute = useCallback(() => {}, [])
 
   return (
     <div className="flex flex-col">
@@ -31,9 +37,9 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
           <Web3Input.Currency
             className="p-3"
             loading={false}
-            value={value}
-            onChange={setValue}
-            currency={side === 'lend' ? collateral : asset}
+            value={collateralValue}
+            onChange={setCollateralValue}
+            currency={collateral}
             customTokenMap={customTokensMap}
             onAddToken={addCustomToken}
             onRemoveToken={removeCustomToken}
@@ -42,7 +48,7 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
           />
         </Widget.Content>
         <Transition
-          show={!!value}
+          show={!!collateralValue}
           className="z-10"
           enter="ease-out duration-300 delay-300"
           enterFrom="opacity-0"
@@ -58,7 +64,7 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
           </div>
         </Transition>
         <Transition
-          show={!!value}
+          show={!!collateralValue}
           unmount={false}
           className="transition-[max-height] overflow-hidden border-t border-slate-200/10 bg-slate-800/30"
           enter="duration-300 ease-in-out"
@@ -70,13 +76,13 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
         >
           <Widget id="depositCollateral" maxWidth="md" className="shadow-none bg-transparent">
             <Widget.Content>
-              <Widget.Header title={`Lend ${side === 'lend' ? asset.symbol : collateral.symbol}`} />
+              <Widget.Header title={`Borrow ${asset.symbol}`} />
               <Web3Input.Currency
                 className="p-3"
                 loading={false}
-                value={lendValue}
-                onChange={setLendValue}
-                currency={side === 'lend' ? asset : collateral}
+                value={borrowValue}
+                onChange={setBorrowValue}
+                currency={asset}
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
@@ -87,7 +93,7 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
                 <Disclosure>
                   {({ open }) => (
                     <div className="flex flex-col gap-2 rounded-xl bg-white bg-opacity-[0.08] px-4 py-2">
-                      <Disclosure.Button className="flex justify-between items-center">
+                      <Disclosure.Button className="flex justify-between items-center h-[28px]">
                         <Typography variant="sm" weight={500} className="text-slate-200">
                           Leverage
                         </Typography>
@@ -165,14 +171,106 @@ export const DepositWidget: FC<DepositWidget> = ({ pair, side }) => {
                     </div>
                   )}
                 </Disclosure>
-                <Button color="blue" fullWidth>
-                  Enter Amount
+                <Button
+                  color="blue"
+                  fullWidth
+                  disabled={!collateralValue || !borrowValue}
+                  onClick={() => setReview(true)}
+                >
+                  {!collateralValue || !borrowValue ? 'Enter Amount' : 'Review'}
                 </Button>
               </div>
             </Widget.Content>
           </Widget>
         </Transition>
       </Widget>
+      <Dialog open={review} onClose={() => setReview(false)}>
+        <Dialog.Content className="max-w-sm !pb-4">
+          <Dialog.Header border={false} title="Confirm Borrow" onClose={() => setReview(false)} />
+          <div className="!my-0 grid grid-cols-12 items-center">
+            <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+              <Typography variant="sm" weight={500} className="text-slate-300">
+                Deposit
+              </Typography>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                    {collateralAsEntity?.toSignificant(6)}{' '}
+                  </Typography>
+                  <div className="flex items-center justify-end gap-2 text-right">
+                    {collateralAsEntity && (
+                      <div className="w-5 h-5">
+                        <Icon currency={collateralAsEntity.currency} width={20} height={20} />
+                      </div>
+                    )}
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                      {collateralAsEntity?.currency.symbol}
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+              <Typography variant="sm" weight={500} className="text-slate-500">
+                {collateralAsEntity && prices?.[collateral.wrapped.address]
+                  ? formatUSD(collateralAsEntity?.multiply(prices?.[collateral.wrapped.address].asFraction).toFixed(2))
+                  : '-'}
+              </Typography>
+            </div>
+            <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+              <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                <ChevronDownIcon width={18} height={18} className="text-slate-200" />
+              </div>
+            </div>
+            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+              <Typography variant="sm" weight={500} className="text-slate-300">
+                Borrow
+              </Typography>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                    {borrowAsEntity?.toSignificant(6)}{' '}
+                  </Typography>
+                  <div className="flex items-center justify-end gap-2 text-right">
+                    {borrowAsEntity && (
+                      <div className="w-5 h-5">
+                        <Icon currency={borrowAsEntity.currency} width={20} height={20} />
+                      </div>
+                    )}
+                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                      {borrowAsEntity?.currency.symbol}
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+              <Typography variant="sm" weight={500} className="text-slate-500">
+                {borrowAsEntity && prices?.[asset.wrapped.address]
+                  ? formatUSD(borrowAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
+                  : '-'}
+              </Typography>
+            </div>
+          </div>
+          <Approve
+            className="flex-grow !justify-end mt-3"
+            components={
+              <Approve.Components>
+                <Approve.Token
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  amount={collateralAsEntity}
+                  address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                />
+              </Approve.Components>
+            }
+            render={({ approved }) => {
+              return (
+                <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
+                  Confirm Borrow
+                </Button>
+              )
+            }}
+          />
+        </Dialog.Content>
+      </Dialog>
     </div>
   )
 }

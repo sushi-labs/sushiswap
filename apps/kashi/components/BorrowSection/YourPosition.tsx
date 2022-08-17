@@ -1,8 +1,12 @@
 import { ArrowRightIcon } from '@heroicons/react/outline'
+import { formatUSD } from '@sushiswap/format'
 import { classNames, Typography } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import { usePrices } from '@sushiswap/wagmi'
+import { FC, ReactNode, useState } from 'react'
 
 import { KashiPair } from '../../.graphclient'
+import { useLiquidationPrice, useTokensFromKashiPair } from '../../lib/hooks'
+import { useBorrowContext } from '../BorrowProvider'
 
 interface YourPositionBlock {
   label: ReactNode
@@ -27,7 +31,7 @@ const YourPositionBlock: FC<YourPositionBlock> = ({ label, value, newValue, capt
         {newValue && (
           <>
             <ArrowRightIcon width={12} height={12} className="text-slate-500" />
-            <Typography variant="lg" weight={600} className="text-slate-100" as="span">
+            <Typography variant="lg" weight={600} className="text-green" as="span">
               {newValue}
             </Typography>
           </>
@@ -42,7 +46,7 @@ const YourPositionBlock: FC<YourPositionBlock> = ({ label, value, newValue, capt
         {newCaption && (
           <>
             <ArrowRightIcon width={12} height={12} className="text-slate-500" />
-            <Typography variant="sm" weight={400} className="text-slate-400" as="span">
+            <Typography variant="sm" weight={400} className="text-green" as="span">
               {newCaption}
             </Typography>
           </>
@@ -57,6 +61,21 @@ interface YourPosition {
 }
 
 export const YourPosition: FC<YourPosition> = ({ pair }) => {
+  const [invert, setInvert] = useState(false)
+  const { asset, collateral } = useTokensFromKashiPair(pair)
+  const { collateralValue, collateralAsEntity, borrowValue, borrowAsEntity } = useBorrowContext()
+  const { data: prices } = usePrices({ chainId: pair.chainId })
+
+  // TODO
+  const liquidationPrice = useLiquidationPrice({
+    pair,
+    collateralAmount: collateralAsEntity,
+    borrowAmount: borrowAsEntity,
+    invert,
+    reduce: false,
+    trade: undefined,
+  })
+
   return (
     <div className="flex flex-col gap-3">
       <Typography weight={600} className="text-slate-200">
@@ -66,12 +85,28 @@ export const YourPosition: FC<YourPosition> = ({ pair }) => {
         <YourPositionBlock
           label="Collateral"
           value="$0.0"
-          newValue="$11.0"
+          newValue={
+            collateralAsEntity && prices?.[collateral.wrapped.address]
+              ? formatUSD(collateralAsEntity?.multiply(prices?.[collateral.wrapped.address].asFraction).toFixed(2))
+              : undefined
+          }
           caption={`0.00 ${pair.collateral.symbol}`}
-          newCaption={`11.0 ${pair.collateral.symbol}`}
+          {...(collateralValue && { newCaption: `${collateralValue} ${pair.collateral.symbol}` })}
         />
-        <YourPositionBlock label="Borrowed" value="$0.0" caption={`0.00 ${pair.asset.symbol}`} />
-        <YourPositionBlock label="Liquidation Price" value="None" caption="n/a" />
+        <YourPositionBlock
+          label="Borrowed"
+          value="$0.0"
+          newValue={
+            borrowAsEntity && prices?.[asset.wrapped.address]
+              ? formatUSD(borrowAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
+              : undefined
+          }
+          caption={`0.00 ${pair.asset.symbol}`}
+          {...(borrowValue && { newCaption: `${borrowValue} ${pair.asset.symbol}` })}
+        />
+        <div onClick={() => setInvert((prev) => !prev)} className="cursor-pointer">
+          <YourPositionBlock label="Liquidation Price" value={liquidationPrice} caption="n/a" />
+        </div>
         <YourPositionBlock
           label="Health"
           value={

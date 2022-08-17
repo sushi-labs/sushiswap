@@ -1,10 +1,11 @@
-import { DepositHeader, DepositWidget, Layout, MarketInformation, YourPosition } from 'components'
+import { Layout, LendWidget } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { KashiPair } from '../../../.graphclient'
+import { LendInformation } from '../../../components/LendSection/LendInformation'
 import { getPair } from '../../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
@@ -39,17 +40,9 @@ const _LendDeposit = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-        <div className="flex flex-col order-1 gap-9">
-          <div className="mb-4">
-            <DepositHeader side="lend" pair={pair} />
-          </div>
-          <YourPosition pair={pair} />
-          <MarketInformation pair={pair} />
-        </div>
-        <div className="flex flex-col order-2 gap-4">
-          <DepositWidget side="lend" pair={pair} />
-        </div>
+      <div className="flex flex-col lg:grid lg:grid-cols-[264px_396px_264px] gap-6">
+        <LendInformation pair={pair} />
+        <LendWidget pair={pair} />
       </div>
     </Layout>
   )

@@ -6,12 +6,11 @@ import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { IconListVariableSizes } from '../IconListVariableSizes'
 
-interface DepositHeader {
+interface BorrowHeader {
   pair: KashiPair
-  side: 'borrow' | 'lend'
 }
 
-export const DepositHeader: FC<DepositHeader> = ({ pair, side }) => {
+export const BorrowHeader: FC<BorrowHeader> = ({ pair }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
 
   return (
@@ -29,13 +28,13 @@ export const DepositHeader: FC<DepositHeader> = ({ pair, side }) => {
             <div className="flex flex-col">
               <div className="flex gap-2 items-center">
                 <Typography variant="lg" className="text-slate-50" weight={700}>
-                  {side === 'lend' ? 'Lend' : 'Borrow'}: {side === 'lend' ? asset.symbol : collateral.symbol}
+                  Borrow: {asset.symbol}
                 </Typography>
                 <Chip color="gray" label="0.05%" className="text-slate-50 font-medium" />
               </div>
               <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
                 <div className="bg-green h-1 w-1 rounded-full" />
-                Collateral: {side === 'lend' ? collateral.symbol : asset.symbol}
+                Collateral: {collateral.symbol}
               </Typography>
             </div>
           </div>
