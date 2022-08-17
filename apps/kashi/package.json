@@ -40,6 +40,7 @@
     "echarts-for-react": "^3.0.2",
     "ethers": "^5.0.0",
     "lodash.get": "^4.4.2",
+    "graphql": "^16.5.0",
     "next": "^12.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
