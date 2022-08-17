@@ -28,7 +28,7 @@ export const useLiquidationPrice: UseLiquidationPrice = ({ pair, borrowAmount, c
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
-  // TODO WHEN KASHI MARKET ENTITY
+  // TODO Use KashiPair Class here
   // const { market } = useKashiMarket()
   // const currentCollateralAmount = Amount.fromRawAmount(collateral, market.userCollateralAmount)
   // const currentBorrowedAmount = Amount.fromRawAmount(asset, market.currentUserBorrowAmount)
