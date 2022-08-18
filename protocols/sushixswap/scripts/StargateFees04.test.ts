@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 import hre, { ethers } from 'hardhat'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainIds } from '@sushiswap/chain'
 import { getBigNumber, getStarGateFeesV04, BridgeState } from '@sushiswap/tines'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID, STARGATE_USDC_ADDRESS } from '@sushiswap/stargate'
 import { StargatePoolABI } from './ABI/StargatePoolABI'
@@ -21,7 +21,7 @@ export function getRandom(rnd: () => number, min: number, max: number) {
 }
 
 describe('Stargate fees', function () {
-  it.skip('Some values check', async function () {
+  it('Contract Extracted fees = Typescript calculated fees', async function () {
     const testSeed = '0' // Change it to change random generator values
     const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
@@ -58,18 +58,44 @@ describe('Stargate fees', function () {
     }
   })
 
-  it('Ethereum check', async () => {
-    const bridgeState = await getStargateBridgeState(
-      STARGATE_CHAIN_ID[ChainId.ETHEREUM],
-      STARGATE_USDC_ADDRESS[ChainId.ETHEREUM],
-      STARGATE_POOL_ID[ChainId.ETHEREUM][STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]],
-      STARGATE_CHAIN_ID[ChainId.POLYGON],
-      STARGATE_POOL_ID[ChainId.POLYGON][STARGATE_USDC_ADDRESS[ChainId.POLYGON]],
+  it('Ethereum USDC - Polygon USDC fees check', async () => {
+    const from = '0xdbf50791d09603915bd066354a5b45775cfad924'
+    const { state, whitelisted } = await getStargateBridgeState_USDC_USDC(
+      ChainId.ETHEREUM,
+      ChainId.POLYGON,
       '0xdbf50791d09603915bd066354a5b45775cfad924'
     )
-    console.log(bridgeState)
+
+    for (let n = 1; n <= 10; ++n) {
+      const amountSD = BigNumber.from(10).pow(n + 3)
+      if (amountSD.gt(state.currentBalance)) break
+      const bridgeFees = await getStargateBridgeFees_USDC_USDC(
+        ChainId.ETHEREUM,
+        ChainId.POLYGON,
+        '0xdbf50791d09603915bd066354a5b45775cfad924',
+        amountSD
+      )
+
+      const calcFees = getStarGateFeesV04(state, whitelisted, amountSD)
+
+      expect(bridgeFees.eqFee.toString()).equal(calcFees.eqFee.toString())
+      expect(bridgeFees.eqReward.toString()).equal(calcFees.eqReward.toString())
+      expect(bridgeFees.lpFee.toString()).equal(calcFees.lpFee.toString())
+      expect(bridgeFees.protocolFee.toString()).equal(calcFees.protocolFee.toString())
+    }
   })
 })
+
+async function getStargateBridgeState_USDC_USDC(srcChain: ChainId, dstChain: ChainId, from: string) {
+  return getStargateBridgeState(
+    STARGATE_CHAIN_ID[srcChain],
+    STARGATE_USDC_ADDRESS[srcChain],
+    STARGATE_POOL_ID[srcChain][STARGATE_USDC_ADDRESS[srcChain]],
+    STARGATE_CHAIN_ID[dstChain],
+    STARGATE_POOL_ID[dstChain][STARGATE_USDC_ADDRESS[dstChain]],
+    from
+  )
+}
 
 async function getStargateBridgeState(
   srcChainId: number,
@@ -112,4 +138,38 @@ async function getStargateBridgeState(
     },
     whitelisted,
   }
+}
+
+async function getStargateBridgeFees_USDC_USDC(
+  srcChain: ChainId,
+  dstChain: ChainId,
+  from: string,
+  amountSD: BigNumber
+) {
+  return getStargateFees(
+    STARGATE_CHAIN_ID[srcChain],
+    STARGATE_POOL_ID[srcChain][STARGATE_USDC_ADDRESS[srcChain]],
+    STARGATE_USDC_ADDRESS[srcChain],
+    STARGATE_CHAIN_ID[dstChain],
+    STARGATE_POOL_ID[dstChain][STARGATE_USDC_ADDRESS[dstChain]],
+    from,
+    amountSD
+  )
+}
+
+async function getStargateFees(
+  srcChainId: number,
+  srcPoolId: number,
+  srcTokenAddress: string,
+  dstChainId: number,
+  dstPoolId: number,
+  from: string,
+  amountSD: BigNumber
+) {
+  const poolAddress = STARGATE_POOL_ADDRESS[srcChainId][srcTokenAddress]
+  const pool = await new ethers.Contract(poolAddress, StargatePoolABI, ethers.getDefaultProvider())
+  const feeLibraryAddress = await pool.feeLibrary()
+  const feeLibrary = await new ethers.Contract(feeLibraryAddress, StargateFeeLibraryABI, ethers.getDefaultProvider())
+  const fees = await feeLibrary.getFees(srcPoolId, dstPoolId, dstChainId, from, amountSD)
+  return fees
 }
