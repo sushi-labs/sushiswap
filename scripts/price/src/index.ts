@@ -1,7 +1,6 @@
 import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/chain'
-import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { getUnixTime } from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient'
@@ -41,23 +40,23 @@ async function getTridentResults() {
         where: {
           derivedNative_gt: 0,
         },
-        native: WNATIVE_ADDRESS[chainId].toLowerCase(),
       })
     })
   )
 
   return results.map((result, i) => {
-    const nativePrice = Number(result.native?.derivedUSD)
+    const nativePrice = Number(result.bundle?.nativePrice)
     const updatedAtBlock = Number(result._meta?.block.number)
-
     return {
       chainId: TRIDENT_CHAINS[i],
       updatedAtBlock,
-      tokens: result.tokenPrices.map((tokenPrice) => ({
-        id: tokenPrice.id,
-        priceUSD: tokenPrice.derivedNative * nativePrice,
-        liquidityNative: Number(tokenPrice.token.kpi?.liquidity),
-      })),
+      tokens: result.tokenPrices.map((tokenPrice) => {
+        return {
+          id: tokenPrice.id,
+          priceUSD: tokenPrice.lastUsdPrice,
+          liquidityNative: Number(tokenPrice.token?.liquidityNative),
+        }
+      }),
     }
   })
 }
