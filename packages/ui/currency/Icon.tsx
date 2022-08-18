@@ -3,7 +3,7 @@ import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useState } from 'react'
 
 import { Link } from '../link'
 
@@ -84,6 +84,7 @@ export interface IconProps extends Omit<ImageProps, 'src'> {
 }
 
 export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
+  const [error, setError] = useState(false)
   const src = useMemo(() => {
     if (currency.isNative) {
       return LOGO[currency.chainId]
@@ -117,9 +118,30 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
   }
 
+  if (error) {
+    return (
+      <svg width={rest.width} height={rest.height} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="30" height="30" rx="15" fill="url(#paint0_linear_13084_19043)" />
+        <defs>
+          <linearGradient
+            id="paint0_linear_13084_19043"
+            x1="-2.30769"
+            y1="4.25715e-07"
+            x2="35.0955"
+            y2="9.13387"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#0993EC" />
+            <stop offset="1" stopColor="#F338C3" />
+          </linearGradient>
+        </defs>
+      </svg>
+    )
+  }
+
   return (
     <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
-      <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
+      <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
     </Link.External>
   )
 }

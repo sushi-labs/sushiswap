@@ -1,3 +1,4 @@
+import { SUSHI } from '@sushiswap/currency'
 import { Currency } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -10,8 +11,7 @@ export const PairRewardsCell: FC<CellProps> = ({ row }) => {
 
   return (
     <Currency.IconList iconHeight={ICON_SIZE} iconWidth={ICON_SIZE}>
-      <Currency.Icon currency={token0} />
-      <Currency.Icon currency={token1} />
+      <Currency.Icon currency={SUSHI[row.chainId]} />
     </Currency.IconList>
   )
 }

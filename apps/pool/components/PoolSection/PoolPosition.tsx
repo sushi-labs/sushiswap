@@ -39,7 +39,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
         </Typography>
         <div className="flex flex-col">
           <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-            {formatUSD(value0 + value1)}
+            {formatUSD(Number(value0) + Number(value1))}
           </Typography>
           <Typography variant="xxs" weight={600} className="text-slate-400 text-right">
             {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'} SLP
@@ -54,7 +54,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
           </Typography>
         </div>
         <Typography variant="xs" weight={600} className="text-slate-400">
-          {formatUSD(value0)}
+          {formatUSD(Number(value0))}
         </Typography>
       </div>
       <div className="flex justify-between py-3 bg-white bg-opacity-[0.04] px-6">
@@ -65,7 +65,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
           </Typography>
         </div>
         <Typography variant="xs" weight={500} className="text-slate-400">
-          {formatUSD(value1)}
+          {formatUSD(Number(value1))}
         </Typography>
       </div>
       <div className="flex justify-between items-center px-6 py-4">
@@ -103,7 +103,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
             </Typography>
             <div className="flex flex-col">
               <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-                {formatUSD(value0 + value1)}
+                {formatUSD(Number(value0) + Number(value1))}
               </Typography>
               <Typography variant="xxs" weight={600} className="text-slate-400 text-right">
                 {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'} SLP
@@ -118,7 +118,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
               </Typography>
             </div>
             <Typography variant="xs" weight={600} className="text-slate-400">
-              {formatUSD(value0)}
+              {formatUSD(Number(value0))}
             </Typography>
           </div>
           <div className="flex justify-between px-2 py-1">
@@ -129,7 +129,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
               </Typography>
             </div>
             <Typography variant="xs" weight={500} className="text-slate-400">
-              {formatUSD(value1)}
+              {formatUSD(Number(value1))}
             </Typography>
           </div>
           <div className="px-2">
