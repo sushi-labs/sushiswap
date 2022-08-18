@@ -558,7 +558,7 @@ export class SushiXSwap {
         this.dstToken.isNative && !this.dstUseBentoBox ? this.srcCooker.masterContract : this.user,
         shareIn.quotient.toString(),
         minimumShareOut.quotient.toString(),
-        this.dstToken.isNative && !this.dstUseBentoBox
+        (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
       )
     } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.isComplex()) {
       if (!this.srcUseBentoBox) {
@@ -581,7 +581,7 @@ export class SushiXSwap {
         this.srcTrade,
         this.dstToken.isNative && !this.dstUseBentoBox ? this.srcCooker.masterContract : this.user,
         minimumShareOut.quotient.toString(),
-        this.dstToken.isNative && !this.dstUseBentoBox
+        (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
       )
     }
     if (this.dstToken.isNative && !this.dstUseBentoBox) {
