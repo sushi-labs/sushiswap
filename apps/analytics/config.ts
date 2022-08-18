@@ -3,13 +3,13 @@ import { ChainId } from '@sushiswap/chain'
 export const ENABLED_NETWORKS = [
   ChainId.AVALANCHE,
   ChainId.BSC,
-  ChainId.CELO,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
+  // ChainId.CELO,
+  // ChainId.FUSE,
+  // ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   // ChainId.HARMONY,
-  ChainId.FANTOM,
+  // ChainId.FANTOM,
 ]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
@@ -21,7 +21,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
+  [ChainId.MOONRIVER]: 'sushi-labs/sushiswap-moonriver',
   [ChainId.HARMONY]: 'sushiswap/sushiswap-harmony',
   [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
 }

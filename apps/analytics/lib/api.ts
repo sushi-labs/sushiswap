@@ -35,6 +35,7 @@ export const getStats = async () => {
   const sdk = getBuiltGraphSDK()
   const { crossChainStats: stats } = await sdk.CrossChainStats({
     chainIds: ENABLED_NETWORKS,
+    first: 10000,
     now: Math.round(new Date().getTime() / 1000),
   })
 
