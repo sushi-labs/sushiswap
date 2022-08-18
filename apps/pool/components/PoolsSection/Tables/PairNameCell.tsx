@@ -9,7 +9,7 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
           <Currency.Icon currency={token0} />
@@ -20,8 +20,9 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
         <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
       </div>
       <div className="flex flex-col">
-        <Typography variant="sm" weight={500} className="text-slate-50 flex gap-1">
-          {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
+        <Typography variant="sm" weight={500} className="text-slate-50 flex items-center gap-1">
+          {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}{' '}
+          <div className="bg-slate-700 rounded-lg px-1 py-0.5 ml-1">0.05%</div>
         </Typography>
         <Typography variant="xxs" className="text-slate-400">
           SushiSwap Farm
