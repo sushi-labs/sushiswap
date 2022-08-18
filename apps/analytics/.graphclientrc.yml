@@ -2,7 +2,7 @@ sources:
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/sushiswap-avalanche}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/sushiswap-bsc}
 
 additionalTypeDefs: |
   extend type Pair {
@@ -14,9 +14,15 @@ additionalTypeDefs: |
     fees24h: BigDecimal!
     fees7d: BigDecimal!
   }
+  extend type FactoryDaySnapshot {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Query {
     crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
     crossChainStats(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
+    crossChainFactoryDaySnapshots(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [FactoryDaySnapshot!]!
   }
 
 additionalResolvers:

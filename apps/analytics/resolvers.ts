@@ -9,6 +9,11 @@ export const resolvers: Resolvers = {
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
   },
+  FactoryDaySnapshot: {
+    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+  },
   Query: {
     crossChainPairs: async (root, args, context, info) =>
       Promise.all(
@@ -87,5 +92,30 @@ export const resolvers: Resolvers = {
           })
         )
       ).then((pools) => pools.flat()),
+    crossChainFactoryDaySnapshots: async (root, args, context, info) =>
+      Promise.all(
+        args.chainIds.map((chainId) =>
+          context.Exchange.Query.factoryDaySnapshots({
+            root,
+            args,
+            context: {
+              ...context,
+              chainId,
+              chainName: chainName[chainId],
+              chainShortName: chainShortName[chainId],
+              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+              subgraphHost: GRAPH_HOST[chainId],
+            },
+            info,
+          }).then((snapshots) => {
+            return snapshots.map((snapshot) => ({
+              ...snapshot,
+              chainId,
+              chainName: chainName[chainId],
+              chainShortName: chainShortName[chainId],
+            }))
+          })
+        )
+      ).then((snapshots) => snapshots.flat()),
   },
 }

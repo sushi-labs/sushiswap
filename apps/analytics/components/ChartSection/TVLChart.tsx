@@ -28,7 +28,7 @@ const chartTimespans: Record<TvlChartPeriod, number> = {
 }
 
 export const TVLChart: FC<{ stats: Pair[] }> = ({ stats }) => {
-  const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(TvlChartPeriod.All)
+  const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(TvlChartPeriod.Week)
 
   const [xData, yData] = useMemo(() => {
     const key = chartTimespans[chartPeriod] <= chartTimespans[TvlChartPeriod.Week] ? 'hourSnapshots' : 'daySnapshots'
