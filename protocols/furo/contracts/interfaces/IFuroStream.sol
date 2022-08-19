@@ -24,8 +24,7 @@ interface IFuroStream {
         uint64 startTime,
         uint64 endTime,
         uint256 amount, /// @dev in token amount and not in shares
-        bool fromBento,
-        uint256 minShare
+        bool fromBento
     ) external payable returns (uint256 streamId, uint256 depositedShares);
 
     function withdrawFromStream(

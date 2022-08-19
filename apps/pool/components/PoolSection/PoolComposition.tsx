@@ -13,7 +13,7 @@ interface PoolCompositionProps {
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
-  const [token0, token1] = useTokensFromPair(pair)
+  const { token0, token1 } = useTokensFromPair(pair)
 
   return (
     <div className="flex flex-col w-full gap-4">

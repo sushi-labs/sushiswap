@@ -343,6 +343,13 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    'arbitrum-nova': {
+      url: 'https://nova.arbitrum.io/rpc',
+      accounts,
+      chainId: 42170,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8

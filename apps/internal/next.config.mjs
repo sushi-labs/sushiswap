@@ -2,7 +2,9 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/internal',
   reactStrictMode: true,
   swcMinify: true,
@@ -13,4 +15,6 @@ export default withTranspileModules({
   experimental: {
     nextScriptWorkers: true,
   },
-})
+}
+
+export default withTranspileModules(nextConfig)

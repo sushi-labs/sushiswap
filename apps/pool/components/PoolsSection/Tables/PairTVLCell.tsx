@@ -13,6 +13,8 @@ export const PairTVLCell: FC<CellProps> = ({ row }) => {
 
   const tvl = formatUSD(row.liquidityUSD)
 
+  // const tvl = formatUSD(row.liquidityETH * bundles?.[row.chainId].nativePrice)
+
   return (
     <Typography variant="sm" weight={600} className="text-slate-50">
       {tvl.includes('NaN') ? '$0.00' : tvl}

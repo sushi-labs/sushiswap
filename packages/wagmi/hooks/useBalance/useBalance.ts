@@ -11,7 +11,7 @@ import { useWalletBalance, useWalletBalances } from './useWalletBalance'
 
 type UseBalancesParams = {
   account: string | undefined
-  currencies: Type[]
+  currencies: (Type | undefined)[]
   chainId?: ChainId
 }
 

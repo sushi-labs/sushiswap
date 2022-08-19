@@ -1,14 +1,17 @@
 import { Tab } from '@headlessui/react'
-import { Chip, classNames } from '@sushiswap/ui'
+import { Chip, classNames, Network } from '@sushiswap/ui'
 import { FC } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { User } from '../../.graphclient'
+import { AMM_ENABLED_NETWORKS } from '../../config'
+import { usePoolFilters } from '../PoolsProvider'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 
 export const PoolsSection: FC = () => {
+  const { selectedNetworks, setFilters } = usePoolFilters()
   const { address } = useAccount()
   const { data: user } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
     fetch(url).then((response) => response.json())
@@ -17,7 +20,7 @@ export const PoolsSection: FC = () => {
   return (
     <section className="flex flex-col gap-6">
       <Tab.Group>
-        <div className="flex gap-6 items-center">
+        <div className="flex items-center gap-6">
           <Tab
             className={({ selected }) =>
               classNames(
@@ -40,6 +43,11 @@ export const PoolsSection: FC = () => {
           </Tab>
         </div>
         <TableFilters />
+        <Network.Selector
+          networks={AMM_ENABLED_NETWORKS}
+          selectedNetworks={selectedNetworks}
+          onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
+        />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <PoolsTable />

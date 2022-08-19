@@ -884,7 +884,7 @@ export class SushiXSwap {
 
       const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee)
       return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
-        value
+        value,
       })
     } catch (error) {
       console.error('SushiXSwap Fee Error', error)

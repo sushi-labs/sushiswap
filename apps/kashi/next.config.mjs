@@ -1,8 +1,16 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/wagmi'])
+const withTranspileModules = transpileModules([
+  '@sushiswap/redux-token-lists',
+  '@sushiswap/redux-localstorage',
+  '@sushiswap/chain',
+  '@sushiswap/wagmi',
+  '@sushiswap/ui',
+])
 
-export default withTranspileModules({
+// @ts-check
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: '/kashi',
   reactStrictMode: true,
   swcMinify: true,
@@ -13,4 +21,6 @@ export default withTranspileModules({
   experimental: {
     nextScriptWorkers: true,
   },
-})
+}
+
+export default withTranspileModules(nextConfig)

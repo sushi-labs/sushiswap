@@ -69,7 +69,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourData, pair.dayData, chartType])
+  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, chartType])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({

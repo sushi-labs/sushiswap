@@ -1,180 +1,96 @@
 import { ChainId } from '@sushiswap/chain'
-import { formatPercent } from '@sushiswap/format'
-import { Table } from '@sushiswap/ui'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import get from 'lodash.get'
+import { Button, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Layout, MarketsSection } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Image from 'next/image'
+import { FC } from 'react'
+import { SWRConfig, unstable_serialize } from 'swr'
 
-import { getBuiltGraphSDK } from '.graphclient'
+import { getPairs } from '../lib/api'
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const orderBy = query.orderBy || 'kpi.supplyAPR'
-  const sdk = await getBuiltGraphSDK()
-  const { crossChainKashiPairs: data } = await sdk.CrossChainKashiPairs({
-    chainIds: [ChainId.ARBITRUM, ChainId.POLYGON],
-  })
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const [pairs] = await Promise.all([
+    getPairs({ orderBy: 'supplyAPR', orderDirection: 'desc' }),
+    getPairs({ orderBy: 'borrowAPR', orderDirection: 'desc' }),
+  ])
+
   return {
     props: {
-      data: data.sort((a, b) => {
-        if (Number(get(a, orderBy)) > Number(get(b, orderBy))) {
-          return -1
-        }
-        if (Number(get(a, orderBy)) < Number(get(b, orderBy))) {
-          return 1
-        }
-        return 0
-      }),
+      fallback: {
+        [unstable_serialize({
+          url: '/kashi/api/pairs',
+          args: {
+            sorting: [
+              {
+                id: 'supplyAPR',
+                desc: true,
+              },
+            ],
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+          },
+        })]: pairs,
+        [unstable_serialize({
+          url: '/kashi/api/pairs',
+          args: {
+            sorting: [
+              {
+                id: 'borrowAPR',
+                desc: true,
+              },
+            ],
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+          },
+        })]: pairs,
+      },
     },
   }
 }
 
-const columns = [
-  // Data Column
-  {
-    accessorKey: 'chainName',
-    header: () => 'Chain',
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'left',
-    },
-  },
-  // {
-  //   accessorKey: 'name',
-  //   header: () => 'Name',
-  //   footer: (props) => props.column.id,
-  // },
-  {
-    accessorKey: 'asset',
-    header: () => 'Asset',
-    cell: (cell) => (
-      <>
-        <div className="font-semibold">{cell.getValue().name}</div>
-        <div className="text-sm font-light text-slate-400">{cell.getValue().symbol}</div>
-      </>
-    ),
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'left',
-    },
-  },
-  {
-    accessorKey: 'collateral',
-    header: () => 'Collateral',
-    cell: (cell) => (
-      <>
-        <div className="font-semibold">{cell.getValue().name}</div>
-        <div className="text-sm font-light text-slate-400">{cell.getValue().symbol}</div>
-      </>
-    ),
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'left',
-    },
-  },
-  {
-    accessorKey: 'totalAsset',
-    header: () => 'Supplied',
-    cell: (cell) => <div className="font-semibold">{cell.getValue().base}</div>,
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'right',
-    },
-  },
-  {
-    accessorKey: 'kpi',
-    header: () => 'Supply APR',
-    cell: (cell) => <div className="font-semibold">{formatPercent(cell.getValue().supplyAPR / 1e18)}</div>,
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'right',
-    },
-  },
-  {
-    accessorKey: 'totalBorrow',
-    header: () => 'Borrowed',
-    cell: (cell) => <div className="font-semibold">{cell.getValue().base}</div>,
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'right',
-    },
-  },
-  {
-    accessorKey: 'kpi',
-    header: () => 'Borrow APR',
-    cell: (cell) => <div className="font-semibold">{formatPercent(cell.getValue().borrowAPR / 1e18)}</div>,
-    footer: (props) => props.column.id,
-    meta: {
-      align: 'right',
-    },
-  },
-  // Display Column
-  // {
-  //   id: 'supply',
-  //   header: () => 'Supply',
-  //   cell: (props) => (
-  //     <Link.Internal href={`/${props.row.original.chainId}/${props.row.original.id}/supply`}>Supply</Link.Internal>
-  //   ),
-  //   meta: {
-  //     align: 'center',
-  //   },
-  // },
-  // Display Column
-  // {
-  //   id: 'borrow',
-  //   header: () => 'Borrow',
-  //   cell: (props) => (
-  //     <Link.Internal href={`/${props.row.original.chainId}/${props.row.original.id}/borrow`}>Borrow</Link.Internal>
-  //   ),
-  //   meta: {
-  //     align: 'center',
-  //   },
-  // },
-]
-
-export default function Index({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
+const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
-    <>
-      <div>
-        <div className="container py-8 mx-auto">MARKETS</div>
-      </div>
-      <div>
-        <Table.container className="container mx-auto">
-          <Table.table className="w-full">
-            <Table.thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Table.tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <Table.th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      align={(header.column.columnDef.meta as any)?.align}
-                    >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </Table.th>
-                  ))}
-                </Table.tr>
-              ))}
-            </Table.thead>
-            <Table.tbody>
-              {table.getRowModel().rows.map((row) => (
-                <Table.tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <Table.td key={cell.id} align={(cell.column.columnDef.meta as any)?.align} className="py-2">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Table.td>
-                  ))}
-                </Table.tr>
-              ))}
-            </Table.tbody>
-          </Table.table>
-        </Table.container>
-      </div>
-    </>
+    <SWRConfig value={{ fallback }}>
+      <_Index />
+    </SWRConfig>
   )
 }
+
+const _Index = () => {
+  return (
+    <Layout>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
+          <Typography variant="h3" weight={600}>
+            Kashi Lending
+          </Typography>
+          <Typography weight={400} className="text-slate-300">
+            Lend, borrow or margin trade with low liquidiation risk, and earn staking rewards! Available on
+          </Typography>
+          <div>
+            <Button className="!px-6">My Position (0)</Button>
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <div className="relative rounded-full h-[240px] w-[240px] border-2 border-dashed border-slate-700 flex items-center justify-center">
+            <div className="w-[140px]">
+              <Image src="https://sushi.com/kashi/images/KashiKanjiSign.png" layout="fill" />
+            </div>
+            <NetworkIcon width={32} chainId={ChainId.ETHEREUM} className="absolute top-0 right-9" />
+            <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute bottom-9 right-0" />
+            <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute top-9 left-0" />
+            <NetworkIcon width={32} chainId={ChainId.POLYGON} className="absolute bottom-0 left-9" />
+          </div>
+        </div>
+      </div>
+      <MarketsSection />
+    </Layout>
+  )
+}
+
+export default Index

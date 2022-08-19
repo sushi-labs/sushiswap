@@ -1,4 +1,3 @@
-import { useIsMounted } from '@sushiswap/hooks'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -41,13 +40,12 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
 
 const _Pool = () => {
   const router = useRouter()
-  const isMounted = useIsMounted()
-  // const [chainShortName, id] = String(router.query.id).split(':')
-  const {
-    data: { pair },
-  } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+
+  if (!data) return <></>
+  const { pair } = data
 
   return (
     <Layout>

@@ -25,6 +25,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/exchange": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
