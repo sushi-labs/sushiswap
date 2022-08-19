@@ -32,15 +32,16 @@ export const resolvers: Resolvers = {
             info,
           }).then((pools) => {
             return pools.map((pool) => {
-              const volume24h =
-                pool.hourSnapshots?.[0]?.volumeUSD - pool.hourSnapshots?.[pool.hourSnapshots.length - 1]?.volumeUSD
-              const fees24h =
-                pool.hourSnapshots?.[0]?.feesUSD - pool.hourSnapshots?.[pool.hourSnapshots.length - 1]?.feesUSD
-              const volume7d =
-                pool.daySnapshots?.[0]?.volumeUSD - pool.daySnapshots?.[pool.daySnapshots.length - 1]?.volumeUSD
-              const fees7d =
-                pool.daySnapshots?.[0]?.feesUSD - pool.daySnapshots?.[pool.daySnapshots.length - 1]?.feesUSD
-
+              const volume24h = Number(pool.hourSnapshots?.[0]?.volumeUSD)
+              const fees24h = Number(pool.hourSnapshots?.[0]?.feesUSD)
+              const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
+                if (i > 6) return previousValue
+                return previousValue + Number(currentValue.volumeUSD)
+              }, 0)
+              const fees7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
+                if (i > 6) return previousValue
+                return previousValue + Number(currentValue.feesUSD)
+              }, 0)
               return {
                 ...pool,
                 volume24h,
