@@ -18,6 +18,7 @@ import {
   VOLUME_7_COLUMN,
   VOLUME_24_COLUMN,
 } from '../Table'
+import { PairQuickHoverTooltip } from './PairTableQuickHoverTooltip'
 
 const COLUMNS = [
   NETWORK_COLUMN,
@@ -136,6 +137,7 @@ export const PairTable: FC = () => {
       columns={COLUMNS}
       loading={isValidating && !error && !pools}
       placeholder="No pools found"
+      HoverElement={PairQuickHoverTooltip}
     />
   )
 }
