@@ -137,7 +137,7 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
                 'Isolated lending markets, elastic interest rates. Leverage long short or create your own market.'
               }
               cta="Enter Kashi"
-              ctaLink="https://app.sushi.com/lend"
+              ctaLink="https://app.sushi.com/kashi"
             />
             <ProductCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/xsushi.png"
