@@ -171,6 +171,98 @@ const otherChains = [
       blockCreated: 1597904,
     },
   },
+  {
+    id: ChainId.KAVA,
+    name: 'Kava',
+    network: 'kava',
+    nativeCurrency: { name: 'Kava', symbol: 'KAVA', decimals: 18 },
+    rpcUrls: {
+      default: 'https://evm.kava.io',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Kavascan',
+        url: 'https://explorer.kava.io/',
+      },
+      default: {
+        name: 'Kavascan',
+        url: 'https://explorer.kava.io/',
+      },
+    },
+    multicall: {
+      address: '0x1578f6d2D3168acF41b506AA666A521994F6BAB6',
+      blockCreated: 1176602,
+    },
+  },
+  {
+    id: ChainId.METIS,
+    name: 'Metis',
+    network: 'metis',
+    nativeCurrency: { name: 'Metis', symbol: 'METIS', decimals: 18 },
+    rpcUrls: {
+      default: 'https://andromeda.metis.io/?owner=1088',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Andromeda',
+        url: 'https://andromeda-explorer.metis.io/',
+      },
+      default: {
+        name: 'Andromeda',
+        url: 'https://andromeda-explorer.metis.io/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 2338552,
+    },
+  },
+  {
+    id: ChainId.CELO,
+    name: 'Celo',
+    network: 'celo',
+    nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.ankr.com/celo',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Celoscan',
+        url: 'https://celoscan.io/',
+      },
+      default: {
+        name: 'Celoscan',
+        url: 'https://celoscan.io/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 13112599,
+    },
+  },
+  {
+    id: ChainId.FUSE,
+    name: 'Fuse',
+    network: 'fuse',
+    nativeCurrency: { name: 'Fuse', symbol: 'FUSE', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.fuse.io',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Fusescan',
+        url: 'https://explorer.fuse.io/',
+      },
+      default: {
+        name: 'Fuse Explorer',
+        url: 'https://explorer.fuse.io/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 16146628,
+    },
+  },
 ]
 
 const { chains, provider, webSocketProvider } = configureChains(

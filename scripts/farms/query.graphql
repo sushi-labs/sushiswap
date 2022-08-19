@@ -1,0 +1,76 @@
+query ExchangeTokens($first: Int = 100000, $skip: Int = 0, $where: Exchange_Token_filter, $block: Exchange_Block_height) {
+  tokens:Exchange_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    symbol
+    decimals
+    liquidity
+    derivedETH
+  }
+}
+
+query ExchangeBundle($block: Exchange_Block_height) {
+  bundle:Exchange_bundle(id: 1, block: $block) {
+    ethPrice
+  }
+}
+
+query ExchangePairs($first: Int = 100000, $skip: Int = 0, $where: Exchange_Pair_filter, $block: Exchange_Block_height) {
+  pairs:Exchange_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    totalSupply
+    volumeUSD
+    reserveUSD
+    trackedReserveETH
+  }
+}
+
+
+query TridentTokens($first: Int = 100000, $skip: Int = 0, $where: Trident_Token_filter, $block: Trident_Block_height) {
+  tokens:Trident_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    symbol
+    decimals
+    liquidity
+    price {
+      derivedNative
+    }
+  }
+
+  bundle:Trident_bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query TridentBundle($block: Trident_Block_height) {
+  bundle:Trident_bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query TridentPairs($first: Int = 100000, $skip: Int = 0, $where: Trident_Pair_filter, $block: Trident_Block_height) {
+  pairs:Trident_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    feesNative
+    liquidity
+    liquidityNative
+    apr
+  }
+}
+
+
+query MasterChefV2Rewarders($first: Int = 1000, $skip: Int = 0, $where: MasterChef_MasterChefV2Rewarder_filter, $block: MasterChef_Block_height) {
+  rewarders:MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
+  }
+}
+
+
+query MiniChefRewarders($first: Int = 1000, $skip: Int = 0, $where: MiniChef_Rewarder_filter, $block: MiniChef_Block_height) {
+  rewarders:MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
+  }
+}

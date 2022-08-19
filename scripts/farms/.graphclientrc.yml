@@ -1,0 +1,55 @@
+sources:
+  - name: Trident
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-labs/trident-optimism}
+    transforms:
+      - prefix:
+          value: Trident_
+          includeRootOperations: true
+          includeTypes: true
+      - autoPagination:
+          validateSchema: true
+  - name: Exchange
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/exchange-ethereum}
+    transforms:
+      - prefix:
+          value: Exchange_
+          includeRootOperations: true
+          includeTypes: true
+      - autoPagination:
+          validateSchema: true
+  - name: MasterChef
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/masterchef-v2-ethereum
+    transforms:
+      - prefix:
+          value: MasterChef_
+          includeRootOperations: true
+          includeTypes: true
+  - name: MiniChef
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:jiro-ono/minichef-staging-updates}
+    transforms:
+      - prefix:
+          value: MiniChef_
+          includeRootOperations: true
+          includeTypes: true
+  # - name: Kashi
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/exchange-ethereum}
+  #   transforms:
+  #     - prefix:
+  #         value: Exchange_
+  #         includeRootOperations: true
+  #         includeTypes: true
+  #     - autoPagination:
+  #         validateSchema: true
+
+documents:
+  - ./query.graphql
