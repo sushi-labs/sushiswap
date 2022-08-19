@@ -10,6 +10,7 @@ import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
 const fetcher = ({
