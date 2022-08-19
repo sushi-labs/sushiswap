@@ -1,7 +1,13 @@
 // @ts-nocheck
 import seedrandom from 'seedrandom'
 import { findMultiRouteExactIn, NetworkInfo } from '../src'
-import { checkRoute, createMultipleNetworks, getRandom, Network } from './utils'
+import {
+  checkRoute,
+  createMultipleNetworks,
+  createMultipleNetworksWithStargateBridge,
+  getRandom,
+  Network,
+} from './utils'
 
 function chooseRandomTokenWithChainId(rnd: () => number, network: Network, chainId?: number) {
   const tokens = network.tokens.filter((t) => t.chainId == chainId)
@@ -21,7 +27,7 @@ function setRandomBaseTokenInNetworkInfo(
   networksInfo.gasPrice = gasPrice * Math.pow(10, randomToken.decimals - 18)
 }
 
-it('two chains', () => {
+it('two chains with pool bridge', () => {
   const testSeed = '0' // Change it to change random generator values
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
@@ -51,6 +57,46 @@ it('two chains', () => {
       const toToken = chooseRandomTokenWithChainId(rnd, network, networksInfo[1].chainId)
       const shift = Math.min(fromToken.price, 1)
       const amountIn = getRandom(rnd, 1e9 / shift, 1e24 / shift)
+
+      const route = findMultiRouteExactIn(fromToken, toToken, amountIn, pools, networksInfo)
+      checkRoute(route, network, fromToken, toToken, amountIn, networksInfo)
+    }
+  }
+})
+
+it.only('two chains with Stargate bridge', () => {
+  const testSeed = '0' // Change it to change random generator values
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+
+  for (let i = 0; i < 5; ++i) {
+    const { pools, network, networksInfo } = createMultipleNetworksWithStargateBridge(
+      rnd,
+      [
+        {
+          tokenNumber: 5,
+          density: 0.6,
+          gasPrice: 100e9,
+        },
+        {
+          tokenNumber: 5,
+          density: 0.6,
+          gasPrice: 50e9,
+        },
+      ],
+      2
+    )
+
+    for (let j = 0; j < 10; ++j) {
+      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[0], 100e9)
+      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[1], 50e9)
+
+      const fromToken = chooseRandomTokenWithChainId(rnd, network, networksInfo[0].chainId)
+      const toToken = chooseRandomTokenWithChainId(rnd, network, networksInfo[1].chainId)
+      const shift = Math.min(fromToken.price, 1)
+      const amountIn = getRandom(rnd, 1e9 / shift, 1e24 / shift)
+      if (i < 5) continue
+      if (j < 2) continue
+      console.log(i, j)
 
       const route = findMultiRouteExactIn(fromToken, toToken, amountIn, pools, networksInfo)
       checkRoute(route, network, fromToken, toToken, amountIn, networksInfo)

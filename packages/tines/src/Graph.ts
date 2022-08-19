@@ -203,7 +203,6 @@ export class Edge {
       const outInc = from === this.vert0 ? amountOut : -amountIn
       const inNew = inPrev + inInc
       const outNew = outPrev + outInc
-      if (inNew * outNew < 0) console.log('333')
       console.assert(inNew * outNew >= 0)
       if (inNew >= 0) {
         directionNew = true

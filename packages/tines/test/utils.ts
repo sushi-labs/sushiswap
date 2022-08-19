@@ -12,6 +12,7 @@ import {
   RToken,
   StableSwapRPool,
 } from '../src'
+import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
 
 const MIN_TOKEN_PRICE = 1e-6
 const MAX_TOKEN_PRICE = 1e6
@@ -39,7 +40,7 @@ export interface Network {
 export function createNetwork(rnd: () => number, tokenNumber: number, density: number, gasPrice: number): Network {
   const tokens = []
   for (var i = 0; i < tokenNumber; ++i) {
-    tokens.push(createRandomToken(rnd, '' + i))
+    tokens.push(createRandomToken(rnd, '' + i, i === 0))
   }
 
   const pools: RPool[] = []
@@ -75,8 +76,8 @@ export function createNetwork(rnd: () => number, tokenNumber: number, density: n
   }
 }
 
-function createRandomToken(rnd: () => number, name: string): TToken {
-  const price = getTokenPrice(rnd)
+function createRandomToken(rnd: () => number, name: string, stablePriceGaranted = false): TToken {
+  const price = stablePriceGaranted ? STABLE_TOKEN_PRICE : getTokenPrice(rnd)
   const decimals = price == STABLE_TOKEN_PRICE ? getRandomDecimals(rnd) : 18
   return {
     name,
@@ -108,7 +109,7 @@ export function getRandom(rnd: () => number, min: number, max: number) {
 }
 
 function getTokenPrice(rnd: () => number) {
-  if (rnd() < 0.6) return STABLE_TOKEN_PRICE
+  if (rnd() < 0.4) return STABLE_TOKEN_PRICE
   return getRandom(rnd, MIN_TOKEN_PRICE, MAX_TOKEN_PRICE)
 }
 
@@ -280,6 +281,16 @@ export function chooseRandomToken(rnd: () => number, network: Network): TToken {
   return network.tokens[Math.floor(rnd() * num)]
 }
 
+export function chooseRandomStableToken(rnd: () => number, network: Network): TToken {
+  const num = network.tokens.length
+  const start = Math.floor(rnd() * num)
+  for (let i = 0; i < num; ++i) {
+    const token = network.tokens[(start + i) % num]
+    if (token.price === STABLE_TOKEN_PRICE) return token
+  }
+  throw new Error('No stable tokens in the network')
+}
+
 export function chooseRandomTokensForSwap(rnd: () => number, network: Network): [TToken, TToken, TToken] {
   const num = network.tokens.length
   const token0 = Math.floor(rnd() * num)
@@ -293,6 +304,26 @@ function createBridge(rnd: () => number, net1: Network, net2: Network) {
   const token0 = chooseRandomToken(rnd, net1)
   const token1 = chooseRandomToken(rnd, net2)
   return getCPPool(rnd, token0, token1)
+}
+
+function createStargateBridge(rnd: () => number, net1: Network, net2: Network) {
+  const token0 = chooseRandomStableToken(rnd, net1)
+  const token1 = chooseRandomStableToken(rnd, net2)
+  const bridgeState = {
+    currentAssetSD: BigNumber.from('62204680881791'),
+    lpAsset: BigNumber.from('82018577759839'),
+    eqFeePool: BigNumber.from('12415520434'),
+    idealBalance: BigNumber.from('6649285670242'),
+    currentBalance: BigNumber.from('3951760190743'),
+    allocPointIsPositive: true,
+  }
+  return new BridgeStargateV04OneWay(
+    `BridgeStargateV04OneWay ${token0.name}-${token1.name}`,
+    token0,
+    token1,
+    bridgeState,
+    false
+  )
 }
 
 export function createMultipleNetworks(
@@ -315,6 +346,48 @@ export function createMultipleNetworks(
       for (let k = 0; k < bridgeNumber; ++k) {
         pools.push(createBridge(rnd, networks[i], networks[j]))
       }
+    }
+  }
+
+  networks.forEach((n, i) => {
+    n.tokens.forEach((t) => {
+      t.chainId = i
+      delete t.tokenId // should be recreated after chainId change
+    })
+  })
+
+  return {
+    networksInfo: networks.map((n, i) => {
+      const baseToken = chooseRandomToken(rnd, n)
+      return {
+        chainId: i,
+        baseToken,
+        baseTokenPrice: baseToken.price,
+        gasPrice: n.gasPrice,
+      }
+    }),
+    network: { tokens, pools, gasPrice: -1 },
+    pools,
+  }
+}
+
+export function createMultipleNetworksWithStargateBridge(
+  rnd: () => number,
+  networkData: NetworkCreateData[]
+): { networksInfo: NetworkInfo[]; network: Network; pools: RPool[] } {
+  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice))
+
+  let pools: RPool[] = []
+  let tokens: TToken[] = []
+  networks.forEach((n) => {
+    pools = pools.concat(n.pools)
+    tokens = tokens.concat(n.tokens)
+  })
+
+  const n = networkData.length
+  for (let i = 0; i < n; ++i) {
+    for (let j = i + 1; j < n; ++j) {
+      pools.push(createStargateBridge(rnd, networks[i], networks[j]))
     }
   }
 

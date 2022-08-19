@@ -28,9 +28,12 @@ export class BridgeStargateV04OneWay extends RPool {
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     if (!direction) throw new Error('Wrong way for BridgeStargateV04OneWay')
-    const maxAmount = parseInt(this.bridgeState.currentBalance.toString())
-    const out = amountIn - this.calcFeeAmount(amountIn)
-    if (out > maxAmount) throw new Error('OutOfLiquidity BridgeStargateV04OneWay')
+    const fees = getStarGateFeesV04(this.bridgeState, this.whitelisted, getBigNumber(amountIn))
+    const maxAmount = parseInt(this.bridgeState.currentBalance.sub(fees.lpFee).add(fees.eqReward).toString())
+    if (amountIn > maxAmount) throw new Error('OutOfLiquidity BridgeStargateV04OneWay')
+    const feesTotal = parseInt(fees.lpFee.add(fees.protocolFee).add(fees.eqFee).sub(fees.eqReward).toString())
+    const out = amountIn - feesTotal
+    console.assert(out >= 0, 'Error 336')
     return { out, gasSpent: this.swapGasCost }
   }
 
