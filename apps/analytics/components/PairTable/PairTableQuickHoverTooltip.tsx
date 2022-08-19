@@ -1,6 +1,6 @@
 import { Native } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
-import { Button, Chip, Currency, Link, Tooltip, Typography } from '@sushiswap/ui'
+import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { getAddress } from 'ethers/lib/utils'
 import { FC } from 'react'
 
@@ -61,29 +61,23 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
       {/*  </div>*/}
       {/*</div>*/}
       <div className="flex gap-2 mt-4 mb-2 justify-end">
-        {/*TODO enable when pool app goes live*/}
-        <Tooltip
-          button={
-            <Link.External
-              className="w-full !no-underline"
-              href={`/pool/add?token0=${
-                Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-                  ? Native.onChain(row.chainId).symbol
-                  : getAddress(row.token0.id)
-              }&token1=${
-                Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-                  ? Native.onChain(row.chainId).symbol
-                  : getAddress(row.token1.id)
-              }&chainId=${row.chainId}`}
-              passHref={true}
-            >
-              <Button as="a" size="sm" fullWidth disabled>
-                Deposit
-              </Button>
-            </Link.External>
-          }
-          panel={<div className="text-xs rounded-2xl text-slate-300">Coming soon!</div>}
-        />
+        <Link.External
+          className="w-full !no-underline"
+          href={`/pool/add?token0=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token0.id)
+          }&token1=${
+            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
+              ? Native.onChain(row.chainId).symbol
+              : getAddress(row.token1.id)
+          }&chainId=${row.chainId}`}
+          passHref={true}
+        >
+          <Button as="a" size="sm" fullWidth disabled>
+            Deposit
+          </Button>
+        </Link.External>
       </div>
     </div>
   )

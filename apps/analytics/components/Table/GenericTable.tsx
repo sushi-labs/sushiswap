@@ -72,7 +72,7 @@ export const GenericTable = <T extends { id: string }>({
                         <Table.tr
                           onClick={() => {
                             setShowOverlay(true)
-                            void router.push(`/${row.original.id}`)
+                            void router.push(`https://sushi.com/pool/${row.original.id}`)
                           }}
                           className="cursor-pointer"
                         >

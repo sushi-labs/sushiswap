@@ -3,7 +3,7 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, Link, MaxWidth, Select, SushiIcon, useBreakpoint } from '../index'
+import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -13,7 +13,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Pool = 'Liquidity',
+  Pool = 'Pool',
   Partner = 'Partner',
 }
 
@@ -95,61 +95,111 @@ export function Header({
               </Listbox.Button>
             }
           >
-            <Select.Options className="w-[auto] !bg-slate-700 -ml-5 mt-4">
-              {appType !== AppType.Swap && (
-                <Select.Option
-                  as="a"
-                  href="https://sushi.com/swap"
-                  key={AppType.Swap}
-                  value={AppType.Swap}
-                  className="!border-slate-700 !cursor-pointer"
-                >
-                  {AppType.Swap}
-                </Select.Option>
-              )}
-              {appType !== AppType.Furo && (
-                <Select.Option
-                  as="a"
-                  href="https://sushi.com/furo"
-                  key={AppType.Furo}
-                  value={AppType.Furo}
-                  className="!border-slate-700 !cursor-pointer"
-                >
-                  {AppType.Furo}
-                </Select.Option>
-              )}
-              {appType !== AppType.Pool && (
-                <Select.Option
-                  as="a"
-                  href="https://sushi.com/pool"
-                  key={AppType.Pool}
-                  value={AppType.Pool}
-                  className="!border-slate-700 !cursor-pointer"
-                >
-                  {AppType.Pool}
-                </Select.Option>
-              )}
-              {appType !== AppType.Kashi && (
-                <Select.Option
-                  as="a"
-                  href="https://sushi.com/kashi"
-                  key={AppType.Kashi}
-                  value={AppType.Kashi}
-                  className="!border-slate-700 !cursor-pointer"
-                >
-                  {AppType.Kashi}
-                </Select.Option>
-              )}
-              <Select.Option
-                as={Link.External}
-                href="https://app.sushi.com"
-                key={AppType.Legacy}
-                value={AppType.Legacy}
-                className="!border-slate-700 !cursor-pointer"
-              >
-                <span>{AppType.Legacy}</span>
-                <ExternalLinkIcon width={14} height={14} />
-              </Select.Option>
+            <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 max-h-[unset]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-1 px-2 py-3">
+                <div>
+                  <Typography variant="xs" weight={600} className="hidden md:block px-3 mb-2 uppercase text-slate-400">
+                    Core
+                  </Typography>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/swap"
+                    key={AppType.Swap}
+                    value={AppType.Swap}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Swap}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      The easiest way to trade
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/pool"
+                    key={AppType.Pool}
+                    value={AppType.Pool}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Pool}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Earn fees by providing liquidity
+                    </Typography>
+                  </Select.Option>
+                </div>
+                <div>
+                  <Typography variant="xs" weight={600} className="hidden md:block px-3 mb-2 uppercase text-slate-400">
+                    Products
+                  </Typography>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/kashi"
+                    key={AppType.Kashi}
+                    value={AppType.Kashi}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    Kashi
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Lend & borrow money
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/furo"
+                    key={AppType.Furo}
+                    value={AppType.Furo}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Furo}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Earn, stream and automate with Furo
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/analytics"
+                    key={AppType.Analytics}
+                    value={AppType.Analytics}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Analytics}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Find the best opportunities
+                    </Typography>
+                  </Select.Option>
+                </div>
+                <div>
+                  <Typography variant="xs" weight={600} className="hidden md:block px-3 mb-2 uppercase text-slate-400">
+                    Links
+                  </Typography>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/blog"
+                    key={AppType.Blog}
+                    value={AppType.Blog}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Blog}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Stay up to date with Sushi
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as={Link.External}
+                    href="https://app.sushi.com"
+                    key={AppType.Legacy}
+                    value={AppType.Legacy}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start !no-underline group"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>{AppType.Legacy}</span>
+                      <ExternalLinkIcon width={14} height={14} />
+                    </div>
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Prefer the old app?
+                    </Typography>
+                  </Select.Option>
+                </div>
+              </div>
             </Select.Options>
           </Select>
         </div>
