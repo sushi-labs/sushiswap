@@ -5,7 +5,7 @@ export const ENABLED_NETWORKS = [
   ChainId.BSC,
   // ChainId.CELO,
   // ChainId.FUSE,
-  // ChainId.GNOSIS,
+  ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   // ChainId.HARMONY,
@@ -21,7 +21,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushi-labs/sushiswap-moonriver',
+  [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
   [ChainId.HARMONY]: 'sushiswap/sushiswap-harmony',
   [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
 }
