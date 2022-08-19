@@ -35,7 +35,7 @@ export const useTokensFromPair = (pair: Pair) => {
       liquidityToken,
       reserve0: tryParseAmount(pair.reserve0, token0),
       reserve1: tryParseAmount(pair.reserve1, token1),
-      totalSupply: tryParseAmount(pair.totalSupply, liquidityToken),
+      totalSupply: tryParseAmount(pair.liquidity, liquidityToken),
     }
   }, [
     pair.chainId,
@@ -50,6 +50,6 @@ export const useTokensFromPair = (pair: Pair) => {
     pair.token1.id,
     pair.token1.name,
     pair.token1.symbol,
-    pair.totalSupply,
+    pair.liquidity,
   ])
 }
