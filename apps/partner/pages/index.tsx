@@ -209,6 +209,10 @@ export default function Home() {
             </Form.Section>
           </Form.Card>
         </Form>
+        <Typography variant="xs" weight={300} className="flex justify-center text-center">
+          I understand that filing an issue or adding liquidity does not guarantee addition to the Sushi default token
+          list. I will not ping the Discord about this listing request.
+        </Typography>
       </div>
     </div>
   )
