@@ -27,17 +27,17 @@ const chartTimespans: Record<TvlChartPeriod, number> = {
   [TvlChartPeriod.All]: Infinity,
 }
 
-export const TVLChart: FC<{ stats: Pair[] }> = ({ stats }) => {
+export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
   const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(TvlChartPeriod.Week)
 
   const [xData, yData] = useMemo(() => {
     const key = chartTimespans[chartPeriod] <= chartTimespans[TvlChartPeriod.Week] ? 'hourSnapshots' : 'daySnapshots'
     const currentDate = Math.round(Date.now())
 
-    const x = []
-    const y = []
-    stats.forEach((pair) => {
-      const [_x, _y] = pair[key].reduce(
+    const x: number[] = []
+    const y: number[] = []
+    stats?.forEach((pair) => {
+      const [_x, _y] = pair[key].reduce<[number[], number[]]>(
         (acc, snapshot) => {
           if (snapshot.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
             acc[0].push(snapshot.date)
@@ -58,6 +58,15 @@ export const TVLChart: FC<{ stats: Pair[] }> = ({ stats }) => {
 
     return [x.reverse(), y.reverse()]
   }, [chartPeriod, stats])
+
+  // Transient update for performance
+  const onMouseOver = useCallback(({ name, value }) => {
+    const valueNodes = document.getElementsByClassName('hoveredItemValueTVL')
+    const nameNodes = document.getElementsByClassName('hoveredItemNameTVL')
+
+    valueNodes[0].innerHTML = formatUSD(value)
+    nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+  }, [])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
@@ -143,17 +152,8 @@ export const TVLChart: FC<{ stats: Pair[] }> = ({ stats }) => {
         },
       ],
     }),
-    [xData, yData]
+    [onMouseOver, xData, yData]
   )
-
-  // Transient update for performance
-  const onMouseOver = useCallback(({ name, value }) => {
-    const valueNodes = document.getElementsByClassName('hoveredItemValueTVL')
-    const nameNodes = document.getElementsByClassName('hoveredItemNameTVL')
-
-    valueNodes[0].innerHTML = formatUSD(value)
-    nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
-  }, [])
 
   return (
     <div className="flex flex-col gap-3">

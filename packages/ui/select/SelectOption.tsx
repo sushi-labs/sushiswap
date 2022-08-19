@@ -40,7 +40,7 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
           <div className="bg-white text-blue rounded-full p-1 shadow-md shadow-black/30">
-            <ArrowRightIcon with={10} height={10} />
+            <ArrowRightIcon width={10} height={10} />
           </div>
         </div>
       </Transition>

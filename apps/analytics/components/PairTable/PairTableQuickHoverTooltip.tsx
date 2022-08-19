@@ -1,10 +1,10 @@
+import { getAddress } from '@ethersproject/address'
 import { Native } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { getAddress } from 'ethers/lib/utils'
 import { FC } from 'react'
 
-import { Pair } from '../../../.graphclient'
+import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
 import { ICON_SIZE } from '../Table'
 
@@ -72,9 +72,8 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
               ? Native.onChain(row.chainId).symbol
               : getAddress(row.token1.id)
           }&chainId=${row.chainId}`}
-          passHref={true}
         >
-          <Button as="a" size="sm" fullWidth disabled>
+          <Button size="sm" fullWidth disabled>
             Deposit
           </Button>
         </Link.External>

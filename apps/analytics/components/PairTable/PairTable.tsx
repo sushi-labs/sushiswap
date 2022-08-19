@@ -20,6 +20,7 @@ import {
 } from '../Table'
 import { PairQuickHoverTooltip } from './PairTableQuickHoverTooltip'
 
+// @ts-ignore
 const COLUMNS = [
   NETWORK_COLUMN,
   NAME_COLUMN,
@@ -127,7 +128,7 @@ export const PairTable: FC = () => {
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, tvl: false, network: false, fees7d: false, tvl: false })
+      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false })
     }
   }, [isLg, isMd, isSm])
 
