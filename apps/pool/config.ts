@@ -5,7 +5,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.ARBITRUM,
   ChainId.MOONBEAM,
   ChainId.FUSE,
-  // ChainId.MOONRIVER,
+  ChainId.MOONRIVER,
   // ChainId.FANTOM,
   ChainId.BSC,
   // ChainId.GNOSIS,
@@ -28,7 +28,7 @@ export const GRAPH_HOST = {
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   // [ChainId.ETHEREUM]: 'sushiswap/exchange',
-  [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
+  [ChainId.AVALANCHE]: 'sushi-labs/sushiswap-avalanche',
   // [ChainId.ARBITRUM]: 'sushi-labs/sushiswap-arbitrum',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
@@ -48,8 +48,8 @@ export const AMM_ENABLED_NETWORKS = [
   // ChainId.ARBITRUM,
   ChainId.MOONBEAM,
   ChainId.FUSE,
-  // ChainId.MOONRIVER,
+  ChainId.MOONRIVER,
   // ChainId.FANTOM,
   ChainId.BSC,
-  // ChainId.GNOSIS,
+  ChainId.GNOSIS,
 ]

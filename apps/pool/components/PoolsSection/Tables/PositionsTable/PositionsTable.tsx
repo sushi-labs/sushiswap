@@ -30,7 +30,7 @@ export const PositionsTable: FC = () => {
     if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => ({
       ...el.pair,
-      liquidityTokenBalance: el.balance,
+      liquidityTokenBalance: String(el.balance / 1e18),
       id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
     }))
   }, [user])
