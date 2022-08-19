@@ -35,7 +35,7 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
 query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
   crossChainUser(id: $id, block: $block, chainIds: $chainIds) {
     liquidityPositions {
-      liquidityTokenBalance: balance
+      balance
       pair {
         id
         chainId
@@ -43,7 +43,7 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
         name
         reserve0
         reserve1
-        totalSupply: liquidity
+        liquidity
         token0 {
           id
           name
@@ -74,7 +74,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
-    totalSupply: liquidity
+    liquidity
     token0 {
       name
       id
@@ -91,21 +91,21 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     liquidityUSD
     volumeUSD
     apr
-    hourData: hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
+    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
       liquidityNative
       liquidityUSD
-      txCount: transactionCount
+      transactionCount
     }
-    dayData: daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
+    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
       liquidityNative
       liquidityUSD
-      txCount: transactionCount
+      transactionCount
     }
     dayChangeData: daySnapshots(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
       id
@@ -113,7 +113,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
       volumeUSD
       liquidityNative
       liquidityUSD
-      txCount: transactionCount
+      transactionCount
     }
   }
 }
@@ -127,7 +127,7 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
-    totalSupply: liquidity
+    liquidity
     token0 {
       name
       id
@@ -144,14 +144,14 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     liquidityUSD
     volumeUSD
     apr
-    hourData: hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
+    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
       liquidityNative
       liquidityUSD
     }
-    dayData: daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
+    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
@@ -164,7 +164,7 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
       volumeUSD
       liquidityNative
       liquidityUSD
-      txCount: transactionCount
+      transactionCount
     }
 
   }

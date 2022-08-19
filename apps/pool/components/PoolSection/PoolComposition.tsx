@@ -1,4 +1,4 @@
-import { Native, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Native } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
@@ -14,7 +14,8 @@ interface PoolCompositionProps {
 export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const { token0, token1 } = useTokensFromPair(pair)
-
+  const reserve0 = Amount.fromRawAmount(token0, pair.reserve0)
+  const reserve1 = Amount.fromRawAmount(token1, pair.reserve1)
   return (
     <div className="flex flex-col w-full gap-4">
       <div className="flex items-center justify-between px-2">
@@ -58,10 +59,12 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               </Table.td>
               <Table.td>
                 <Typography weight={500} variant="sm" className="text-slate-400">
-                  {tryParseAmount(pair.reserve0, token0)?.toSignificant(6)}
+                  {reserve0?.toSignificant(6)}
                 </Typography>
               </Table.td>
-              <Table.td>{formatUSD(pair.reserve0 * Number(prices?.[token0.address].toFixed(10)))}</Table.td>
+              <Table.td>
+                {formatUSD(Number(reserve0.toFixed()) * Number(prices?.[token0.address].toFixed(10)))}
+              </Table.td>
             </Table.tr>
             <Table.tr>
               <Table.td>
@@ -74,10 +77,12 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               </Table.td>
               <Table.td>
                 <Typography weight={500} variant="sm" className="text-slate-400">
-                  {tryParseAmount(pair.reserve1, token1)?.toSignificant(6)}
+                  {reserve1?.toSignificant(6)}
                 </Typography>
               </Table.td>
-              <Table.td>{formatUSD(pair.reserve1 * Number(prices?.[token1.address].toFixed(10)))}</Table.td>
+              <Table.td>
+                {formatUSD(Number(reserve1.toFixed()) * Number(prices?.[token1.address].toFixed(10)))}
+              </Table.td>
             </Table.tr>
           </Table.tbody>
         </Table.table>
