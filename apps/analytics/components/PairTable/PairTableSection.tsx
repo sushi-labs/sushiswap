@@ -1,11 +1,15 @@
 import { Network } from '@sushiswap/ui'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 import { ENABLED_NETWORKS } from '../../config'
 import { usePoolFilters } from '../PairsProvider'
 import { PairTable } from './PairTable'
 
-export const PairTableSection: FC = () => {
+interface PairTableSection {
+  children?: ReactNode
+}
+
+export const PairTableSection: FC<PairTableSection> = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
 
   return (

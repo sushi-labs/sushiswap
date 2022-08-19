@@ -42,7 +42,7 @@ export const NAME_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 
 export const TVL_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'TVL',
-  id: 'tvl',
+  id: 'liquidityUSD',
   accessorFn: (row) => row.liquidityUSD,
   cell: (props) => <PairTVLCell row={props.row.original} />,
   size: 100,
@@ -51,8 +51,7 @@ export const TVL_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 
 export const VOLUME_24_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'Volume (24h)',
-  id: 'volume24h',
-  accessorFn: (row) => row.volume24h,
+  id: 'volumeUSD',
   cell: (props) => <PairVolume24hCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -61,7 +60,6 @@ export const VOLUME_24_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 export const VOLUME_7_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'Volume (7d)',
   id: 'volume7d',
-  accessorFn: (row) => row.volume7d,
   cell: (props) => <PairVolume7dCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -69,8 +67,7 @@ export const VOLUME_7_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 
 export const FEES_24_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'Fees (24h)',
-  id: 'fees24h',
-  accessorFn: (row) => row.fees24h,
+  id: 'feesUSD',
   cell: (props) => <PairFees24hCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -79,7 +76,6 @@ export const FEES_24_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 export const FEES_7_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'Fees (7d)',
   id: 'fees7d',
-  accessorFn: (row) => row.fees7d,
   cell: (props) => <PairFees7dCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
