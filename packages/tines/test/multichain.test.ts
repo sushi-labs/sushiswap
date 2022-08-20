@@ -1,6 +1,6 @@
 // @ts-nocheck
 import seedrandom from 'seedrandom'
-import { findMultiRouteExactIn, NetworkInfo } from '../src'
+import { findMultiRouteExactIn, NetworkInfo, RouteStatus } from '../src'
 import {
   checkRoute,
   createMultipleNetworks,
@@ -28,7 +28,7 @@ function setRandomBaseTokenInNetworkInfo(
 }
 
 it('two chains with pool bridge', () => {
-  const testSeed = '0' // Change it to change random generator values
+  const testSeed = '1' // Change it to change random generator values
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
   for (let i = 0; i < 10; ++i) {
@@ -64,11 +64,11 @@ it('two chains with pool bridge', () => {
   }
 })
 
-it.only('two chains with Stargate bridge', () => {
+it('two chains with Stargate bridge', () => {
   const testSeed = '0' // Change it to change random generator values
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
-  for (let i = 0; i < 5; ++i) {
+  for (let i = 0; i < 10; ++i) {
     const { pools, network, networksInfo } = createMultipleNetworksWithStargateBridge(
       rnd,
       [
@@ -94,11 +94,15 @@ it.only('two chains with Stargate bridge', () => {
       const toToken = chooseRandomTokenWithChainId(rnd, network, networksInfo[1].chainId)
       const shift = Math.min(fromToken.price, 1)
       const amountIn = getRandom(rnd, 1e9 / shift, 1e24 / shift)
-      if (i < 5) continue
-      if (j < 2) continue
-      console.log(i, j)
 
       const route = findMultiRouteExactIn(fromToken, toToken, amountIn, pools, networksInfo)
+
+      // const bridge = route.legs.filter((l) => l.poolAddress.startsWith('Bridge'))
+      // if (bridge.length > 0)
+      //   console.log(
+      //     bridge.map((b) => `${b.poolAddress} ${b.absolutePortion * 100}% ${b.assumedAmountIn}->${b.assumedAmountOut}`)
+      //   )
+
       checkRoute(route, network, fromToken, toToken, amountIn, networksInfo)
     }
   }
