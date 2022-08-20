@@ -60,20 +60,7 @@ export const resolvers: Resolvers = {
             })
           })
         )
-      ).then((pools) =>
-        pools
-          .flat()
-          .sort((a, b) => {
-            if (args.orderDirection === 'asc') {
-              return a[args.orderBy || 'liquidityUSD'] - b[args.orderBy || 'liquidityUSD']
-            } else if (args.orderDirection === 'desc') {
-              return b[args.orderBy || 'liquidityUSD'] - a[args.orderBy || 'liquidityUSD']
-            }
-
-            return 0
-          })
-          .slice(args.skip, args.skip + args.first)
-      ),
+      ).then((pools) => pools.flat().slice(args.skip, args.skip + args.first)),
     crossChainStats: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
