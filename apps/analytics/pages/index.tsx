@@ -5,11 +5,12 @@ import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PairsProvider, PairTable, PairTableSection } from '../components'
 import { ChartSection } from '../components/ChartSection'
-import { getCharts, getPairs } from '../lib/api'
+import { getCharts, getPairs, GetPairsQuery } from '../lib/api'
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pairs, charts] = await Promise.all([getPairs(), getCharts()])
+  // console.log('SSR query', query)
+  const [pairs, charts] = await Promise.all([getPairs(query as unknown as GetPairsQuery), getCharts()])
   return {
     props: {
       fallback: {

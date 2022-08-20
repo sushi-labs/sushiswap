@@ -1,35 +1,35 @@
-import { OrderDirection, Pair_orderBy } from '../.graphclient'
-import { getBuiltGraphSDK } from '../.graphclient'
+import { QuerypairsArgs } from '../.graphclient'
 import { ENABLED_NETWORKS } from '../config'
-type GetPoolsQuery = Partial<{
-  where: string
-  first: number
-  skip: number
-  orderBy: Pair_orderBy
-  orderDirection: OrderDirection
-  networks?: string
-}>
 
-export const getPairs = async (query?: GetPoolsQuery) => {
-  const sdk = getBuiltGraphSDK()
+export type GetPairsQuery = QuerypairsArgs & { networks: string }
 
-  const where = JSON.parse(query?.where || '{}')
-  const networks = JSON.parse(query?.networks || JSON.stringify(ENABLED_NETWORKS))
-  const orderBy = query?.orderBy || 'liquidityUSD'
-  const orderDirection = query?.orderDirection || 'desc'
-
-  const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
-    chainIds: networks,
-    first: 20,
-    skip: 0,
-    ...(query && { where, orderBy, orderDirection }),
-    now: Math.round(new Date().getTime() / 1000),
-  })
-
-  return pairs
+export const getPairs = async (query: GetPairsQuery) => {
+  try {
+    const { getBuiltGraphSDK } = await import('../.graphclient')
+    const { CrossChainPairs } = getBuiltGraphSDK()
+    const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
+    const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
+    const where = query?.where ? query.where : undefined
+    const orderBy = query?.orderBy || 'liquidityUSD'
+    const orderDirection = query?.orderDirection || 'desc'
+    const chainIds = query?.networks ? JSON.parse(query.networks) : ENABLED_NETWORKS
+    const { crossChainPairs } = await CrossChainPairs({
+      first,
+      skip,
+      where,
+      orderBy,
+      orderDirection,
+      chainIds,
+      now: Math.round(new Date().getTime() / 1000),
+    })
+    return crossChainPairs
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 export const getStats = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
   const { crossChainStats: stats } = await sdk.CrossChainStats({
     chainIds: ENABLED_NETWORKS,
@@ -41,6 +41,7 @@ export const getStats = async () => {
 }
 
 export const getCharts = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
   const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
     chainIds: ENABLED_NETWORKS,
