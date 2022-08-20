@@ -136,7 +136,7 @@ export const TVLChart: FC<{ x?: number[]; y?: number[] }> = ({ x, y }) => {
       <div className="flex justify-between">
         <div className={classNames('pb-2 font-semibold text-sm')}>TVL</div>
         <div className="flex gap-4">
-          <button
+          {/* <button
             onClick={() => setChartPeriod(TvlChartPeriod.Day)}
             className={classNames(
               'font-semibold text-sm',
@@ -144,7 +144,7 @@ export const TVLChart: FC<{ x?: number[]; y?: number[] }> = ({ x, y }) => {
             )}
           >
             1D
-          </button>
+          </button> */}
           <button
             onClick={() => setChartPeriod(TvlChartPeriod.Week)}
             className={classNames(
