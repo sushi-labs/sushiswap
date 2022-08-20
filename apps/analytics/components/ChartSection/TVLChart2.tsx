@@ -26,13 +26,13 @@ const chartTimespans: Record<TvlChartPeriod, number> = {
   [TvlChartPeriod.All]: Infinity,
 }
 
-export const TVLChart: FC<{ x?: number[]; y?: number[] }> = ({ x, y }) => {
+export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
   const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(TvlChartPeriod.Month)
 
   const [xData, yData] = useMemo(() => {
     const currentDate = Math.round(Date.now())
-    const predicates = x?.map((x) => x * 1000 >= currentDate - chartTimespans[chartPeriod])
-    return [x?.filter((x, i) => predicates?.[i])?.reverse(), y?.filter((y, i) => predicates?.[i])?.reverse()]
+    const predicates = x.map((x) => x * 1000 >= currentDate - chartTimespans[chartPeriod])
+    return [x.filter((x, i) => predicates[i]).reverse(), y.filter((y, i) => predicates[i]).reverse()]
   }, [chartPeriod, x, y])
 
   // Transient update for performance
