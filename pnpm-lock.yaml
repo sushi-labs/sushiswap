@@ -757,6 +757,8 @@ importers:
       ethers: ^5.0.0
       graphql: 16.6.0
       next: ^12.2.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
       numeral: ^2.0.6
       postcss: ^8.4.0
@@ -798,6 +800,8 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.6.9
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.20_next@12.2.3
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
