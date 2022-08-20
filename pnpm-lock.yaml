@@ -191,6 +191,8 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
       next: ^12.2.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.20
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -218,6 +220,8 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.20_next@12.2.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
@@ -18451,6 +18455,19 @@ packages:
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
     dev: false
 
+  /next-sitemap/3.1.20_next@12.2.3:
+    resolution: {integrity: sha512-ugcSQpAtwc9fk7fsr5to0yrlA/RjY0kw2wHOUqcrRXnZDwFfBwGnEVvaYbI7C4ZlhvxjJTA3G15QMpvpmvPquw==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      '@next/env': '*'
+      next: '*'
+    dependencies:
+      '@corex/deepmerge': 4.0.29
+      minimist: 1.2.6
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+    dev: false
+
   /next-tick/1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
@@ -21028,7 +21045,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1

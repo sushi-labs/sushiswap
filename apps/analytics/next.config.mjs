@@ -5,7 +5,7 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/analytics',
+  basePath: '/pool',
   reactStrictMode: true,
   swcMinify: true,
   images: {
