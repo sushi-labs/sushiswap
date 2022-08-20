@@ -2,8 +2,15 @@ sources:
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/sushiswap-bsc}
-
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/sushiswap-avalanche}
+    transforms:
+      - blockTracking:
+          validateSchema: true
+      - autoPagination:
+          validateSchema: true
+      # - autoPagination:
+      #     validateSchema: true # Validates that the schema source actually contains the required input filters.
+      #     limitOfRecords: 1000 # Default is 1000, you can change if you indexer has different configuration in GRAPH_GRAPHQL_MAX_FIRST var.
 additionalTypeDefs: |
   extend type Pair {
     chainId: BigInt!
@@ -20,9 +27,17 @@ additionalTypeDefs: |
     chainShortName: String!
   }
   extend type Query {
-    crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
+    crossChainPairs(
+      first: Int!, 
+      skip: Int! = 0, 
+      where: Pair_filter, 
+      orderBy: Pair_orderBy, 
+      orderDirection: OrderDirection, 
+      chainIds: [BigInt!]!, 
+      now: Int!
+    ): [Pair!]!
     crossChainStats(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
-    crossChainFactoryDaySnapshots(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [FactoryDaySnapshot!]!
+    crossChainFactoryDaySnapshots(first: Int! = 1000, skip: Int! = 0, where: FactoryDaySnapshot_filter, orderBy: FactoryDaySnapshot_orderBy!, orderDirection: OrderDirection!, block: Block_height, chainIds: [BigInt!]!): [FactoryDaySnapshot!]!
   }
 
 additionalResolvers:

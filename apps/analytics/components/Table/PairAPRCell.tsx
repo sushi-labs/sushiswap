@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
-  const apr = formatPercent(row.apr / 100_000)
+  const apr = formatPercent(row.apr / 100)
 
   return (
     <Typography variant="sm" weight={600} className="text-slate-50">

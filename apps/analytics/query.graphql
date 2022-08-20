@@ -2,13 +2,22 @@ query CrossChainPairs(
   $first: Int = 1000
   $skip: Int = 0
   $where: Pair_filter
-  $orderBy: Pair_orderBy
-  $orderDirection: OrderDirection
+  $orderBy: Pair_orderBy = liquidityUSD
+  $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [BigInt!]!
   $now: Int!
 ) {
-  crossChainPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds, now: $now) {
+  crossChainPairs(
+    first: $first, 
+    skip: $skip, 
+    where: $where, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection,
+    block: $block, 
+    chainIds: $chainIds, 
+    now: $now
+  ) {
     volume7d
     volume24h
     fees7d
@@ -68,7 +77,16 @@ query CrossChainStats(
   $chainIds: [BigInt!]!
   $now: Int!
 ) {
-  crossChainStats(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds, now: $now) {
+  crossChainStats(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection,
+    block: $block,
+    chainIds: $chainIds, 
+    now: $now
+) {
     chainId
     chainName
     chainShortName
@@ -91,25 +109,29 @@ query CrossChainFactoryDaySnapshots(
   $first: Int = 1000
   $skip: Int = 0
   $where: FactoryDaySnapshot_filter
-  $orderBy: FactoryDaySnapshot_orderBy
-  $orderDirection: OrderDirection
+  $orderBy: FactoryDaySnapshot_orderBy = date
+  $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [BigInt!]!
 ) {
-  crossChainFactoryDaySnapshots(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, chainIds: $chainIds) {
+  crossChainFactoryDaySnapshots(
+    first: $first, 
+    skip: $skip, 
+    where: $where, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection, 
+    block: $block, 
+    chainIds: $chainIds
+  ) {
     chainId
     chainName
     chainShortName
     id
     date
     volumeUSD
-    volumeNative
     untrackedVolumeUSD
-    liquidityNative
     liquidityUSD
-    feesNative
     feesUSD
-    transactionCount
   }
 }
 

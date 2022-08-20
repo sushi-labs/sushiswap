@@ -103,6 +103,7 @@ export const PairTable: FC = () => {
     () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
+
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/analytics/api/pairs', args }, fetcher, {})
 
   const table = useReactTable({

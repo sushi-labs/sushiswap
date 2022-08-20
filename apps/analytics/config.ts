@@ -4,12 +4,13 @@ export const ENABLED_NETWORKS = [
   ChainId.AVALANCHE,
   ChainId.BSC,
   // ChainId.CELO,
-  // ChainId.FUSE,
+  ChainId.FUSE,
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   // ChainId.HARMONY,
   // ChainId.FANTOM,
+  // ChainId.POLYGON,
 ]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
@@ -24,6 +25,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
   [ChainId.HARMONY]: 'sushiswap/sushiswap-harmony',
   [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
+  [ChainId.POLYGON]: 'sushiswap/sushiswap-polygon',
 }
 
 export const GRAPH_HOST = {
@@ -36,4 +38,5 @@ export const GRAPH_HOST = {
   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
   [ChainId.HARMONY]: GRAPH_HOST_ENDPOINT,
   [ChainId.FANTOM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
 }

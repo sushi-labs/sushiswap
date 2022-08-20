@@ -78,7 +78,7 @@ export const GenericTable = <T extends { id: string }>({
                         >
                           {row.getVisibleCells().map((cell) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </Table.td>
                             )
@@ -101,7 +101,7 @@ export const GenericTable = <T extends { id: string }>({
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Table.td>
                       )
@@ -122,7 +122,7 @@ export const GenericTable = <T extends { id: string }>({
             {!loading && table.getRowModel().rows.length === 0 && (
               <Table.tr className="!h-[260px]">
                 <Table.td colSpan={table.getAllColumns().length} className="!h-[260px]">
-                  <Typography variant="xs" className="text-slate-400 italic w-full text-center">
+                  <Typography variant="xs" className="w-full italic text-center text-slate-400">
                     {placeholder}
                   </Typography>
                 </Table.td>

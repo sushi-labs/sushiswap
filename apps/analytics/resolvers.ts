@@ -8,6 +8,10 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+    volume24h: (root, args, context, info) => root.volume24h || '0',
+    fees24h: (root, args, context, info) => root.fees24h || '0',
+    volume7d: (root, args, context, info) => root.volume7d || '0',
+    fees7d: (root, args, context, info) => root.fees7d || '0',
   },
   FactoryDaySnapshot: {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,

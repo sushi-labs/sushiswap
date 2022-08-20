@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       dstToken: dstToken ?? null,
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
-      srcTypedAmount: srcTypedAmount ?? '',
+      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
     },
   }
 }
