@@ -16,8 +16,10 @@ export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetwo
   const handleClick = useCallback(
     (chainId: ChainId) => {
       if (networks.every((network) => selectedNetworks.includes(network))) {
+        // If every network enabled, disable all but incoming chainId
         onChange([chainId])
-      } else if (selectedNetworks.length) {
+      } else if (!selectedNetworks.length) {
+        // If none selected, enable all
         onChange(networks)
       } else if (selectedNetworks.includes(chainId)) {
         onChange(selectedNetworks.filter((el) => el !== chainId))
