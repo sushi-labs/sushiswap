@@ -658,9 +658,6 @@ export class Graph {
         const price = v2.price / finish.price
         const gasPrice = v2.gasPrice * price
         const newTotal = newIncome * price - newGasSpent * gasPrice
-        if (Number.isNaN(newTotal)) {
-          debugger
-        }
 
         console.assert(e.bestEdgeIncome === 0, 'Error 373')
         e.bestEdgeIncome = newIncome * price
@@ -886,7 +883,7 @@ export class Graph {
         // }
       }
     }
-    if (step == 0)
+    if (step == 0 || output == 0)
       return {
         status: RouteStatus.NoWay,
         fromToken: from,
