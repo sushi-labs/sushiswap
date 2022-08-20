@@ -15,13 +15,17 @@ export interface SelectorProps {
 export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetworks, onChange }) => {
   const handleClick = useCallback(
     (chainId: ChainId) => {
-      if (selectedNetworks.includes(chainId)) {
+      if (networks.every((network) => selectedNetworks.includes(network))) {
+        onChange([chainId])
+      } else if (selectedNetworks.length) {
+        onChange(networks)
+      } else if (selectedNetworks.includes(chainId)) {
         onChange(selectedNetworks.filter((el) => el !== chainId))
       } else {
         onChange([...selectedNetworks, chainId])
       }
     },
-    [onChange, selectedNetworks]
+    [networks, onChange, selectedNetworks]
   )
 
   return (
