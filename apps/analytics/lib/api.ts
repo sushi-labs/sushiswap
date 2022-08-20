@@ -20,7 +20,7 @@ export const getPairs = async (query?: GetPoolsQuery) => {
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
     chainIds: networks,
-    first: Math.ceil(25 * networks.length),
+    first: 20,
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),
     now: Math.round(new Date().getTime() / 1000),
@@ -44,7 +44,7 @@ export const getCharts = async () => {
   const sdk = getBuiltGraphSDK()
   const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
     chainIds: ENABLED_NETWORKS,
-    first: 20,
+    first: 365,
   })
 
   const dateSnapshotMap = new Map()
