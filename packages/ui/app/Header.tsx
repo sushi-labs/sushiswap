@@ -154,7 +154,7 @@ export function Header({
                       Earn, stream and automate with Furo
                     </Typography>
                   </Select.Option>
-                  <Select.Option
+                  {/* <Select.Option
                     as="a"
                     href="https://sushi.com/analytics"
                     key={AppType.Analytics}
@@ -165,7 +165,7 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Find the best opportunities
                     </Typography>
-                  </Select.Option>
+                  </Select.Option> */}
                 </div>
                 <div>
                   <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">

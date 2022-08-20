@@ -83,8 +83,6 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  console.log({ args })
-
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const table = useReactTable({
@@ -101,8 +99,6 @@ export const PoolsTable: FC = () => {
     manualSorting: true,
     manualPagination: true,
   })
-
-  console.log({ pools })
 
   useEffect(() => {
     if (isSm) {
