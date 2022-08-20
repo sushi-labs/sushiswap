@@ -1,6 +1,6 @@
 export * from './Caption'
 export * from './ConfirmationComponentController'
-export * from './CurrencyInput'
+export * from './CurrencyInputWithNetworkSelector'
 export * from './Header'
 export * from './Layout'
 export * from './NetworkSelectorOverlay'

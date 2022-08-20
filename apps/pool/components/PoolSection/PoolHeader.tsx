@@ -1,5 +1,6 @@
+import chains from '@sushiswap/chain'
 import { formatNumber } from '@sushiswap/format'
-import { Chip, Currency, Typography } from '@sushiswap/ui'
+import { Chip, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -10,39 +11,48 @@ interface PoolHeader {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
-  const [token0, token1] = useTokensFromPair(pair)
+  const { token0, token1 } = useTokensFromPair(pair)
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
-        <div className="flex">
-          <Currency.IconList iconWidth={44} iconHeight={44}>
-            <Currency.Icon currency={token0} />
-            <Currency.Icon currency={token1} />
-          </Currency.IconList>
-          <div className="flex flex-col">
-            <div className="flex gap-2 items-center">
-              <Typography variant="lg" className="text-slate-50" weight={700}>
-                {token0.symbol}/{token1.symbol}
-              </Typography>
-              <Chip color="gray" label="0.05%" className="text-slate-50 font-medium" />
-            </div>
-            <Typography variant="sm" weight={500} className="text-slate-400">
-              Classic Pool
-            </Typography>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-            APY: <span className="font-bold text-slate-50">22.27%</span>
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-1">
+          <NetworkIcon type="naked" chainId={pair.chainId} width={16} height={16} />
+
+          <Typography variant="xs" className="text-slate-500">
+            {chains[pair.chainId].name}
           </Typography>
-          <div className="flex gap-2">
-            <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-              Rewards: 12%
+        </div>
+        <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
+          <div className="flex">
+            <Currency.IconList iconWidth={44} iconHeight={44}>
+              <Currency.Icon currency={token0} />
+              <Currency.Icon currency={token1} />
+            </Currency.IconList>
+            <div className="flex flex-col">
+              <div className="flex gap-2 items-center">
+                <Typography variant="lg" className="text-slate-50" weight={700}>
+                  {token0.symbol}/{token1.symbol}
+                </Typography>
+                <Chip color="gray" label="0.05%" className="text-slate-50 font-medium" />
+              </div>
+              <Typography variant="sm" weight={500} className="text-slate-400">
+                Classic Pool
+              </Typography>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
+              APY: <span className="font-bold text-slate-50">22.27%</span>
             </Typography>
-            <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-              Fees: 10.27%
-            </Typography>
+            <div className="flex gap-2">
+              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                Rewards: 12%
+              </Typography>
+              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                Fees: 10.27%
+              </Typography>
+            </div>
           </div>
         </div>
       </div>

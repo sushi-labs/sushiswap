@@ -8,13 +8,13 @@ import { default as th } from './HeadCell'
 import { default as thr } from './HeadRow'
 import { Paginator, PaginatorProps } from './Paginator'
 import { default as table } from './Root'
-import { default as tr } from './Row'
+import { default as tr, RowProps } from './Row'
 
 export type TableProps = {
   container: FC<TableContainerProps>
   thead: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>>
   table: FC<React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>>
-  tr: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>>
+  tr: FC<RowProps>
   thr: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>>
   th: FC<React.DetailedHTMLProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>>
   td: FC<React.DetailedHTMLProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>>

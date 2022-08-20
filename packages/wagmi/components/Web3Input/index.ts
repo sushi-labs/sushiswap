@@ -1,5 +1,14 @@
-import { EnsInput } from './Ens'
+import { FC } from 'react'
 
-export const Web3Input = {
+import { CurrencyInput, CurrencyInputProps } from './Currency'
+import { EnsInput, EnsInputProps } from './Ens'
+
+interface Web3Input {
+  Ens: FC<EnsInputProps>
+  Currency: FC<CurrencyInputProps>
+}
+
+export const Web3Input: Web3Input = {
   Ens: EnsInput,
+  Currency: CurrencyInput,
 }

@@ -18,25 +18,25 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
 
   const [totals1d, totals2d] = pair.dayChangeData
-  const reserveChange = ((totals1d.reserveUSD - totals2d.reserveUSD) / totals2d.reserveUSD) * 100
+  const reserveChange = ((totals1d.liquidityUSD - totals2d.liquidityUSD) / totals2d.liquidityUSD) * 100
   const volChange = ((totals1d.volumeUSD - totals2d.volumeUSD) / totals2d.volumeUSD) * 100
   const txCountChange = ((totals1d.txCount - totals2d.txCount) / totals2d.txCount) * 100
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Liquidity
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.reserveETH * Number(nativePrice?.toFixed(4)))}
+          {formatUSD(pair.liquidityNative * Number(nativePrice?.toFixed(4)))}
         </Typography>
         <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
           {reserveChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(reserveChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Volume (1d)
         </Typography>
@@ -48,7 +48,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
           {formatNumber(Math.abs(volChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Fees (1d)
         </Typography>
@@ -60,7 +60,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
           {formatNumber(Math.abs(volChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Transactions (1d)
         </Typography>

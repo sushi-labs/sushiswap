@@ -12,11 +12,11 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Account } from '../Account'
 
-type EnsInput = Omit<AddressProps, 'ref'> & {
+export interface EnsInputProps extends Omit<AddressProps, 'ref'> {
   inputClassName?: string
 }
 
-export const EnsInput = forwardRef<HTMLInputElement, EnsInput>(
+export const EnsInput = forwardRef<HTMLInputElement, EnsInputProps>(
   ({ onChange, value, className, inputClassName, ...rest }, ref) => {
     const typedRef = useRef<string>()
     const [showEns, setShowEns] = useState<boolean>(false)
