@@ -110,7 +110,7 @@ export const GenericTable = <T extends { id: string }>({
                 )
               })}
             {loading &&
-              Array.from(Array(5)).map((el, index) => (
+              Array.from(Array(20)).map((el, index) => (
                 <Table.tr key={index}>
                   {columns.map((column) => (
                     <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }}>
