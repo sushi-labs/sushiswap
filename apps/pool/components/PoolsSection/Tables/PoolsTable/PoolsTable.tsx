@@ -10,6 +10,7 @@ import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
 const fetcher = ({
@@ -70,7 +71,7 @@ export const PoolsTable: FC = () => {
   const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'reserveETH', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'apr', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -97,6 +98,8 @@ export const PoolsTable: FC = () => {
     manualSorting: true,
     manualPagination: true,
   })
+
+  console.log({ pools })
 
   useEffect(() => {
     if (isSm) {

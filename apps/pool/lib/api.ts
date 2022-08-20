@@ -34,8 +34,9 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
+
   const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
-  const orderBy = query?.orderBy || 'reserveETH'
+  const orderBy = query?.orderBy || 'apr'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({

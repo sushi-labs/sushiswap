@@ -11,6 +11,7 @@ import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, REWARDS_COLUM
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
 export const PositionsTable: FC = () => {
@@ -29,7 +30,7 @@ export const PositionsTable: FC = () => {
     if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => ({
       ...el.pair,
-      liquidityTokenBalance: el.liquidityTokenBalance,
+      liquidityTokenBalance: String(el.balance / 1e18),
       id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
     }))
   }, [user])

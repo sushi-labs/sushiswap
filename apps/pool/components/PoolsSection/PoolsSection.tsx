@@ -20,7 +20,7 @@ export const PoolsSection: FC = () => {
   return (
     <section className="flex flex-col gap-6">
       <Tab.Group>
-        <div className="flex gap-6 items-center">
+        <div className="flex items-center gap-6">
           <Tab
             className={({ selected }) =>
               classNames(

@@ -51,6 +51,7 @@ export const TVL_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 export const APR_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   id: 'apr',
   header: 'APR',
+  accessorFn: (row) => row.apr,
   cell: (props) => <PairAPRCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,

@@ -46,7 +46,8 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.All)
 
   const [xData, yData] = useMemo(() => {
-    const data = chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourData : pair.dayData
+    const data =
+      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourSnapshots : pair.daySnapshots
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
@@ -58,18 +59,17 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
                 ? cur.volumeUSD * FEE_BPS
                 : chartType === PoolChartType.Volume
                 ? cur.volumeUSD
-                : cur.reserveUSD
+                : cur.liquidityUSD
             )
           )
         }
-
         return acc
       },
       [[], []]
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourData, pair.dayData, chartType])
+  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, chartType])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
@@ -261,7 +261,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         <Typography variant="xl" weight={500} className="text-slate-50">
           <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1])}</span>{' '}
           {chartType === PoolChartType.Volume && (
-            <span className="font-medium text-sm text-slate-300">
+            <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * FEE_BPS)}</span> earned
             </span>

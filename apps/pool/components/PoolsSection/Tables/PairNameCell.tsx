@@ -20,9 +20,9 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
         <NetworkIcon chainId={row.chainId} width={ICON_SIZE} height={ICON_SIZE} />
       </div>
       <div className="flex flex-col">
-        <Typography variant="sm" weight={500} className="text-slate-50 flex items-center gap-1">
+        <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-50">
           {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}{' '}
-          <div className="bg-slate-700 rounded-lg px-1 py-0.5 ml-1">0.05%</div>
+          <div className="bg-slate-700 rounded-lg px-1 py-0.5 ml-1">0.3%</div>
         </Typography>
         <Typography variant="xxs" className="text-slate-400">
           SushiSwap Farm

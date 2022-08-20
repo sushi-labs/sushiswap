@@ -3,7 +3,7 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
     id
     chainId
     chainName
-    ethPrice
+    nativePrice
   }
 }
 
@@ -19,22 +19,23 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
       id
       decimals
       symbol
-    }
+    }     
     token1 {
       name
       id
       decimals
       symbol
     }
-    reserveETH
-    reserveUSD
+    liquidityNative
+    liquidityUSD
+    apr
   }
 }
 
 query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
   crossChainUser(id: $id, block: $block, chainIds: $chainIds) {
     liquidityPositions {
-      liquidityTokenBalance
+      balance
       pair {
         id
         chainId
@@ -42,7 +43,7 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
         name
         reserve0
         reserve1
-        totalSupply
+        liquidity
         token0 {
           id
           name
@@ -55,8 +56,8 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
           decimals
           symbol
         }
-        reserveETH
-        reserveUSD
+        liquidityNative
+        liquidityUSD
       }
     }
   }
@@ -73,7 +74,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
-    totalSupply
+    liquidity
     token0 {
       name
       id
@@ -86,28 +87,33 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
       decimals
       symbol
     }
-    reserveETH
+    liquidityNative
+    liquidityUSD
     volumeUSD
-    hourData(first: 168, orderBy: date, orderDirection: desc) {
+    apr
+    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
-      reserveUSD
-      txCount
+      liquidityNative
+      liquidityUSD
+      transactionCount
     }
-    dayData(first: 730, orderBy: date, orderDirection: desc) {
+    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
-      reserveUSD
-      txCount
+      liquidityNative
+      liquidityUSD
+      transactionCount
     }
-    dayChangeData: dayData(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+    dayChangeData: daySnapshots(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
       id
       date
       volumeUSD
-      reserveUSD
-      txCount
+      liquidityNative
+      liquidityUSD
+      transactionCount
     }
   }
 }
@@ -121,7 +127,7 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
-    totalSupply
+    liquidity
     token0 {
       name
       id
@@ -134,27 +140,33 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
       decimals
       symbol
     }
-    reserveETH
+    liquidityNative
+    liquidityUSD
     volumeUSD
-    hourData(first: 168, orderBy: date, orderDirection: desc) {
+    apr
+    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
-      reserveUSD
+      liquidityNative
+      liquidityUSD
     }
-    dayData(first: 730, orderBy: date, orderDirection: desc) {
+    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
       id
       date
       volumeUSD
-      reserveUSD
+      liquidityNative
+      liquidityUSD
     }
-    dayChangeData: dayData(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+    dayChangeData: daySnapshots(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
       id
       date
       volumeUSD
-      reserveUSD
-      txCount
+      liquidityNative
+      liquidityUSD
+      transactionCount
     }
+
   }
 }
 

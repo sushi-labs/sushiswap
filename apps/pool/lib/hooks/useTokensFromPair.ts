@@ -1,4 +1,4 @@
-import { Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
 import { Pair } from '../../.graphclient'
@@ -33,9 +33,9 @@ export const useTokensFromPair = (pair: Pair) => {
       token0,
       token1,
       liquidityToken,
-      reserve0: tryParseAmount(pair.reserve0, token0),
-      reserve1: tryParseAmount(pair.reserve1, token1),
-      totalSupply: tryParseAmount(pair.totalSupply, liquidityToken),
+      reserve0: Amount.fromRawAmount(token0, pair.reserve0 || 0),
+      reserve1: Amount.fromRawAmount(token1, pair.reserve1 || 0),
+      totalSupply: Amount.fromRawAmount(liquidityToken, pair.liquidity || 0),
     }
   }, [
     pair.chainId,
@@ -50,6 +50,6 @@ export const useTokensFromPair = (pair: Pair) => {
     pair.token1.id,
     pair.token1.name,
     pair.token1.symbol,
-    pair.totalSupply,
+    pair.liquidity,
   ])
 }
