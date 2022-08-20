@@ -64,17 +64,7 @@ export const resolvers: Resolvers = {
             }))
           )
         )
-      ).then((pools) =>
-        pools.flat().sort((a, b) => {
-          if (args.orderDirection === 'asc') {
-            return a.apr - b.apr
-          } else if (args.orderDirection === 'desc') {
-            return b.apr - a.apr
-          }
-
-          return 0
-        })
-      ),
+      ).then((pools) => pools.flat()),
     crossChainBundles: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
