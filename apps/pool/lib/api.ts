@@ -1,7 +1,7 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths } from 'date-fns'
 
-import { CrossChainFarmsQuery, OrderDirection, Pair_orderBy } from '../.graphclient'
+import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
 
 export const getBundles = async () => {
@@ -18,35 +18,30 @@ export const getBundles = async () => {
   }, {})
 }
 
-type GetPoolsQuery = Partial<{
-  where: string
-  first: number
-  skip: number
-  orderBy: Pair_orderBy
-  orderDirection: OrderDirection
-  networks?: string
-}>
+export type GetPoolsQuery = QuerypairsArgs & { networks: string }
 
 export const getPools = async (query?: GetPoolsQuery) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
-  const where = JSON.parse(query?.where || '{}')
-  const first = query?.first || 20
-  const skip = query?.skip || 0
-
-  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
-  const orderBy = query?.orderBy || 'apr'
-  const orderDirection = query?.orderDirection || 'desc'
-
-  const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
-    chainIds: networks,
-    first: Math.ceil(60 / networks.length),
-    skip: 0,
-    ...(query && { where, orderBy, orderDirection }),
-  })
-
-  return pairs
+  try {
+    const { getBuiltGraphSDK } = await import('../.graphclient')
+    const { CrossChainPairs } = getBuiltGraphSDK()
+    const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
+    const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
+    const where = query?.where ? query.where : undefined
+    const orderBy = query?.orderBy || 'apr'
+    const orderDirection = query?.orderDirection || 'desc'
+    const chainIds = query?.networks ? JSON.parse(query.networks) : AMM_ENABLED_NETWORKS
+    const { crossChainPairs } = await CrossChainPairs({
+      first,
+      skip,
+      where,
+      orderBy,
+      orderDirection,
+      chainIds,
+    })
+    return crossChainPairs
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 export const getPool = async (id: string) => {

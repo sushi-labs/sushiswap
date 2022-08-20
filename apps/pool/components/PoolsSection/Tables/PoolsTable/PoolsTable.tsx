@@ -82,6 +82,9 @@ export const PoolsTable: FC = () => {
     () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
+
+  console.log({ args })
+
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const table = useReactTable({

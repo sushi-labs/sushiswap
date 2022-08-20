@@ -1,16 +1,20 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon } from '@sushiswap/ui'
+import { AMM_ENABLED_NETWORKS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getFarms, getPools } from '../lib/api'
+import { getBundles, getFarms, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pairs, bundles, farms] = await Promise.all([getPools(query), getBundles(), getFarms()])
-
+  const [pairs, bundles, farms] = await Promise.all([
+    getPools(query as unknown as GetPoolsQuery),
+    getBundles(),
+    getFarms(),
+  ])
   return {
     props: {
       fallback: {
@@ -23,6 +27,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
                 desc: true,
               },
             ],
+            selectedNetworks: AMM_ENABLED_NETWORKS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
