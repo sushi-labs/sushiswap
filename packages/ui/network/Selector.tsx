@@ -18,7 +18,7 @@ export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetwo
       if (networks.every((network) => selectedNetworks.includes(network))) {
         // If every network enabled, disable all but incoming chainId
         onChange([chainId])
-      } else if (!selectedNetworks.length) {
+      } else if (selectedNetworks.length === 1 && selectedNetworks[0] === chainId) {
         // If none selected, enable all
         onChange(networks)
       } else if (selectedNetworks.includes(chainId)) {
