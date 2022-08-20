@@ -28,10 +28,14 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
 }
 
+export const getMulticallContractConfig = (chainId: number | undefined) => ({
+  addressOrName: chainId ? MULTICALL_ADDRESS[chainId] : '',
+  contractInterface: UniswapInterfaceMulticallArtifact.abi,
+})
+
 export function useMulticallContract(chainId: number): UniswapInterfaceMulticall {
   return useContract<UniswapInterfaceMulticall>({
-    addressOrName: MULTICALL_ADDRESS[chainId],
-    contractInterface: UniswapInterfaceMulticallArtifact.abi,
+    ...getMulticallContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })
 }

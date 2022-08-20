@@ -7,6 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).send({ user: [] })
   }
 
-  const user = await getUser(req.query.id as string)
+  const user = await getUser(req.query)
   res.status(200).send(user)
 }

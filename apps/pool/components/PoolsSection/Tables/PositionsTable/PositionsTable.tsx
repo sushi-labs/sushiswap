@@ -1,3 +1,4 @@
+import { chainShortName } from '@sushiswap/chain'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
@@ -5,6 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { Pair, User } from '../../../../.graphclient'
 import { PairWithBalance } from '../../../../types'
+import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, REWARDS_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
@@ -12,9 +14,15 @@ import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, APR_COLUMN, REWARDS_COLUMN]
 
 export const PositionsTable: FC = () => {
+  const { selectedNetworks } = usePoolFilters()
   const { address } = useAccount()
-  const { data: user } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
-    fetch(url).then((response) => response.json())
+  const {
+    data: user,
+    error,
+    isValidating,
+  } = useSWR<User>(
+    `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    (url) => fetch(url).then((response) => response.json())
   )
 
   const liquidityPositions: PairWithBalance[] = useMemo(() => {
@@ -22,6 +30,7 @@ export const PositionsTable: FC = () => {
     return user.liquidityPositions.map((el) => ({
       ...el.pair,
       liquidityTokenBalance: el.liquidityTokenBalance,
+      id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
     }))
   }, [user])
 
@@ -33,7 +42,13 @@ export const PositionsTable: FC = () => {
   })
 
   return (
-    // @ts-ignore
-    <GenericTable<Pair | PairWithBalance> table={table} columns={COLUMNS} HoverElement={PositionQuickHoverTooltip} />
+    <GenericTable<Pair | PairWithBalance>
+      table={table}
+      // @ts-ignore
+      columns={COLUMNS}
+      HoverElement={PositionQuickHoverTooltip}
+      loading={isValidating && !error && !user}
+      placeholder="No positions found"
+    />
   )
 }

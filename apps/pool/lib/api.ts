@@ -24,6 +24,7 @@ type GetPoolsQuery = Partial<{
   skip: number
   orderBy: Pair_orderBy
   orderDirection: OrderDirection
+  networks?: string
 }>
 
 export const getPools = async (query?: GetPoolsQuery) => {
@@ -33,12 +34,13 @@ export const getPools = async (query?: GetPoolsQuery) => {
   const where = JSON.parse(query?.where || '{}')
   const first = query?.first || 20
   const skip = query?.skip || 0
+  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
   const orderBy = query?.orderBy || 'reserveETH'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainPairs: pairs } = await sdk.CrossChainPairs({
-    chainIds: AMM_ENABLED_NETWORKS,
-    first: 20,
+    chainIds: networks,
+    first: Math.ceil(60 / networks.length),
     skip: 0,
     ...(query && { where, orderBy, orderDirection }),
   })
@@ -89,13 +91,20 @@ export const getFarms = async (query?: CrossChainFarmsQuery) => {
   return farms
 }
 
-export const getUser = async (id: string) => {
+type GetUserQuery = Partial<{
+  id: string
+  networks: string
+}>
+
+export const getUser = async (query?: GetUserQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
+  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
+
   const { crossChainUser: user } = await sdk.CrossChainUser({
-    chainIds: AMM_ENABLED_NETWORKS,
-    id: id.toLowerCase(),
+    chainIds: networks,
+    id: query?.id?.toLowerCase(),
   })
 
   return user

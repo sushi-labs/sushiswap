@@ -1,194 +1,50 @@
 sources:
-  - name: ethereum-exchange
+  - name: Exchange
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/exchange
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/sushiswap-avalanche}
     transforms:
-      - prefix:
-          value: ETHEREUM_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            - queryFieldName: ETHEREUM_factory
-              keyField: id
-              keyArg: id
-  - name: matic-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange
-    transforms:
-      - prefix:
-          value: MATIC_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: MATIC_factory
-              keyField: id
-              keyArg: id
-  - name: arbitrum-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange
-    transforms:
-      - prefix:
-          value: ARBITRUM_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: ARBITRUM_factory
-              keyField: id
-              keyArg: id
-  - name: fantom-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange
-    transforms:
-      - prefix:
-          value: FANTOM_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: FANTOM_factory
-              keyField: id
-              keyArg: id
-  - name: xdai-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/xdai-exchange
-    transforms:
-      - prefix:
-          value: XDAI_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: XDAI_factory
-              keyField: id
-              keyArg: id
-  - name: moonriver-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonriver-exchange
-    transforms:
-      - prefix:
-          value: MOONRIVER_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: MOONRIVER_factory
-              keyField: id
-              keyArg: id
-  - name: avalanche-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange
-    transforms:
-      - prefix:
-          value: AVALANCHE_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: AVALANCHE_factory
-              keyField: id
-              keyArg: id
-  - name: bsc-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange
-    transforms:
-      - prefix:
-          value: BSC_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: BSC_factory
-              keyField: id
-              keyArg: id
-  # - name: harmony-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange
-  #   transforms:
-  #     - prefix:
-  #         value: HARMONY_
-  #         includeRootOperations: true
-  #         ignore:
-  #           - _SubgraphErrorPolicy_
-  #     - typeMerging:
-  #         queryFields:
-  #           # Without batching
-  #           - queryFieldName: HARMONY_factory
-  #             keyField: id
-  #             keyArg: id
-  # - name: celo-exchange
-  #   handler:
-  #     graphql:
-  #       endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/sushitestsubgraph
-  #   transforms:
-  #     - prefix:
-  #         value: CELO_
-  #         includeRootOperations: true
-  #         ignore:
-  #           - _SubgraphErrorPolicy_
-  #     - typeMerging:
-  #         queryFields:
-  #           # Without batching
-  #           - queryFieldName: CELO_factory
-  #             keyField: id
-  #             keyArg: id
-  - name: fuse-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/fuse-exchange
-    transforms:
-      - prefix:
-          value: FUSE_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: FUSE_factory
-              keyField: id
-              keyArg: id
-  - name: moonbeam-exchange
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/moonbeam-exchange
-    transforms:
-      - prefix:
-          value: MOONBEAM_
-          includeRootOperations: true
-          ignore:
-            - _SubgraphErrorPolicy_
-      - typeMerging:
-          queryFields:
-            # Without batching
-            - queryFieldName: MOONBEAM_factory
-              keyField: id
-              keyArg: id
+      - blockTracking:
+          validateSchema: true
+      - autoPagination:
+          validateSchema: true
+      # - autoPagination:
+      #     validateSchema: true # Validates that the schema source actually contains the required input filters.
+      #     limitOfRecords: 1000 # Default is 1000, you can change if you indexer has different configuration in GRAPH_GRAPHQL_MAX_FIRST var.
+additionalTypeDefs: |
+  extend type Pair {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+    volume24h: BigDecimal!
+    volume7d: BigDecimal!
+    fees24h: BigDecimal!
+    fees7d: BigDecimal!
+  }
+  extend type FactoryDaySnapshot {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+  }
+  extend type Query {
+    crossChainPairs(
+      first: Int!, 
+      skip: Int! = 0, 
+      where: Pair_filter, 
+      orderBy: Pair_orderBy, 
+      orderDirection: OrderDirection, 
+      chainIds: [BigInt!]!, 
+      now: Int!
+    ): [Pair!]!
+    crossChainStats(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
+    crossChainFactoryDaySnapshots(first: Int! = 1000, skip: Int! = 0, where: FactoryDaySnapshot_filter, orderBy: FactoryDaySnapshot_orderBy!, orderDirection: OrderDirection!, block: Block_height, chainIds: [BigInt!]!): [FactoryDaySnapshot!]!
+  }
+
+additionalResolvers:
+  - ./resolvers.ts
+
 documents:
-  - ./factory.graphql
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'

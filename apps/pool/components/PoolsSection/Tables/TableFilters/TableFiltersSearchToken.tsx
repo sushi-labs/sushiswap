@@ -35,7 +35,7 @@ export const TableFiltersSearchToken: FC = () => {
   return (
     <div
       className={classNames(
-        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12 shadow-md shadow-black/20'
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12'
       )}
     >
       <div
