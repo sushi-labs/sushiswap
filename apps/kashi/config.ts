@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUPPORTED_CHAIN_IDS = [ChainId.POLYGON]
+export const SUPPORTED_CHAIN_IDS = [ChainId.ARBITRUM]
 
 export const KASHI_ADDRESS: Record<number | string, string> = {
   [ChainId.ETHEREUM]: '0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42',
@@ -28,6 +28,6 @@ export const KASHI_SUBGRAPH_HOST: Record<number | string, string> = {
 }
 
 export const KASHI_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushiswap/kashi-polygon',
-  [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
+  // [ChainId.POLYGON]: 'sushiswap/kashi-polygon',
+  [ChainId.ARBITRUM]: 'olastenberg/kashi-arbitrum',
 }

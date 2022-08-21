@@ -12,6 +12,7 @@ import {
   UpdateMaxPriorityFeePerGas,
   UpdateSlippageTolerancePayload,
   UpdateSlippageToleranceTypePayload,
+  UpdateTransactionDeadline,
 } from './types'
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
@@ -24,6 +25,7 @@ const initialState: StorageState = {
   gasType: parsedState?.gasType || 'preset',
   customTokens: parsedState?.customTokens || {},
   expertMode: parsedState?.expertMode || false,
+  transactionDeadline: 30,
 }
 
 const reducers = {
@@ -77,6 +79,10 @@ const reducers = {
     if (state.customTokens[chainId] && state.customTokens[chainId][address.toLowerCase()]) {
       delete state.customTokens[chainId][address.toLowerCase()]
     }
+  },
+  updateTransactionDeadline: (state: StorageState, action: PayloadAction<UpdateTransactionDeadline>) => {
+    const { transactionDeadline } = action.payload
+    state.transactionDeadline = transactionDeadline
   },
 }
 

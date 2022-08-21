@@ -4,7 +4,7 @@ const HeadRow: FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLTableRowEleme
   children,
   ...props
 }) => (
-  <tr {...props} className="w-full h-12">
+  <tr {...props} className="w-full h-[52px]">
     {children}
   </tr>
 )

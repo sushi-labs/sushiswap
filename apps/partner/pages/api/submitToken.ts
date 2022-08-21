@@ -1,4 +1,5 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
+import { formatUSD } from '@sushiswap/format'
 import { ethers } from 'ethers'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -13,6 +14,7 @@ interface Body {
 
 const owner = 'sushiswap'
 
+// TODO: Clean up by extracting octokit calls
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
   if (!tokenData?.decimals || !tokenData.name || !tokenData.symbol || !tokenIcon || !listType || !chainId) {
@@ -153,7 +155,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: currentListData?.sha,
   })
 
-  const exchangeData = await getExchangeData(chainId, tokenAddress)
+  const exchangeData = await getTokenKPI(tokenAddress, chainId)
 
   // Open List PR
   const {
@@ -164,12 +166,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     title: `Token: ${displayName}`,
     head: branch,
     base: 'master',
-    body: `Name: ${tokenData.name}
+    body: `Chain: ${ChainKey[chainId]}
+      Name: ${tokenData.name}
       Symbol: ${tokenData.symbol}
       Decimals: ${tokenData.decimals}
       List: ${listType}
-      Volume: $${exchangeData?.volumeUSD.toFixed(2)}
-      Liquidity: $${exchangeData?.liquidityUSD.toFixed(2)}
+      Volume: ${formatUSD(exchangeData?.volumeUSD)}
+      Liquidity: ${formatUSD(exchangeData?.liquidityUSD)}
       CoinGecko: ${await getCoinGecko(chainId, checksummedAddress)}
       Image: https://github.com/${owner}/list/tree/${branch}/${imagePath}
       ![${displayName}](https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath})
@@ -208,16 +211,4 @@ async function getCoinGecko(chainId: ChainId, address: string) {
   return await fetch(`https://api.coingecko.com/api/v3/coins/${ChainId[chainId].toLowerCase()}/contract/${address}`)
     .then((data) => data.json())
     .then((data) => (data.id ? `https://www.coingecko.com/en/coins/${data.id}` : 'Not Found'))
-}
-
-// Currently only supports legacy
-async function getExchangeData(chainId: ChainId, address: string) {
-  try {
-    return getTokenKPI(address, chainId)
-  } catch {
-    return {
-      liquidityUSD: 0,
-      volumeUSD: 0,
-    }
-  }
 }

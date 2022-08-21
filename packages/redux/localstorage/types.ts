@@ -22,6 +22,7 @@ export type StorageState = {
   maxPriorityFeePerGas: undefined | number
   gasType: 'custom' | 'preset'
   customTokens: Record<number, Record<string, TokenAsObject>>
+  transactionDeadline: number
 }
 
 export interface UpdateSlippageTolerancePayload {
@@ -50,6 +51,10 @@ export interface UpdateMaxFeePerGas {
 
 export interface UpdateGasType {
   gasType: 'custom' | 'preset'
+}
+
+export interface UpdateTransactionDeadline {
+  transactionDeadline: number
 }
 
 export type AddCustomToken = TokenAsObject

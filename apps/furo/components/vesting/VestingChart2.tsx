@@ -156,7 +156,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   </Typography>
                 </Typography>
                 <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {vesting?.withdrawnAmount ? vesting.amount.toSignificant(6) : '0.000'} {vesting?.token.symbol} Total
+                  / {vesting?.totalAmount.toSignificant(6)} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>
@@ -177,7 +177,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   </Typography>
                 </Typography>
                 <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {vesting?.amount.toExact() || '0.000'} {vesting?.token.symbol} Total
+                  / {vesting?.remainingAmount.toExact() || '0.000'} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>

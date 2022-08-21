@@ -20,6 +20,8 @@
     "@hookform/resolvers": "^2.8.10",
     "@octokit/auth-app": "^4.0.4",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "cookie-cutter": "^0.2.0",
@@ -38,8 +40,8 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.2",
-    "@graphprotocol/client-cli": "2.1.1",
+    "@graphprotocol/client-add-source-name": "1.0.5",
+    "@graphprotocol/client-cli": "2.2.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -50,7 +52,7 @@
     "@types/yup": "^0.29.14",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.20.0",
-    "graphql": "^16.5.0",
+    "graphql": "16.6.0",
     "next-transpile-modules": "9.0.0",
     "postcss": "^8.4.0",
     "react-hook-form": "^7.28.0",

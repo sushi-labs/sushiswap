@@ -4,17 +4,24 @@ pragma solidity 0.8.10;
 
 import './interfaces/IFuroVesting.sol';
 
-contract FuroVestingWrapper is Multicall {
+contract FuroVestingRouter is Multicall {
   IBentoBoxMinimal public immutable bentoBox;
   IFuroVesting public immutable furoVesting;
+  address public immutable wETH;
 
   // custom errors
   error InsufficientShares();
 
-  constructor(IBentoBoxMinimal _bentoBox, IFuroVesting _furoVesting) {
+  constructor(
+    IBentoBoxMinimal _bentoBox,
+    IFuroVesting _furoVesting,
+    address _wETH
+  ) {
     bentoBox = _bentoBox;
     furoVesting = _furoVesting;
+    wETH = _wETH;
     _bentoBox.setMasterContractApproval(address(this), address(_furoVesting), true, 0, bytes32(0), bytes32(0));
+    _bentoBox.registerProtocol();
   }
 
   function setBentoBoxApproval(
@@ -47,6 +54,9 @@ contract FuroVestingWrapper is Multicall {
 
     if (depositedShares < minShare) revert InsufficientShares();
 
+    if (address(vestParams.token) == address(0)) {
+      vestParams.token = IERC20(wETH);
+    }
     vestParams.fromBentoBox = true;
 
     (depositedShares, vestId, stepShares, cliffShares) = furoVesting.createVesting(vestParams);

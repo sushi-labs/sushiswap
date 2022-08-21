@@ -193,7 +193,7 @@ export default function Home() {
                 </Typography>
               )}
               {submitState?.data && (
-                <div className="flex flex-col col-span-3 gap-5 p-4 border rounded border-dark-800 bg-dark-1000/20">
+                <div className="flex flex-col col-span-6 gap-5 p-4 border rounded-xl border-slate-700">
                   <div className="flex flex-col gap-1">
                     <Typography variant="sm" weight={600}>
                       List pull request
@@ -209,6 +209,10 @@ export default function Home() {
             </Form.Section>
           </Form.Card>
         </Form>
+        <Typography variant="xs" weight={300} className="flex justify-center text-center">
+          I understand that filing an issue or adding liquidity does not guarantee addition to the Sushi default token
+          list. I will not ping the Discord about this listing request.
+        </Typography>
       </div>
     </div>
   )

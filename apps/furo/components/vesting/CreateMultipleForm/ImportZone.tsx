@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
 import chains from '@sushiswap/chain'
@@ -5,7 +6,7 @@ import { Native, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dropzone, Typography } from '@sushiswap/ui'
-import { useCallback, useRef } from 'react'
+import { FC, useCallback, useRef } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useNetwork } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
@@ -13,7 +14,11 @@ import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 import { stepConfigurations } from '../CreateForm'
 import { CreateMultipleVestingFormData, CreateVestingFormData } from '../types'
 
-export const ImportZone = () => {
+interface ImportZone {
+  onErrors(errors: string[]): void
+}
+
+export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
   const { chain } = useNetwork()
   const { control, trigger } = useFormContext<CreateMultipleVestingFormData>()
   const errors = useRef<string[][]>([])
@@ -39,7 +44,16 @@ export const ImportZone = () => {
           if (typeof result === 'string') {
             // Split and remove header
             const arr = result.split(/\r?\n/)
-            arr.shift()
+
+            // If the CSV has a header, remove the first line
+            if (arr.length > 0) {
+              const [tokenAddress] = arr[0].split(',')
+              try {
+                getAddress(tokenAddress)
+              } catch (e) {
+                arr.shift()
+              }
+            }
 
             const rows: CreateVestingFormData[] = []
 
@@ -54,7 +68,7 @@ export const ImportZone = () => {
                           errors.current[index] = []
                         }
                         errors.current[index].push(
-                          `${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
+                          `${index}: ${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
                         )
                       })
                     )
@@ -96,7 +110,7 @@ export const ImportZone = () => {
                 try {
                   _startDate = new Date(Number(startDate) * 1000).toISOString().slice(0, 16)
                 } catch (e) {
-                  errors.current[index].push('Start date must be of format MM-DD-YYYY')
+                  errors.current[index].push(`Vesting ${index}: Start date in csv file must be a unix timestamp`)
                 }
 
                 let _endDate = null
@@ -105,29 +119,7 @@ export const ImportZone = () => {
                     _endDate = new Date(Number(cliffEndDate) * 1000).toISOString().slice(0, 16)
                   }
                 } catch (e) {
-                  errors.current[index].push('End date must be of format MM-DD-YYYY')
-                }
-
-                if (![0, 1].includes(Number(fundSource))) {
-                  errors.current[index].push('Fund source must be either 0 for Wallet or 1 for Bentobox')
-                }
-
-                if (![0, 1].includes(Number(cliff))) {
-                  errors.current[index].push('Cliff must be either 0 for disabled or 1 for enabled')
-                }
-
-                if (!Number(stepPayouts)) {
-                  errors.current[index].push("Incorrect value entered for 'Number of Intervals'")
-                }
-
-                if (!Number(stepAmount)) {
-                  errors.current[index].push("Incorrect value entered for 'Payout per Interval")
-                }
-
-                if (![0, 1, 2, 3].includes(Number(stepConfig))) {
-                  errors.current[index].push(
-                    'Payout Interval must be either 0 for Weekly, 1 for Biweekly, 2 for Monthly, 3 for Yearly'
-                  )
+                  errors.current[index].push(`Vesting ${index}: End date in csv file must be a unix timestamp`)
                 }
 
                 rows.push({
@@ -151,6 +143,7 @@ export const ImportZone = () => {
 
             append(rows)
             await trigger()
+            onErrors(errors.current.flat())
           }
         }
 
@@ -159,12 +152,12 @@ export const ImportZone = () => {
     },
 
     // @ts-ignore
-    [append, chain, trigger]
+    [append, chain, onErrors, trigger]
   )
 
   const downloadExample = useCallback(() => {
     const encodedUri = encodeURI(
-      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET, 1 = BentoBox),Recipient,Start Date (Unix Epoch Timestamp),Cliff(0 = DISABLED, 1 = ENABLED),Cliff End Date (Unix Epoch Timestamp),Cliff Amount,Payout Interval(0=WEEKLY,1=BIWEEKLY,2=MONTHLY,3=QUARTERLY,4=YEARLY),Number of Intervals,Payout Per Interval\n0x0000000000000000000000000000000000000000,0,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,08-08-2022,1,10-08-2022,0.0001,0,10,0.0001\n'
+      'data:text/csv;charset=utf-8,Currency Address,Funding Source (0 = WALLET 1 = BentoBox),Recipient,Start Date (Unix Epoch Timestamp),Cliff(0 = DISABLED 1 = ENABLED),Cliff End Date (Unix Epoch Timestamp),Cliff Amount,Payout Interval(0=WEEKLY 1=BIWEEKLY 2=MONTHLY 3=QUARTERLY 4=YEARLY),Number of Intervals,Payout Per Interval\n0x0000000000000000000000000000000000000000,0,0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7,1661440124,1,1661872124,0.0001,0,10,0.0001\n'
     )
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)

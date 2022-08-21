@@ -25,7 +25,7 @@ import {
   Caption,
   ConfirmationComponentController,
   CrossChainRoute,
-  CurrencyInput,
+  CurrencyInputWithNetworkSelector,
   Layout,
   Rate,
   SameChainRoute,
@@ -46,7 +46,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { useSettings } from '../lib/state/storage'
+import { useCustomTokens, useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       dstToken: dstToken ?? null,
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
-      srcTypedAmount: srcTypedAmount ?? '',
+      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
     },
   }
 }
@@ -178,6 +178,10 @@ const Widget: FC<Swap> = ({
   const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+  const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
+    useCustomTokens(srcChainId)
+  const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
+    useCustomTokens(dstChainId)
 
   useEffect(() => {
     setSrcToken(initialState.srcToken)
@@ -202,9 +206,6 @@ const Widget: FC<Swap> = ({
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
-
-  const [srcUseBentoBox, setSrcUseBentoBox] = useState(false)
-  const [dstUseBentoBox, setDstUseBentoBox] = useState(false)
 
   const srcTokens = useTokens(srcChainId)
   const dstTokens = useTokens(dstChainId)
@@ -467,8 +468,8 @@ const Widget: FC<Swap> = ({
       dstToken,
       srcTrade,
       dstTrade,
-      srcUseBentoBox,
-      dstUseBentoBox,
+      srcUseBentoBox: false,
+      dstUseBentoBox: false,
       user: address,
       debug: true,
     })
@@ -536,7 +537,6 @@ const Widget: FC<Swap> = ({
     dstOutputCurrencyRebase,
     dstToken,
     dstTrade,
-    dstUseBentoBox,
     nanoId,
     sameChainSwap,
     signature,
@@ -549,7 +549,6 @@ const Widget: FC<Swap> = ({
     srcOutputCurrencyRebase,
     srcToken,
     srcTrade,
-    srcUseBentoBox,
     transfer,
   ])
 
@@ -669,8 +668,8 @@ const Widget: FC<Swap> = ({
         dstToken,
         srcTrade,
         dstTrade,
-        srcUseBentoBox,
-        dstUseBentoBox,
+        srcUseBentoBox: false,
+        dstUseBentoBox: false,
         user: AddressZero,
         debug: false,
       })
@@ -727,7 +726,6 @@ const Widget: FC<Swap> = ({
     dstOutputCurrencyRebase,
     dstToken,
     dstTrade,
-    dstUseBentoBox,
     nanoId,
     sameChainSwap,
     slippageTolerance,
@@ -740,7 +738,6 @@ const Widget: FC<Swap> = ({
     srcOutputCurrencyRebase,
     srcToken,
     srcTrade,
-    srcUseBentoBox,
     swapSlippage,
     transfer,
   ])
@@ -761,13 +758,17 @@ const Widget: FC<Swap> = ({
         >
           {priceImpact?.multiply(-1).toFixed(2)}%
         </Typography>
-        <Typography variant="sm" className="text-slate-400">
-          Est. Processing Time
-        </Typography>
-        <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
-          ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
-          minutes
-        </Typography>
+        {crossChain && (
+          <>
+            <Typography variant="sm" className="text-slate-400">
+              Est. Processing Time
+            </Typography>
+            <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
+              minutes
+            </Typography>
+          </>
+        )}
         <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
         <Typography variant="sm" className="text-slate-400">
           Min. Received
@@ -928,40 +929,37 @@ const Widget: FC<Swap> = ({
             <SettingsOverlay chainId={srcChainId} />
           </div>
         </div>
-        <CurrencyInput
+        <CurrencyInputWithNetworkSelector
+          onNetworkSelect={onSrcNetworkSelect}
           value={srcTypedAmount}
           onChange={setSrcTypedAmount}
-          onCurrencySelect={setSrcToken}
-          onFundSourceSelect={(source) => setSrcUseBentoBox(source === FundSource.BENTOBOX)}
-          fundSource={srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
+          onSelect={setSrcToken}
           currency={srcToken}
-          network={Chain.from(srcChainId)}
-          onNetworkSelect={onSrcNetworkSelect}
-          tokenList={srcTokens}
-          theme={theme}
-          onMax={(value) => setSrcTypedAmount(value)}
-          balance={srcBalance?.[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+          chainId={srcChainId}
+          tokenMap={srcTokens}
+          customTokenMap={srcCustomTokenMap}
+          onAddToken={onAddSrcCustomToken}
+          onRemoveToken={onRemoveSrcCustomToken}
         />
         <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
           <SwitchCurrenciesButton onClick={switchCurrencies} />
         </div>
         <div className="bg-slate-800">
-          <CurrencyInput
-            className="pb-1"
+          <CurrencyInputWithNetworkSelector
+            className="!pb-1"
             disabled
+            disableMaxButton
+            onNetworkSelect={onDstNetworkSelect}
             value={dstTypedAmount}
             onChange={setDstTypedAmount}
-            onCurrencySelect={setDstToken}
-            onFundSourceSelect={(source) => setDstUseBentoBox(source === FundSource.BENTOBOX)}
-            fundSource={dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET}
+            onSelect={setDstToken}
             currency={dstToken}
-            network={Chain.from(dstChainId)}
-            onNetworkSelect={onDstNetworkSelect}
-            tokenList={dstTokens}
-            theme={theme}
-            disableMaxButton
-            balance={dstBalance?.[dstUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]}
+            chainId={dstChainId}
+            tokenMap={dstTokens}
+            customTokenMap={dstCustomTokenMap}
             usdPctChange={usdPctChange}
+            onAddToken={onAddDstCustomToken}
+            onRemoveToken={onRemoveDstCustomToken}
           />
 
           <div className="p-3">
@@ -1063,8 +1061,7 @@ const Widget: FC<Swap> = ({
                 feeRef.current &&
                 nativeBalance &&
                 feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
-                (srcBalance &&
-                  srcAmount?.greaterThan(srcBalance[srcUseBentoBox ? FundSource.BENTOBOX : FundSource.WALLET]))) ? (
+                (srcBalance && srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
               <Button size="md" fullWidth disabled>
                 Insufficient Balance
               </Button>

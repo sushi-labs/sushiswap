@@ -1,3 +1,4 @@
+import { chainName, chainShortName } from '@sushiswap/chain'
 import { KASHI_SUBGRAPH_HOST, KASHI_SUBGRAPH_NAME } from 'config'
 
 import { CHAIN_NAME } from './config'
@@ -9,6 +10,27 @@ export const resolvers: Resolvers = {
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
   Query: {
+    crossChainKashiPair: async (root, args, context, info) =>
+      context.Kashi.Query.kashiPair({
+        root,
+        args,
+        context: {
+          ...context,
+          now: args.now,
+          chainId: args.chainId,
+          chainName: chainName[args.chainId],
+          chainShortName: chainShortName[args.chainId],
+          subgraphName: KASHI_SUBGRAPH_NAME[args.chainId],
+          subgraphHost: KASHI_SUBGRAPH_HOST[args.chainId],
+        },
+        info,
+      }).then((pool) => ({
+        ...pool,
+        id: `${chainShortName[args.chainId]}:${pool.id}`,
+        chainId: args.chainId,
+        chainName: chainName[args.chainId],
+        chainShortName: chainShortName[args.chainId],
+      })),
     crossChainKashiPairs: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>

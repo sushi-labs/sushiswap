@@ -117,7 +117,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                 Stream Amount
               </Typography>
               <Typography variant="sm" weight={500} className="text-slate-200">
-                {stream.amount.toSignificant(6)}{' '}
+                {stream.remainingAmount.toSignificant(6)}{' '}
                 <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
             </div>

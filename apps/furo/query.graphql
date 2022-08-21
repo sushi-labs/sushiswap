@@ -1,66 +1,5 @@
 query userVestings($block: Block_height, $id: ID!) {
-  furo_vesting_user(block: $block, id: $id) {
-    incomingVestings(orderBy: startedAt) {
-      id
-      __typename
-      status
-      steps
-      startedAt
-      expiresAt
-      modifiedAtTimestamp
-      cliffDuration
-      stepDuration
-      stepAmount
-      cliffAmount
-      totalAmount
-      withdrawnAmount
-      fromBentoBox
-      token {
-        id
-        name
-        symbol
-        decimals
-      }
-      recipient {
-        id
-      }
-      createdBy {
-        id
-      }
-    }
-    outgoingVestings(orderBy: startedAt) {
-      id
-      __typename
-      status
-      steps
-      startedAt
-      expiresAt
-      modifiedAtTimestamp
-      cliffDuration
-      stepDuration
-      stepAmount
-      cliffAmount
-      totalAmount
-      withdrawnAmount
-      fromBentoBox
-      token {
-        id
-        name
-        symbol
-        decimals
-      }
-      recipient {
-        id
-      }
-      createdBy {
-        id
-      }
-    }
-  }
-}
-
-query vesting($block: Block_height, $id: ID!) {
-  furo_vesting_vesting(block: $block, id: $id) {
+  incomingVestings: vestings(where: { recipient: $id }, orderBy: startedAt, block: $block) {
     id
     __typename
     status
@@ -70,9 +9,74 @@ query vesting($block: Block_height, $id: ID!) {
     modifiedAtTimestamp
     cliffDuration
     stepDuration
-    stepAmount
-    cliffAmount
-    totalAmount
+    stepShares
+    cliffShares
+    initialAmount
+    initialShares
+    remainingShares
+    withdrawnAmount
+    fromBentoBox
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+  }
+  outgoingVestings: vestings(where: { createdBy: $id }, orderBy: startedAt, block: $block) {
+    id
+    __typename
+    status
+    steps
+    startedAt
+    expiresAt
+    modifiedAtTimestamp
+    cliffDuration
+    stepDuration
+    stepShares
+    cliffShares
+    initialAmount
+    initialShares
+    remainingShares
+    withdrawnAmount
+    fromBentoBox
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+  }
+}
+
+query vesting($block: Block_height, $id: ID!) {
+  vesting(block: $block, id: $id) {
+    id
+    __typename
+    status
+    steps
+    startedAt
+    expiresAt
+    modifiedAtTimestamp
+    cliffDuration
+    stepDuration
+    stepShares
+    cliffShares
+    initialShares
+    initialAmount
+    remainingShares
     withdrawnAmount
     fromBentoBox
     txHash
@@ -92,8 +96,22 @@ query vesting($block: Block_height, $id: ID!) {
   }
 }
 
-query vestingTransactions($block: Block_height, $first: Int = 1000, $orderBy:  Transaction_orderBy = createdAtTimestamp, $orderDirection:  OrderDirection = desc, $skip: Int, $where: Transaction_filter) {
-  furo_vesting_transactions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+query vestingTransactions(
+  $block: Block_height
+  $first: Int = 1000
+  $orderBy: Transaction_orderBy = createdAtTimestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Transaction_filter
+) {
+  transactions(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) {
     id
     type
     amount
@@ -114,63 +132,73 @@ query vestingTransactions($block: Block_height, $first: Int = 1000, $orderBy:  T
 }
 
 query userStreams($block: Block_height, $id: ID!) {
-  furo_stream_user(block: $block, id: $id) {
-    incomingStreams(orderBy: startedAt) {
-      id
-      __typename
-      status
-      startedAt
-      expiresAt
-      modifiedAtTimestamp
-      totalAmount
-      withdrawnAmount
-      recipient {
-        id
-      }
-      createdBy {
-        id
-      }
-      token {
-        id
-        symbol
-        name
-        decimals
-      }
-    }
-    outgoingStreams(orderBy: startedAt) {
-      id
-      __typename
-      status
-      startedAt
-      expiresAt
-      modifiedAtTimestamp
-      totalAmount
-      withdrawnAmount
-      recipient {
-        id
-      }
-      createdBy {
-        id
-      }
-      token {
-        id
-        symbol
-        name
-        decimals
-      }
-    }
-  }
-}
-
-query stream($block: Block_height, $id: ID!) {
-  furo_stream_stream(block: $block, id: $id) {
+  incomingStreams: streams(where: { recipient: $id }, orderBy: startedAt, block: $block) {
     id
     __typename
     status
     startedAt
     expiresAt
+    extendedAtTimestamp
     modifiedAtTimestamp
-    totalAmount
+    initialShares
+    initialAmount
+    extendedShares
+    remainingShares
+    withdrawnAmount
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+    token {
+      id
+      symbol
+      name
+      decimals
+    }
+  }
+  outgoingStreams: streams(where: { createdBy: $id }, orderBy: startedAt, block: $block) {
+    id
+    __typename
+    status
+    startedAt
+    expiresAt
+    extendedAtTimestamp
+    modifiedAtTimestamp
+    initialShares
+    initialAmount
+    extendedShares
+    remainingShares
+    withdrawnAmount
+    recipient {
+      id
+    }
+    createdBy {
+      id
+    }
+    token {
+      id
+      symbol
+      name
+      decimals
+    }
+  }
+}
+
+query stream($block: Block_height, $id: ID!) {
+  stream(block: $block, id: $id) {
+    id
+    __typename
+    status
+    startedAt
+    expiresAt
+    extendedAtTimestamp
+    modifiedAtTimestamp
+    initialShares
+    initialAmount
+    extendedShares
+    remainingShares
     withdrawnAmount
     txHash
     recipient {
@@ -188,8 +216,22 @@ query stream($block: Block_height, $id: ID!) {
   }
 }
 
-query streamTransactions($block: Block_height, $first: Int = 1000, $orderBy:  Transaction_orderBy = createdAtTimestamp, $orderDirection:  OrderDirection = desc, $skip: Int, $where: Transaction_filter) {
-  furo_stream_transactions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+query streamTransactions(
+  $block: Block_height
+  $first: Int = 1000
+  $orderBy: Transaction_orderBy = createdAtTimestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Transaction_filter
+) {
+  transactions(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) {
     id
     type
     amount
@@ -210,14 +252,28 @@ query streamTransactions($block: Block_height, $first: Int = 1000, $orderBy:  Tr
 }
 
 query bentoBoxRebase($block: Block_height, $id: ID!) {
-  bentobox_rebase(block: $block, id: $id) {
+  rebase(block: $block, id: $id) {
     id
     base
     elastic
   }
 }
-query bentoBoxRebases($block: Block_height, $first: Int = 1000, $orderBy:  Rebase_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: Rebase_filter) {
-  bentobox_rebases(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+query bentoBoxRebases(
+  $block: Block_height
+  $first: Int = 1000
+  $orderBy: Rebase_orderBy
+  $orderDirection: OrderDirection
+  $skip: Int
+  $where: Rebase_filter
+) {
+  rebases(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) {
     id
     base
     elastic

@@ -5,7 +5,7 @@ export interface PairWithAlias extends Pair {
     id: string
     date: number
     volumeUSD: number
-    reserveUSD: number
+    liquidityUSD: number
     txCount: number
   }[]
 }

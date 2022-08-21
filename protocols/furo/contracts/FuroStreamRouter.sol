@@ -4,17 +4,24 @@ pragma solidity 0.8.10;
 
 import './interfaces/IFuroStream.sol';
 
-contract FuroStreamWrapper is Multicall {
+contract FuroStreamRouter is Multicall {
   IBentoBoxMinimal public immutable bentoBox;
   IFuroStream public immutable furoStream;
+  address public immutable wETH;
 
   // custom errors
   error InsufficientShares();
 
-  constructor(IBentoBoxMinimal _bentoBox, IFuroStream _furoStream) {
+  constructor(
+    IBentoBoxMinimal _bentoBox,
+    IFuroStream _furoStream,
+    address _wETH
+  ) {
     bentoBox = _bentoBox;
     furoStream = _furoStream;
+    wETH = _wETH;
     _bentoBox.setMasterContractApproval(address(this), address(_furoStream), true, 0, bytes32(0), bytes32(0));
+    _bentoBox.registerProtocol();
   }
 
   function setBentoBoxApproval(
@@ -40,7 +47,14 @@ contract FuroStreamWrapper is Multicall {
 
     if (depositedShares < minShare) revert InsufficientShares();
 
-    (streamId, ) = furoStream.createStream(recipient, token, startTime, endTime, amount, true);
+    (streamId, ) = furoStream.createStream(
+      recipient,
+      token == address(0) ? wETH : token,
+      startTime,
+      endTime,
+      amount,
+      true
+    );
 
     furoStream.updateSender(streamId, msg.sender);
   }

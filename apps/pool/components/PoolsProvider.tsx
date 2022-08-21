@@ -1,9 +1,13 @@
+import { ChainId } from '@sushiswap/chain'
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+
+import { AMM_ENABLED_NETWORKS } from '../config'
 
 enum Filters {
   myTokensOnly = 'myTokensOnly',
   singleSidedStakingOnly = 'singleSidedStakingOnly',
   stablePairsOnly = 'stablePairsOnly',
+  selectedNetworks = 'selectedNetworks',
 }
 
 interface FilterContext {
@@ -12,6 +16,7 @@ interface FilterContext {
   [Filters.myTokensOnly]: boolean
   [Filters.singleSidedStakingOnly]: boolean
   [Filters.stablePairsOnly]: boolean
+  [Filters.selectedNetworks]: ChainId[]
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -28,6 +33,7 @@ export const PoolsProvider: FC<PoolsProvider> = ({ children }) => {
     [Filters.myTokensOnly]: false,
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
+    [Filters.selectedNetworks]: AMM_ENABLED_NETWORKS,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

@@ -26,7 +26,7 @@ export const TableSection = () => {
         <div
           className={classNames(
             fields?.length === 0 ? 'rounded-2xl' : 'rounded-t-2xl',
-            'bg-slate-800 rounded-t-xl grid grid-cols-[100px_160px_100px_160px_160px_160px_80px] gap-y-3 gap-x-2 py-[18px] px-6'
+            'bg-slate-800 rounded-t-xl grid grid-cols-[100px_160px_100px_160px_160px_160px_40px] gap-y-3 gap-x-2 py-[18px] px-6'
           )}
         >
           <Typography variant="sm" weight={500} className="text-slate-500">
@@ -61,7 +61,7 @@ export const TableSection = () => {
             />
           ))}
         </div>
-        <div className="flex px-2 mt-1">
+        <div className="flex px-2 mt-3">
           <Button
             type="button"
             variant="empty"
