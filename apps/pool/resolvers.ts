@@ -67,9 +67,9 @@ export const resolvers: Resolvers = {
       ).then((pools) =>
         pools.flat().sort((a, b) => {
           if (args.orderDirection === 'asc') {
-            return a.apr - b.apr
+            return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
           } else if (args.orderDirection === 'desc') {
-            return b.apr - a.apr
+            return b[args.orderBy || 'apr'] - a[args.orderBy || 'apr']
           }
 
           return 0
