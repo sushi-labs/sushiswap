@@ -6,9 +6,9 @@ import { FC } from 'react'
 import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
-  const formattedApr = formatPercent(row.apr)
+  const formattedApr = formatPercent(row.apr / 100)
   return (
-    <Typography variant="sm" className="flex items-center gap-1 text-slate-400">
+    <Typography variant="sm" weight={600} className="flex items-center gap-1 text-slate-50">
       {formattedApr}
       <Tooltip
         placement="bottom"

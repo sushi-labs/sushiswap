@@ -1,5 +1,5 @@
 import { Native, tryParseAmount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { getAddress } from 'ethers/lib/utils'
 import { FC, useMemo } from 'react'
@@ -42,11 +42,11 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
             <Chip color="gray" size="sm" label="Classic" />
-            Fee 0.5%
+            Fee {row.swapFee / 100}%
           </Typography>
         </div>
         <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APY:</span> 22.27%
+          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
         </Typography>
       </div>
       <hr className="border-t border-slate-200/10 my-3" />

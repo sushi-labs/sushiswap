@@ -1,5 +1,5 @@
 import chains from '@sushiswap/chain'
-import { formatNumber } from '@sushiswap/format'
+import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Chip, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -34,7 +34,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
                 <Typography variant="lg" className="text-slate-50" weight={700}>
                   {token0.symbol}/{token1.symbol}
                 </Typography>
-                <Chip color="gray" label="0.05%" className="text-slate-50 font-medium" />
+                <Chip color="gray" label={`${pair.swapFee / 100}%`} className="text-slate-50 font-medium" />
               </div>
               <Typography variant="sm" weight={500} className="text-slate-400">
                 Classic Pool
@@ -43,7 +43,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
           <div className="flex flex-col gap-1">
             <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APY: <span className="font-bold text-slate-50">22.27%</span>
+              APR: <span className="font-bold text-slate-50">{formatPercent(pair.apr / 100)}</span>
             </Typography>
             <div className="flex gap-2">
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">
