@@ -45,7 +45,7 @@ export const getCharts = async () => {
   const sdk = getBuiltGraphSDK()
   const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
     chainIds: ENABLED_NETWORKS,
-    first: 365,
+    first: 1000,
   })
 
   const dateSnapshotMap = new Map()
