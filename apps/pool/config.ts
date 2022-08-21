@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAIN_IDS = [
+  // ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   // ChainId.ARBITRUM,
   ChainId.MOONBEAM,
@@ -27,8 +28,8 @@ export const GRAPH_HOST = {
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  // [ChainId.ETHEREUM]: 'sushiswap/exchange',
-  [ChainId.AVALANCHE]: 'sushi-labs/sushiswap-avalanche',
+  [ChainId.ETHEREUM]: 'sushiswap/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
   // [ChainId.ARBITRUM]: 'sushi-labs/sushiswap-arbitrum',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
@@ -44,6 +45,7 @@ export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
 export const STAKING_ENABLED_NETWORKS = [ChainId.ARBITRUM]
 
 export const AMM_ENABLED_NETWORKS = [
+  // ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   // ChainId.ARBITRUM,
   ChainId.MOONBEAM,

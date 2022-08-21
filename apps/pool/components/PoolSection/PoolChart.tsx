@@ -71,6 +71,21 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     return [x.reverse(), y.reverse()]
   }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, chartType])
 
+  // Transient update for performance
+  const onMouseOver = useCallback(
+    ({ name, value }) => {
+      const valueNodes = document.getElementsByClassName('hoveredItemValue')
+      const nameNodes = document.getElementsByClassName('hoveredItemName')
+
+      valueNodes[0].innerHTML = formatUSD(value)
+      if (chartType === PoolChartType.Volume) {
+        valueNodes[1].innerHTML = formatUSD(value * FEE_BPS)
+      }
+      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+    },
+    [chartType]
+  )
+
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
       tooltip: {
@@ -84,6 +99,8 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           fontWeight: 600,
         },
         formatter: (params) => {
+          onMouseOver({ name: params[0].name, value: params[0].value })
+
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
             <span class="text-sm text-slate-50 font-bold">${formatUSD(params[0].value)}</span>
@@ -153,29 +170,8 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         },
       ],
     }),
-    [chartType, xData, yData]
+    [onMouseOver, chartType, xData, yData]
   )
-
-  // Transient update for performance
-  const onMouseOver = useCallback(
-    ({ name, value }) => {
-      const valueNodes = document.getElementsByClassName('hoveredItemValue')
-      const nameNodes = document.getElementsByClassName('hoveredItemName')
-
-      valueNodes[0].innerHTML = formatUSD(value)
-      if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * FEE_BPS)
-      }
-      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
-    },
-    [chartType]
-  )
-
-  const onEvents = useMemo(() => {
-    return {
-      mouseover: onMouseOver,
-    }
-  }, [onMouseOver])
 
   return (
     <div className="flex flex-col gap-6">
@@ -271,7 +267,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
         </Typography>
       </div>
-      <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} onEvents={onEvents} />
+      <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
     </div>
   )
 }

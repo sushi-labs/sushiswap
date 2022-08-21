@@ -45,7 +45,7 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
                 </div>
               </Table.td>
               <Table.td>
-                <Typography variant="sm" weight={500} className="text-slate-50">
+                <Typography variant="sm" weight={600} className="text-slate-50">
                   69.74 SUSHI per day
                 </Typography>
               </Table.td>

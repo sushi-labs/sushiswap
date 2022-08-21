@@ -69,7 +69,7 @@ export const SushiBarSectionDesktop: FC = () => {
             </div>
             <div className="flex flex-col">
               <h4 className="font-bold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
-              <p className="text-sm text-slate-400">APR (1m)</p>
+              <p className="text-sm text-slate-400">APR (30d)</p>
               <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
                 {stats?.apr?.['1m']}
                 <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
