@@ -1,5 +1,6 @@
 import chains from '@sushiswap/chain'
-import { formatNumber, formatPercent } from '@sushiswap/format'
+import { Price } from '@sushiswap/currency'
+import { formatPercent } from '@sushiswap/format'
 import { Chip, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -11,7 +12,8 @@ interface PoolHeader {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
-  const { token0, token1 } = useTokensFromPair(pair)
+  const { token0, token1, reserve1, reserve0 } = useTokensFromPair(pair)
+  const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
 
   return (
     <div className="flex flex-col gap-5">
@@ -60,13 +62,13 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
-            1 {token0.symbol} = {formatNumber(pair.reserve1 / pair.reserve0)} {token1.symbol}
+            1 {token0.symbol} = {price?.toSignificant(6)} {token1.symbol}
           </Typography>
         </div>
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token1} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
-            1 {token1.symbol} = {formatNumber(pair.reserve0 / pair.reserve1)} {token0.symbol}
+            1 {token1.symbol} = {price?.invert()?.toSignificant(6)} {token0.symbol}
           </Typography>
         </div>
       </div>
