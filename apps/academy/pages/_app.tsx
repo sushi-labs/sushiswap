@@ -2,7 +2,7 @@ import '@sushiswap/ui/index.css'
 import '../index.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
-import { App, ThemeProvider } from '@sushiswap/ui'
+import { App, Container, ThemeProvider } from '@sushiswap/ui'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
@@ -60,7 +60,9 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
         <App.Shell>
           <DefaultSeo seo={seo} />
           <Header />
-          <Component {...pageProps} seo={seo} />
+          <div className="px-4">
+            <Component {...pageProps} seo={seo} />
+          </div>
           <App.Footer />
         </App.Shell>
       </ThemeProvider>

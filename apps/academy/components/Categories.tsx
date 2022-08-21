@@ -1,25 +1,15 @@
 import { Button } from '@sushiswap/ui'
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 
 import { CategoryEntity } from '../.mesh'
 
 interface Categories {
-  selected: string[]
-  onSelect: Dispatch<SetStateAction<string[]>>
+  selected: string
+  onSelect: Dispatch<SetStateAction<string>>
   categories: CategoryEntity[]
 }
 
 export const Categories: FC<Categories> = ({ categories, selected, onSelect }) => {
-  const handleSelect = useCallback(
-    (index: string) => {
-      onSelect((prevState: string[]) => {
-        if (selected.includes(index)) return prevState.filter((el) => el !== index)
-        else return [...prevState, index]
-      })
-    },
-    [selected, onSelect]
-  )
-
   return (
     <>
       {categories.map((category) => {
@@ -28,11 +18,11 @@ export const Categories: FC<Categories> = ({ categories, selected, onSelect }) =
         return (
           <Button
             size="sm"
-            color={selected.includes(category.id) ? 'blue' : 'gray'}
-            onClick={() => handleSelect(category.id as string)}
+            color={selected === category.id ? 'blue' : 'gray'}
+            onClick={() => onSelect(category.id)}
             variant="outlined"
             key={category.id}
-            className="!text-xs capitalize"
+            className="!text-xs rounded-full"
           >
             {category?.attributes?.name}
           </Button>

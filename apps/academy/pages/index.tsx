@@ -1,6 +1,7 @@
-import { SearchIcon } from '@heroicons/react/outline'
+import { PlusCircleIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container } from '@sushiswap/ui'
+import { Button, Container, Typography } from '@sushiswap/ui'
+import { LevelCard } from 'components/LevelCard'
 import { BlogSeo } from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
@@ -10,15 +11,66 @@ import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseC
 import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
+const difficultyLevels = [
+  {
+    name: 'Beginner',
+    title: 'How to get started with Sushi',
+    description: 'For Beginner users',
+    imgSrc: '',
+  },
+  {
+    name: 'Advanced',
+    title: 'Advanced tooling',
+    description: 'For Advanced users',
+    imgSrc: '',
+  },
+  {
+    name: 'Developers',
+    title: 'Technical documentation',
+    description: 'For Builders',
+    imgSrc: '',
+  },
+]
+
 export async function getStaticProps() {
-  const articles = await getArticles({ pagination: { limit: 10 } })
+  const articles = await getArticles({ pagination: { limit: 6 } })
   const categories = await getCategories()
+
+  // TODO: mock, to be implemented
+  const levels = [
+    {
+      id: '6',
+      attributes: {
+        name: 'Beginner',
+        description: 'Beginner',
+        slug: 'beginner',
+      },
+    },
+    {
+      id: '7',
+      attributes: {
+        name: 'Advanced',
+        description: 'Advanced',
+        slug: 'advanced',
+      },
+    },
+    {
+      id: '8',
+      attributes: {
+        name: 'Developers',
+        description: 'Developers',
+        slug: 'developers',
+      },
+    },
+  ]
+
+  const fullData = [...levels, ...(categories?.categories.data || [])]
 
   return {
     props: {
       fallback: {
-        ['/articles']: articles?.articles || [],
-        ['/categories']: categories?.categories || [],
+        ['/articles']: articles?.articles,
+        ['/categories']: { data: fullData },
       },
     },
     revalidate: 1,
@@ -37,21 +89,22 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 200)
 
-  const [selected, setSelected] = useState<string[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string>()
+  const [selectedLevel, setSelectedLevel] = useState<string>()
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
 
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selected, debouncedQuery],
-    async (url, selected, debouncedQuery) => {
+    [`/articles`, selectedCategory, selectedLevel, debouncedQuery],
+    async (url, categoryFilter, levelFilter, debouncedQuery) => {
       return (
         await getArticles({
           filters: {
             ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
-            ...(selected.length > 0 && {
+            ...((categoryFilter || levelFilter) && {
               categories: {
                 id: {
-                  in: selected,
+                  in: [categoryFilter, levelFilter],
                 },
               },
             }),
@@ -65,44 +118,133 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data
-  const articleList = selected && filterData?.data ? filterData?.data : articles ? articles : undefined
+  const articleList =
+    (selectedCategory || selectedLevel) && filterData?.data ? filterData?.data : articles ? articles : undefined
+  const categoriesFiltered = categories.filter((cat) =>
+    difficultyLevels.every(({ name }) => name.toLowerCase() !== cat.attributes.name.toLowerCase())
+  )
+  const levels = difficultyLevels.map((level) => {
+    const levelCategory = categories.find((cat) => cat.attributes.name.toLowerCase() === level.name.toLowerCase())
+    return { id: levelCategory?.id ?? 'Unknown', attributes: { ...levelCategory?.attributes, ...level } }
+  })
+  const latestReleases = articles?.slice(0, 3)
+
+  /**
+   * const initialArticleList = special tag
+   */
 
   return (
     <>
       <BlogSeo seo={seo} />
-      <div className="flex flex-col divide-y divide-slate-800">
-        {articles?.[0] && <Hero article={articles[0]} />}
-        <section className="py-10 pb-60">
-          <Container maxWidth="5xl" className="px-4 mx-auto space-y-10">
-            <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
-              <div className="order-2 w-full p-1 -ml-1 overflow-hidden md:order-1">
-                <div className="flex flex-wrap gap-3">
-                  <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
-                </div>
-              </div>
-              <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
-                <SearchIcon width={24} height={24} className="text-slate-500" />
-                <input
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full font-medium placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
-                  placeholder="Search Article"
+      <div className="flex flex-col">
+        <Hero />
+        <section className="pt-40 pb-24">
+          <Container maxWidth="6xl" className="flex flex-col gap-24 mx-auto">
+            <div className="grid grid-cols-3 gap-6">
+              {levels.map(({ attributes }) => (
+                <LevelCard
+                  title={attributes.title}
+                  imgSrc={attributes.imgSrc}
+                  chipLabel={attributes.description}
+                  key={attributes.name}
                 />
+              ))}
+            </div>
+            <div>
+              <div className="flex flex-col">
+                <Typography variant="h3" weight={700}>
+                  Choose Topic:
+                </Typography>
+                <div className="flex flex-wrap gap-8 mt-8">
+                  <Categories
+                    selected={selectedCategory}
+                    onSelect={setSelectedCategory}
+                    categories={categoriesFiltered || []}
+                  />
+                </div>
+                <div className="flex items-center gap-8 mt-16">
+                  <Typography variant="h3" weight={700}>
+                    Difficulty:
+                  </Typography>
+                  <div className="flex gap-6">
+                    {levels.map(({ id, attributes }) => (
+                      <Button
+                        size="sm"
+                        color={selectedLevel === id ? 'blue' : 'gray'}
+                        onClick={() => setSelectedLevel(id)}
+                        variant="outlined"
+                        key={attributes.name}
+                        className="!text-xs rounded-lg"
+                      >
+                        {attributes.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {articleList && (
-              <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
-                <ArticleList
-                  articles={articleList as ArticleEntity[]}
-                  loading={loading}
-                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
-                />
+            <div>
+              {articleList && (
+                <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
+                  <ArticleList
+                    articles={articleList as ArticleEntity[]}
+                    loading={loading}
+                    render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                  />
+                </div>
+              )}
+
+              <div className="flex justify-center mt-14">
+                <Button
+                  as="a"
+                  // TODO: change
+                  href="/blog/archive"
+                  color="gray"
+                  variant="outlined"
+                  size="md"
+                  className="rounded-full"
+                >
+                  View All
+                  <PlusCircleIcon width={20} height={20} />
+                </Button>
               </div>
-            )}
-            <div className="flex justify-center">
-              <Button as="a" href="/blog/archive" color="gray" variant="outlined" className="px-6">
-                View Archive
-              </Button>
+            </div>
+
+            <div>
+              <Typography variant="h3" weight={700}>
+                Latest Releases
+              </Typography>
+              {latestReleases && (
+                <div className="grid grid-cols-1 gap-4 mt-12 transition-all sm:grid-cols-2 md:grid-cols-3">
+                  <ArticleList
+                    articles={latestReleases as ArticleEntity[]}
+                    loading={loading}
+                    render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="p-14 bg-[#E2E3E7] rounded-2xl">
+              <Typography variant="h2" weight={700} className="md:w-3/5">
+                Get the latest Sushi Alpha delivered to your inbox.
+              </Typography>
+              <div className="flex h-16 mt-10">
+                <div className="w-[340px] px-6 bg-white rounded-l-xl">
+                  <input
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full h-16 font-medium bg-white text-slate-300 outline-0"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                <Button
+                  // TODO: implement
+                  onClick={() => null}
+                  className="w-24 min-h-full rounded-l-none bg-slate-800 rounded-r-xl"
+                >
+                  Subscribe
+                </Button>
+              </div>
             </div>
           </Container>
         </section>
