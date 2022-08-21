@@ -2,8 +2,18 @@ import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
 
-const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL, PARTNER_URL } =
-  process.env
+const {
+  BLOG_URL,
+  ANALYTICS_URL,
+  DAO_URL,
+  DOCS_URL,
+  FURO_URL,
+  LANDING_URL,
+  SWAP_URL,
+  LEGACY_URL,
+  PARTNER_URL,
+  ACADEMY_URL,
+} = process.env
 
 // @ts-check
 /** @type {import('next').NextConfig} */
@@ -86,6 +96,14 @@ const nextConfig = {
       {
         source: '/swap',
         destination: `${SWAP_URL}/swap`,
+      },
+      {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
         source: '/swap/:path*',
