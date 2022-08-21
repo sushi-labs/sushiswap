@@ -10,7 +10,10 @@ import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import redis from './redis'
 
 createClient(client.config as any)
-;(async function () {
+
+async function execute() {
+  console.log(`Updating farms`)
+
   const timestamp = getUnixTime(Date.now())
 
   const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) => getMinichef(Number(chainId)))
@@ -34,4 +37,5 @@ createClient(client.config as any)
   )
   console.log(`Finished updating farms`)
   process.exit()
-})()
+}
+execute()

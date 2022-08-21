@@ -2167,8 +2167,10 @@ importers:
       tsup: ^6.2.0
       typescript: ^4.7.0
     dependencies:
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 2.0.0-canary.1
       '@sushiswap/core-sdk': 1.0.0-canary.133
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@wagmi/core': 0.4.9
@@ -2188,8 +2190,6 @@ importers:
       '@graphql-mesh/transform-rename': 0.12.61_graphql@16.5.0
       '@graphql-mesh/transform-type-merging': 0.4.15_graphql@16.5.0
       '@graphql-mesh/utils': 0.37.5_graphql@16.5.0
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier

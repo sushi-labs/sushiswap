@@ -52,8 +52,6 @@
     "@graphql-mesh/transform-rename": "^0.12.61",
     "@graphql-mesh/transform-type-merging": "^0.4.15",
     "@graphql-mesh/utils": "^0.37.5",
-    "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -78,6 +76,8 @@
   },
   "dependencies": {
     "@sushiswap/core": "^2.0.0-canary.1",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/core-sdk": "1.0.0-canary.133",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
