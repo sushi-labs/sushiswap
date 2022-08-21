@@ -73,12 +73,12 @@ it('two chains with Stargate bridge', () => {
       rnd,
       [
         {
-          tokenNumber: 5,
+          tokenNumber: 8,
           density: 0.6,
           gasPrice: 100e9,
         },
         {
-          tokenNumber: 5,
+          tokenNumber: 8,
           density: 0.6,
           gasPrice: 50e9,
         },

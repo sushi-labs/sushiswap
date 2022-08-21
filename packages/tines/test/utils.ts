@@ -12,6 +12,7 @@ import {
   RToken,
   StableSwapRPool,
 } from '../src'
+import { BridgeUnlimited } from '../src/BridgeBidirectionalUnlimited'
 import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
 
 const MIN_TOKEN_PRICE = 1e-6
@@ -319,8 +320,8 @@ function createBridge(rnd: () => number, net1: Network, net2: Network) {
 }
 
 function createStargateBridge(rnd: () => number, net1: Network, net2: Network) {
-  const [usdc0, usdt0] = chooseRandomStableToken(rnd, net1, 2)
-  const [usdc1, usdt1] = chooseRandomStableToken(rnd, net2, 2)
+  const [usdc0, usdt0, stg0] = chooseRandomStableToken(rnd, net1, 3)
+  const [usdc1, usdt1, stg1] = chooseRandomStableToken(rnd, net2, 3)
   const bridgeState = {
     currentAssetSD: BigNumber.from('62204680881791000000'),
     lpAsset: BigNumber.from('82018577759839000000'),
@@ -334,6 +335,7 @@ function createStargateBridge(rnd: () => number, net1: Network, net2: Network) {
     new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdt-usdt`, usdt0, usdt1, bridgeState, false),
     new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdc-usdt`, usdc0, usdt1, bridgeState, false),
     new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdt-usdc`, usdt0, usdc1, bridgeState, false),
+    new BridgeUnlimited(`BridgeUnlimited ${stg0.address}-${stg1.address}`, stg0, stg1, 0),
   ]
 }
 
@@ -386,7 +388,7 @@ export function createMultipleNetworksWithStargateBridge(
   rnd: () => number,
   networkData: NetworkCreateData[]
 ): { networksInfo: NetworkInfo[]; network: Network; pools: RPool[] } {
-  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice, 2))
+  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice, 3))
 
   let pools: RPool[] = []
   let tokens: TToken[] = []
