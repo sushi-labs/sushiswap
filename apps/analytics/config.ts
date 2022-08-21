@@ -10,7 +10,7 @@ export const ENABLED_NETWORKS = [
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   // ChainId.HARMONY,
-  // ChainId.FANTOM,
+  ChainId.FANTOM,
   // ChainId.POLYGON,
 ]
 

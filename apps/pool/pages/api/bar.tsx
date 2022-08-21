@@ -4,6 +4,7 @@ import numeral from 'numeral'
 import { getOneMonthBlock, getSushiBar } from '../../lib/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
   const blocks = await getOneMonthBlock()
   const blockNumber = blocks && blocks[0].number ? Number(blocks[0].number) : undefined
   if (!blockNumber) {

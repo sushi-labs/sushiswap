@@ -9,7 +9,7 @@ import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../compone
 import { getBundles, getFarms, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
   const [pairs, bundles, farms] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getBundles(),
