@@ -17,7 +17,7 @@ export const NETWORK_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <PairChainCell row={props.row.original} />,
-  size: 50,
+  size: 30,
   skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
 }
 

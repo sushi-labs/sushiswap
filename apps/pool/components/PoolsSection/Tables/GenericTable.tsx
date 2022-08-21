@@ -76,9 +76,9 @@ export const GenericTable = <T extends { id: string }>({
                           }}
                           className="cursor-pointer"
                         >
-                          {row.getVisibleCells().map((cell) => {
+                          {row.getVisibleCells().map((cell, i) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td style={{ maxWidth: columns[i].size, width: columns[i].size }} key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </Table.td>
                             )
@@ -99,9 +99,9 @@ export const GenericTable = <T extends { id: string }>({
                     }}
                     className="cursor-pointer"
                   >
-                    {row.getVisibleCells().map((cell) => {
+                    {row.getVisibleCells().map((cell, i) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td style={{ maxWidth: columns[i].size, width: columns[i].size }} key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Table.td>
                       )
