@@ -129,7 +129,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             bytes32 srcContext
         ) = abi.decode(payload, (address, uint8[], uint256[], bytes[], bytes32));
 
-        uint256 reserveGas = 200000;
+        uint256 reserveGas = 100000;
         bool failed;
 
         if(gasleft() < reserveGas) {
@@ -139,7 +139,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             return;
         }
 
-        // 200000 -> exit gas
+        // 100000 -> exit gas
         uint256 limit = gasleft() - reserveGas;
 
         /// @dev incase the actions fail, transfer bridge token to the to address
