@@ -5,6 +5,15 @@ query Block($id: ID!) {
     timestamp
   }
 }
+
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
 query Blocks($where: Block_filter) {
   blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
     id

@@ -6,7 +6,7 @@ export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
 export const KAVA_HOST = 'pvt.graph.kava.io/subgraphs/name'
 export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 
-export const METIS_HOST = ''
+export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = ''
 
 export const CHAIN_NAME: Record<number | string, string> = {
@@ -22,6 +22,14 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'Moonriver',
   [ChainId.OPTIMISM]: 'Optimism',
   [ChainId.POLYGON]: 'Polygon',
+  [ChainId.TELOS]: 'Telos',
+  [ChainId.CELO]: 'Celo',
+  [ChainId.FUSE]: 'Fuse',
+  [ChainId.OKEX]: 'OKEx',
+  [ChainId.HECO]: 'HECO',
+  [ChainId.PALM]: 'Palm',
+  [ChainId.KAVA]: 'Kava',
+  [ChainId.METIS]: 'Metis',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
@@ -37,6 +45,11 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
+  [ChainId.METIS]: METIS_HOST,
+  [ChainId.KAVA]: KAVA_HOST,
+  [ChainId.HARMONY]: GRAPH_HOST,
+  [ChainId.FUSE]: GRAPH_HOST,
+  [ChainId.CELO]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -56,6 +69,23 @@ export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
+  [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
+  [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
+  [ChainId.FANTOM]: 'matthewlilley/fantom-blocks',
+  [ChainId.BSC]: 'matthewlilley/bsc-blocks',
+  [ChainId.HARMONY]: 'sushiswap/harmony-blocks',
+  [ChainId.AVALANCHE]: 'matthewlilley/avalanche-blocks',
+  [ChainId.CELO]: 'ubeswap/celo-blocks',
+  [ChainId.ARBITRUM]: 'sushiswap/arbitrum-blocks',
+  [ChainId.OKEX]: 'okexchain-blocks/oec',
+  [ChainId.HECO]: 'hecoblocks/heco',
+  [ChainId.MOONRIVER]: 'sushiswap/moonriver-blocks',
+  [ChainId.FUSE]: 'sushiswap/fuse-blocks',
+  [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
+  [ChainId.MOONBEAM]: 'sushiswap/moonbeam-blocks',
+  [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
+  [ChainId.KAVA]: 'sushiswap/blocks-kava',
+  [ChainId.METIS]: 'sushiswap/blocks-metis',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -71,6 +101,14 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
+}
+
+export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'sushi-labs/trident-polygon',
+  [ChainId.KOVAN]: 'sushi-labs/trident-kovan',
+  [ChainId.OPTIMISM]: 'sushi-labs/trident-optimism',
+  [ChainId.KAVA]: 'sushiswap/trident-kava',
+  [ChainId.METIS]: 'sushiswap/trident-metis',
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
