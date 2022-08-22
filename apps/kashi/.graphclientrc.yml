@@ -2,7 +2,7 @@ sources:
   - name: Kashi
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/kashi-arbitrum}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/kashi-arbitrum}
 
 additionalTypeDefs: |
   extend type KashiPair {

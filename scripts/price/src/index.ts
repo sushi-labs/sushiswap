@@ -107,6 +107,7 @@ export async function execute() {
         chainId,
         JSON.stringify({
           chainId,
+          // @ts-ignore
           ...tokens.reduce((acc, token) => ({ ...acc, [token.id]: token.priceUSD }), {}),
           updatedAtBlock,
           updatedAtTimestamp,
