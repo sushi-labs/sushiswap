@@ -23,21 +23,24 @@ export type GetPoolsQuery = QuerypairsArgs & { networks: string }
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const { getBuiltGraphSDK } = await import('../.graphclient')
-    const { CrossChainPairs } = getBuiltGraphSDK()
+    const sdk = getBuiltGraphSDK()
+
     const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
     const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     const where = query?.where ? query.where : { liquidityUSD_gt: 5000 }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : AMM_ENABLED_NETWORKS
-    const { crossChainPairs } = await CrossChainPairs({
+    const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
       where,
       orderBy,
       orderDirection,
       chainIds,
+      now: Math.round(new Date().getTime() / 1000),
     })
+
     return crossChainPairs
   } catch (error) {
     throw new Error(error)

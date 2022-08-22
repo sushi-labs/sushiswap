@@ -16,8 +16,9 @@ interface AddSectionStepperProps {
   onClick(step: number): void
   pair: PairWithAlias
 }
+
 export const AddSectionStepper: FC<AddSectionStepperProps> = ({ step, onClick, pair }) => {
-  const isFarm = false
+  const isFarm = true
 
   return (
     <div className="p-5 flex flex-col gap-4">

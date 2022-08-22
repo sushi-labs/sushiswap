@@ -5,6 +5,7 @@ import { Resolvers } from '.graphclient'
 
 export const resolvers: Resolvers = {
   Pair: {
+    volume7d: (root, args, context, info) => root.volume7d || '0',
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
@@ -55,13 +56,21 @@ export const resolvers: Resolvers = {
             },
             info,
           }).then((pools) =>
-            pools.map((pool) => ({
-              ...pool,
-              id: `${chainShortName[chainId]}:${pool.id}`,
-              chainId,
-              chainName: chainName[chainId],
-              chainShortName: chainShortName[chainId],
-            }))
+            pools.map((pool) => {
+              const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
+                if (i > 6) return previousValue
+                return previousValue + Number(currentValue.volumeUSD)
+              }, 0)
+
+              return {
+                ...pool,
+                volume7d,
+                id: `${chainShortName[chainId]}:${pool.id}`,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+              }
+            })
           )
         )
       ).then((pools) =>

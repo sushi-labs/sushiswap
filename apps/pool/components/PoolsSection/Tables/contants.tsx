@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Pair } from '../../../.graphclient'
 import { PairWithBalance } from '../../../types'
+import { PairVolume7dCell } from '.'
 import { PairAPRCell } from './PairAPRCell'
 import { PairChainCell } from './PairChainCell'
 import { PairNameCell } from './PairNameCell'
@@ -73,6 +74,14 @@ export const POSITION_COLUMN: ExtendedColumnDef<PairWithBalance, unknown> = {
   id: 'position',
   header: 'Value',
   cell: (props) => <PairPositionCell row={props.row.original} />,
+  size: 100,
+  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+}
+
+export const VOLUME_COLUMN: ExtendedColumnDef<Pair, unknown> = {
+  id: 'volume',
+  header: 'Volume (7d)',
+  cell: (props) => <PairVolume7dCell row={props.row.original} />,
   size: 100,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }

@@ -18,6 +18,7 @@ sources:
 
 additionalTypeDefs: |
   extend type Pair {
+    volume7d: BigDecimal!
     chainId: BigInt!
     chainName: String!
     chainShortName: String!
@@ -36,7 +37,7 @@ additionalTypeDefs: |
   }
   extend type Query {
     crossChainPair(id: String!, now: Int!, chainId: BigInt!): Pair!
-    crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!): [Pair!]!
+    crossChainPairs(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
     crossChainUser(id: String!, chainIds: [BigInt!]!): User!

@@ -7,14 +7,15 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
-  crossChainPairs(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds) {
+query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!, $now: Int!) {
+  crossChainPairs(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds, now: $now) {
     id
     chainId
     chainName
     chainShortName
     name
     swapFee
+    volume7d
     token0 {
       name
       id
@@ -30,6 +31,11 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
     liquidityNative
     liquidityUSD
     apr
+    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+      id
+      date
+      volumeUSD
+    }
   }
 }
 
