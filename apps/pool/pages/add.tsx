@@ -1,8 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
+import { Transition } from '@headlessui/react'
 import { ExternalLinkIcon, PlusIcon } from '@heroicons/react/solid'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, tryParseAmount } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { Chain, ChainId, chainShortName } from '@sushiswap/chain'
+import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
+import { calculateSlippageAmount, computePairAddress, FACTORY_ADDRESS } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Container, createToast, Dialog, Dots, Link, Typography } from '@sushiswap/ui'
@@ -22,13 +23,17 @@ import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import useSWR from 'swr'
 import { ProviderRpcError, useSwitchNetwork } from 'wagmi'
 import { useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import { Layout, Rate } from '../components'
+import { AddSectionStepper } from '../components/AddSection'
+import { AddSectionMyPosition } from '../components/AddSection/AddSectionMyPosition'
 import { useTransactionDeadline } from '../lib/hooks'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
+import { PairWithAlias } from '../types'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   return {
@@ -56,6 +61,7 @@ const AddPage = ({
   const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
   const router = useRouter()
+  const [step, setStep] = useState(1)
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
@@ -83,6 +89,19 @@ const AddPage = ({
       : _token1 in tokens
       ? tokens[_token1]
       : undefined
+  )
+
+  const id =
+    token0 && token1 && chainId
+      ? `${chainShortName[chainId]}:${computePairAddress({
+          factoryAddress: FACTORY_ADDRESS[token0.chainId],
+          tokenA: token0.wrapped,
+          tokenB: token1.wrapped,
+        }).toLowerCase()}`
+      : undefined
+
+  const { data: pairData } = useSWR<{ pair: PairWithAlias }>(id ? `/pool/api/pool/${id}` : null, (url) =>
+    fetch(url).then((response) => response.json())
   )
 
   const loadingToken0 = _token0 && !token0
@@ -312,87 +331,117 @@ const AddPage = ({
     )
   }, [_token1, chainId, tokens])
 
+  const price = useMemo(() => {
+    if (!parsedInput0 || !parsedInput1) return undefined
+    return new Price({ baseAmount: parsedInput0, quoteAmount: parsedInput1 })
+  }, [parsedInput0, parsedInput1])
+
   return (
     <Layout>
-      <div className="flex flex-col gap-6 pb-40">
-        <Widget id="addLiquidity" maxWidth={400}>
-          <Widget.Content>
-            <Widget.Header title="Add Liquidity" />
-            <Web3Input.Currency
-              className="p-3"
-              loading={loadingToken0}
-              value={input0}
-              onChange={onChangeToken0TypedAmount}
-              currency={token0}
-              onSelect={setToken0}
-              customTokenMap={customTokensMap}
-              onAddToken={addCustomToken}
-              onRemoveToken={removeCustomToken}
-              chainId={chainId}
-              tokenMap={tokenMap}
-            />
-            <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-              <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
-                <PlusIcon width={16} height={16} />
-              </div>
-            </div>
-            <div className="bg-slate-800">
+      <div className="grid grid-cols-1 md:grid-cols-[264px_396px_264px] gap-10">
+        <div />
+        <div className="flex flex-col gap-3 pb-40">
+          <Widget id="addLiquidity" maxWidth={400}>
+            <Widget.Content>
+              <Widget.Header title="Add Liquidity" />
               <Web3Input.Currency
-                className="p-3 !pb-1"
-                value={input1}
-                loading={loadingToken1}
-                onChange={onChangeToken1TypedAmount}
-                currency={token1}
-                onSelect={setToken1}
+                className="p-3"
+                loading={loadingToken0}
+                value={input0}
+                onChange={onChangeToken0TypedAmount}
+                currency={token0}
+                onSelect={setToken0}
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
                 chainId={chainId}
                 tokenMap={tokenMap}
               />
-              <div className="p-3">
-                {isMounted && !address ? (
-                  <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
-                    Connect Wallet
-                  </Wallet.Button>
-                ) : isMounted && chain && chain.id !== chainId ? (
-                  <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
-                    Switch to {Chain.from(chainId).name}
-                  </Button>
-                ) : !parsedInput0 || !parsedInput1 ? (
-                  <Button size="md" fullWidth disabled>
-                    Enter Amounts
-                  </Button>
-                ) : insufficientBalance ? (
-                  <Button size="md" fullWidth disabled>
-                    Insufficient Balance
-                  </Button>
-                ) : (
-                  <Button
-                    fullWidth
-                    size="md"
-                    variant="filled"
-                    disabled={isWritePending}
-                    onClick={() => setReview(true)}
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
-                  </Button>
-                )}
+              <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+                <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
+                  <PlusIcon width={16} height={16} />
+                </div>
               </div>
-            </div>
-          </Widget.Content>
-        </Widget>
-        <Container className="mx-auto max-w-[400px]">
-          <Link.External
-            href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
-            className="flex justify-center px-6 py-4 decoration-slate-500 bg-white bg-opacity-[0.04] hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
-          >
-            <Typography variant="sm" weight={500} className="flex items-center gap-1 text-slate-400">
-              Learn more about liquidity and yield farming
-              <ExternalLinkIcon width={16} height={16} className="text-slate-400" />
-            </Typography>
-          </Link.External>
-        </Container>
+              <div className="bg-slate-800">
+                <Web3Input.Currency
+                  className="p-3 !pb-1"
+                  value={input1}
+                  loading={loadingToken1}
+                  onChange={onChangeToken1TypedAmount}
+                  currency={token1}
+                  onSelect={setToken1}
+                  customTokenMap={customTokensMap}
+                  onAddToken={addCustomToken}
+                  onRemoveToken={removeCustomToken}
+                  chainId={chainId}
+                  tokenMap={tokenMap}
+                />
+                <div className="p-3">
+                  {isMounted && !address ? (
+                    <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
+                      Connect Wallet
+                    </Wallet.Button>
+                  ) : isMounted && chain && chain.id !== chainId ? (
+                    <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
+                      Switch to {Chain.from(chainId).name}
+                    </Button>
+                  ) : !parsedInput0 || !parsedInput1 ? (
+                    <Button size="md" fullWidth disabled>
+                      Enter Amounts
+                    </Button>
+                  ) : insufficientBalance ? (
+                    <Button size="md" fullWidth disabled>
+                      Insufficient Balance
+                    </Button>
+                  ) : (
+                    <Button
+                      fullWidth
+                      size="md"
+                      variant="filled"
+                      disabled={isWritePending}
+                      onClick={() => setReview(true)}
+                    >
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Widget.Content>
+          </Widget>
+          <Container className="mx-auto max-w-[400px]">
+            <Link.External
+              href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+              className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+            >
+              <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                Learn more about liquidity and yield farming
+                <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+              </Typography>
+            </Link.External>
+          </Container>
+        </div>
+        <div>
+          {pairData?.pair && (
+            <Transition
+              appear
+              show={true}
+              enter="transition duration-300 origin-center ease-out"
+              enterFrom="transform scale-90 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform opacity-100"
+              leaveTo="transform opacity-0"
+            >
+              <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
+                <AddSectionStepper onClick={setStep} step={step} pair={pairData.pair} />
+                <div className="px-5">
+                  <hr className="h-px border-t border-slate-200/5" />
+                </div>
+                <AddSectionMyPosition pair={pairData.pair} />
+              </div>
+            </Transition>
+          )}
+        </div>
       </div>
       <Dialog open={review} onClose={() => setReview(false)}>
         <Dialog.Content className="max-w-sm !pb-4">
@@ -449,7 +498,7 @@ const AddPage = ({
             </div>
           </div>
           <div className="flex justify-center p-4">
-            <Rate price={pair?.token0Price}>
+            <Rate price={price}>
               {({ toggleInvert, content, usdPrice }) => (
                 <Typography
                   as="button"
@@ -491,6 +540,11 @@ const AddPage = ({
               )
             }}
           />
+          {error && (
+            <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+              {error}
+            </Typography>
+          )}
         </Dialog.Content>
       </Dialog>
       <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
