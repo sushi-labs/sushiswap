@@ -2,7 +2,7 @@ import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths } from 'date-fns'
 
 import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
-import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
+import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getBundles = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
@@ -30,7 +30,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const where = query?.where ? query.where : { liquidityUSD_gt: 5000 }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks ? JSON.parse(query.networks) : AMM_ENABLED_NETWORKS
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,

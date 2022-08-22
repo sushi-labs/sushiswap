@@ -1,5 +1,11 @@
 import { chainName, chainShortName } from '@sushiswap/chain'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST } from 'config'
+import {
+  AMM_ENABLED_NETWORKS,
+  EXCHANGE_SUBGRAPH_NAME,
+  GRAPH_HOST,
+  TRIDENT_ENABLED_NETWORKS,
+  TRIDENT_SUBGRAPH_NAME,
+} from 'config'
 
 import { Resolvers } from '.graphclient'
 
@@ -40,40 +46,60 @@ export const resolvers: Resolvers = {
         chainName: chainName[args.chainId],
         chainShortName: chainShortName[args.chainId],
       })),
-    crossChainPairs: async (root, args, context, info) =>
-      Promise.all(
-        args.chainIds.map((chainId) =>
-          context.Exchange.Query.pairs({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              chainName: chainName[chainId],
-              chainShortName: chainShortName[chainId],
-              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-              subgraphHost: GRAPH_HOST[chainId],
-            },
-            info,
-          }).then((pools) =>
-            pools.map((pool) => {
-              const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
-                if (i > 6) return previousValue
-                return previousValue + Number(currentValue.volumeUSD)
-              }, 0)
+    crossChainPairs: async (root, args, context, info) => {
+      const transformer = (pools, chainId) =>
+        pools.map((pool) => {
+          const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
+            if (i > 6) return previousValue
+            return previousValue + Number(currentValue.volumeUSD)
+          }, 0)
 
-              return {
-                ...pool,
-                volume7d,
-                id: `${chainShortName[chainId]}:${pool.id}`,
+          return {
+            ...pool,
+            volume7d,
+            id: `${chainShortName[chainId]}:${pool.id}`,
+            chainId,
+            chainName: chainName[chainId],
+            chainShortName: chainShortName[chainId],
+          }
+        })
+
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.pairs({
+              root,
+              args,
+              context: {
+                ...context,
                 chainId,
                 chainName: chainName[chainId],
                 chainShortName: chainShortName[chainId],
-              }
-            })
-          )
-        )
-      ).then((pools) =>
+                subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((pools) => transformer(pools, chainId))
+          ),
+        ...args.chainIds
+          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Exchange.Query.pairs({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((pools) => transformer(pools, chainId))
+          ),
+      ]).then((pools) =>
         pools.flat().sort((a, b) => {
           if (args.orderDirection === 'asc') {
             return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
@@ -83,7 +109,8 @@ export const resolvers: Resolvers = {
 
           return 0
         })
-      ),
+      )
+    },
     crossChainBundles: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>

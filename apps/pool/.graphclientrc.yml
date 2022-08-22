@@ -15,6 +15,10 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+  - name: Trident
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
 
 additionalTypeDefs: |
   extend type Pair {

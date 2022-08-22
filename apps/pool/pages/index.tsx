@@ -15,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     getBundles(),
     getFarms(),
   ])
+
   return {
     props: {
       fallback: {
