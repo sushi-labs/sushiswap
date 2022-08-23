@@ -22,7 +22,8 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
           Rewards
         </Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
-          Reward APR: <span className="font-bold text-slate-50">{totalAPR > 0 ? formatPercent(totalAPR) : 'n/a'}</span>
+          Reward APR:{' '}
+          <span className="font-semibold text-slate-50">{totalAPR > 0 ? formatPercent(totalAPR) : 'n/a'}</span>
         </Typography>
       </div>
       <Table.container className="w-full">

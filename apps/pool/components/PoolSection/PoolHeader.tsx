@@ -58,7 +58,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
           <div className="flex flex-col gap-1">
             <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APR: <span className="font-bold text-slate-50">{formatPercent(totalAPR)}</span>
+              APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
             </Typography>
             <div className="flex gap-2">
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">

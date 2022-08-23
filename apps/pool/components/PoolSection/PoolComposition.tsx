@@ -24,7 +24,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
         </Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
           Total Assets:{' '}
-          <span className="font-bold text-slate-50">
+          <span className="font-semibold text-slate-50">
             {' '}
             {formatUSD(
               pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address].toFixed(10))
