@@ -126,15 +126,18 @@ export const resolvers: Resolvers = {
             }).then((pools) => transformer(pools, chainId))
           ),
       ]).then((pools) =>
-        pools.flat().sort((a, b) => {
-          if (args.orderDirection === 'asc') {
-            return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
-          } else if (args.orderDirection === 'desc') {
-            return b[args.orderBy || 'apr'] - a[args.orderBy || 'apr']
-          }
+        pools
+          .flat()
+          .sort((a, b) => {
+            if (args.orderDirection === 'asc') {
+              return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
+            } else if (args.orderDirection === 'desc') {
+              return b[args.orderBy || 'apr'] - a[args.orderBy || 'apr']
+            }
 
-          return 0
-        })
+            return 0
+          })
+          .slice(args.skip, args.skip + args.first)
       )
     },
     crossChainBundles: async (root, args, context, info) =>
