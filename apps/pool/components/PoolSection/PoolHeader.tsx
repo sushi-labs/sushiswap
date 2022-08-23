@@ -19,7 +19,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
   const { data: rewards } = useFarmRewards()
 
   const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const rewardAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const rewardAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
   const totalAPR = rewardAPR + pair.apr / 100
 
   return (
