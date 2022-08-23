@@ -2,6 +2,7 @@ import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { Currency, NetworkIcon, Typography } from '@sushiswap/ui'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -14,6 +15,11 @@ interface PoolHeader {
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
   const { token0, token1, reserve1, reserve0 } = useTokensFromPair(pair)
   const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
+  const { data: rewards } = useFarmRewards()
+
+  const farm = rewards?.[pair.chainId]?.farms?.[pair.id]
+  const rewardAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = rewardAPR + pair.apr / 100
 
   return (
     <div className="flex flex-col gap-5">
@@ -44,14 +50,14 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
           <div className="flex flex-col gap-1">
             <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APR: <span className="font-bold text-slate-50">{formatPercent(pair.apr / 100)}</span>
+              APR: <span className="font-bold text-slate-50">{formatPercent(totalAPR)}</span>
             </Typography>
             <div className="flex gap-2">
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Rewards: 12%
+                Rewards: {formatPercent(rewardAPR)}
               </Typography>
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Fees: 10.27%
+                Fees: {formatPercent(totalAPR)}
               </Typography>
             </div>
           </div>

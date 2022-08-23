@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { useBreakpoint } from '@sushiswap/ui'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -84,9 +85,19 @@ export const PoolsTable: FC = () => {
   )
 
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
+  const { data: rewards } = useFarmRewards()
+
+  const data = useMemo(() => {
+    return (
+      pools?.map((pool) => ({
+        ...pool,
+        incentives: rewards?.[pool.chainId]?.farms?.[pool.id]?.incentives || [],
+      })) || []
+    )
+  }, [pools, rewards])
 
   const table = useReactTable({
-    data: pools ?? [],
+    data,
     columns: COLUMNS,
     state: {
       sorting,
