@@ -132,7 +132,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       },
     ]
 
-    const indexOfWETH = minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : 1
+    let indexOfWETH = -1
+    indexOfWETH = minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : indexOfWETH
+    indexOfWETH = minAmount1.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 1 : indexOfWETH
 
     const actions = [
       approveMasterContractAction({ router: contract, signature: permit }),
@@ -140,23 +142,28 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         router: contract,
         address: pool.liquidityToken.address,
         amount: slpAmountToRemove.quotient.toString(),
-        recipient: contract.address,
+        recipient: indexOfWETH >= 0 ? contract.address : address,
         liquidityOutput,
         receiveToWallet: true,
       }),
-      unwrapWETHAction({
-        chainId: pair.chainId,
-        router: contract,
-        amountMinimum: liquidityOutput[indexOfWETH].amount,
-        recipient: address,
-      }),
-      sweepNativeTokenAction({
-        router: contract,
-        token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-        recipient: address,
-        amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
-      }),
     ]
+
+    if (indexOfWETH >= 0) {
+      actions.push(
+        unwrapWETHAction({
+          chainId: pair.chainId,
+          router: contract,
+          amountMinimum: liquidityOutput[indexOfWETH].amount,
+          recipient: address,
+        }),
+        sweepNativeTokenAction({
+          router: contract,
+          token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+          recipient: address,
+          amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+        })
+      )
+    }
 
     try {
       const data = await sendTransactionAsync({
