@@ -17,12 +17,17 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
     [row.liquidityTokenBalance, liquidityToken]
   )
+
+  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = rewardAPR + row.apr / 100
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0.wrapped,
     reserve1: reserve1.wrapped,
     totalSupply,
     balance,
   })
+
   const [underlying0, underlying1] = underlying
   const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
 
@@ -50,7 +55,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
           </Typography>
         </div>
         <Typography variant="sm" weight={600} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
+          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
         </Typography>
       </div>
       <hr className="border-t border-slate-200/10 my-3" />

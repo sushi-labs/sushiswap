@@ -13,6 +13,9 @@ interface PairQuickHoverTooltipProps {
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
 
+  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = rewardAPR + row.apr / 100
+
   return (
     <div className="flex flex-col p-2 !pb-0">
       <div className="flex justify-between gap-8">
@@ -36,7 +39,7 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
           </Typography>
         </div>
         <Typography variant="sm" weight={600} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
+          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
         </Typography>
       </div>
       {row.incentives.length > 0 && (
