@@ -3,7 +3,6 @@ import { ChainId } from '@sushiswap/chain'
 export const SUPPORTED_CHAIN_IDS = [
   // ChainId.ETHEREUM,
   ChainId.POLYGON,
-  ChainId.OPTIMISM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -35,10 +34,11 @@ export const GRAPH_HOST = {
   [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
+  [ChainId.METIS]: 'https://jsonrpc.andromeda.thegraph.metis.io',
+  [ChainId.KAVA]: 'https://pvt-admin.graph.kava.io',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.OPTIMISM]: 'sushiswap/sushiswap-optimism',
   [ChainId.ETHEREUM]: 'sushiswap/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
@@ -59,8 +59,11 @@ export const STAKING_ENABLED_NETWORKS = [ChainId.ARBITRUM]
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'sushiswap/trident-optimism',
   [ChainId.POLYGON]: 'sushiswap/trident-polygon',
+  [ChainId.METIS]: 'sushiswap/trident-metis',
+  [ChainId.KAVA]: 'sushiswap/trident-kava',
 }
-export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON]
+
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA]
 
 export const AMM_ENABLED_NETWORKS = [
   // ChainId.ETHEREUM,
