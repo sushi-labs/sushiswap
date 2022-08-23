@@ -1,4 +1,5 @@
 import { chainShortName } from '@sushiswap/chain'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
@@ -26,14 +27,17 @@ export const PositionsTable: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
+  const { data: rewards } = useFarmRewards()
+
   const liquidityPositions: PairWithBalance[] = useMemo(() => {
     if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => ({
       ...el.pair,
+      incentives: rewards?.[el.pair.chainId]?.farms?.[el.pair.id]?.incentives || [],
       liquidityTokenBalance: String(el.balance / 1e18),
       id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
     }))
-  }, [user])
+  }, [rewards, user?.liquidityPositions])
 
   const table = useReactTable<Pair | PairWithBalance>({
     data: liquidityPositions ?? [],

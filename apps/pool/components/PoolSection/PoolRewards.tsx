@@ -1,4 +1,4 @@
-import { formatPercent } from '@sushiswap/format'
+import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
@@ -12,13 +12,13 @@ interface PoolRewardsProps {
 export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
   const { data: rewards } = useFarmRewards()
 
-  const farm = rewards?.[pair.chainId]?.farms?.[pair.id]
+  const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
   const totalAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex justify-between items-center px-2">
-        <Typography weight={700} className="text-slate-50">
+        <Typography weight={600} className="text-slate-50">
           Rewards
         </Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
@@ -44,14 +44,14 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
                   <Table.td>
                     <div className="flex gap-3 items-center">
                       <Currency.Icon currency={incentive.rewardToken} width={24} height={24} />
-                      <Typography weight={700} variant="sm" className="text-slate-50">
+                      <Typography weight={600} variant="sm" className="text-slate-50">
                         {incentive.rewardToken.symbol}
                       </Typography>
                     </div>
                   </Table.td>
                   <Table.td>
                     <Typography variant="sm" weight={600} className="text-slate-50">
-                      {incentive.rewardPerDay} {incentive.rewardToken.symbol} per day
+                      {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol} per day
                     </Typography>
                   </Table.td>
                 </Table.tr>

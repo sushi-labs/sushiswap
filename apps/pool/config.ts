@@ -63,7 +63,7 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'sushiswap/trident-kava',
 }
 
-export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON]
 
 export const AMM_ENABLED_NETWORKS = [
   ChainId.AVALANCHE,

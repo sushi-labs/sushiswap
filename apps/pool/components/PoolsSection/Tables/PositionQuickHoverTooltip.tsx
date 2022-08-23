@@ -49,7 +49,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             Fee {row.swapFee / 100}%
           </Typography>
         </div>
-        <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
+        <Typography variant="sm" weight={600} className="text-slate-50 flex gap-3">
           <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
         </Typography>
       </div>
@@ -61,7 +61,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         <div className="flex justify-between items-center gap-2">
           <div className="flex gap-2 items-center">
             <Currency.Icon currency={token0} width={18} height={18} />
-            <Typography variant="sm" weight={700} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-slate-50">
               {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
             </Typography>
           </div>
@@ -72,7 +72,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         <div className="flex justify-between items-center gap-2">
           <div className="flex gap-2 items-center">
             <Currency.Icon currency={token1} width={18} height={18} />
-            <Typography variant="sm" weight={700} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-slate-50">
               {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
             </Typography>
           </div>

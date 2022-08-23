@@ -1,3 +1,4 @@
+import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { UseQueryOptions } from 'react-query'
@@ -50,7 +51,7 @@ export const useFarmRewards: UseFarmRewards = ({ options } = {}) => {
     isLoading,
   } = useQuery<string, unknown, Record<number, FarmMap<RewardToken>>, string[]>(
     ['https://farm.sushi.com/v0'],
-    () => fetch(`https://farm.com/v0/`).then((response) => response.json()),
+    () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()),
     { staleTime: 20000, ...options }
   )
 
@@ -65,17 +66,21 @@ export const useFarmRewards: UseFarmRewards = ({ options } = {}) => {
               acc[chainId] = {
                 ...j,
                 farms: Object.entries(farmsMap[chainId].farms).reduce<Record<string, Farm<Token>>>((acc, [farm, v]) => {
-                  acc[farm] = {
+                  acc[`${chainShortName[chainId]}:${farm.toLowerCase()}`] = {
                     ...v,
-                    incentives: farmsMap[chainId].farms[farm].incentives.map((el) => ({
-                      ...el,
-                      rewardToken: new Token({
-                        chainId,
-                        address: el.rewardToken.address,
-                        symbol: el.rewardToken.symbol,
-                        decimals: 18,
+                    incentives: farmsMap[chainId].farms[farm].incentives
+                      .filter((el) => el.rewardToken.address !== '')
+                      .map((el) => {
+                        return {
+                          ...el,
+                          rewardToken: new Token({
+                            chainId,
+                            address: el.rewardToken.address,
+                            symbol: el.rewardToken.symbol,
+                            decimals: 18,
+                          }),
+                        }
                       }),
-                    })),
                   }
                   return acc
                 }, {}),
