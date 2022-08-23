@@ -1,7 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { Signature } from '@ethersproject/bytes'
 import { Transition } from '@headlessui/react'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Native, SUSHI_ADDRESS } from '@sushiswap/currency'
+import { Chain } from '@sushiswap/chain'
+import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
@@ -19,17 +19,16 @@ import {
 import { Widget } from '@sushiswap/ui/widget'
 import {
   Approve,
-  calculateGasMargin,
+  getV3RouterContractConfig,
   PairState,
   useBalance,
+  useBentoBoxTotals,
   usePair,
-  usePairTotalSupply,
+  useTotalSupply,
+  useV3RouterContract,
   Wallet,
 } from '@sushiswap/wagmi'
-import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { FC, Fragment, useCallback, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
   useAccount,
@@ -39,85 +38,59 @@ import {
   useSwitchNetwork,
 } from 'wagmi'
 
-import { Layout } from '../components'
-import { useTokenAmountDollarValues, useTransactionDeadline } from '../lib/hooks'
-import { useSettings } from '../lib/state/storage'
-import { useTokens } from '../lib/state/token-lists'
+import { Pair } from '../../.graphclient'
+import {
+  approveMasterContractAction,
+  batchAction,
+  burnLiquidityAction,
+  LiquidityOutput,
+  sweepNativeTokenAction,
+  unwrapWETHAction,
+} from '../../lib/actions'
+import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
+import { useSettings } from '../../lib/state/storage'
+import { Layout } from '../Layout'
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { token0, token1, chainId } = query
-
-  const _token0 = token0 ?? Native.onChain(Number(chainId as string) || ChainId.ETHEREUM).symbol
-  const _chainId = chainId ?? ChainId.ETHEREUM
-  const _token1 = token1 ?? SUSHI_ADDRESS[Number(chainId as string) || ChainId.ETHEREUM]
-
-  const redirect = {
-    permanent: false,
-    destination: `/remove?token0=${_token0}&token1=${_token1}&chainId=${_chainId}`,
-  }
-
-  return {
-    ...((!token0 || !token1 || !chainId) && { redirect: { ...redirect } }),
-    props: {
-      token0: _token0,
-      token1: _token1,
-      chainId: _chainId,
-    },
-  }
+interface RemoveSectionTridentProps {
+  pair: Pair
 }
 
-const RemovePage = ({
-  token0: _token0,
-  token1: _token1,
-  chainId: _chainId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter()
-  const chainId = Number(_chainId)
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
+  const { address } = useAccount()
+  const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
-  const { address } = useAccount()
-  const tokens = useTokens(chainId)
-  const deadline = useTransactionDeadline(chainId)
-  const contract = useV2RouterContract(chainId)
+  const contract = useV3RouterContract(pair.chainId)
   const { switchNetwork } = useSwitchNetwork()
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId })
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
-
+  const [permit, setPermit] = useState<Signature>()
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<number>(0)
   const percentageEntity = useMemo(() => new Percent(percentage, 10_000), [percentage])
+  const rebases = useBentoBoxTotals(pair.chainId, [token0, token1])
+  const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
 
-  const token0 =
-    _token0 === Native.onChain(chainId).symbol
-      ? Native.onChain(chainId)
-      : _token0 in tokens
-      ? tokens[_token0]
-      : undefined
-  const token1 =
-    _token1 === Native.onChain(chainId).symbol
-      ? Native.onChain(chainId)
-      : _token1 in tokens
-      ? tokens[_token1]
-      : undefined
+  const slpAmountToRemove = useMemo(() => {
+    return balance?.[FundSource.WALLET].multiply(percentageEntity)
+  }, [balance, percentageEntity])
 
-  const [pairState, pair] = usePair(chainId, token0, token1)
-  const { data: balance } = useBalance({ chainId, account: address, currency: pair?.liquidityToken })
-  const totalSupply = usePairTotalSupply(pair?.liquidityToken.address, chainId)
+  const [poolState, pool] = usePair(pair.chainId, token0, token1)
+  const totalSupply = useTotalSupply(liquidityToken)
 
-  const underlying = useMemo(() => {
-    if (!pair || !totalSupply || !balance?.[FundSource.WALLET]) return [undefined, undefined]
-    return [
-      pair.getLiquidityValue(pair.token0, totalSupply, balance?.[FundSource.WALLET].wrapped).multiply(percentageEntity),
-      pair.getLiquidityValue(pair.token1, totalSupply, balance?.[FundSource.WALLET].wrapped).multiply(percentageEntity),
-    ]
-  }, [balance, pair, percentageEntity, totalSupply])
+  const underlying = useUnderlyingTokenBalanceFromPair({
+    reserve0: pool?.reserve0,
+    reserve1: pool?.reserve1,
+    totalSupply,
+    balance: balance?.[FundSource.WALLET].wrapped,
+  })
 
   const [underlying0, underlying1] = underlying
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: underlying })
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -132,94 +105,85 @@ const RemovePage = ({
 
   const execute = useCallback(async () => {
     if (
+      !pool ||
       !token0 ||
       !token1 ||
-      !chain?.id ||
+      !pair.chainId ||
       !contract ||
-      !underlying0 ||
-      !underlying1 ||
-      !address ||
-      !pair ||
-      !balance?.[FundSource.WALLET] ||
       !minAmount0 ||
-      !minAmount1
-    ) {
+      !minAmount1 ||
+      !address ||
+      !minAmount0 ||
+      !minAmount1 ||
+      !rebases?.[token0.wrapped.address] ||
+      !rebases?.[token1.wrapped.address] ||
+      !slpAmountToRemove
+    )
       return
-    }
 
-    const withNative =
-      Native.onChain(chainId).wrapped === pair.token0 || Native.onChain(chainId).wrapped === pair.token1
-    let methodNames
-    let args
+    const liquidityOutput: LiquidityOutput[] = [
+      {
+        token: minAmount0.wrapped.currency.address,
+        amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString(),
+      },
+      {
+        token: minAmount1.wrapped.currency.address,
+        amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString(),
+      },
+    ]
+
+    const indexOfWETH = minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : 1
+
+    const actions = [
+      approveMasterContractAction({ router: contract, signature: permit }),
+      burnLiquidityAction({
+        router: contract,
+        address: pool.liquidityToken.address,
+        amount: slpAmountToRemove.quotient.toString(),
+        recipient: contract.address,
+        liquidityOutput,
+        receiveToWallet: true,
+      }),
+      unwrapWETHAction({
+        chainId: pair.chainId,
+        router: contract,
+        amountMinimum: liquidityOutput[indexOfWETH].amount,
+        recipient: address,
+      }),
+      sweepNativeTokenAction({
+        router: contract,
+        token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+        recipient: address,
+        amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+      }),
+    ]
 
     try {
-      if (withNative) {
-        methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
-        args = [
-          Native.onChain(chainId).wrapped === pair.token1 ? pair.token0.address : pair.token1.address,
-          balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
-          minAmount0.quotient.toString(),
-          minAmount1.quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
-      } else {
-        methodNames = ['removeLiquidity']
-        args = [
-          pair.token0.address,
-          pair.token1.address,
-          balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
-          minAmount0.quotient.toString(),
-          minAmount1.quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
-      }
+      const data = await sendTransactionAsync({
+        request: {
+          from: address,
+          to: contract.address,
+          data: batchAction({
+            contract,
+            actions,
+          }),
+        },
+      })
 
-      const safeGasEstimates = await Promise.all(
-        methodNames.map((methodName) =>
-          contract.estimateGas[methodName](...args)
-            .then(calculateGasMargin)
-            .catch((error) => {
-              console.error(`estimateGas failed`, methodName, args, error)
-              return undefined
-            })
-        )
-      )
-
-      const indexOfSuccessfulEstimation = safeGasEstimates.findIndex((safeGasEstimate) =>
-        BigNumber.isBigNumber(safeGasEstimate)
-      )
-
-      if (indexOfSuccessfulEstimation === -1) {
-        console.error('This transaction would fail. Please contact support.')
-      } else {
-        const methodName = methodNames[indexOfSuccessfulEstimation]
-        const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
-        const data = await sendTransactionAsync({
-          request: {
-            from: address,
-            to: contract.address,
-            data: contract.interface.encodeFunctionData(methodName, args),
-            gasLimit: calculateGasMargin(safeGasEstimate),
-          },
-        })
-
-        createToast({
-          txHash: data.hash,
-          href: Chain.from(chain.id).getTxUrl(data.hash),
-          promise: data.wait(),
-          summary: {
-            pending: (
-              <Dots>
-                Removing liquidity from the {token0.symbol}/{token1.symbol} pair
-              </Dots>
-            ),
-            completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
-            failed: 'Something went wrong when removing liquidity',
-          },
-        })
-      }
+      createToast({
+        txHash: data.hash,
+        href: Chain.from(pool.chainId).getTxUrl(data.hash),
+        promise: data.wait(),
+        summary: {
+          pending: (
+            <Dots>
+              Removing liquidity from the {token0.symbol}/{token1.symbol} pair
+            </Dots>
+          ),
+          completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
+          failed: 'Something went wrong when removing liquidity',
+        },
+      })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
         setError((e as ProviderRpcError).message)
@@ -228,20 +192,17 @@ const RemovePage = ({
       console.log(e)
     }
   }, [
+    pool,
     token0,
     token1,
-    chain?.id,
+    pair.chainId,
     contract,
-    underlying0,
-    underlying1,
-    address,
-    pair,
-    balance,
     minAmount0,
     minAmount1,
-    chainId,
-    percentageEntity,
-    deadline,
+    address,
+    rebases,
+    permit,
+    slpAmountToRemove,
     sendTransactionAsync,
   ])
 
@@ -336,8 +297,8 @@ const RemovePage = ({
                       {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
                       <span className="text-slate-400">
                         <span className="text-slate-50">{underlying0?.toSignificant(6)}</span>{' '}
-                        {Native.onChain(chainId).wrapped === pair?.token0
-                          ? Native.onChain(chainId).symbol
+                        {Native.onChain(pair.chainId).wrapped === pool?.token0
+                          ? Native.onChain(pair.chainId).symbol
                           : underlying0?.currency.symbol}
                       </span>
                     </Typography>
@@ -350,8 +311,8 @@ const RemovePage = ({
                       {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
                       <span className="text-slate-400">
                         <span className="text-slate-50">{underlying1?.toSignificant(6)}</span>{' '}
-                        {Native.onChain(chainId).wrapped === pair?.token1
-                          ? Native.onChain(chainId).symbol
+                        {Native.onChain(pair.chainId).wrapped === pool?.token1
+                          ? Native.onChain(pair.chainId).symbol
                           : underlying1?.currency.symbol}
                       </span>
                     </Typography>
@@ -365,13 +326,13 @@ const RemovePage = ({
                 <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
                   Connect Wallet
                 </Wallet.Button>
-              ) : isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(pairState) ? (
+              ) : isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState) ? (
                 <Button size="md" color="gray" fullWidth disabled={true}>
                   Pool Not Found
                 </Button>
-              ) : chain && chain.id !== chainId ? (
-                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
-                  Switch to {Chain.from(chainId).name}
+              ) : chain && chain.id !== pair.chainId ? (
+                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(pair.chainId)}>
+                  Switch to {Chain.from(pair.chainId).name}
                 </Button>
               ) : percentage <= 0 ? (
                 <Button size="md" fullWidth disabled={true}>
@@ -382,12 +343,19 @@ const RemovePage = ({
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>
+                      <Approve.Bentobox
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                        onSignature={setPermit}
+                      />
                       <Approve.Token
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
-                        address={getV2RouterContractConfig(chainId).addressOrName}
+                        amount={slpAmountToRemove}
+                        address={getV3RouterContractConfig(pair.chainId).addressOrName}
                       />
                     </Approve.Components>
                   }
@@ -406,6 +374,11 @@ const RemovePage = ({
                   }}
                 />
               )}
+              {error && (
+                <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+                  {error}
+                </Typography>
+              )}
             </div>
           </Widget.Content>
         </Widget>
@@ -413,5 +386,3 @@ const RemovePage = ({
     </Layout>
   )
 }
-
-export default RemovePage

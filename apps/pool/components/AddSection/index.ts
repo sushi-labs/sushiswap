@@ -1,4 +1,3 @@
-export * from './AddSection'
 export * from './AddSectionLegacy'
 export * from './AddSectionMyPosition'
 export * from './AddSectionStepper'

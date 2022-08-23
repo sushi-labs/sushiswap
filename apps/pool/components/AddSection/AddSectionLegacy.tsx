@@ -8,18 +8,8 @@ import { Percent } from '@sushiswap/math'
 import { Button, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import {
-  Approve,
-  calculateGasMargin,
-  PairState,
-  useBalances,
-  usePair,
-  usePrices,
-  Wallet,
-  Web3Input,
-} from '@sushiswap/wagmi'
+import { Approve, calculateGasMargin, PairState, useBalances, usePair, Wallet, Web3Input } from '@sushiswap/wagmi'
 import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
-import { useRouter } from 'next/router'
 import { FC, useCallback, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
@@ -30,13 +20,13 @@ import {
   useSwitchNetwork,
 } from 'wagmi'
 
+import { Pair } from '../../.graphclient'
 import { useTokenAmountDollarValues, useTokensFromPair, useTransactionDeadline } from '../../lib/hooks'
 import { useCustomTokens, useSettings } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { Rate } from '../Rate'
-import { AddSectionProps } from './AddSection'
 
-export const AddSectionLegacy: FC<AddSectionProps> = ({ pair }) => {
+export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
   const { token0, token1 } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
@@ -46,7 +36,6 @@ export const AddSectionLegacy: FC<AddSectionProps> = ({ pair }) => {
   const deadline = useTransactionDeadline(pair.chainId)
   const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
-  const router = useRouter()
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
@@ -61,7 +50,6 @@ export const AddSectionLegacy: FC<AddSectionProps> = ({ pair }) => {
 
   const [poolState, pool] = usePair(pair.chainId, token0, token1)
   const { data: balances } = useBalances({ chainId: pair.chainId, account: address, currencies: [token0, token1] })
-  const { data: prices } = usePrices({ chainId: pair.chainId })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]

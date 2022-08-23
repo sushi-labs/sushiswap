@@ -33,16 +33,16 @@ import {
   useSwitchNetwork,
 } from 'wagmi'
 
+import { Pair } from '../../.graphclient'
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
 import { useTokenAmountDollarValues, useTokensFromPair } from '../../lib/hooks'
 import { useCustomTokens, useSettings } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { Rate } from '../Rate'
-import { AddSectionProps } from './AddSection'
 
 const ZERO_PERCENT = new Percent('0')
 
-export const AddSectionTrident: FC<AddSectionProps> = ({ pair }) => {
+export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
