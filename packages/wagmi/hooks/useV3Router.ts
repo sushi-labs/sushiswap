@@ -1,16 +1,11 @@
-import { AddressZero } from '@ethersproject/constants'
-import sushiswapArtifact from '@sushiswap/sushiswap/artifacts/contracts/UniswapV2Router02.sol/UniswapV2Router02.json'
-import sushiswapExports from '@sushiswap/sushiswap/exports.json'
+import TRIDENT from '@sushiswap/trident/exports/all.json'
 import { useContract, useSigner } from 'wagmi'
 
-// TODO TRIDENT
 export const getV3RouterContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
-    sushiswapExports[chainId as unknown as keyof Omit<typeof sushiswapExports, '31337' | '42220'>]?.[0]?.contracts
-      ?.UniswapV2Router02?.address ?? AddressZero,
-  contractInterface:
-    sushiswapExports[chainId as unknown as keyof Omit<typeof sushiswapExports, '31337' | '42220'>]?.[0]?.contracts
-      ?.UniswapV2Router02?.abi ?? sushiswapArtifact.abi,
+  // @ts-ignore
+  addressOrName: TRIDENT[chainId]?.[0]?.contracts.TridentRouter.address,
+  // @ts-ignore
+  contractInterface: TRIDENT[chainId]?.[0]?.contracts.TridentRouter.abi,
 })
 
 export function useV3RouterContract(chainId: number | undefined) {

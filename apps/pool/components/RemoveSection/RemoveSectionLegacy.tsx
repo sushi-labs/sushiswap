@@ -217,7 +217,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         <Widget id="addLiquidity" maxWidth={400} className="bg-slate-800">
           <Widget.Content>
             <Widget.Header title="Remove Liquidity" />
-            <div className="flex flex-col gap-2 p-3">
+            <div className="flex flex-col gap-3 p-3">
               <div className="flex items-center gap-2">
                 <div className="flex flex-grow justify-between items-center">
                   <Input.Numeric
