@@ -89,6 +89,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
             rewardToken: {
               address: SUSHI[ChainId.ETHEREUM].address,
               symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
+              decimals: SUSHI[ChainId.ETHEREUM]?.decimals ?? 18,
             },
           },
         ],

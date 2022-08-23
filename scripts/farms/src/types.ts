@@ -6,6 +6,7 @@ export interface Farm {
     rewardToken: {
       address: string
       symbol: string
+      decimals: number
     }
   }[]
   chefType: 'MasterChefV1' | 'MasterChefV2' | 'MiniChef'
