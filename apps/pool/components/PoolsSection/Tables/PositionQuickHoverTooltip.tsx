@@ -1,7 +1,6 @@
-import { Native, tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { getAddress } from 'ethers/lib/utils'
 import { FC, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
@@ -78,34 +77,12 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         </div>
       </div>
       <div className="flex gap-2 mt-8 mb-2 justify-end">
-        <Link.Internal
-          href={`/remove?token0=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token0.id)
-          }&token1=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token1.id)
-          }&chainId=${row.chainId}`}
-          passHref={true}
-        >
+        <Link.Internal href={`/${row.id}/remove`} passHref={true}>
           <Button as="a" size="sm" variant="outlined" fullWidth>
             Withdraw
           </Button>
         </Link.Internal>
-        <Link.Internal
-          href={`/add?token0=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token0.id)
-          }&token1=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token1.id)
-          }&chainId=${row.chainId}`}
-          passHref={true}
-        >
+        <Link.Internal href={`/${row.id}/add`} passHref={true}>
           <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>

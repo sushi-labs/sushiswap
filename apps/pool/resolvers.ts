@@ -25,8 +25,8 @@ export const resolvers: Resolvers = {
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
   Query: {
-    crossChainPair: async (root, args, context, info) =>
-      context.Exchange.Query.pair({
+    crossChainPair: async (root, args, context, info) => {
+      return context.Exchange.Query.pair({
         root,
         args,
         context: {
@@ -39,13 +39,39 @@ export const resolvers: Resolvers = {
           subgraphHost: GRAPH_HOST[args.chainId],
         },
         info,
-      }).then((pool) => ({
-        ...pool,
-        id: `${chainShortName[args.chainId]}:${pool.id}`,
-        chainId: args.chainId,
-        chainName: chainName[args.chainId],
-        chainShortName: chainShortName[args.chainId],
-      })),
+      }).then((pool) => {
+        if (!pool) {
+          return context.Trident.Query.pair({
+            root,
+            args,
+            context: {
+              ...context,
+              now: args.now,
+              chainId: args.chainId,
+              chainName: chainName[args.chainId],
+              chainShortName: chainShortName[args.chainId],
+              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
+              subgraphHost: GRAPH_HOST[args.chainId],
+            },
+            info,
+          }).then((tridentPool) => ({
+            ...tridentPool,
+            id: `${chainShortName[args.chainId]}:${tridentPool.id}`,
+            chainId: args.chainId,
+            chainName: chainName[args.chainId],
+            chainShortName: chainShortName[args.chainId],
+          }))
+        } else {
+          return {
+            ...pool,
+            id: `${chainShortName[args.chainId]}:${pool.id}`,
+            chainId: args.chainId,
+            chainName: chainName[args.chainId],
+            chainShortName: chainShortName[args.chainId],
+          }
+        }
+      })
+    },
     crossChainPairs: async (root, args, context, info) => {
       const transformer = (pools, chainId) =>
         pools.map((pool) => {

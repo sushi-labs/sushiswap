@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Token, Type as Currency } from '@sushiswap/currency'
-import { ConstantProductPool } from '@sushiswap/exchange'
+import { Amount, Token, Type } from '@sushiswap/currency'
+import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/exchange'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 
@@ -16,15 +16,17 @@ export enum PoolState {
 
 const POOL_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_ABI)
 
+type PoolInput = [Type, Type, Fee, boolean]
+
 interface PoolData {
   address: string
   token0: Token
   token1: Token
 }
 
-export function useConstantProductPools(
+export function useGetAllExistedPools(
   chainId: number,
-  currencies: [Currency | undefined, Currency | undefined][]
+  currencies: [Type | undefined, Type | undefined][]
 ): [PoolState, ConstantProductPool | null][] {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
@@ -49,7 +51,7 @@ export function useConstantProductPools(
       addressOrName: contract.address,
       contractInterface: contract.interface,
       functionName: 'poolsCount',
-      args: [el],
+      args: el,
     })),
     enabled: pairsUniqueAddr.length > 0,
   })
@@ -78,7 +80,7 @@ export function useConstantProductPools(
       addressOrName: contract.address,
       contractInterface: contract.interface,
       functionName: 'getPools',
-      args: [el],
+      args: el,
     })),
     enabled: callStatePoolsCountProcessed.length > 0,
   })
@@ -139,40 +141,97 @@ export function useConstantProductPools(
   )
 }
 
-export function useConstantProductPool(
+export function useConstantProductPools(
   chainId: number,
-  tokenA?: Currency,
-  tokenB?: Currency
-): [PoolState, ConstantProductPool | null] {
-  const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB])
-  return useConstantProductPools(chainId, inputs)[0]
+  pools: PoolInput[]
+): [PoolState, ConstantProductPool | null][] {
+  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+
+  const input = useMemo(
+    () =>
+      pools
+        .filter((input) => {
+          const [tokenA, tokenB, fee, twap] = input
+          return Boolean(
+            tokenA &&
+              tokenB &&
+              fee &&
+              twap !== undefined &&
+              tokenA.chainId === tokenB.chainId &&
+              !tokenA.equals(tokenB) &&
+              constantProductPoolFactory?.address
+          )
+        })
+        .map<[Token, Token, Fee, boolean]>(([currencyA, currencyB, fee, twap]) => [
+          currencyA.wrapped,
+          currencyB.wrapped,
+          fee,
+          twap,
+        ]),
+    [constantProductPoolFactory?.address, pools]
+  )
+
+  const poolsAddresses = useMemo(
+    () =>
+      input.reduce<string[]>((acc, [tokenA, tokenB, fee, twap]) => {
+        acc.push(
+          computeConstantProductPoolAddress({
+            factoryAddress: constantProductPoolFactory.address,
+            tokenA,
+            tokenB,
+            fee,
+            twap,
+          })
+        )
+        return acc
+      }, []),
+    [constantProductPoolFactory.address, input]
+  )
+
+  const { data } = useContractReads({
+    contracts: poolsAddresses.map((addressOrName) => ({
+      chainId,
+      addressOrName,
+      contractInterface: POOL_INTERFACE,
+      functionName: 'getReserves',
+    })),
+    enabled: poolsAddresses.length > 0,
+  })
+
+  return useMemo(() => {
+    if (poolsAddresses.length === 0) return [[PoolState.INVALID, null]]
+    if (!data) return poolsAddresses.map(() => [PoolState.LOADING, null])
+    return data.map((result, i) => {
+      const tokenA = pools[i][0]?.wrapped
+      const tokenB = pools[i][1]?.wrapped
+      const fee = pools[i]?.[2]
+      const twap = pools[i]?.[3]
+
+      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PoolState.INVALID, null]
+      if (!result) return [PoolState.NOT_EXISTS, null]
+      const [reserve0, reserve1] = result
+      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+
+      return [
+        PoolState.EXISTS,
+        new ConstantProductPool(
+          Amount.fromRawAmount(token0, reserve0.toString()),
+          Amount.fromRawAmount(token1, reserve1.toString()),
+          fee,
+          twap
+        ),
+      ]
+    })
+  }, [data, pools, poolsAddresses])
 }
 
-// Just for testing purposes
-export function poolListCompare(
-  list1: [PoolState, ConstantProductPool | null][],
-  list2: [PoolState, ConstantProductPool | null][]
-): boolean | number {
-  const l1 = list1
-    .filter((p) => p[0] == PoolState.EXISTS)
-    .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
-  const l2 = list2
-    .filter((p) => p[0] == PoolState.EXISTS)
-    .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
-  if (l1.length !== l2.length) {
-    console.log(l1.length, '-', l2.length)
-    return 2
-  }
-  for (let i = 0; i < l1.length; ++i) {
-    const p1 = l1[i][1]
-    const p2 = l2[i][1]
-    if (p1 === null || p2 === null) return 3
-    if (p1.twap !== p2.twap) return 4
-    if (p1.fee !== p2.fee) return 5
-    if (p1.token0.address !== p2.token0.address) return 6
-    if (p1.token1.address !== p2.token1.address) return 7
-    if (!p1.reserve0.equalTo(p2.reserve0)) return 8
-    if (!p1.reserve1.equalTo(p2.reserve1)) return 9
-  }
-  return true
+export function useConstantProductPool(
+  chainId: number,
+  tokenA: Type,
+  tokenB: Type,
+  fee: Fee,
+  twap: boolean
+): [PoolState, ConstantProductPool | null] {
+  const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, fee, twap]], [tokenA, tokenB, fee, twap])
+  return useConstantProductPools(chainId, inputs)[0]
 }

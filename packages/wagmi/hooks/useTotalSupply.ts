@@ -1,8 +1,8 @@
+import { Result } from '@ethersproject/abi'
 import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
 import { erc20ABI, useContractReads } from 'wagmi'
 
-function bigNumToCurrencyAmount(totalSupply?: BigNumber, token?: Token) {
+function bigNumToCurrencyAmount(totalSupply?: Result, token?: Token) {
   return token?.isToken && totalSupply ? Amount.fromRawAmount(token, totalSupply.toString()) : undefined
 }
 
@@ -21,10 +21,10 @@ export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<
   })
 
   return data
-    ?.map((cs, i) => bigNumToCurrencyAmount(cs.result?.[0], tokens?.[i]))
+    ?.map((cs, i) => bigNumToCurrencyAmount(cs, tokens?.[i]))
     .reduce<Record<string, Amount<Token> | undefined>>((acc, curr, i) => {
       if (curr && tokens?.[i]) {
-        acc[tokens[i]!.wrapped.address] = curr
+        acc[tokens[i]?.wrapped.address] = curr
       }
       return acc
     }, {})

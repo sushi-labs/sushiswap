@@ -15,6 +15,7 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
     chainShortName
     name
     swapFee
+    twapEnabled
     volume7d
     source
     token0 {
@@ -101,6 +102,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     volumeUSD
     apr
     swapFee
+    twapEnabled
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
@@ -154,6 +156,8 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     liquidityUSD
     volumeUSD
     apr
+    swapFee
+    twapEnabled
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date

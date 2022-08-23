@@ -20,7 +20,7 @@ import {
 } from '@sushiswap/wagmi'
 import { getV2RouterContractConfig, useV2RouterContract } from '@sushiswap/wagmi/hooks/useV2Router'
 import { useRouter } from 'next/router'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
   useAccount,
@@ -30,27 +30,20 @@ import {
   useSwitchNetwork,
 } from 'wagmi'
 
-import { useTransactionDeadline } from '../../lib/hooks'
+import { useTokenAmountDollarValues, useTokensFromPair, useTransactionDeadline } from '../../lib/hooks'
 import { useCustomTokens, useSettings } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { Rate } from '../Rate'
 import { AddSectionProps } from './AddSection'
 
-export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
-  loadingToken0,
-  loadingToken1,
-  chainId,
-  token0,
-  token1,
-  setToken1,
-  setToken0,
-}) => {
+export const AddSectionLegacy: FC<AddSectionProps> = ({ pair }) => {
+  const { token0, token1 } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const contract = useV2RouterContract(chainId)
-  const tokenMap = useTokens(chainId)
-  const deadline = useTransactionDeadline(chainId)
+  const contract = useV2RouterContract(pair.chainId)
+  const tokenMap = useTokens(pair.chainId)
+  const deadline = useTransactionDeadline(pair.chainId)
   const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
   const router = useRouter()
@@ -59,16 +52,16 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId })
+  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
+  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
 
   const [error, setError] = useState<string>()
   const [review, setReview] = useState(false)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
 
-  const [pairState, pair] = usePair(chainId, token0, token1)
-  const { data: balances } = useBalances({ chainId, account: address, currencies: [token0, token1] })
-  const { data: prices } = usePrices({ chainId })
+  const [poolState, pool] = usePair(pair.chainId, token0, token1)
+  const { data: balances } = useBalances({ chainId: pair.chainId, account: address, currencies: [token0, token1] })
+  const { data: prices } = usePrices({ chainId: pair.chainId })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -77,52 +70,52 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       parsedInput0
-        ? pairState === PairState.NOT_EXISTS
+        ? poolState === PairState.NOT_EXISTS
           ? parsedInput0
           : Amount.fromRawAmount(parsedInput0.currency, calculateSlippageAmount(parsedInput0, slippagePercent)[0])
         : undefined,
       parsedInput1
-        ? pairState === PairState.NOT_EXISTS
+        ? poolState === PairState.NOT_EXISTS
           ? parsedInput1
           : Amount.fromRawAmount(parsedInput1.currency, calculateSlippageAmount(parsedInput1, slippagePercent)[0])
         : undefined,
     ]
-  }, [pairState, parsedInput0, parsedInput1, slippagePercent])
+  }, [poolState, parsedInput0, parsedInput1, slippagePercent])
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
-      if (pairState === PairState.NOT_EXISTS) {
+      if (poolState === PairState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
         }))
-      } else if (token0 && pair) {
+      } else if (token0 && pool) {
         const parsedAmount = tryParseAmount(value, token0)
         setTypedAmounts({
           input0: value,
-          input1: parsedAmount ? pair.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
         })
       }
     },
-    [pair, pairState, token0]
+    [pool, poolState, token0]
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
-      if (pairState === PairState.NOT_EXISTS) {
+      if (poolState === PairState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
         }))
-      } else if (token1 && pair) {
+      } else if (token1 && pool) {
         const parsedAmount = tryParseAmount(value, token1)
         setTypedAmounts({
-          input0: parsedAmount ? pair.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+          input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
           input1: value,
         })
       }
     },
-    [pair, pairState, token1]
+    [pool, poolState, token1]
   )
 
   const execute = useCallback(async () => {
@@ -233,43 +226,7 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
           ))
       : undefined
 
-  const [inputUsd, outputUsd] = useMemo(() => {
-    if (!token0 || !token1) return [undefined, undefined]
-    const token0Price = prices?.[token0.wrapped.address]
-    const token1Price = prices?.[token1.wrapped.address]
-
-    const inputUSD = parsedInput0 && token0Price ? parsedInput0.multiply(token0Price.asFraction) : undefined
-    const outputUSD = parsedInput1 && token1Price ? parsedInput1.multiply(token1Price.asFraction) : undefined
-    return [inputUSD, outputUSD]
-  }, [parsedInput0, parsedInput1, prices, token0, token1])
-
-  useEffect(() => {
-    if (
-      token0 &&
-      token1 &&
-      chainId === Number(router.query.chainId) &&
-      (token0.symbol === router.query.token0 || token0.wrapped.address === router.query.token0) &&
-      (token1.symbol === router.query.token1 || token1.wrapped.address === router.query.token1)
-    ) {
-      return
-    }
-
-    if (token0 && token1) {
-      void router.replace(
-        {
-          pathname: router.pathname,
-          query: {
-            ...router.query,
-            chainId,
-            token0: token0 && token0.isToken ? token0.address : token0.symbol,
-            token1: token1 && token1.isToken ? token1.address : token1.symbol,
-          },
-        },
-        undefined,
-        { shallow: true }
-      )
-    }
-  }, [router, chainId, token0, token1])
+  const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: [parsedInput0, parsedInput1] })
 
   const price = useMemo(() => {
     if (!parsedInput0 || !parsedInput1) return undefined
@@ -283,15 +240,13 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
           <Widget.Header title="Add Liquidity" />
           <Web3Input.Currency
             className="p-3"
-            loading={loadingToken0}
             value={input0}
             onChange={onChangeToken0TypedAmount}
             currency={token0}
-            onSelect={setToken0}
             customTokenMap={customTokensMap}
             onAddToken={addCustomToken}
             onRemoveToken={removeCustomToken}
-            chainId={chainId}
+            chainId={pair.chainId}
             tokenMap={tokenMap}
           />
           <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
@@ -303,14 +258,12 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
             <Web3Input.Currency
               className="p-3 !pb-1"
               value={input1}
-              loading={loadingToken1}
               onChange={onChangeToken1TypedAmount}
               currency={token1}
-              onSelect={setToken1}
               customTokenMap={customTokensMap}
               onAddToken={addCustomToken}
               onRemoveToken={removeCustomToken}
-              chainId={chainId}
+              chainId={pair.chainId}
               tokenMap={tokenMap}
             />
             <div className="p-3">
@@ -318,9 +271,9 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
                 <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
                   Connect Wallet
                 </Wallet.Button>
-              ) : isMounted && chain && chain.id !== chainId ? (
-                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
-                  Switch to {Chain.from(chainId).name}
+              ) : isMounted && chain && chain.id !== pair.chainId ? (
+                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(pair.chainId)}>
+                  Switch to {Chain.from(pair.chainId).name}
                 </Button>
               ) : !parsedInput0 || !parsedInput1 ? (
                 <Button size="md" fullWidth disabled>
@@ -362,7 +315,7 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
                 </div>
               </div>
               <Typography variant="sm" weight={500} className="text-slate-500">
-                {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
+                {value0 ? `$${value0.toFixed(2)}` : '-'}
               </Typography>
             </div>
             <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
@@ -389,7 +342,7 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
                 </div>
               </div>
               <Typography variant="sm" weight={500} className="text-slate-500">
-                {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
+                {value1 ? `$${value1.toFixed(2)}` : ''}
               </Typography>
             </div>
           </div>
@@ -417,14 +370,14 @@ export const AddSectionLegacy: FC<Omit<AddSectionProps, 'pair'>> = ({
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput0}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getV2RouterContractConfig(pair.chainId).addressOrName}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={parsedInput1}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getV2RouterContractConfig(pair.chainId).addressOrName}
                 />
               </Approve.Components>
             }

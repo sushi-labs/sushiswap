@@ -47,7 +47,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
-      onSelect(currency)
+      onSelect && onSelect(currency)
       onClose()
     },
     [onClose, onSelect]
@@ -56,7 +56,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
   const handleImport = useCallback(
     (currency: Token) => {
       onAddToken(currency)
-      onSelect(currency)
+      onSelect && onSelect(currency)
       onClose()
     },
     [onAddToken, onClose, onSelect]

@@ -1,25 +1,33 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Native, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
 import { Pair } from '../../.graphclient'
 
 export const useTokensFromPair = (pair: Pair) => {
   return useMemo(() => {
+    const _token0 = new Token({
+      address: pair.token0.id,
+      name: pair.token0.name,
+      decimals: Number(pair.token0.decimals),
+      symbol: pair.token0.symbol,
+      chainId: pair.chainId,
+    })
+
+    const _token1 = new Token({
+      address: pair.token1.id,
+      name: pair.token1.name,
+      decimals: Number(pair.token1.decimals),
+      symbol: pair.token1.symbol,
+      chainId: pair.chainId,
+    })
+
     const [token0, token1, liquidityToken] = [
-      new Token({
-        address: pair.token0.id,
-        name: pair.token0.name,
-        decimals: Number(pair.token0.decimals),
-        symbol: pair.token0.symbol,
-        chainId: pair.chainId,
-      }),
-      new Token({
-        address: pair.token1.id,
-        name: pair.token1.name,
-        decimals: Number(pair.token1.decimals),
-        symbol: pair.token1.symbol,
-        chainId: pair.chainId,
-      }),
+      _token0.wrapped.address == Native.onChain(_token0.chainId).wrapped.address
+        ? Native.onChain(_token0.chainId)
+        : _token0,
+      _token1.wrapped.address == Native.onChain(_token1.chainId).wrapped.address
+        ? Native.onChain(_token1.chainId)
+        : _token0,
       new Token({
         address: pair.id.includes(':') ? pair.id.split(':')[1] : pair.id,
         name: 'SLP Token',

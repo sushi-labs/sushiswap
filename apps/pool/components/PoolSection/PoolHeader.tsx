@@ -1,7 +1,7 @@
 import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
-import { Chip, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -36,10 +36,9 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
                 <Typography variant="lg" className="text-slate-50" weight={700}>
                   {token0.symbol}/{token1.symbol}
                 </Typography>
-                <Chip color="gray" label={`${pair.swapFee / 100}%`} className="text-slate-50 font-medium" />
               </div>
-              <Typography variant="sm" weight={500} className="text-slate-400">
-                Classic Pool
+              <Typography variant="xs" className="text-slate-300">
+                Fee: {pair.swapFee / 100}%
               </Typography>
             </div>
           </div>

@@ -1,21 +1,11 @@
 import { Transition } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
 import { Loader } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { Pair } from '../../.graphclient'
-import { AddSectionLegacy, AddSectionTrident } from '.'
 
 export interface AddSectionProps {
-  pair: Pair | undefined
-  chainId: ChainId
-  loadingToken0: boolean
-  loadingToken1: boolean
-  token0: Type | undefined
-  token1: Type | undefined
-  setToken0(token: Type): void
-  setToken1(token: Type): void
+  pair: Pair
 }
 
 export const AddSection: FC<AddSectionProps> = ({ pair, ...rest }) => {
@@ -36,8 +26,6 @@ export const AddSection: FC<AddSectionProps> = ({ pair, ...rest }) => {
       leave="transition duration-75 ease-out"
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
-    >
-      {pair.source === 'TRIDENT' ? <AddSectionTrident {...rest} /> : <AddSectionLegacy {...rest} />}
-    </Transition>
+    ></Transition>
   )
 }
