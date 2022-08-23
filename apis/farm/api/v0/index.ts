@@ -10,7 +10,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     return response.status(204)
   }
 
-  const json = Object.fromEntries(Object.values(data).map(([chainId, data]) => [chainId, JSON.parse(data)]))
+  const json = Object.fromEntries(Object.entries(data).map(([chainId, data]) => [chainId, JSON.parse(data)]))
 
   const now = getUnixTime(Date.now())
 
