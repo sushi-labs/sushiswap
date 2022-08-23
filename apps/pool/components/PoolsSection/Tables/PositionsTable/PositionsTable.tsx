@@ -12,7 +12,7 @@ import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, APR_COLUMN, VOLUME_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
   const { selectedNetworks } = usePoolFilters()
