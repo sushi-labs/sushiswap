@@ -160,39 +160,69 @@ export const resolvers: Resolvers = {
           )
         )
       ).then((bundles) => bundles.flat()),
-    crossChainUser: async (root, args, context, info) =>
-      Promise.all(
-        args.chainIds.map((chainId) =>
-          context.Exchange.Query.user({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              chainName: chainName[chainId],
-              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-              subgraphHost: GRAPH_HOST[chainId],
-            },
-            info,
-          }).then((user) => ({
-            ...user,
-            id: args.id,
-            chainId,
-            chainName: chainName[chainId],
-            liquidityPositions: user
-              ? user.liquidityPositions.map((el) => ({
+    crossChainUser: async (root, args, context, info) => {
+      const transformer = (user, chainId) => {
+        return {
+          ...user,
+          id: args.id,
+          chainId,
+          chainName: chainName[chainId],
+          liquidityPositions: user
+            ? user.liquidityPositions.map((el) => {
+                const volume7d = el.pair.daySnapshots?.reduce((previousValue, currentValue, i) => {
+                  if (i > 6) return previousValue
+                  return previousValue + Number(currentValue.volumeUSD)
+                }, 0)
+
+                return {
                   ...el,
                   pair: {
                     ...el.pair,
+                    volume7d,
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
                   },
-                }))
-              : [],
-          }))
-        )
-      ).then((users) => {
+                }
+              })
+            : [],
+        }
+      }
+
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Exchange.Query.user({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((user) => transformer(user, chainId))
+          ),
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.user({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((user) => transformer(user, chainId))
+          ),
+      ]).then((users) => {
         return users.flat().reduce(
           (acc, cur) => {
             return {
@@ -202,6 +232,7 @@ export const resolvers: Resolvers = {
           },
           { liquidityPositions: [] }
         )
-      }),
+      })
+    },
   },
 }

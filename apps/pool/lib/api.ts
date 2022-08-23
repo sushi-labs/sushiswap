@@ -43,6 +43,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
 
     return crossChainPairs
   } catch (error) {
+    console.log(error)
     throw new Error(error)
   }
 }
@@ -99,11 +100,11 @@ export const getUser = async (query?: GetUserQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
-
+  const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUser: user } = await sdk.CrossChainUser({
     chainIds: networks,
     id: query?.id?.toLowerCase(),
+    now: Math.round(new Date().getTime() / 1000),
   })
 
   return user
