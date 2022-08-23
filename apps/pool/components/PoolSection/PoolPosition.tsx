@@ -60,7 +60,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
       <div className="flex justify-between py-3 bg-white bg-opacity-[0.04] px-6">
         <div className="flex gap-2 items-center">
           <Currency.Icon currency={token1} width={20} height={20} />
-          <Typography variant="sm" weight={700} className="text-slate-50">
+          <Typography variant="sm" weight={600} className="text-slate-50">
             {underlying1?.toSignificant(6)} {token1.symbol}
           </Typography>
         </div>
@@ -124,7 +124,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
           <div className="flex justify-between px-2 py-1">
             <div className="flex gap-2 items-center">
               <Currency.Icon currency={token1} width={20} height={20} />
-              <Typography variant="sm" weight={700} className="text-slate-50">
+              <Typography variant="sm" weight={600} className="text-slate-50">
                 {underlying1?.toSignificant(6)} {token1.symbol}
               </Typography>
             </div>

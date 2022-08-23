@@ -6,6 +6,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
+import { PairWithFarmRewards } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
@@ -87,7 +88,7 @@ export const PoolsTable: FC = () => {
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
   const { data: rewards } = useFarmRewards()
 
-  const data = useMemo(() => {
+  const data: PairWithFarmRewards[] = useMemo(() => {
     return (
       pools?.map((pool) => ({
         ...pool,
@@ -96,7 +97,7 @@ export const PoolsTable: FC = () => {
     )
   }, [pools, rewards])
 
-  const table = useReactTable({
+  const table = useReactTable<PairWithFarmRewards>({
     data,
     columns: COLUMNS,
     state: {
@@ -120,7 +121,7 @@ export const PoolsTable: FC = () => {
   }, [isSm])
 
   return (
-    <GenericTable<Pair>
+    <GenericTable<PairWithFarmRewards>
       table={table}
       columns={COLUMNS}
       loading={isValidating && !error && !pools}

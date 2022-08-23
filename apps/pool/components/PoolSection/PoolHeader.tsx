@@ -7,6 +7,7 @@ import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
+import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 
 interface PoolHeader {
   pair: PairWithAlias
@@ -17,7 +18,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
   const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
   const { data: rewards } = useFarmRewards()
 
-  const farm = rewards?.[pair.chainId]?.farms?.[pair.id]
+  const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
   const rewardAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
   const totalAPR = rewardAPR + pair.apr / 100
 
@@ -26,7 +27,6 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
       <div className="flex flex-col gap-3">
         <div className="flex gap-1">
           <NetworkIcon type="naked" chainId={pair.chainId} width={16} height={16} />
-
           <Typography variant="xs" className="text-slate-500">
             {chains[pair.chainId].name}
           </Typography>
@@ -39,8 +39,9 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
             </Currency.IconList>
             <div className="flex flex-col">
               <div className="flex gap-2 items-center">
-                <Typography variant="lg" className="text-slate-50" weight={700}>
+                <Typography variant="lg" className="text-slate-50" weight={600}>
                   {token0.symbol}/{token1.symbol}
+                  {rewardAPR && <FarmRewardsAvailableTooltip />}
                 </Typography>
               </div>
               <Typography variant="xs" className="text-slate-300">
@@ -57,7 +58,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
                 Rewards: {formatPercent(rewardAPR)}
               </Typography>
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Fees: {formatPercent(totalAPR)}
+                Fees: {formatPercent(pair.apr / 100)}
               </Typography>
             </div>
           </div>

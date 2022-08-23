@@ -1,11 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ReactNode } from 'react'
 
-import { Pair } from '../../../.graphclient'
-import { PairWithBalance } from '../../../types'
+import { PairWithBalance, PairWithFarmRewards } from '../../../types'
 
 export interface CellProps {
-  row: Pair
+  row: PairWithFarmRewards
 }
 
 export interface CellWithBalanceProps {

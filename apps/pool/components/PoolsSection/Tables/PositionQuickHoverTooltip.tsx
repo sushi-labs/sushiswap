@@ -17,12 +17,17 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
     [row.liquidityTokenBalance, liquidityToken]
   )
+
+  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = rewardAPR + row.apr / 100
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0.wrapped,
     reserve1: reserve1.wrapped,
     totalSupply,
     balance,
   })
+
   const [underlying0, underlying1] = underlying
   const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
 
@@ -49,8 +54,8 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             Fee {row.swapFee / 100}%
           </Typography>
         </div>
-        <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
+        <Typography variant="sm" weight={600} className="text-slate-50 flex gap-3">
+          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
         </Typography>
       </div>
       <hr className="border-t border-slate-200/10 my-3" />
@@ -61,7 +66,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         <div className="flex justify-between items-center gap-2">
           <div className="flex gap-2 items-center">
             <Currency.Icon currency={token0} width={18} height={18} />
-            <Typography variant="sm" weight={700} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-slate-50">
               {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
             </Typography>
           </div>
@@ -72,7 +77,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         <div className="flex justify-between items-center gap-2">
           <div className="flex gap-2 items-center">
             <Currency.Icon currency={token1} width={18} height={18} />
-            <Typography variant="sm" weight={700} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-slate-50">
               {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
             </Typography>
           </div>

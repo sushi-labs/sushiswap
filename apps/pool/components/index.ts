@@ -1,3 +1,4 @@
+export * from './FarmRewardsAvailableTooltip'
 export * from './Layout'
 export * from './PoolSection'
 export * from './PoolsProvider'

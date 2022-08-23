@@ -69,7 +69,7 @@ export const SushiBarSectionMobile: FC = () => {
             <UICurrency.Icon currency={XSUSHI_TOKEN} width={44} height={44} />
           </div>
           <div className="flex flex-col">
-            <Typography variant="lg" weight={700} className="text-slate-100">
+            <Typography variant="lg" weight={600} className="text-slate-100">
               Sushi Bar
             </Typography>
             <Typography variant="sm" weight={400} className="text-slate-400 -mt-1">
