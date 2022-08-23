@@ -1,5 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getUnixTime, subMonths } from 'date-fns'
+import { getUnixTime, subMonths, subYears } from 'date-fns'
 
 import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
@@ -68,6 +68,16 @@ export const getOneMonthBlock = async () => {
 
   return await (
     await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
+  ).blocks
+}
+
+export const getOneYearBlock = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+  const oneYearAgo = getUnixTime(subYears(new Date(), 1))
+
+  return await (
+    await sdk.EthereumBlocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } })
   ).blocks
 }
 
