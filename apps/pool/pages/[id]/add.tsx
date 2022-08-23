@@ -37,7 +37,6 @@ const Add: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallb
 }
 
 const _Add = () => {
-  const isFarm = false
   const [step, setStep] = useState(1)
   const router = useRouter()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>

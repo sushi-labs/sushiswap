@@ -65,7 +65,7 @@ export const SushiBarSectionDesktop: FC = () => {
         <div className="p-5 flex flex-col lg:flex-row rounded-2xl bg-white bg-opacity-[0.02]">
           <div className="grid grid-cols-[72px_auto] items-center gap-4 px-5">
             <div className="relative w-[72px] h-[72px]">
-              <Image src="https://sushi.com/pool/images/SushiBarNeonSign.png" layout="fill" />
+              <Image alt="neon-sign" src="https://sushi.com/pool/images/SushiBarNeonSign.png" layout="fill" />
             </div>
             <div className="flex flex-col">
               <h4 className="font-bold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>

@@ -8,10 +8,10 @@ interface Batch {
   actions: (string | undefined)[]
 }
 
-interface Action<T = any> {
+interface Action {
   contract: Contract
   fn: string
-  args?: T
+  args: ReadonlyArray<unknown>
 }
 
 export type LiquidityInput = {
@@ -53,7 +53,7 @@ export interface StandardSignatureData extends BaseSignatureData {
  * @param fn
  * @param args
  */
-export const getAsEncodedAction = <T = any>({ contract, fn, args }: Action): string => {
+export const getAsEncodedAction = ({ contract, fn, args }: Action): string => {
   return contract.interface.encodeFunctionData(fn, args)
 }
 
@@ -63,7 +63,7 @@ export const getAsEncodedAction = <T = any>({ contract, fn, args }: Action): str
  * @param contract should contain batch function
  * @param actions array of encoded function data
  */
-export const batchAction = <T = any>({ contract, actions = [] }: Batch): string | undefined => {
+export const batchAction = ({ contract, actions = [] }: Batch): string | undefined => {
   const validated = actions.filter(Boolean)
 
   if (validated.length === 0) throw new Error('No valid actions')

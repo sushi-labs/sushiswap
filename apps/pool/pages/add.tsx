@@ -174,3 +174,6 @@
 // }
 //
 // export default AddPage
+
+const AddPage = () => <span />
+export default AddPage

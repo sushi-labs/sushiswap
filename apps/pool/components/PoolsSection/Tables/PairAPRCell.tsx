@@ -5,7 +5,6 @@ import { FC } from 'react'
 import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
-  const isFarm = true
   const formattedApr = formatPercent(row.apr / 100)
 
   return (
