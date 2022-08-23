@@ -67,12 +67,14 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
           rewardToken: {
             address: SUSHI[chainId]?.address ?? '',
             symbol: SUSHI[chainId]?.symbol ?? '',
+            decimals: SUSHI[chainId]?.decimals ?? 18,
           },
         },
       ]
 
       if (pool.rewarder) {
         const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
+
         if (token) {
           let rewardPerSecond
 
@@ -86,6 +88,7 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
             }
             // Singlepool rewarder
           } else {
+            // rewardPerSecond = Number(pool.rewarder.rewardPerSecond.toString()) / Number(token.decimals)
             rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
           }
 
@@ -99,6 +102,7 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
               rewardToken: {
                 address: pool.rewarder.rewardToken,
                 symbol: token.symbol,
+                decimals: token.decimals,
               },
             })
           }

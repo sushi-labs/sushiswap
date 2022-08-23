@@ -247,6 +247,7 @@ export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x90708b20ccC1eb95a4FA7C8b18Fd2C22a0Ff9E78',
   [ChainId.MOONBEAM]: '0x2C78f1b70Ccf63CDEe49F9233e9fAa99D43AA07e',
   [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
+  [ChainId.METIS]: '0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C',
 }
 
 export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToTokenMap(
