@@ -10,12 +10,20 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     return response.status(204)
   }
 
-  const json = Object.fromEntries(Object.values(data).map(([chainId, data]) => [chainId, JSON.parse(data)]))
-
   const now = getUnixTime(Date.now())
 
-  return response.status(200).json({
-    ...json,
-    updatedSecondsAgo: now - json.updatedAtTimestamp,
-  })
+  return response.status(200).json(
+    Object.fromEntries(
+      Object.entries(data).map(([chainId, data]) => {
+        const json = JSON.parse(data)
+        return [
+          chainId,
+          {
+            ...json,
+            updatedSecondsAgo: now - json.updatedAtTimestamp,
+          },
+        ]
+      })
+    )
+  )
 }
