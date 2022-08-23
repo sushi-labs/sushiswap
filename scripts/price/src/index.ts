@@ -11,54 +11,66 @@ async function getSushiSwapResults() {
   const results = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
       const sdk = getBuiltGraphSDK({ chainId, name: SUSHISWAP_SUBGRAPH_NAME[chainId] })
-      return sdk.SushiSwapTokens({ first: 100000, where: { derivedETH_gt: 0 } })
+      return sdk.SushiSwapTokens({ first: 100000, where: { derivedETH_gt: 0 } }).catch(() => {
+        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+        return undefined
+      })
     })
   )
 
-  return results.map((result, i) => {
-    const nativePrice = Number(result.bundle?.ethPrice)
-    const updatedAtBlock = Number(result._meta?.block.number)
+  return results
+    .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
+    .map((result, i) => {
+      const nativePrice = Number(result.bundle?.ethPrice)
+      const updatedAtBlock = Number(result._meta?.block.number)
 
-    return {
-      chainId: SUSHISWAP_CHAINS[i],
-      updatedAtBlock,
-      tokens: result.tokens.map((token) => ({
-        id: token.id,
-        priceUSD: token.derivedETH * nativePrice,
-        liquidityNative: Number(token.liquidity),
-      })),
-    }
-  })
+      return {
+        chainId: SUSHISWAP_CHAINS[i],
+        updatedAtBlock,
+        tokens: result.tokens.map((token) => ({
+          id: token.id,
+          priceUSD: token.derivedETH * nativePrice,
+          liquidityNative: Number(token.liquidity),
+        })),
+      }
+    })
 }
 
 async function getTridentResults() {
   const results = await Promise.all(
     TRIDENT_CHAINS.map((chainId) => {
       const sdk = getBuiltGraphSDK({ chainId, name: TRIDENT_SUBGRAPH_NAME[chainId] })
-      return sdk.TridentTokens({
-        first: 100000,
-        where: {
-          derivedNative_gt: 0,
-        },
-      })
+      return sdk
+        .TridentTokens({
+          first: 100000,
+          where: {
+            derivedNative_gt: 0,
+          },
+        })
+        .catch(() => {
+          console.log(`Fetch failed: Trident - ${ChainId[chainId]}`)
+          return undefined
+        })
     })
   )
 
-  return results.map((result, i) => {
-    const nativePrice = Number(result.bundle?.nativePrice)
-    const updatedAtBlock = Number(result._meta?.block.number)
-    return {
-      chainId: TRIDENT_CHAINS[i],
-      updatedAtBlock,
-      tokens: result.tokenPrices.map((tokenPrice) => {
-        return {
-          id: tokenPrice.id,
-          priceUSD: tokenPrice.lastUsdPrice,
-          liquidityNative: Number(tokenPrice.token?.liquidityNative),
-        }
-      }),
-    }
-  })
+  return results
+    .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
+    .map((result, i) => {
+      //const nativePrice = Number(result.bundle?.nativePrice)
+      const updatedAtBlock = Number(result._meta?.block.number)
+      return {
+        chainId: TRIDENT_CHAINS[i],
+        updatedAtBlock,
+        tokens: result.tokenPrices.map((tokenPrice) => {
+          return {
+            id: tokenPrice.id,
+            priceUSD: Number(tokenPrice.lastUsdPrice),
+            liquidityNative: Number(tokenPrice.token?.liquidityNative),
+          }
+        }),
+      }
+    })
 }
 
 export async function execute() {
@@ -107,7 +119,6 @@ export async function execute() {
         chainId,
         JSON.stringify({
           chainId,
-          // @ts-ignore
           ...tokens.reduce((acc, token) => ({ ...acc, [token.id]: token.priceUSD }), {}),
           updatedAtBlock,
           updatedAtTimestamp,
