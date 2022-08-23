@@ -40,12 +40,10 @@ const _Remove = () => {
 
   return (
     <Layout>
-      <Layout>
-        <div className="flex flex-col gap-6 pb-40">
-          {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
-        </div>
-        <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-      </Layout>
+      <div className="flex flex-col gap-6 pb-40">
+        {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
+      </div>
+      <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
     </Layout>
   )
 }
