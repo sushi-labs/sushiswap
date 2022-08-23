@@ -76,6 +76,7 @@ export enum ChainId {
   BSC = 56,
   BSC_TESTNET = 97,
   ARBITRUM = 42161,
+  ARBITRUM_NOVA = 42170,
   ARBITRUM_RINKEBY_TESTNET = 421611,
   ARBITRUM_GNOSIS_TESTNET = 200,
   ARBITRUM_TESTNET = 79377087078960,
@@ -103,6 +104,7 @@ export enum ChainId {
 
 export enum ChainKey {
   ARBITRUM = 'arbitrum',
+  ARBITRUM_NOVA = 'arbitrum-nova',
   ARBITRUM_TESTNET = 'arbitrum-testnet',
   AVALANCHE = 'avalanche',
   AVALANCHE_TESTNET = 'avalance-testnet',
