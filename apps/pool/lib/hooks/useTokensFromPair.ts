@@ -27,7 +27,7 @@ export const useTokensFromPair = (pair: Pair) => {
         : _token0,
       _token1.wrapped.address == Native.onChain(_token1.chainId).wrapped.address
         ? Native.onChain(_token1.chainId)
-        : _token0,
+        : _token1,
       new Token({
         address: pair.id.includes(':') ? pair.id.split(':')[1] : pair.id,
         name: 'SLP Token',
