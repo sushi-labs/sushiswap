@@ -13,7 +13,7 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
   const { data: rewards } = useFarmRewards()
 
   const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const totalAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
 
   return (
     <div className="flex flex-col gap-4 w-full">
