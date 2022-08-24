@@ -1,25 +1,25 @@
+import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
-import { Currency, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
-import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 
 interface PoolHeader {
   pair: PairWithAlias
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
-  const { token0, token1, reserve1, reserve0 } = useTokensFromPair(pair)
+  const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
   const { data: rewards } = useFarmRewards()
 
   const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const rewardAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const rewardAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
   const totalAPR = rewardAPR + pair.apr / 100
 
   return (
@@ -37,21 +37,28 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
             </Currency.IconList>
-            <div className="flex flex-col">
+            <Link.External
+              className="flex flex-col !no-underline group"
+              href={chains[pair.chainId].getTokenUrl(liquidityToken.wrapped.address)}
+            >
               <div className="flex gap-2 items-center">
-                <Typography variant="lg" className="text-slate-50" weight={600}>
+                <Typography
+                  variant="lg"
+                  className="flex items-center gap-1 text-slate-50 group-hover:text-blue-400"
+                  weight={600}
+                >
                   {token0.symbol}/{token1.symbol}
-                  {rewardAPR && <FarmRewardsAvailableTooltip />}
+                  <ExternalLinkIcon width={20} height={20} className="text-slate-400 group-hover:text-blue-400" />
                 </Typography>
               </div>
               <Typography variant="xs" className="text-slate-300">
                 Fee: {pair.swapFee / 100}%
               </Typography>
-            </div>
+            </Link.External>
           </div>
           <div className="flex flex-col gap-1">
             <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APR: <span className="font-bold text-slate-50">{formatPercent(totalAPR)}</span>
+              APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
             </Typography>
             <div className="flex gap-2">
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">

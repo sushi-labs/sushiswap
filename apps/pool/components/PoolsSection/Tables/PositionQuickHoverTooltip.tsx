@@ -18,8 +18,8 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     [row.liquidityTokenBalance, liquidityToken]
   )
 
-  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
-  const totalAPR = rewardAPR / 100 + row.apr / 100
+  const rewardAPR = (row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
+  const totalAPR = rewardAPR + row.apr / 100
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0.wrapped,

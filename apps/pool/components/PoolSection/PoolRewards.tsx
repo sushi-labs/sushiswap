@@ -13,7 +13,7 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
   const { data: rewards } = useFarmRewards()
 
   const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const totalAPR = farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -22,7 +22,8 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
           Rewards
         </Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
-          Reward APR: <span className="font-bold text-slate-50">{totalAPR > 0 ? formatPercent(totalAPR) : 'n/a'}</span>
+          Reward APR:{' '}
+          <span className="font-semibold text-slate-50">{totalAPR > 0 ? formatPercent(totalAPR) : 'n/a'}</span>
         </Typography>
       </div>
       <Table.container className="w-full">

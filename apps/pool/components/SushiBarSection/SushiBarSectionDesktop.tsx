@@ -61,14 +61,14 @@ export const SushiBarSectionDesktop: FC = () => {
   return (
     <section className="hidden md:flex">
       <div className="flex w-full flex-col gap-6">
-        <h4 className="text-slate-50 font-bold">Earn trading fees from all pools on Sushi!</h4>
+        <h4 className="text-slate-50 font-semibold">Earn trading fees from all pools on Sushi!</h4>
         <div className="p-5 flex flex-col lg:flex-row rounded-2xl bg-white bg-opacity-[0.02]">
           <div className="grid grid-cols-[72px_auto] items-center gap-4 px-5">
             <div className="relative w-[72px] h-[72px]">
               <Image alt="neon-sign" src="https://sushi.com/pool/images/SushiBarNeonSign.png" layout="fill" />
             </div>
             <div className="flex flex-col">
-              <h4 className="font-bold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
+              <h4 className="font-semibold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
               <p className="text-sm text-slate-400">APR (1y)</p>
               <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
                 {stats?.apr?.['1y']}
