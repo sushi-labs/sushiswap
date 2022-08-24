@@ -43,11 +43,13 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
       ? ((pair.volumeUSD - pair7d.volumeUSD) * EXCHANGE_LP_FEE * WEEKS_IN_YEAR) / pair.reserveUSD
       : 0
 
+    const liquidityUSD = pair.trackedReserveETH * bundle?.ethPrice
+
     return {
       id: pair.id,
       feeApy: aprToApy(feeApr * 100, 3650) / 100,
       totalSupply: pair.totalSupply,
-      liquidityUSD: pair.trackedReserveETH * bundle?.ethPrice,
+      liquidityUSD: liquidityUSD > 0 ? liquidityUSD : pair.reserveUSD,
       type: 'Legacy',
     }
   })
