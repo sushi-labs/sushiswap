@@ -33,7 +33,7 @@ export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: T
             </div>
           </div>
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           <IconButton onClick={onRemove}>
             <XCircleIcon width={20} height={20} className="text-slate-500" />
           </IconButton>
@@ -76,12 +76,12 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
     <>
       <button
         onClick={() => setOpen(true)}
-        className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
+        className="relative flex items-center justify-between w-full gap-3 group rounded-xl"
       >
-        <div className="w-5 h-5 flex items-center justify-center">
+        <div className="flex items-center justify-center w-5 h-5">
           <CurrencyDollarIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
         </div>
-        <div className="flex gap-1 w-full justify-between items-center py-4">
+        <div className="flex items-center justify-between w-full gap-1 py-4">
           <Typography variant="sm" weight={500}>
             Custom Tokens
           </Typography>
@@ -112,8 +112,8 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
             />
           </div>
           {tokens.length === 0 && (
-            <div className="pointer-events-none absolute inset-0 flex justify-center items-center">
-              <div className="flex flex-col gap-1 justify-center items-center">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="flex flex-col items-center justify-center gap-1">
                 <Typography variant="xs" className="flex italic text-slate-500">
                   No custom tokens found
                 </Typography>
