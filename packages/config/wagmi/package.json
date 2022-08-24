@@ -1,0 +1,28 @@
+{
+  "name": "@sushiswap/wagmi-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Wagmi Config",
+  "keywords": [
+    "sushi",
+    "wagmi",
+    "config"
+  ],
+  "homepage": "https://sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/wagmi"
+  },
+  "license": "MIT",
+  "author": "LufyCZ <me@lufy.cz>",
+  "files": [
+    "index.ts"
+  ],
+  "dependencies": {
+    "@ethersproject/providers": "^5.0.0",
+    "@gnosis.pm/safe-apps-wagmi": "^1.0.1",
+    "@sushiswap/chain": "workspace:*",
+    "wagmi": "^0.5.12"
+  }
+}

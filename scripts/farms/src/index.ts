@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/core-sdk'
-import { client } from '@sushiswap/wagmi/client'
+import { config } from '@sushiswap/wagmi-config'
 import { createClient } from '@wagmi/core'
 import { getUnixTime } from 'date-fns'
 
@@ -9,7 +9,7 @@ import { MINICHEF_SUBGRAPH_NAME } from './config'
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import redis from './redis'
 
-createClient(client.config as any)
+createClient(config)
 
 async function execute() {
   console.log(`Updating farms`)
