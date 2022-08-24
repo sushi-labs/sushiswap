@@ -3,6 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
+import { Fee } from '@sushiswap/exchange'
 import { Button, classNames, DEFAULT_INPUT_RING, Loader, Select } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
@@ -44,6 +45,8 @@ const Test = () => {
               token0={token0}
               token1={token1}
               enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId)}
+              fee={Fee.DEFAULT}
+              twap={false}
             />
           </PoolFinder.Components>
         }
