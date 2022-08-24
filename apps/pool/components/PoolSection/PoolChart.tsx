@@ -103,7 +103,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-bold">${formatUSD(params[0].value)}</span>
+            <span class="text-sm text-slate-50 font-semibold">${formatUSD(params[0].value)}</span>
             <span class="text-xs text-slate-400 font-medium">${
               date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
             }</span>

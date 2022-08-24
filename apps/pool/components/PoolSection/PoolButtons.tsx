@@ -25,7 +25,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
         size="md"
         variant="outlined"
         as="a"
-        href={`/swap?srcToken=${pair.id}&srcChainId=${pair.chainId}`}
+        href={`/swap?srcToken=${pair.id.split(':')[1]}&srcChainId=${pair.chainId}`}
       >
         Trade
       </Button>

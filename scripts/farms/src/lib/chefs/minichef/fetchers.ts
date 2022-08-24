@@ -95,6 +95,8 @@ export async function getRewarderInfos(chainId: ChainId) {
     },
   })
 
+  console.log('get rewarder infos')
+
   return Promise.all(
     rewarders.map(async (rewarder) => {
       try {
@@ -106,7 +108,7 @@ export async function getRewarderInfos(chainId: ChainId) {
         }
         const poolLength = await readContract<MiniChefV2, Awaited<ReturnType<MiniChefV2['poolLength']>>>(poolLengthCall)
 
-        const poolIdCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
+        const poolIdCalls: ReadContractsConfig['contracts'] = [...Array(poolLength?.toNumber())].map((_, i) => ({
           addressOrName: rewarder.id,
           args: [i],
           chainId: chainId,
@@ -114,7 +116,7 @@ export async function getRewarderInfos(chainId: ChainId) {
           functionName: 'poolIds',
         }))
 
-        const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
+        const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength?.toNumber())].map((_, i) => ({
           addressOrName: rewarder.id,
           args: [i],
           chainId: chainId,
@@ -133,9 +135,19 @@ export async function getRewarderInfos(chainId: ChainId) {
           }),
         ])
 
+        // if (rewarder.id === '0x3f505b5cff05d04f468db65e27e72ec45a12645f') {
+        //   console.log(
+        //     [...Array(poolLength?.toNumber())].map((_, i) => ({
+        //       // Minichef pool ID
+        //       id: poolIds[i].toNumber(),
+        //       allocPoint: Number(poolInfos[i].allocPoint),
+        //     }))
+        //   )
+        // }
+
         return {
           id: rewarder.id,
-          pools: [...Array(poolLength.toNumber())].map((_, i) => ({
+          pools: [...Array(poolLength?.toNumber())].map((_, i) => ({
             // Minichef pool ID
             id: poolIds[i].toNumber(),
             allocPoint: Number(poolInfos[i].allocPoint),
@@ -144,7 +156,8 @@ export async function getRewarderInfos(chainId: ChainId) {
           rewardToken: rewarder.rewardToken,
           rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
         }
-      } catch {
+      } catch (error) {
+        // console.log('error', error)
         return {
           id: rewarder.id,
           rewardToken: rewarder.rewardToken,
