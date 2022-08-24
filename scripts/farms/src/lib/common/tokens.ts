@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { ERC20 } from '@sushiswap/core'
-import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-client/config'
+import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
 
 import { divBigNumberToNumber } from './utils'

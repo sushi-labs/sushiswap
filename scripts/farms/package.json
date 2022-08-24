@@ -81,6 +81,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/core-sdk": "1.0.0-canary.133",
     "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@wagmi/core": "^0.4.9"
   }

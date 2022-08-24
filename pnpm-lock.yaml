@@ -1204,6 +1204,12 @@ importers:
       '@types/eslint': 8.4.5
       '@types/node': 17.0.45
 
+  packages/config/graph:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+    dependencies:
+      '@sushiswap/chain': link:../../chain
+
   packages/config/hardhat:
     specifiers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
@@ -1428,6 +1434,7 @@ importers:
       '@graphql-mesh/utils': ^0.37.5
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -1460,6 +1467,7 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.4.15_graphql@16.6.0
       '@graphql-mesh/utils': 0.37.5_graphql@16.6.0
       '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/graph-config': link:../config/graph
       '@sushiswap/jest-config': link:../config/jest
       '@sushiswap/prettier-config': link:../config/prettier
       '@sushiswap/typescript-config': link:../config/typescript
@@ -2215,6 +2223,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -2241,6 +2250,7 @@ importers:
       '@sushiswap/core-sdk': 1.0.0-canary.133
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/graph-client': link:../../packages/graph-client
+      '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/wagmi-config': link:../../packages/config/wagmi
       '@wagmi/core': 0.4.9_ethers@5.6.9
     devDependencies:
@@ -19685,7 +19695,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.5
-      ts-node: 10.9.1_x2utdhayajzrh747hktprshhby
+      ts-node: 10.9.1_typescript@4.7.4
       yaml: 1.10.2
     dev: true
 

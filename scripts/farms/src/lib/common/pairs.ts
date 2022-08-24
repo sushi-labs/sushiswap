@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-client/config'
+import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { daysInWeek, daysInYear } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'

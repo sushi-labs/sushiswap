@@ -1,5 +1,6 @@
+import { BENTOBOX_SUBGRAPH_NAME, CHAIN_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+
 import { Resolvers } from '../.graphclient'
-import { BENTOBOX_SUBGRAPH_NAME, CHAIN_NAME, SUBGRAPH_HOST } from '../config'
 
 export const resolvers: Resolvers = {
   Rebase: {
