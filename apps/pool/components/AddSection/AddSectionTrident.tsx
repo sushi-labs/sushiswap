@@ -1,58 +1,40 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { PlusIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
-import { Amount, Price, tryParseAmount } from '@sushiswap/currency'
+import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
-import { Widget } from '@sushiswap/ui/widget'
+import { Button, createToast, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
   getV3RouterContractConfig,
   PoolState,
-  useBalances,
   useBentoBoxTotals,
   useConstantProductPool,
   useTotalSupply,
   useV3RouterContract,
-  Wallet,
-  Web3Input,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import {
-  ProviderRpcError,
-  useAccount,
-  useNetwork,
-  UserRejectedRequestError,
-  useSendTransaction,
-  useSwitchNetwork,
-} from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useTokenAmountDollarValues, useTokensFromPair } from '../../lib/hooks'
-import { useCustomTokens, useSettings } from '../../lib/state/storage'
-import { useTokens } from '../../lib/state/token-lists'
-import { Rate } from '../Rate'
+import { useTokensFromPair } from '../../lib/hooks'
+import { useSettings } from '../../lib/state/storage'
+import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { AddSectionWidget } from './AddSectionWidget'
 
 const ZERO_PERCENT = new Percent('0')
 
 export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
-  const isMounted = useIsMounted()
   const { address } = useAccount()
   const contract = useV3RouterContract(pair.chainId)
-  const tokenMap = useTokens(pair.chainId)
-  const { switchNetwork } = useSwitchNetwork()
   const [{ slippageTolerance }] = useSettings()
   const [permit, setPermit] = useState<Signature>()
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
 
   const [error, setError] = useState<string>()
@@ -61,7 +43,6 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
 
   const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
   const totalSupply = useTotalSupply(liquidityToken)
-  const { data: balances } = useBalances({ chainId: pair.chainId, account: address, currencies: [token0, token1] })
   const rebases = useBentoBoxTotals(pair.chainId, [token0, token1])
 
   const slippagePercent = useMemo(() => {
@@ -86,8 +67,6 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
         : undefined,
     ]
   }, [poolState, parsedInput0, parsedInput1, slippagePercent])
-
-  const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: [parsedInput0, parsedInput1] })
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
@@ -265,194 +244,63 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
     permit,
   ])
 
-  const insufficientBalance =
-    token0 && token1
-      ? (parsedInput0 &&
-          balances?.[token0.isNative ? AddressZero : token0.wrapped.address]?.[FundSource.WALLET]?.lessThan(
-            parsedInput0
-          )) ||
-        (parsedInput1 &&
-          balances?.[token1.isNative ? AddressZero : token1.wrapped.address]?.[FundSource.WALLET]?.lessThan(
-            parsedInput1
-          ))
-      : undefined
-
-  const price = useMemo(() => {
-    if (!parsedInput0 || !parsedInput1) return undefined
-    return new Price({ baseAmount: parsedInput0, quoteAmount: parsedInput1 })
-  }, [parsedInput0, parsedInput1])
-
   return (
     <div>
-      <Widget id="addLiquidity" maxWidth={400}>
-        <Widget.Content>
-          <Widget.Header title="Add Liquidity" />
-          <Web3Input.Currency
-            className="p-3"
-            loading={false}
-            value={input0}
-            onChange={onChangeToken0TypedAmount}
-            currency={token0}
-            customTokenMap={customTokensMap}
-            onAddToken={addCustomToken}
-            onRemoveToken={removeCustomToken}
-            chainId={pair.chainId}
-            tokenMap={tokenMap}
-          />
-          <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-            <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
-              <PlusIcon width={16} height={16} />
-            </div>
-          </div>
-          <div className="bg-slate-800">
-            <Web3Input.Currency
-              className="p-3 !pb-1"
-              value={input1}
-              onChange={onChangeToken1TypedAmount}
-              currency={token1}
-              customTokenMap={customTokensMap}
-              onAddToken={addCustomToken}
-              onRemoveToken={removeCustomToken}
-              chainId={pair.chainId}
-              tokenMap={tokenMap}
-            />
-            <div className="p-3">
-              {isMounted && !address ? (
-                <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
-                  Connect Wallet
-                </Wallet.Button>
-              ) : isMounted && chain && chain.id !== pair.chainId ? (
-                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(pair.chainId)}>
-                  Switch to {Chain.from(pair.chainId).name}
-                </Button>
-              ) : !parsedInput0 || !parsedInput1 ? (
-                <Button size="md" fullWidth disabled>
-                  Enter Amounts
-                </Button>
-              ) : insufficientBalance ? (
-                <Button size="md" fullWidth disabled>
-                  Insufficient Balance
-                </Button>
-              ) : (
-                <Button fullWidth size="md" variant="filled" disabled={isWritePending} onClick={() => setReview(true)}>
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
-                </Button>
-              )}
-            </div>
-          </div>
-        </Widget.Content>
-      </Widget>
-      <Dialog open={review} onClose={() => setReview(false)}>
-        <Dialog.Content className="max-w-sm !pb-4">
-          <Dialog.Header border={false} title="Add Liquidity" onClose={() => setReview(false)} />
-          <div className="!my-0 grid grid-cols-12 items-center">
-            <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-between w-full gap-2">
-                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                    {parsedInput0?.toSignificant(6)}{' '}
-                  </Typography>
-                  <div className="flex items-center justify-end gap-2 text-right">
-                    {parsedInput0 && (
-                      <div className="w-5 h-5">
-                        <Icon currency={parsedInput0.currency} width={20} height={20} />
-                      </div>
-                    )}
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                      {parsedInput0?.currency.symbol}
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-              <Typography variant="sm" weight={500} className="text-slate-500">
-                {value0 ? `$${value0.toFixed(2)}` : '-'}
-              </Typography>
-            </div>
-            <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
-              <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                <PlusIcon width={18} height={18} className="text-slate-200" />
-              </div>
-            </div>
-            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-between w-full gap-2">
-                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                    {parsedInput1?.toSignificant(6)}{' '}
-                  </Typography>
-                  <div className="flex items-center justify-end gap-2 text-right">
-                    {parsedInput1 && (
-                      <div className="w-5 h-5">
-                        <Icon currency={parsedInput1.currency} width={20} height={20} />
-                      </div>
-                    )}
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                      {parsedInput1?.currency.symbol}
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-              <Typography variant="sm" weight={500} className="text-slate-500">
-                {value1 ? `$${value1.toFixed(2)}` : ''}
-              </Typography>
-            </div>
-          </div>
-          <div className="flex justify-center p-4">
-            <Rate price={price}>
-              {({ toggleInvert, content, usdPrice }) => (
-                <Typography
-                  as="button"
-                  onClick={() => toggleInvert()}
-                  variant="sm"
-                  weight={600}
-                  className="flex items-center gap-1 text-slate-100"
-                >
-                  {content} {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
-                </Typography>
-              )}
-            </Rate>
-          </div>
-          <Approve
-            className="flex-grow !justify-end"
-            components={
-              <Approve.Components>
-                <Approve.Bentobox
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  address={getV3RouterContractConfig(pair.chainId).addressOrName}
-                  onSignature={setPermit}
-                />
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={parsedInput0}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                />
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={parsedInput1}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              return (
-                <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
-                  Add
-                </Button>
-              )
-            }}
-          />
-          {error && (
-            <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-              {error}
-            </Typography>
-          )}
-        </Dialog.Content>
-      </Dialog>
+      <AddSectionWidget
+        chainId={pair.chainId}
+        input0={input0}
+        input1={input1}
+        token0={token0}
+        token1={token1}
+        onInput0={onChangeToken0TypedAmount}
+        onInput1={onChangeToken1TypedAmount}
+        isWritePending={isWritePending}
+        onReview={() => setReview(true)}
+      />
+      <AddSectionReviewModal
+        chainId={pair.chainId}
+        input0={parsedInput0}
+        input1={parsedInput1}
+        open={review}
+        setOpen={setReview}
+        error={error}
+      >
+        <Approve
+          className="flex-grow !justify-end"
+          components={
+            <Approve.Components>
+              <Approve.Bentobox
+                size="md"
+                className="whitespace-nowrap"
+                fullWidth
+                address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                onSignature={setPermit}
+              />
+              <Approve.Token
+                size="md"
+                className="whitespace-nowrap"
+                fullWidth
+                amount={parsedInput0}
+                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+              />
+              <Approve.Token
+                size="md"
+                className="whitespace-nowrap"
+                fullWidth
+                amount={parsedInput1}
+                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+              />
+            </Approve.Components>
+          }
+          render={({ approved }) => {
+            return (
+              <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
+                Add
+              </Button>
+            )
+          }}
+        />
+      </AddSectionReviewModal>
     </div>
   )
 }
