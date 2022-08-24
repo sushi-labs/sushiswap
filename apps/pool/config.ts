@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAIN_IDS = [
-  // ChainId.ETHEREUM,
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -11,8 +12,8 @@ export const SUPPORTED_CHAIN_IDS = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.HARMONY,
-  // ChainId.POLYGON,
+  ChainId.KAVA,
+  ChainId.METIS,
 ]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
@@ -22,6 +23,7 @@ const KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
 const PENDING_KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
 
 export const GRAPH_HOST = {
+  [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
   [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
   [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
   [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
@@ -33,6 +35,8 @@ export const GRAPH_HOST = {
   [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
+  [ChainId.KAVA]: 'pvt.graph.kava.io/subgraphs/name',
+  [ChainId.METIS]: 'andromeda.thegraph.metis.io/subgraphs/name',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -53,8 +57,16 @@ export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 export const STAKING_ENABLED_NETWORKS = [ChainId.ARBITRUM]
 
+export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.OPTIMISM]: 'sushi-labs/trident-optimism',
+  [ChainId.POLYGON]: 'sushi-graph/trident-polygon',
+  [ChainId.METIS]: 'sushi-labs/trident-metis',
+  [ChainId.KAVA]: 'sushiswap/trident-kava',
+}
+
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+
 export const AMM_ENABLED_NETWORKS = [
-  // ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -64,6 +76,4 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.HARMONY,
-  // ChainId.POLYGON,
 ]

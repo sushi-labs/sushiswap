@@ -78,6 +78,7 @@ export const FEES_24_COLUMN: ExtendedColumnDef<Pair, unknown> = {
 
 export const FEES_7_COLUMN: ExtendedColumnDef<Pair, unknown> = {
   header: 'Fees (7d)',
+  id: 'fees7d',
   // accessorFn: (row) => row.fees7d,
   cell: (props) => <PairFees7dCell row={props.row.original} />,
   size: 100,

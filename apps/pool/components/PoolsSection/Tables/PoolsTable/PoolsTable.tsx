@@ -1,17 +1,19 @@
 import { ChainId } from '@sushiswap/chain'
 import { useBreakpoint } from '@sushiswap/ui'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
+import { PairWithFarmRewards } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL_COLUMN } from '../contants'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 const fetcher = ({
   url,
@@ -84,9 +86,19 @@ export const PoolsTable: FC = () => {
   )
 
   const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
+  const { data: rewards } = useFarmRewards()
 
-  const table = useReactTable({
-    data: pools ?? [],
+  const data: PairWithFarmRewards[] = useMemo(() => {
+    return (
+      pools?.map((pool) => ({
+        ...pool,
+        incentives: rewards?.[pool.chainId]?.farms?.[pool.id]?.incentives || [],
+      })) || []
+    )
+  }, [pools, rewards])
+
+  const table = useReactTable<PairWithFarmRewards>({
+    data,
     columns: COLUMNS,
     state: {
       sorting,
@@ -109,7 +121,7 @@ export const PoolsTable: FC = () => {
   }, [isSm])
 
   return (
-    <GenericTable<Pair>
+    <GenericTable<PairWithFarmRewards>
       table={table}
       columns={COLUMNS}
       loading={isValidating && !error && !pools}

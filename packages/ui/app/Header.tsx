@@ -96,9 +96,9 @@ export function Header({
             }
           >
             <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 max-h-[unset]">
-              <div className="grid grid-cols-1 gap-1 px-2 py-3 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-1 px-2 py-3 pt-4 md:grid-cols-3">
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Core
                   </Typography>
                   <Select.Option
@@ -113,7 +113,7 @@ export function Header({
                       The easiest way to trade
                     </Typography>
                   </Select.Option>
-                  <Select.Option
+                  {/* <Select.Option
                     as="a"
                     href="https://sushi.com/pool"
                     key={AppType.Pool}
@@ -124,10 +124,10 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Earn fees by providing liquidity
                     </Typography>
-                  </Select.Option>
+                  </Select.Option> */}
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Products
                   </Typography>
                   {/* <Select.Option
@@ -154,7 +154,7 @@ export function Header({
                       Earn, stream and automate with Furo
                     </Typography>
                   </Select.Option>
-                  <Select.Option
+                  {/* <Select.Option
                     as="a"
                     href="https://sushi.com/analytics"
                     key={AppType.Analytics}
@@ -165,10 +165,10 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Find the best opportunities
                     </Typography>
-                  </Select.Option>
+                  </Select.Option> */}
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Links
                   </Typography>
                   <Select.Option

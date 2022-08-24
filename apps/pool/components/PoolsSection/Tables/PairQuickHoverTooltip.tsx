@@ -1,19 +1,20 @@
-import { Native } from '@sushiswap/currency'
-import { formatPercent } from '@sushiswap/format'
+import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { getAddress } from 'ethers/lib/utils'
 import { FC } from 'react'
 
-import { Pair } from '../../../.graphclient'
 import { useTokensFromPair } from '../../../lib/hooks'
+import { PairWithFarmRewards } from '../../../types'
 import { ICON_SIZE } from './contants'
 
 interface PairQuickHoverTooltipProps {
-  row: Pair
+  row: PairWithFarmRewards
 }
 
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
+
+  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
+  const totalAPR = rewardAPR / 100 + row.apr / 100
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -25,7 +26,7 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
               <Currency.Icon currency={token1} />
             </Currency.IconList>
             <div className="flex flex-col">
-              <Typography variant="sm" weight={500} className="text-slate-50 flex gap-1">
+              <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
                 {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
               </Typography>
               <Typography variant="xxs" className="text-slate-400">
@@ -33,46 +34,37 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
               </Typography>
             </div>
           </div>
-          <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
-            <Chip color="gray" size="sm" label="Classic" />
-            Fee {row.swapFee / 100}%
+          <Typography variant="xs" weight={600} className="flex gap-1.5 mt-1 items-center text-slate-400">
+            <Chip color="gray" label={`Fee ${row.swapFee / 100}%`} />
           </Typography>
         </div>
-        <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
+        <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
         </Typography>
       </div>
-      <hr className="border-t border-slate-200/10 my-3" />
-      <div className="flex flex-col gap-1.5">
-        <Typography variant="xs" className="text-slate-500 mb-1">
-          Reward Emission
-        </Typography>
-        <div className="flex items-center gap-2">
-          <Currency.Icon currency={token0} width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-slate-50">
-            <span>420 {token0.symbol}</span> <span className="font-normal text-slate-300">per day</span>
-          </Typography>
-        </div>
-        <div className="flex items-center gap-2">
-          <Currency.Icon currency={token1} width={18} height={18} />
-          <Typography variant="sm" weight={700} className="text-slate-50">
-            <span>420 {token1.symbol}</span> <span className="font-normal text-slate-300">per day</span>
-          </Typography>
-        </div>
-      </div>
-      <div className="flex gap-2 mt-8 mb-2 justify-end">
-        <Link.Internal
-          href={`/add?token0=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token0.id)
-          }&token1=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token1.id)
-          }&chainId=${row.chainId}`}
-          passHref={true}
-        >
+      {row.incentives.length > 0 && (
+        <>
+          <hr className="my-3 border-t border-slate-200/10" />
+          <div className="flex flex-col gap-1.5">
+            <Typography variant="xs" className="mb-1 text-slate-500">
+              Reward Emission
+            </Typography>
+            {row.incentives.map((incentive, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Currency.Icon currency={incentive.rewardToken} width={18} height={18} />
+                <Typography variant="sm" weight={600} className="text-slate-50">
+                  <span>
+                    {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}
+                  </span>{' '}
+                  <span className="font-normal text-slate-300">per day</span>
+                </Typography>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      <div className="flex justify-end gap-2 mt-4 mb-2">
+        <Link.Internal href={`/${row.id}/add`} passHref={true}>
           <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>

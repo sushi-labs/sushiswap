@@ -29,5 +29,5 @@ export const KASHI_SUBGRAPH_HOST: Record<number | string, string> = {
 
 export const KASHI_SUBGRAPH_NAME: Record<number | string, string> = {
   // [ChainId.POLYGON]: 'sushiswap/kashi-polygon',
-  [ChainId.ARBITRUM]: 'olastenberg/kashi-arbitrum',
+  [ChainId.ARBITRUM]: 'sushi-labs/kashi-arbitrum',
 }

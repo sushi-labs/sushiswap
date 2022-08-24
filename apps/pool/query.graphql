@@ -7,14 +7,35 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
-  crossChainPairs(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds) {
+query CrossChainPairs(
+  $first: Int = 20
+  $skip: Int = 0
+  $where: Pair_filter
+  $orderBy: Pair_orderBy = apr
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [BigInt!]!
+  $now: Int!
+) {
+  crossChainPairs(
+    first: $first, 
+    skip: $skip, 
+    where: $where, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection,
+    block: $block, 
+    chainIds: $chainIds, 
+    now: $now
+  ) {
     id
     chainId
     chainName
     chainShortName
     name
     swapFee
+    twapEnabled
+    volume7d
+    source
     token0 {
       name
       id
@@ -30,11 +51,16 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
     liquidityNative
     liquidityUSD
     apr
+    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+      id
+      date
+      volumeUSD
+    }
   }
 }
 
-query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
-  crossChainUser(id: $id, block: $block, chainIds: $chainIds) {
+query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!, $now: Int!) {
+  crossChainUser(id: $id, block: $block, chainIds: $chainIds, now: $now) {
     liquidityPositions {
       balance
       pair {
@@ -45,6 +71,10 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
         reserve0
         reserve1
         liquidity
+        swapFee
+        source
+        twapEnabled
+        volume7d
         token0 {
           id
           name
@@ -57,8 +87,14 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
           decimals
           symbol
         }
+        apr
         liquidityNative
         liquidityUSD
+        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+          id
+          date
+          volumeUSD
+        }
       }
     }
   }
@@ -76,6 +112,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     reserve0
     reserve1
     liquidity
+    source
     token0 {
       name
       id
@@ -93,6 +130,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     volumeUSD
     apr
     swapFee
+    twapEnabled
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
@@ -146,6 +184,8 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     liquidityUSD
     volumeUSD
     apr
+    swapFee
+    twapEnabled
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date

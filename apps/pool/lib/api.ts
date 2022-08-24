@@ -1,8 +1,8 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getUnixTime, subMonths } from 'date-fns'
+import { getUnixTime, subMonths, subYears } from 'date-fns'
 
 import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
-import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS } from '../config'
+import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getBundles = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
@@ -23,23 +23,27 @@ export type GetPoolsQuery = QuerypairsArgs & { networks: string }
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const { getBuiltGraphSDK } = await import('../.graphclient')
-    const { CrossChainPairs } = getBuiltGraphSDK()
+    const sdk = getBuiltGraphSDK()
+
     const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
     const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     const where = query?.where ? query.where : { liquidityUSD_gt: 5000 }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks ? JSON.parse(query.networks) : AMM_ENABLED_NETWORKS
-    const { crossChainPairs } = await CrossChainPairs({
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+    const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
       where,
       orderBy,
       orderDirection,
       chainIds,
+      now: Math.round(new Date().getTime() / 1000),
     })
+
     return crossChainPairs
   } catch (error) {
+    console.log(error)
     throw new Error(error)
   }
 }
@@ -64,6 +68,16 @@ export const getOneMonthBlock = async () => {
 
   return await (
     await sdk.EthereumBlocks({ where: { timestamp_gt: oneMonthAgo, timestamp_lt: oneMonthAgo + 30000 } })
+  ).blocks
+}
+
+export const getOneYearBlock = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+  const oneYearAgo = getUnixTime(subYears(new Date(), 1))
+
+  return await (
+    await sdk.EthereumBlocks({ where: { timestamp_gt: oneYearAgo, timestamp_lt: oneYearAgo + 30000 } })
   ).blocks
 }
 
@@ -96,11 +110,11 @@ export const getUser = async (query?: GetUserQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
-  const networks = JSON.parse(query?.networks || JSON.stringify(AMM_ENABLED_NETWORKS))
-
+  const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUser: user } = await sdk.CrossChainUser({
     chainIds: networks,
     id: query?.id?.toLowerCase(),
+    now: Math.round(new Date().getTime() / 1000),
   })
 
   return user

@@ -19,12 +19,12 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
   return (
     <div className="flex flex-col w-full gap-4">
       <div className="flex items-center justify-between px-2">
-        <Typography weight={700} className="text-slate-50">
+        <Typography weight={600} className="text-slate-50">
           Pool Composition
         </Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
           Total Assets:{' '}
-          <span className="font-bold text-slate-50">
+          <span className="font-semibold text-slate-50">
             {' '}
             {formatUSD(
               pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address].toFixed(10))
@@ -52,7 +52,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               <Table.td>
                 <div className="flex items-center gap-3">
                   <Currency.Icon currency={token0} width={24} height={24} />
-                  <Typography weight={700} variant="sm" className="text-slate-50">
+                  <Typography weight={600} variant="sm" className="text-slate-50">
                     {token0.symbol}
                   </Typography>
                 </div>
@@ -65,8 +65,8 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               <Table.td>
                 <Typography weight={600} variant="sm" className="text-slate-50">
                   {formatUSD(
-                    prices?.[token0.address]
-                      ? reserve0.multiply(prices?.[token0.address].asFraction).toSignificant(6)
+                    prices?.[token0.wrapped.address]
+                      ? reserve0.multiply(prices?.[token0.wrapped.address].asFraction).toSignificant(6)
                       : ''
                   )}
                 </Typography>
@@ -76,7 +76,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               <Table.td>
                 <div className="flex items-center gap-3">
                   <Currency.Icon currency={token1} width={24} height={24} />
-                  <Typography weight={700} variant="sm" className="text-slate-50">
+                  <Typography weight={600} variant="sm" className="text-slate-50">
                     {token1.symbol}
                   </Typography>
                 </div>
@@ -89,8 +89,8 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
               <Table.td>
                 <Typography weight={600} variant="sm" className="text-slate-50">
                   {formatUSD(
-                    prices?.[token1.address]
-                      ? reserve1.multiply(prices?.[token1.address].asFraction).toSignificant(6)
+                    prices?.[token1.wrapped.address]
+                      ? reserve1.multiply(prices?.[token1.wrapped.address].asFraction).toSignificant(6)
                       : ''
                   )}
                 </Typography>

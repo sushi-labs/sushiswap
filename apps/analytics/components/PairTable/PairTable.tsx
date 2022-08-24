@@ -129,7 +129,7 @@ export const PairTable: FC = () => {
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false })
+      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
     }
   }, [isLg, isMd, isSm])
 
