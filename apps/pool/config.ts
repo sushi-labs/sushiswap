@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAIN_IDS = [
+  ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,

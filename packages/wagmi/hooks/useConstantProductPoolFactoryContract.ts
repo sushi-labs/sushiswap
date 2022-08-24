@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { useContract, useSigner } from 'wagmi'
+import { useContract, useProvider } from 'wagmi'
 
 import CONSTANT_PRODUCT_POOL_FACTORY_ABI from '../abis/constant-product-pool-factory.json'
 
@@ -14,9 +14,8 @@ export const getConstantProductPoolFactoryContract = (chainId: number | undefine
 })
 
 export function useConstantProductPoolFactoryContract(chainId: ChainId) {
-  const { data: signerOrProvider } = useSigner()
   return useContract({
     ...getConstantProductPoolFactoryContract(chainId),
-    signerOrProvider,
+    signerOrProvider: useProvider({ chainId }),
   })
 }

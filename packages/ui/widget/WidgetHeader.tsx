@@ -3,7 +3,7 @@ import { FC, ReactNode } from 'react'
 import { Typography } from '../typography'
 
 export interface WidgetHeaderProps {
-  title: string
+  title: ReactNode
   children?: ReactNode
 }
 

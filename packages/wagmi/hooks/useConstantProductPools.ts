@@ -16,7 +16,7 @@ export enum PoolState {
 
 const POOL_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_ABI)
 
-type PoolInput = [Type, Type, Fee, boolean]
+type PoolInput = [Type | undefined, Type | undefined, Fee, boolean]
 
 interface PoolData {
   address: string
@@ -150,15 +150,15 @@ export function useConstantProductPools(
   const input = useMemo(
     () =>
       pools
-        .filter((input) => {
-          const [tokenA, tokenB, fee, twap] = input
+        .filter((input): input is [Type, Type, Fee, boolean] => {
+          const [currencyA, currencyB, fee, twap] = input
           return Boolean(
-            tokenA &&
-              tokenB &&
+            currencyA &&
+              currencyB &&
               fee &&
               twap !== undefined &&
-              tokenA.chainId === tokenB.chainId &&
-              !tokenA.equals(tokenB) &&
+              currencyA.chainId === currencyB.chainId &&
+              !currencyA.wrapped.equals(currencyB.wrapped) &&
               constantProductPoolFactory?.address
           )
         })
@@ -227,8 +227,8 @@ export function useConstantProductPools(
 
 export function useConstantProductPool(
   chainId: number,
-  tokenA: Type,
-  tokenB: Type,
+  tokenA: Type | undefined,
+  tokenB: Type | undefined,
   fee: Fee,
   twap: boolean
 ): [PoolState, ConstantProductPool | null] {
