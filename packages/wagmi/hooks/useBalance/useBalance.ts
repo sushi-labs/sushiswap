@@ -13,6 +13,7 @@ type UseBalancesParams = {
   account: string | undefined
   currencies: (Type | undefined)[]
   chainId?: ChainId
+  enabled?: boolean
 }
 
 type UseBalances = (params: UseBalancesParams) => (
@@ -22,10 +23,15 @@ type UseBalances = (params: UseBalancesParams) => (
   data: BalanceMap
 }
 
-export const useBalances: UseBalances = (params) => {
+export const useBalances: UseBalances = ({ enabled, ...params }) => {
   const _params = useMemo(
-    () => ({ chainId: params.chainId, currencies: params.currencies, account: params.account }),
-    [params.chainId, params.account, params.currencies]
+    () => ({
+      chainId: params.chainId,
+      currencies: params.currencies,
+      account: params.account,
+      enabled,
+    }),
+    [params.chainId, params.account, params.currencies, enabled]
   )
 
   const { data: walletBalances, isError: walletError, isLoading: walletLoading } = useWalletBalances(_params)

@@ -5,7 +5,7 @@ import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dots, Link } from '@sushiswap/ui'
-import { Approve, useBalances } from '@sushiswap/wagmi'
+import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import Image from 'next/image'
 import { FC, useCallback, useState } from 'react'
@@ -18,7 +18,7 @@ const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
 
 export const SushiBarSectionDesktop: FC = () => {
-  const { chain: activeChain } = useNetwork()
+  const { chain } = useNetwork()
   const { address } = useAccount()
   const [stake, setStake] = useState<boolean>(true)
   const [value, setValue] = useState<string>('')
@@ -28,7 +28,7 @@ export const SushiBarSectionDesktop: FC = () => {
     fetch(url).then((response) => response.json())
   )
 
-  const { writeAsync } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: stake ? 'enter' : 'leave',
   })
@@ -42,13 +42,13 @@ export const SushiBarSectionDesktop: FC = () => {
   const amount = tryParseAmount(value, stake ? SUSHI_TOKEN : XSUSHI_TOKEN)
 
   const execute = useCallback(async () => {
-    if (!activeChain?.id || !amount?.greaterThan(ZERO)) return
+    if (!chain?.id || !amount?.greaterThan(ZERO)) return
 
     const data = await writeAsync({ args: [amount.quotient.toString()] })
 
     createToast({
       txHash: data.hash,
-      href: Chain.from(activeChain.id).getTxUrl(data.hash),
+      href: Chain.from(chain.id).getTxUrl(data.hash),
       promise: data.wait(),
       summary: {
         pending: <Dots>{stake ? 'Entering' : 'Exiting'} the Bar</Dots>,
@@ -56,7 +56,7 @@ export const SushiBarSectionDesktop: FC = () => {
         failed: `Something went wrong ${stake ? 'entering' : 'exiting'} the Bar`,
       },
     })
-  }, [activeChain?.id, amount, writeAsync, stake])
+  }, [chain?.id, amount, writeAsync, stake])
 
   return (
     <section className="hidden md:flex">
@@ -121,13 +121,25 @@ export const SushiBarSectionDesktop: FC = () => {
                 }
                 render={({ approved }) => {
                   return (
-                    <Button
-                      onClick={execute}
-                      disabled={!approved}
-                      className="w-[130px] min-h-[48px] max-w-[130px] order-4"
-                    >
-                      {stake ? 'Stake' : 'Unstake'}
-                    </Button>
+                    <Checker.Connected className="whitespace-nowrap !h-[48px]">
+                      <Checker.Network className="whitespace-nowrap !h-[48px]" chainId={ChainId.ETHEREUM}>
+                        <Checker.Amounts
+                          className="whitespace-nowrap !h-[48px]"
+                          chainId={ChainId.ETHEREUM}
+                          fundSource={FundSource.WALLET}
+                          amounts={[amount]}
+                        >
+                          <Button
+                            className="!h-[48px]"
+                            fullWidth
+                            onClick={execute}
+                            disabled={!approved || isWritePending}
+                          >
+                            {isWritePending ? <Dots>Confirm transaction</Dots> : stake ? 'Stake' : 'Unstake'}
+                          </Button>
+                        </Checker.Amounts>
+                      </Checker.Network>
+                    </Checker.Connected>
                   )
                 }}
               />

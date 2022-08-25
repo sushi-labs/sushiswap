@@ -12,6 +12,7 @@ type UseBentoBalancesParams = {
   account: string | undefined
   currencies: (Type | undefined)[]
   chainId?: ChainId
+  enabled?: boolean
 }
 
 type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
@@ -21,7 +22,7 @@ type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainId }) => {
+export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainId, enabled = true }) => {
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
       currencies.reduce<[Token[], string[][]]>(
@@ -56,6 +57,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
   } = useContractReads({
     contracts: contractsForTotalsRequest,
     keepPreviousData: true,
+    enabled,
   })
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
@@ -105,6 +107,7 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
   } = useContractReads({
     contracts: contractsForBalancesRequest,
     keepPreviousData: true,
+    enabled,
   })
 
   return useMemo(() => {

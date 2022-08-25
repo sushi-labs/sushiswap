@@ -1,13 +1,9 @@
-import { AddressZero } from '@ethersproject/constants'
 import { PlusIcon } from '@heroicons/react/solid'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
+import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { Widget } from '@sushiswap/ui/widget'
-import { useBalances, Wallet, Web3Input } from '@sushiswap/wagmi'
-import { FC, useMemo } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { Web3Input } from '@sushiswap/wagmi'
+import { FC, ReactNode } from 'react'
 
 import { useCustomTokens } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
@@ -22,8 +18,7 @@ interface AddSectionWidgetProps {
   onSelectToken1?(currency: Type): void
   onInput0(value: string): void
   onInput1(value: string): void
-  isWritePending: boolean
-  onReview(): void
+  children: ReactNode
 }
 
 export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
@@ -36,32 +31,10 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   onSelectToken1,
   onInput0,
   onInput1,
-  onReview,
-  isWritePending,
+  children,
 }) => {
-  const { chain } = useNetwork()
-  const isMounted = useIsMounted()
   const tokenMap = useTokens(chainId)
-  const { address } = useAccount()
-  const { switchNetwork } = useSwitchNetwork()
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const { data: balances } = useBalances({ chainId, account: address, currencies: [token0, token1] })
-
-  const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
-  }, [input0, input1, token0, token1])
-
-  const insufficientBalance =
-    token0 && token1
-      ? (parsedInput0 &&
-          balances?.[token0.isNative ? AddressZero : token0.wrapped.address]?.[FundSource.WALLET]?.lessThan(
-            parsedInput0
-          )) ||
-        (parsedInput1 &&
-          balances?.[token1.isNative ? AddressZero : token1.wrapped.address]?.[FundSource.WALLET]?.lessThan(
-            parsedInput1
-          ))
-      : undefined
 
   return (
     <Widget id="addLiquidity" maxWidth={400}>
@@ -98,29 +71,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             chainId={chainId}
             tokenMap={tokenMap}
           />
-          <div className="p-3">
-            {isMounted && !address ? (
-              <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
-                Connect Wallet
-              </Wallet.Button>
-            ) : isMounted && chain && chain.id !== chainId ? (
-              <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(chainId)}>
-                Switch to {Chain.from(chainId).name}
-              </Button>
-            ) : !parsedInput0 || !parsedInput1 ? (
-              <Button size="md" fullWidth disabled>
-                Enter Amounts
-              </Button>
-            ) : insufficientBalance ? (
-              <Button size="md" fullWidth disabled>
-                Insufficient Balance
-              </Button>
-            ) : (
-              <Button fullWidth size="md" variant="filled" disabled={isWritePending} onClick={onReview}>
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
-              </Button>
-            )}
-          </div>
+          <div className="p-3">{children}</div>
         </div>
       </Widget.Content>
     </Widget>

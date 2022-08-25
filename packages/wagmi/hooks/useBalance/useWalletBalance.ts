@@ -10,6 +10,7 @@ type UseWalletBalancesParams = {
   account: string | undefined
   currencies: (Type | undefined)[]
   chainId?: ChainId
+  enabled?: boolean
 }
 
 type UseWalletBalances = (params: UseWalletBalancesParams) => (
@@ -19,12 +20,12 @@ type UseWalletBalances = (params: UseWalletBalancesParams) => (
   data: Record<string, Amount<Type>> | undefined
 }
 
-export const useWalletBalances: UseWalletBalances = ({ account, currencies, chainId }) => {
+export const useWalletBalances: UseWalletBalances = ({ account, currencies, chainId, enabled = true }) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId, keepPreviousData: true })
+  } = useBalance({ addressOrName: account, chainId, keepPreviousData: true, enabled })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -61,7 +62,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
-    enabled: Boolean(account && validatedTokenAddresses.length),
+    enabled: Boolean(account && validatedTokenAddresses.length) && enabled,
     keepPreviousData: true,
   })
 

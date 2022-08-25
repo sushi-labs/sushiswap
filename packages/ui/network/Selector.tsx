@@ -31,7 +31,7 @@ export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetwo
   )
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-wrap">
       {networks.map((chainId) => (
         <Tooltip
           mouseEnterDelay={0.5}

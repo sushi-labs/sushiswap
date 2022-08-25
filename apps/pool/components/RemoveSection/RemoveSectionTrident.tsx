@@ -7,24 +7,17 @@ import { Percent } from '@sushiswap/math'
 import { Button, createToast, Dots } from '@sushiswap/ui'
 import {
   Approve,
+  Checker,
   getV3RouterContractConfig,
-  PairState,
+  PoolState,
   useBalance,
   useBentoBoxTotals,
-  usePair,
+  useConstantProductPool,
   useTotalSupply,
   useV3RouterContract,
-  Wallet,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import {
-  ProviderRpcError,
-  useAccount,
-  useNetwork,
-  UserRejectedRequestError,
-  useSendTransaction,
-  useSwitchNetwork,
-} from 'wagmi'
+import { ProviderRpcError, useAccount, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
 import {
@@ -47,10 +40,8 @@ interface RemoveSectionTridentProps {
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
-  const { chain } = useNetwork()
   const isMounted = useIsMounted()
   const contract = useV3RouterContract(pair.chainId)
-  const { switchNetwork } = useSwitchNetwork()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
@@ -68,7 +59,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     return balance?.[FundSource.WALLET].multiply(percentageEntity)
   }, [balance, percentageEntity])
 
-  const [poolState, pool] = usePair(pair.chainId, token0, token1)
+  const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
   const totalSupply = useTotalSupply(liquidityToken)
 
   const underlying = useUnderlyingTokenBalanceFromPair({
@@ -215,52 +206,62 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           setPercentage={setPercentage}
           error={error}
         >
-          {isMounted && !address ? (
-            <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
-              Connect Wallet
-            </Wallet.Button>
-          ) : isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState) ? (
-            <Button size="md" color="gray" fullWidth disabled={true}>
-              Pool Not Found
-            </Button>
-          ) : chain && chain.id !== pair.chainId ? (
-            <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(pair.chainId)}>
-              Switch to {Chain.from(pair.chainId).name}
-            </Button>
-          ) : percentage <= 0 ? (
-            <Button size="md" fullWidth disabled={true}>
-              Enter Amount
-            </Button>
-          ) : (
-            <Approve
-              className="flex-grow !justify-end"
-              components={
-                <Approve.Components>
-                  <Approve.Bentobox
-                    size="md"
-                    className="whitespace-nowrap"
-                    fullWidth
-                    address={getV3RouterContractConfig(pair.chainId).addressOrName}
-                    onSignature={setPermit}
-                  />
-                  <Approve.Token
-                    size="md"
-                    className="whitespace-nowrap"
-                    fullWidth
-                    amount={slpAmountToRemove}
-                    address={getV3RouterContractConfig(pair.chainId).addressOrName}
-                  />
-                </Approve.Components>
+          <Checker.Connected>
+            <Checker.Custom
+              logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+              button={
+                <Button size="md" color="gray" fullWidth disabled={true}>
+                  Pool Not Found
+                </Button>
               }
-              render={({ approved }) => {
-                return (
-                  <Button onClick={execute} fullWidth size="md" variant="filled" disabled={!approved || isWritePending}>
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                  </Button>
-                )
-              }}
-            />
-          )}
+            >
+              <Checker.Network chainId={pair.chainId}>
+                <Checker.Custom
+                  logic={percentage <= 0}
+                  button={
+                    <Button size="md" fullWidth disabled={true}>
+                      Enter Amount
+                    </Button>
+                  }
+                >
+                  <Approve
+                    className="flex-grow !justify-end"
+                    components={
+                      <Approve.Components>
+                        <Approve.Bentobox
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                          onSignature={setPermit}
+                        />
+                        <Approve.Token
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={slpAmountToRemove}
+                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                        />
+                      </Approve.Components>
+                    }
+                    render={({ approved }) => {
+                      return (
+                        <Button
+                          onClick={execute}
+                          fullWidth
+                          size="md"
+                          variant="filled"
+                          disabled={!approved || isWritePending}
+                        >
+                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                        </Button>
+                      )
+                    }}
+                  />
+                </Checker.Custom>
+              </Checker.Network>
+            </Checker.Custom>
+          </Checker.Connected>
         </RemoveSectionWidget>
       </div>
     </Layout>

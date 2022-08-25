@@ -4,7 +4,7 @@ import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
-import { Approve, useBalances, Wallet } from '@sushiswap/wagmi'
+import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
@@ -27,7 +27,7 @@ export const SushiBarSectionMobile: FC = () => {
     fetch(url).then((response) => response.json())
   )
 
-  const { writeAsync } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
   })
@@ -140,15 +140,33 @@ export const SushiBarSectionMobile: FC = () => {
                       }
                       render={({ approved }) => {
                         return (
-                          <Wallet.Button
-                            onClick={execute}
-                            disabled={!approved}
-                            size="md"
-                            fullWidth
-                            appearOnMount={false}
-                          >
-                            {selectedIndex === 0 ? 'Stake' : 'Unstake'}
-                          </Wallet.Button>
+                          <Checker.Connected size="md" fullWidth className="whitespace-nowrap">
+                            <Checker.Network
+                              size="md"
+                              fullWidth
+                              className="whitespace-nowrap"
+                              chainId={ChainId.ETHEREUM}
+                            >
+                              <Checker.Amounts
+                                size="md"
+                                fullWidth
+                                className="whitespace-nowrap"
+                                chainId={ChainId.ETHEREUM}
+                                fundSource={FundSource.WALLET}
+                                amounts={[amount]}
+                              >
+                                <Button size="md" fullWidth onClick={execute} disabled={!approved || isWritePending}>
+                                  {isWritePending ? (
+                                    <Dots>Confirm transaction</Dots>
+                                  ) : selectedIndex === 0 ? (
+                                    'Stake'
+                                  ) : (
+                                    'Unstake'
+                                  )}
+                                </Button>
+                              </Checker.Amounts>
+                            </Checker.Network>
+                          </Checker.Connected>
                         )
                       }}
                     />

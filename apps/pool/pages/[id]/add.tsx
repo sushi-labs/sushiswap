@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Container, Link, Typography } from '@sushiswap/ui'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
@@ -43,8 +44,11 @@ const _Add = () => {
     fetch(url).then((response) => response.json())
   )
 
+  const { data: rewards } = useFarmRewards()
+
   if (!data) return <></>
   const { pair } = data
+  const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   return (
     <Layout>
@@ -64,15 +68,17 @@ const _Add = () => {
             </Link.External>
           </Container>
         </div>
-        <div>
-          <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
-            <AddSectionStepper onClick={setStep} step={step} pair={pair} />
-            <div className="px-5">
-              <hr className="h-px border-t border-slate-200/5" />
+        {incentives && (
+          <div>
+            <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
+              <AddSectionStepper onClick={setStep} step={step} pair={pair} />
+              <div className="px-5">
+                <hr className="h-px border-t border-slate-200/5" />
+              </div>
+              <AddSectionMyPosition pair={pair} />
             </div>
-            <AddSectionMyPosition pair={pair} />
           </div>
-        </div>
+        )}
       </div>
       <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
     </Layout>

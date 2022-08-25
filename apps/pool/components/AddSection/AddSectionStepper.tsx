@@ -1,10 +1,9 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { Button, Currency as UICurrency, Tooltip, Typography } from '@sushiswap/ui'
-import { useBalance, Wallet } from '@sushiswap/wagmi'
+import { useBalance, useFarmRewards, Wallet } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -18,6 +17,12 @@ interface AddSectionStepperProps {
 }
 
 export const AddSectionStepper: FC<AddSectionStepperProps> = ({ step, onClick, pair }) => {
+  const { data: rewards } = useFarmRewards()
+
+  const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
+  const rewardAPR = (incentives?.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
+  const totalAPR = rewardAPR + pair.apr / 100
+
   return (
     <div className="p-5 flex flex-col gap-4">
       <Typography variant="sm" weight={600} className="text-slate-200">
@@ -30,7 +35,7 @@ export const AddSectionStepper: FC<AddSectionStepperProps> = ({ step, onClick, p
 
       <div className="grid grid-cols-2 gap-2">
         <Typography variant="xs" weight={500} className="text-slate-300">
-          LP Fee APR:
+          Fee APR:
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-300 text-right">
           {formatPercent(pair.apr / 100)}
@@ -39,20 +44,22 @@ export const AddSectionStepper: FC<AddSectionStepperProps> = ({ step, onClick, p
           Reward APR:
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-          0%
+          {formatPercent(rewardAPR)}
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-300">
           Total APR:
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-          {formatPercent(pair.apr / 100)}
+          {formatPercent(totalAPR)}
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-300">
           Farming Rewards:
         </Typography>
         <div className="flex justify-end">
           <UICurrency.IconList iconWidth={20} iconHeight={20}>
-            <UICurrency.Icon currency={SUSHI[pair.chainId]} />
+            {incentives?.map((incentive, index) => (
+              <UICurrency.Icon key={index} currency={incentive.rewardToken} />
+            ))}
           </UICurrency.IconList>
         </div>
         <div className="col-span-2 mt-3 flex justify-center">

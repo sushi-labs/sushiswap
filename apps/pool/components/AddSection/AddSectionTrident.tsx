@@ -4,11 +4,13 @@ import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
 import { Amount, tryParseAmount } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, createToast, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
+  Checker,
   getV3RouterContractConfig,
   PoolState,
   useBentoBoxTotals,
@@ -29,6 +31,7 @@ import { AddSectionWidget } from './AddSectionWidget'
 const ZERO_PERCENT = new Percent('0')
 
 export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
+  const isMounted = useIsMounted()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const { address } = useAccount()
@@ -254,9 +257,32 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
         token1={token1}
         onInput0={onChangeToken0TypedAmount}
         onInput1={onChangeToken1TypedAmount}
-        isWritePending={isWritePending}
-        onReview={() => setReview(true)}
-      />
+      >
+        <Checker.Connected fullWidth size="md">
+          <Checker.Custom
+            logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+            button={
+              <Button size="md" color="gray" fullWidth disabled={true}>
+                Pool Not Found
+              </Button>
+            }
+          >
+            <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+              <Checker.Amounts
+                fullWidth
+                size="md"
+                chainId={pair.chainId}
+                fundSource={FundSource.WALLET}
+                amounts={[parsedInput0, parsedInput1]}
+              >
+                <Button fullWidth onClick={() => setReview(true)} disabled={isWritePending} size="md">
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
+                </Button>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Custom>
+        </Checker.Connected>
+      </AddSectionWidget>
       <AddSectionReviewModal
         chainId={pair.chainId}
         input0={parsedInput0}
