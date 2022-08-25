@@ -22,14 +22,14 @@ import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, use
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
-import { Layout } from '../Layout'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionLegacyProps {
   pair: Pair
+  isFarm: boolean
 }
 
-export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
+export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm }) => {
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
@@ -187,70 +187,69 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   ])
 
   return (
-    <Layout>
-      <div className="flex flex-col gap-6 pb-40">
-        <RemoveSectionWidget
-          chainId={pair.chainId}
-          percentage={percentage}
-          liquidityToken={liquidityToken}
-          token0={token0}
-          token1={token1}
-          reserve0={pool?.reserve0}
-          reserve1={pool?.reserve1}
-          setPercentage={setPercentage}
-          error={error}
-        >
-          <Checker.Connected fullWidth size="md">
-            <Checker.Custom
-              logic={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-              button={
-                <Button size="md" color="gray" fullWidth disabled={true}>
-                  Pool Not Found
-                </Button>
-              }
-            >
-              <Checker.Network fullWidth size="md" chainId={pair.chainId}>
-                <Checker.Custom
-                  logic={percentage <= 0}
-                  button={
-                    <Button size="md" fullWidth disabled={true}>
-                      Enter Amount
-                    </Button>
+    <div>
+      <RemoveSectionWidget
+        isFarm={isFarm}
+        chainId={pair.chainId}
+        percentage={percentage}
+        liquidityToken={liquidityToken}
+        token0={token0}
+        token1={token1}
+        reserve0={pool?.reserve0}
+        reserve1={pool?.reserve1}
+        setPercentage={setPercentage}
+        error={error}
+      >
+        <Checker.Connected fullWidth size="md">
+          <Checker.Custom
+            logic={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            button={
+              <Button size="md" color="gray" fullWidth disabled={true}>
+                Pool Not Found
+              </Button>
+            }
+          >
+            <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+              <Checker.Custom
+                logic={percentage <= 0}
+                button={
+                  <Button size="md" fullWidth disabled={true}>
+                    Enter Amount
+                  </Button>
+                }
+              >
+                <Approve
+                  className="flex-grow !justify-end"
+                  components={
+                    <Approve.Components>
+                      <Approve.Token
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
+                        address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                      />
+                    </Approve.Components>
                   }
-                >
-                  <Approve
-                    className="flex-grow !justify-end"
-                    components={
-                      <Approve.Components>
-                        <Approve.Token
-                          size="md"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
-                          address={getV2RouterContractConfig(pair.chainId).addressOrName}
-                        />
-                      </Approve.Components>
-                    }
-                    render={({ approved }) => {
-                      return (
-                        <Button
-                          onClick={execute}
-                          fullWidth
-                          size="md"
-                          variant="filled"
-                          disabled={!approved || isWritePending}
-                        >
-                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                        </Button>
-                      )
-                    }}
-                  />
-                </Checker.Custom>
-              </Checker.Network>
-            </Checker.Custom>
-          </Checker.Connected>
-        </RemoveSectionWidget>
-      </div>
-    </Layout>
+                  render={({ approved }) => {
+                    return (
+                      <Button
+                        onClick={execute}
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        disabled={!approved || isWritePending}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                      </Button>
+                    )
+                  }}
+                />
+              </Checker.Custom>
+            </Checker.Network>
+          </Checker.Custom>
+        </Checker.Connected>
+      </RemoveSectionWidget>
+    </div>
   )
 }

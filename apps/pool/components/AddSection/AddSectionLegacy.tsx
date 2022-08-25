@@ -15,7 +15,7 @@ import { useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
+export const AddSectionLegacy: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, isFarm }) => {
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
   const { chain } = useNetwork()
@@ -190,6 +190,7 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
   return (
     <div>
       <AddSectionWidget
+        isFarm={isFarm}
         chainId={pair.chainId}
         input0={input0}
         input1={input1}

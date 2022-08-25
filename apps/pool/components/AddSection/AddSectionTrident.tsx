@@ -30,7 +30,7 @@ import { AddSectionWidget } from './AddSectionWidget'
 
 const ZERO_PERCENT = new Percent('0')
 
-export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
+export const AddSectionTrident: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, isFarm }) => {
   const isMounted = useIsMounted()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
@@ -250,6 +250,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   return (
     <div>
       <AddSectionWidget
+        isFarm={isFarm}
         chainId={pair.chainId}
         input0={input0}
         input1={input1}

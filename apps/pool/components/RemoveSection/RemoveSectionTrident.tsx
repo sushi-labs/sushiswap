@@ -30,14 +30,14 @@ import {
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
-import { Layout } from '../Layout'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionTridentProps {
   pair: Pair
+  isFarm: boolean
 }
 
-export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFarm }) => {
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()
@@ -193,77 +193,76 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   ])
 
   return (
-    <Layout>
-      <div className="flex flex-col gap-6 pb-40">
-        <RemoveSectionWidget
-          chainId={pair.chainId}
-          percentage={percentage}
-          liquidityToken={liquidityToken}
-          token0={token0}
-          token1={token1}
-          reserve0={pool?.reserve0}
-          reserve1={pool?.reserve1}
-          setPercentage={setPercentage}
-          error={error}
-        >
-          <Checker.Connected>
-            <Checker.Custom
-              logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
-              button={
-                <Button size="md" color="gray" fullWidth disabled={true}>
-                  Pool Not Found
-                </Button>
-              }
-            >
-              <Checker.Network chainId={pair.chainId}>
-                <Checker.Custom
-                  logic={percentage <= 0}
-                  button={
-                    <Button size="md" fullWidth disabled={true}>
-                      Enter Amount
-                    </Button>
+    <div>
+      <RemoveSectionWidget
+        isFarm={isFarm}
+        chainId={pair.chainId}
+        percentage={percentage}
+        liquidityToken={liquidityToken}
+        token0={token0}
+        token1={token1}
+        reserve0={pool?.reserve0}
+        reserve1={pool?.reserve1}
+        setPercentage={setPercentage}
+        error={error}
+      >
+        <Checker.Connected>
+          <Checker.Custom
+            logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+            button={
+              <Button size="md" color="gray" fullWidth disabled={true}>
+                Pool Not Found
+              </Button>
+            }
+          >
+            <Checker.Network chainId={pair.chainId}>
+              <Checker.Custom
+                logic={percentage <= 0}
+                button={
+                  <Button size="md" fullWidth disabled={true}>
+                    Enter Amount
+                  </Button>
+                }
+              >
+                <Approve
+                  className="flex-grow !justify-end"
+                  components={
+                    <Approve.Components>
+                      <Approve.Bentobox
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                        onSignature={setPermit}
+                      />
+                      <Approve.Token
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        amount={slpAmountToRemove}
+                        address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                      />
+                    </Approve.Components>
                   }
-                >
-                  <Approve
-                    className="flex-grow !justify-end"
-                    components={
-                      <Approve.Components>
-                        <Approve.Bentobox
-                          size="md"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
-                          onSignature={setPermit}
-                        />
-                        <Approve.Token
-                          size="md"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          amount={slpAmountToRemove}
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
-                        />
-                      </Approve.Components>
-                    }
-                    render={({ approved }) => {
-                      return (
-                        <Button
-                          onClick={execute}
-                          fullWidth
-                          size="md"
-                          variant="filled"
-                          disabled={!approved || isWritePending}
-                        >
-                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                        </Button>
-                      )
-                    }}
-                  />
-                </Checker.Custom>
-              </Checker.Network>
-            </Checker.Custom>
-          </Checker.Connected>
-        </RemoveSectionWidget>
-      </div>
-    </Layout>
+                  render={({ approved }) => {
+                    return (
+                      <Button
+                        onClick={execute}
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        disabled={!approved || isWritePending}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                      </Button>
+                    )
+                  }}
+                />
+              </Checker.Custom>
+            </Checker.Network>
+          </Checker.Custom>
+        </Checker.Connected>
+      </RemoveSectionWidget>
+    </div>
   )
 }

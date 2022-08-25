@@ -1,10 +1,14 @@
+import { ExternalLinkIcon } from '@heroicons/react/solid'
+import { Container, Link, Typography } from '@sushiswap/ui'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { Layout } from '../../components'
+import { AddSectionMyPosition, AddSectionStepper, Layout } from '../../components'
 import { RemoveSectionLegacy, RemoveSectionTrident } from '../../components/RemoveSection'
+import { RemoveSectionUnstake } from '../../components/RemoveSection/RemoveSectionUnstake'
 import { getPool } from '../../lib/api'
 import { PairWithAlias } from '../../types'
 
@@ -30,18 +34,52 @@ const Remove: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fa
 }
 
 const _Remove = () => {
+  const [step, setStep] = useState(1)
   const router = useRouter()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
+  const { data: rewards } = useFarmRewards()
+
   if (!data) return <></>
   const { pair } = data
+  const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   return (
     <Layout>
-      <div className="flex flex-col gap-6 pb-40">
-        {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
+      <div className="grid grid-cols-1 md:grid-cols-[264px_396px_264px] gap-10">
+        <div />
+        <div className="flex flex-col gap-3 pb-40">
+          {pair.source === 'TRIDENT' ? (
+            <RemoveSectionTrident pair={pair} isFarm={!!incentives} />
+          ) : (
+            <RemoveSectionLegacy pair={pair} isFarm={!!incentives} />
+          )}
+          {incentives && <RemoveSectionUnstake pair={pair} />}
+          <Container className="flex justify-center">
+            <Link.External
+              href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+              className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+            >
+              <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                Learn more about liquidity and yield farming
+                <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+              </Typography>
+            </Link.External>
+          </Container>
+        </div>
+        {incentives && (
+          <div>
+            <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
+              <AddSectionStepper pair={pair} />
+              <div className="px-5">
+                <hr className="h-px border-t border-slate-200/5" />
+              </div>
+              <AddSectionMyPosition pair={pair} />
+            </div>
+          </div>
+        )}
       </div>
       <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
     </Layout>

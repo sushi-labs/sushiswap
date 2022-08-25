@@ -3,16 +3,17 @@ import { Container, Link, Typography } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { Layout } from '../../components'
 import {
   AddSectionLegacy,
   AddSectionMyPosition,
+  AddSectionStake,
   AddSectionStepper,
   AddSectionTrident,
-} from '../../components/AddSection'
+  Layout,
+} from '../../components'
 import { getPool } from '../../lib/api'
 import { PairWithAlias } from '../../types'
 
@@ -38,7 +39,6 @@ const Add: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallb
 }
 
 const _Add = () => {
-  const [step, setStep] = useState(1)
   const router = useRouter()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
@@ -55,7 +55,12 @@ const _Add = () => {
       <div className="grid grid-cols-1 md:grid-cols-[264px_396px_264px] gap-10">
         <div />
         <div className="flex flex-col gap-3 pb-40">
-          {pair.source === 'TRIDENT' ? <AddSectionTrident pair={pair} /> : <AddSectionLegacy pair={pair} />}
+          {pair.source === 'TRIDENT' ? (
+            <AddSectionTrident pair={pair} isFarm={!!incentives} />
+          ) : (
+            <AddSectionLegacy pair={pair} isFarm={!!incentives} />
+          )}
+          {incentives && <AddSectionStake pair={pair} />}
           <Container className="flex justify-center">
             <Link.External
               href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
@@ -71,7 +76,7 @@ const _Add = () => {
         {incentives && (
           <div>
             <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
-              <AddSectionStepper onClick={setStep} step={step} pair={pair} />
+              <AddSectionStepper pair={pair} />
               <div className="px-5">
                 <hr className="h-px border-t border-slate-200/5" />
               </div>

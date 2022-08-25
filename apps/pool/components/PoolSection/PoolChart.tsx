@@ -7,10 +7,9 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
+import { PairWithAlias } from '../../types'
 
 const tailwind = resolveConfig(tailwindConfig)
-
-import { PairWithAlias } from '../../types'
 
 interface PoolChartProps {
   pair: PairWithAlias
