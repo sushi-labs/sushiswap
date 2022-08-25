@@ -235,17 +235,19 @@ export const CreateMultipleForm: FC = () => {
                     {el}
                   </Typography>
                 ))}
-                {formStateErrors.streams?.map((errors, idx) =>
-                  Object.entries(errors).map(([k, v]) => (
-                    <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
-                      <ExclamationCircleIcon width={20} height={20} />
-                      Stream {idx + 1}: {(v as any).message}
-                    </Typography>
-                  ))
-                )}
+                {formStateErrors.streams?.map((errors, idx) => {
+                  if (errors) {
+                    return Object.entries(errors).map(([k, v]) => (
+                      <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
+                        <ExclamationCircleIcon width={20} height={20} />
+                        Stream {idx + 1}: {(v as any).message}
+                      </Typography>
+                    ))
+                  }
+                })}
               </div>
               <TableSection />
-              <Form.Buttons className="flex flex-col items-end gap-3 mt-[-68px]">
+              <Form.Buttons className="flex flex-col items-end gap-3">
                 <Button
                   type="button"
                   onClick={() => setReview(true)}
