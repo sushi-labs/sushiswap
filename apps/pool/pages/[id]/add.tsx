@@ -52,9 +52,9 @@ const _Add = () => {
 
   return (
     <Layout>
-      <div className="grid grid-cols-1 md:grid-cols-[264px_396px_264px] gap-10">
-        <div />
-        <div className="flex flex-col gap-3 pb-40">
+      <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
+        <div className="hidden md:block" />
+        <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
           {pair.source === 'TRIDENT' ? (
             <AddSectionTrident pair={pair} isFarm={!!incentives} />
           ) : (
@@ -74,7 +74,7 @@ const _Add = () => {
           </Container>
         </div>
         {incentives && (
-          <div>
+          <div className="order-1 sm:order-3">
             <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
               <AddSectionStepper pair={pair} />
               <div className="px-5">
