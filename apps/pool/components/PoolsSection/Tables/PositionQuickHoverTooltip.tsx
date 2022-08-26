@@ -1,7 +1,6 @@
-import { Native, tryParseAmount } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
+import { tryParseAmount } from '@sushiswap/currency'
+import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { getAddress } from 'ethers/lib/utils'
 import { FC, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
@@ -18,7 +17,12 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
     [row.liquidityTokenBalance, liquidityToken]
   )
-  const underlying = useUnderlyingTokenBalanceFromPair({ reserve0, reserve1, totalSupply, balance })
+  const underlying = useUnderlyingTokenBalanceFromPair({
+    reserve0: reserve0.wrapped,
+    reserve1: reserve1.wrapped,
+    totalSupply,
+    balance,
+  })
   const [underlying0, underlying1] = underlying
   const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
 
@@ -42,11 +46,11 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
             <Chip color="gray" size="sm" label="Classic" />
-            Fee 0.5%
+            Fee {row.swapFee / 100}%
           </Typography>
         </div>
         <Typography variant="sm" weight={700} className="text-slate-50 flex gap-3">
-          <span className="text-slate-400">APY:</span> 22.27%
+          <span className="text-slate-400">APR:</span> {formatPercent(row.apr / 100)}
         </Typography>
       </div>
       <hr className="border-t border-slate-200/10 my-3" />
@@ -78,34 +82,12 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
         </div>
       </div>
       <div className="flex gap-2 mt-8 mb-2 justify-end">
-        <Link.Internal
-          href={`/remove?token0=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token0.id)
-          }&token1=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token1.id)
-          }&chainId=${row.chainId}`}
-          passHref={true}
-        >
+        <Link.Internal href={`/${row.id}/remove`} passHref={true}>
           <Button as="a" size="sm" variant="outlined" fullWidth>
             Withdraw
           </Button>
         </Link.Internal>
-        <Link.Internal
-          href={`/add?token0=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token0.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token0.id)
-          }&token1=${
-            Native.onChain(row.chainId).wrapped.address === getAddress(row.token1.id)
-              ? Native.onChain(row.chainId).symbol
-              : getAddress(row.token1.id)
-          }&chainId=${row.chainId}`}
-          passHref={true}
-        >
+        <Link.Internal href={`/${row.id}/add`} passHref={true}>
           <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>

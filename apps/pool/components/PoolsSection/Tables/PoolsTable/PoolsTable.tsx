@@ -6,12 +6,12 @@ import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
 import { usePoolFilters } from '../../../PoolsProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL_COLUMN } from '../contants'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 const fetcher = ({
   url,

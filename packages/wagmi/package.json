@@ -37,6 +37,7 @@
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/trident": "^1.0.0-canary.40",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "wagmi": "^0.5.12"

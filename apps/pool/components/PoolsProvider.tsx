@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { AMM_ENABLED_NETWORKS } from '../config'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 enum Filters {
   myTokensOnly = 'myTokensOnly',
@@ -33,7 +33,7 @@ export const PoolsProvider: FC<PoolsProvider> = ({ children }) => {
     [Filters.myTokensOnly]: false,
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
-    [Filters.selectedNetworks]: AMM_ENABLED_NETWORKS,
+    [Filters.selectedNetworks]: SUPPORTED_CHAIN_IDS,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

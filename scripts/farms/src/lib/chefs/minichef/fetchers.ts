@@ -135,7 +135,7 @@ export async function getRewarderInfos(chainId: ChainId) {
 
         return {
           id: rewarder.id,
-          pools: [...Array(poolLength)].map((_, i) => ({
+          pools: [...Array(poolLength.toNumber())].map((_, i) => ({
             // Minichef pool ID
             id: poolIds[i].toNumber(),
             allocPoint: Number(poolInfos[i].allocPoint),

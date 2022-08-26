@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { User } from '../../.graphclient'
-import { AMM_ENABLED_NETWORKS } from '../../config'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { usePoolFilters } from '../PoolsProvider'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
@@ -44,7 +44,7 @@ export const PoolsSection: FC = () => {
         </div>
         <TableFilters />
         <Network.Selector
-          networks={AMM_ENABLED_NETWORKS}
+          networks={SUPPORTED_CHAIN_IDS}
           selectedNetworks={selectedNetworks}
           onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
         />

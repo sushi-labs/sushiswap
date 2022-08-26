@@ -38,6 +38,25 @@ importers:
       ts-jest: 28.0.7_jest@28.1.3
       turbo: 1.4.3
 
+  apis/farm:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@vercel/node': ^2.2.0
+      date-fns: 2.x
+      ioredis: 5.x
+    dependencies:
+      '@vercel/node': 2.5.0
+      date-fns: 2.29.1
+      ioredis: 5.2.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+
   apis/path-finder:
     specifiers:
       '@sushiswap/currency': workspace:*
@@ -64,7 +83,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^31.1.0
+      '@sushiswap/default-token-list': ^32.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -72,7 +91,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 31.1.0
+      '@sushiswap/default-token-list': 32.0.0
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -1894,6 +1913,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/trident': ^1.0.0-canary.40
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -1928,6 +1948,7 @@ importers:
       '@sushiswap/math': link:../math
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/trident': 1.0.0-canary.40
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@uniswap/v2-core': 1.0.1
@@ -8275,8 +8296,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/31.1.0:
-    resolution: {integrity: sha512-uicM8HGvGaBUd+Rz/XcpLaXJt+3qfIp1IeZnNz/xB9blW7e/UT97gGG5pz2GeHaw/TQLf+2AZYqZgiWGJPmmiA==}
+  /@sushiswap/default-token-list/32.0.0:
+    resolution: {integrity: sha512-zjs1JWn/2vi07DEmt9GcKcmUWHZ1FGOtbtDAI3A2jxzlPb6VqYzxraRulbTwdw5lQpWfcxfs6rUgwSEF7hhdtg==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -8312,6 +8333,10 @@ packages:
 
   /@sushiswap/trident/1.0.0-canary.38:
     resolution: {integrity: sha512-TnhOhKGevcMmGfj5rbABmmOmus7j0kHmDu2lNbPvnq+z7RB9mEsLG6DiyzEM9t+5SMm3ckTwt1GXhRgYPmy7mQ==}
+    dev: false
+
+  /@sushiswap/trident/1.0.0-canary.40:
+    resolution: {integrity: sha512-DL+OtlDnMcbWh95qT4hcqMOQtYZxRH69XEjKKkM4HaPjN6XtR0SaT9WLHA7k8huQDuweDZ94aKilSrp1WgcKZQ==}
     dev: false
 
   /@swc/helpers/0.4.3:

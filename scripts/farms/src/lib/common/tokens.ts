@@ -67,7 +67,6 @@ export const getTokens = async (ids: string[], chainId: ChainId) => {
     .map((id) => {
       const exchangeToken = exchangeTokens.find((token) => token.id === id.toLowerCase())
       const tridentToken = tridentTokens.find((token) => token.id === id.toLowerCase())
-
       if (exchangeToken && tridentToken)
         return exchangeToken.liquidity > tridentToken.liquidity ? exchangeToken : tridentToken
       return exchangeToken ?? tridentToken ?? undefined

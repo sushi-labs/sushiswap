@@ -1,4 +1,4 @@
-import { Amount, Price, Token } from '@sushiswap/currency'
+import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, ONE, sqrt, ZERO } from '@sushiswap/math'
 import EXPORTS from '@sushiswap/trident/exports/all.json'
 import invariant from 'tiny-invariant'
@@ -214,8 +214,8 @@ export class ConstantProductPool implements Pool {
 
   public getLiquidityMinted(
     totalSupply: Amount<Token>,
-    tokenAmountA: Amount<Token>,
-    tokenAmountB: Amount<Token>
+    tokenAmountA: Amount<Token> | Share<Token>,
+    tokenAmountB: Amount<Token> | Share<Token>
   ): Amount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
     const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks

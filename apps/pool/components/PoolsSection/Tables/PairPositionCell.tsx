@@ -12,7 +12,12 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
     () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
     [row.liquidityTokenBalance, liquidityToken]
   )
-  const underlying = useUnderlyingTokenBalanceFromPair({ reserve0, reserve1, totalSupply, balance })
+  const underlying = useUnderlyingTokenBalanceFromPair({
+    reserve0: reserve0.wrapped,
+    reserve1: reserve1.wrapped,
+    totalSupply,
+    balance,
+  })
   const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
 
   return (

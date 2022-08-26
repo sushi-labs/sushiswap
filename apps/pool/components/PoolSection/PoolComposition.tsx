@@ -63,7 +63,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 </Typography>
               </Table.td>
               <Table.td>
-                {formatUSD(Number(reserve0.toFixed()) * Number(prices?.[token0.address].toFixed(10)))}
+                <Typography weight={600} variant="sm" className="text-slate-50">
+                  {formatUSD(
+                    prices?.[token0.wrapped.address]
+                      ? reserve0.multiply(prices?.[token0.wrapped.address].asFraction).toSignificant(6)
+                      : ''
+                  )}
+                </Typography>
               </Table.td>
             </Table.tr>
             <Table.tr>
@@ -81,7 +87,13 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
                 </Typography>
               </Table.td>
               <Table.td>
-                {formatUSD(Number(reserve1.toFixed()) * Number(prices?.[token1.address].toFixed(10)))}
+                <Typography weight={600} variant="sm" className="text-slate-50">
+                  {formatUSD(
+                    prices?.[token1.wrapped.address]
+                      ? reserve1.multiply(prices?.[token1.wrapped.address].asFraction).toSignificant(6)
+                      : ''
+                  )}
+                </Typography>
               </Table.td>
             </Table.tr>
           </Table.tbody>

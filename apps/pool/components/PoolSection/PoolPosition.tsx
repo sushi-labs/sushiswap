@@ -19,8 +19,8 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
   const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
   const { data: balance } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account: address })
   const underlying = useUnderlyingTokenBalanceFromPair({
-    reserve0,
-    reserve1,
+    reserve0: reserve0.wrapped,
+    reserve1: reserve1.wrapped,
     totalSupply,
     balance: balance?.[FundSource.WALLET].wrapped,
   })

@@ -1,23 +1,24 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import numeral from 'numeral'
 
-import { getOneMonthBlock, getSushiBar } from '../../lib/api'
+import { getOneYearBlock, getSushiBar } from '../../lib/api'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const blocks = await getOneMonthBlock()
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
+  const blocks = await getOneYearBlock()
   const blockNumber = blocks && blocks[0].number ? Number(blocks[0].number) : undefined
   if (!blockNumber) {
     res.status(204).send({})
   }
-  const [currentBar, oneMonthBar] = await Promise.all([await getSushiBar(), await getSushiBar(blockNumber)])
-  if (!currentBar || !oneMonthBar) {
+  const [currentBar, oneYearBar] = await Promise.all([await getSushiBar(), await getSushiBar(blockNumber)])
+  if (!currentBar || !oneYearBar) {
     res.status(204).send({})
   }
-  const apr = numeral((currentBar?.ratio / oneMonthBar?.ratio - 1) * 12).format('0.00%')
+  const apr = numeral(currentBar?.ratio / oneYearBar?.ratio - 1).format('0.00%')
 
   res.status(200).send({
     apr: {
-      '1m': apr,
+      '1y': apr,
     },
   })
 }
