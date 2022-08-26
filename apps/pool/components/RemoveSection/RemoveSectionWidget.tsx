@@ -74,7 +74,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           </Typography>
         </div>
       </Transition>
-      <Widget id="removeLiquidity" maxWidth={400} className="bg-slate-700">
+      <Widget id="removeLiquidity" maxWidth={400} className="bg-slate-800">
         <Widget.Content>
           <Disclosure>
             {({ open }) => (

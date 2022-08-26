@@ -57,7 +57,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
 
   return (
-    <Widget id="stakeLiquidity" maxWidth={400} className="bg-slate-700">
+    <Widget id="stakeLiquidity" maxWidth={400} className="bg-slate-800">
       <Widget.Content>
         <Disclosure defaultOpen={true}>
           {({ open }) => (
