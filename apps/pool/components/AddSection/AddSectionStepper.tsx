@@ -18,7 +18,7 @@ export const AddSectionStepper: FC<AddSectionStepperProps> = ({ pair }) => {
 
   return (
     <div className="p-5 flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 items-center gap-2">
         <Typography variant="xs" weight={500} className="text-slate-300">
           Fee APR:
         </Typography>
@@ -40,8 +40,8 @@ export const AddSectionStepper: FC<AddSectionStepperProps> = ({ pair }) => {
         <Typography variant="xs" weight={500} className="text-slate-300">
           Farming Rewards:
         </Typography>
-        <div className="flex justify-end">
-          <UICurrency.IconList iconWidth={20} iconHeight={20}>
+        <div className="flex justify-end -mr-2">
+          <UICurrency.IconList iconWidth={16} iconHeight={16}>
             {incentives?.map((incentive, index) => (
               <UICurrency.Icon key={index} currency={incentive.rewardToken} />
             ))}
