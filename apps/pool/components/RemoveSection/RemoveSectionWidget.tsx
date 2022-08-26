@@ -59,7 +59,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={isFarm && hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address}
+        show={Boolean(isFarm && hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"

@@ -263,7 +263,7 @@ export const AddSectionTrident: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, i
           <Checker.Custom
             logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
             button={
-              <Button size="md" color="gray" fullWidth disabled={true}>
+              <Button size="md" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }

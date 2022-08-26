@@ -81,6 +81,9 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 leaveTo="transform max-h-0"
               >
                 <Disclosure.Panel unmount={false}>
+                  <Typography variant="sm" className="text-slate-400 px-3 pb-5">
+                    Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
+                  </Typography>
                   <div className="flex flex-col gap-3 p-3">
                     <div className="flex items-center gap-2">
                       <div className="flex flex-grow justify-between items-center">

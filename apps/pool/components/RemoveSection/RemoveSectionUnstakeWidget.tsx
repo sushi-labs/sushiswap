@@ -86,6 +86,9 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                 leaveTo="transform max-h-0"
               >
                 <Disclosure.Panel unmount={false}>
+                  <Typography variant="sm" className="text-slate-400 px-3 pb-5">
+                    Unstake your liquidity tokens first if you mean to remove your liquidity position
+                  </Typography>
                   <div className="flex flex-col gap-3 p-3">
                     <div className="flex items-center gap-2">
                       <div className="flex flex-grow justify-between items-center">

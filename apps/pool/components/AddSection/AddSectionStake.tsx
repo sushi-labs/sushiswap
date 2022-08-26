@@ -37,7 +37,7 @@ export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farm
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address}
+        show={Boolean(hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"

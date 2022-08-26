@@ -204,7 +204,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
           <Checker.Custom
             logic={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
             button={
-              <Button size="md" color="gray" fullWidth disabled={true}>
+              <Button size="md" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
             }
