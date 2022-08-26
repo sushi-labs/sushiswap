@@ -63,7 +63,7 @@ const _Remove = () => {
           ) : (
             <RemoveSectionLegacy pair={pair} isFarm={!!incentives} />
           )}
-          {incentives && isMounted && (
+          {incentives && farmId && isMounted && (
             <Transition
               appear
               show={true}
@@ -89,7 +89,7 @@ const _Remove = () => {
             </Link.External>
           </Container>
         </div>
-        {incentives && isMounted && (
+        {incentives && isMounted && farmId && (
           <Transition
             appear
             show={true}

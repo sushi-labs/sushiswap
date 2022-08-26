@@ -12,6 +12,7 @@ export interface FarmMap<T> {
 }
 
 export interface Farm<T> {
+  id: number
   feeApy: number | null
   incentives: Incentive<T>[]
   chefType: ChefType
