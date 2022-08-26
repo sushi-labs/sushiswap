@@ -68,7 +68,7 @@ const _Add = () => {
           ) : (
             <AddSectionLegacy pair={pair} isFarm={!!incentives} />
           )}
-          {chefType && farmId && isMounted && (
+          {chefType && farmId !== undefined && isMounted && (
             <Transition
               appear
               show={true}
@@ -94,7 +94,7 @@ const _Add = () => {
             </Link.External>
           </Container>
         </div>
-        {incentives && isMounted && farmId && (
+        {incentives && isMounted && farmId !== undefined && (
           <Transition
             appear
             show={true}
