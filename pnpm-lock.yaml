@@ -1226,8 +1226,17 @@ importers:
   packages/config/graph:
     specifiers:
       '@sushiswap/chain': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      tsup: 6.x
+      typescript: 4.x
     dependencies:
       '@sushiswap/chain': link:../../chain
+    devDependencies:
+      '@sushiswap/jest-config': link:../jest
+      '@sushiswap/typescript-config': link:../typescript
+      tsup: 6.2.0_typescript@4.7.4
+      typescript: 4.7.4
 
   packages/config/hardhat:
     specifiers:
@@ -1312,12 +1321,21 @@ importers:
       '@ethersproject/providers': ^5.0.0
       '@gnosis.pm/safe-apps-wagmi': ^1.0.1
       '@sushiswap/chain': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      tsup: 6.x
+      typescript: 4.x
       wagmi: ^0.5.12
     dependencies:
       '@ethersproject/providers': 5.6.8
       '@gnosis.pm/safe-apps-wagmi': 1.0.1
       '@sushiswap/chain': link:../../chain
+      '@sushiswap/typescript-config': link:../typescript
       wagmi: 0.5.12
+    devDependencies:
+      '@sushiswap/jest-config': link:../jest
+      tsup: 6.2.0_typescript@4.7.4
+      typescript: 4.7.4
 
   packages/currency:
     specifiers:

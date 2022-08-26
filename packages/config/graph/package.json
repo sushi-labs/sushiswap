@@ -16,10 +16,27 @@
   },
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
-    "index.ts"
+    "dist"
   ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
   "dependencies": {
     "@sushiswap/chain": "workspace:*"
+  },
+  "devDependencies": {
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "tsup": "6.x",
+    "typescript": "4.x"
   }
 }
