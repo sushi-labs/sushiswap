@@ -3,9 +3,9 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, getV3RouterContractConfig, useBalance } from '@sushiswap/wagmi'
-import { FC, Fragment, useCallback, useMemo, useState } from 'react'
-import { useAccount, useSendTransaction } from 'wagmi'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useBalance, useMasterChef } from '@sushiswap/wagmi'
+import { FC, Fragment, useMemo, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
@@ -13,26 +13,31 @@ import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
   pair: Pair
+  farmId: number
+  chefType: Chef
 }
 
-export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair }) => {
+export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
   const [value, setValue] = useState('')
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
+  const { deposit, isLoading: isWritePending } = useMasterChef({
+    chainId: pair.chainId,
+    chef: chefType,
+    pid: farmId,
+    token: liquidityToken,
+  })
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
 
-  const execute = useCallback(() => {}, [])
-
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO)}
+        show={hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -68,14 +73,14 @@ export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair }) => {
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amount}
-                        address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                        address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
                       />
                     </Approve.Components>
                   }
                   render={({ approved }) => {
                     return (
                       <Button
-                        onClick={execute}
+                        onClick={() => deposit(amount)}
                         fullWidth
                         size="md"
                         variant="filled"

@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
@@ -40,6 +40,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   children,
   error,
 }) => {
+  const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
   const { data: balance } = useBalance({ chainId, account: address, currency: liquidityToken })
@@ -58,7 +59,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={isFarm && hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO)}
+        show={isFarm && hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -78,7 +79,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <Disclosure>
             {({ open }) => (
               <>
-                {isFarm ? (
+                {isFarm && isMounted ? (
                   <Disclosure.Button className="w-full pr-4">
                     <div className="flex justify-between items-center">
                       <Widget.Header title="Remove Liquidity" className="!pb-3 " />

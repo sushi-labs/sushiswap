@@ -3,16 +3,16 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
-import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { useBalance, useTotalSupply } from '@sushiswap/wagmi'
+import { Chef, useMasterChef, useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 
-interface AddSectionStakeWidgetProps {
+interface RemoveSectionUnstakeWidget {
+  chefType: Chef
+  farmId: number
   chainId: ChainId
   value: string
   setValue(value: string): void
@@ -23,7 +23,9 @@ interface AddSectionStakeWidgetProps {
   error?: string
 }
 
-export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
+export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
+  chefType,
+  farmId,
   chainId,
   value,
   setValue,
@@ -33,12 +35,13 @@ export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
   children,
   error,
 }) => {
-  const { address } = useAccount()
-
-  // TODO, get staked balance
-  const { data: balance } = useBalance({ chainId, account: address, currency: liquidityToken })
-
   const totalSupply = useTotalSupply(liquidityToken)
+  const { balance } = useMasterChef({
+    chainId,
+    chef: chefType,
+    pid: farmId,
+    token: liquidityToken,
+  })
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
@@ -95,19 +98,13 @@ export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         />
                       </div>
                       <div className="flex gap-2">
-                        <Button
-                          size="xs"
-                          onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
-                        >
+                        <Button size="xs" onClick={() => setValue(balance?.divide(4)?.toExact() || '')}>
                           25%
                         </Button>
-                        <Button
-                          size="xs"
-                          onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
-                        >
+                        <Button size="xs" onClick={() => setValue(balance?.divide(2)?.toExact() || '')}>
                           50%
                         </Button>
-                        <Button size="xs" onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}>
+                        <Button size="xs" onClick={() => setValue(balance?.toExact() || '')}>
                           MAX
                         </Button>
                       </div>
@@ -122,7 +119,7 @@ export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
                       <Transition
                         appear
                         as={Fragment}
-                        show={Boolean(balance?.[FundSource.WALLET])}
+                        show={Boolean(balance)}
                         enter="transition duration-300 origin-center ease-out"
                         enterFrom="transform scale-90 opacity-0"
                         enterTo="transform scale-100 opacity-100"
@@ -136,7 +133,7 @@ export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
                       </Transition>
                       <Transition
                         appear
-                        show={Boolean(balance?.[FundSource.WALLET])}
+                        show={Boolean(balance)}
                         as={Fragment}
                         enter="transition duration-300 origin-center ease-out"
                         enterFrom="transform scale-90 opacity-0"
@@ -146,13 +143,13 @@ export const RemoveSectionUnstakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         leaveTo="transform opacity-0"
                       >
                         <Typography
-                          onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                          onClick={() => setValue(balance?.toExact() || '')}
                           as="button"
                           variant="sm"
                           weight={500}
                           className="col-span-2 justify-end flex text-slate-300 hover:text-slate-200 truncate"
                         >
-                          Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                          Balance: {balance?.toSignificant(6)}
                         </Typography>
                       </Transition>
                     </div>

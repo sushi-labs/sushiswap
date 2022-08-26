@@ -17,7 +17,7 @@ const _Tab: React.ForwardRefExoticComponent<React.PropsWithoutRef<TabButton> & R
         {({ selected }) => (
           <Button
             size="sm"
-            className={classNames('hover:ring-0 focus:ring-0', className)}
+            className={classNames(className, 'hover:ring-0 focus:ring-0 outline-none')}
             color="gray"
             variant={selected ? 'filled' : 'empty'}
             {...props}

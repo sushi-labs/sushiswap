@@ -25,7 +25,7 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId, keepPreviousData: true, enabled })
+  } = useBalance({ addressOrName: account, chainId, enabled })
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -63,7 +63,6 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
   } = useContractReads({
     contracts,
     enabled: Boolean(account && validatedTokenAddresses.length) && enabled,
-    keepPreviousData: true,
   })
 
   return useMemo(() => {

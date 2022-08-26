@@ -3,6 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Web3Input } from '@sushiswap/wagmi'
@@ -38,6 +39,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   onInput1,
   children,
 }) => {
+  const isMounted = useIsMounted()
   const tokenMap = useTokens(chainId)
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
 
@@ -47,7 +49,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
         <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
-              {isFarm ? (
+              {isFarm && isMounted ? (
                 <Disclosure.Button className="w-full pr-4">
                   <div className="flex justify-between items-center">
                     <Widget.Header title="1. Add Liquidity" className="!pb-3 " />

@@ -56,7 +56,6 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     isLoading: totalsLoading,
   } = useContractReads({
     contracts: contractsForTotalsRequest,
-    keepPreviousData: true,
     enabled,
   })
 

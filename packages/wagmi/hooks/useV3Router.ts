@@ -1,6 +1,7 @@
 import TRIDENT from '@sushiswap/trident/exports/all.json'
 import { useContract, useSigner } from 'wagmi'
 
+// TODO TRIDENT export should be in protocol folder
 export const getV3RouterContractConfig = (chainId: number | undefined) => ({
   // @ts-ignore
   addressOrName: TRIDENT[chainId]?.[0]?.contracts.TridentRouter.address,

@@ -1,7 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Currency, Typography } from '@sushiswap/ui'
-import { useBalance } from '@sushiswap/wagmi'
+import { Chef, useBalance, useMasterChef } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -10,13 +10,22 @@ import { PairWithAlias } from '../../types'
 
 interface AddSectionMyPositionProps {
   pair: PairWithAlias
+  chefType: Chef
+  farmId: number
 }
 
-export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair }) => {
+export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair, chefType, farmId }) => {
   const { address } = useAccount()
 
   const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
   const { data: balance } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account: address })
+  const { balance: stakedBalance } = useMasterChef({
+    chainId: pair.chainId,
+    chef: chefType,
+    pid: farmId,
+    token: liquidityToken,
+  })
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0.wrapped,
     reserve1: reserve1.wrapped,
@@ -25,6 +34,15 @@ export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair }) =>
   })
   const [underlying0, underlying1] = underlying
   const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: underlying })
+
+  const stakedUnderlying = useUnderlyingTokenBalanceFromPair({
+    reserve0: reserve0.wrapped,
+    reserve1: reserve1.wrapped,
+    totalSupply,
+    balance: stakedBalance,
+  })
+  const [stakedUnderlying0, stakedUnderlying1] = stakedUnderlying
+  const [stakedValue0, stakedValue1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: underlying })
 
   return (
     <>
@@ -66,8 +84,8 @@ export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair }) =>
             My Staked Position
           </Typography>
           <Typography variant="xs" weight={500} className="text-slate-400">
-            {balance ? (
-              formatUSD(Number(value0) + Number(value1))
+            {stakedBalance ? (
+              formatUSD(Number(stakedValue0) + Number(stakedValue1))
             ) : (
               <div className="bg-slate-700 rounded-full h-[16px] my-0.5 animate-pulse w-[60px]" />
             )}
@@ -79,7 +97,7 @@ export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair }) =>
               <Currency.Icon currency={token0} width={16} height={16} />
             </div>
             <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-              {balance && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
+              {stakedBalance && stakedUnderlying0?.toSignificant(3)} {stakedUnderlying0?.currency.symbol}
             </Typography>
           </div>
           <div className="flex items-center gap-1.5">
@@ -87,7 +105,7 @@ export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair }) =>
               <Currency.Icon currency={token1} width={16} height={16} />
             </div>
             <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-              {balance && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
+              {stakedBalance && stakedUnderlying1?.toSignificant(3)} {stakedUnderlying1?.currency.symbol}
             </Typography>
           </div>
         </div>
