@@ -199,7 +199,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     deposit,
     withdraw,
     harvest,
-    balance: balance as Amount<Token> | undefined,
+    balance: balance as unknown as Amount<Token> | undefined,
     ...rest,
   }
 }
