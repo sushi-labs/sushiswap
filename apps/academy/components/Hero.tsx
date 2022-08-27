@@ -9,10 +9,10 @@ export const Hero: FC = () => {
     <section>
       <Container maxWidth="6xl" className="px-4 py-10 mx-auto">
         <div className="flex flex-col items-center">
-          <Typography className="text-[110px]" variant="hero">
+          <Typography className="text-6xl md:text-[110px]" variant="hero">
             Sushi
           </Typography>
-          <Typography className="text-[110px]" variant="hero" weight={700}>
+          <Typography className="text-6xl md:text-[110px]" variant="hero" weight={700}>
             Academy
           </Typography>
           <Typography className="mt-10 text-center">

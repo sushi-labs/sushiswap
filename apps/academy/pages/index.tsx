@@ -1,6 +1,6 @@
 import { PlusCircleIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container, Typography } from '@sushiswap/ui'
+import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { LevelCard } from 'components/LevelCard'
 import { BlogSeo } from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
@@ -14,19 +14,19 @@ import { getArticles, getCategories } from '../lib/api'
 const difficultyLevels = [
   {
     name: 'Beginner',
-    title: 'How to get started with Sushi',
+    title: 'Getting started with Sushi: Tutorials & Product Explainers',
     description: 'For Beginner users',
     imgSrc: '',
   },
   {
     name: 'Advanced',
-    title: 'Advanced tooling',
+    title: 'Deepdive into Sushi: Strategies & Product Features',
     description: 'For Advanced users',
     imgSrc: '',
   },
   {
     name: 'Developers',
-    title: 'Technical documentation',
+    title: 'Building on Sushi: Technical Documentation',
     description: 'For Builders',
     imgSrc: '',
   },
@@ -104,7 +104,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             ...((categoryFilter || levelFilter) && {
               categories: {
                 id: {
-                  in: [categoryFilter, levelFilter],
+                  in: [categoryFilter, levelFilter].filter(Boolean),
                 },
               },
             }),
@@ -140,7 +140,20 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <Hero />
         <section className="pt-40 pb-24">
           <Container maxWidth="6xl" className="flex flex-col gap-24 mx-auto">
-            <div className="grid grid-cols-3 gap-6">
+            <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden">
+              <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max">
+                <Tab.List>
+                  {levels.map(({ id, attributes }) => (
+                    <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => setSelectedLevel(id)}>
+                      <Typography variant="xs" weight={500}>
+                        {attributes.description}
+                      </Typography>
+                    </Tab>
+                  ))}
+                </Tab.List>
+              </Tab.Group>
+            </div>
+            <div className="flex min-w-full gap-6 -mt-20 overflow-x-auto md:mt-0">
               {levels.map(({ attributes }) => (
                 <LevelCard
                   title={attributes.title}
@@ -150,6 +163,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 />
               ))}
             </div>
+
             <div>
               <div className="flex flex-col">
                 <Typography variant="h3" weight={700}>
@@ -162,11 +176,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                     categories={categoriesFiltered || []}
                   />
                 </div>
-                <div className="flex items-center gap-8 mt-16">
+                <div className="items-baseline hidden gap-8 mt-16 md:flex">
                   <Typography variant="h3" weight={700}>
                     Difficulty:
                   </Typography>
-                  <div className="flex gap-6">
+                  <div className="flex flex-wrap gap-6">
                     {levels.map(({ id, attributes }) => (
                       <Button
                         size="sm"
@@ -199,7 +213,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 <Button
                   as="a"
                   // TODO: change
-                  href="/blog/archive"
+                  href="/academy/archive"
                   color="gray"
                   variant="outlined"
                   size="md"
