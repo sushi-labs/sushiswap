@@ -141,7 +141,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <section className="pt-40 pb-24">
           <Container maxWidth="6xl" className="flex flex-col gap-24 mx-auto">
             <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden">
-              <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max">
+              <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
                 <Tab.List>
                   {levels.map(({ id, attributes }) => (
                     <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => setSelectedLevel(id)}>
