@@ -160,6 +160,79 @@ importers:
       tailwindcss: 3.1.6_postcss@8.4.14
       typescript: 4.7.4
 
+  apps/academy:
+    specifiers:
+      '@cloudinary/url-gen': ^1.8.0
+      '@graphql-mesh/cli': ^0.75.3
+      '@graphql-mesh/graphql': ^0.29.5
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^1.0.0
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@tailwindcss/typography': ^0.5.2
+      '@types/node': 17.0.30
+      '@types/qs': ^6.9.7
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      and: ^0.0.3
+      autoprefixer: ^10.4.0
+      classnames: ^2.3.1
+      date-fns: ^2.28.0
+      eslint: ^8.20.0
+      graphql: 16.6.0
+      next: ^12.2.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
+      next-transpile-modules: 9.0.0
+      postcss: ^8.4.0
+      qs: ^6.10.3
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-markdown: ^8.0.3
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typescript: ^4.7.0
+    dependencies:
+      '@cloudinary/url-gen': 1.8.0
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/ui': link:../../packages/ui
+      '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.6
+      classnames: 2.3.1
+      date-fns: 2.29.1
+      graphql: 16.6.0
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.20_next@12.2.3
+      qs: 6.11.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-markdown: 8.0.3_3hx2ussxxho4jajbwrd6gq34qe
+      swr: 1.3.0_react@18.2.0
+    devDependencies:
+      '@graphql-mesh/cli': 0.75.11_jelggnc5b4b3hu7o6odhvrmlsa
+      '@graphql-mesh/graphql': 0.29.10_jelggnc5b4b3hu7o6odhvrmlsa
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.30
+      '@types/qs': 6.9.7
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      and: 0.0.3
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.1.6
+      typescript: 4.7.4
+
   apps/analytics:
     specifiers:
       '@ethersproject/address': ^5.0.0
@@ -3372,13 +3445,13 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
-  /@envelop/parser-cache/4.5.0_po6qs34n4wurvucij4uurkc7ou:
+  /@envelop/parser-cache/4.5.0_yr3gyqp77xumsfnwaouh36vp5y:
     resolution: {integrity: sha512-PrMPLSYme/zpdSlRj+ZwWSitzUukf2vrHgrVnHBxc5I60N+kGXzg7SiddrTWM1BotqgEi5qSRd7AaiqgHQ6Hqg==}
     peerDependencies:
       '@envelop/core': ^2.4.0
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      '@envelop/core': 2.4.0_graphql@16.6.0
+      '@envelop/core': 2.5.0_graphql@16.6.0
       graphql: 16.6.0
       lru-cache: 6.0.0
     dev: true
@@ -3421,13 +3494,13 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
-  /@envelop/validation-cache/4.5.0_po6qs34n4wurvucij4uurkc7ou:
+  /@envelop/validation-cache/4.5.0_yr3gyqp77xumsfnwaouh36vp5y:
     resolution: {integrity: sha512-+vBW+IFaI8dk74xbg9f1wI8X43pB7/Ul4MUHsZJ21hpIlR/Ahu4+Jw5lydPa8lXEoCoK6EAm9ym8ClHBA5kKBQ==}
     peerDependencies:
       '@envelop/core': ^2.4.0
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      '@envelop/core': 2.4.0_graphql@16.6.0
+      '@envelop/core': 2.5.0_graphql@16.6.0
       graphql: 16.6.0
       lru-cache: 6.0.0
     dev: true
@@ -6613,11 +6686,11 @@ packages:
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
-      '@envelop/core': 2.4.0_graphql@16.6.0
-      '@envelop/parser-cache': 4.5.0_po6qs34n4wurvucij4uurkc7ou
-      '@envelop/validation-cache': 4.5.0_po6qs34n4wurvucij4uurkc7ou
+      '@envelop/core': 2.5.0_graphql@16.6.0
+      '@envelop/parser-cache': 4.5.0_yr3gyqp77xumsfnwaouh36vp5y
+      '@envelop/validation-cache': 4.5.0_yr3gyqp77xumsfnwaouh36vp5y
       '@graphql-tools/schema': 8.5.1_graphql@16.6.0
-      '@graphql-tools/utils': 8.9.0_graphql@16.6.0
+      '@graphql-tools/utils': 8.10.0_graphql@16.6.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
       '@graphql-yoga/subscription': 2.2.2
       cross-undici-fetch: 0.4.14
@@ -6648,8 +6721,8 @@ packages:
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
-      '@envelop/core': 2.4.0_graphql@16.6.0
-      '@graphql-tools/utils': 8.8.0_graphql@16.6.0
+      '@envelop/core': 2.5.0_graphql@16.6.0
+      '@graphql-tools/utils': 8.10.0_graphql@16.6.0
       '@graphql-yoga/common': 2.12.3_graphql@16.6.0
       '@graphql-yoga/subscription': 2.2.2
       cross-undici-fetch: 0.4.14
@@ -8094,7 +8167,7 @@ packages:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
     dev: false
 
   /@tanstack/react-table/8.0.0-alpha.87_biqbaboplfbrettd7655fr4n2y:
@@ -11638,8 +11711,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       is-text-path: 1.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -19325,17 +19398,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /postcss-import/14.1.0:
-    resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      postcss: ^8.0.0
-    dependencies:
-      postcss-value-parser: 4.2.0
-      read-cache: 1.0.0
-      resolve: 1.22.1
-    dev: true
-
   /postcss-import/14.1.0_postcss@8.4.14:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
@@ -19346,15 +19408,6 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
-
-  /postcss-js/4.0.0:
-    resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
-    engines: {node: ^12 || ^14 || >= 16}
-    peerDependencies:
-      postcss: ^8.3.3
-    dependencies:
-      camelcase-css: 2.0.1
-    dev: true
 
   /postcss-js/4.0.0_postcss@8.4.14:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -19412,15 +19465,6 @@ packages:
       lilconfig: 2.0.5
       ts-node: 10.9.1_x2utdhayajzrh747hktprshhby
       yaml: 1.10.2
-    dev: true
-
-  /postcss-nested/5.0.6:
-    resolution: {integrity: sha512-rKqm2Fk0KbA8Vt3AdGN0FB9OBOMDVajMG6ZCf/GoHgdxUJ4sBFp0A/uMIRm+MJUdo33YXEtjqIz8u7DAp8B7DA==}
-    engines: {node: '>=12.0'}
-    peerDependencies:
-      postcss: ^8.2.14
-    dependencies:
-      postcss-selector-parser: 6.0.10
     dev: true
 
   /postcss-nested/5.0.6_postcss@8.4.14:
@@ -21707,8 +21751,6 @@ packages:
     resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -21724,17 +21766,16 @@ packages:
       object-hash: 3.0.0
       picocolors: 1.0.0
       postcss: 8.4.14
-      postcss-import: 14.1.0
-      postcss-js: 4.0.0
-      postcss-load-config: 3.1.4
-      postcss-nested: 5.0.6
+      postcss-import: 14.1.0_postcss@8.4.14
+      postcss-js: 4.0.0_postcss@8.4.14
+      postcss-load-config: 3.1.4_postcss@8.4.14
+      postcss-nested: 5.0.6_postcss@8.4.14
       postcss-selector-parser: 6.0.10
       postcss-value-parser: 4.2.0
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
       - ts-node
-    dev: true
 
   /tailwindcss/3.1.6_postcss@8.4.14:
     resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
@@ -21767,6 +21808,7 @@ packages:
       resolve: 1.22.1
     transitivePeerDependencies:
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
