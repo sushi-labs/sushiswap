@@ -10,11 +10,16 @@ export interface SelectorProps {
   networks: ChainId[]
   selectedNetworks: ChainId[]
   onChange(selectedNetworks: ChainId[]): void
+  exclusive?: boolean
 }
 
-export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetworks, onChange }) => {
+export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetworks, onChange, exclusive = false }) => {
   const handleClick = useCallback(
     (chainId: ChainId) => {
+      if (exclusive) {
+        return onChange([chainId])
+      }
+
       if (networks.every((network) => selectedNetworks.includes(network))) {
         // If every network enabled, disable all but incoming chainId
         onChange([chainId])
@@ -45,13 +50,7 @@ export const Selector: FC<SelectorProps> = ({ className, networks, selectedNetwo
                 'hover:ring-2 ring-slate-800 ring-offset-2 ring-offset-slate-900 border-2 rounded-xl overflow-hidden cursor-pointer p-2'
               )}
             >
-              <NetworkIcon
-                type="circle"
-                chainId={chainId}
-                width={20}
-                height={20}
-                className={selectedNetworks.includes(chainId) ? '' : 'saturate-0'}
-              />
+              <NetworkIcon type="circle" chainId={chainId} width={20} height={20} />
             </div>
           }
           panel={<div>{chainName[chainId]}</div>}
