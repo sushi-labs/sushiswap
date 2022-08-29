@@ -16,6 +16,7 @@ import {
 } from 'components'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
@@ -204,6 +205,38 @@ const Add = () => {
                                   </Button>
                                 )}
                               </AddSectionReviewModalLegacy>
+                            )}
+                            {!pool && !tridentPoolIfCreate && (
+                              <AddSectionReviewModalLegacy
+                                poolState={PairState.NOT_EXISTS}
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                              >
+                                {({ isWritePending, setOpen }) => (
+                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                  </Button>
+                                )}
+                              </AddSectionReviewModalLegacy>
+                            )}
+                            {!pool && tridentPoolIfCreate && (
+                              <CreateSectionReviewModalTrident
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                                fee={FEE_MAP[fee]}
+                              >
+                                {({ isWritePending, setOpen }) => (
+                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                  </Button>
+                                )}
+                              </CreateSectionReviewModalTrident>
                             )}
                           </Checker.Amounts>
                         </Checker.Network>

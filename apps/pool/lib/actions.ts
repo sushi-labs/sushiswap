@@ -2,6 +2,8 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
+import { Fee } from '@sushiswap/exchange'
 
 interface Batch {
   contract: Contract
@@ -205,4 +207,24 @@ export const approveSLPAction = ({ router, signatureData }: ApproveSLPActionProp
   if (!signatureData) return undefined
   const { tokenAddress, amount, deadline, v, r, s } = signatureData
   return router.interface.encodeFunctionData('selfPermit', [tokenAddress, amount, deadline, v, r, s])
+}
+
+export interface DeployNewPoolActionProps {
+  assets: [Type, Type]
+  factory: string
+  router: Contract
+  feeTier: Fee
+  twap: boolean
+}
+
+export const deployNewPoolAction = ({ assets, factory, router, feeTier, twap }: DeployNewPoolActionProps): string => {
+  const [tokenA, tokenB] = assets[0].wrapped.sortsBefore(assets[1].wrapped)
+    ? [assets[0], assets[1]]
+    : [assets[1], assets[0]]
+  const deployData = defaultAbiCoder.encode(
+    ['address', 'address', 'uint8', 'bool'],
+    [tokenA.wrapped.address, tokenB.wrapped.address, feeTier, twap]
+  )
+
+  return router.interface.encodeFunctionData('deployPool', [factory, deployData])
 }
