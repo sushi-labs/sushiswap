@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useState } from 'react'
@@ -70,16 +70,21 @@ export const GenericTable = <T extends { id: string }>({
                       placement="top"
                       button={
                         <Table.tr
-                          onClick={() => {
-                            window.open (`/pool/${row.original.id}`, '_ blank')
-                            // void router.push(`/${row.original.id}`)
+                          onClick={(e) => {
+                            if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                              setShowOverlay(true)
+                            }
                           }}
                           className="cursor-pointer"
                         >
                           {row.getVisibleCells().map((cell) => {
                             return (
                               <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                                  <a>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </a>
+                                </Link.Internal>
                               </Table.td>
                             )
                           })}
@@ -93,16 +98,21 @@ export const GenericTable = <T extends { id: string }>({
                 return (
                   <Table.tr
                     key={row.id}
-                    onClick={() => {
-                      setShowOverlay(true)
-                      void router.push(`/${row.original.id}`)
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                        setShowOverlay(true)
+                      }
                     }}
                     className="cursor-pointer"
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
                         <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                            <a>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </a>
+                          </Link.Internal>
                         </Table.td>
                       )
                     })}
