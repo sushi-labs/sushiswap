@@ -35,7 +35,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = ({ selectedNetwork, fee
                   }
                   panel={
                     <Typography variant="xs" className="max-w-[220px]">
-                      This network does not allow changing the default fee tier of 0.3%
+                      This network does not allow changing the default fee of 0.3%
                     </Typography>
                   }
                 ></Tooltip>
