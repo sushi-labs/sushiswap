@@ -190,25 +190,9 @@ const Add = () => {
                                 )}
                               </AddSectionReviewModalTrident>
                             )}
-                            {pool && isLegacyPool(pool) && (
+                            {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
                               <AddSectionReviewModalLegacy
                                 poolState={poolState as PairState}
-                                chainId={chainId}
-                                token0={token0}
-                                token1={token1}
-                                input0={parsedInput0}
-                                input1={parsedInput1}
-                              >
-                                {({ isWritePending, setOpen }) => (
-                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                                  </Button>
-                                )}
-                              </AddSectionReviewModalLegacy>
-                            )}
-                            {!pool && !tridentPoolIfCreate && (
-                              <AddSectionReviewModalLegacy
-                                poolState={PairState.NOT_EXISTS}
                                 chainId={chainId}
                                 token0={token0}
                                 token1={token1}
