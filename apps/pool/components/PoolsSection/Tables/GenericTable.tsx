@@ -21,7 +21,6 @@ export const GenericTable = <T extends { id: string }>({
   loading,
   placeholder,
 }: GenericTableProps<T>) => {
-  const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
 
   return (
