@@ -110,7 +110,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
               approveMasterContractAction({ router: contract, signature: permit }),
               deployNewPoolAction({
                 assets: [token0, token1],
-                factory: '',
+                factory: factory.address,
                 router: contract,
                 feeTier: fee,
                 twap: false,
