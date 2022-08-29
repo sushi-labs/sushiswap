@@ -8,7 +8,7 @@ import { Button, classNames, createToast, Dots, Link } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import Image from 'next/image'
-import { FC, useCallback, useState } from 'react'
+import {FC, useCallback, useMemo, useState} from 'react'
 import useSWR from 'swr'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
@@ -24,7 +24,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const [value, setValue] = useState<string>('')
   const [otherValue, setOtherValue] = useState<string>('')
 
-  const { data: stats } = useSWR<{ apr: { '1y': string } }>(`pool/api/bar`, (url) =>
+  const { data: stats } = useSWR<{ apr: { '1y': string }; ratio: number }>(`pool/api/bar`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
@@ -39,7 +39,7 @@ export const SushiBarSectionDesktop: FC = () => {
     account: address,
   })
 
-  const amount = tryParseAmount(value, stake ? SUSHI_TOKEN : XSUSHI_TOKEN)
+  const amount = useMemo(() => tryParseAmount(value, stake ? SUSHI_TOKEN : XSUSHI_TOKEN), [stake, value])
 
   const execute = useCallback(async () => {
     if (!chain?.id || !amount?.greaterThan(ZERO)) return
@@ -79,11 +79,11 @@ export const SushiBarSectionDesktop: FC = () => {
             </div>
           </div>
           <div className="p-5 flex flex-grow gap-3 items-start">
-            <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3 max-w-[280px]')}>
+            <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
               <SushiBarInput
                 currency={SUSHI_TOKEN}
                 balance={balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]}
-                value={stake ? value : otherValue}
+                value={stake ? value : (Number(value) / Number(stats?.ratio)).toFixed(6)}
                 onChange={stake ? setValue : setOtherValue}
                 disabled={!stake}
               />
@@ -97,11 +97,11 @@ export const SushiBarSectionDesktop: FC = () => {
                 <ChevronRightIcon width={16} height={16} />
               </div>
             </button>
-            <div className={classNames(!stake ? 'order-1 flex-grow' : 'order-3 max-w-[280px]')}>
+            <div className={classNames(!stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
               <SushiBarInput
                 currency={XSUSHI_TOKEN}
                 balance={balances?.[XSUSHI_TOKEN.address]?.[FundSource.WALLET]}
-                value={stake ? otherValue : value}
+                value={stake ? (Number(value) / Number(stats?.ratio)).toFixed(6) : value}
                 onChange={stake ? setOtherValue : setValue}
                 disabled={stake}
               />
@@ -113,7 +113,7 @@ export const SushiBarSectionDesktop: FC = () => {
                   <Approve.Components>
                     <Approve.Token
                       hideIcon
-                      className="whitespace-nowrap w-[130px] min-h-[48px]"
+                      className="whitespace-nowrap w-[213px] min-h-[48px]"
                       amount={amount}
                       address={getSushiBarContractConfig(ChainId.ETHEREUM).addressOrName}
                     />
@@ -121,16 +121,16 @@ export const SushiBarSectionDesktop: FC = () => {
                 }
                 render={({ approved }) => {
                   return (
-                    <Checker.Connected className="whitespace-nowrap !h-[48px]">
-                      <Checker.Network className="whitespace-nowrap !h-[48px]" chainId={ChainId.ETHEREUM}>
+                    <Checker.Connected className="whitespace-nowrap !h-[48px] w-[213px]">
+                      <Checker.Network className="whitespace-nowrap !h-[48px] w-[213px]" chainId={ChainId.ETHEREUM}>
                         <Checker.Amounts
-                          className="whitespace-nowrap !h-[48px]"
+                          className="whitespace-nowrap !h-[48px] w-[213px]"
                           chainId={ChainId.ETHEREUM}
                           fundSource={FundSource.WALLET}
                           amounts={[amount]}
                         >
                           <Button
-                            className="!h-[48px]"
+                            className="!h-[48px] w-[213px]"
                             fullWidth
                             onClick={execute}
                             disabled={!approved || isWritePending}

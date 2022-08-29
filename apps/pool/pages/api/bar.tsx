@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const apr = numeral(currentBar?.ratio / oneYearBar?.ratio - 1).format('0.00%')
 
   res.status(200).send({
+    ratio: currentBar?.ratio,
     apr: {
       '1y': apr,
     },

@@ -132,7 +132,9 @@ export const SushiBarSectionMobile: FC = () => {
                         <Approve.Components>
                           <Approve.Token
                             hideIcon
-                            className="whitespace-nowrap w-[130px] min-h-[48px]"
+                            fullWidth
+                            size="md"
+                            className="whitespace-nowrap min-h-[48px]"
                             amount={amount}
                             address={getSushiBarContractConfig(ChainId.ETHEREUM).addressOrName}
                           />
