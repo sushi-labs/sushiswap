@@ -80,9 +80,7 @@ export const GenericTable = <T extends { id: string }>({
                             return (
                               <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
                                 <Link.Internal href={`/${row.original.id}`} passHref={true}>
-                                  <a>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  </a>
+                                  <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                                 </Link.Internal>
                               </Table.td>
                             )
@@ -108,9 +106,7 @@ export const GenericTable = <T extends { id: string }>({
                       return (
                         <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
                           <Link.Internal href={`/${row.original.id}`} passHref={true}>
-                            <a>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </a>
+                            <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                           </Link.Internal>
                         </Table.td>
                       )

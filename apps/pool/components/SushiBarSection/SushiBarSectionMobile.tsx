@@ -8,7 +8,7 @@ import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { SushiBarInput } from './SushiBarInput'
 
@@ -22,6 +22,7 @@ export const SushiBarSectionMobile: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+  const [error, setError] = useState<string>()
 
   const { data: stats } = useSWR<{ apr: { '1m': string } }>(`pool/api/bar`, (url) =>
     fetch(url).then((response) => response.json())
@@ -43,18 +44,26 @@ export const SushiBarSectionMobile: FC = () => {
   const execute = useCallback(async () => {
     if (!activeChain?.id || !amount?.greaterThan(ZERO)) return
 
-    const data = await writeAsync({ args: [amount.quotient.toString()] })
+    try {
+      const data = await writeAsync({ args: [amount.quotient.toString()] })
 
-    createToast({
-      txHash: data.hash,
-      href: Chain.from(activeChain.id).getTxUrl(data.hash),
-      promise: data.wait(),
-      summary: {
-        pending: <Dots>{selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar</Dots>,
-        completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
-        failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
-      },
-    })
+      createToast({
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        promise: data.wait(),
+        summary: {
+          pending: <Dots>{selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar</Dots>,
+          completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
+          failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
+        },
+      })
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
+
+      console.log(e)
+    }
   }, [activeChain?.id, amount, writeAsync, selectedIndex])
 
   const handleClose = useCallback(() => {
@@ -173,6 +182,11 @@ export const SushiBarSectionMobile: FC = () => {
                       }}
                     />
                   </Dialog.Actions>
+                  {error && (
+                    <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+                      {error}
+                    </Typography>
+                  )}
                 </Tab.Panels>
               </Tab.Group>
             </div>
