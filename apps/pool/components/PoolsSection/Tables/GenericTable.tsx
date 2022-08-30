@@ -1,7 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, Table as ReactTableType } from '@tanstack/react-table'
-import { useRouter } from 'next/router'
 import React, { ReactNode, useState } from 'react'
 
 import { ExtendedColumnDef } from './types'
