@@ -38,7 +38,12 @@ export const getArticles = async (variables?: { filters?: ArticleFiltersInput; p
   return await sdk.getArticles(variables)
 }
 
-export const getCategories = async (filters?: CategoryFiltersInput) => {
+export const getCategories = async () => {
   const sdk = getMeshSDK()
-  return await sdk.getCategories({ filters })
+  return await sdk.getCategories()
+}
+
+export const getLevels = async () => {
+  const sdk = getMeshSDK()
+  return await sdk.getLevels()
 }

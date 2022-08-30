@@ -10,7 +10,7 @@ const config = {
   transform: (config, path) => {
     // Ignore articles, they'll be added dynamically
     // ! Array has to be updated if pages are added
-    if (!['/', '/archive'].includes(path)) {
+    if (!['/', '/articles'].includes(path)) {
       return null
     }
 

@@ -12,7 +12,7 @@ interface ArticleListItem {
 export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
   return (
     <a
-      href={`/blog/${article?.attributes?.slug}`}
+      href={`/academy/articles/${article?.attributes?.slug}`}
       className="grid grid-cols-[200px_auto] md:grid-cols-[300px_auto] py-8 gap-x-8 cursor-pointer border-slate-200/5"
     >
       {article?.attributes?.cover.data && (

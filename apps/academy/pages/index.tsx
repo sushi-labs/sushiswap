@@ -9,68 +9,19 @@ import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
 import { ArticleList, Card, Categories, Hero } from '../components'
-import { getArticles, getCategories } from '../lib/api'
-
-const difficultyLevels = [
-  {
-    name: 'Beginner',
-    title: 'Getting started with Sushi: Tutorials & Product Explainers',
-    description: 'For Beginner users',
-    imgSrc: '',
-  },
-  {
-    name: 'Advanced',
-    title: 'Deepdive into Sushi: Strategies & Product Features',
-    description: 'For Advanced users',
-    imgSrc: '',
-  },
-  {
-    name: 'Developers',
-    title: 'Building on Sushi: Technical Documentation',
-    description: 'For Builders',
-    imgSrc: '',
-  },
-]
+import { getArticles, getCategories, getLevels } from '../lib/api'
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 6 } })
   const categories = await getCategories()
-
-  // TODO: mock, to be implemented
-  const levels = [
-    {
-      id: '6',
-      attributes: {
-        name: 'Beginner',
-        description: 'Beginner',
-        slug: 'beginner',
-      },
-    },
-    {
-      id: '7',
-      attributes: {
-        name: 'Advanced',
-        description: 'Advanced',
-        slug: 'advanced',
-      },
-    },
-    {
-      id: '8',
-      attributes: {
-        name: 'Developers',
-        description: 'Developers',
-        slug: 'developers',
-      },
-    },
-  ]
-
-  const fullData = [...levels, ...(categories?.categories.data || [])]
+  const levels = await getLevels()
 
   return {
     props: {
       fallback: {
         ['/articles']: articles?.articles,
-        ['/categories']: { data: fullData },
+        ['/categories']: categories?.categories,
+        ['/levels']: levels?.categories,
       },
     },
     revalidate: 1,
@@ -86,21 +37,22 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
-  const [query, setQuery] = useState<string>()
-  const debouncedQuery = useDebounce(query, 200)
-
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [selectedLevel, setSelectedLevel] = useState<string>()
+  const queryParams = new URLSearchParams({
+    ...(selectedLevel && { level: selectedLevel }),
+    ...(selectedCategory && { category: selectedCategory }),
+  }).toString()
+
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
-
+  const { data: levelsData } = useSWR<CategoryEntityResponseCollection>('/levels')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedLevel, debouncedQuery],
-    async (url, categoryFilter, levelFilter, debouncedQuery) => {
+    [`/articles`, selectedCategory, selectedLevel],
+    async (_url, categoryFilter, levelFilter) => {
       return (
         await getArticles({
           filters: {
-            ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
             ...((categoryFilter || levelFilter) && {
               categories: {
                 id: {
@@ -117,21 +69,19 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
-  const categories = categoriesData?.data
+  const categories = categoriesData?.data || []
+  const levels = levelsData?.data || []
   const articleList =
     (selectedCategory || selectedLevel) && filterData?.data ? filterData?.data : articles ? articles : undefined
-  const categoriesFiltered = categories.filter((cat) =>
-    difficultyLevels.every(({ name }) => name.toLowerCase() !== cat.attributes.name.toLowerCase())
-  )
-  const levels = difficultyLevels.map((level) => {
-    const levelCategory = categories.find((cat) => cat.attributes.name.toLowerCase() === level.name.toLowerCase())
-    return { id: levelCategory?.id ?? 'Unknown', attributes: { ...levelCategory?.attributes, ...level } }
-  })
   const latestReleases = articles?.slice(0, 3)
 
   /**
    * const initialArticleList = special tag
    */
+
+  const handleSelectLevel = (id: string) => setSelectedLevel((currentLevel) => (currentLevel === id ? undefined : id))
+  const handleSelectCategory = (id: string) =>
+    setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
 
   return (
     <>
@@ -144,7 +94,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
                 <Tab.List>
                   {levels.map(({ id, attributes }) => (
-                    <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => setSelectedLevel(id)}>
+                    <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => handleSelectLevel(id)}>
                       <Typography variant="xs" weight={500}>
                         {attributes.description}
                       </Typography>
@@ -154,14 +104,24 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               </Tab.Group>
             </div>
             <div className="flex min-w-full gap-6 -mt-20 overflow-x-auto md:mt-0">
-              {levels.map(({ attributes }) => (
-                <LevelCard
-                  title={attributes.title}
-                  imgSrc={attributes.imgSrc}
-                  chipLabel={attributes.description}
-                  key={attributes.name}
-                />
-              ))}
+              <LevelCard
+                name="Beginner"
+                title="Getting started with Sushi: Tutorials & Product Explainers"
+                chipLabel="For Beginner users"
+                imgSrc=""
+              />
+              <LevelCard
+                name="Advanced"
+                title="Deepdive into Sushi: Strategies & Product Features"
+                chipLabel="For Advanced users"
+                imgSrc=""
+              />
+              <LevelCard
+                name="Builders"
+                title="Building on Sushi: Technical Documentation"
+                chipLabel="For Builders"
+                imgSrc=""
+              />
             </div>
 
             <div>
@@ -172,8 +132,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 <div className="flex flex-wrap gap-8 mt-8">
                   <Categories
                     selected={selectedCategory}
-                    onSelect={setSelectedCategory}
-                    categories={categoriesFiltered || []}
+                    onSelect={handleSelectCategory}
+                    categories={categories || []}
                   />
                 </div>
                 <div className="items-baseline hidden gap-8 mt-16 md:flex">
@@ -185,7 +145,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                       <Button
                         size="sm"
                         color={selectedLevel === id ? 'blue' : 'gray'}
-                        onClick={() => setSelectedLevel(id)}
+                        onClick={() => handleSelectLevel(id)}
                         variant="outlined"
                         key={attributes.name}
                         className="!text-xs rounded-lg"
@@ -212,8 +172,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               <div className="flex justify-center mt-14">
                 <Button
                   as="a"
-                  // TODO: change
-                  href="/academy/archive"
+                  href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')}
                   color="gray"
                   variant="outlined"
                   size="md"
@@ -246,7 +205,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               <div className="flex h-16 mt-10">
                 <div className="w-[340px] px-6 bg-white rounded-l-xl">
                   <input
-                    onChange={(e) => setQuery(e.target.value)}
+                    // onChange={(e) => setQuery(e.target.value)}
                     className="w-full h-16 font-medium bg-white text-slate-300 outline-0"
                     placeholder="Enter your email address"
                   />

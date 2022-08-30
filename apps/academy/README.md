@@ -2,4 +2,4 @@
 
 ### DEV
 
-pnpm exec turbo run dev --filter=academy
+run `pnpm exec turbo run dev --filter=academy` on /apps (parent) folder

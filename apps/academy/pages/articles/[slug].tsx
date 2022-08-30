@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
+import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -14,14 +14,14 @@ import {
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
-} from '../components'
-import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
+} from '../../components'
+import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
+      if (article?.attributes?.slug) acc.push(`/articles/${article?.attributes.slug}`)
 
       console.log(acc)
       return acc
@@ -37,6 +37,8 @@ export async function getStaticProps({
   params: { slug: string }
   preview: Record<string, unknown> | null
 }) {
+  console.log('params', params)
+  console.log('preview', preview)
   const data = await getArticleAndMoreArticles(params.slug, preview)
 
   return {
