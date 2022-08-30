@@ -155,7 +155,7 @@ type UseBalanceParams = {
 }
 
 type UseBalance = (params: UseBalanceParams) => Pick<ReturnType<typeof useBalances>, 'isError' | 'isLoading'> & {
-  data: Record<FundSource, Amount<Type> | undefined> | undefined
+  data: Record<FundSource, Amount<Type>> | undefined
 }
 
 export const useBalance: UseBalance = ({ chainId, account, currency, enabled = true }) => {
@@ -164,17 +164,17 @@ export const useBalance: UseBalance = ({ chainId, account, currency, enabled = t
 
   return useMemo(() => {
     const walletBalance = currency
-      ? data[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
+      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
       : undefined
     const bentoBalance = currency
-      ? data[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
+      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
 
     return {
       isError: isError,
       isLoading: isLoading,
       data:
-        currency && data
+        walletBalance && bentoBalance
           ? {
               [FundSource.WALLET]: walletBalance,
               [FundSource.BENTOBOX]: bentoBalance,
