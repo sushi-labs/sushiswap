@@ -8,7 +8,7 @@ export interface CustomProps {
 }
 
 export const Custom: FC<CustomProps> = ({ showGuardIfTrue, guard, children }) => {
-  if (!showGuardIfTrue) {
+  if (showGuardIfTrue) {
     return <>{cloneElement(guard, { ...guard.props, disabled: true }, guard.props.children)}</>
   }
 
