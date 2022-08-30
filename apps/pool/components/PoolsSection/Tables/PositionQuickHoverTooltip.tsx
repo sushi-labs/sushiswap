@@ -54,9 +54,17 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             Fee {row.swapFee / 100}%
           </Typography>
         </div>
-        <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
-        </Typography>
+        <div className="flex flex-col gap-1">
+          <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+            <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
+          </Typography>
+          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+            <span className="text-slate-400">Rewards:</span> {formatPercent(rewardAPR)}
+          </Typography>
+          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.apr / 100)}
+          </Typography>
+        </div>
       </div>
       <hr className="my-3 border-t border-slate-200/10" />
       <div className="flex flex-col gap-1.5">

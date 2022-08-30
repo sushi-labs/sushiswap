@@ -13,8 +13,8 @@ interface PairQuickHoverTooltipProps {
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
 
-  const rewardAPR = row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0
-  const totalAPR = rewardAPR / 100 + row.apr / 100
+  const rewardAPR = (row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
+  const totalAPR = rewardAPR + row.apr / 100
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -38,9 +38,17 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
             <Chip color="gray" label={`Fee ${row.swapFee / 100}%`} />
           </Typography>
         </div>
-        <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-          <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
-        </Typography>
+        <div className="flex flex-col gap-1">
+          <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+            <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
+          </Typography>
+          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+            <span className="text-slate-400">Rewards:</span> {formatPercent(rewardAPR)}
+          </Typography>
+          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.apr / 100)}
+          </Typography>
+        </div>
       </div>
       {row.incentives.length > 0 && (
         <>

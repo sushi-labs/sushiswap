@@ -1,3 +1,5 @@
+import { useIsMounted } from '@sushiswap/hooks'
+import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -39,13 +41,18 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
 }
 
 const _Pool = () => {
+  const isMounted = useIsMounted()
   const router = useRouter()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+  const { data: rewards } = useFarmRewards()
 
   if (!data) return <></>
   const { pair } = data
+
+  const farmId = rewards?.[pair.chainId]?.farms[pair.id]?.id
+  const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   return (
     <Layout>
@@ -56,7 +63,7 @@ const _Pool = () => {
           <PoolChart pair={pair} />
           <PoolStats pair={pair} />
           <PoolComposition pair={pair} />
-          <PoolRewards pair={pair} />
+          {incentives && isMounted && farmId !== undefined && <PoolRewards pair={pair} />}
         </div>
         <div className="flex flex-col order-2 gap-4">
           <PoolPosition pair={pair} />

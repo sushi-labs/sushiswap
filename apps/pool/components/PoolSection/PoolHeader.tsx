@@ -2,8 +2,8 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
-import { Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
-import { useFarmRewards } from '@sushiswap/wagmi'
+import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
+import { useFarmRewards, usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -14,6 +14,7 @@ interface PoolHeader {
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
+  const { data: prices } = usePrices({ chainId: pair.chainId })
   const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
   const { data: rewards } = useFarmRewards()
@@ -56,33 +57,48 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
               </Typography>
             </Link.External>
           </div>
-          <div className="flex flex-col gap-1">
-            <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-              APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
-            </Typography>
-            <div className="flex gap-2">
-              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Rewards: {formatPercent(rewardAPR)}
+          <AppearOnMount>
+            <div className="flex flex-col gap-1">
+              <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
+                APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
+                {rewardAPR > 0 ? '✨' : ''}
               </Typography>
-              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Fees: {formatPercent(pair.apr / 100)}
-              </Typography>
+              <div className="flex gap-2">
+                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                  Rewards: {formatPercent(rewardAPR)}
+                </Typography>
+                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                  Fees: {formatPercent(pair.apr / 100)}
+                </Typography>
+              </div>
             </div>
-          </div>
+          </AppearOnMount>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
-          <Typography variant="sm" weight={600} className="text-slate-300">
-            1 {token0.symbol} = {price?.toSignificant(6)} {token1.symbol}
-          </Typography>
+          <AppearOnMount>
+            <Typography variant="sm" weight={600} className="text-slate-300">
+              {token0.symbol} = $
+              {(prices?.[token1.wrapped.address]
+                ? Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6))
+                : 0
+              ).toFixed(2)}
+            </Typography>
+          </AppearOnMount>
         </div>
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token1} width={20} height={20} />
-          <Typography variant="sm" weight={600} className="text-slate-300">
-            1 {token1.symbol} = {price?.invert()?.toSignificant(6)} {token0.symbol}
-          </Typography>
+          <AppearOnMount>
+            <Typography variant="sm" weight={600} className="text-slate-300">
+              {token1.symbol} = $
+              {(prices?.[token0.wrapped.address]
+                ? Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6))
+                : 0
+              ).toFixed(10)}{' '}
+            </Typography>
+          </AppearOnMount>
         </div>
       </div>
     </div>

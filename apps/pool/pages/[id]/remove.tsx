@@ -58,12 +58,12 @@ const _Remove = () => {
       <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
         <div className="hidden md:block" />
         <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
+          <RemoveSectionUnstake chainId={pair.chainId} poolAddress={pair.id} />
           {pair.source === 'TRIDENT' ? (
             <RemoveSectionTrident pair={pair} isFarm={!!incentives} />
           ) : (
             <RemoveSectionLegacy pair={pair} isFarm={!!incentives} />
           )}
-          <RemoveSectionUnstake chainId={pair.chainId} poolAddress={pair.id} />
           <Container className="flex justify-center">
             <Link.External
               href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
