@@ -10,7 +10,9 @@ import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
+import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
+import XSushi = BarTypes.XSushi
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
@@ -24,9 +26,7 @@ export const SushiBarSectionMobile: FC = () => {
   const [value, setValue] = useState('')
   const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<{ apr: { '1m': string } }>(`pool/api/bar`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
@@ -109,7 +109,7 @@ export const SushiBarSectionMobile: FC = () => {
                         variant="xs"
                         className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent"
                       >
-                        {stats?.apr?.['1m']}
+                        {stats?.apr12m}
                         <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                           <ExternalLinkIcon width={12} height={12} className="text-slate-200 hover:text-blue" />
                         </Link.External>

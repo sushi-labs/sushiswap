@@ -220,17 +220,13 @@ query EthereumBlocks($where: Block_filter) {
   }
 }
 
-query Bar($block: Block_height, $id: String = "0x8798249c2e607446efb7ad49ec89dd1865ff4272") {
-  bar(block: $block, id: $id) {
-    id
-    decimals
-    sushi
-    totalSupply
-    ratio
-    xSushiMinted
-    xSushiBurned
-    sushiStaked
-    sushiHarvested
+query Bar($id: String = "xSushi") {
+  xsushi(id: $id) {
+    sushiXsushiRatio
+    apr1m
+    apr3m
+    apr6m
+    apr12m
   }
 }
 

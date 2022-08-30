@@ -10,7 +10,7 @@ sources:
   - name: Bar
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/bar}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/xsushi}
   - name: Blocks-ethereum
     handler:
       graphql:

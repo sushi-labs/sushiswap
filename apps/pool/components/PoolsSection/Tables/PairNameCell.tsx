@@ -13,8 +13,8 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
     <div className="flex items-center">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
-          <Currency.Icon currency={token0} />
-          <Currency.Icon currency={token1} />
+          <Currency.Icon disableLink currency={token0} />
+          <Currency.Icon disableLink currency={token1} />
         </Currency.IconList>
       </div>
       <div className="flex sm:hidden">

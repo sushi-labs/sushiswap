@@ -13,6 +13,7 @@ import { useAccount } from 'wagmi'
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 
 interface AddSectionStakeWidgetProps {
+  title?: string
   chainId: ChainId
   value: string
   setValue(value: string): void
@@ -24,6 +25,7 @@ interface AddSectionStakeWidgetProps {
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
+  title,
   chainId,
   value,
   setValue,
@@ -59,7 +61,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
             <>
               <Disclosure.Button className="w-full pr-4">
                 <div className="flex justify-between items-center">
-                  <Widget.Header title="2. Stake Liquidity" className="!pb-3 " />
+                  <Widget.Header title={title || '2. Stake Liquidity'} className="!pb-3 " />
                   <div
                     className={classNames(
                       open ? 'rotate-180' : 'rotate-0',

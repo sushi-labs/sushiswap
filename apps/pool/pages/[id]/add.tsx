@@ -68,20 +68,7 @@ const _Add = () => {
           ) : (
             <AddSectionLegacy pair={pair} isFarm={!!incentives} />
           )}
-          {chefType && farmId !== undefined && isMounted && (
-            <Transition
-              appear
-              show={true}
-              enter="transition duration-300 origin-center ease-out"
-              enterFrom="transform scale-90 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform opacity-100"
-              leaveTo="transform opacity-0"
-            >
-              <AddSectionStake pair={pair} chefType={chefType} farmId={farmId} />
-            </Transition>
-          )}
+          <AddSectionStake chainId={pair.chainId} poolAddress={pair.id} />
           <Container className="flex justify-center">
             <Link.External
               href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"

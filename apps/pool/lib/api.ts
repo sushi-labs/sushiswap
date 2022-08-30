@@ -81,10 +81,12 @@ export const getOneYearBlock = async () => {
   ).blocks
 }
 
-export const getSushiBar = async (blockNumber?: number) => {
+export const getSushiBar = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
-  return blockNumber ? (await sdk.Bar({ block: { number: blockNumber } })).bar : (await sdk.Bar()).bar
+
+  const { xsushi } = await sdk.Bar()
+  return xsushi
 }
 
 export const getFarms = async (query?: CrossChainFarmsQuery) => {

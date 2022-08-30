@@ -2,16 +2,18 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
+import { formatNumber } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dots, Link, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import Image from 'next/image'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
+import { XSushi } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
@@ -25,9 +27,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const [, setOtherValue] = useState<string>('')
   const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<{ apr: { '1y': string }; ratio: number }>(`pool/api/bar`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
@@ -67,6 +67,10 @@ export const SushiBarSectionDesktop: FC = () => {
     }
   }, [chain?.id, amount, writeAsync, stake])
 
+  useEffect(() => {
+    setValue('')
+  }, [stake])
+
   return (
     <section className="hidden md:flex">
       <div className="flex w-full flex-col gap-6">
@@ -81,7 +85,7 @@ export const SushiBarSectionDesktop: FC = () => {
                 <h4 className="font-semibold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
                 <p className="text-sm text-slate-400">APR (1y)</p>
                 <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
-                  {stats?.apr?.['1y']}
+                  {formatNumber(stats?.apr12m * 100)}
                   <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                     <ExternalLinkIcon width={16} height={16} className="text-slate-200 hover:text-blue" />
                   </Link.External>
@@ -93,7 +97,7 @@ export const SushiBarSectionDesktop: FC = () => {
                 <SushiBarInput
                   currency={SUSHI_TOKEN}
                   balance={balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]}
-                  value={stake ? value : (Number(value) / Number(stats?.ratio)).toFixed(6)}
+                  value={stake ? value : (Number(value) / Number(stats?.sushiXsushiRatio)).toFixed(6)}
                   onChange={stake ? setValue : setOtherValue}
                   disabled={!stake}
                 />
@@ -111,7 +115,7 @@ export const SushiBarSectionDesktop: FC = () => {
                 <SushiBarInput
                   currency={XSUSHI_TOKEN}
                   balance={balances?.[XSUSHI_TOKEN.address]?.[FundSource.WALLET]}
-                  value={stake ? (Number(value) / Number(stats?.ratio)).toFixed(6) : value}
+                  value={stake ? (Number(value) / Number(stats?.sushiXsushiRatio)).toFixed(6) : value}
                   onChange={stake ? setOtherValue : setValue}
                   disabled={stake}
                 />

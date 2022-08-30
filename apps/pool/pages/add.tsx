@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { Fee } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
@@ -9,6 +9,7 @@ import { Checker, PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
   AddSectionReviewModalLegacy,
   AddSectionReviewModalTrident,
+  AddSectionStake,
   FEE_MAP,
   Layout,
   SelectFeeWidget,
@@ -129,106 +130,117 @@ const Add = () => {
               )
 
             return (
-              <Widget id="addLiquidity" maxWidth={400}>
-                <Widget.Content>
-                  <Widget.Header title="3. Add Liquidity" />
-                  <Web3Input.Currency
-                    className="p-3"
-                    value={input0}
-                    onChange={(val) => onChangeToken0TypedAmount(pool, poolState, val)}
-                    currency={token0}
-                    onSelect={setToken0}
-                    customTokenMap={customTokensMap}
-                    onAddToken={addCustomToken}
-                    onRemoveToken={removeCustomToken}
-                    chainId={chainId}
-                    tokenMap={tokenMap}
-                  />
-                  <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-                    <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
-                      <PlusIcon width={16} height={16} />
-                    </div>
-                  </div>
-                  <div className="bg-slate-800">
+              <>
+                <Widget id="addLiquidity" maxWidth={400}>
+                  <Widget.Content>
+                    <Widget.Header title="3. Add Liquidity" />
                     <Web3Input.Currency
-                      className="p-3 !pb-1"
-                      value={input1}
-                      onChange={(val) => onChangeToken1TypedAmount(pool, poolState, val)}
-                      currency={token1}
-                      onSelect={setToken1}
+                      className="p-3"
+                      value={input0}
+                      onChange={(val) => onChangeToken0TypedAmount(pool, poolState, val)}
+                      currency={token0}
+                      onSelect={setToken0}
                       customTokenMap={customTokensMap}
                       onAddToken={addCustomToken}
                       onRemoveToken={removeCustomToken}
                       chainId={chainId}
                       tokenMap={tokenMap}
                     />
-                    <div className="p-3">
-                      <Checker.Connected fullWidth size="md">
-                        <Checker.Network fullWidth size="md" chainId={chainId}>
-                          <Checker.Amounts
-                            fullWidth
-                            size="md"
-                            chainId={chainId}
-                            fundSource={FundSource.WALLET}
-                            amounts={[parsedInput0, parsedInput1]}
-                          >
-                            {pool && isConstantProductPool(pool) && (
-                              <AddSectionReviewModalTrident
-                                poolAddress={pool.liquidityToken.address}
-                                poolState={poolState as PoolState}
-                                pool={pool}
-                                chainId={chainId}
-                                token0={token0}
-                                token1={token1}
-                                input0={parsedInput0}
-                                input1={parsedInput1}
-                              >
-                                {({ isWritePending, setOpen }) => (
-                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                                  </Button>
-                                )}
-                              </AddSectionReviewModalTrident>
-                            )}
-                            {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
-                              <AddSectionReviewModalLegacy
-                                poolState={poolState as PairState}
-                                chainId={chainId}
-                                token0={token0}
-                                token1={token1}
-                                input0={parsedInput0}
-                                input1={parsedInput1}
-                              >
-                                {({ isWritePending, setOpen }) => (
-                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                                  </Button>
-                                )}
-                              </AddSectionReviewModalLegacy>
-                            )}
-                            {!pool && tridentPoolIfCreate && (
-                              <CreateSectionReviewModalTrident
-                                chainId={chainId}
-                                token0={token0}
-                                token1={token1}
-                                input0={parsedInput0}
-                                input1={parsedInput1}
-                                fee={FEE_MAP[fee]}
-                              >
-                                {({ isWritePending, setOpen }) => (
-                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                                  </Button>
-                                )}
-                              </CreateSectionReviewModalTrident>
-                            )}
-                          </Checker.Amounts>
-                        </Checker.Network>
-                      </Checker.Connected>
+                    <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+                      <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
+                        <PlusIcon width={16} height={16} />
+                      </div>
                     </div>
+                    <div className="bg-slate-800">
+                      <Web3Input.Currency
+                        className="p-3 !pb-1"
+                        value={input1}
+                        onChange={(val) => onChangeToken1TypedAmount(pool, poolState, val)}
+                        currency={token1}
+                        onSelect={setToken1}
+                        customTokenMap={customTokensMap}
+                        onAddToken={addCustomToken}
+                        onRemoveToken={removeCustomToken}
+                        chainId={chainId}
+                        tokenMap={tokenMap}
+                      />
+                      <div className="p-3">
+                        <Checker.Connected fullWidth size="md">
+                          <Checker.Network fullWidth size="md" chainId={chainId}>
+                            <Checker.Amounts
+                              fullWidth
+                              size="md"
+                              chainId={chainId}
+                              fundSource={FundSource.WALLET}
+                              amounts={[parsedInput0, parsedInput1]}
+                            >
+                              {pool && isConstantProductPool(pool) && (
+                                <AddSectionReviewModalTrident
+                                  poolAddress={pool.liquidityToken.address}
+                                  poolState={poolState as PoolState}
+                                  pool={pool}
+                                  chainId={chainId}
+                                  token0={token0}
+                                  token1={token1}
+                                  input0={parsedInput0}
+                                  input1={parsedInput1}
+                                >
+                                  {({ isWritePending, setOpen }) => (
+                                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                      {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                    </Button>
+                                  )}
+                                </AddSectionReviewModalTrident>
+                              )}
+                              {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
+                                <AddSectionReviewModalLegacy
+                                  poolState={poolState as PairState}
+                                  chainId={chainId}
+                                  token0={token0}
+                                  token1={token1}
+                                  input0={parsedInput0}
+                                  input1={parsedInput1}
+                                >
+                                  {({ isWritePending, setOpen }) => (
+                                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                      {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                    </Button>
+                                  )}
+                                </AddSectionReviewModalLegacy>
+                              )}
+                              {!pool && tridentPoolIfCreate && (
+                                <CreateSectionReviewModalTrident
+                                  chainId={chainId}
+                                  token0={token0}
+                                  token1={token1}
+                                  input0={parsedInput0}
+                                  input1={parsedInput1}
+                                  fee={FEE_MAP[fee]}
+                                >
+                                  {({ isWritePending, setOpen }) => (
+                                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                      {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                    </Button>
+                                  )}
+                                </CreateSectionReviewModalTrident>
+                              )}
+                            </Checker.Amounts>
+                          </Checker.Network>
+                        </Checker.Connected>
+                      </div>
+                    </div>
+                  </Widget.Content>
+                </Widget>
+                {pool && (
+                  <div className="max-w-[400px] mx-auto w-full">
+                    <AddSectionStake
+                      title="4. Stake Liquidity"
+                      chainId={chainId}
+                      poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
+                    />
                   </div>
-                </Widget.Content>
-              </Widget>
+                )}
+              </>
             )
           }}
         </PoolFinder>
