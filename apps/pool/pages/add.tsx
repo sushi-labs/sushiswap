@@ -3,7 +3,7 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { Fee } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, Dots, Loader } from '@sushiswap/ui'
+import { Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -232,13 +232,13 @@ const Add = () => {
                   </Widget.Content>
                 </Widget>
                 {pool && (
-                  <div className="max-w-[400px] mx-auto w-full">
+                  <Container maxWidth={400} className="mx-auto">
                     <AddSectionStake
                       title="4. Stake Liquidity"
                       chainId={chainId}
                       poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
                     />
-                  </div>
+                  </Container>
                 )}
               </>
             )
