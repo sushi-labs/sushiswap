@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
-import { erc20ABI, useBalance, useContractReads } from 'wagmi'
+import { useBalance, useContractReads } from 'wagmi'
 
 type UseWalletBalancesParams = {
   account: string | undefined
@@ -20,35 +20,61 @@ type UseWalletBalances = (params: UseWalletBalancesParams) => (
   data: Record<string, Amount<Type>> | undefined
 }
 
+const abi = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
 export const useWalletBalances: UseWalletBalances = ({ account, currencies, chainId, enabled = true }) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
     error: isNativeError,
-  } = useBalance({ addressOrName: account, chainId, enabled })
+  } = useBalance({
+    addressOrName: account,
+    chainId,
+    enabled,
+    watch: true,
+    keepPreviousData: true,
+  })
 
-  const [validatedTokens, validatedTokenAddresses] = useMemo(
-    () =>
-      currencies.reduce<[Token[], string[]]>(
-        (acc, currency) => {
-          if (currency?.wrapped.address && isAddress(currency.wrapped.address)) {
-            acc[0].push(currency.wrapped)
-            acc[1].push(currency.wrapped.address)
-          }
+  const [validatedTokens, validatedTokenAddresses] = useMemo(() => {
+    return currencies.reduce<[Token[], string[]]>(
+      (acc, currency) => {
+        if (currency?.wrapped.address && isAddress(currency.wrapped.address)) {
+          acc[0].push(currency.wrapped)
+          acc[1].push(currency.wrapped.address)
+        }
 
-          return acc
-        },
-        [[], []]
-      ),
-    [currencies]
-  )
+        return acc
+      },
+      [[], []]
+    )
+  }, [currencies])
 
   const contracts = useMemo(
     () =>
       validatedTokenAddresses.map((token) => ({
         chainId,
         addressOrName: token,
-        contractInterface: erc20ABI,
+        contractInterface: abi,
         functionName: 'balanceOf',
         args: [account],
       })),
@@ -62,44 +88,39 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     isLoading: isTokensLoading,
   } = useContractReads({
     contracts,
-    enabled: Boolean(account && validatedTokenAddresses.length) && enabled,
+    enabled: Boolean(account && validatedTokenAddresses.length > 0) && enabled,
+    watch: true,
+    cacheOnBlock: true,
+    keepPreviousData: true,
+    isDataEqual: (prev, next) => {
+      return prev?.findIndex((el, idx) => next[idx].toString() !== el.toString()) === -1
+    },
   })
 
-  return useMemo(() => {
-    const _data =
-      data && account && validatedTokens.length > 0
-        ? validatedTokens.reduce<Record<string, Amount<Token>>>((acc, token, i) => {
-            const value = data[i]
-            const amount = value ? JSBI.BigInt(value.toString()) : undefined
-            if (amount) acc[token.address] = Amount.fromRawAmount(token, amount)
-            else acc[token.address] = Amount.fromRawAmount(token, '0')
+  const tokens: Record<string, Amount<Type>> | undefined = useMemo(() => {
+    return data && account && validatedTokens.length > 0
+      ? validatedTokens.reduce<Record<string, Amount<Token>>>((acc, token, i) => {
+          const value = data[i]
+          const amount = value ? JSBI.BigInt(value.toString()) : undefined
+          if (amount) acc[token.address] = Amount.fromRawAmount(token, amount)
+          else acc[token.address] = Amount.fromRawAmount(token, '0')
 
-            return acc
-          }, {})
-        : undefined
+          return acc
+        }, {})
+      : undefined
+  }, [account, data, validatedTokens])
+
+  return useMemo(() => {
+    if (tokens && chainId && nativeBalance?.value) {
+      tokens[AddressZero] = Amount.fromRawAmount(Native.onChain(chainId), nativeBalance.value.toString())
+    }
 
     return {
-      data: {
-        ...(chainId &&
-          nativeBalance?.value && {
-            [AddressZero]: Amount.fromRawAmount(Native.onChain(chainId), nativeBalance.value.toString()),
-          }),
-        ..._data,
-      },
+      data: tokens,
       isLoading: isTokensLoading ?? isNativeLoading,
       isError: Boolean(isTokensError ?? isNativeError),
     }
-  }, [
-    account,
-    data,
-    validatedTokens,
-    isTokensLoading,
-    isNativeLoading,
-    isTokensError,
-    isNativeError,
-    chainId,
-    nativeBalance,
-  ])
+  }, [tokens, chainId, nativeBalance?.value, isTokensLoading, isNativeLoading, isTokensError, isNativeError])
 }
 
 type UseWalletBalanceParams = {

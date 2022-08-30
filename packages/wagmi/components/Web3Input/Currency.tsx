@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Loader, Typography } from '@sushiswap/ui'
-import { FC, useCallback, useRef, useState } from 'react'
+import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalance, usePrices } from '../../hooks'
@@ -49,7 +49,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   const { data: balance } = useBalance({ chainId: currency?.chainId, currency, account: address })
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
-  const parsedValue = tryParseAmount(value, currency)
+  const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
 
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -159,7 +159,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         onClose={handleClose}
         open={tokenSelectorOpen}
         fundSource={FundSource.WALLET}
-        {...{ chainId, currency, onSelect, onAddToken, onRemoveToken, tokenMap, customTokenMap }}
+        chainId={chainId}
+        currency={currency}
+        onSelect={onSelect}
+        onAddToken={onAddToken}
+        onRemoveToken={onRemoveToken}
+        tokenMap={tokenMap}
+        customTokenMap={customTokenMap}
       />
     </div>
   )

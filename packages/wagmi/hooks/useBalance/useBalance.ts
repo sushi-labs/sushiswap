@@ -48,17 +48,16 @@ export const useBalances: UseBalances = ({ enabled, ...params }) => {
             return acc
           }, {})
         : {},
-    [walletBalances, bentoBalances]
+    [bentoBalances, walletBalances]
   )
 
-  return useMemo(
-    () => ({
-      isError: walletError || bentoError,
-      isLoading: walletLoading || bentoLoading,
+  return useMemo(() => {
+    return {
+      isError: walletError ?? bentoError,
+      isLoading: walletLoading ?? bentoLoading,
       data: balances,
-    }),
-    [walletError, bentoError, walletLoading, bentoLoading, balances]
-  )
+    }
+  }, [walletError, bentoError, walletLoading, bentoLoading, balances])
 }
 
 type UseBalanceParams = {

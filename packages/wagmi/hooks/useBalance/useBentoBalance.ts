@@ -22,6 +22,57 @@ type UseBentoBalances = (params: UseBentoBalancesParams) => Pick<
   data: Record<string, Amount<Type>> | undefined
 }
 
+const abi = [
+  {
+    inputs: [
+      {
+        internalType: 'contract IERC20',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'totals',
+    outputs: [
+      {
+        internalType: 'uint128',
+        name: 'elastic',
+        type: 'uint128',
+      },
+      {
+        internalType: 'uint128',
+        name: 'base',
+        type: 'uint128',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'contract IERC20',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
 export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainId, enabled = true }) => {
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
@@ -57,6 +108,12 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
   } = useContractReads({
     contracts: contractsForTotalsRequest,
     enabled,
+    watch: true,
+    cacheOnBlock: true,
+    keepPreviousData: true,
+    isDataEqual: (prev, next) => {
+      return prev?.findIndex((el, idx) => next[idx].toString() !== el.toString()) === -1
+    },
   })
 
   const [tokensWithTotal, baseTotals, balanceInputs] = useMemo(
@@ -105,12 +162,17 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
     isLoading: balancesLoading,
   } = useContractReads({
     contracts: contractsForBalancesRequest,
-    keepPreviousData: true,
     enabled,
+    watch: true,
+    cacheOnBlock: true,
+    keepPreviousData: true,
+    isDataEqual: (prev, next) => {
+      return prev?.findIndex((el, idx) => next[idx].toString() !== el.toString()) === -1
+    },
   })
 
-  return useMemo(() => {
-    const _data = balances
+  const tokens: Record<string, Amount<Type>> | undefined = useMemo(() => {
+    return balances
       ? balances.reduce<Record<string, Amount<Token>>>((acc, el, i) => {
           if (baseTotals[i] && tokensWithTotal[i] && el) {
             const amount = Amount.fromShare(tokensWithTotal[i], el.toString(), baseTotals[i])
@@ -124,19 +186,19 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
           return acc
         }, {})
       : undefined
+  }, [balances, baseTotals, tokensWithTotal])
+
+  return useMemo(() => {
+    if (tokens && chainId && tokens?.[Native.onChain(chainId).wrapped.address]) {
+      tokens[AddressZero] = tokens[Native.onChain(chainId).wrapped.address]
+    }
 
     return {
-      data: {
-        ...(chainId &&
-          _data?.[Native.onChain(chainId).wrapped.address] && {
-            [AddressZero]: _data[Native.onChain(chainId).wrapped.address],
-          }),
-        ..._data,
-      },
+      data: tokens,
       isLoading: balancesLoading ?? totalsLoading,
       isError: balancesError ?? totalsError,
     }
-  }, [balances, chainId, balancesLoading, totalsLoading, balancesError, totalsError, baseTotals, tokensWithTotal])
+  }, [tokens, chainId, balancesLoading, totalsLoading, balancesError, totalsError])
 }
 
 type UseBentoBalanceParams = {
