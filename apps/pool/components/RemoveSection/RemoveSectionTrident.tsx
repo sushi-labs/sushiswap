@@ -208,8 +208,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFa
       >
         <Checker.Connected>
           <Checker.Custom
-            logic={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
-            button={
+            showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+            guard={
               <Button size="md" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
@@ -217,8 +217,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFa
           >
             <Checker.Network chainId={pair.chainId}>
               <Checker.Custom
-                logic={percentage <= 0}
-                button={
+                showGuardIfTrue={percentage <= 0}
+                guard={
                   <Button size="md" fullWidth disabled={true}>
                     Enter Amount
                   </Button>

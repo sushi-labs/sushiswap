@@ -77,8 +77,8 @@ export const AddSectionLegacy: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, is
         >
           <Checker.Connected fullWidth size="md">
             <Checker.Custom
-              logic={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-              button={
+              showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+              guard={
                 <Button size="md" fullWidth disabled={true}>
                   Pool Not Found
                 </Button>

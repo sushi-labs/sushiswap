@@ -1,11 +1,11 @@
 import { Transition } from '@headlessui/react'
-import { tryParseAmount } from '@sushiswap/currency'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig, useBalance, useMasterChef } from '@sushiswap/wagmi'
-import { FC, Fragment, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { FC, Fragment, useCallback, useMemo, useState } from 'react'
+import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
@@ -19,11 +19,12 @@ interface AddSectionStakeProps {
 
 export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
   const [hover, setHover] = useState(false)
+  const [error, setError] = useState<string>()
   const { address } = useAccount()
   const [value, setValue] = useState('')
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
-  const { deposit, isLoading: isWritePending } = useMasterChef({
+  const { deposit: _deposit, isLoading: isWritePending } = useMasterChef({
     chainId: pair.chainId,
     chef: chefType,
     pid: farmId,
@@ -33,6 +34,21 @@ export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farm
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
+
+  const deposit = useCallback(
+    async (amount: Amount<Token> | undefined) => {
+      try {
+        await _deposit(amount)
+      } catch (e: unknown) {
+        if (!(e instanceof UserRejectedRequestError)) {
+          setError((e as ProviderRpcError).message)
+        }
+
+        console.log(e)
+      }
+    },
+    [_deposit]
+  )
 
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -91,6 +107,11 @@ export const AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farm
                     )
                   }}
                 />
+                {error && (
+                  <Typography variant="xs" className="text-center text-red" weight={500}>
+                    {error}
+                  </Typography>
+                )}
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connected>

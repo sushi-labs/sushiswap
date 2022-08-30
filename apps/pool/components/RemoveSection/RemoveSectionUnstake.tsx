@@ -1,7 +1,8 @@
-import { tryParseAmount } from '@sushiswap/currency'
-import { Button, Dots } from '@sushiswap/ui'
+import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChef } from '@sushiswap/wagmi'
-import { FC, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
@@ -15,9 +16,10 @@ interface AddSectionStakeProps {
 
 export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
   const [value, setValue] = useState('')
+  const [error, setError] = useState<string>()
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const {
-    withdraw,
+    withdraw: _withdraw,
     balance,
     isLoading: isWritePending,
   } = useMasterChef({
@@ -30,6 +32,21 @@ export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType,
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
+
+  const withdraw = useCallback(
+    async (amount: Amount<Token> | undefined) => {
+      try {
+        await _withdraw(amount)
+      } catch (e: unknown) {
+        if (!(e instanceof UserRejectedRequestError)) {
+          setError((e as ProviderRpcError).message)
+        }
+
+        console.log(e)
+      }
+    },
+    [_withdraw]
+  )
 
   return (
     <RemoveSectionUnstakeWidget
@@ -45,8 +62,8 @@ export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType,
       <Checker.Connected size="md">
         <Checker.Network size="md" chainId={pair.chainId}>
           <Checker.Custom
-            logic={Boolean(amount && balance && amount.greaterThan(balance))}
-            button={<Button size="md">Insufficient Balance</Button>}
+            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
+            guard={<Button size="md">Insufficient Balance</Button>}
           >
             <Approve
               className="flex-grow !justify-end"
@@ -75,6 +92,11 @@ export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType,
                 )
               }}
             />
+            {error && (
+              <Typography variant="xs" className="text-center text-red" weight={500}>
+                {error}
+              </Typography>
+            )}
           </Checker.Custom>
         </Checker.Network>
       </Checker.Connected>

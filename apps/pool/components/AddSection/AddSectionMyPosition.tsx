@@ -42,7 +42,7 @@ export const AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair, chef
     balance: stakedBalance,
   })
   const [stakedUnderlying0, stakedUnderlying1] = stakedUnderlying
-  const [stakedValue0, stakedValue1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: underlying })
+  const [stakedValue0, stakedValue1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: stakedUnderlying })
 
   return (
     <>

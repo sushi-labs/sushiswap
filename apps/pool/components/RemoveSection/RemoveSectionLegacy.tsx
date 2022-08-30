@@ -202,8 +202,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
       >
         <Checker.Connected fullWidth size="md">
           <Checker.Custom
-            logic={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-            button={
+            showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+            guard={
               <Button size="md" fullWidth disabled={true}>
                 Pool Not Found
               </Button>
@@ -211,8 +211,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
           >
             <Checker.Network fullWidth size="md" chainId={pair.chainId}>
               <Checker.Custom
-                logic={percentage <= 0}
-                button={
+                showGuardIfTrue={percentage <= 0}
+                guard={
                   <Button size="md" fullWidth disabled={true}>
                     Enter Amount
                   </Button>

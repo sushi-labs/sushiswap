@@ -42,12 +42,14 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
 
   const { data: pendingSushi } = useContractRead({
     ...getMasterChefContractV2Config(chainId),
+    chainId,
     functionName: 'pendingSushi',
     args: [pid, address],
   })
 
   const { data: sushiBalance } = useContractRead({
     addressOrName: chainId ? SUSHI_ADDRESS[chainId] : AddressZero,
+    chainId,
     functionName: 'balanceOf',
     contractInterface: erc20ABI,
     enabled: Boolean(chainId && SUSHI_ADDRESS[chainId]),
@@ -55,13 +57,17 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
 
   const { data: balance } = useContractRead({
     ...getMasterChefContractConfig(chainId, chef),
-    chainId: contract.chainId,
+    chainId,
     functionName: 'userInfo',
     args: [pid, address],
     enabled: !!address,
     select: (data) => Amount.fromRawAmount(token, data?.amount ? data.amount.toString() : 0) as unknown as Result,
+    watch: true,
   })
 
+  /**
+   * @throws {Error}
+   */
   const deposit = useCallback(
     async (amount: Amount<Token> | undefined) => {
       if (!chainId) return console.error('useMasterChef: chainId not defined')
@@ -96,6 +102,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     [address, chainId, chef, contract.address, contract.interface, pid, sendTransactionAsync]
   )
 
+  /**
+   * @throws {Error}
+   */
   const withdraw = useCallback(
     async (amount: Amount<Token> | undefined) => {
       if (!chainId) return console.error('useMasterChef: chainId not defined')
@@ -130,6 +139,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     [address, chainId, chef, contract.address, contract.interface, pid, sendTransactionAsync]
   )
 
+  /**
+   * @throws {Error}
+   */
   const harvest = useCallback(async () => {
     if (!chainId) return console.error('useMasterChef: chainId not defined')
 

@@ -1,13 +1,16 @@
-import { FC, ReactNode } from 'react'
+import { ButtonProps } from '@sushiswap/ui'
+import React, { cloneElement, FC, ReactElement, ReactNode } from 'react'
 
 export interface CustomProps {
-  logic: boolean
-  button: ReactNode
+  showGuardIfTrue: boolean
+  guard: ReactElement<ButtonProps<'button'>>
   children: ReactNode
 }
 
-export const Custom: FC<CustomProps> = ({ logic, button, children }) => {
-  if (logic) return <>{button}</>
+export const Custom: FC<CustomProps> = ({ showGuardIfTrue, guard, children }) => {
+  if (!showGuardIfTrue) {
+    return <>{cloneElement(guard, { ...guard.props, disabled: true }, guard.props.children)}</>
+  }
 
   return <>{children}</>
 }
