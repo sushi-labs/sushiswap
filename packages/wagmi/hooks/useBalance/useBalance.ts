@@ -101,12 +101,12 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
 
         result[validatedTokens[i].address] = {
           [FundSource.BENTOBOX]: amount.greaterThan(ZERO) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
-          [FundSource.WALLET]: undefined,
+          [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
         }
       } else {
         result[validatedTokens[i].address] = {
           [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
-          [FundSource.WALLET]: undefined,
+          [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
         }
       }
 
@@ -114,8 +114,8 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
       const amount = value ? JSBI.BigInt(value.toString()) : undefined
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
-          [FundSource.BENTOBOX]: undefined,
-          [FundSource.WALLET]: undefined,
+          [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
+          [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
         }
       }
 
@@ -155,7 +155,7 @@ type UseBalanceParams = {
 }
 
 type UseBalance = (params: UseBalanceParams) => Pick<ReturnType<typeof useBalances>, 'isError' | 'isLoading'> & {
-  data: Record<FundSource, Amount<Type> | undefined>
+  data: Record<FundSource, Amount<Type> | undefined> | undefined
 }
 
 export const useBalance: UseBalance = ({ chainId, account, currency, enabled = true }) => {
@@ -164,19 +164,22 @@ export const useBalance: UseBalance = ({ chainId, account, currency, enabled = t
 
   return useMemo(() => {
     const walletBalance = currency
-      ? data[currency.isNative ? AddressZero : currency.wrapped.address][FundSource.WALLET]
+      ? data[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
       : undefined
     const bentoBalance = currency
-      ? data[currency.isNative ? AddressZero : currency.wrapped.address][FundSource.BENTOBOX]
+      ? data[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
       : undefined
 
     return {
       isError: isError,
       isLoading: isLoading,
-      data: {
-        [FundSource.WALLET]: walletBalance,
-        [FundSource.BENTOBOX]: bentoBalance,
-      },
+      data:
+        currency && data
+          ? {
+              [FundSource.WALLET]: walletBalance,
+              [FundSource.BENTOBOX]: bentoBalance,
+            }
+          : undefined,
     }
   }, [isError, isLoading, currency, data])
 }
