@@ -8,6 +8,7 @@ import { FC } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
+import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 
 interface PoolHeader {
   pair: PairWithAlias
@@ -61,7 +62,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
             <div className="flex flex-col gap-1">
               <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
                 APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
-                {rewardAPR > 0 ? '✨' : ''}
+                {rewardAPR > 0 ? <FarmRewardsAvailableTooltip /> : ''}
               </Typography>
               <div className="flex gap-2">
                 <Typography variant="sm" weight={400} as="span" className="text-slate-400">

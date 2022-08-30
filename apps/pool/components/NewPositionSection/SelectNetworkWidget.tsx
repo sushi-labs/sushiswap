@@ -50,6 +50,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = ({ selectedNetw
                       selectedNetworks={[selectedNetwork]}
                       exclusive={true}
                       onChange={(networks) => onSelect(networks[0])}
+                      renderer={(element) => <Disclosure.Button>{element}</Disclosure.Button>}
                     />
                   </div>
                 </Disclosure.Panel>

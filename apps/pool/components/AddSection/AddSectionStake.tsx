@@ -13,7 +13,7 @@ import {
   useFarmRewards,
   useMasterChef,
 } from '@sushiswap/wagmi'
-import { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
@@ -35,10 +35,6 @@ export const AddSectionStake: FC<{ chainId: ChainId; poolAddress: string; title?
   poolAddress,
   title,
 }) => {
-  useEffect(() => {
-    console.log('mount')
-  }, [])
-  console.log(poolAddress)
   const isMounted = useIsMounted()
   const { data: rewards } = useFarmRewards()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress.toLowerCase()}`, (url) =>
@@ -49,7 +45,6 @@ export const AddSectionStake: FC<{ chainId: ChainId; poolAddress: string; title?
   const chefType = rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType
     ? CHEF_TYPE_MAP[rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType]
     : undefined
-  console.log(farmId, chainId, poolAddress.toLowerCase())
 
   if (!data || !chefType || farmId === undefined || !isMounted) return <></>
   const { pair } = data

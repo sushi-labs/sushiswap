@@ -63,46 +63,54 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = ({ selectedNetwork, fee
                   <div className="p-3 pt-0">
                     <Tab.Group selectedIndex={fee} onChange={setFee}>
                       <Tab.List className="mt-2">
-                        <Tab as="div" className="!h-[unset] p-2">
-                          <div className="flex flex-col gap-0.5">
-                            <Typography variant="xs" weight={500} className="text-slate-200">
-                              0.01%
-                            </Typography>
-                            <Typography variant="xxs" weight={500} className="text-slate-400">
-                              Best for stable pairs.
-                            </Typography>
-                          </div>
-                        </Tab>
-                        <Tab as="div" className="!h-[unset] p-2">
-                          <div className="flex flex-col gap-0.5">
-                            <Typography variant="xs" weight={500} className="text-slate-200">
-                              0.05%
-                            </Typography>
-                            <Typography variant="xxs" weight={500} className="text-slate-400">
-                              Best for less volatile pairs.
-                            </Typography>
-                          </div>
-                        </Tab>
-                        <Tab as="div" className="!h-[unset] p-2">
-                          <div className="flex flex-col gap-0.5">
-                            <Typography variant="xs" weight={500} className="text-slate-200">
-                              0.3%
-                            </Typography>
-                            <Typography variant="xxs" weight={500} className="text-slate-400">
-                              Best for most pairs.
-                            </Typography>
-                          </div>
-                        </Tab>
-                        <Tab as="div" className="!h-[unset] p-2">
-                          <div className="flex flex-col gap-0.5">
-                            <Typography variant="xs" weight={500} className="text-slate-200">
-                              1%
-                            </Typography>
-                            <Typography variant="xxs" weight={500} className="text-slate-400">
-                              Best for volatile pairs.
-                            </Typography>
-                          </div>
-                        </Tab>
+                        <Disclosure.Button>
+                          <Tab as="div" className="!h-[unset] p-2">
+                            <div className="flex flex-col gap-0.5">
+                              <Typography variant="xs" weight={500} className="text-slate-200">
+                                0.01%
+                              </Typography>
+                              <Typography variant="xxs" weight={500} className="text-slate-400">
+                                Best for stable pairs.
+                              </Typography>
+                            </div>
+                          </Tab>
+                        </Disclosure.Button>
+                        <Disclosure.Button>
+                          <Tab as="div" className="!h-[unset] p-2">
+                            <div className="flex flex-col gap-0.5">
+                              <Typography variant="xs" weight={500} className="text-slate-200">
+                                0.05%
+                              </Typography>
+                              <Typography variant="xxs" weight={500} className="text-slate-400">
+                                Best for less volatile pairs.
+                              </Typography>
+                            </div>
+                          </Tab>
+                        </Disclosure.Button>
+                        <Disclosure.Button>
+                          <Tab as="div" className="!h-[unset] p-2">
+                            <div className="flex flex-col gap-0.5">
+                              <Typography variant="xs" weight={500} className="text-slate-200">
+                                0.3%
+                              </Typography>
+                              <Typography variant="xxs" weight={500} className="text-slate-400">
+                                Best for most pairs.
+                              </Typography>
+                            </div>
+                          </Tab>
+                        </Disclosure.Button>
+                        <Disclosure.Button>
+                          <Tab as="div" className="!h-[unset] p-2">
+                            <div className="flex flex-col gap-0.5">
+                              <Typography variant="xs" weight={500} className="text-slate-200">
+                                1%
+                              </Typography>
+                              <Typography variant="xxs" weight={500} className="text-slate-400">
+                                Best for volatile pairs.
+                              </Typography>
+                            </div>
+                          </Tab>
+                        </Disclosure.Button>
                       </Tab.List>
                     </Tab.Group>
                   </div>
