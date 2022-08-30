@@ -108,7 +108,6 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
   } = useContractReads({
     contracts: contractsForTotalsRequest,
     enabled,
-    watch: true,
     cacheOnBlock: true,
     keepPreviousData: true,
     isDataEqual: (prev, next) => {
@@ -163,7 +162,6 @@ export const useBentoBalances: UseBentoBalances = ({ account, currencies, chainI
   } = useContractReads({
     contracts: contractsForBalancesRequest,
     enabled,
-    watch: true,
     cacheOnBlock: true,
     keepPreviousData: true,
     isDataEqual: (prev, next) => {

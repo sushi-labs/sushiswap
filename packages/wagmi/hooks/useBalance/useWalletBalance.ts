@@ -51,7 +51,6 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
     addressOrName: account,
     chainId,
     enabled,
-    watch: true,
     keepPreviousData: true,
   })
 
@@ -89,7 +88,6 @@ export const useWalletBalances: UseWalletBalances = ({ account, currencies, chai
   } = useContractReads({
     contracts,
     enabled: Boolean(account && validatedTokenAddresses.length > 0) && enabled,
-    watch: true,
     cacheOnBlock: true,
     keepPreviousData: true,
     isDataEqual: (prev, next) => {
