@@ -202,8 +202,8 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
-                Add
+              <Button size="md" disabled={!approved} fullWidth onClick={execute}>
+                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )
           }}
