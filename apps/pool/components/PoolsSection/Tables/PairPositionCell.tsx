@@ -35,7 +35,7 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
           chainId={row.chainId}
         >
           {({ value0: stakedValue0, value1: stakedValue1 }) => (
-            <Typography variant="sm" weight={600} className="text-slate-50">
+            <Typography variant="sm" weight={600} className="text-slate-50 text-right">
               {formatUSD(Number(value0) + Number(value1) + Number(stakedValue0) + Number(stakedValue1))}
             </Typography>
           )}
@@ -45,7 +45,7 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
   }
 
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50">
+    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
       {formatUSD(Number(value0) + Number(value1))}
     </Typography>
   )

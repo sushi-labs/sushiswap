@@ -73,6 +73,7 @@ const fetcher = ({
 export const PoolsTable: FC = () => {
   const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'apr', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -118,12 +119,14 @@ export const PoolsTable: FC = () => {
   })
 
   useEffect(() => {
-    if (isSm) {
+    if (isSm && !isMd) {
+      setColumnVisibility({ volume: false, network: false, rewards: false })
+    } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ network: false, rewards: false })
+      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false })
     }
-  }, [isSm])
+  }, [isMd, isSm])
 
   return (
     <GenericTable<PairWithFarmRewards>

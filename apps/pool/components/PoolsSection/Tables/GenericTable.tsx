@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { flexRender, Table as ReactTableType } from '@tanstack/react-table'
+import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
 
 import { ExtendedColumnDef } from './types'
@@ -11,6 +11,12 @@ interface GenericTableProps<C> {
   HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
+}
+
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    className?: string
+  }
 }
 
 export const GenericTable = <T extends { id: string }>({
@@ -40,6 +46,7 @@ export const GenericTable = <T extends { id: string }>({
                       {...{
                         className: classNames(
                           header.column.getCanSort() ? 'cursor-pointer select-none' : '',
+                          header.column.columnDef?.meta?.className,
                           'h-full flex items-center gap-2'
                         ),
                         onClick: header.column.getToggleSortingHandler(),

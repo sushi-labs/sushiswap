@@ -10,9 +10,9 @@ export const PairAPRCell: FC<CellProps> = ({ row }) => {
   const totalAPR = rewardAPR + row.apr / 100
 
   return (
-    <Typography variant="sm" weight={600} className="flex items-center gap-1 text-slate-50">
-      {formatPercent(totalAPR)}
+    <Typography variant="sm" weight={600} className="flex items-center gap-1 text-slate-50 justify-end">
       {row.incentives.length > 0 && <FarmRewardsAvailableTooltip />}
+      {formatPercent(totalAPR)}
     </Typography>
   )
 }

@@ -13,4 +13,7 @@ export interface CellWithBalanceProps {
 
 export type ExtendedColumnDef<C, P> = ColumnDef<C, P> & {
   skeleton: ReactNode
+  meta?: {
+    className?: string
+  }
 }
