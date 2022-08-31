@@ -70,9 +70,11 @@ const _Pools = () => {
                   New Position
                 </Button>
               </Link.Internal>
-              <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
-                Join Onsen
-              </Button>
+              <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
+                  Join Onsen
+                </Button>
+              </Link.External>
             </div>
           </div>
         </section>
