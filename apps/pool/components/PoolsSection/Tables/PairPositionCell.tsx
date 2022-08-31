@@ -1,24 +1,24 @@
-import { Amount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
+import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, Typography } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { useBalance } from '@sushiswap/wagmi'
+import { FC } from 'react'
+import { useAccount } from 'wagmi'
 
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
 import { StakedPositionFetcher } from '../../StakedPositionFetcher'
 import { CellWithBalanceProps } from './types'
 
 export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
+  const { address } = useAccount()
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(row)
-  const balance = useMemo(
-    () => Amount.fromRawAmount(liquidityToken, row.liquidityTokenBalance),
-    [row.liquidityTokenBalance, liquidityToken]
-  )
+  const { data: balance } = useBalance({ chainId: row.chainId, currency: liquidityToken, account: address })
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0.wrapped,
     reserve1: reserve1.wrapped,
     totalSupply,
-    balance,
+    balance: balance?.[FundSource.WALLET]?.wrapped,
   })
 
   const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })

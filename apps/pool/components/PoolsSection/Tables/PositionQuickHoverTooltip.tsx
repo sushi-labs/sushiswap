@@ -1,7 +1,9 @@
-import { Amount } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
+import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { useBalance } from '@sushiswap/wagmi'
+import { FC } from 'react'
+import { useAccount } from 'wagmi'
 
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
@@ -13,12 +15,9 @@ interface PositionQuickHoverTooltipProps {
 }
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
+  const { address } = useAccount()
   const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(row)
-
-  const balance = useMemo(
-    () => Amount.fromRawAmount(liquidityToken, row.liquidityTokenBalance),
-    [row.liquidityTokenBalance, liquidityToken]
-  )
+  const { data: balance } = useBalance({ chainId: row.chainId, currency: liquidityToken, account: address })
 
   const rewardAPR = (row.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
   const totalAPR = rewardAPR + row.apr / 100
@@ -27,7 +26,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     reserve0: reserve0.wrapped,
     reserve1: reserve1.wrapped,
     totalSupply,
-    balance,
+    balance: balance?.[FundSource.WALLET]?.wrapped,
   })
 
   const [underlying0, underlying1] = underlying

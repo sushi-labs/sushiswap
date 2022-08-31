@@ -29,7 +29,6 @@ export const PositionsTable: FC = () => {
   )
 
   const { data: rewards } = useFarmRewards()
-
   const liquidityPositions: PairWithBalance[] = useMemo(() => {
     if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => {

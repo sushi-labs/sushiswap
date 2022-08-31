@@ -13,6 +13,7 @@ import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejecte
 import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
 import XSushi = BarTypes.XSushi
+import { formatNumber } from '@sushiswap/format'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
@@ -109,7 +110,7 @@ export const SushiBarSectionMobile: FC = () => {
                         variant="xs"
                         className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent"
                       >
-                        {stats?.apr12m}
+                        {formatNumber(stats?.apr12m)}
                         <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                           <ExternalLinkIcon width={12} height={12} className="text-slate-200 hover:text-blue" />
                         </Link.External>
