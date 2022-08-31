@@ -51,7 +51,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFa
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<number>(0)
-  const percentageEntity = useMemo(() => new Percent(percentage, 10_000), [percentage])
+  const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
   const rebases = useBentoBoxTotals(pair.chainId, [token0, token1])
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
 

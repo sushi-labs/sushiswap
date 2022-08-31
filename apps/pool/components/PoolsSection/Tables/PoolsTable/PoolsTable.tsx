@@ -6,6 +6,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
+import { CHEF_TYPE_MAP } from '../../../../lib/constants'
 import { PairWithFarmRewards } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
@@ -93,6 +94,10 @@ export const PoolsTable: FC = () => {
       pools?.map((pool) => ({
         ...pool,
         incentives: rewards?.[pool.chainId]?.farms?.[pool.id]?.incentives || [],
+        farmId: rewards?.[pool.chainId]?.farms?.[pool.id]?.id,
+        chefType: rewards?.[pool.chainId]?.farms[pool.id]?.chefType
+          ? CHEF_TYPE_MAP[rewards?.[pool.chainId]?.farms[pool.id]?.chefType]
+          : undefined,
       })) || []
     )
   }, [pools, rewards])

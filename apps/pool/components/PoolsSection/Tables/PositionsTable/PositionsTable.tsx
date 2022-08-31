@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { Pair, User } from '../../../../.graphclient'
+import { CHEF_TYPE_MAP } from '../../../../lib/constants'
 import { PairWithBalance } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
@@ -31,12 +32,20 @@ export const PositionsTable: FC = () => {
 
   const liquidityPositions: PairWithBalance[] = useMemo(() => {
     if (!user?.liquidityPositions) return []
-    return user.liquidityPositions.map((el) => ({
-      ...el.pair,
-      incentives: rewards?.[el.pair.chainId]?.farms?.[el.pair.id]?.incentives || [],
-      liquidityTokenBalance: String(el.balance / 1e18),
-      id: `${chainShortName[el.pair.chainId]}:${el.pair.id}`,
-    }))
+    return user.liquidityPositions.map((el) => {
+      const id = `${chainShortName[el.pair.chainId]}:${el.pair.id}`
+
+      return {
+        ...el.pair,
+        id,
+        incentives: rewards?.[el.pair.chainId]?.farms?.[id]?.incentives || [],
+        liquidityTokenBalance: el.balance,
+        farmId: rewards?.[el.pair.chainId]?.farms?.[id]?.id,
+        chefType: rewards?.[el.pair.chainId]?.farms[id]?.chefType
+          ? CHEF_TYPE_MAP[rewards?.[el.pair.chainId]?.farms[id]?.chefType]
+          : undefined,
+      }
+    })
   }, [rewards, user?.liquidityPositions])
 
   const table = useReactTable<Pair | PairWithBalance>({

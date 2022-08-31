@@ -31,11 +31,12 @@ interface UseMasterChefParams {
   chef: Chef
   pid: number
   token: Token
+  enabled?: boolean
 }
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
+export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
   const { sendTransactionAsync, ...rest } = useSendTransaction({ chainId })
@@ -45,6 +46,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     chainId,
     functionName: 'pendingSushi',
     args: [pid, address],
+    enabled,
   })
 
   const { data: sushiBalance } = useContractRead({
@@ -52,7 +54,10 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     chainId,
     functionName: 'balanceOf',
     contractInterface: erc20ABI,
-    enabled: Boolean(chainId && SUSHI_ADDRESS[chainId]),
+    enabled:
+      enabled !== undefined
+        ? Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled
+        : Boolean(chainId && SUSHI_ADDRESS[chainId]),
   })
 
   const { data: balance } = useContractRead({
@@ -60,7 +65,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token }) => {
     chainId,
     functionName: 'userInfo',
     args: [pid, address],
-    enabled: !!address,
+    enabled: enabled !== undefined ? !!address && enabled : enabled,
     select: (data) => Amount.fromRawAmount(token, data?.amount ? data.amount.toString() : 0) as unknown as Result,
     watch: true,
   })

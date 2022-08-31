@@ -45,7 +45,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<number>(0)
-  const percentageEntity = useMemo(() => new Percent(percentage, 10_000), [percentage])
+  const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
 
   const [poolState, pool] = usePair(pair.chainId, token0, token1)
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
@@ -89,26 +89,28 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
     }
 
     const withNative =
-      Native.onChain(pair.chainId).wrapped === pool.token0 || Native.onChain(pair.chainId).wrapped === pool.token1
+      Native.onChain(pair.chainId).wrapped.address === pool.token0.address ||
+      Native.onChain(pair.chainId).wrapped.address === pool.token1.address
     let methodNames
     let args
 
     try {
       if (withNative) {
+        const token1IsNative = Native.onChain(pair.chainId).wrapped.address === pool.token1.wrapped.address
         methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
         args = [
-          Native.onChain(pair.chainId).wrapped === pool.token1 ? pool.token0.address : pool.token1.address,
+          token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
           balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
-          minAmount0.quotient.toString(),
-          minAmount1.quotient.toString(),
+          token1IsNative ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
+          token1IsNative ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
           address,
           deadline.toHexString(),
         ]
       } else {
         methodNames = ['removeLiquidity']
         args = [
-          pool.token0.address,
-          pool.token1.address,
+          pool.token0.wrapped.address,
+          pool.token1.wrapped.address,
           balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
           minAmount0.quotient.toString(),
           minAmount1.quotient.toString(),
@@ -117,13 +119,22 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
         ]
       }
 
+      console.log(contract.address, [
+        Native.onChain(pair.chainId).wrapped === pool.token1
+          ? pool.token0.wrapped.address
+          : pool.token1.wrapped.address,
+        balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
+        minAmount0.quotient.toString(),
+        minAmount1.quotient.toString(),
+        address,
+        deadline.toHexString(),
+      ])
       const safeGasEstimates = await Promise.all(
         methodNames.map((methodName) =>
           contract.estimateGas[methodName](...args)
             .then(calculateGasMargin)
             .catch((error) => {
               console.error(`estimateGas failed`, methodName, args, error)
-              return undefined
             })
         )
       )

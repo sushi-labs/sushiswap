@@ -1,10 +1,11 @@
-import { tryParseAmount } from '@sushiswap/currency'
+import { Amount } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
+import { AppearOnMount, Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
+import { StakedPositionFetcher } from '../../StakedPositionFetcher'
 import { ICON_SIZE } from './contants'
 
 interface PositionQuickHoverTooltipProps {
@@ -13,8 +14,9 @@ interface PositionQuickHoverTooltipProps {
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1, reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(row)
+
   const balance = useMemo(
-    () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
+    () => Amount.fromRawAmount(liquidityToken, row.liquidityTokenBalance),
     [row.liquidityTokenBalance, liquidityToken]
   )
 
@@ -94,6 +96,49 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
           </Typography>
         </div>
       </div>
+      {row.chefType !== undefined && row.farmId !== undefined && (
+        <AppearOnMount>
+          <StakedPositionFetcher
+            chainId={row.chainId}
+            liquidityToken={liquidityToken}
+            totalSupply={totalSupply}
+            reserve0={reserve0}
+            reserve1={reserve1}
+            chefType={row.chefType}
+            farmId={row.farmId}
+          >
+            {({ underlying0, underlying1, value0, value1 }) => (
+              <div className="flex flex-col gap-1.5 mt-4">
+                <Typography variant="xs" className="mb-1 text-slate-500">
+                  Staked Position
+                </Typography>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Currency.Icon currency={token0} width={18} height={18} />
+                    <Typography variant="sm" weight={600} className="text-slate-50">
+                      {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
+                    </Typography>
+                  </div>
+                  <Typography variant="xs" className="text-slate-400">
+                    {formatUSD(Number(value0))}
+                  </Typography>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Currency.Icon currency={token1} width={18} height={18} />
+                    <Typography variant="sm" weight={600} className="text-slate-50">
+                      {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
+                    </Typography>
+                  </div>
+                  <Typography variant="xs" className="text-slate-400">
+                    {formatUSD(Number(value1))}
+                  </Typography>
+                </div>
+              </div>
+            )}
+          </StakedPositionFetcher>
+        </AppearOnMount>
+      )}
       <div className="flex justify-end gap-2 mt-8 mb-2">
         <Link.Internal href={`/${row.id}/remove`} passHref={true}>
           <Button as="a" size="sm" variant="outlined" fullWidth>

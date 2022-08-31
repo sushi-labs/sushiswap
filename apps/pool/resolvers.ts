@@ -179,6 +179,8 @@ export const resolvers: Resolvers = {
 
                 return {
                   ...el,
+                  // TODO REMOVE WHEN SUBGRAPH UPDATED
+                  balance: Math.floor(Number(el.balance / 2)),
                   pair: {
                     ...el.pair,
                     volume7d,

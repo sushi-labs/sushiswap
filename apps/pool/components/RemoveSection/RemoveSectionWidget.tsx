@@ -5,7 +5,15 @@ import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
+import {
+  AppearOnMount,
+  Button,
+  classNames,
+  Currency as UICurrency,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Typography,
+} from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { useBalance, useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useState } from 'react'
@@ -134,42 +142,25 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </div>
                       </div>
                       <div className="grid grid-cols-3 pb-2 justify-between items-center">
-                        <Transition
-                          appear
-                          as={Fragment}
-                          show={Boolean(balance?.[FundSource.WALLET])}
-                          enter="transition duration-300 origin-center ease-out"
-                          enterFrom="transform scale-90 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
-                        >
+                        <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
                             {formatUSD((Number(value0) + Number(value1)) * (percentage / 100))}
                           </Typography>
-                        </Transition>
-                        <Transition
-                          appear
+                        </AppearOnMount>
+                        <AppearOnMount
+                          className="col-span-2 flex justify-end"
                           show={Boolean(balance?.[FundSource.WALLET])}
-                          as={Fragment}
-                          enter="transition duration-300 origin-center ease-out"
-                          enterFrom="transform scale-90 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
                         >
                           <Typography
                             onClick={() => setPercentage(100)}
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="col-span-2 justify-end flex text-slate-300 hover:text-slate-200 truncate"
+                            className="text-slate-300 hover:text-slate-200 truncate"
                           >
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
-                        </Transition>
+                        </AppearOnMount>
                       </div>
                       <Transition
                         show={Boolean(percentage > 0 && underlying0 && underlying1)}
@@ -192,7 +183,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                               {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
                               <span className="text-slate-400">
                                 <span className="text-slate-50">{underlying0?.toSignificant(6)}</span>{' '}
-                                {Native.onChain(chainId).wrapped === token0
+                                {Native.onChain(chainId).wrapped.address === token0.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : underlying0?.currency.symbol}
                               </span>
@@ -206,7 +197,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                               {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
                               <span className="text-slate-400">
                                 <span className="text-slate-50">{underlying1?.toSignificant(6)}</span>{' '}
-                                {Native.onChain(chainId).wrapped === token1
+                                {Native.onChain(chainId).wrapped.address === token1.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : underlying1?.currency.symbol}
                               </span>
