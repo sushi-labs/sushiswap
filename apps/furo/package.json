@@ -57,6 +57,7 @@
     "ethers": "^5.0.0",
     "graphql": "16.6.0",
     "next": "^12.2.0",
+    "next-seo": "^5.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.31.1",

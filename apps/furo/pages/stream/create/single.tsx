@@ -1,5 +1,6 @@
 import { Breadcrumb, BreadcrumbLink, Layout } from 'components'
 import { CreateForm } from 'components/stream'
+import { NextSeo } from 'next-seo'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -14,12 +15,15 @@ const LINKS: BreadcrumbLink[] = [
 
 const SingleStream = () => {
   return (
-    <Layout>
-      <Breadcrumb links={LINKS} />
-      <div className="mt-6">
-        <CreateForm />
-      </div>
-    </Layout>
+    <>
+      <NextSeo title="New Stream" />
+      <Layout>
+        <Breadcrumb links={LINKS} />
+        <div className="mt-6">
+          <CreateForm />
+        </div>
+      </Layout>
+    </>
   )
 }
 

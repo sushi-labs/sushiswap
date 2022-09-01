@@ -1,5 +1,6 @@
 import { Breadcrumb, BreadcrumbLink, Layout } from 'components'
 import { CreateForm } from 'components/vesting'
+import { NextSeo } from 'next-seo'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -14,12 +15,15 @@ const LINKS: BreadcrumbLink[] = [
 
 const SingleVesting = () => {
   return (
-    <Layout>
-      <Breadcrumb links={LINKS} />
-      <div className="mt-6">
-        <CreateForm />
-      </div>
-    </Layout>
+    <>
+      <NextSeo title="New Vesting" />
+      <Layout>
+        <Breadcrumb links={LINKS} />
+        <div className="mt-6">
+          <CreateForm />
+        </div>
+      </Layout>
+    </>
   )
 }
 
