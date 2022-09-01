@@ -154,19 +154,21 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           </Transition>
         </div>
       </div>
-      <TokenSelector
-        variant="dialog"
-        onClose={handleClose}
-        open={tokenSelectorOpen}
-        fundSource={FundSource.WALLET}
-        chainId={chainId}
-        currency={currency}
-        onSelect={onSelect}
-        onAddToken={onAddToken}
-        onRemoveToken={onRemoveToken}
-        tokenMap={tokenMap}
-        customTokenMap={customTokenMap}
-      />
+      {onSelect && (
+        <TokenSelector
+          variant="dialog"
+          onClose={handleClose}
+          open={tokenSelectorOpen}
+          fundSource={FundSource.WALLET}
+          chainId={chainId}
+          currency={currency}
+          onSelect={onSelect}
+          onAddToken={onAddToken}
+          onRemoveToken={onRemoveToken}
+          tokenMap={tokenMap}
+          customTokenMap={customTokenMap}
+        />
+      )}
     </div>
   )
 }
