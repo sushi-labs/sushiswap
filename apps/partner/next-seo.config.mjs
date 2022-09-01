@@ -1,8 +1,7 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
-  titleTemplate: '%s | Sushi',
-  title: 'Partner',
+  titleTemplate: '%s | Partner',
   defaultTitle: 'Partner',
   description: 'Sushi Partner is a platform for sushi-partner interaction.',
   //   canonical: 'https://sushi.com/analytics',

@@ -1,8 +1,7 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
-  titleTemplate: '%s | Sushi',
-  title: 'Furo',
+  titleTemplate: '%s | Furo',
   defaultTitle: 'Furo',
   description: 'Earn, stream and automate your DAO salaries and token vesting with Furo.',
   //   canonical: 'https://sushi.com/furo',
