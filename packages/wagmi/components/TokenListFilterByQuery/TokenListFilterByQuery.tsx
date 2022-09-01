@@ -83,12 +83,14 @@ export const TokenListFilterByQuery: FC<Props> = ({
     return filteredSortedTokens
   }, [_includeNative, chainId, filteredSortedTokens])
 
-  return children({
-    currencies: filteredSortedTokensWithNative,
-    inputRef,
-    query,
-    onInput: setQuery,
-    searching: isLoading || searching.current,
-    queryToken: searchToken,
-  })
+  return useMemo(() => {
+    return children({
+      currencies: filteredSortedTokensWithNative,
+      inputRef,
+      query,
+      onInput: setQuery,
+      searching: isLoading || searching.current,
+      queryToken: searchToken,
+    })
+  }, [children, filteredSortedTokensWithNative, isLoading, query, searchToken])
 }
