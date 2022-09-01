@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Fee } from '@sushiswap/exchange'
 import { Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 
 import { TRIDENT_ENABLED_NETWORKS } from '../../config'
 
@@ -15,7 +15,7 @@ interface SelectFeeWidgetProps {
 
 export const FEE_MAP = [Fee.LOW, Fee.MEDIUM, Fee.DEFAULT, Fee.HIGH]
 
-export const SelectFeeWidget: FC<SelectFeeWidgetProps> = ({ selectedNetwork, fee, setFee }) => {
+export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork, fee, setFee }) => {
   return (
     <Widget id="selectFee" maxWidth={400} className="bg-slate-800">
       <Widget.Content>
@@ -122,4 +122,4 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = ({ selectedNetwork, fee
       </Widget.Content>
     </Widget>
   )
-}
+})

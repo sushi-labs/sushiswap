@@ -2,7 +2,7 @@ import { Disclosure, Transition } from '@headlessui/react'
 import chains, { ChainId } from '@sushiswap/chain'
 import { classNames, Network, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 
@@ -11,7 +11,7 @@ interface SelectNetworkWidgetProps {
   onSelect(chainId: ChainId): void
 }
 
-export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = ({ selectedNetwork, onSelect }) => {
+export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(({ selectedNetwork, onSelect }) => {
   return (
     <Widget id="selectNetwork" maxWidth={400} className="bg-slate-800">
       <Widget.Content>
@@ -61,4 +61,4 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = ({ selectedNetw
       </Widget.Content>
     </Widget>
   )
-}
+})

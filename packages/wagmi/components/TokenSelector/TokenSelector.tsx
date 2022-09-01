@@ -38,16 +38,31 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       account: address,
       chainId,
       currencies: _tokenMapValues,
-      loadBentobox: !!onSelect || fundSource === FundSource.BENTOBOX,
+      loadBentobox: false,
     })
 
     const { data: pricesMap } = usePrices({ chainId })
 
-    if (!isMounted) return <></>
+    return useMemo(() => {
+      if (!isMounted) return <></>
 
-    if (variant === 'overlay') {
+      if (variant === 'overlay') {
+        return (
+          <TokenSelectorOverlay
+            account={address}
+            balancesMap={balances}
+            tokenMap={_tokenMap}
+            pricesMap={pricesMap}
+            chainId={chainId}
+            fundSource={fundSource}
+            onSelect={onSelect}
+            {...props}
+          />
+        )
+      }
+
       return (
-        <TokenSelectorOverlay
+        <TokenSelectorDialog
           account={address}
           balancesMap={balances}
           tokenMap={_tokenMap}
@@ -58,20 +73,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
           {...props}
         />
       )
-    }
-
-    return (
-      <TokenSelectorDialog
-        account={address}
-        balancesMap={balances}
-        tokenMap={_tokenMap}
-        pricesMap={pricesMap}
-        chainId={chainId}
-        fundSource={fundSource}
-        onSelect={onSelect}
-        {...props}
-      />
-    )
+    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, pricesMap, props, variant])
   },
   (prevProps, nextProps) => {
     return (
