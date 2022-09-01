@@ -1,4 +1,6 @@
+import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
+import { BreadcrumbLink } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -17,6 +19,13 @@ import {
 } from '../../components'
 import { getPool, getSushiBar } from '../../lib/api'
 import { PairWithAlias } from '../../types'
+
+const LINKS = (id: string): BreadcrumbLink[] => [
+  {
+    href: `/${id}`,
+    label: `${shortenAddress(id.split(':')[1])}`,
+  },
+]
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -55,7 +64,7 @@ const _Pool = () => {
   const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   return (
-    <Layout>
+    <Layout breadcrumbs={LINKS(router.query.id as string)}>
       <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
         <div className="flex flex-col order-1 gap-9">
           <PoolHeader pair={pair} />

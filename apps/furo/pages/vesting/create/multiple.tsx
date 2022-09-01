@@ -1,4 +1,5 @@
-import { Breadcrumb, BreadcrumbLink, Layout } from 'components'
+import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
+import { Layout } from 'components'
 import { CreateMultipleForm } from 'components/vesting'
 
 const LINKS: BreadcrumbLink[] = [
@@ -15,7 +16,7 @@ const LINKS: BreadcrumbLink[] = [
 const MultipleVesting = () => {
   return (
     <Layout>
-      <Breadcrumb links={LINKS} />
+      <Breadcrumb home="/dashboard" links={LINKS} />
       <div className="mt-6">
         <CreateMultipleForm />
       </div>

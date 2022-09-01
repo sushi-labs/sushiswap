@@ -1,5 +1,5 @@
-import { Typography } from '@sushiswap/ui'
-import { Breadcrumb, BreadcrumbLink, Layout } from 'components'
+import { Breadcrumb, BreadcrumbLink, Typography } from '@sushiswap/ui'
+import { Layout } from 'components'
 import Link from 'next/link'
 
 const LINKS: BreadcrumbLink[] = [
@@ -12,7 +12,7 @@ const LINKS: BreadcrumbLink[] = [
 const VestingCreate = () => {
   return (
     <Layout>
-      <Breadcrumb links={LINKS} />
+      <Breadcrumb home="/dashboard" links={LINKS} />
       <div className="mt-24">
         <div className="flex flex-col gap-10 justify-center">
           <Typography variant="h3" weight={500} className="text-center">

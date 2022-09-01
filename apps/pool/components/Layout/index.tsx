@@ -1,4 +1,4 @@
-import { Backdrop, classNames, Container, MaxWidth } from '@sushiswap/ui'
+import { Backdrop, Breadcrumb, BreadcrumbLink, classNames, Container, MaxWidth } from '@sushiswap/ui'
 import React from 'react'
 
 type Props = {
@@ -6,15 +6,16 @@ type Props = {
   maxWidth?: MaxWidth
   backdrop?: React.ReactNode
   className?: string
+  breadcrumbs?: BreadcrumbLink[]
 }
 
-export function Layout({ children, maxWidth = '5xl', backdrop, className }: Props) {
+export function Layout({ children, maxWidth = '5xl', backdrop, className, breadcrumbs }: Props) {
   return (
-    <Container
-      maxWidth={maxWidth}
-      className={classNames(className, 'lg:mx-auto px-4 h-full pb-4 mb-4 lg:mb-40 lg:mt-20 mt-10')}
-    >
-      <Backdrop backdrop={backdrop}>{children}</Backdrop>
+    <Container maxWidth={maxWidth} className={classNames(className, 'lg:mx-auto px-4 h-full')}>
+      {breadcrumbs && <Breadcrumb home="/" links={breadcrumbs} />}
+      <div className="pb-4 mb-4 lg:mb-40 lg:mt-20 mt-10">
+        <Backdrop backdrop={backdrop}>{children}</Backdrop>
+      </div>
     </Container>
   )
 }

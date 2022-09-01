@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-import { Container, Link, Typography } from '@sushiswap/ui'
+import { shortenAddress } from '@sushiswap/format'
+import { BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -9,6 +10,17 @@ import useSWR, { SWRConfig } from 'swr'
 import { AddSectionLegacy, AddSectionMyPosition, AddSectionStake, AddSectionTrident, Layout } from '../../components'
 import { getPool } from '../../lib/api'
 import { PairWithAlias } from '../../types'
+
+const LINKS = (id: string): BreadcrumbLink[] => [
+  {
+    href: `/${id}`,
+    label: `${shortenAddress(id.split(':')[1])}`,
+  },
+  {
+    href: `/${id}/add`,
+    label: `Add Liquidity`,
+  },
+]
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -44,7 +56,7 @@ const _Add = () => {
   const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   return (
-    <Layout>
+    <Layout breadcrumbs={LINKS(router.query.id as string)}>
       <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
         <div className="hidden md:block" />
         <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">

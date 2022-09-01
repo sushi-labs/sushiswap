@@ -44,7 +44,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
-  const [percentage, setPercentage] = useState<number>(0)
+  const [percentage, setPercentage] = useState<string>('')
   const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
 
   const [poolState, pool] = usePair(pair.chainId, token0, token1)
@@ -222,7 +222,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
           >
             <Checker.Network fullWidth size="md" chainId={pair.chainId}>
               <Checker.Custom
-                showGuardIfTrue={percentage <= 0}
+                showGuardIfTrue={+percentage <= 0}
                 guard={
                   <Button size="md" fullWidth disabled={true}>
                     Enter Amount

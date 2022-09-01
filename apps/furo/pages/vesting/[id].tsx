@@ -1,10 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import { ProgressBar, ProgressColor } from '@sushiswap/ui'
+import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
-  Breadcrumb,
   CancelModal,
   HistoryPopover,
   Layout,
@@ -58,7 +57,7 @@ const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
   )
 }
 
-const LINKS = (id: string) => [
+const LINKS = (id: string): BreadcrumbLink[] => [
   {
     href: `/vesting/${id}`,
     label: `Vesting ${id}`,
@@ -116,7 +115,7 @@ const _VestingPage: FC = () => {
         </div>
       }
     >
-      <Breadcrumb links={LINKS(router.query.id as string)} />
+      <Breadcrumb home="/dashboard" links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
         <div className="flex justify-center">
           <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />

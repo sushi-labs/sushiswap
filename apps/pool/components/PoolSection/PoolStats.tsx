@@ -41,7 +41,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       <AppearOnMount>
         <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
           <Typography variant="xs" weight={500} className="text-slate-400">
-            Volume (1d)
+            Volume (24h)
           </Typography>
           <Typography weight={500} className="text-slate-50">
             {formatUSD(totals1d.volumeUSD)}
@@ -55,7 +55,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       <AppearOnMount>
         <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
           <Typography variant="xs" weight={500} className="text-slate-400">
-            Fees (1d)
+            Fees (24h)
           </Typography>
           <Typography weight={500} className="text-slate-50">
             {formatUSD(totals1d.volumeUSD * FEE_BPS)}
@@ -69,7 +69,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       <AppearOnMount>
         <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
           <Typography variant="xs" weight={500} className="text-slate-400">
-            Transactions (1d)
+            Transactions (24h)
           </Typography>
           <Typography weight={500} className="text-slate-50">
             {formatNumber(totals1d.txCount)}

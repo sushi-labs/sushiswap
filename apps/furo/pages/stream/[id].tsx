@@ -1,10 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import furoExports from '@sushiswap/furo/exports.json'
-import { ProgressBar, ProgressColor } from '@sushiswap/ui'
+import { Breadcrumb, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
-  Breadcrumb,
   CancelModal,
   FuroTimer,
   HistoryPopover,
@@ -103,7 +102,7 @@ const _Streams: FC = () => {
         </div>
       }
     >
-      <Breadcrumb links={LINKS(router.query.id as string)} />
+      <Breadcrumb home="/dashboard" links={LINKS(router.query.id as string)} />
       <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
         <div className="flex justify-center">
           <BalanceChart stream={stream} hover={hover} setHover={setHover} />

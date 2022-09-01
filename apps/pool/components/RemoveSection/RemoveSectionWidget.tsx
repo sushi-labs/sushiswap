@@ -24,13 +24,13 @@ import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '.
 interface RemoveSectionWidgetProps {
   isFarm: boolean
   chainId: ChainId
-  percentage: number
+  percentage: string
   liquidityToken: Token
   token0: Type
   token1: Type
   reserve0: Amount<Token> | undefined
   reserve1: Amount<Token> | undefined
-  setPercentage(percentage: number): void
+  setPercentage(percentage: string): void
   error?: string
   children: ReactNode
 }
@@ -67,7 +67,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
-        show={Boolean(isFarm && hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
+        show={Boolean(hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -78,13 +78,13 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
       >
         <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
           <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
-            No liquidity found, did you unstake?
+            No liquidity tokens found {isFarm && ', did you unstake?'}
           </Typography>
         </div>
       </Transition>
       <Widget id="removeLiquidity" maxWidth={400} className="bg-slate-800">
         <Widget.Content>
-          <Disclosure>
+          <Disclosure defaultOpen={!isFarm}>
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
@@ -116,27 +116,33 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                 >
                   <Disclosure.Panel unmount={false}>
                     <div className="flex flex-col gap-3 p-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-4">
                         <div className="flex flex-grow justify-between items-center">
                           <Input.Numeric
-                            onUserInput={(val) => setPercentage(Number(val))}
+                            onUserInput={(val) => setPercentage(val ? Math.min(+val, 100).toString() : '')}
                             value={percentage}
-                            placeholder="0"
+                            placeholder="100%"
                             variant="unstyled"
                             className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
+                            min="0"
+                            type="number"
+                            inputMode="numeric"
                           />
+                          <Typography variant="h3" weight={500} className="text-slate-400">
+                            SLP
+                          </Typography>
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setPercentage(25)}>
+                          <Button size="xs" onClick={() => setPercentage('25')}>
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage(50)}>
+                          <Button size="xs" onClick={() => setPercentage('50')}>
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage(75)}>
+                          <Button size="xs" onClick={() => setPercentage('75')}>
                             75%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage(100)}>
+                          <Button size="xs" onClick={() => setPercentage('100')}>
                             MAX
                           </Button>
                         </div>
@@ -144,7 +150,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       <div className="grid grid-cols-3 pb-2 justify-between items-center">
                         <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
-                            {formatUSD((Number(value0) + Number(value1)) * (percentage / 100))}
+                            {formatUSD((Number(value0) + Number(value1)) * (+percentage / 100))}
                           </Typography>
                         </AppearOnMount>
                         <AppearOnMount
@@ -152,7 +158,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           show={Boolean(balance?.[FundSource.WALLET])}
                         >
                           <Typography
-                            onClick={() => setPercentage(100)}
+                            onClick={() => setPercentage('100')}
                             as="button"
                             variant="sm"
                             weight={500}
@@ -163,7 +169,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </AppearOnMount>
                       </div>
                       <Transition
-                        show={Boolean(percentage > 0 && underlying0 && underlying1)}
+                        show={Boolean(+percentage > 0 && underlying0 && underlying1)}
                         unmount={false}
                         className="transition-[max-height] overflow-hidden"
                         enter="duration-300 ease-in-out"

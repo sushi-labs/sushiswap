@@ -64,7 +64,7 @@ export function Header({
     >
       <Transition
         as={Fragment}
-        show={showBackground}
+        show={showBackground || !withScrollBackground}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"
@@ -74,7 +74,10 @@ export function Header({
       >
         <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
-      <Container maxWidth={maxWidth} className="grid grid-cols-3 items-center w-full mx-auto z-[101] px-4">
+      <Container
+        maxWidth={maxWidth}
+        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
+      >
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">

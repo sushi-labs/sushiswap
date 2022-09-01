@@ -50,7 +50,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFa
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
 
-  const [percentage, setPercentage] = useState<number>(0)
+  const [percentage, setPercentage] = useState<string>('')
   const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
   const rebases = useBentoBoxTotals(pair.chainId, [token0, token1])
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
@@ -217,7 +217,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFa
           >
             <Checker.Network chainId={pair.chainId}>
               <Checker.Custom
-                showGuardIfTrue={percentage <= 0}
+                showGuardIfTrue={+percentage <= 0}
                 guard={
                   <Button size="md" fullWidth disabled={true}>
                     Enter Amount

@@ -1,5 +1,4 @@
 export * from './BackgroundVector'
-export * from './Breadcrumb'
 export * from './CancelModal'
 export * from './CurrencyInput'
 export * from './Dashboard'

@@ -3,7 +3,7 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { Fee } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
-import { Button, Container, Dots, Loader } from '@sushiswap/ui'
+import { BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -24,6 +24,13 @@ import { isConstantProductPool, isLegacyPool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 import { PoolFinder } from '../systems/PoolFinder/PoolFinder'
+
+const LINKS: BreadcrumbLink[] = [
+  {
+    href: `/add`,
+    label: `Add`,
+  },
+]
 
 const Add = () => {
   const [chainId, setChainId] = useState(ChainId.OPTIMISM)
@@ -90,7 +97,7 @@ const Add = () => {
   const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId) && FEE_MAP[fee] !== Fee.DEFAULT
 
   return (
-    <Layout>
+    <Layout breadcrumbs={LINKS}>
       <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
         <div className="hidden md:block" />
         <PoolFinder

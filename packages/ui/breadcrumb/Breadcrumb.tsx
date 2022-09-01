@@ -1,7 +1,7 @@
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/solid'
-import { Typography } from '@sushiswap/ui'
-import Link from 'next/link'
 import { FC } from 'react'
+
+import { Link, Typography } from '..'
 
 export type BreadcrumbLink = {
   href: string
@@ -9,17 +9,18 @@ export type BreadcrumbLink = {
 }
 
 interface Breadcrumb {
+  home: string
   links: BreadcrumbLink[]
 }
 
-export const Breadcrumb: FC<Breadcrumb> = ({ links }) => {
+export const Breadcrumb: FC<Breadcrumb> = ({ links, home }) => {
   return (
     <div className="flex items-center gap-2 mt-4">
-      <Link href="/dashboard" passHref={true}>
+      <Link.Internal href={home} passHref={true}>
         <a className="flex items-center gap-2 group">
           <HomeIcon width={16} className="cursor-pointer group-hover:text-slate-50 text-slate-600" />
         </a>
-      </Link>
+      </Link.Internal>
       {links
         .map((link, index) => {
           const last = links.length === index + 1
@@ -32,7 +33,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ links }) => {
           }
 
           return (
-            <Link href={link.href} passHref={true} key={`index-${link.label}`}>
+            <Link.Internal href={link.href} passHref={true} key={`index-${link.label}`}>
               <a className="flex items-center gap-2 group">
                 <Typography
                   variant="sm"
@@ -42,7 +43,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ links }) => {
                   {link.label}
                 </Typography>
               </a>
-            </Link>
+            </Link.Internal>
           )
         })
         .reduce<JSX.Element[]>(
