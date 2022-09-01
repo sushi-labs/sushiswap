@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { Chef, useMasterChef } from '@sushiswap/wagmi'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
 
@@ -12,7 +12,7 @@ interface StakedPositionFetcherRenderProps {
   underlying1: Amount<Token> | undefined
 }
 
-interface StakedPositionFetcherProps {
+export interface StakedPositionFetcherProps {
   chainId: ChainId
   liquidityToken: Token
   totalSupply: Amount<Token>
@@ -41,21 +41,24 @@ export const StakedPositionFetcher: FC<StakedPositionFetcherProps> = ({
   })
 
   const stakedUnderlying = useUnderlyingTokenBalanceFromPair({
-    reserve0: reserve0.wrapped,
-    reserve1: reserve1.wrapped,
+    reserve0: reserve0,
+    reserve1: reserve1,
     totalSupply,
     balance: stakedBalance,
   })
 
   const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: stakedUnderlying })
-  return (
-    <>
-      {children({
-        value0: Number(value0),
-        value1: Number(value1),
-        underlying0: stakedUnderlying[0],
-        underlying1: stakedUnderlying[1],
-      })}
-    </>
-  )
+
+  return useMemo(() => {
+    return (
+      <>
+        {children({
+          value0: Number(value0),
+          value1: Number(value1),
+          underlying0: stakedUnderlying[0],
+          underlying1: stakedUnderlying[1],
+        })}
+      </>
+    )
+  }, [stakedUnderlying, value0, value1])
 }

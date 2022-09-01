@@ -77,6 +77,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId, ti
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
+    enabled: false,
   })
 
   const amount = useMemo(() => {
@@ -122,8 +123,8 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId, ti
           chainId={pair.chainId}
           value={value}
           setValue={setValue}
-          reserve0={reserve0.wrapped}
-          reserve1={reserve1.wrapped}
+          reserve0={reserve0}
+          reserve1={reserve1}
           liquidityToken={liquidityToken}
         >
           <Checker.Connected size="md">

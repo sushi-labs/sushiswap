@@ -18,6 +18,7 @@ interface TokenSelectorRow {
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
   ({ price, balance, currency, fundSource, style, className, onCurrency }) => {
+    console.log('hi')
     const onClick = useCallback(() => {
       onCurrency(currency)
     }, [currency, onCurrency])

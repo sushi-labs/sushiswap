@@ -1,8 +1,15 @@
-import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Loader, Typography } from '@sushiswap/ui'
+import {
+  AppearOnMount,
+  classNames,
+  Currency as UICurrency,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Loader,
+  Typography,
+} from '@sushiswap/ui'
 import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -133,16 +140,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         </Typography>
 
         <div className="h-6">
-          <Transition
-            appear
-            show={Boolean(isMounted && balance)}
-            enter="transition duration-300 origin-center ease-out"
-            enterFrom="transform scale-90 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform opacity-100"
-            leaveTo="transform opacity-0"
-          >
+          <AppearOnMount show={!!balance}>
             <button
               type="button"
               onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
@@ -151,7 +149,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             >
               {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
             </button>
-          </Transition>
+          </AppearOnMount>
         </div>
       </div>
       {onSelect && (

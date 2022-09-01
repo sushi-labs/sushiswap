@@ -1,7 +1,7 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
@@ -17,8 +17,8 @@ interface AddSectionStakeWidgetProps {
   chainId: ChainId
   value: string
   setValue(value: string): void
-  reserve0: Amount<Token>
-  reserve1: Amount<Token>
+  reserve0: Amount<Type>
+  reserve1: Amount<Type>
   liquidityToken: Token
   children: ReactNode
   error?: string

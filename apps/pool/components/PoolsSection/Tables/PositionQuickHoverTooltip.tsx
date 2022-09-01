@@ -23,10 +23,10 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
   const totalAPR = rewardAPR + row.apr / 100
 
   const underlying = useUnderlyingTokenBalanceFromPair({
-    reserve0: reserve0.wrapped,
-    reserve1: reserve1.wrapped,
+    reserve0,
+    reserve1,
     totalSupply,
-    balance: balance?.[FundSource.WALLET]?.wrapped,
+    balance: balance?.[FundSource.WALLET],
   })
 
   const [underlying0, underlying1] = underlying

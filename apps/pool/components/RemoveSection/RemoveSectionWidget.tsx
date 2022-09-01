@@ -58,7 +58,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
     reserve0,
     reserve1,
     totalSupply,
-    balance: balance?.[FundSource.WALLET].wrapped,
+    balance: balance?.[FundSource.WALLET],
   })
 
   const [underlying0, underlying1] = underlying

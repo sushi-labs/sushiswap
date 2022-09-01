@@ -1,11 +1,10 @@
-import { Result } from '@ethersproject/abi'
 import { AddressZero } from '@ethersproject/constants'
-import { Chain } from '@sushiswap/chain'
+import { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { createToast, Dots } from '@sushiswap/ui'
-import { useCallback } from 'react'
-import { erc20ABI, useAccount, useContractRead, useSendTransaction } from 'wagmi'
+import { useCallback, useMemo } from 'react'
+import { erc20ABI, useAccount, useContractReads, useSendTransaction } from 'wagmi'
 
 import {
   getMasterChefContractConfig,
@@ -19,7 +18,7 @@ export enum Chef {
   MINICHEF,
 }
 
-interface UseMasterChefReturn extends Omit<ReturnType<typeof useSendTransaction>, 'sendTransactionAsync'> {
+interface UseMasterChefReturn extends Pick<ReturnType<typeof useSendTransaction>, 'isLoading' | 'isError'> {
   deposit(amount: Amount<Token> | undefined): void
   withdraw(amount: Amount<Token> | undefined): void
   balance: Amount<Token> | undefined
@@ -27,7 +26,7 @@ interface UseMasterChefReturn extends Omit<ReturnType<typeof useSendTransaction>
 }
 
 interface UseMasterChefParams {
-  chainId: number | undefined
+  chainId: ChainId
   chef: Chef
   pid: number
   token: Token
@@ -36,39 +35,64 @@ interface UseMasterChefParams {
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled }) => {
+export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
-  const { sendTransactionAsync, ...rest } = useSendTransaction({ chainId })
+  const { sendTransactionAsync, isLoading, isError } = useSendTransaction({ chainId })
+  const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
+  const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
-  const { data: pendingSushi } = useContractRead({
-    ...getMasterChefContractV2Config(chainId),
-    chainId,
-    functionName: 'pendingSushi',
-    args: [pid, address],
-    enabled,
-  })
+  const contracts = useMemo(() => {
+    const inputs = []
 
-  const { data: sushiBalance } = useContractRead({
-    addressOrName: chainId ? SUSHI_ADDRESS[chainId] : AddressZero,
-    chainId,
-    functionName: 'balanceOf',
-    contractInterface: erc20ABI,
-    enabled:
-      enabled !== undefined
-        ? Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled
-        : Boolean(chainId && SUSHI_ADDRESS[chainId]),
-  })
+    if (Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled) {
+      inputs.push({
+        chainId,
+        addressOrName: chainId ? SUSHI_ADDRESS[chainId] : AddressZero,
+        contractInterface: erc20ABI,
+        functionName: 'balanceOf',
+        args: [config.addressOrName],
+      })
+    }
 
-  const { data: balance } = useContractRead({
-    ...getMasterChefContractConfig(chainId, chef),
-    chainId,
-    functionName: 'userInfo',
-    args: [pid, address],
-    enabled: enabled !== undefined ? !!address && enabled : enabled,
-    select: (data) => Amount.fromRawAmount(token, data?.amount ? data.amount.toString() : 0) as unknown as Result,
+    if (!!address && enabled && config.addressOrName) {
+      inputs.push({
+        chainId,
+        ...config,
+        functionName: 'userInfo',
+        args: [pid, address],
+      })
+    }
+
+    if (enabled && !!v2Config.addressOrName) {
+      inputs.push({
+        chainId,
+        ...v2Config,
+        functionName: 'pendingSushi',
+        args: [pid, address],
+      })
+    }
+
+    return inputs
+  }, [address, chainId, config, enabled, pid, v2Config])
+
+  const { data } = useContractReads({
+    contracts,
     watch: true,
+    cacheOnBlock: true,
+    keepPreviousData: true,
+    enabled: contracts.length > 0 && enabled,
   })
+
+  const [sushiBalance, balance, pendingSushi] = useMemo(() => {
+    const copy = data ? [...data] : []
+    const sushiBalance = Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? copy.shift() : undefined
+    const _balance = !!address && enabled && config.addressOrName ? copy.shift()?.amount : undefined
+    const pendingSushi = enabled && !!v2Config.addressOrName ? copy.shift() : undefined
+
+    const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
+    return [sushiBalance, balance, pendingSushi]
+  }, [address, chainId, config.addressOrName, data, enabled, token, v2Config.addressOrName])
 
   /**
    * @throws {Error}
@@ -149,10 +173,11 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
    */
   const harvest = useCallback(async () => {
     if (!chainId) return console.error('useMasterChef: chainId not defined')
+    if (!data) return console.error('useMasterChef: could not fetch pending sushi and sushi balance')
 
-    let data
+    let tx
     if (chef === Chef.MASTERCHEF) {
-      data = await sendTransactionAsync({
+      tx = await sendTransactionAsync({
         request: {
           from: address,
           to: contract.address,
@@ -160,7 +185,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
         },
       })
     } else if (chef === Chef.MINICHEF) {
-      data = await sendTransactionAsync({
+      tx = await sendTransactionAsync({
         request: {
           from: address,
           to: contract.address,
@@ -169,7 +194,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       })
     } else {
       if (pendingSushi?.gt(sushiBalance)) {
-        data = await sendTransactionAsync({
+        tx = await sendTransactionAsync({
           request: {
             from: address,
             to: contract.address,
@@ -180,7 +205,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
           },
         })
       } else {
-        data = await sendTransactionAsync({
+        tx = await sendTransactionAsync({
           request: {
             from: address,
             to: contract.address,
@@ -191,9 +216,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
     }
 
     createToast({
-      txHash: data.hash,
-      href: Chain.from(chainId).getTxUrl(data.hash),
-      promise: data.wait(),
+      txHash: tx.hash,
+      href: Chain.from(chainId).getTxUrl(tx.hash),
+      promise: tx.wait(),
       summary: {
         pending: <Dots>Harvesting rewards</Dots>,
         completed: `Successfully harvested rewards`,
@@ -201,22 +226,26 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       },
     })
   }, [
-    address,
-    sushiBalance,
     chainId,
+    data,
     chef,
+    sendTransactionAsync,
+    address,
     contract.address,
     contract.interface,
-    pendingSushi,
     pid,
-    sendTransactionAsync,
+    pendingSushi,
+    sushiBalance,
   ])
 
-  return {
-    deposit,
-    withdraw,
-    harvest,
-    balance: balance as unknown as Amount<Token> | undefined,
-    ...rest,
-  }
+  return useMemo(() => {
+    return {
+      deposit,
+      withdraw,
+      harvest,
+      balance,
+      isLoading,
+      isError,
+    }
+  }, [balance, deposit, harvest, isError, isLoading, withdraw])
 }

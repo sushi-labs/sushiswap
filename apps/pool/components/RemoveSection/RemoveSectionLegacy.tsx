@@ -52,10 +52,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
   const totalSupply = useTotalSupply(liquidityToken)
 
   const underlying = useUnderlyingTokenBalanceFromPair({
-    reserve0: pool?.reserve0,
-    reserve1: pool?.reserve1,
+    reserve0,
+    reserve1,
     totalSupply,
-    balance: balance?.[FundSource.WALLET].wrapped,
+    balance: balance?.[FundSource.WALLET],
   })
 
   const [underlying0, underlying1] = underlying
