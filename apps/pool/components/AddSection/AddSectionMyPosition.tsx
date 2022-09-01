@@ -34,10 +34,12 @@ export const AddSectionMyPosition: FC<{ chainId: ChainId; poolAddress: string }>
   if (!data || !chefType || farmId === undefined || !isMounted) return <></>
   const { pair } = data
 
+  console.log('hi2')
   return (
     <Transition
       appear
       show={true}
+      unmount={false}
       enter="transition duration-300 origin-center ease-out"
       enterFrom="transform scale-90 opacity-0"
       enterTo="transform scale-100 opacity-100"

@@ -1,5 +1,5 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { Amount, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { createToast, Dots } from '@sushiswap/ui'
@@ -26,7 +26,7 @@ interface UseMasterChefReturn extends Pick<ReturnType<typeof useSendTransaction>
 }
 
 interface UseMasterChefParams {
-  chainId: ChainId
+  chainId: number
   chef: Chef
   pid: number
   token: Token
@@ -43,11 +43,11 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
   const contracts = useMemo(() => {
-    const inputs = []
+    const inputs: any[] = []
 
     if (Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled) {
       inputs.push({
-        chainId,
+        chainId: chainId,
         addressOrName: chainId ? SUSHI_ADDRESS[chainId] : AddressZero,
         contractInterface: erc20ABI,
         functionName: 'balanceOf',
@@ -57,7 +57,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
 
     if (!!address && enabled && config.addressOrName) {
       inputs.push({
-        chainId,
+        chainId: chainId,
         ...config,
         functionName: 'userInfo',
         args: [pid, address],
@@ -66,7 +66,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
 
     if (enabled && !!v2Config.addressOrName) {
       inputs.push({
-        chainId,
+        chainId: chainId,
         ...v2Config,
         functionName: 'pendingSushi',
         args: [pid, address],
