@@ -42,7 +42,12 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
     () =>
       currencies.reduce<[Token[], string[][]]>(
         (acc, currencies) => {
-          if (currencies && isAddress(currencies.wrapped.address)) {
+          if (
+            chainId &&
+            currencies &&
+            isAddress(currencies.wrapped.address) &&
+            currencies.wrapped.address !== Native.onChain(chainId).wrapped.address
+          ) {
             acc[0].push(currencies.wrapped)
             acc[1].push([currencies.wrapped.address])
           }
@@ -51,7 +56,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
         },
         [[], []]
       ),
-    [currencies]
+    [chainId, currencies]
   )
 
   const contracts = useMemo(() => {
