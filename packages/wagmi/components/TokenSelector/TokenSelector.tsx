@@ -23,7 +23,7 @@ export type TokenSelectorProps = {
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, ...props }) => {
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, ...props }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
@@ -38,6 +38,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       account: address,
       chainId,
       currencies: _tokenMapValues,
+      loadBentobox: !!onSelect || fundSource === FundSource.BENTOBOX,
     })
 
     const { data: pricesMap } = usePrices({ chainId })
@@ -53,6 +54,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
           pricesMap={pricesMap}
           chainId={chainId}
           fundSource={fundSource}
+          onSelect={onSelect}
           {...props}
         />
       )
@@ -66,6 +68,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
         pricesMap={pricesMap}
         chainId={chainId}
         fundSource={fundSource}
+        onSelect={onSelect}
         {...props}
       />
     )

@@ -15,6 +15,7 @@ type UseBalancesParams = {
   currencies: (Type | undefined)[]
   chainId?: ChainId
   enabled?: boolean
+  loadBentobox?: boolean
 }
 
 type UseBalances = (params: UseBalancesParams) => (
@@ -24,7 +25,7 @@ type UseBalances = (params: UseBalancesParams) => (
   data: BalanceMap
 }
 
-export const useBalances: UseBalances = ({ enabled, chainId, account, currencies }) => {
+export const useBalances: UseBalances = ({ enabled, chainId, account, currencies, loadBentobox = false }) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
@@ -54,21 +55,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
   )
 
   const contracts = useMemo(() => {
-    const totals = validatedTokenAddresses.map((token) => ({
-      chainId,
-      ...getBentoBoxContractConfig(chainId),
-      functionName: 'totals',
-      args: token,
-    }))
-
-    const balanceInputs = validatedTokenAddresses.map((token, i) => ({
-      chainId,
-      ...getBentoBoxContractConfig(chainId),
-      functionName: 'balanceOf',
-      args: [validatedTokenAddresses[i][0], account],
-    }))
-
-    const walletBalanceInput = validatedTokenAddresses.map((token) => {
+    const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
         addressOrName: token[0],
@@ -78,8 +65,26 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
       }
     })
 
-    return [...totals, ...balanceInputs, ...walletBalanceInput]
-  }, [validatedTokenAddresses, chainId, account])
+    if (loadBentobox) {
+      const totals = validatedTokenAddresses.map((token) => ({
+        chainId,
+        ...getBentoBoxContractConfig(chainId),
+        functionName: 'totals',
+        args: token,
+      }))
+
+      const balanceInputs = validatedTokenAddresses.map((token, i) => ({
+        chainId,
+        ...getBentoBoxContractConfig(chainId),
+        functionName: 'balanceOf',
+        args: [validatedTokenAddresses[i][0], account],
+      }))
+
+      return [...input, ...totals, ...balanceInputs]
+    }
+
+    return input
+  }, [validatedTokenAddresses, loadBentobox, chainId, account])
 
   const { data, isError, isLoading } = useContractReads({
     contracts: contracts,
@@ -94,23 +99,29 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
 
     if (data?.length !== contracts.length) return result
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
-      const { base, elastic } = data[i]
-      if (base && elastic) {
-        const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
-        const amount = Amount.fromShare(validatedTokens[i], data[i + validatedTokenAddresses.length].toString(), rebase)
+      if (loadBentobox) {
+        const { base, elastic } = data[i + validatedTokenAddresses.length]
+        if (base && elastic) {
+          const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
+          const amount = Amount.fromShare(
+            validatedTokens[i],
+            data[i + 2 * validatedTokenAddresses.length].toString(),
+            rebase
+          )
 
-        result[validatedTokens[i].address] = {
-          [FundSource.BENTOBOX]: amount.greaterThan(ZERO) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
-          [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
-        }
-      } else {
-        result[validatedTokens[i].address] = {
-          [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
-          [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
+          result[validatedTokens[i].address] = {
+            [FundSource.BENTOBOX]: amount.greaterThan(ZERO) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
+            [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
+          }
+        } else {
+          result[validatedTokens[i].address] = {
+            [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
+            [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
+          }
         }
       }
 
-      const value = data[i + 2 * validatedTokenAddresses.length]
+      const value = data[i]
       const amount = value ? JSBI.BigInt(value.toString()) : undefined
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
@@ -125,7 +136,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
     }
 
     return result
-  }, [contracts.length, data, validatedTokenAddresses.length, validatedTokens])
+  }, [contracts.length, data, loadBentobox, validatedTokenAddresses.length, validatedTokens])
 
   return useMemo(() => {
     tokens[AddressZero] = {
@@ -152,15 +163,16 @@ type UseBalanceParams = {
   currency: Type | undefined
   chainId?: ChainId
   enabled?: boolean
+  loadBentobox?: boolean
 }
 
 type UseBalance = (params: UseBalanceParams) => Pick<ReturnType<typeof useBalances>, 'isError' | 'isLoading'> & {
   data: Record<FundSource, Amount<Type>> | undefined
 }
 
-export const useBalance: UseBalance = ({ chainId, account, currency, enabled = true }) => {
+export const useBalance: UseBalance = ({ chainId, account, currency, enabled = true, loadBentobox = false }) => {
   const currencies = useMemo(() => [currency], [currency])
-  const { data, isLoading, isError } = useBalances({ chainId, currencies, account, enabled })
+  const { data, isLoading, isError } = useBalances({ chainId, currencies, account, enabled, loadBentobox })
 
   return useMemo(() => {
     const walletBalance = currency
