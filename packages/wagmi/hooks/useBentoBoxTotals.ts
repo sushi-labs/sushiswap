@@ -32,6 +32,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
   const { data: totals } = useContractReads({
     contracts,
   })
+
   return useMemo(() => {
     return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue, i) => {
       if (!currentValue) return previousValue

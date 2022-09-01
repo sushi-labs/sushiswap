@@ -4,7 +4,7 @@ import { formatPercent, formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Currency, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import { Chef, useBalance, useFarmRewards } from '@sushiswap/wagmi'
-import React, { FC, memo } from 'react'
+import React, { FC, memo, useMemo } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
@@ -34,7 +34,6 @@ export const AddSectionMyPosition: FC<{ chainId: ChainId; poolAddress: string }>
   if (!data || !chefType || farmId === undefined || !isMounted) return <></>
   const { pair } = data
 
-  console.log('hi2')
   return (
     <Transition
       appear
@@ -70,90 +69,109 @@ const _AddSectionMyPosition: FC<AddSectionMyPositionProps> = ({ pair, chefType, 
   const rewardAPR = (incentives?.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
   const totalAPR = rewardAPR + pair.apr / 100
 
-  console.log('hi')
-
-  return (
-    <>
-      <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
-        <div className="p-5 flex flex-col gap-4">
-          <div className="grid grid-cols-2 items-center gap-2">
-            <Typography variant="xs" weight={500} className="text-slate-300">
-              Total APR:
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-              {formatPercent(totalAPR)}
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300">
-              Fee APR:
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-              {formatPercent(pair.apr / 100)}
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300">
-              Reward APR:
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-              {formatPercent(rewardAPR)}
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-300">
-              Farming Rewards:
-            </Typography>
-            <div className="flex justify-end -mr-2">
-              <UICurrency.IconList iconWidth={16} iconHeight={16}>
-                {incentives?.map((incentive, index) => (
-                  <UICurrency.Icon key={index} currency={incentive.rewardToken} />
-                ))}
-              </UICurrency.IconList>
+  return useMemo(() => {
+    return (
+      <>
+        <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
+          <div className="p-5 flex flex-col gap-4">
+            <div className="grid grid-cols-2 items-center gap-2">
+              <Typography variant="xs" weight={500} className="text-slate-300">
+                Total APR:
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+                {formatPercent(totalAPR)}
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300">
+                Fee APR:
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+                {formatPercent(pair.apr / 100)}
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300">
+                Reward APR:
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+                {formatPercent(rewardAPR)}
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-300">
+                Farming Rewards:
+              </Typography>
+              <div className="flex justify-end -mr-2">
+                <UICurrency.IconList iconWidth={16} iconHeight={16}>
+                  {incentives?.map((incentive, index) => (
+                    <UICurrency.Icon key={index} currency={incentive.rewardToken} />
+                  ))}
+                </UICurrency.IconList>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="px-5">
-          <hr className="h-px border-t border-slate-200/5" />
-        </div>
-        <div className="p-5 pb-2 flex flex-col gap-2">
-          <div className="flex gap-1 justify-between items-center">
-            <Typography variant="sm" weight={600} className="text-slate-50">
-              My Liquidity Position
-            </Typography>
-            <Typography variant="xs" weight={500} className="text-slate-400">
-              {balance ? (
-                formatUSD(Number(value0) + Number(value1))
-              ) : (
-                <div className="bg-slate-700 rounded-full h-[16px] my-0.5 animate-pulse w-[60px]" />
-              )}
-            </Typography>
+          <div className="px-5">
+            <hr className="h-px border-t border-slate-200/5" />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4">
-                <Currency.Icon currency={token0} width={16} height={16} />
-              </div>
-              <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-                {balance && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
+          <div className="p-5 pb-2 flex flex-col gap-2">
+            <div className="flex gap-1 justify-between items-center">
+              <Typography variant="sm" weight={600} className="text-slate-50">
+                My Liquidity Position
+              </Typography>
+              <Typography variant="xs" weight={500} className="text-slate-400">
+                {balance ? (
+                  formatUSD(Number(value0) + Number(value1))
+                ) : (
+                  <div className="bg-slate-700 rounded-full h-[16px] my-0.5 animate-pulse w-[60px]" />
+                )}
               </Typography>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4">
-                <Currency.Icon currency={token1} width={16} height={16} />
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4">
+                  <Currency.Icon currency={token0} width={16} height={16} />
+                </div>
+                <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
+                  {balance && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
+                </Typography>
               </div>
-              <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-                {balance && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
-              </Typography>
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4">
+                  <Currency.Icon currency={token1} width={16} height={16} />
+                </div>
+                <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
+                  {balance && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
+                </Typography>
+              </div>
             </div>
           </div>
+          <_AddSectionMyStakedPosition
+            chainId={pair.chainId}
+            liquidityToken={liquidityToken}
+            totalSupply={totalSupply}
+            reserve0={reserve0}
+            reserve1={reserve1}
+            chefType={chefType}
+            farmId={farmId}
+          />
         </div>
-        <_AddSectionMyStakedPosition
-          chainId={pair.chainId}
-          liquidityToken={liquidityToken}
-          totalSupply={totalSupply}
-          reserve0={reserve0}
-          reserve1={reserve1}
-          chefType={chefType}
-          farmId={farmId}
-        />
-      </div>
-    </>
-  )
+      </>
+    )
+  }, [
+    balance,
+    chefType,
+    farmId,
+    incentives,
+    liquidityToken,
+    pair.apr,
+    pair.chainId,
+    reserve0,
+    reserve1,
+    rewardAPR,
+    token0,
+    token1,
+    totalAPR,
+    totalSupply,
+    underlying0,
+    underlying1,
+    value0,
+    value1,
+  ])
 }
 
 const _AddSectionMyStakedPosition: FC<Omit<StakedPositionFetcherProps, 'children'>> = ({

@@ -85,58 +85,74 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
     [_withdraw]
   )
 
-  return (
-    <RemoveSectionUnstakeWidget
-      chefType={chefType}
-      farmId={farmId}
-      chainId={pair.chainId}
-      value={value}
-      setValue={setValue}
-      reserve0={reserve0.wrapped}
-      reserve1={reserve1.wrapped}
-      liquidityToken={liquidityToken}
-    >
-      <Checker.Connected size="md">
-        <Checker.Network size="md" chainId={pair.chainId}>
-          <Checker.Custom
-            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-            guard={<Button size="md">Insufficient Balance</Button>}
-          >
-            <Approve
-              className="flex-grow !justify-end"
-              components={
-                <Approve.Components>
-                  <Approve.Token
-                    size="md"
-                    className="whitespace-nowrap"
-                    fullWidth
-                    amount={amount}
-                    address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
-                  />
-                </Approve.Components>
-              }
-              render={({ approved }) => {
-                return (
-                  <Button
-                    onClick={() => withdraw(amount)}
-                    fullWidth
-                    size="md"
-                    variant="filled"
-                    disabled={!approved || isWritePending}
-                  >
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-                  </Button>
-                )
-              }}
-            />
-            {error && (
-              <Typography variant="xs" className="text-center text-red" weight={500}>
-                {error}
-              </Typography>
-            )}
-          </Checker.Custom>
-        </Checker.Network>
-      </Checker.Connected>
-    </RemoveSectionUnstakeWidget>
+  return useMemo(
+    () => (
+      <RemoveSectionUnstakeWidget
+        chefType={chefType}
+        farmId={farmId}
+        chainId={pair.chainId}
+        value={value}
+        setValue={setValue}
+        reserve0={reserve0}
+        reserve1={reserve1}
+        liquidityToken={liquidityToken}
+      >
+        <Checker.Connected size="md">
+          <Checker.Network size="md" chainId={pair.chainId}>
+            <Checker.Custom
+              showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
+              guard={<Button size="md">Insufficient Balance</Button>}
+            >
+              <Approve
+                className="flex-grow !justify-end"
+                components={
+                  <Approve.Components>
+                    <Approve.Token
+                      size="md"
+                      className="whitespace-nowrap"
+                      fullWidth
+                      amount={amount}
+                      address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
+                    />
+                  </Approve.Components>
+                }
+                render={({ approved }) => {
+                  return (
+                    <Button
+                      onClick={() => withdraw(amount)}
+                      fullWidth
+                      size="md"
+                      variant="filled"
+                      disabled={!approved || isWritePending}
+                    >
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+                    </Button>
+                  )
+                }}
+              />
+              {error && (
+                <Typography variant="xs" className="text-center text-red" weight={500}>
+                  {error}
+                </Typography>
+              )}
+            </Checker.Custom>
+          </Checker.Network>
+        </Checker.Connected>
+      </RemoveSectionUnstakeWidget>
+    ),
+    [
+      amount,
+      balance,
+      chefType,
+      error,
+      farmId,
+      isWritePending,
+      liquidityToken,
+      pair.chainId,
+      reserve0,
+      reserve1,
+      value,
+      withdraw,
+    ]
   )
 }

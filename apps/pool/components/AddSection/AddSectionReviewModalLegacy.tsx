@@ -155,46 +155,49 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     deadline,
   ])
 
-  return (
-    <>
-      {children({ isWritePending, setOpen })}
-      <AddSectionReviewModal
-        chainId={chainId}
-        input0={input0}
-        input1={input1}
-        open={open}
-        setOpen={setOpen}
-        error={error}
-      >
-        <Approve
-          className="flex-grow !justify-end"
-          components={
-            <Approve.Components>
-              <Approve.Token
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input0}
-                address={getV2RouterContractConfig(chainId).addressOrName}
-              />
-              <Approve.Token
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input1}
-                address={getV2RouterContractConfig(chainId).addressOrName}
-              />
-            </Approve.Components>
-          }
-          render={({ approved }) => {
-            return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-              </Button>
-            )
-          }}
-        />
-      </AddSectionReviewModal>
-    </>
+  return useMemo(
+    () => (
+      <>
+        {children({ isWritePending, setOpen })}
+        <AddSectionReviewModal
+          chainId={chainId}
+          input0={input0}
+          input1={input1}
+          open={open}
+          setOpen={setOpen}
+          error={error}
+        >
+          <Approve
+            className="flex-grow !justify-end"
+            components={
+              <Approve.Components>
+                <Approve.Token
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  amount={input0}
+                  address={getV2RouterContractConfig(chainId).addressOrName}
+                />
+                <Approve.Token
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  amount={input1}
+                  address={getV2RouterContractConfig(chainId).addressOrName}
+                />
+              </Approve.Components>
+            }
+            render={({ approved }) => {
+              return (
+                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              )
+            }}
+          />
+        </AddSectionReviewModal>
+      </>
+    ),
+    [chainId, children, error, execute, input0, input1, isWritePending, open]
   )
 }

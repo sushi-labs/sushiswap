@@ -231,53 +231,56 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     permit,
   ])
 
-  return (
-    <>
-      {children({ isWritePending, setOpen })}
-      <AddSectionReviewModal
-        chainId={chainId}
-        input0={input0}
-        input1={input1}
-        open={open}
-        setOpen={setOpen}
-        error={error}
-      >
-        <Approve
-          className="flex-grow !justify-end"
-          components={
-            <Approve.Components>
-              <Approve.Bentobox
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                address={getV3RouterContractConfig(chainId).addressOrName}
-                onSignature={setPermit}
-              />
-              <Approve.Token
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input0}
-                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-              />
-              <Approve.Token
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input1}
-                address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-              />
-            </Approve.Components>
-          }
-          render={({ approved }) => {
-            return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-              </Button>
-            )
-          }}
-        />
-      </AddSectionReviewModal>
-    </>
+  return useMemo(
+    () => (
+      <>
+        {children({ isWritePending, setOpen })}
+        <AddSectionReviewModal
+          chainId={chainId}
+          input0={input0}
+          input1={input1}
+          open={open}
+          setOpen={setOpen}
+          error={error}
+        >
+          <Approve
+            className="flex-grow !justify-end"
+            components={
+              <Approve.Components>
+                <Approve.Bentobox
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  address={getV3RouterContractConfig(chainId).addressOrName}
+                  onSignature={setPermit}
+                />
+                <Approve.Token
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  amount={input0}
+                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                />
+                <Approve.Token
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  amount={input1}
+                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                />
+              </Approve.Components>
+            }
+            render={({ approved }) => {
+              return (
+                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
+                </Button>
+              )
+            }}
+          />
+        </AddSectionReviewModal>
+      </>
+    ),
+    [chain, chainId, children, error, execute, input0, input1, isWritePending, open]
   )
 }

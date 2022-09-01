@@ -51,9 +51,13 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
   const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
   const totalSupply = useTotalSupply(liquidityToken)
 
+  const [reserve0, reserve1] = useMemo(() => {
+    return [pool?.reserve0, pool?.reserve1]
+  }, [pool?.reserve0, pool?.reserve1])
+
   const underlying = useUnderlyingTokenBalanceFromPair({
-    reserve0: pool?.reserve0,
-    reserve1: pool?.reserve1,
+    reserve0,
+    reserve1,
     totalSupply,
     balance: balance?.[FundSource.WALLET],
   })
@@ -197,70 +201,88 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm
     sendTransactionAsync,
   ])
 
-  return (
-    <div>
-      <RemoveSectionWidget
-        isFarm={isFarm}
-        chainId={pair.chainId}
-        percentage={percentage}
-        liquidityToken={liquidityToken}
-        token0={token0}
-        token1={token1}
-        reserve0={pool?.reserve0}
-        reserve1={pool?.reserve1}
-        setPercentage={setPercentage}
-        error={error}
-      >
-        <Checker.Connected fullWidth size="md">
-          <Checker.Custom
-            showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-            guard={
-              <Button size="md" fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
-          >
-            <Checker.Network fullWidth size="md" chainId={pair.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button size="md" fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
-                <Approve
-                  className="flex-grow !justify-end"
-                  components={
-                    <Approve.Components>
-                      <Approve.Token
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
-                        address={getV2RouterContractConfig(pair.chainId).addressOrName}
-                      />
-                    </Approve.Components>
+  return useMemo(() => {
+    return (
+      <div>
+        <RemoveSectionWidget
+          isFarm={isFarm}
+          chainId={pair.chainId}
+          percentage={percentage}
+          liquidityToken={liquidityToken}
+          token0={token0}
+          token1={token1}
+          reserve0={pool?.reserve0}
+          reserve1={pool?.reserve1}
+          setPercentage={setPercentage}
+          error={error}
+        >
+          <Checker.Connected fullWidth size="md">
+            <Checker.Custom
+              showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+              guard={
+                <Button size="md" fullWidth disabled={true}>
+                  Pool Not Found
+                </Button>
+              }
+            >
+              <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+                <Checker.Custom
+                  showGuardIfTrue={+percentage <= 0}
+                  guard={
+                    <Button size="md" fullWidth disabled={true}>
+                      Enter Amount
+                    </Button>
                   }
-                  render={({ approved }) => {
-                    return (
-                      <Button
-                        onClick={execute}
-                        fullWidth
-                        size="md"
-                        variant="filled"
-                        disabled={!approved || isWritePending}
-                      >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                      </Button>
-                    )
-                  }}
-                />
-              </Checker.Custom>
-            </Checker.Network>
-          </Checker.Custom>
-        </Checker.Connected>
-      </RemoveSectionWidget>
-    </div>
-  )
+                >
+                  <Approve
+                    className="flex-grow !justify-end"
+                    components={
+                      <Approve.Components>
+                        <Approve.Token
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
+                          address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                        />
+                      </Approve.Components>
+                    }
+                    render={({ approved }) => {
+                      return (
+                        <Button
+                          onClick={execute}
+                          fullWidth
+                          size="md"
+                          variant="filled"
+                          disabled={!approved || isWritePending}
+                        >
+                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                        </Button>
+                      )
+                    }}
+                  />
+                </Checker.Custom>
+              </Checker.Network>
+            </Checker.Custom>
+          </Checker.Connected>
+        </RemoveSectionWidget>
+      </div>
+    )
+  }, [
+    balance,
+    error,
+    execute,
+    isFarm,
+    isMounted,
+    isWritePending,
+    liquidityToken,
+    pair.chainId,
+    percentage,
+    percentageEntity,
+    pool?.reserve0,
+    pool?.reserve1,
+    poolState,
+    token0,
+    token1,
+  ])
 }

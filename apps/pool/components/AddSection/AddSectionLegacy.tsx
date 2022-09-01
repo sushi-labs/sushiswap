@@ -55,52 +55,67 @@ export const AddSectionLegacy: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, is
     [pool, poolState, token1]
   )
 
-  return (
-    <AddSectionReviewModalLegacy
-      poolState={poolState}
-      chainId={pair.chainId}
-      token0={token0}
-      token1={token1}
-      input0={parsedInput0}
-      input1={parsedInput1}
-    >
-      {({ isWritePending, setOpen }) => (
-        <AddSectionWidget
-          isFarm={isFarm}
-          chainId={pair.chainId}
-          input0={input0}
-          input1={input1}
-          token0={token0}
-          token1={token1}
-          onInput0={onChangeToken0TypedAmount}
-          onInput1={onChangeToken1TypedAmount}
-        >
-          <Checker.Connected fullWidth size="md">
-            <Checker.Custom
-              showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
-              guard={
-                <Button size="md" fullWidth disabled={true}>
-                  Pool Not Found
-                </Button>
-              }
-            >
-              <Checker.Network fullWidth size="md" chainId={pair.chainId}>
-                <Checker.Amounts
-                  fullWidth
-                  size="md"
-                  chainId={pair.chainId}
-                  fundSource={FundSource.WALLET}
-                  amounts={[parsedInput0, parsedInput1]}
-                >
-                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
+  return useMemo(() => {
+    return (
+      <AddSectionReviewModalLegacy
+        poolState={poolState}
+        chainId={pair.chainId}
+        token0={token0}
+        token1={token1}
+        input0={parsedInput0}
+        input1={parsedInput1}
+      >
+        {({ isWritePending, setOpen }) => (
+          <AddSectionWidget
+            isFarm={isFarm}
+            chainId={pair.chainId}
+            input0={input0}
+            input1={input1}
+            token0={token0}
+            token1={token1}
+            onInput0={onChangeToken0TypedAmount}
+            onInput1={onChangeToken1TypedAmount}
+          >
+            <Checker.Connected fullWidth size="md">
+              <Checker.Custom
+                showGuardIfTrue={isMounted && [PairState.NOT_EXISTS, PairState.INVALID].includes(poolState)}
+                guard={
+                  <Button size="md" fullWidth disabled={true}>
+                    Pool Not Found
                   </Button>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Custom>
-          </Checker.Connected>
-        </AddSectionWidget>
-      )}
-    </AddSectionReviewModalLegacy>
-  )
+                }
+              >
+                <Checker.Network fullWidth size="md" chainId={pair.chainId}>
+                  <Checker.Amounts
+                    fullWidth
+                    size="md"
+                    chainId={pair.chainId}
+                    fundSource={FundSource.WALLET}
+                    amounts={[parsedInput0, parsedInput1]}
+                  >
+                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
+                    </Button>
+                  </Checker.Amounts>
+                </Checker.Network>
+              </Checker.Custom>
+            </Checker.Connected>
+          </AddSectionWidget>
+        )}
+      </AddSectionReviewModalLegacy>
+    )
+  }, [
+    input0,
+    input1,
+    isFarm,
+    isMounted,
+    onChangeToken0TypedAmount,
+    onChangeToken1TypedAmount,
+    pair.chainId,
+    parsedInput0,
+    parsedInput1,
+    poolState,
+    token0,
+    token1,
+  ])
 }

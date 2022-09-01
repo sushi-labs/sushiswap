@@ -50,6 +50,7 @@ const _Add = () => {
   )
 
   const { data: rewards } = useFarmRewards()
+
   if (!data) return <></>
 
   const { pair } = data
