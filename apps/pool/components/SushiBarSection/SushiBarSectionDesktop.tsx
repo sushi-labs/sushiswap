@@ -97,7 +97,7 @@ export const SushiBarSectionDesktop: FC = () => {
                 <SushiBarInput
                   currency={SUSHI_TOKEN}
                   balance={balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]}
-                  value={stake ? value : (Number(value) / Number(stats?.sushiXsushiRatio)).toFixed(6)}
+                  value={stake ? value : (Number(value) * Number(stats?.sushiXsushiRatio)).toFixed(6)}
                   onChange={stake ? setValue : setOtherValue}
                   disabled={!stake}
                 />
