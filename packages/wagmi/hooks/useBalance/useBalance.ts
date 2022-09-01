@@ -29,7 +29,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
-    error: isNativeError,
+    isError: isNativeError,
   } = useWagmiBalance({
     addressOrName: account,
     chainId,
