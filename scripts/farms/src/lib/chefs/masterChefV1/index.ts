@@ -72,7 +72,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
 
   return {
     chainId: ChainId.ETHEREUM,
-    farms: poolInfos.reduce<Record<string, Farm>>((acc, farm) => {
+    farms: poolInfos.reduce<Record<string, Farm>>((acc, farm, i) => {
       const pair = pairs.find((pair) => pair.id === farm.lpToken.toLowerCase())
       const lpBalance = lpBalances.find(({ token }) => token === farm.lpToken)?.balance
       if (!pair || !lpBalance) return acc
@@ -81,6 +81,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
       acc[farm.lpToken] = {
+        id: i,
         feeApy: pair.feeApy,
         incentives: [
           {
@@ -88,7 +89,12 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
             rewardPerDay: rewardPerDay,
             rewardToken: {
               address: SUSHI[ChainId.ETHEREUM].address,
+              decimals: SUSHI[ChainId.ETHEREUM].decimals ?? 18,
               symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
+            },
+            rewarder: {
+              address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
+              type: 'Primary',
             },
           },
         ],

@@ -153,7 +153,12 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
           rewardPerDay: sushiRewardPerDay,
           rewardToken: {
             address: SUSHI[ChainId.ETHEREUM].address,
+            decimals: SUSHI[ChainId.ETHEREUM].decimals ?? 18,
             symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
+          },
+          rewarder: {
+            address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+            type: 'Primary',
           },
         },
       ]
@@ -170,13 +175,19 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
             rewardPerDay: rewardPerDay,
             rewardToken: {
               address: pool.rewarder.rewardToken,
+              decimals: token.decimals,
               symbol: token.symbol,
+            },
+            rewarder: {
+              address: pool.rewarder.id,
+              type: 'Secondary',
             },
           })
         }
       }
 
       acc[pool.pair.id] = {
+        id: pool.id,
         feeApy: pool.pair.feeApy,
         incentives: incentives,
         chefType: 'MasterChefV2',
