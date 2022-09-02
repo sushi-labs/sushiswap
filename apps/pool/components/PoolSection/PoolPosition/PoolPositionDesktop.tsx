@@ -1,10 +1,10 @@
 import { formatUSD } from '@sushiswap/format'
 import { Currency, Typography } from '@sushiswap/ui'
-import { useFarmRewards } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithAlias } from '../../../types'
+import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { usePoolPosition } from '../../PoolPositionProvider'
 
 interface PoolPositionProps {
@@ -12,11 +12,9 @@ interface PoolPositionProps {
 }
 
 export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
+  const { isFarm } = usePoolFarmRewards()
   const { token1, token0 } = useTokensFromPair(pair)
   const { underlying1, underlying0, value1, value0, isError, isLoading } = usePoolPosition()
-
-  const { data: rewards } = useFarmRewards()
-  const isFarm = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
 
   if (isLoading && !isError) {
     return (
@@ -40,7 +38,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
   if (!isLoading && !isError) {
     return (
       <div className="flex flex-col px-5 py-4 gap-3">
-        {!!isFarm && (
+        {isFarm && (
           <div className="flex justify-between items-center mb-1">
             <Typography variant="sm" weight={600} className="text-slate-100">
               Unstaked Position
