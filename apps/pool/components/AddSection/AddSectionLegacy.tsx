@@ -6,10 +6,12 @@ import { FC, useCallback, useMemo, useState } from 'react'
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'
 
-export const AddSectionLegacy: FC<{ pair: Pair; isFarm: boolean }> = ({ pair, isFarm }) => {
+export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
+  const { isFarm } = usePoolFarmRewards()
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })

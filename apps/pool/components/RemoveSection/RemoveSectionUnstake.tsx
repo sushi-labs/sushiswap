@@ -1,17 +1,16 @@
 import { Transition } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useFarmRewards, useMasterChef } from '@sushiswap/wagmi'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChef } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 
 interface AddSectionStakeProps {
@@ -20,17 +19,12 @@ interface AddSectionStakeProps {
   chefType: Chef
 }
 
-export const RemoveSectionUnstake: FC<{ chainId: ChainId; poolAddress: string }> = ({ chainId, poolAddress }) => {
+export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
+  const { farmId, chefType } = usePoolFarmRewards()
   const isMounted = useIsMounted()
-  const { data: rewards } = useFarmRewards()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-
-  const farmId = rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.id
-  const chefType = rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType
-    ? CHEF_TYPE_MAP[rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType]
-    : undefined
 
   if (!data || !chefType || farmId === undefined || !isMounted) return <></>
   const { pair } = data

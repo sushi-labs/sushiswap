@@ -157,8 +157,8 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
 
     return {
       data: tokens,
-      isLoading: isLoading ?? isNativeLoading,
-      isError: isError ?? isNativeError,
+      isLoading: isLoading || isNativeLoading,
+      isError: isError || isNativeError,
     }
   }, [tokens, chainId, nativeBalance?.value, isLoading, isNativeLoading, isError, isNativeError])
 }

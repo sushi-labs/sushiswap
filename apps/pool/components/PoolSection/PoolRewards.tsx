@@ -1,19 +1,11 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { AppearOnMount, Currency, Table, Typography } from '@sushiswap/ui'
-import { useFarmRewards } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 
-import { PairWithAlias } from '../../types'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
-interface PoolRewardsProps {
-  pair: PairWithAlias
-}
-
-export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
-  const { data: rewards } = useFarmRewards()
-
-  const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const totalAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
+export const PoolRewards: FC = () => {
+  const { totalAPR, incentives } = usePoolFarmRewards()
 
   return (
     <AppearOnMount>
@@ -40,8 +32,8 @@ export const PoolRewards: FC<PoolRewardsProps> = ({ pair }) => {
               </Table.thr>
             </Table.thead>
             <Table.tbody>
-              {farm?.incentives ? (
-                farm?.incentives.map((incentive, idx) => (
+              {incentives ? (
+                incentives.map((incentive, idx) => (
                   <Table.tr key={idx}>
                     <Table.td>
                       <div className="flex gap-3 items-center">

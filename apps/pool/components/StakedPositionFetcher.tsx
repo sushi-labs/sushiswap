@@ -10,6 +10,8 @@ interface StakedPositionFetcherRenderProps {
   value1: number
   underlying0: Amount<Token> | undefined
   underlying1: Amount<Token> | undefined
+  isLoading: boolean
+  isError: boolean
 }
 
 export interface StakedPositionFetcherProps {
@@ -33,7 +35,11 @@ export const StakedPositionFetcher: FC<StakedPositionFetcherProps> = ({
   farmId,
   children,
 }) => {
-  const { balance: stakedBalance } = useMasterChef({
+  const {
+    balance: stakedBalance,
+    isLoading,
+    isError,
+  } = useMasterChef({
     chainId: chainId,
     chef: chefType,
     pid: farmId,
@@ -57,8 +63,10 @@ export const StakedPositionFetcher: FC<StakedPositionFetcherProps> = ({
           value1: Number(value1),
           underlying0: stakedUnderlying[0],
           underlying1: stakedUnderlying[1],
+          isLoading,
+          isError,
         })}
       </>
     )
-  }, [stakedUnderlying, value0, value1])
+  }, [children, isError, isLoading, stakedUnderlying, value0, value1])
 }

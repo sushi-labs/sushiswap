@@ -22,14 +22,15 @@ import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, use
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionLegacyProps {
   pair: Pair
-  isFarm: boolean
 }
 
-export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair, isFarm }) => {
+export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
+  const { isFarm } = usePoolFarmRewards()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()

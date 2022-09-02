@@ -3,26 +3,23 @@ import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
-import { useFarmRewards, usePrices } from '@sushiswap/wagmi'
-import { FC } from 'react'
+import { usePrices } from '@sushiswap/wagmi'
+import { FC, useMemo } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
 interface PoolHeader {
   pair: PairWithAlias
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
+  const { rewardAPR, totalAPR } = usePoolFarmRewards()
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
-  const price = new Price({ baseAmount: reserve0, quoteAmount: reserve1 })
-  const { data: rewards } = useFarmRewards()
-
-  const farm = rewards?.[pair.chainId]?.farms?.[pair.id.toLowerCase()]
-  const rewardAPR = (farm?.incentives.reduce((acc, cur) => acc + (cur.apr || 0), 0) || 0) / 100
-  const totalAPR = rewardAPR + pair.apr / 100
+  const price = useMemo(() => new Price({ baseAmount: reserve0, quoteAmount: reserve1 }), [reserve0, reserve1])
 
   return (
     <div className="flex flex-col gap-5">

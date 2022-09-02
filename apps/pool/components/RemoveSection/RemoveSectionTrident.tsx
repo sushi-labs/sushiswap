@@ -13,6 +13,7 @@ import {
   useBalance,
   useBentoBoxTotals,
   useConstantProductPool,
+  useFarmRewards,
   useTotalSupply,
   useV3RouterContract,
 } from '@sushiswap/wagmi'
@@ -34,10 +35,10 @@ import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionTridentProps {
   pair: Pair
-  isFarm: boolean
 }
 
-export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair, isFarm }) => {
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
+  const { isFarm } = useFarmRewards()
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()

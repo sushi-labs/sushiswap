@@ -1,6 +1,6 @@
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
-import { BreadcrumbLink } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -12,13 +12,18 @@ import {
   PoolButtons,
   PoolChart,
   PoolComposition,
+  PoolFarmRewardsProvider,
   PoolHeader,
   PoolMyRewards,
   PoolPosition,
+  PoolPositionProvider,
+  PoolPositionRewardsProvider,
+  PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
 } from '../../components'
 import { getPool, getSushiBar } from '../../lib/api'
+import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { PairWithAlias } from '../../types'
 
 const LINKS = (id: string): BreadcrumbLink[] => [
@@ -61,31 +66,49 @@ const _Pool = () => {
   if (!data) return <></>
   const { pair } = data
 
-  const farmId = rewards?.[pair.chainId]?.farms[pair.id]?.id
   const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
+  const farmId = rewards?.[pair.chainId]?.farms[pair.id]?.id
+  const chefType = rewards?.[pair.chainId]?.farms[pair.id]?.chefType
+    ? CHEF_TYPE_MAP[rewards?.[pair.chainId]?.farms[pair.id]?.chefType]
+    : undefined
 
   return (
-    <Layout breadcrumbs={LINKS(router.query.id as string)}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-        <div className="flex flex-col order-1 gap-9">
-          <PoolHeader pair={pair} />
-          <hr className="my-3 border-t border-slate-200/5" />
-          <PoolChart pair={pair} />
-          <PoolStats pair={pair} />
-          <PoolComposition pair={pair} />
-          {incentives && isMounted && farmId !== undefined && <PoolRewards pair={pair} />}
-        </div>
-        <div className="flex flex-col order-2 gap-4">
-          <div className="flex flex-col gap-10">
-            <PoolMyRewards pair={pair} />
-            <PoolPosition pair={pair} />
+    <PoolFarmRewardsProvider pair={pair}>
+      <Layout breadcrumbs={LINKS(router.query.id as string)}>
+        <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+          <div className="flex flex-col order-1 gap-9">
+            <PoolHeader pair={pair} />
+            <hr className="my-3 border-t border-slate-200/5" />
+            <PoolChart pair={pair} />
+            <PoolStats pair={pair} />
+            <PoolComposition pair={pair} />
+            {incentives && isMounted && farmId !== undefined && <PoolRewards pair={pair} />}
           </div>
-          <div className="hidden lg:flex">
-            <PoolButtons pair={pair} />
-          </div>
+          <PoolPositionProvider pair={pair}>
+            <PoolPositionStakedProvider pair={pair} farmId={farmId} chefType={chefType}>
+              <div className="flex flex-col order-2 gap-4">
+                <AppearOnMount>
+                  <div className="flex flex-col gap-10">
+                    <PoolPositionRewardsProvider
+                      pair={pair}
+                      incentives={incentives}
+                      farmId={farmId}
+                      chefType={chefType}
+                    >
+                      <PoolMyRewards pair={pair} />
+                    </PoolPositionRewardsProvider>
+                    <PoolPosition pair={pair} />
+                  </div>
+                </AppearOnMount>
+                <div className="hidden lg:flex">
+                  <PoolButtons pair={pair} />
+                </div>
+              </div>
+            </PoolPositionStakedProvider>
+          </PoolPositionProvider>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </PoolFarmRewardsProvider>
   )
 }
 

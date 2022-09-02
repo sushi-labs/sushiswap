@@ -1,26 +1,17 @@
 import { Transition } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import {
-  Approve,
-  Checker,
-  Chef,
-  getMasterChefContractConfig,
-  useBalance,
-  useFarmRewards,
-  useMasterChef,
-} from '@sushiswap/wagmi'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useBalance, useMasterChef } from '@sushiswap/wagmi'
 import { FC, Fragment, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
@@ -30,21 +21,12 @@ interface AddSectionStakeProps {
   title?: string
 }
 
-export const AddSectionStake: FC<{ chainId: ChainId; poolAddress: string; title?: string }> = ({
-  chainId,
-  poolAddress,
-  title,
-}) => {
+export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
+  const { farmId, chefType } = usePoolFarmRewards()
   const isMounted = useIsMounted()
-  const { data: rewards } = useFarmRewards()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress.toLowerCase()}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-
-  const farmId = rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.id
-  const chefType = rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType
-    ? CHEF_TYPE_MAP[rewards?.[chainId]?.farms[poolAddress.toLowerCase()]?.chefType]
-    : undefined
 
   if (!data || !chefType || farmId === undefined || !isMounted) return <></>
   const { pair } = data

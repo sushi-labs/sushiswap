@@ -13,10 +13,14 @@ import {
   AddSectionStake,
   FEE_MAP,
   Layout,
+  PoolFarmRewardsProvider,
+  PoolPositionProvider,
+  PoolPositionStakedProvider,
   SelectFeeWidget,
   SelectNetworkWidget,
 } from 'components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
@@ -24,6 +28,7 @@ import { isConstantProductPool, isLegacyPool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 import { PoolFinder } from '../systems/PoolFinder/PoolFinder'
+import { PairWithAlias } from '../types'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -54,63 +59,65 @@ const Add = () => {
   const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId) && FEE_MAP[fee] !== Fee.DEFAULT
 
   return (
-    <Layout breadcrumbs={LINKS}>
-      <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
-        <div className="hidden md:block" />
-        <PoolFinder
-          components={
-            <PoolFinder.Components>
-              <PoolFinder.LegacyPool
-                chainId={chainId}
-                token0={token0}
-                token1={token1}
-                enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
-              />
-              <PoolFinder.ConstantProductPool
-                chainId={chainId}
-                token0={token0}
-                token1={token1}
-                enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId)}
-                fee={FEE_MAP[fee]}
-                twap={false}
-              />
-            </PoolFinder.Components>
-          }
-        >
-          {({ pool: [poolState, pool] }) => {
-            const title =
-              !token0 || !token1 ? (
-                'Select Tokens'
-              ) : [PairState.LOADING, PoolState.LOADING].includes(poolState) ? (
-                <div className="h-[20px] flex items-center justify-center">
-                  <Loader width={14} />
-                </div>
-              ) : [PairState.EXISTS, PoolState.EXISTS].includes(poolState) ? (
-                'Add Liquidity'
-              ) : (
-                'Create Pool'
-              )
+    <SWRConfig>
+      <Layout breadcrumbs={LINKS}>
+        <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
+          <div className="hidden md:block" />
+          <PoolFinder
+            components={
+              <PoolFinder.Components>
+                <PoolFinder.LegacyPool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
+                />
+                <PoolFinder.ConstantProductPool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId)}
+                  fee={FEE_MAP[fee]}
+                  twap={false}
+                />
+              </PoolFinder.Components>
+            }
+          >
+            {({ pool: [poolState, pool] }) => {
+              const title =
+                !token0 || !token1 ? (
+                  'Select Tokens'
+                ) : [PairState.LOADING, PoolState.LOADING].includes(poolState) ? (
+                  <div className="h-[20px] flex items-center justify-center">
+                    <Loader width={14} />
+                  </div>
+                ) : [PairState.EXISTS, PoolState.EXISTS].includes(poolState) ? (
+                  'Add Liquidity'
+                ) : (
+                  'Create Pool'
+                )
 
-            return (
-              <_Add
-                chainId={chainId}
-                setChainId={setChainId}
-                fee={fee}
-                setFee={setFee}
-                pool={pool}
-                poolState={poolState}
-                tridentPoolIfCreate={tridentPoolIfCreate}
-                title={title}
-                token0={token0}
-                token1={token1}
-                setToken0={setToken0}
-                setToken1={setToken1}
-              />
-            )
-          }}
-        </PoolFinder>
-      </div>
-    </Layout>
+              return (
+                <_Add
+                  chainId={chainId}
+                  setChainId={setChainId}
+                  fee={fee}
+                  setFee={setFee}
+                  pool={pool}
+                  poolState={poolState}
+                  tridentPoolIfCreate={tridentPoolIfCreate}
+                  title={title}
+                  token0={token0}
+                  token1={token1}
+                  setToken0={setToken0}
+                  setToken1={setToken1}
+                />
+              )
+            }}
+          </PoolFinder>
+        </div>
+      </Layout>
+    </SWRConfig>
   )
 }
 
@@ -143,6 +150,13 @@ const _Add: FC<AddProps> = ({
   setToken0,
   setToken1,
 }) => {
+  const { data } = useSWR<{ pair: PairWithAlias }>(
+    pool?.liquidityToken.address
+      ? `/pool/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
+      : null,
+    (url) => fetch(url).then((response) => response.json())
+  )
+
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
@@ -294,24 +308,33 @@ const _Add: FC<AddProps> = ({
             </div>
           </Widget.Content>
         </Widget>
-        {pool && (
-          <Container maxWidth={400} className="mx-auto">
-            <AddSectionStake
-              title="4. Stake Liquidity"
-              chainId={chainId}
-              poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
-            />
-          </Container>
+        {pool && data?.pair && (
+          <PoolFarmRewardsProvider pair={data?.pair}>
+            <PoolPositionProvider pair={data?.pair}>
+              <PoolPositionStakedProvider pair={data?.pair}>
+                <Container maxWidth={400} className="mx-auto">
+                  <AddSectionStake
+                    title="4. Stake Liquidity"
+                    poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
+                  />
+                </Container>
+              </PoolPositionStakedProvider>
+            </PoolPositionProvider>
+          </PoolFarmRewardsProvider>
         )}
       </div>
-      <div className="order-1 sm:order-3">
-        {pool && (
-          <AddSectionMyPosition
-            chainId={chainId}
-            poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
-          />
-        )}
-      </div>
+
+      {pool && data?.pair && (
+        <PoolFarmRewardsProvider pair={data?.pair}>
+          <PoolPositionProvider pair={data?.pair}>
+            <PoolPositionStakedProvider pair={data?.pair}>
+              <div className="order-1 sm:order-3">
+                <AddSectionMyPosition />
+              </div>
+            </PoolPositionStakedProvider>
+          </PoolPositionProvider>
+        </PoolFarmRewardsProvider>
+      )}
     </>
   )
 }
