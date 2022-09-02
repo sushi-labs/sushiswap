@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi'
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
 import { StakedPositionFetcher } from '../../StakedPositionFetcher'
+import { StakedRewardsFetcher } from '../../StakedRewardsFetcher'
 import { ICON_SIZE } from './contants'
 
 interface PositionQuickHoverTooltipProps {
@@ -139,6 +140,39 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
             </StakedPositionFetcher>
           </AppearOnMount>
         )}
+        {row.chefType !== undefined && row.farmId !== undefined && (
+          <AppearOnMount>
+            <StakedRewardsFetcher
+              chainId={row.chainId}
+              liquidityToken={liquidityToken}
+              chefType={row.chefType}
+              farmId={row.farmId}
+              account={address}
+              incentives={row.incentives}
+            >
+              {({ rewardTokens, pendingRewards, values }) => (
+                <div className="flex flex-col gap-1.5 mt-4">
+                  <Typography variant="xs" className="mb-1 text-slate-500">
+                    Farmed Rewards
+                  </Typography>
+                  {pendingRewards.map((reward, index) => (
+                    <div className="flex items-center justify-between gap-2" key={index}>
+                      <div className="flex items-center gap-2">
+                        <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
+                        <Typography variant="sm" weight={600} className="text-slate-50">
+                          {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                        </Typography>
+                      </div>
+                      <Typography variant="xs" className="text-slate-400">
+                        {isNaN(+formatUSD(Number(values[index]))) ? '$0.00' : formatUSD(Number(values[index]))}
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </StakedRewardsFetcher>
+          </AppearOnMount>
+        )}
         <div className="flex justify-end gap-2 mt-8 mb-2">
           <Link.Internal href={`/${row.id}/remove`} passHref={true}>
             <Button as="a" size="sm" variant="outlined" fullWidth>
@@ -154,6 +188,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
       </div>
     )
   }, [
+    address,
     liquidityToken,
     reserve0,
     reserve1,
@@ -163,6 +198,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
     row.chefType,
     row.farmId,
     row.id,
+    row.incentives,
     row.swapFee,
     token0,
     token1,

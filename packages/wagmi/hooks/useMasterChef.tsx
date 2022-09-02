@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Chain } from '@sushiswap/chain'
-import { Amount, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
+import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { createToast, Dots } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
@@ -23,6 +23,7 @@ interface UseMasterChefReturn extends Pick<ReturnType<typeof useSendTransaction>
   withdraw(amount: Amount<Token> | undefined): void
   balance: Amount<Token> | undefined
   harvest(): void
+  pendingSushi: Amount<Token> | undefined
 }
 
 interface UseMasterChefParams {
@@ -86,11 +87,17 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const copy = data ? [...data] : []
-    const sushiBalance = Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? copy.shift() : undefined
+    const _sushiBalance = Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? copy.shift() : undefined
     const _balance = !!address && enabled && config.addressOrName ? copy.shift()?.amount : undefined
-    const pendingSushi = enabled && !!v2Config.addressOrName ? copy.shift() : undefined
+    const _pendingSushi = enabled && !!v2Config.addressOrName ? copy.shift() : undefined
 
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
+    const pendingSushi = SUSHI[chainId]
+      ? Amount.fromRawAmount(SUSHI[chainId], _pendingSushi ? _pendingSushi.toString() : 0)
+      : undefined
+    const sushiBalance = SUSHI[chainId]
+      ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
+      : undefined
     return [sushiBalance, balance, pendingSushi]
   }, [address, chainId, config.addressOrName, data, enabled, token, v2Config.addressOrName])
 
@@ -193,7 +200,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
         },
       })
     } else {
-      if (pendingSushi?.gt(sushiBalance)) {
+      if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
         tx = await sendTransactionAsync({
           request: {
             from: address,
@@ -246,6 +253,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       balance,
       isLoading,
       isError,
+      pendingSushi,
     }
-  }, [balance, deposit, harvest, isError, isLoading, withdraw])
+  }, [balance, deposit, harvest, isError, isLoading, pendingSushi, withdraw])
 }

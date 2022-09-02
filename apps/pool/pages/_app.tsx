@@ -21,7 +21,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
               nav={
                 <App.NavItemList>
                   <App.NavItem href="/swap" label="Swap" />
-                  <App.NavItem href="/pool" label="Liquidity" />
+                  <App.NavItem href="/pool" label="Earn" />
                 </App.NavItemList>
               }
             >

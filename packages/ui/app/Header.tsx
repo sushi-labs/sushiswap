@@ -13,7 +13,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Pool = 'Pool',
+  Pool = 'Earn',
   Partner = 'Partner',
 }
 
@@ -116,7 +116,7 @@ export function Header({
                       The easiest way to trade
                     </Typography>
                   </Select.Option>
-                  {/* <Select.Option
+                  <Select.Option
                     as="a"
                     href="https://sushi.com/pool"
                     key={AppType.Pool}
@@ -127,7 +127,7 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Earn fees by providing liquidity
                     </Typography>
-                  </Select.Option> */}
+                  </Select.Option>
                 </div>
                 <div>
                   <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">

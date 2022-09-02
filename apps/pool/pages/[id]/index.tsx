@@ -13,6 +13,7 @@ import {
   PoolChart,
   PoolComposition,
   PoolHeader,
+  PoolMyRewards,
   PoolPosition,
   PoolRewards,
   PoolStats,
@@ -75,7 +76,10 @@ const _Pool = () => {
           {incentives && isMounted && farmId !== undefined && <PoolRewards pair={pair} />}
         </div>
         <div className="flex flex-col order-2 gap-4">
-          <PoolPosition pair={pair} />
+          <div className="flex flex-col gap-10">
+            <PoolMyRewards pair={pair} />
+            <PoolPosition pair={pair} />
+          </div>
           <div className="hidden lg:flex">
             <PoolButtons pair={pair} />
           </div>

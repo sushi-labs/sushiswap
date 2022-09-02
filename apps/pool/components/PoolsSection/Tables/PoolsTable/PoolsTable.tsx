@@ -133,7 +133,7 @@ export const PoolsTable: FC = () => {
       table={table}
       columns={COLUMNS}
       loading={isValidating && !error && !pools}
-      HoverElement={PairQuickHoverTooltip}
+      HoverElement={isMd ? PairQuickHoverTooltip : undefined}
       placeholder="No pools found"
     />
   )

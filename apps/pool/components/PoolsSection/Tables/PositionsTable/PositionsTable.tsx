@@ -77,7 +77,7 @@ export const PositionsTable: FC = () => {
       table={table}
       // @ts-ignore
       columns={COLUMNS}
-      HoverElement={PositionQuickHoverTooltip}
+      HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
       loading={isValidating && !error && !user}
       placeholder="No positions found"
     />

@@ -28,11 +28,20 @@ export interface Incentive<T> {
   apr: number | null
   rewardPerDay: number
   rewardToken: T
+  rewarder: {
+    address: string
+    type: RewarderType
+  }
 }
 
 export interface RewardToken {
   address: string
   symbol: string
+}
+
+export enum RewarderType {
+  Primary = 'Primary',
+  Secondary = 'Secondary',
 }
 
 export enum PoolType {
@@ -53,7 +62,7 @@ export const useFarmRewards: UseFarmRewards = ({ options } = {}) => {
   } = useQuery<string, unknown, Record<number, FarmMap<RewardToken>>, string[]>(
     ['https://farm.sushi.com/v0'],
     () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()),
-    { staleTime: 20000, ...options }
+    { staleTime: 2000, ...options }
   )
 
   return useMemo(() => {
