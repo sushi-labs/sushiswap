@@ -8,7 +8,6 @@ export interface Farm {
       address: string
       decimals: number
       symbol: string
-      decimals: number
     }
     rewarder: {
       address: string
