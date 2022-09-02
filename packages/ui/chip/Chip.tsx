@@ -33,6 +33,7 @@ export interface ChipProps {
   color?: ChipColor
   variant?: ChipVariant
   size?: ChipSize
+  opaque?: boolean
   className?: string
   // @ts-ignore TYPE NEEDS FIXING
   onClick?: (e) => void
@@ -49,6 +50,7 @@ export const Chip: FC<ChipProps> = ({
   className = '',
   onClick,
   icon = undefined,
+  opaque,
   endIcon = <XIcon width={12} height={12} strokeWidth={5} />,
   id = '',
 }) => {
@@ -58,6 +60,7 @@ export const Chip: FC<ChipProps> = ({
       className={classNames(
         VARIANT[variant][color],
         SIZE[size],
+        opaque ? '!bg-opacity-100 !text-slate-900 font-bold' : '',
         onClick ? 'pr-1' : 'pr-3',
         'whitespace-nowrap inline-flex rounded-2xl py-0.5 pl-3 font-medium text-xs leading-5 gap-2 items-center justify-center',
         className

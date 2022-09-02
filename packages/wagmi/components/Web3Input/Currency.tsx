@@ -73,13 +73,17 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           readOnly={disabled}
         />
         <button
-          onClick={(e) => {
-            setTokenSelectorOpen(true)
-            e.stopPropagation()
-          }}
+          {...(onSelect && {
+            onClick: (e) => {
+              setTokenSelectorOpen(true)
+              e.stopPropagation()
+            },
+          })}
           className={classNames(
-            currency || loading ? 'bg-white bg-opacity-[0.12] ring-slate-500' : 'bg-blue ring-blue-700',
-            'h-[36px] text-slate-200 hover:text-slate-100 transition-all hover:ring-2 shadow-md flex flex-row items-center gap-1 text-xl font-medium rounded-full px-2 py-1'
+            onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
+            (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
+            currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
+            'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
           )}
         >
           {loading ? (
@@ -96,9 +100,11 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           ) : (
             <div className="ml-0.5 -mr-0.5 pl-1">Select</div>
           )}
-          <div className="w-5 h-5">
-            <ChevronDownIcon width={20} height={20} />
-          </div>
+          {onSelect && (
+            <div className="w-5 h-5">
+              <ChevronDownIcon width={20} height={20} />
+            </div>
+          )}
         </button>
       </div>
       <div className="flex flex-row justify-between">

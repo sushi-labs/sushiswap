@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { usePrices } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 
 interface Params {
   chainId: ChainId
-  amounts: (Amount<Token> | undefined)[]
+  amounts: (Amount<Type> | undefined)[]
 }
 
 type UseTokenAmountDollarValues = (params: Params) => (number | undefined)[]

@@ -8,7 +8,7 @@ import { ChartSection } from '../components/ChartSection'
 import { getCharts, getPairs, GetPairsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
   // console.log('SSR query', query)
   const [pairs, charts] = await Promise.all([getPairs(query as unknown as GetPairsQuery), getCharts()])
   return {

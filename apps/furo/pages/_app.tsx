@@ -7,12 +7,14 @@ import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
 import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
 import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
+import SEO from '../next-seo.config.mjs'
 import store from '../store'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
@@ -51,6 +53,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ReduxProvider store={store}>
           <ThemeProvider>
             <App.Shell>
+              <DefaultSeo {...SEO} />
               <Header />
               <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
               <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />

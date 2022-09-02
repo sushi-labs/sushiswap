@@ -7,12 +7,12 @@ import { useAccount } from 'wagmi'
 import { Pair, User } from '../../../../.graphclient'
 import { PairWithBalance } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, REWARDS_COLUMN } from '../contants'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, APR_COLUMN, REWARDS_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
   const { selectedNetworks } = usePoolFilters()

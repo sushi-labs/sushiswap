@@ -16,7 +16,7 @@ export type TokenSelectorProps = {
   tokenMap: Record<string, Token>
   customTokenMap: Record<string, Token>
   onClose(): void
-  onSelect(currency: Type): void
+  onSelect?(currency: Type): void
   onAddToken(token: Token): void
   onRemoveToken({ chainId, address }: { chainId: ChainId; address: string }): void
   fundSource?: FundSource
