@@ -11,7 +11,7 @@ import redis from './redis'
 
 createClient(client.config as any)
 
-async function execute() {
+export async function execute() {
   console.log(`Updating farms`)
 
   const timestamp = getUnixTime(Date.now())
@@ -38,4 +38,3 @@ async function execute() {
   console.log(`Finished updating farms`)
   process.exit()
 }
-execute()
