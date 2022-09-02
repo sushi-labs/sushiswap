@@ -1,7 +1,6 @@
 import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
-import { useFarmRewards } from '@sushiswap/wagmi'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -23,7 +22,6 @@ import {
   PoolStats,
 } from '../../components'
 import { getPool, getSushiBar } from '../../lib/api'
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { PairWithAlias } from '../../types'
 
 const LINKS = (id: string): BreadcrumbLink[] => [
@@ -61,16 +59,9 @@ const _Pool = () => {
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-  const { data: rewards } = useFarmRewards()
 
   if (!data) return <></>
   const { pair } = data
-
-  const incentives = rewards?.[pair.chainId]?.farms[pair.id]?.incentives
-  const farmId = rewards?.[pair.chainId]?.farms[pair.id]?.id
-  const chefType = rewards?.[pair.chainId]?.farms[pair.id]?.chefType
-    ? CHEF_TYPE_MAP[rewards?.[pair.chainId]?.farms[pair.id]?.chefType]
-    : undefined
 
   return (
     <PoolFarmRewardsProvider pair={pair}>
@@ -82,19 +73,14 @@ const _Pool = () => {
             <PoolChart pair={pair} />
             <PoolStats pair={pair} />
             <PoolComposition pair={pair} />
-            {incentives && isMounted && farmId !== undefined && <PoolRewards pair={pair} />}
+            <PoolRewards />
           </div>
           <PoolPositionProvider pair={pair}>
-            <PoolPositionStakedProvider pair={pair} farmId={farmId} chefType={chefType}>
+            <PoolPositionStakedProvider pair={pair}>
               <div className="flex flex-col order-2 gap-4">
                 <AppearOnMount>
                   <div className="flex flex-col gap-10">
-                    <PoolPositionRewardsProvider
-                      pair={pair}
-                      incentives={incentives}
-                      farmId={farmId}
-                      chefType={chefType}
-                    >
+                    <PoolPositionRewardsProvider pair={pair}>
                       <PoolMyRewards pair={pair} />
                     </PoolPositionRewardsProvider>
                     <PoolPosition pair={pair} />

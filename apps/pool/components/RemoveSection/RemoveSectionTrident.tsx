@@ -13,7 +13,6 @@ import {
   useBalance,
   useBentoBoxTotals,
   useConstantProductPool,
-  useFarmRewards,
   useTotalSupply,
   useV3RouterContract,
 } from '@sushiswap/wagmi'
@@ -31,6 +30,7 @@ import {
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionTridentProps {
@@ -38,7 +38,7 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
-  const { isFarm } = useFarmRewards()
+  const { isFarm } = usePoolFarmRewards()
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()

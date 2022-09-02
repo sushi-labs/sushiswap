@@ -6,6 +6,7 @@ import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../.graphclient'
 import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'
+import { usePoolFarmRewards } from './PoolFarmRewardsProvider'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]
@@ -30,18 +31,11 @@ interface PoolPositionRewardsProviderProps {
 interface PoolPositionStakedProviderProps {
   pair: Pair
   children: ReactNode
-  incentives: Incentive<Token>[] | undefined
-  farmId: number | undefined
-  chefType: Chef | undefined
 }
 
-export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({
-  pair,
-  farmId,
-  chefType,
-  children,
-  incentives,
-}) => {
+export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
+  const { farmId, chefType, incentives } = usePoolFarmRewards()
+
   if (farmId === undefined || !chefType || !incentives)
     return (
       <Context.Provider
