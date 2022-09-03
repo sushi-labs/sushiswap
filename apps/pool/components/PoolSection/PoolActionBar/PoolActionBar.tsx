@@ -1,4 +1,4 @@
-import { Typography } from '@sushiswap/ui'
+import { Typography, useBreakpoint } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
 import { PairWithAlias } from '../../../types'
@@ -12,6 +12,9 @@ interface PoolActionBarProps {
 export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
   const [openPosition, setOpenPosition] = useState<boolean>(false)
   const [openRewards, setOpenRewards] = useState<boolean>(false)
+  const { isLg } = useBreakpoint('lg')
+
+  if (isLg) return <></>
 
   return (
     <>
