@@ -39,7 +39,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
           value1: undefined,
           underlying0: undefined,
           underlying1: undefined,
-          isLoading: true,
+          isLoading: false,
           isError: false,
           withdraw: undefined,
           deposit: undefined,

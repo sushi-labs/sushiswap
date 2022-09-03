@@ -9,7 +9,7 @@ export const AddSectionMyPositionStaked: FC = () => {
 
   if (isLoading && !isError && !balance) {
     return (
-      <div className="py-5 flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">
           <Typography variant="sm" weight={600} className="text-slate-50">
             My Staked Position
@@ -18,12 +18,12 @@ export const AddSectionMyPositionStaked: FC = () => {
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between items-center gap-1.5">
-            <div className="h-[14px] w-[120px] bg-slate-700 animate-pulse rounded-full" />
-            <div className="h-[14px] w-[40px] bg-slate-700 animate-pulse rounded-full" />
+            <div className="h-[16px] w-[120px] bg-slate-700 animate-pulse rounded-full" />
+            <div className="h-[16px] w-[40px] bg-slate-700 animate-pulse rounded-full" />
           </div>
           <div className="flex justify-between items-center gap-1.5">
-            <div className="h-[14px] w-[120px] bg-slate-700 animate-pulse rounded-full" />
-            <div className="h-[14px] w-[40px] bg-slate-700 animate-pulse rounded-full" />
+            <div className="h-[16px] w-[120px] bg-slate-700 animate-pulse rounded-full" />
+            <div className="h-[16px] w-[40px] bg-slate-700 animate-pulse rounded-full" />
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@ export const AddSectionMyPositionStaked: FC = () => {
   }
 
   return (
-    <div className="py-5 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <div className="flex gap-1 justify-between items-center">
         <Typography variant="sm" weight={600} className="text-slate-50">
           My Staked Position

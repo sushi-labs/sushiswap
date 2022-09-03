@@ -38,7 +38,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
     value1: stakedValue1,
   } = usePoolPositionStaked()
 
-  const { rewardAPR, totalAPR } = usePoolFarmRewards()
+  const { rewardAPR, totalAPR, isFarm } = usePoolFarmRewards()
   const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
 
   return (
@@ -131,24 +131,26 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </Typography>
         </div>
       </div>
-      <div className="flex flex-col gap-1.5 mt-4">
-        <Typography variant="xs" className="mb-1 text-slate-500">
-          Farmed Rewards
-        </Typography>
-        {pendingRewards.map((reward, index) => (
-          <div className="flex items-center justify-between gap-2" key={index}>
-            <div className="flex items-center gap-2">
-              <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
-              <Typography variant="sm" weight={600} className="text-slate-50">
-                {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+      {isFarm && (
+        <div className="flex flex-col gap-1.5 mt-4">
+          <Typography variant="xs" className="mb-1 text-slate-500">
+            Farmed Rewards
+          </Typography>
+          {pendingRewards.map((reward, index) => (
+            <div className="flex items-center justify-between gap-2" key={index}>
+              <div className="flex items-center gap-2">
+                <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
+                <Typography variant="sm" weight={600} className="text-slate-50">
+                  {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
+                </Typography>
+              </div>
+              <Typography variant="xs" className="text-slate-400">
+                {isNaN(+formatUSD(Number(values[index]))) ? '$0.00' : formatUSD(Number(values[index]))}
               </Typography>
             </div>
-            <Typography variant="xs" className="text-slate-400">
-              {isNaN(+formatUSD(Number(values[index]))) ? '$0.00' : formatUSD(Number(values[index]))}
-            </Typography>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       <div className="flex justify-end gap-2 mt-8 mb-2">
         <Link.Internal href={`/${row.id}/remove`} passHref={true}>
           <Button as="a" size="sm" variant="outlined" fullWidth>
