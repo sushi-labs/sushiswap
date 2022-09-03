@@ -1,15 +1,16 @@
 import { Transition } from '@headlessui/react'
 import { useIsMounted } from '@sushiswap/hooks'
-import { FC, Fragment, ReactNode } from 'react'
+import { ElementType, FC, Fragment, ReactNode } from 'react'
 
 interface AppearOnMount {
+  as?: ElementType<any>
   show?: boolean
   children: ((mounted: boolean) => ReactNode) | ReactNode
   enabled?: boolean
   className?: string
 }
 
-export const AppearOnMount: FC<AppearOnMount> = ({ show, children, enabled = true, className }) => {
+export const AppearOnMount: FC<AppearOnMount> = ({ as = 'div', show, children, enabled = true, className }) => {
   const isMounted = useIsMounted()
 
   if (!enabled) {
@@ -19,6 +20,7 @@ export const AppearOnMount: FC<AppearOnMount> = ({ show, children, enabled = tru
   if (isMounted)
     return (
       <Transition
+        as={as}
         appear
         className={className}
         show={show !== undefined ? show : true}

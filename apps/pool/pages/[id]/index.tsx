@@ -2,7 +2,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
@@ -95,9 +95,7 @@ const _Pool = () => {
                 </div>
               </div>
             </Layout>
-            <AppearOnMount>
-              <PoolActionBar pair={pair} />
-            </AppearOnMount>
+            <PoolActionBar pair={pair} />
           </PoolPositionRewardsProvider>
         </PoolPositionStakedProvider>
       </PoolPositionProvider>

@@ -89,18 +89,18 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
         )}
 
         {isStakedLoading && !isStakedError && !stakedBalance ? (
-          <div className="flex flex-col px-2 py-4 gap-2 mt-2">
-            <div className="justify-between grid gap-10 grid-cols-10 mb-2">
-              <div className="h-[20px] bg-slate-600 animate-pulse col-span-8 rounded-full" />
-              <div className="h-[20px] bg-slate-600 animate-pulse col-span-2 rounded-full" />
+          <div className="flex flex-col py-4 gap-3 px-2">
+            <div className="flex justify-between mb-1 py-0.5">
+              <div className="h-[16px] bg-slate-600 animate-pulse w-[100px] rounded-full" />
+              <div className="h-[16px] bg-slate-600 animate-pulse w-[60px] rounded-full" />
             </div>
-            <div className="justify-between grid gap-10 grid-cols-10">
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
+            <div className="flex justify-between py-0.5">
+              <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
+              <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
             </div>
-            <div className="justify-between grid gap-10 grid-cols-10">
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
+            <div className="flex justify-between py-0.5">
+              <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
+              <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
             </div>
           </div>
         ) : (
