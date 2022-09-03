@@ -10,7 +10,6 @@ import {
   Checker,
   getV3RouterContractConfig,
   PoolState,
-  useBalance,
   useBentoBoxTotals,
   useConstantProductPool,
   useTotalSupply,
@@ -31,6 +30,7 @@ import {
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
+import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionTridentProps {
@@ -55,7 +55,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(pair.chainId, tokens)
-  const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
+  const { balance } = usePoolPosition()
 
   const slpAmountToRemove = useMemo(() => {
     return balance?.[FundSource.WALLET].multiply(percentageEntity)
@@ -201,11 +201,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           isFarm={isFarm}
           chainId={pair.chainId}
           percentage={percentage}
-          liquidityToken={liquidityToken}
           token0={token0}
           token1={token1}
-          reserve0={pool?.reserve0}
-          reserve1={pool?.reserve1}
           setPercentage={setPercentage}
           error={error}
         >
@@ -274,11 +271,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       isFarm,
       isMounted,
       isWritePending,
-      liquidityToken,
       pair.chainId,
       percentage,
-      pool?.reserve0,
-      pool?.reserve1,
       poolState,
       slpAmountToRemove,
       token0,

@@ -5,14 +5,13 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Chef, useMasterChef, useTotalSupply } from '@sushiswap/wagmi'
+import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
+import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 
 interface RemoveSectionUnstakeWidget {
-  chefType: Chef
-  farmId: number
   chainId: ChainId
   value: string
   setValue(value: string): void
@@ -24,8 +23,6 @@ interface RemoveSectionUnstakeWidget {
 }
 
 export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
-  chefType,
-  farmId,
   chainId,
   value,
   setValue,
@@ -36,12 +33,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   error,
 }) => {
   const totalSupply = useTotalSupply(liquidityToken)
-  const { balance } = useMasterChef({
-    chainId,
-    chef: chefType,
-    pid: farmId,
-    token: liquidityToken,
-  })
+  const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)

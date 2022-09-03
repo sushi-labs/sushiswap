@@ -11,7 +11,6 @@ import {
   Checker,
   getV2RouterContractConfig,
   PairState,
-  useBalance,
   usePair,
   useTotalSupply,
   useV2RouterContract,
@@ -23,6 +22,7 @@ import { Pair } from '../../.graphclient'
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
+import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionLegacyProps {
@@ -49,7 +49,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
 
   const [poolState, pool] = usePair(pair.chainId, token0, token1)
-  const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
+  const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
   const [reserve0, reserve1] = useMemo(() => {
@@ -209,11 +209,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           isFarm={isFarm}
           chainId={pair.chainId}
           percentage={percentage}
-          liquidityToken={liquidityToken}
           token0={token0}
           token1={token1}
-          reserve0={pool?.reserve0}
-          reserve1={pool?.reserve1}
           setPercentage={setPercentage}
           error={error}
         >
@@ -276,12 +273,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     isFarm,
     isMounted,
     isWritePending,
-    liquidityToken,
     pair.chainId,
     percentage,
     percentageEntity,
-    pool?.reserve0,
-    pool?.reserve1,
     poolState,
     token0,
     token1,

@@ -174,7 +174,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row gap-5 justify-between">
         <div className="flex gap-6">
           <button
             onClick={() => setChartType(PoolChartType.Volume)}

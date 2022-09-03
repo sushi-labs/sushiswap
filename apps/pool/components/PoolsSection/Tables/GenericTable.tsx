@@ -1,13 +1,11 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import { ColumnDef, flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
-
-import { ExtendedColumnDef } from './types'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
-  columns: ExtendedColumnDef<C, unknown>[]
+  columns: ColumnDef<C>[]
   HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
@@ -16,6 +14,7 @@ interface GenericTableProps<C> {
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
     className?: string
+    skeleton: ReactNode
   }
 }
 
@@ -133,11 +132,16 @@ export const GenericTable = <T extends { id: string }>({
             {loading &&
               Array.from(Array(5)).map((el, index) => (
                 <Table.tr key={index}>
-                  {columns.map((column) => (
-                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }}>
-                      {column.skeleton}
-                    </Table.td>
-                  ))}
+                  {table.getVisibleFlatColumns().map((column) => {
+                    return (
+                      <Table.td
+                        key={column.id}
+                        style={{ maxWidth: column.columnDef.size, width: column.columnDef.size }}
+                      >
+                        {column.columnDef.meta?.skeleton}
+                      </Table.td>
+                    )
+                  })}
                 </Table.tr>
               ))}
             {!loading && table.getRowModel().rows.length === 0 && (

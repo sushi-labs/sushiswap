@@ -5,9 +5,9 @@ import React, { FC } from 'react'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 
 export const AddSectionMyPositionStaked: FC = () => {
-  const { value0, value1, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
+  const { balance, value0, value1, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
 
-  if (isLoading && !isError) {
+  if (isLoading && !isError && !balance) {
     return (
       <div className="py-5 flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">

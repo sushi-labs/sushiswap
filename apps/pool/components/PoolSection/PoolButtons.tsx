@@ -1,50 +1,50 @@
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { AppearOnMount, Button, Link } from '@sushiswap/ui'
-import { useBalance } from '@sushiswap/wagmi'
-import { FC, useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { Button, Link } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
+import { usePoolPosition } from '../PoolPositionProvider'
+import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 
 interface PoolButtonsProps {
   pair: PairWithAlias
 }
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
-  const { liquidityToken } = useTokensFromPair(pair)
-  const { address } = useAccount()
-  const { data: balance } = useBalance({ chainId: pair.chainId, account: address, currency: liquidityToken })
+  const { balance } = usePoolPosition()
+  const { balance: stakedBalance } = usePoolPositionStaked()
 
-  return useMemo(
-    () => (
-      <div className="flex flex-col gap-2 w-full">
-        <div className="flex gap-2">
-          <AppearOnMount show={Boolean(balance?.[FundSource.WALLET]?.greaterThan(ZERO))} className="w-full">
-            <Link.Internal href={`/${pair.id}/remove`} passHref={true}>
-              <Button as="a" size="md" color="gray" fullWidth>
-                Withdraw
-              </Button>
-            </Link.Internal>
-          </AppearOnMount>
-          <Link.Internal href={`/${pair.id}/add`} passHref={true}>
-            <Button as="a" size="md" fullWidth>
-              Deposit
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex gap-2">
+        <Link.Internal href={`/${pair.id}/remove`} passHref={true}>
+          <a className="w-full">
+            <Button
+              disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
+              size="md"
+              color="gray"
+              fullWidth
+            >
+              Withdraw
             </Button>
-          </Link.Internal>
-        </div>
-        <Button
-          className="col-span-2"
-          size="md"
-          variant="outlined"
-          as="a"
-          href={`/swap?srcToken=${pair.id.split(':')[1]}&srcChainId=${pair.chainId}`}
-        >
-          Trade
-        </Button>
+          </a>
+        </Link.Internal>
+        <Link.Internal href={`/${pair.id}/add`} passHref={true}>
+          <Button as="a" size="md" fullWidth>
+            Deposit
+          </Button>
+        </Link.Internal>
       </div>
-    ),
-    [balance, pair.chainId, pair.id]
+      <Button
+        className="col-span-2"
+        size="md"
+        variant="outlined"
+        as="a"
+        href={`/swap?srcToken=${pair.id.split(':')[1]}&srcChainId=${pair.chainId}`}
+      >
+        Trade
+      </Button>
+    </div>
   )
 }

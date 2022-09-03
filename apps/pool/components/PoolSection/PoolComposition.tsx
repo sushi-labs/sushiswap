@@ -1,4 +1,4 @@
-import { Amount, Native } from '@sushiswap/currency'
+import { Native } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { AppearOnMount, Currency, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
@@ -13,9 +13,8 @@ interface PoolCompositionProps {
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
-  const { token0, token1 } = useTokensFromPair(pair)
-  const reserve0 = Amount.fromRawAmount(token0, pair.reserve0)
-  const reserve1 = Amount.fromRawAmount(token1, pair.reserve1)
+  const { token0, token1, reserve1, reserve0 } = useTokensFromPair(pair)
+
   return (
     <div className="flex flex-col w-full gap-4">
       <div className="flex items-center justify-between px-2">

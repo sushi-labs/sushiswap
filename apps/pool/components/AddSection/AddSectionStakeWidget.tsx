@@ -6,11 +6,11 @@ import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { useBalance, useTotalSupply } from '@sushiswap/wagmi'
+import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
+import { usePoolPosition } from '../PoolPositionProvider'
 
 interface AddSectionStakeWidgetProps {
   title?: string
@@ -35,9 +35,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   children,
   error,
 }) => {
-  const { address } = useAccount()
-
-  const { data: balance } = useBalance({ chainId, account: address, currency: liquidityToken })
+  const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
   const amount = useMemo(() => {

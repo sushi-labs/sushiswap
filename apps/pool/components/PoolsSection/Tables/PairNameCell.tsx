@@ -10,7 +10,7 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-3 sm:gap-0">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
           <Currency.Icon disableLink currency={token0} />

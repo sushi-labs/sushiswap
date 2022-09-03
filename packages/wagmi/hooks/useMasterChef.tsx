@@ -227,9 +227,9 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       href: Chain.from(chainId).getTxUrl(tx.hash),
       promise: tx.wait(),
       summary: {
-        pending: <Dots>Harvesting rewards</Dots>,
-        completed: `Successfully harvested rewards`,
-        failed: `Something went wrong when harvesting rewards`,
+        pending: <Dots>Claiming rewards</Dots>,
+        completed: `Successfully claimed rewards`,
+        failed: `Something went wrong when claiming rewards`,
       },
     })
   }, [

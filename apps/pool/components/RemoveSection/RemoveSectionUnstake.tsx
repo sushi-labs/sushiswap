@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChef } from '@sushiswap/wagmi'
+import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
@@ -11,22 +11,22 @@ import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
+import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 
 interface AddSectionStakeProps {
   pair: Pair
-  farmId: number
   chefType: Chef
 }
 
 export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
-  const { farmId, chefType } = usePoolFarmRewards()
+  const { chefType } = usePoolFarmRewards()
   const isMounted = useIsMounted()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
-  if (!data || !chefType || farmId === undefined || !isMounted) return <></>
+  if (!data || !chefType || !isMounted) return <></>
   const { pair } = data
 
   return (
@@ -40,25 +40,16 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_RemoveSectionUnstake pair={pair} farmId={farmId} chefType={chefType} />
+      <_RemoveSectionUnstake pair={pair} chefType={chefType} />
     </Transition>
   )
 }
 
-export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
+export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType }) => {
   const [value, setValue] = useState('')
   const [error, setError] = useState<string>()
-  const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
-  const {
-    withdraw: _withdraw,
-    balance,
-    isLoading: isWritePending,
-  } = useMasterChef({
-    chainId: pair.chainId,
-    chef: chefType,
-    pid: farmId,
-    token: liquidityToken,
-  })
+  const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair)
+  const { withdraw: _withdraw, balance, isLoading: isWritePending } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
@@ -66,6 +57,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
 
   const withdraw = useCallback(
     async (amount: Amount<Token> | undefined) => {
+      if (!_withdraw) return
+
       try {
         await _withdraw(amount)
       } catch (e: unknown) {
@@ -79,74 +72,56 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
     [_withdraw]
   )
 
-  return useMemo(
-    () => (
-      <RemoveSectionUnstakeWidget
-        chefType={chefType}
-        farmId={farmId}
-        chainId={pair.chainId}
-        value={value}
-        setValue={setValue}
-        reserve0={reserve0}
-        reserve1={reserve1}
-        liquidityToken={liquidityToken}
-      >
-        <Checker.Connected size="md">
-          <Checker.Network size="md" chainId={pair.chainId}>
-            <Checker.Custom
-              showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
-              guard={<Button size="md">Insufficient Balance</Button>}
-            >
-              <Approve
-                className="flex-grow !justify-end"
-                components={
-                  <Approve.Components>
-                    <Approve.Token
-                      size="md"
-                      className="whitespace-nowrap"
-                      fullWidth
-                      amount={amount}
-                      address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
-                    />
-                  </Approve.Components>
-                }
-                render={({ approved }) => {
-                  return (
-                    <Button
-                      onClick={() => withdraw(amount)}
-                      fullWidth
-                      size="md"
-                      variant="filled"
-                      disabled={!approved || isWritePending}
-                    >
-                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-                    </Button>
-                  )
-                }}
-              />
-              {error && (
-                <Typography variant="xs" className="text-center text-red" weight={500}>
-                  {error}
-                </Typography>
-              )}
-            </Checker.Custom>
-          </Checker.Network>
-        </Checker.Connected>
-      </RemoveSectionUnstakeWidget>
-    ),
-    [
-      amount,
-      balance,
-      chefType,
-      error,
-      farmId,
-      isWritePending,
-      liquidityToken,
-      pair.chainId,
-      reserve0,
-      reserve1,
-      value,
-      withdraw,
-    ]
+  return (
+    <RemoveSectionUnstakeWidget
+      chainId={pair.chainId}
+      value={value}
+      setValue={setValue}
+      reserve0={reserve0}
+      reserve1={reserve1}
+      liquidityToken={liquidityToken}
+    >
+      <Checker.Connected size="md">
+        <Checker.Network size="md" chainId={pair.chainId}>
+          <Checker.Custom
+            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
+            guard={<Button size="md">Insufficient Balance</Button>}
+          >
+            <Approve
+              className="flex-grow !justify-end"
+              components={
+                <Approve.Components>
+                  <Approve.Token
+                    size="md"
+                    className="whitespace-nowrap"
+                    fullWidth
+                    amount={amount}
+                    address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
+                  />
+                </Approve.Components>
+              }
+              render={({ approved }) => {
+                return (
+                  <Button
+                    onClick={() => withdraw(amount)}
+                    fullWidth
+                    size="md"
+                    variant="filled"
+                    disabled={!approved || isWritePending}
+                  >
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
+                  </Button>
+                )
+              }}
+            />
+            {error && (
+              <Typography variant="xs" className="text-center text-red" weight={500}>
+                {error}
+              </Typography>
+            )}
+          </Checker.Custom>
+        </Checker.Network>
+      </Checker.Connected>
+    </RemoveSectionUnstakeWidget>
   )
 }

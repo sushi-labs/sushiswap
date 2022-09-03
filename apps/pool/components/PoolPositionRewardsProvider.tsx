@@ -93,6 +93,7 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     farmId,
     rewarderAddresses,
     types,
+    chef: chefType,
   })
 
   const { harvest: _harvest } = useMasterChef({

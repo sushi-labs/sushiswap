@@ -7,7 +7,7 @@ import { usePoolPosition } from '../../PoolPositionProvider'
 export const AddSectionMyPositionUnstaked: FC = () => {
   const { balance, value0, value1, underlying1, underlying0, isError, isLoading } = usePoolPosition()
 
-  if (isLoading && !isError) {
+  if (isLoading && !isError && !balance) {
     return (
       <div className="py-5 flex flex-col gap-2">
         <div className="flex gap-1 justify-between items-center">

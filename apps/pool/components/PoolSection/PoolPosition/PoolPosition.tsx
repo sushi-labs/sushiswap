@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Typography } from '@sushiswap/ui'
+import { Typography, useBreakpoint } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { PairWithAlias } from '../../../types'
@@ -15,6 +15,9 @@ interface PoolPositionProps {
 export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
   const { value0, value1 } = usePoolPosition()
   const { value0: stakedValue0, value1: stakedValue1 } = usePoolPositionStaked()
+  const { isLg } = useBreakpoint('lg')
+
+  if (!isLg) return <></>
 
   return (
     <div className="flex bg-slate-800 flex flex-col rounded-2xl shadow-md shadow-black/30">
