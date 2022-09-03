@@ -76,27 +76,23 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
-          <AppearOnMount>
-            <Typography variant="sm" weight={600} className="text-slate-300">
-              {token0.symbol} = $
-              {(prices?.[token1.wrapped.address]
-                ? Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6))
-                : 0
-              ).toFixed(2)}
-            </Typography>
-          </AppearOnMount>
+          <Typography variant="sm" weight={600} className="text-slate-300">
+            {token0.symbol} = $
+            {(prices?.[token1.wrapped.address]
+              ? Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6))
+              : 0
+            ).toFixed(2)}
+          </Typography>
         </div>
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token1} width={20} height={20} />
-          <AppearOnMount>
-            <Typography variant="sm" weight={600} className="text-slate-300">
-              {token1.symbol} = $
-              {(prices?.[token0.wrapped.address]
-                ? Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6))
-                : 0
-              ).toFixed(10)}{' '}
-            </Typography>
-          </AppearOnMount>
+          <Typography variant="sm" weight={600} className="text-slate-300">
+            {token1.symbol} = $
+            {(prices?.[token0.wrapped.address]
+              ? Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6))
+              : 0
+            ).toFixed(10)}{' '}
+          </Typography>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { ConstantProductPool, Fee, Pair } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
-import { BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -329,7 +329,9 @@ const _Add: FC<AddProps> = ({
           <PoolPositionProvider pair={data?.pair}>
             <PoolPositionStakedProvider pair={data?.pair}>
               <div className="order-1 sm:order-3">
-                <AddSectionMyPosition />
+                <AppearOnMount>
+                  <AddSectionMyPosition />
+                </AppearOnMount>
               </div>
             </PoolPositionStakedProvider>
           </PoolPositionProvider>

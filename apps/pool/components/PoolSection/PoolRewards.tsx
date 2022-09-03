@@ -1,5 +1,5 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { AppearOnMount, Currency, Table, Typography } from '@sushiswap/ui'
+import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
@@ -8,7 +8,7 @@ export const PoolRewards: FC = () => {
   const { totalAPR, incentives } = usePoolFarmRewards()
 
   return (
-    <AppearOnMount>
+    <>
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between items-center px-2">
           <Typography weight={600} className="text-slate-50">
@@ -63,6 +63,6 @@ export const PoolRewards: FC = () => {
           </Table.table>
         </Table.container>
       </div>
-    </AppearOnMount>
+    </>
   )
 }

@@ -55,7 +55,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
   const [value, setValue] = useState('')
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const { balance } = usePoolPosition()
-  const { deposit: _deposit, isLoading: isWritePending } = usePoolPositionStaked()
+  const { deposit: _deposit, isWritePending } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)

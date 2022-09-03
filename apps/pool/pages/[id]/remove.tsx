@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { shortenAddress } from '@sushiswap/format'
-import { BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -83,7 +83,9 @@ const _Remove = () => {
                 </Container>
               </div>
               <div className="order-1 sm:order-3">
-                <AddSectionMyPosition />
+                <AppearOnMount>
+                  <AddSectionMyPosition />
+                </AppearOnMount>
               </div>
             </div>
             <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />

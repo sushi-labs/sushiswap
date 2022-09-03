@@ -73,9 +73,13 @@ const _Pool = () => {
                   <PoolHeader pair={pair} />
                   <hr className="my-3 border-t border-slate-200/5" />
                   <PoolChart pair={pair} />
-                  <PoolStats pair={pair} />
+                  <AppearOnMount>
+                    <PoolStats pair={pair} />
+                  </AppearOnMount>
                   <PoolComposition pair={pair} />
-                  <PoolRewards />
+                  <AppearOnMount>
+                    <PoolRewards />
+                  </AppearOnMount>
                 </div>
 
                 <div className="flex flex-col order-2 gap-4">
@@ -91,7 +95,9 @@ const _Pool = () => {
                 </div>
               </div>
             </Layout>
-            <PoolActionBar pair={pair} />
+            <AppearOnMount>
+              <PoolActionBar pair={pair} />
+            </AppearOnMount>
           </PoolPositionRewardsProvider>
         </PoolPositionStakedProvider>
       </PoolPositionProvider>

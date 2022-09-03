@@ -16,6 +16,8 @@ interface PoolPositionStakedContext {
   isError: boolean
   withdraw: ((amount: Amount<Token> | undefined) => void) | undefined
   deposit: ((amount: Amount<Token> | undefined) => void) | undefined
+  isWritePending: boolean
+  isWriteError: boolean
 }
 
 const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
@@ -41,6 +43,8 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
           isError: false,
           withdraw: undefined,
           deposit: undefined,
+          isWriteError: false,
+          isWritePending: false,
         }}
       >
         {children}
@@ -64,7 +68,7 @@ interface _PoolPositionStakedProviderProps {
 const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({ pair, farmId, chefType, children }) => {
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
 
-  const { balance, isLoading, isError, withdraw, deposit } = useMasterChef({
+  const { balance, isLoading, isError, withdraw, deposit, isWritePending, isWriteError } = useMasterChef({
     chainId: pair.chainId,
     chef: chefType,
     pid: farmId,
@@ -94,8 +98,22 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({ pai
           isError,
           withdraw,
           deposit,
+          isWritePending,
+          isWriteError,
         }),
-        [balance, deposit, isError, isLoading, underlying0, underlying1, value0, value1, withdraw]
+        [
+          balance,
+          deposit,
+          isError,
+          isLoading,
+          isWriteError,
+          isWritePending,
+          underlying0,
+          underlying1,
+          value0,
+          value1,
+          withdraw,
+        ]
       )}
     >
       {children}

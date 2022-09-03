@@ -18,18 +18,18 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
 
   if (isLoading && !isError) {
     return (
-      <div className="flex flex-col py-4 gap-2 mt-2 px-5">
-        <div className="flex justify-between mb-2">
-          <div className="h-[20px] bg-slate-600 animate-pulse w-[100px] rounded-full" />
-          <div className="h-[20px] bg-slate-600 animate-pulse w-[60px] rounded-full" />
+      <div className="flex flex-col py-4 gap-3 px-5">
+        <div className="flex justify-between mb-1 py-0.5">
+          <div className="h-[16px] bg-slate-600 animate-pulse w-[100px] rounded-full" />
+          <div className="h-[16px] bg-slate-600 animate-pulse w-[60px] rounded-full" />
         </div>
-        <div className="flex justify-between">
-          <div className="h-[20px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
-          <div className="h-[20px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
+        <div className="flex justify-between py-0.5">
+          <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
+          <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
         </div>
-        <div className="flex justify-between">
-          <div className="h-[20px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
-          <div className="h-[20px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
+        <div className="flex justify-between py-0.5">
+          <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
+          <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
         </div>
       </div>
     )

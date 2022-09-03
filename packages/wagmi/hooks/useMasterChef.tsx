@@ -24,6 +24,8 @@ interface UseMasterChefReturn extends Pick<ReturnType<typeof useSendTransaction>
   balance: Amount<Token> | undefined
   harvest(): void
   pendingSushi: Amount<Token> | undefined
+  isWritePending: boolean
+  isWriteError: boolean
 }
 
 interface UseMasterChefParams {
@@ -39,7 +41,7 @@ type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
-  const { sendTransactionAsync, isLoading, isError } = useSendTransaction({ chainId })
+  const { sendTransactionAsync, isLoading: isWritePending, isError: isWriteError } = useSendTransaction({ chainId })
   const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
@@ -77,7 +79,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
     return inputs
   }, [address, chainId, config, enabled, pid, v2Config])
 
-  const { data } = useContractReads({
+  const { data, isLoading, isError } = useContractReads({
     contracts,
     watch: true,
     cacheOnBlock: true,
@@ -254,6 +256,8 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       isLoading,
       isError,
       pendingSushi,
+      isWritePending,
+      isWriteError,
     }
-  }, [balance, deposit, harvest, isError, isLoading, pendingSushi, withdraw])
+  }, [balance, deposit, harvest, isError, isLoading, isWriteError, isWritePending, pendingSushi, withdraw])
 }
