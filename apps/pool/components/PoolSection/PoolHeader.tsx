@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
-import { formatPercent } from '@sushiswap/format'
+import { formatPercent, formatUSD } from '@sushiswap/format'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
@@ -77,21 +77,19 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
-            {token0.symbol} = $
-            {(prices?.[token1.wrapped.address]
-              ? Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6))
-              : 0
-            ).toFixed(2)}
+            {token0.symbol} ={' '}
+            {prices?.[token1.wrapped.address]
+              ? formatUSD(Number(price.toFixed(6)) * Number(prices[token1.wrapped.address].toSignificant(6)))
+              : `$0.00`}
           </Typography>
         </div>
         <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
           <Currency.Icon currency={token1} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
-            {token1.symbol} = $
-            {(prices?.[token0.wrapped.address]
-              ? Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6))
-              : 0
-            ).toFixed(10)}{' '}
+            {token1.symbol} ={' '}
+            {prices?.[token0.wrapped.address]
+              ? formatUSD(Number(prices[token0.wrapped.address].toSignificant(6)) / Number(price.toSignificant(6)))
+              : '$0.00'}{' '}
           </Typography>
         </div>
       </div>
