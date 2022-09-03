@@ -12,7 +12,7 @@ import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories, getLevels } from '../lib/api'
 
 export async function getStaticProps() {
-  const articles = await getArticles({ pagination: { limit: 6 } })
+  const articles = await getArticles({ pagination: { limit: 5 } })
   const categories = await getCategories()
   const levels = await getLevels()
 
@@ -164,7 +164,9 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                   <ArticleList
                     articles={articleList as ArticleEntity[]}
                     loading={loading}
-                    render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                    render={(article, i) => (
+                      <Card article={article} isBig={!i} key={`article__left__${article?.attributes?.slug}`} />
+                    )}
                   />
                 </div>
               )}
@@ -194,6 +196,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                     articles={latestReleases as ArticleEntity[]}
                     loading={loading}
                     render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                    skeletonAmount={latestReleases.length}
                   />
                 </div>
               )}

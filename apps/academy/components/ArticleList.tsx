@@ -6,21 +6,18 @@ import { CardSkeleton } from './Card'
 interface ArticleList {
   loading: boolean
   articles: ArticleEntity[]
-  render(article: ArticleEntity): ReactNode
+  render(article: ArticleEntity, index: number): ReactNode
+  skeletonAmount?: number
 }
 
-export const ArticleList: FC<ArticleList> = ({ articles, loading, render }) => {
+export const ArticleList: FC<ArticleList> = ({ articles, loading, render, skeletonAmount }) => {
   if (loading)
     return (
       <>
-        <CardSkeleton />
-        <CardSkeleton />
-        <CardSkeleton />
-        <CardSkeleton />
-        <CardSkeleton />
-        <CardSkeleton />
+        {Array.from({ length: skeletonAmount ?? 6 }, (_, i) => i + 1).map((n) => (
+          <CardSkeleton key={n} />
+        ))}
       </>
     )
-
-  return <>{articles.map((article) => render(article))}</>
+  return <>{articles.map((article, i) => render(article, i))}</>
 }
