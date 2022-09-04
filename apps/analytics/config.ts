@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 export const ENABLED_NETWORKS = [
-  // ChainId.ETHEREUM,
+  ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -11,14 +11,14 @@ export const ENABLED_NETWORKS = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
   // ChainId.POLYGON,
 ]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushiswap/sushiswap-ethereum',
+  [ChainId.ETHEREUM]: 'sushi-graph/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
   [ChainId.BSC]: 'sushiswap/sushiswap-bsc',
@@ -28,7 +28,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'sushiswap/sushiswap-harmony',
+  [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
   [ChainId.POLYGON]: 'sushiswap/sushiswap-polygon',
 }
 
