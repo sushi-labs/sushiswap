@@ -37,8 +37,7 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('first', args.pagination.pageSize.toString())
-    _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
+    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {

@@ -10,6 +10,7 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
 query CrossChainPairs(
   $first: Int = 20
   $skip: Int = 0
+  $pagination: Pagination
   $where: Pair_filter
   $orderBy: Pair_orderBy = apr
   $orderDirection: OrderDirection = desc
@@ -19,7 +20,8 @@ query CrossChainPairs(
 ) {
   crossChainPairs(
     first: $first, 
-    skip: $skip, 
+    skip: $skip,
+    pagination: $pagination,
     where: $where, 
     orderBy: $orderBy, 
     orderDirection: $orderDirection,

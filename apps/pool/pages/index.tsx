@@ -7,6 +7,7 @@ import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
 import { getBundles, getFarms, getPools, GetPoolsQuery } from '../lib/api'
+import { QuerycrossChainPairsArgs } from '.graphclient'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
@@ -22,20 +23,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
         [unstable_serialize({
           url: '/pool/api/pools',
           args: {
-            sorting: [
-              {
-                id: 'apr',
-                desc: true,
-              },
-            ],
-            selectedNetworks: AMM_ENABLED_NETWORKS,
+            orderBy: 'apr',
+            orderDirection: 'desc',
+            chainIds: AMM_ENABLED_NETWORKS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
             },
-            query: '',
-            extraQuery: '',
-          },
+          } as QuerycrossChainPairsArgs,
         })]: pairs,
         [`/pool/api/bundles`]: bundles,
         [`/pool/api/farms`]: farms,
