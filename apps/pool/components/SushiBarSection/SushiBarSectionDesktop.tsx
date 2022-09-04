@@ -8,7 +8,6 @@ import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dots, Link, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
-import Image from 'next/image'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
@@ -77,20 +76,15 @@ export const SushiBarSectionDesktop: FC = () => {
         <h4 className="text-slate-50 font-semibold">Earn trading fees from all pools on Sushi!</h4>
         <div className="p-5 flex flex-col rounded-2xl bg-white bg-opacity-[0.02]">
           <div className="flex flex-col lg:flex-row">
-            <div className="grid grid-cols-[72px_auto] items-center gap-4 px-5">
-              <div className="relative w-[72px] h-[72px]">
-                <Image alt="neon-sign" src="https://sushi.com/pool/images/SushiBarNeonSign.png" layout="fill" />
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-semibold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
-                <p className="text-sm text-slate-400">APR (1y)</p>
-                <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
-                  {formatNumber(stats?.apr12m * 100)}
-                  <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
-                    <ExternalLinkIcon width={16} height={16} className="text-slate-200 hover:text-blue" />
-                  </Link.External>
-                </p>
-              </div>
+            <div className="flex flex-col px-5 justify-center">
+              <h4 className="font-semibold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
+              <p className="text-sm text-slate-400">APR (1y)</p>
+              <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
+                {formatNumber(stats?.apr12m * 100)}
+                <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
+                  <ExternalLinkIcon width={16} height={16} className="text-slate-200 hover:text-blue" />
+                </Link.External>
+              </p>
             </div>
             <div className="p-5 flex flex-grow gap-3 items-start">
               <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
