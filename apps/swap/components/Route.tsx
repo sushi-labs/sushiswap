@@ -50,14 +50,14 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     </div>
                   </Badge>
                 </div>
-                <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
+                <div className="flex items-center rounded-full bg-slate-800 min-w-[70px]">
                   {srcTrade && (
                     <Tooltip
                       placement="top"
                       button={
                         <Chip
                           color="gray"
-                          label={srcTrade.isV1() ? 'Legacy' : 'Trident'}
+                          label={srcTrade.isV1() ? 'SushiSwap' : 'Trident'}
                           size="sm"
                           className="!px-2 h-full"
                         />
@@ -110,13 +110,13 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     </div>
                   </Badge>
                 </div>
-                <div className="flex items-center rounded-full bg-slate-800 min-w-[50px]">
+                <div className="flex items-center rounded-full bg-slate-800 min-w-[70px]">
                   {dstTrade && (
                     <Tooltip
                       button={
                         <Chip
                           color="gray"
-                          label={dstTrade.isV1() ? 'Legacy' : 'Trident'}
+                          label={dstTrade.isV1() ? 'SushiSwap' : 'Trident'}
                           size="sm"
                           className="!px-2 h-full"
                         />
