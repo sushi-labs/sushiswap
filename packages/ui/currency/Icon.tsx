@@ -141,16 +141,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
 
   return (
     <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
-      <Image
-        onError={() => {
-          console.log('hi')
-          setError(true)
-        }}
-        src={src}
-        alt={currency.name}
-        className="rounded-full"
-        {...rest}
-      />
+      <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
     </Link.External>
   )
 }
