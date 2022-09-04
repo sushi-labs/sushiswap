@@ -2,10 +2,11 @@ import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
+import { Pair } from '../../.graphclient'
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
-export const PoolRewards: FC = () => {
-  const { totalAPR, incentives } = usePoolFarmRewards()
+export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
+  const { totalAPR, incentives } = usePoolFarmRewards(pair)
 
   return (
     <>

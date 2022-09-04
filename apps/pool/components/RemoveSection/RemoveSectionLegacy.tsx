@@ -30,7 +30,7 @@ interface RemoveSectionLegacyProps {
 }
 
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards()
+  const { isFarm } = usePoolFarmRewards(pair)
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()

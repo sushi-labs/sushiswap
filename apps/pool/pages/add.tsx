@@ -202,7 +202,7 @@ const _Add: FC<AddProps> = ({
   )
 
   return (
-    <>
+    <PoolFarmRewardsProvider>
       <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
         <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
@@ -309,35 +309,31 @@ const _Add: FC<AddProps> = ({
           </Widget.Content>
         </Widget>
         {pool && data?.pair && (
-          <PoolFarmRewardsProvider pair={data?.pair}>
-            <PoolPositionProvider pair={data?.pair}>
-              <PoolPositionStakedProvider pair={data?.pair}>
-                <Container maxWidth={400} className="mx-auto">
-                  <AddSectionStake
-                    title="4. Stake Liquidity"
-                    poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
-                  />
-                </Container>
-              </PoolPositionStakedProvider>
-            </PoolPositionProvider>
-          </PoolFarmRewardsProvider>
+          <PoolPositionProvider pair={data.pair}>
+            <PoolPositionStakedProvider pair={data.pair}>
+              <Container maxWidth={400} className="mx-auto">
+                <AddSectionStake
+                  title="4. Stake Liquidity"
+                  poolAddress={`${chainShortName[chainId]}:${pool.liquidityToken.address}`}
+                />
+              </Container>
+            </PoolPositionStakedProvider>
+          </PoolPositionProvider>
         )}
       </div>
 
       {pool && data?.pair && (
-        <PoolFarmRewardsProvider pair={data?.pair}>
-          <PoolPositionProvider pair={data?.pair}>
-            <PoolPositionStakedProvider pair={data?.pair}>
-              <div className="order-1 sm:order-3">
-                <AppearOnMount>
-                  <AddSectionMyPosition />
-                </AppearOnMount>
-              </div>
-            </PoolPositionStakedProvider>
-          </PoolPositionProvider>
-        </PoolFarmRewardsProvider>
+        <PoolPositionProvider pair={data.pair}>
+          <PoolPositionStakedProvider pair={data.pair}>
+            <div className="order-1 sm:order-3">
+              <AppearOnMount>
+                <AddSectionMyPosition pair={data.pair} />
+              </AppearOnMount>
+            </div>
+          </PoolPositionStakedProvider>
+        </PoolPositionProvider>
       )}
-    </>
+    </PoolFarmRewardsProvider>
   )
 }
 

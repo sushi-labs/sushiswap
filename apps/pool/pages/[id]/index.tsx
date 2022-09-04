@@ -63,7 +63,7 @@ const _Pool = () => {
   const { pair } = data
 
   return (
-    <PoolFarmRewardsProvider pair={pair}>
+    <PoolFarmRewardsProvider>
       <PoolPositionProvider pair={pair}>
         <PoolPositionStakedProvider pair={pair}>
           <PoolPositionRewardsProvider pair={pair}>
@@ -78,7 +78,7 @@ const _Pool = () => {
                   </AppearOnMount>
                   <PoolComposition pair={pair} />
                   <AppearOnMount>
-                    <PoolRewards />
+                    <PoolRewards pair={pair} />
                   </AppearOnMount>
                 </div>
 

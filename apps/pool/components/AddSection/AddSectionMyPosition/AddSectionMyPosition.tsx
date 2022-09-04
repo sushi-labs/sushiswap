@@ -2,12 +2,13 @@ import { formatPercent } from '@sushiswap/format'
 import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
+import { Pair } from '../../../.graphclient'
 import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 
-export const AddSectionMyPosition: FC = () => {
-  const { incentives, rewardAPR, totalAPR, feeAPR, isFarm } = usePoolFarmRewards()
+export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
+  const { incentives, rewardAPR, totalAPR, feeAPR, isFarm } = usePoolFarmRewards(pair)
 
   return (
     <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">

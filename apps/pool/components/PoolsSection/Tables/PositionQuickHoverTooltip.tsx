@@ -4,7 +4,7 @@ import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
-import { PoolFarmRewardsProvider, usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
+import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
 import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
@@ -16,15 +16,13 @@ interface PositionQuickHoverTooltipProps {
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   return (
-    <PoolFarmRewardsProvider pair={row}>
-      <PoolPositionProvider pair={row}>
-        <PoolPositionStakedProvider pair={row}>
-          <PoolPositionRewardsProvider pair={row}>
-            <_PositionQuickHoverTooltip row={row} />
-          </PoolPositionRewardsProvider>
-        </PoolPositionStakedProvider>
-      </PoolPositionProvider>
-    </PoolFarmRewardsProvider>
+    <PoolPositionProvider pair={row}>
+      <PoolPositionStakedProvider pair={row}>
+        <PoolPositionRewardsProvider pair={row}>
+          <_PositionQuickHoverTooltip row={row} />
+        </PoolPositionRewardsProvider>
+      </PoolPositionStakedProvider>
+    </PoolPositionProvider>
   )
 }
 
@@ -38,7 +36,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
     value1: stakedValue1,
   } = usePoolPositionStaked()
 
-  const { rewardAPR, totalAPR, isFarm } = usePoolFarmRewards()
+  const { rewardAPR, totalAPR, isFarm } = usePoolFarmRewards(row)
   const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
 
   return (

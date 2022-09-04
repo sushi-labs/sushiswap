@@ -34,7 +34,7 @@ interface PoolPositionStakedProviderProps {
 }
 
 export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
-  const { farmId, chefType, incentives } = usePoolFarmRewards()
+  const { farmId, chefType, incentives } = usePoolFarmRewards(pair)
 
   if (farmId === undefined || !chefType || !incentives)
     return (

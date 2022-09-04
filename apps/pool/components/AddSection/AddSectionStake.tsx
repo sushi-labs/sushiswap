@@ -23,13 +23,13 @@ interface AddSectionStakeProps {
 }
 
 export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
-  const { chefType } = usePoolFarmRewards()
   const isMounted = useIsMounted()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress.toLowerCase()}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+  const rewards = usePoolFarmRewards(data?.pair)
 
-  if (!data || !chefType || !isMounted) return <></>
+  if (!data || !rewards?.chefType || !isMounted) return <></>
   const { pair } = data
 
   return (
@@ -43,7 +43,7 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_AddSectionStake pair={pair} chefType={chefType} title={title} />
+      <_AddSectionStake pair={pair} chefType={rewards.chefType} title={title} />
     </Transition>
   )
 }

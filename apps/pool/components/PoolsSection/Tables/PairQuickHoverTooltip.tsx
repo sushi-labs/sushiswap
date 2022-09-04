@@ -4,7 +4,7 @@ import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithFarmRewards } from '../../../types'
-import { PoolFarmRewardsProvider, usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
+import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { ICON_SIZE } from './contants'
 
 interface PairQuickHoverTooltipProps {
@@ -12,16 +12,8 @@ interface PairQuickHoverTooltipProps {
 }
 
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
-  return (
-    <PoolFarmRewardsProvider pair={row}>
-      <_PairQuickHoverTooltip row={row} />
-    </PoolFarmRewardsProvider>
-  )
-}
-
-const _PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
-  const { rewardAPR, totalAPR } = usePoolFarmRewards()
+  const { rewardAPR, totalAPR } = usePoolFarmRewards(row)
 
   return (
     <div className="flex flex-col p-2 !pb-0">

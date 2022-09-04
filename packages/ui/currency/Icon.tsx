@@ -115,7 +115,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   }
 
   if (disableLink) {
-    return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
+    return <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
   }
 
   if (error) {

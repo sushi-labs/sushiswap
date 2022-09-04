@@ -38,7 +38,7 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards()
+  const { isFarm } = usePoolFarmRewards(pair)
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()

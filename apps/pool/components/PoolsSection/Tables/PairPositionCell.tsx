@@ -2,20 +2,17 @@ import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { PoolFarmRewardsProvider } from '../../PoolFarmRewardsProvider'
 import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { CellWithBalanceProps } from './types'
 
 export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
   return (
-    <PoolFarmRewardsProvider pair={row}>
-      <PoolPositionProvider pair={row}>
-        <PoolPositionStakedProvider pair={row}>
-          <_PairPositionCell row={row} />
-        </PoolPositionStakedProvider>
-      </PoolPositionProvider>
-    </PoolFarmRewardsProvider>
+    <PoolPositionProvider pair={row}>
+      <PoolPositionStakedProvider pair={row}>
+        <_PairPositionCell row={row} />
+      </PoolPositionStakedProvider>
+    </PoolPositionProvider>
   )
 }
 

@@ -61,7 +61,7 @@ const _Remove = () => {
   const { pair } = data
 
   return (
-    <PoolFarmRewardsProvider pair={pair}>
+    <PoolFarmRewardsProvider>
       <PoolPositionProvider pair={pair}>
         <PoolPositionStakedProvider pair={pair}>
           <Layout breadcrumbs={LINKS(router.query.id as string)}>
@@ -84,7 +84,7 @@ const _Remove = () => {
               </div>
               <div className="order-1 sm:order-3">
                 <AppearOnMount>
-                  <AddSectionMyPosition />
+                  <AddSectionMyPosition pair={pair} />
                 </AppearOnMount>
               </div>
             </div>

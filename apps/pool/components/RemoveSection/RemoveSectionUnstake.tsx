@@ -20,13 +20,13 @@ interface AddSectionStakeProps {
 }
 
 export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
-  const { chefType } = usePoolFarmRewards()
   const isMounted = useIsMounted()
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
-  if (!data || !chefType || !isMounted) return <></>
+  const rewards = usePoolFarmRewards(data?.pair)
+  if (!data || !rewards?.chefType || !isMounted) return <></>
   const { pair } = data
 
   return (
@@ -40,7 +40,7 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_RemoveSectionUnstake pair={pair} chefType={chefType} />
+      <_RemoveSectionUnstake pair={pair} chefType={rewards.chefType} />
     </Transition>
   )
 }

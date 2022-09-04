@@ -11,7 +11,7 @@ import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
 export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards()
+  const { isFarm } = usePoolFarmRewards(pair)
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })

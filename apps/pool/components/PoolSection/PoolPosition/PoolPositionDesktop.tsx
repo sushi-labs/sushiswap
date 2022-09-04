@@ -12,7 +12,7 @@ interface PoolPositionProps {
 }
 
 export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards()
+  const { isFarm } = usePoolFarmRewards(pair)
   const { token1, token0 } = useTokensFromPair(pair)
   const { underlying1, underlying0, value1, value0, isError, isLoading } = usePoolPosition()
 
