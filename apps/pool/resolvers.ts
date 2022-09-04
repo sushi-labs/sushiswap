@@ -73,22 +73,25 @@ export const resolvers: Resolvers = {
       })
     },
     crossChainPairs: async (root, args, context, info) => {
-      const transformer = (pools, chainId) =>
-        pools.map((pool) => {
-          const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
-            if (i > 6) return previousValue
-            return previousValue + Number(currentValue.volumeUSD)
-          }, 0)
+      const transformer = (pools, chainId) => {
+        return pools?.length > 0
+          ? pools.map((pool) => {
+              const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
+                if (i > 6) return previousValue
+                return previousValue + Number(currentValue.volumeUSD)
+              }, 0)
 
-          return {
-            ...pool,
-            volume7d,
-            id: `${chainShortName[chainId]}:${pool.id}`,
-            chainId,
-            chainName: chainName[chainId],
-            chainShortName: chainShortName[chainId],
-          }
-        })
+              return {
+                ...pool,
+                volume7d,
+                id: `${chainShortName[chainId]}:${pool.id}`,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+              }
+            })
+          : []
+      }
 
       return Promise.all([
         ...args.chainIds

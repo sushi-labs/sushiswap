@@ -49,7 +49,6 @@ const fetcher = ({
   if (args.query) {
     where = {
       token0_: { symbol_contains_nocase: args.query },
-      token1_: { symbol_contains_nocase: args.query },
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
@@ -58,7 +57,6 @@ const fetcher = ({
   if (args.extraQuery) {
     where = {
       ...where,
-      token0_: { symbol_contains_nocase: args.extraQuery },
       token1_: { symbol_contains_nocase: args.extraQuery },
     }
 

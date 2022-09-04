@@ -18,7 +18,7 @@ export const getBundles = async () => {
   }, {})
 }
 
-export type GetPoolsQuery = QuerypairsArgs & { networks: string }
+export type GetPoolsQuery = Omit<QuerypairsArgs, 'where'> & { networks: string; where?: string }
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
@@ -27,10 +27,11 @@ export const getPools = async (query?: GetPoolsQuery) => {
 
     const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
     const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
-    const where = query?.where ? query.where : { liquidityUSD_gt: 5000 }
+    const where = { liquidityUSD_gt: 5000, ...(query?.where && { ...JSON.parse(query.where) }) }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
