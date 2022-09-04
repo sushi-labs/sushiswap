@@ -104,20 +104,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     }/${currency.wrapped.address}.jpg`
   }, [currency])
 
-  if (!src) {
-    return (
-      <QuestionMarkCircleIcon
-        width={rest.width}
-        height={rest.height}
-        className="rounded-full bg-white bg-opacity-[0.12]"
-      />
-    )
-  }
-
-  if (disableLink) {
-    return <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
-  }
-
   if (error) {
     return (
       <svg width={rest.width} height={rest.height} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -139,9 +125,32 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     )
   }
 
+  if (!src) {
+    return (
+      <QuestionMarkCircleIcon
+        width={rest.width}
+        height={rest.height}
+        className="rounded-full bg-white bg-opacity-[0.12]"
+      />
+    )
+  }
+
+  if (disableLink) {
+    return <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
+  }
+
   return (
     <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
-      <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
+      <Image
+        onError={() => {
+          console.log('hi')
+          setError(true)
+        }}
+        src={src}
+        alt={currency.name}
+        className="rounded-full"
+        {...rest}
+      />
     </Link.External>
   )
 }
