@@ -53,7 +53,7 @@ export const Header: FC = () => {
             <Select.Options
               className={classNames(
                 'w-[217px] max-w-[240px] !bg-slate-700 -ml-5 mt-5 max-h-[unset] p-6 gap-6 flex flex-col',
-                i === headerLinks.length - 1 && 'right-0'
+                i === headerLinks.length - 1 && 'right-0 xl:right-auto'
               )}
             >
               {options.map(({ option, href }, i) => (
