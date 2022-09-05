@@ -6,11 +6,12 @@ import { Furo } from './Furo'
 import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
-  public readonly extendedShares: Amount<Token>
   public readonly totalAmount: Amount<Token>
   public readonly inititalShares: Amount<Token>
   public readonly inititalAmount: Amount<Token>
+  public readonly extendedShares: Amount<Token>
   public readonly extendedAtTimestamp: Date
+  public readonly withdrawnShares: Amount<Token>
 
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
     super({ chainId, furo, rebase })
@@ -21,6 +22,10 @@ export class Stream extends Furo {
     this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
     this.extendedShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.extendedShares))
     this.extendedAtTimestamp = new Date(parseInt(furo.extendedAtTimestamp) * 1000)
+    this.withdrawnShares = Amount.fromRawAmount(
+      this.token,
+      JSBI.subtract(JSBI.add(this.inititalShares.quotient, this.extendedShares.quotient), this.remainingShares.quotient)
+    )
   }
 
   public override get balance(): Amount<Token> {
@@ -30,10 +35,14 @@ export class Stream extends Furo {
     if (this.extendedShares.equalTo(0)) {
       const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
       const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
-      const balance = Amount.fromRawAmount(
+      const streamedShares = JSBI.divide(JSBI.multiply(this.inititalShares.quotient, passed), duration)
+      const pendingAmount = Amount.fromShare(
         this.token,
-        JSBI.divide(JSBI.multiply(this.totalAmount.quotient, passed), duration)
+        JSBI.subtract(streamedShares, this.withdrawnShares.quotient),
+        this.rebase
       )
+      const balance = Amount.fromRawAmount(this.token, JSBI.add(this.withdrawnAmount.quotient, pendingAmount.quotient))
+
       return balance.lessThan(this.totalAmount) ? balance : this.totalAmount
     } else {
       const duration = JSBI.subtract(
