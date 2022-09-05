@@ -1,8 +1,8 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 
-import { CrossChainFarmsQuery, Pagination, QuerycrossChainPairsArgs } from '../.graphclient'
-import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
+import { CrossChainFarmsQuery, QuerycrossChainPairsArgs } from '../.graphclient'
+import { STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getPoolCount = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
@@ -60,7 +60,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
-    const orderBy = query?.orderBy || 'apr'
+    const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 

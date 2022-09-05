@@ -1,22 +1,21 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon } from '@sushiswap/ui'
-import { AMM_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolFarmRewardsProvider, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getFarms, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
-import { QuerycrossChainPairsArgs } from '.graphclient'
+import { getBundles, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const [pairs, bundles, farms, poolCount] = await Promise.all([
+  const [pairs, bundles, poolCount] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getBundles(),
-    getFarms(),
     getPoolCount(),
   ])
+
   return {
     props: {
       fallback: {
@@ -39,7 +38,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           },
         })]: pairs,
         [`/pool/api/bundles`]: bundles,
-        [`/pool/api/farms`]: farms,
         [`/pool/api/pools/count`]: poolCount,
       },
     },
