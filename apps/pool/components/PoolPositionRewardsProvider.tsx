@@ -11,7 +11,7 @@ import { usePoolFarmRewards } from './PoolFarmRewardsProvider'
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]
   rewardTokens: Token[]
-  values: (number | undefined)[]
+  values: number[]
   isLoading: boolean
   isError: boolean
   harvest: undefined | (() => void)

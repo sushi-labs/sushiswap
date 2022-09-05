@@ -37,7 +37,7 @@ export const AddSectionMyPositionStaked: FC = () => {
           My Staked Position
         </Typography>
         <Typography variant="xs" weight={500} className="text-slate-400">
-          {formatUSD(Number(value0) + Number(value1))}
+          {formatUSD(value0 + value1)}
         </Typography>
       </div>
       <div className="flex flex-col gap-1.5">

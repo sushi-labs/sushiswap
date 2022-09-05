@@ -87,7 +87,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(Number(value0))}
+            {formatUSD(value0)}
           </Typography>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -98,7 +98,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(Number(value1))}
+            {formatUSD(value1)}
           </Typography>
         </div>
       </div>
@@ -114,7 +114,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(Number(stakedValue0))}
+            {formatUSD(stakedValue0)}
           </Typography>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -125,7 +125,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
-            {formatUSD(Number(stakedValue1))}
+            {formatUSD(stakedValue1)}
           </Typography>
         </div>
       </div>
@@ -143,7 +143,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                 </Typography>
               </div>
               <Typography variant="xs" className="text-slate-400">
-                {isNaN(+formatUSD(Number(values[index]))) ? '$0.00' : formatUSD(Number(values[index]))}
+                {formatUSD(values[index])}
               </Typography>
             </div>
           ))}

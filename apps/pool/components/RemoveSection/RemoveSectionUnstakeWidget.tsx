@@ -124,7 +124,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           leaveTo="transform opacity-0"
                         >
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
-                            {formatUSD(Number(value0) + Number(value1))}
+                            {formatUSD(value0 + value1)}
                           </Typography>
                         </Transition>
                         <Transition

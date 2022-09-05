@@ -5,16 +5,18 @@ import { FC } from 'react'
 
 import { Pair } from '../../.graphclient'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
+import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
 interface PoolMyRewardsProps {
   pair: Pair
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
+  const { isFarm } = usePoolFarmRewards(pair)
   const { pendingRewards, rewardTokens, harvest, isError, values, isLoading, error } = usePoolPositionRewards()
   const { isLg } = useBreakpoint('lg')
 
-  if (!isLg) return <></>
+  if (!isLg || !isFarm) return <></>
 
   return (
     <div className="flex flex-col gap-3">
@@ -25,9 +27,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
           </Typography>
           <div className="flex flex-col">
             <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-              {isNaN(+formatUSD(Number(values.reduce((sum, value) => Number(sum) + Number(value), 0))))
-                ? '$0.00'
-                : formatUSD(Number(values.reduce((sum, value) => Number(sum) + Number(value), 0)))}
+              {formatUSD(values.reduce((sum, value) => sum + value, 0))}
             </Typography>
           </div>
         </div>
@@ -50,7 +50,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
                   </Typography>
                 </div>
                 <Typography variant="xs" weight={500} className="text-slate-400">
-                  {isNaN(+formatUSD(Number(values[index]))) ? '$0.00' : formatUSD(Number(values[index]))}
+                  {formatUSD(values[index])}
                 </Typography>
               </div>
             )

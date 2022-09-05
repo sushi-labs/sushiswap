@@ -44,7 +44,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
               Unstaked Position
             </Typography>
             <Typography variant="xs" weight={500} className="text-slate-100">
-              {formatUSD(Number(value0) + Number(value1))}
+              {formatUSD(value0 + value1)}
             </Typography>
           </div>
         )}
@@ -56,7 +56,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="text-slate-400">
-            {formatUSD(Number(value0))}
+            {formatUSD(value0)}
           </Typography>
         </div>
         <div className="flex justify-between items-center">
@@ -67,7 +67,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="text-slate-400">
-            {formatUSD(Number(value1))}
+            {formatUSD(value1)}
           </Typography>
         </div>
       </div>

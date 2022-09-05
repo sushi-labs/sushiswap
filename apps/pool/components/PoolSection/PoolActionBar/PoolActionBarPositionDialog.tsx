@@ -59,7 +59,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
               </Typography>
               <div className="flex flex-col">
                 <Typography variant="xs" weight={500} className="text-slate-100 text-right">
-                  {formatUSD(Number(value0) + Number(value1))}
+                  {formatUSD(value0 + value1)}
                 </Typography>
               </div>
             </div>
@@ -71,7 +71,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="text-slate-400">
-                {formatUSD(Number(value0))}
+                {formatUSD(value0)}
               </Typography>
             </div>
             <div className="flex justify-between px-2 py-1">
@@ -82,7 +82,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="text-slate-400">
-                {formatUSD(Number(value1))}
+                {formatUSD(value1)}
               </Typography>
             </div>
           </>
@@ -110,7 +110,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                 Staked Position
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-100">
-                {formatUSD(Number(stakedValue0) + Number(stakedValue1))}
+                {formatUSD(stakedValue0 + stakedValue1)}
               </Typography>
             </div>
             <div className="flex justify-between items-center">
@@ -121,7 +121,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="text-slate-400">
-                {formatUSD(Number(stakedValue0))}
+                {formatUSD(stakedValue0)}
               </Typography>
             </div>
             <div className="flex justify-between items-center">
@@ -132,7 +132,7 @@ export const PoolActionBarPositionDialog: FC<PoolActionBarPositionDialogProps> =
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="text-slate-400">
-                {formatUSD(Number(stakedValue1))}
+                {formatUSD(stakedValue1)}
               </Typography>
             </div>
           </div>

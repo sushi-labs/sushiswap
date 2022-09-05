@@ -27,7 +27,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {
         </Typography>
         <div className="flex flex-col">
           <Typography variant="sm" weight={600} className="text-slate-50 text-right">
-            {formatUSD(Number(value0) + Number(value1) + Number(stakedValue0) + Number(stakedValue1))}
+            {formatUSD(value0 + value1 + stakedValue0 + stakedValue1)}
           </Typography>
         </div>
       </div>

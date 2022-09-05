@@ -9,8 +9,8 @@ import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanc
 
 interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined
-  value0: number | undefined
-  value1: number | undefined
+  value0: number
+  value1: number
   underlying0: Amount<Token> | undefined
   underlying1: Amount<Token> | undefined
   isLoading: boolean

@@ -6,7 +6,9 @@ import { Pair } from '../../.graphclient'
 import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
 export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
-  const { totalAPR, incentives } = usePoolFarmRewards(pair)
+  const { totalAPR, incentives, isFarm } = usePoolFarmRewards(pair)
+
+  if (!isFarm) return <></>
 
   return (
     <>

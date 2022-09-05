@@ -132,7 +132,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       <div className="grid grid-cols-3 pb-2 justify-between items-center">
                         <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
-                            {formatUSD((Number(value0) + Number(value1)) * (+percentage / 100))}
+                            {formatUSD((value0 + value1) * (+percentage / 100))}
                           </Typography>
                         </AppearOnMount>
                         <AppearOnMount
@@ -177,7 +177,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-slate-400">
-                              {formatUSD(Number(value0))}
+                              {formatUSD(value0)}
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
@@ -191,7 +191,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-slate-400">
-                              {formatUSD(Number(value1))}
+                              {formatUSD(value1)}
                             </Typography>
                           </div>
                         </div>

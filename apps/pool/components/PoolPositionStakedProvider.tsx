@@ -8,8 +8,8 @@ import { usePoolFarmRewards } from './PoolFarmRewardsProvider'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined
-  value0: number | undefined
-  value1: number | undefined
+  value0: number
+  value1: number
   underlying0: Amount<Token> | undefined
   underlying1: Amount<Token> | undefined
   isLoading: boolean
@@ -35,8 +35,8 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
       <Context.Provider
         value={{
           balance: undefined,
-          value0: undefined,
-          value1: undefined,
+          value0: 0,
+          value1: 0,
           underlying0: undefined,
           underlying1: undefined,
           isLoading: false,

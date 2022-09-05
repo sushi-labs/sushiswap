@@ -5,14 +5,18 @@ import { FC } from 'react'
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithAlias } from '../../../types'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
+import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 
 interface PoolPositionStakedDesktopProps {
   pair: PairWithAlias
 }
 
 export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pair }) => {
+  const { isFarm } = usePoolFarmRewards(pair)
   const { token0, token1 } = useTokensFromPair(pair)
   const { value1, value0, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
+
+  if (!isFarm) return <></>
 
   if (isLoading && !isError) {
     return (
@@ -41,7 +45,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
             Staked Position
           </Typography>
           <Typography variant="xs" weight={500} className="text-slate-100">
-            {formatUSD(Number(value0) + Number(value1))}
+            {formatUSD(value0 + value1)}
           </Typography>
         </div>
         <div className="flex justify-between items-center">
@@ -52,7 +56,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="text-slate-400">
-            {formatUSD(Number(value0))}
+            {formatUSD(value0)}
           </Typography>
         </div>
         <div className="flex justify-between items-center">
@@ -63,7 +67,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
             </Typography>
           </div>
           <Typography variant="xs" weight={500} className="text-slate-400">
-            {formatUSD(Number(value1))}
+            {formatUSD(value1)}
           </Typography>
         </div>
       </div>
