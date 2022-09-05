@@ -19,11 +19,11 @@ export const Card: FC<Card> = ({ article, isBig }) => {
   return (
     <div
       className={classNames(
-        'h-[420px] w-full rounded-xl bg-slate-800 overflow-hidden ring-1 ring-slate-700',
+        'h-[420px] w-full rounded-xl bg-slate-800 group ring-1 ring-slate-700',
         isBig && 'col-span-2 flex flex-row gap-6'
       )}
     >
-      <div className={classNames('relative', isBig ? 'h-full w-[55%]' : 'h-[205px]')}>
+      <div className={classNames('relative rounded-xl overflow-hidden', isBig ? 'h-full w-[55%]' : 'h-[205px]')}>
         {article?.attributes?.cover?.data && (
           <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
             <Image
@@ -48,16 +48,27 @@ export const Card: FC<Card> = ({ article, isBig }) => {
             </Typography>
             <div className="flex gap-2">
               <ClockIcon width={16} />
-              <Typography variant="sm">5 min read</Typography>
+              <Typography variant="sm">15 min</Typography>
             </div>
           </div>
           <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
-            <Typography variant="h2" weight={700} className="leading-10 text-slate-200">
+            <span
+              className={classNames(
+                'text-slate-200 font-bold',
+                isBig
+                  ? 'leading-8 lg:leading-10 text-2xl lg:text-3xl'
+                  : 'leading-6 lg:leading-8 text-xl lg:text-2xl line-clamp-2'
+              )}
+            >
+              {' '}
               {article?.attributes?.title}
-            </Typography>
+            </span>
           </a>
 
-          <Typography variant="sm" className="leading-6 text-slate-400 line-clamp-4">
+          <Typography
+            variant="sm"
+            className={classNames('leading-6 text-slate-400', isBig ? 'line-clamp-4' : 'line-clamp-2')}
+          >
             {article?.attributes?.description}
           </Typography>
         </div>

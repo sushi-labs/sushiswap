@@ -236,6 +236,7 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
   articles(pagination: $pagination, sort: "publishedAt:desc", filters: $filters) {
     meta {
       pagination {
+        total
         page
         pageCount
         pageSize

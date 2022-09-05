@@ -1,47 +1,25 @@
 import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon, ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container, Select, Typography } from '@sushiswap/ui'
-import { InferGetServerSidePropsType } from 'next'
-import Link from 'next/link'
+import { Container, Select, Typography } from '@sushiswap/ui'
+import { Pane } from 'components/Pane'
+import { SubscribePanel } from 'components/SubscribePanel'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import useSWR from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection } from '../../.mesh'
-import { ArticleList, ArticleListItem, Categories, Pagination } from '../../components'
-import { getArticles, getCategories } from '../../lib/api'
+import { ArticleEntity } from '../../.mesh'
+import { ArticleList, Pagination } from '../../components'
+import { getArticles, getCategories, getLevels } from '../../lib/api'
 
-export async function getStaticProps() {
-  const articles = await getArticles()
-  const categories = await getCategories()
+type SortBy = 'relevance' | 'dateAsc' | 'dateDesc' | 'author'
 
-  return {
-    props: {
-      fallback: {
-        ['/articles']: articles?.articles,
-        ['/categories']: categories?.categories,
-      },
-    },
-    revalidate: 1,
-  }
-}
-
-const Articles: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
-  return (
-    <SWRConfig value={{ fallback }}>
-      <_Articles />
-    </SWRConfig>
-  )
-}
-
-const _Articles: FC = () => {
+const Articles: FC = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
   const router = useRouter()
 
-  // const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles', async () => {
   const { data: articlesData } = useSWR(
     ['/articles'],
     async () => {
@@ -50,7 +28,7 @@ const _Articles: FC = () => {
           filters: {
             ...((router.query.level || router.query.category) && {
               categories: {
-                slug: { in: [router.query.level as string, router.query.category as string].filter(Boolean) },
+                id: { in: [router.query.level as string, router.query.category as string].filter(Boolean) },
               },
             }),
           },
@@ -59,16 +37,18 @@ const _Articles: FC = () => {
     }
     // { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: true }
   )
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
+  const { data: categoriesData } = useSWR('/categories', async () => (await getCategories())?.categories)
+  const { data: levelsData } = useSWR('/levels', async () => (await getLevels())?.categories)
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categoriesData?.data.find((c) => c.attributes.slug === (router.query.category as string))?.id
   )
   const [selectedLevel, setSelectedLevel] = useState<string>(
     categoriesData?.data.find((c) => c.attributes.slug === (router.query.level as string))?.id
   )
+  const [sortBy, setSortBy] = useState<SortBy>('relevance')
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selectedCategory, selectedLevel, debouncedQuery, page],
-    async (url, categoryFilter, levelFilter, debouncedQuery, page) => {
+    async (_url, categoryFilter, levelFilter, debouncedQuery, page) => {
       return (
         await getArticles({
           filters: {
@@ -91,16 +71,29 @@ const _Articles: FC = () => {
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data
+  const levels = levelsData?.data
   // const articleList = selectedCategory && filterData?.data ? filterData?.data : articles ? articles : []
   const articleList =
     (selectedCategory || selectedLevel) && filterData?.data ? filterData.data : articles ? articles : undefined
   const articlesMeta =
-    selectedCategory && filterData?.meta ? filterData.meta : articlesData?.meta ? articlesData.meta : undefined
+    (selectedCategory || selectedLevel) && filterData?.meta
+      ? filterData.meta
+      : articlesData?.meta
+      ? articlesData.meta
+      : undefined
+
+  const handleSelectLevel = (id: string) => setSelectedLevel((currentLevel) => (currentLevel === id ? undefined : id))
+  const handleSelectCategory = (id: string) =>
+    setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
+
+  // TODO: strapi
+  const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
+
+  const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
 
   return (
-    <>
-      {/* <Container maxWidth="6xl" className="mx-auto px-4 h-[86px] flex items-center justify-between"> */}
-      <Container maxWidth="6xl" className="flex items-center justify-between mx-auto mt-24">
+    <Container maxWidth="6xl" className="py-24 mx-auto">
+      <Container maxWidth="full" className="flex items-center justify-between">
         <div>
           <Typography variant="lg" weight={500} className="">
             Articles
@@ -109,69 +102,150 @@ const _Articles: FC = () => {
             Tutorials & Explainers
           </Typography>
         </div>
-        <div>
+        <div className="flex gap-5">
           <Select
             button={
               <Listbox.Button
                 type="button"
-                className="flex items-center h-10 gap-1 px-4 font-medium rounded-full hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
+                className="w-32 flex items-center justify-between pl-4 h-10 gap-1 font-medium rounded-full hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
               >
-                <span className="text-sm">Beginner</span>
-                <ChevronDownIcon className="w-2 h-2" aria-hidden="true" />
+                <span className="text-sm">
+                  {selectedLevel
+                    ? levels?.find(({ id }) => id === selectedLevel).attributes.name ?? 'Select Level'
+                    : 'Select Level'}
+                </span>
+                <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
               </Listbox.Button>
             }
           >
-            <Select.Options className="w-[217px] max-w-[240px] !bg-slate-700 -ml-5 mt-5 max-h-[unset] p-6 gap-6 flex flex-col">
-              {/* {options.map(({ option, href }, i) => ( */}
-              <Typography weight={500} variant="sm">
-                he
-              </Typography>
-              {/* ))} */}
+            <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+              {levels?.map(({ id, attributes }, i) => (
+                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
+                  {attributes.name}
+                </Typography>
+              ))}
+            </Select.Options>
+          </Select>
+          <Select
+            button={
+              // TODO: PRODUCTS
+              <Listbox.Button
+                type="button"
+                className="w-32 flex items-center justify-between h-10 pl-4 font-medium rounded-full hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
+              >
+                <span className="text-sm">
+                  {selectedLevel
+                    ? levels?.find(({ id }) => id === selectedLevel).attributes.name ?? 'Select Level'
+                    : 'Select Level'}
+                </span>
+                <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
+              </Listbox.Button>
+            }
+          >
+            <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+              {levels?.map(({ id, attributes }, i) => (
+                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
+                  {attributes.name}
+                </Typography>
+              ))}
             </Select.Options>
           </Select>
         </div>
       </Container>
-      <div className="flex flex-col divide-y divide-slate-800">
-        <section className="py-4 pb-60">
-          <Container maxWidth="5xl" className="px-4 mx-auto space-y-8">
-            <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
-              <div className="flex items-center order-2 gap-3 md:order-1">
-                <div className="mr-2 text-sm font-medium text-slate-400">Categories</div>
-                <Categories selected={selectedCategory} onSelect={setSelectedCategory} categories={categories || []} />
+
+      <Container maxWidth="full" className="flex gap-12 mx-auto mt-24">
+        <aside className="flex-col hidden w-64 gap-8 md:flex">
+          <div className="flex items-center w-full gap-2 pl-3 md:w-auto rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
+            <SearchIcon width={24} height={24} className="text-slate-500" />
+            <input
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full h-14 font-medium placeholder:text-sm text-slate-300 bg-transparent text-base !ring-0 !outline-0"
+              placeholder="Search Topic"
+            />
+          </div>
+          <div className="flex flex-col gap-6 pl-3">
+            {products.map((product) => (
+              <Typography
+                className="hover:underline"
+                weight={500}
+                key={product}
+                onClick={() => null /** TODO: implement */}
+              >
+                {product}
+              </Typography>
+            ))}
+          </div>
+        </aside>
+
+        <div className="w-full space-y-8">
+          {articleList && !articleList.length ? (
+            <Typography variant="lg">No articles found</Typography>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                {articlesMeta?.pagination?.total > 0 && (
+                  <Typography weight={500}>{articlesMeta.pagination.total} Results</Typography>
+                )}
+                <div>
+                  <Select
+                    button={
+                      // TODO: sortby
+                      <Listbox.Button
+                        type="button"
+                        className="pl-20 w-48 flex items-center h-14 font-medium rounded-lg hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
+                      >
+                        <Typography className="absolute text-sm left-4">Sortby:</Typography>
+                        <Typography className="text-sm">{sortBy}</Typography>
+                        <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
+                      </Listbox.Button>
+                    }
+                  >
+                    <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+                      {sortOptions?.map((key) => (
+                        <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
+                          {key}
+                        </Typography>
+                      ))}
+                    </Select.Options>
+                  </Select>
+                </div>
               </div>
-              <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
-                <input
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full font-medium placeholder:text-sm h-[40px] text-slate-300 bg-transparent text-base !ring-0 !outline-0"
-                  placeholder="Search in Archive..."
-                />
-                <SearchIcon width={24} height={24} className="text-slate-500" />
-              </div>
-            </div>
-            <div className="border-t border-b divide-y divide-slate-200/5 border-slate-200/5">
-              {articleList && (
+              <div className="grid grid-cols-1 transition-all gap-x-6 sm:grid-cols-2 gap-y-10">
                 <ArticleList
                   articles={articleList as ArticleEntity[]}
-                  loading={loading}
-                  render={(article) => (
-                    <ArticleListItem article={article} key={`article__left__${article?.attributes?.slug}`} />
+                  loading={loading || !articleList}
+                  render={(article, i) => (
+                    <>
+                      <Pane
+                        article={article}
+                        isBig={!i}
+                        key={`article__left__${article?.attributes?.slug}`}
+                        className="hidden sm:block"
+                      />
+                      <Pane
+                        article={article}
+                        key={`article__left__${article?.attributes?.slug}`}
+                        className="sm:hidden"
+                      />
+                    </>
                   )}
                 />
-              )}
-            </div>
-            <div className="flex justify-center">
-              {articlesMeta && (
-                <Pagination
-                  page={articlesMeta.pagination.page}
-                  onPage={setPage}
-                  pages={articlesMeta.pagination.pageCount}
-                />
-              )}
-            </div>
-          </Container>
-        </section>
-      </div>
-    </>
+              </div>
+            </>
+          )}
+          <div className="flex justify-center">
+            {articlesMeta?.pagination?.pageCount > 0 && (
+              <Pagination
+                page={articlesMeta.pagination.page}
+                onPage={setPage}
+                pages={articlesMeta.pagination.pageCount}
+              />
+            )}
+          </div>
+        </div>
+      </Container>
+      <SubscribePanel className="mt-24" />
+    </Container>
   )
 }
 

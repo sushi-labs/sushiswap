@@ -3,6 +3,7 @@ import { useDebounce } from '@sushiswap/hooks'
 import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { LevelCard } from 'components/LevelCard'
 import { BlogSeo } from 'components/Seo/BlogSeo'
+import { SubscribePanel } from 'components/SubscribePanel'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -52,6 +53,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     async (_url, categoryFilter, levelFilter) => {
       return (
         await getArticles({
+          pagination: { limit: 5 },
           filters: {
             ...((categoryFilter || levelFilter) && {
               categories: {
@@ -201,27 +203,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 </div>
               )}
             </div>
-            <div className="p-14 bg-[#E2E3E7] rounded-2xl">
-              <Typography variant="h2" weight={700} className="md:w-3/5">
-                Get the latest Sushi Alpha delivered to your inbox.
-              </Typography>
-              <div className="flex h-16 mt-10">
-                <div className="w-[340px] px-6 bg-white rounded-l-xl">
-                  <input
-                    // onChange={(e) => setQuery(e.target.value)}
-                    className="w-full h-16 font-medium bg-white text-slate-300 outline-0"
-                    placeholder="Enter your email address"
-                  />
-                </div>
-                <Button
-                  // TODO: implement
-                  onClick={() => null}
-                  className="w-24 min-h-full rounded-l-none bg-slate-800 rounded-r-xl"
-                >
-                  Subscribe
-                </Button>
-              </div>
-            </div>
+            <SubscribePanel />
           </Container>
         </section>
       </div>
