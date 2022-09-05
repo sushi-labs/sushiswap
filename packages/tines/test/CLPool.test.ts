@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { default as seedrandom } from 'seedrandom'
-import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK } from '../src'
+import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigNumber } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -18,23 +18,23 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
   return res
 }
 
-function addTick(ticks: CLTick[], index: number, L: number) {
+function addTick(ticks: CLTick[], index: number, L: BigNumber) {
   const fromIndex = ticks.findIndex((t) => t.index >= index)
   if (fromIndex === -1) {
     ticks.push({ index, DLiquidity: L })
   } else {
     if (ticks[fromIndex].index === index) {
-      ticks[fromIndex].DLiquidity += L
+      ticks[fromIndex].DLiquidity = ticks[fromIndex].DLiquidity.add(L)
     } else {
       ticks.splice(fromIndex, 0, { index, DLiquidity: L })
     }
   }
 }
 
-function addLiquidity(pool: CLRPool, from: number, to: number, L: number) {
+function addLiquidity(pool: CLRPool, from: number, to: number, L: BigNumber) {
   console.assert(from >= CL_MIN_TICK && from < to && to <= CL_MAX_TICK)
   console.assert((from / pool.tickSpacing) % 2 === 0 && (to / pool.tickSpacing) % 2 !== 0, `${from} - ${to}`)
-  console.assert(L >= 0)
+  console.assert(L.gte(0))
   addTick(pool.ticks, from, L)
   addTick(pool.ticks, to, L)
 }
@@ -43,13 +43,13 @@ function getTickPrice(pool: CLRPool, tick: number): number {
   return Math.sqrt(Math.pow(1.0001, pool.ticks[tick].index))
 }
 
-function getTickLiquidity(pool: CLRPool, tick: number): number {
-  let L = 0
+function getTickLiquidity(pool: CLRPool, tick: number): BigNumber {
+  let L = BigNumber.from(0)
   for (let i = 0; i <= tick; ++i) {
     if (pool.ticks[i].index % 2 === 0) {
-      L += pool.ticks[i].DLiquidity
+      L = L.add(pool.ticks[i].DLiquidity)
     } else {
-      L -= pool.ticks[i].DLiquidity
+      L = L.sub(pool.ticks[i].DLiquidity)
     }
   }
   return L
@@ -78,7 +78,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
     tickSpacing,
     BigNumber.from(0),
     BigNumber.from(0),
-    0,
+    BigNumber.from(0),
     1,
     -1,
     []
@@ -87,7 +87,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   for (let i = 0; i < rangeNumber; ++i) {
     const [low, high] = getRandomRange(rnd, tickSpacing)
     const liquidity = getRandomExp(rnd, minLiquidity, maxLiquidity)
-    addLiquidity(pool, low, high, liquidity)
+    addLiquidity(pool, low, high, getBigNumber(liquidity))
   }
 
   pool.nearestTick = Math.floor(getRandomLin(rnd, 0, pool.ticks.length - 1))
