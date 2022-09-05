@@ -1,6 +1,6 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon } from '@sushiswap/ui'
-import { AMM_ENABLED_NETWORKS } from 'config'
+import { AMM_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
@@ -17,21 +17,26 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     getFarms(),
     getPoolCount(),
   ])
-
   return {
     props: {
       fallback: {
         [unstable_serialize({
           url: '/pool/api/pools',
           args: {
-            orderBy: 'liquidityUSD',
-            orderDirection: 'desc',
-            chainIds: AMM_ENABLED_NETWORKS,
+            sorting: [
+              {
+                id: 'liquidityUSD',
+                desc: true,
+              },
+            ],
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
             },
-          } as QuerycrossChainPairsArgs,
+            query: '',
+            extraQuery: '',
+          },
         })]: pairs,
         [`/pool/api/bundles`]: bundles,
         [`/pool/api/farms`]: farms,

@@ -85,13 +85,7 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const {
-    data: pools,
-    isLoading,
-    isError,
-  } = useQuery<Pair[]>(['/pool/api/pools', args], () => fetcher({ url: '/pool/api/pools', args }), {
-    staleTime: 20_000,
-  })
+  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const { data: poolCount } = useSWR<number>(
     '/pool/api/pools/count',
@@ -145,7 +139,7 @@ export const PoolsTable: FC = () => {
       <GenericTable<PairWithFarmRewards>
         table={table}
         columns={COLUMNS}
-        loading={isLoading && !isError}
+        loading={!pools && isValidating}
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}
