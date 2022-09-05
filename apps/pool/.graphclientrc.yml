@@ -25,6 +25,11 @@ additionalTypeDefs: |
     pageIndex: Int! = 0
     pageSize: Int! = 20
   }
+  extend type Factory {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Pair {
     volume7d: BigDecimal!
     chainId: BigInt!
@@ -58,6 +63,7 @@ additionalTypeDefs: |
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
     crossChainUser(id: String!, chainIds: [BigInt!]!, now: Int!): User!
+    crossChainFactories(chainIds: [BigInt!]!): [Factory!]!
   }
 
 additionalResolvers:

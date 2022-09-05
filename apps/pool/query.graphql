@@ -279,6 +279,15 @@ query CrossChainFarms($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
     }
   }
 }
+#
+query CrossChainFactories($chainIds: [BigInt!]!) {
+  crossChainFactories(chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    pairCount
+  }
+}
 
 # query UserSubscribedIncentives($id: ID!) {
 #   user(id: $id) {

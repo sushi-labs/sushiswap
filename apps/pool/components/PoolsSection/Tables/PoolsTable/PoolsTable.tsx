@@ -1,17 +1,17 @@
 import { ChainId } from '@sushiswap/chain'
-import { useBreakpoint } from '@sushiswap/ui'
-import { useFarmRewards } from '@sushiswap/wagmi'
+import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
-import { CHEF_TYPE_MAP } from '../../../../lib/constants'
 import { PairWithFarmRewards } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
+import { usePoolFarmRewardsContext } from '../../../PoolFarmRewardsProvider'
+import { useQuery } from 'wagmi'
 
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
@@ -68,6 +68,7 @@ const fetcher = ({
 }
 
 export const PoolsTable: FC = () => {
+  const { getRewardsForPair } = usePoolFarmRewardsContext()
   const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -84,21 +85,34 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
-  const { data: rewards } = useFarmRewards()
+  const {
+    data: pools,
+    isLoading,
+    isError,
+  } = useQuery<Pair[]>(['/pool/api/pools', args], () => fetcher({ url: '/pool/api/pools', args }), {
+    staleTime: 20_000,
+  })
+
+  const { data: poolCount } = useSWR<number>(
+    '/pool/api/pools/count',
+    (url) => fetch(url).then((response) => response.json()),
+    {}
+  )
 
   const data: PairWithFarmRewards[] = useMemo(() => {
     return (
-      pools?.map((pool) => ({
-        ...pool,
-        incentives: rewards?.[pool.chainId]?.farms?.[pool.id]?.incentives || [],
-        farmId: rewards?.[pool.chainId]?.farms?.[pool.id]?.id,
-        chefType: rewards?.[pool.chainId]?.farms[pool.id]?.chefType
-          ? CHEF_TYPE_MAP[rewards?.[pool.chainId]?.farms[pool.id]?.chefType]
-          : undefined,
-      })) || []
+      pools?.map((pool) => {
+        const { incentives, farmId, chefType } = getRewardsForPair(pool)
+
+        return {
+          ...pool,
+          incentives: incentives || [],
+          farmId,
+          chefType,
+        }
+      }) || []
     )
-  }, [pools, rewards])
+  }, [getRewardsForPair, pools])
 
   const table = useReactTable<PairWithFarmRewards>({
     data,
@@ -107,6 +121,7 @@ export const PoolsTable: FC = () => {
       sorting,
       columnVisibility,
     },
+    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -126,12 +141,25 @@ export const PoolsTable: FC = () => {
   }, [isMd, isSm])
 
   return (
-    <GenericTable<PairWithFarmRewards>
-      table={table}
-      columns={COLUMNS}
-      loading={isValidating && !error && !pools}
-      HoverElement={isMd ? PairQuickHoverTooltip : undefined}
-      placeholder="No pools found"
-    />
+    <>
+      <GenericTable<PairWithFarmRewards>
+        table={table}
+        columns={COLUMNS}
+        loading={isLoading && !isError}
+        HoverElement={isMd ? PairQuickHoverTooltip : undefined}
+        placeholder="No pools found"
+        pageSize={PAGE_SIZE}
+      />
+      <Table.Paginator
+        hasPrev={pagination.pageIndex > 0}
+        hasNext={pagination.pageIndex < table.getPageCount()}
+        onPrev={table.previousPage}
+        onNext={table.nextPage}
+        page={pagination.pageIndex}
+        onPage={table.setPageIndex}
+        pages={table.getPageCount()}
+        pageSize={PAGE_SIZE}
+      />
+    </>
   )
 }

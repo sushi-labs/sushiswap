@@ -9,6 +9,7 @@ interface GenericTableProps<C> {
   HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
+  pageSize: number
 }
 
 declare module '@tanstack/react-table' {
@@ -24,6 +25,7 @@ export const GenericTable = <T extends { id: string }>({
   HoverElement,
   loading,
   placeholder,
+  pageSize,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -31,7 +33,7 @@ export const GenericTable = <T extends { id: string }>({
     <>
       <LoadingOverlay show={showOverlay} />
       <Table.container>
-        <Table.table className="min-h-[312px]">
+        <Table.table style={{ minHeight: (pageSize + 1) * 52 }}>
           <Table.thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.thr key={headerGroup.id}>
@@ -122,7 +124,7 @@ export const GenericTable = <T extends { id: string }>({
               })}
             {!loading &&
               table.getRowModel().rows.length !== 0 &&
-              Array.from(Array(Math.max(5 - table.getRowModel().rows.length, 0))).map((el, index) => (
+              Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
                 <Table.tr key={index}>
                   {columns.map((column) => (
                     <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }} />
@@ -130,7 +132,7 @@ export const GenericTable = <T extends { id: string }>({
                 </Table.tr>
               ))}
             {loading &&
-              Array.from(Array(5)).map((el, index) => (
+              Array.from(Array(pageSize)).map((el, index) => (
                 <Table.tr key={index}>
                   {table.getVisibleFlatColumns().map((column) => {
                     return (

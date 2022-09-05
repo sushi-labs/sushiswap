@@ -19,6 +19,11 @@ const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Paginati
 }
 
 export const resolvers: Resolvers = {
+  Factory: {
+    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+  },
   Pair: {
     volume7d: (root, args, context, info) => root.volume7d || '0',
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
@@ -151,29 +156,58 @@ export const resolvers: Resolvers = {
         )
         .then((pools) => page(pools, args.pagination))
     },
-    crossChainBundles: async (root, args, context, info) =>
-      Promise.all(
-        args.chainIds.map((chainId) =>
-          context.Exchange.Query.bundles({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              chainName: chainName[chainId],
-              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-              subgraphHost: GRAPH_HOST[chainId],
-            },
-            info,
-          }).then((bundles) =>
-            bundles.map((bundle) => ({
-              ...bundle,
-              chainId,
-              chainName: chainName[chainId],
-            }))
-          )
-        )
-      ).then((bundles) => bundles.flat()),
+    crossChainBundles: async (root, args, context, info) => {
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.bundles({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((bundles) =>
+              bundles?.length > 0
+                ? bundles.map((bundle) => ({
+                    ...bundle,
+                    chainId,
+                    chainName: chainName[chainId],
+                  }))
+                : []
+            )
+          ),
+        ...args.chainIds
+          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Exchange.Query.bundles({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((bundles) =>
+              bundles?.length > 0
+                ? bundles.map((bundle) => ({
+                    ...bundle,
+                    chainId,
+                    chainName: chainName[chainId],
+                  }))
+                : []
+            )
+          ),
+      ]).then((bundles) => bundles.flat())
+    },
     crossChainUser: async (root, args, context, info) => {
       const transformer = (user, chainId) => {
         return {
@@ -249,6 +283,62 @@ export const resolvers: Resolvers = {
           { liquidityPositions: [] }
         )
       })
+    },
+    crossChainFactories: async (root, args, context, info) => {
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.factories({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((factories) => {
+              return factories?.length > 0
+                ? factories.map((factory) => ({
+                    ...factory,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                  }))
+                : []
+            })
+          ),
+        ...args.chainIds
+          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Exchange.Query.factories({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((factories) => {
+              return factories?.length > 0
+                ? factories.map((factory) => ({
+                    ...factory,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                  }))
+                : []
+            })
+          ),
+      ]).then((snapshots) => snapshots.flat())
     },
   },
 }

@@ -4,12 +4,37 @@ import { getUnixTime, subMonths, subYears } from 'date-fns'
 import { CrossChainFarmsQuery, Pagination, QuerycrossChainPairsArgs } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
+export const getPoolCount = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  return factories.reduce((sum, cur) => sum + +cur.pairCount, 0)
+}
+
+export const getFactories = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  return factories.reduce((acc, cur) => {
+    acc[cur.chainId] = cur
+    return acc
+  }, {})
+}
+
 export const getBundles = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
   const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
-    chainIds: AMM_ENABLED_NETWORKS,
+    chainIds: SUPPORTED_CHAIN_IDS,
   })
 
   return bundles.reduce((acc, cur) => {
@@ -18,7 +43,11 @@ export const getBundles = async () => {
   }, {})
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & { networks: string; where?: string; pagination: string }
+export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+  networks: string
+  where?: string
+  pagination: string
+}
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
@@ -30,7 +59,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       : undefined
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
-    const where = { liquidityUSD_gt: 5000, ...(query?.where && { ...JSON.parse(query.where) }) }
+    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
