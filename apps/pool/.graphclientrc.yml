@@ -3,10 +3,10 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/sushiswap-avalanche}
-  - name: Staking
-    handler:
-      graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
+  # - name: Staking
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
   - name: Bar
     handler:
       graphql:
@@ -25,6 +25,23 @@ additionalTypeDefs: |
     pageIndex: Int! = 0
     pageSize: Int! = 20
   }
+  type RewardToken {
+    address: String!
+    symbol: String!
+    decimals: Int!
+  }
+  type Inventive {
+    apr: BigDecimal!
+    rewardPerDay: BigDecimal!
+    rewardToken: RewardToken!
+  }
+  type Farm {
+    id: ID!
+    feeApy: BigDecimal!
+    incentives: [Inventive!]!
+    chefType: String!
+    poolType: String!
+  }
   extend type Factory {
     chainId: BigInt!
     chainName: String!
@@ -35,21 +52,24 @@ additionalTypeDefs: |
     chainId: BigInt!
     chainName: String!
     chainShortName: String!
+    farm: Farm
+    incentiveApr: BigDecimal!
+    feeApr: BigDecimal!
   }
   extend type Bundle {
     chainId: BigInt!
     chainName: String!
   }
-  extend type Farm {
-    chainId: BigInt!
-    chainName: String!
-  }
+  # extend type Farm {
+  #   chainId: BigInt!
+  #   chainName: String!
+  # }
   extend type User {
     chainId: BigInt!
     chainName: String!
   }
   extend type Query {
-    crossChainPair(id: String!, now: Int!, chainId: BigInt!): Pair!
+    crossChainPair(id: ID!, now: Int!, chainId: BigInt!): Pair!
     crossChainPairs(
       first: Int!,
       skip: Int! = 0, 
@@ -58,11 +78,12 @@ additionalTypeDefs: |
       orderBy: Pair_orderBy, 
       orderDirection: OrderDirection, 
       chainIds: [BigInt!]!, 
-      now: Int!
+      now: Int!,
+      block: Block_height
     ): [Pair!]!
     crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
-    crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
-    crossChainUser(id: String!, chainIds: [BigInt!]!, now: Int!): User!
+    # crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
+    crossChainUser(id: ID!, chainIds: [BigInt!]!, now: Int!, block: Block_height): User!
     crossChainFactories(chainIds: [BigInt!]!): [Factory!]!
   }
 

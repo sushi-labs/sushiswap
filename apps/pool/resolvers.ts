@@ -8,6 +8,7 @@ import {
 } from 'config'
 
 import { InputMaybe, Pagination, Resolvers } from '.graphclient'
+import { getAddress } from '@ethersproject/address'
 
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
   if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data
@@ -34,10 +35,10 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
-  Farm: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
-  },
+  // Farm: {
+  //   chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+  //   chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+  // },
   Query: {
     crossChainPair: async (root, args, context, info) => {
       return context.Exchange.Query.pair({
@@ -87,6 +88,8 @@ export const resolvers: Resolvers = {
       })
     },
     crossChainPairs: async (root, args, context, info) => {
+      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+
       const transformer = (pools, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
@@ -94,7 +97,15 @@ export const resolvers: Resolvers = {
                 if (i > 6) return previousValue
                 return previousValue + Number(currentValue.volumeUSD)
               }, 0)
-
+              const farm = farms?.[chainId]?.farms?.[pool.id]
+              // console.log(`Farm for pool ${pool.id}`, farm)
+              const feeApr = pool?.apr ?? 0
+              const incentiveApr =
+                farm?.incentives?.reduce((previousValue, currentValue) => {
+                  if (!previousValue) return Number(currentValue.apr)
+                  return previousValue + Number(currentValue.apr)
+                }, 0) ?? 0
+              const apr = Number(feeApr) + Number(incentiveApr)
               return {
                 ...pool,
                 volume7d,
@@ -102,6 +113,26 @@ export const resolvers: Resolvers = {
                 chainId,
                 chainName: chainName[chainId],
                 chainShortName: chainShortName[chainId],
+                apr: String(apr),
+                feeApr: String(feeApr),
+                incentiveApr: String(incentiveApr),
+                farm: farm
+                  ? {
+                      id: farm.id,
+                      feeApy: String(farm.feeApy),
+                      incentives: farm.incentives.map((incentive) => ({
+                        apr: String(incentive.apr),
+                        rewardPerDay: String(incentive.rewardPerDay),
+                        rewardToken: {
+                          address: incentive.rewardToken.address,
+                          symbol: incentive.rewardToken.symbol,
+                          decimals: Number(incentive.rewardToken.decimals),
+                        },
+                      })),
+                      chefType: String(farm.chefType),
+                      poolType: String(farm.poolType),
+                    }
+                  : null,
               }
             })
           : []
