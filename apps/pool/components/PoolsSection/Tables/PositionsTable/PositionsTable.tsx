@@ -33,7 +33,10 @@ export const PositionsTable: FC = () => {
     if (!user?.liquidityPositions) return []
     return user.liquidityPositions.map((el) => {
       const id = `${chainShortName[el.pair.chainId]}:${el.pair.id}`
-      const { incentives, farmId, chefType } = getRewardsForPair(el.pair)
+      const { incentives, farmId, chefType } = getRewardsForPair({
+        ...el.pair,
+        id,
+      })
 
       return {
         ...el.pair,
