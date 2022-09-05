@@ -10,9 +10,6 @@ interface PoolStats {
   pair: PairWithAlias
 }
 
-// TODO MAKE DYNAMIC
-const FEE_BPS = 0.0005
-
 export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
@@ -53,7 +50,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
           Fees (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(totals1d.volumeUSD * FEE_BPS)}
+          {formatUSD(totals1d.volumeUSD * (pair.swapFee / 10000))}
         </Typography>
         <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
           {volChange > 0 ? '+' : '-'}

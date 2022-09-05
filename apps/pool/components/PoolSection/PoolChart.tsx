@@ -29,9 +29,6 @@ enum PoolChartPeriod {
   All,
 }
 
-// TODO MAKE DYNAMIC
-const FEE_BPS = 0.0005
-
 const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.Day]: 86400 * 1000,
   [PoolChartPeriod.Week]: 604800 * 1000,
@@ -55,7 +52,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           acc[1].push(
             Number(
               chartType === PoolChartType.Fees
-                ? cur.volumeUSD * FEE_BPS
+                ? cur.volumeUSD * (pair.swapFee / 10000)
                 : chartType === PoolChartType.Volume
                 ? cur.volumeUSD
                 : cur.liquidityUSD
@@ -68,7 +65,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, chartType])
+  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, pair.swapFee, chartType])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -78,11 +75,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
       valueNodes[0].innerHTML = formatUSD(value)
       if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * FEE_BPS)
+        valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000))
       }
       nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
     },
-    [chartType]
+    [chartType, pair.swapFee]
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -258,7 +255,8 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           {chartType === PoolChartType.Volume && (
             <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * FEE_BPS)}</span> earned
+              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * (pair.swapFee / 10000))}</span>{' '}
+              earned
             </span>
           )}
         </Typography>
