@@ -93,18 +93,17 @@ export const resolvers: Resolvers = {
       const transformer = (pools, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
-              const volume7d = pool.daySnapshots?.reduce((previousValue, currentValue, i) => {
-                if (i > 6) return previousValue
-                return previousValue + Number(currentValue.volumeUSD)
-              }, 0)
+              const volume7d = pool.daySnapshots
+                ?.slice(0, 6)
+                ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
               const farm = farms?.[chainId]?.farms?.[pool.id]
               // console.log(`Farm for pool ${pool.id}`, farm)
-              const feeApr = pool?.apr ?? 0
+              const feeApr = Number(pool?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? pool?.apr : 0
               const incentiveApr =
-                farm?.incentives?.reduce((previousValue, currentValue) => {
-                  if (!previousValue) return Number(currentValue.apr)
-                  return previousValue + Number(currentValue.apr)
-                }, 0) ?? 0
+                farm?.incentives?.reduce(
+                  (previousValue, currentValue) => previousValue + Number(currentValue.apr),
+                  0
+                ) ?? 0
               const apr = Number(feeApr) + Number(incentiveApr)
               return {
                 ...pool,

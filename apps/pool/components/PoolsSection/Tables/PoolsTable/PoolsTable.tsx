@@ -73,7 +73,7 @@ export const PoolsTable: FC = () => {
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'apr', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,

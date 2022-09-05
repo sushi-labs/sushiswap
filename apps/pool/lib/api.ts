@@ -60,7 +60,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
-    const orderBy = query?.orderBy || 'liquidityUSD'
+    const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
