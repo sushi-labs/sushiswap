@@ -5,8 +5,10 @@ import { FC } from 'react'
 import { useTokensFromPair } from '../../../lib/hooks'
 import { ICON_SIZE } from './contants'
 import { CellProps } from './types'
+import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 
 export const PairNameCell: FC<CellProps> = ({ row }) => {
+  const { isFarm } = usePoolFarmRewards(row)
   const { token0, token1 } = useTokensFromPair(row)
 
   return (
@@ -28,7 +30,7 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
           </div>
         </Typography>
         <Typography variant="xxs" className="text-slate-400">
-          SushiSwap Farm
+          {isFarm ? 'Farm' : 'Pool'}
         </Typography>
       </div>
     </div>
