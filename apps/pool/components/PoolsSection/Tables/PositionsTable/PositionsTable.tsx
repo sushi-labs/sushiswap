@@ -74,7 +74,7 @@ export const PositionsTable: FC = () => {
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
       loading={isLoading && !isError}
       placeholder="No positions found"
-      pageSize={5}
+      pageSize={Math.max(liquidityPositions?.length, 5)}
     />
   )
 }
