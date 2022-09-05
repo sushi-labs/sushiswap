@@ -100,7 +100,7 @@ const Articles: FC = () => {
                     >
                       <span className="text-xs sm:text-sm">
                         {selectedLevel
-                          ? levels?.find(({ id }) => id === selectedLevel).attributes.name ?? 'Select Level'
+                          ? levels?.find(({ id }) => id === selectedLevel).attributes?.name ?? 'Select Level'
                           : 'Select Level'}
                       </span>
                       <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
