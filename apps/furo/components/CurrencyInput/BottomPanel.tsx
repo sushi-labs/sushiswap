@@ -12,7 +12,7 @@ interface BottomPanel {
 export const BottomPanel: FC<BottomPanel> = ({ loading, amount, label, onChange }) => {
   return (
     <div className="flex justify-between">
-      <Typography variant="xs" weight={500} className="text-slate-500">
+      <Typography variant="xs" weight={500} className="text-slate-400">
         {label}
       </Typography>
       {loading ? (
@@ -21,7 +21,7 @@ export const BottomPanel: FC<BottomPanel> = ({ loading, amount, label, onChange 
         <Typography
           variant="xs"
           weight={500}
-          className="text-slate-500"
+          className="text-slate-400"
           onClick={() => (amount && onChange ? onChange(amount?.toExact()) : undefined)}
         >
           {amount?.toSignificant(6)} {amount?.currency.symbol}
