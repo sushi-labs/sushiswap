@@ -89,124 +89,117 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   return (
     <>
       <BlogSeo seo={seo} />
-      <div className="flex flex-col">
-        <Hero />
-        <section className="pt-40 pb-24">
-          <Container maxWidth="6xl" className={classNames('flex flex-col gap-24 mx-auto', defaultSidePadding)}>
-            <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden">
-              <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
-                <Tab.List>
-                  {levels.map(({ id, attributes }) => (
-                    <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => handleSelectLevel(id)}>
-                      <Typography variant="xs" weight={500}>
-                        {attributes.description}
-                      </Typography>
-                    </Tab>
-                  ))}
-                </Tab.List>
-              </Tab.Group>
-            </div>
-            <div className="flex min-w-full gap-6 -mt-20 overflow-x-auto md:mt-0">
-              <LevelCard
-                name="Beginner"
-                title="Getting started with Sushi: Tutorials & Product Explainers"
-                chipLabel="For Beginner users"
-                imgSrc=""
-              />
-              <LevelCard
-                name="Advanced"
-                title="Deepdive into Sushi: Strategies & Product Features"
-                chipLabel="For Advanced users"
-                imgSrc=""
-              />
-              <LevelCard
-                name="Builders"
-                title="Building on Sushi: Technical Documentation"
-                chipLabel="For Builders"
-                imgSrc=""
-              />
-            </div>
-
-            <div>
-              <div className="flex flex-col">
-                <Typography variant="h3" weight={700}>
-                  Choose Topic:
-                </Typography>
-                <div className="flex flex-wrap gap-8 mt-8">
-                  <Categories
-                    selected={selectedCategory}
-                    onSelect={handleSelectCategory}
-                    categories={categories || []}
-                  />
-                </div>
-                <div className="items-baseline hidden gap-8 mt-16 md:flex">
-                  <Typography variant="h3" weight={700}>
-                    Difficulty:
+      <Hero />
+      <Container maxWidth="6xl" className="flex flex-col gap-12 pt-20 pb-16 mx-auto sm:gap-24 sm:pb-24 sm:pt-40">
+        <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden px-6 sm:pl-4 sm:pr-4">
+          <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
+            <Tab.List>
+              {levels.map(({ id, attributes }) => (
+                <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => handleSelectLevel(id)}>
+                  <Typography variant="xs" weight={500}>
+                    {attributes.description}
                   </Typography>
-                  <div className="flex flex-wrap gap-6">
-                    {levels.map(({ id, attributes }) => (
-                      <Button
-                        size="sm"
-                        color={selectedLevel === id ? 'blue' : 'gray'}
-                        onClick={() => handleSelectLevel(id)}
-                        variant="outlined"
-                        key={attributes.name}
-                        className="!text-xs rounded-lg"
-                      >
-                        {attributes.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+                </Tab>
+              ))}
+            </Tab.List>
+          </Tab.Group>
+        </div>
 
-            <div>
-              {articleList && (
-                <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
-                  <ArticleList
-                    articles={articleList as ArticleEntity[]}
-                    loading={loading}
-                    render={(article, i) => (
-                      <Card article={article} isBig={!i} key={`article__left__${article?.attributes?.slug}`} />
-                    )}
-                  />
-                </div>
-              )}
+        <div className="flex min-w-full gap-6 px-6 -mt-6 overflow-x-auto md:mt-0 sm:pl-4 sm:pr-4">
+          <LevelCard
+            name="Beginner"
+            title="Getting started with Sushi: Tutorials & Product Explainers"
+            chipLabel="For Beginner users"
+            imgSrc=""
+          />
+          <LevelCard
+            name="Advanced"
+            title="Deepdive into Sushi: Strategies & Product Features"
+            chipLabel="For Advanced users"
+            imgSrc=""
+          />
+          <LevelCard
+            name="Builders"
+            title="Building on Sushi: Technical Documentation"
+            chipLabel="For Builders"
+            imgSrc=""
+          />
+        </div>
 
-              <div className="flex justify-center mt-14">
+        <div className={classNames('flex flex-col', defaultSidePadding)}>
+          <Typography variant="h3" weight={700}>
+            Choose Topic:
+          </Typography>
+          <div className="flex flex-wrap mt-6 sm:mt-8 gap-y-3 gap-x-4 sm:gap-x-8 sm:gap-y-6">
+            <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
+          </div>
+          <div className="items-baseline hidden gap-8 mt-16 md:flex">
+            <Typography variant="h3" weight={700}>
+              Difficulty:
+            </Typography>
+            <div className="flex flex-wrap gap-6">
+              {levels.map(({ id, attributes }) => (
                 <Button
-                  as="a"
-                  href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')}
-                  color="gray"
+                  size="sm"
+                  color={selectedLevel === id ? 'blue' : 'gray'}
+                  onClick={() => handleSelectLevel(id)}
                   variant="outlined"
-                  size="md"
-                  className="rounded-full"
+                  key={attributes.name}
+                  className="!text-xs rounded-lg"
                 >
-                  View All
-                  <PlusCircleIcon width={20} height={20} />
+                  {attributes.name}
                 </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className={defaultSidePadding}>
+          {articleList && (
+            <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
+              <ArticleList
+                articles={articleList as ArticleEntity[]}
+                loading={loading}
+                render={(article, i) => (
+                  <Card article={article} isBig={!i} key={`article__left__${article?.attributes?.slug}`} />
+                )}
+              />
+            </div>
+          )}
+
+          <div className="flex justify-center mt-14">
+            <Button
+              as="a"
+              href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')}
+              color="gray"
+              variant="outlined"
+              size="md"
+              className="rounded-full"
+            >
+              View All
+              <PlusCircleIcon width={20} height={20} />
+            </Button>
+          </div>
+        </div>
+
+        <div className={defaultSidePadding}>
+          <Typography variant="h3" weight={700}>
+            Latest Releases
+          </Typography>
+          {latestReleases && (
+            <div className="overflow-x-auto">
+              <div className="flex gap-6 mt-6 sm:mt-12 transition-all sm:gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 w-[798px] sm:w-full">
+                <ArticleList
+                  articles={latestReleases as ArticleEntity[]}
+                  loading={loading}
+                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                  skeletonAmount={latestReleases.length}
+                />
               </div>
             </div>
-
-            <div>
-              <Typography variant="h3" weight={700}>
-                Latest Releases
-              </Typography>
-              {latestReleases && (
-                <div className="grid grid-cols-1 gap-4 mt-12 transition-all sm:grid-cols-2 md:grid-cols-3">
-                  <ArticleList
-                    articles={latestReleases as ArticleEntity[]}
-                    loading={loading}
-                    render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
-                    skeletonAmount={latestReleases.length}
-                  />
-                </div>
-              )}
-            </div>
-          </Container>
-        </section>
-      </div>
+          )}
+        </div>
+      </Container>
     </>
   )
 }
