@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
         [unstable_serialize({
           url: '/pool/api/pools',
           args: {
-            orderBy: 'apr',
+            orderBy: 'liquidityUSD',
             orderDirection: 'desc',
             chainIds: AMM_ENABLED_NETWORKS,
             pagination: {
