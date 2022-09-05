@@ -1,7 +1,7 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 
-import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
+import { CrossChainFarmsQuery, Pagination, QuerycrossChainPairsArgs } from '../.graphclient'
 import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getBundles = async () => {
@@ -18,15 +18,18 @@ export const getBundles = async () => {
   }, {})
 }
 
-export type GetPoolsQuery = Omit<QuerypairsArgs, 'where'> & { networks: string; where?: string }
+export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & { networks: string; where?: string; pagination: string }
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const { getBuiltGraphSDK } = await import('../.graphclient')
     const sdk = getBuiltGraphSDK()
 
-    const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
-    const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
+    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+      ? JSON.parse(query?.pagination)
+      : undefined
+    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     const where = { liquidityUSD_gt: 5000, ...(query?.where && { ...JSON.parse(query.where) }) }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
@@ -35,6 +38,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
+      pagination,
       where,
       orderBy,
       orderDirection,

@@ -21,6 +21,10 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
 
 additionalTypeDefs: |
+  input Pagination {
+    pageIndex: Int! = 0
+    pageSize: Int! = 20
+  }
   extend type Pair {
     volume7d: BigDecimal!
     chainId: BigInt!
@@ -44,6 +48,7 @@ additionalTypeDefs: |
     crossChainPairs(
       first: Int!,
       skip: Int! = 0, 
+      pagination: Pagination,
       where: Pair_filter, 
       orderBy: Pair_orderBy, 
       orderDirection: OrderDirection, 

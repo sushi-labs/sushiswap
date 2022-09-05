@@ -7,7 +7,16 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from 'config'
 
-import { Resolvers } from '.graphclient'
+import { InputMaybe, Pagination, Resolvers } from '.graphclient'
+
+const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
+  if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data
+
+  const start = pagination.pageIndex * pagination.pageSize
+  const end = (pagination.pageIndex + 1) * pagination.pageSize
+
+  return data.slice(start, end) as T
+}
 
 export const resolvers: Resolvers = {
   Pair: {
@@ -128,10 +137,9 @@ export const resolvers: Resolvers = {
               info,
             }).then((pools) => transformer(pools, chainId))
           ),
-      ]).then((pools) =>
-        pools
-          .flat()
-          .sort((a, b) => {
+      ])
+        .then((pools) =>
+          pools.flat().sort((a, b) => {
             if (args.orderDirection === 'asc') {
               return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
             } else if (args.orderDirection === 'desc') {
@@ -140,8 +148,8 @@ export const resolvers: Resolvers = {
 
             return 0
           })
-          .slice(args.skip, args.skip + args.first)
-      )
+        )
+        .then((pools) => page(pools, args.pagination))
     },
     crossChainBundles: async (root, args, context, info) =>
       Promise.all(
