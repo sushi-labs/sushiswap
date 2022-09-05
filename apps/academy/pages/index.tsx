@@ -1,9 +1,8 @@
 import { PlusCircleIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container, Tab, Typography } from '@sushiswap/ui'
+import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
 import { LevelCard } from 'components/LevelCard'
 import { BlogSeo } from 'components/Seo/BlogSeo'
-import { SubscribePanel } from 'components/SubscribePanel'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -11,6 +10,8 @@ import useSWR, { SWRConfig } from 'swr'
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
 import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories, getLevels } from '../lib/api'
+
+export const defaultSidePadding = 'px-6 sm:px-4'
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 5 } })
@@ -91,7 +92,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
       <div className="flex flex-col">
         <Hero />
         <section className="pt-40 pb-24">
-          <Container maxWidth="6xl" className="flex flex-col gap-24 mx-auto">
+          <Container maxWidth="6xl" className={classNames('flex flex-col gap-24 mx-auto', defaultSidePadding)}>
             <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden">
               <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
                 <Tab.List>
@@ -203,7 +204,6 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 </div>
               )}
             </div>
-            <SubscribePanel />
           </Container>
         </section>
       </div>

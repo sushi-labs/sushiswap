@@ -10,22 +10,25 @@ import { Image } from './Image'
 interface Pane {
   article: ArticleEntity
   isBig?: boolean
-  className?: string
 }
 
-export const Pane: FC<Pane> = ({ article, isBig, className }) => {
+export const Pane: FC<Pane> = ({ article, isBig }) => {
   const authors: AuthorEntity[] | undefined = article.attributes?.authors?.data
   const authorName: string | undefined = authors?.length > 1 ? 'Multiple Owners' : authors[0]?.attributes.name
 
   return (
     <div
       className={classNames(
-        className,
         'w-full relative group',
-        isBig ? 'h-[340px] col-span-2 sm:!flex gap-6' : 'h-[480px]'
+        isBig ? 'h-[340px] sm:col-span-2 sm:flex gap-6' : 'h-[340px] sm:h-[480px]'
       )}
     >
-      <div className={classNames('relative rounded-xl overflow-hidden', isBig ? 'w-[55%] h-full' : 'h-[210px]')}>
+      <div
+        className={classNames(
+          'relative rounded-xl overflow-hidden',
+          isBig ? 'sm:w-[55%] sm:h-full h-[156px]' : 'sm:h-[210px] h-[156px]'
+        )}
+      >
         {article?.attributes?.cover?.data && (
           <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
             <Image
@@ -41,41 +44,46 @@ export const Pane: FC<Pane> = ({ article, isBig, className }) => {
           </a>
         )}
       </div>
-      <div className={classNames('flex flex-col gap-5', isBig ? 'w-[45%]' : 'mt-5')}>
-        <div className="flex items-center justify-between gap-1 lg:gap-4 lg:justify-start">
+      <div className={classNames('flex flex-col gap-3 sm:gap-5', isBig ? 'sm:w-[45%] mt-4 sm:mt-0' : 'mt-4 sm:mt-5')}>
+        <div className="flex items-center justify-start gap-3 lg:gap-4">
           <div className="flex p-1 rounded-full bg-slate-200 items-center gap-1.5 pr-3">
-            <Chip label="Furo" />
-            <Typography variant="sm" className="text-black" weight={500}>
-              5 min read
-            </Typography>
+            <Chip label="Furo" size="sm" />
+            <span className="text-xs font-medium text-black sm:text-sm">5 min read</span>
           </div>
           <div className="flex gap-1">
             <CircleLabyrinthIcon />
-            <Typography variant="xs" weight={500}>
-              Beginner
-            </Typography>
+            <span className="text-xs font-medium">Beginner</span>
           </div>
         </div>
-        <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
+        <div>
+          <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
+            <span
+              className={classNames(
+                'text-slate-200 font-bold sm:font-medium',
+                isBig
+                  ? 'leading-8 lg:leading-10 text-base sm:text-2xl lg:text-3xl'
+                  : 'leading-6 lg:leading-8 text-base sm:text-xl lg:text-2xl'
+              )}
+            >
+              {article?.attributes?.title}
+            </span>
+          </a>
           <span
             className={classNames(
-              'text-slate-200 font-medium',
-              isBig ? 'leading-8 lg:leading-10 text-2xl lg:text-3xl' : 'leading-6 lg:leading-8 text-xl lg:text-2xl'
+              'text-xs text-slate-400 line-clamp-4 sm:mt-5 sm:text-sm',
+              isBig ? 'sm:line-clamp-4 line-clamp-2' : 'line-clamp-2'
             )}
           >
-            {article?.attributes?.title}
+            {article?.attributes?.description}
           </span>
-        </a>
-        <Typography variant="sm" className="leading-6 text-slate-400 line-clamp-4">
-          {article?.attributes?.description}
-        </Typography>
+        </div>
         <div className="absolute bottom-0 flex items-center gap-4">
           {authors?.length > 0 && (
-            <div className="flex -space-x-6">
+            <div className="flex -space-x-4 lg:-space-x-6">
               {authors.slice(0, 4).map((author, i, a) => (
                 <div
                   key={author.id}
-                  className="relative w-8 h-8 overflow-hidden rounded-full lg:h-12 lg:w-12 ring-2 ring-white"
+                  className="relative overflow-hidden rounded-full w-9 h-9 lg:h-12 lg:w-12 ring-2 ring-white"
                   style={{ zIndex: (a.length - i) * 10 }}
                 >
                   <Image image={author?.attributes.avatar.data} width={64} height={64} />
@@ -84,11 +92,7 @@ export const Pane: FC<Pane> = ({ article, isBig, className }) => {
             </div>
           )}
           <div className="flex flex-col gap-1.5">
-            {authorName && (
-              <Typography variant="sm" weight={500}>
-                {authorName}
-              </Typography>
-            )}
+            {authorName && <span className="text-xs font-medium sm:text-sm">{authorName}</span>}
             <Typography variant="xxs" className="text-slate-400 line-clamp-2">
               {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
             </Typography>
