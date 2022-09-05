@@ -116,7 +116,7 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
   }, [_harvest])
 
   const values = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: pendingRewards })
-  console.log(values)
+
   return (
     <Context.Provider
       value={useMemo(
