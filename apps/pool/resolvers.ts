@@ -89,15 +89,15 @@ export const resolvers: Resolvers = {
         chainName: chainName[args.chainId],
         chainShortName: chainShortName[args.chainId],
         volume7d,
-        apr: String(apr),
-        feeApr: String(feeApr),
+        apr: String(apr / 100),
+        feeApr: String(feeApr / 100),
         incentiveApr: String(incentiveApr),
         farm: farm
           ? {
               id: farm.id,
-              feeApy: String(farm.feeApy),
+              feeApy: String(farm.feeApy / 100),
               incentives: farm.incentives.map((incentive) => ({
-                apr: String(incentive.apr),
+                apr: String(incentive.apr / 100),
                 rewardPerDay: String(incentive.rewardPerDay),
                 rewardToken: {
                   address: incentive.rewardToken.address,
@@ -138,15 +138,15 @@ export const resolvers: Resolvers = {
                 chainId,
                 chainName: chainName[chainId],
                 chainShortName: chainShortName[chainId],
-                apr: String(apr),
-                feeApr: String(feeApr),
-                incentiveApr: String(incentiveApr),
+                apr: String(apr / 100),
+                feeApr: String(feeApr / 100),
+                incentiveApr: String(incentiveApr / 100),
                 farm: farm
                   ? {
                       id: farm.id,
-                      feeApy: String(farm.feeApy),
+                      feeApy: String(farm.feeApy / 100),
                       incentives: farm.incentives.map((incentive) => ({
-                        apr: String(incentive.apr),
+                        apr: String(incentive.apr / 100),
                         rewardPerDay: String(incentive.rewardPerDay),
                         rewardToken: {
                           address: incentive.rewardToken.address,
@@ -300,15 +300,15 @@ export const resolvers: Resolvers = {
                       chainId,
                       chainName: chainName[chainId],
                       chainShortName: chainShortName[chainId],
-                      apr: String(apr),
-                      feeApr: String(feeApr),
-                      incentiveApr: String(incentiveApr),
+                      apr: String(apr / 100),
+                      feeApr: String(feeApr / 100),
+                      incentiveApr: String(incentiveApr / 100),
                       farm: farm
                         ? {
                             id: farm.id,
-                            feeApy: String(farm.feeApy),
+                            feeApy: String(farm.feeApy / 100),
                             incentives: farm.incentives.map((incentive) => ({
-                              apr: String(incentive.apr),
+                              apr: String(incentive.apr / 100),
                               rewardPerDay: String(incentive.rewardPerDay),
                               rewardToken: {
                                 address: incentive.rewardToken.address,
