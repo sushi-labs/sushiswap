@@ -149,7 +149,9 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
-    liquidity
+    swapFee
+    twapEnabled
+    volume7d
     source
     token0 {
       name
@@ -165,10 +167,26 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: BigInt!) {
     }
     liquidityNative
     liquidityUSD
-    volumeUSD
     apr
-    swapFee
-    twapEnabled
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date

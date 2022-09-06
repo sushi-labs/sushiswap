@@ -3,13 +3,11 @@ import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { Pair } from '../../../.graphclient'
-import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
+import { incentiveRewardToToken } from '../../../lib/functions'
 
 export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
-  const { incentives, rewardAPR, totalAPR, feeAPR, isFarm } = usePoolFarmRewards(pair)
-
   return (
     <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
       <div className="p-5 flex flex-col gap-4">
@@ -18,29 +16,29 @@ export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
             Total APR:
           </Typography>
           <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-            {formatPercent(totalAPR)}
+            {formatPercent(pair.apr)}
           </Typography>
-          {isFarm && (
+          {pair.farm && (
             <>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Fee APR:
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-                {formatPercent(feeAPR)}
+                {formatPercent(pair.feeApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Reward APR:
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300 text-right">
-                {formatPercent(rewardAPR)}
+                {formatPercent(pair.incentiveApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Farming Rewards:
               </Typography>
-              <div className={classNames(incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
+              <div className={classNames(pair.farm.incentives?.length === 2 ? '-mr-2' : '', 'flex justify-end ')}>
                 <UICurrency.IconList iconWidth={16} iconHeight={16}>
-                  {incentives?.map((incentive, index) => (
-                    <UICurrency.Icon key={index} currency={incentive.rewardToken} />
+                  {pair.farm.incentives?.map((incentive, index) => (
+                    <UICurrency.Icon key={index} currency={incentiveRewardToToken(pair.chainId, incentive)} />
                   ))}
                 </UICurrency.IconList>
               </div>
@@ -53,7 +51,7 @@ export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
       </div>
       <div className="p-5 space-y-5">
         <AddSectionMyPositionUnstaked />
-        {isFarm && <AddSectionMyPositionStaked />}
+        {pair.farm && <AddSectionMyPositionStaked />}
       </div>
     </div>
   )

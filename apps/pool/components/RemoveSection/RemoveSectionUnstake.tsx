@@ -10,9 +10,9 @@ import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
+import { CHEF_TYPE_MAP } from '../../lib/constants'
 
 interface AddSectionStakeProps {
   pair: Pair
@@ -25,9 +25,9 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
     fetch(url).then((response) => response.json())
   )
 
-  const rewards = usePoolFarmRewards(data?.pair)
-  if (!data || !rewards?.chefType || !isMounted) return <></>
+  if (!data) return <></>
   const { pair } = data
+  if (!pair.farm?.chefType || !isMounted) return <></>
 
   return (
     <Transition
@@ -40,7 +40,7 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_RemoveSectionUnstake pair={pair} chefType={rewards.chefType} />
+      <_RemoveSectionUnstake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} />
     </Transition>
   )
 }

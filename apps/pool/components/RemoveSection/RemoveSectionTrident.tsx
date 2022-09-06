@@ -29,7 +29,6 @@ import {
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -38,7 +37,6 @@ interface RemoveSectionTridentProps {
 }
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards(pair)
   const { address } = useAccount()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()
@@ -198,7 +196,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     () => (
       <div>
         <RemoveSectionWidget
-          isFarm={isFarm}
+          isFarm={!!pair.farm}
           chainId={pair.chainId}
           percentage={percentage}
           token0={token0}
@@ -268,10 +266,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     [
       error,
       execute,
-      isFarm,
       isMounted,
       isWritePending,
       pair.chainId,
+      pair.farm,
       percentage,
       poolState,
       slpAmountToRemove,

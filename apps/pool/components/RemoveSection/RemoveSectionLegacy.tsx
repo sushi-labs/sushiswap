@@ -21,7 +21,6 @@ import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, use
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useSettings } from '../../lib/state/storage'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -30,7 +29,6 @@ interface RemoveSectionLegacyProps {
 }
 
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards(pair)
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
@@ -206,7 +204,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     return (
       <div>
         <RemoveSectionWidget
-          isFarm={isFarm}
+          isFarm={!!pair.farm}
           chainId={pair.chainId}
           percentage={percentage}
           token0={token0}
@@ -270,10 +268,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     balance,
     error,
     execute,
-    isFarm,
     isMounted,
     isWritePending,
     pair.chainId,
+    pair.farm,
     percentage,
     percentageEntity,
     poolState,

@@ -123,20 +123,6 @@ export const getSushiBar = async () => {
   return xsushi
 }
 
-export const getFarms = async (query?: CrossChainFarmsQuery) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
-  const { farms } = await sdk.CrossChainFarms({
-    chainIds: STAKING_ENABLED_NETWORKS,
-    first: 20,
-    skip: 0,
-    ...query,
-  })
-
-  return farms
-}
-
 type GetUserQuery = Partial<{
   id: string
   networks: string

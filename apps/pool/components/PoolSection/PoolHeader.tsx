@@ -9,14 +9,12 @@ import { FC, useMemo } from 'react'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
 interface PoolHeader {
   pair: PairWithAlias
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
-  const { rewardAPR, totalAPR } = usePoolFarmRewards(pair)
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const price = useMemo(() => new Price({ baseAmount: reserve0, quoteAmount: reserve1 }), [reserve0, reserve1])
@@ -58,15 +56,15 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           <AppearOnMount>
             <div className="flex flex-col gap-1">
               <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-                APR: <span className="font-semibold text-slate-50">{formatPercent(totalAPR)}</span>
-                {rewardAPR > 0 ? <FarmRewardsAvailableTooltip /> : ''}
+                APR: <span className="font-semibold text-slate-50">{formatPercent(pair.apr)}</span>
+                {pair.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
               </Typography>
               <div className="flex gap-2">
                 <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                  Rewards: {formatPercent(rewardAPR)}
+                  Rewards: {formatPercent(pair.incentiveApr)}
                 </Typography>
                 <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                  Fees: {formatPercent(pair.apr / 100)}
+                  Fees: {formatPercent(pair.feeApr / 100)}
                 </Typography>
               </div>
             </div>

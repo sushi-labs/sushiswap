@@ -5,18 +5,16 @@ import { FC } from 'react'
 
 import { Pair } from '../../.graphclient'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 
 interface PoolMyRewardsProps {
   pair: Pair
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards(pair)
   const { pendingRewards, rewardTokens, harvest, isError, values, isLoading, error } = usePoolPositionRewards()
   const { isLg } = useBreakpoint('lg')
 
-  if (!isLg || !isFarm) return <></>
+  if (!isLg || !pair.farm) return <></>
 
   return (
     <div className="flex flex-col gap-3">

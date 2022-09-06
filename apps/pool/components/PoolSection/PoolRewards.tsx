@@ -3,12 +3,10 @@ import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { Pair } from '../../.graphclient'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
+import { incentiveRewardToToken } from '../../lib/functions'
 
 export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
-  const { totalAPR, incentives, isFarm } = usePoolFarmRewards(pair)
-
-  if (!isFarm) return <></>
+  if (!pair.farm) return <></>
 
   return (
     <>
@@ -19,7 +17,9 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
           </Typography>
           <Typography variant="sm" weight={400} className="text-slate-400">
             Reward APR:{' '}
-            <span className="font-semibold text-slate-50">{totalAPR > 0 ? formatPercent(totalAPR) : 'n/a'}</span>
+            <span className="font-semibold text-slate-50">
+              {pair.incentiveApr > 0 ? formatPercent(pair.incentiveApr) : 'n/a'}
+            </span>
           </Typography>
         </div>
         <Table.container className="w-full">
@@ -35,12 +35,16 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
               </Table.thr>
             </Table.thead>
             <Table.tbody>
-              {incentives ? (
-                incentives.map((incentive, idx) => (
+              {pair.farm.incentives ? (
+                pair.farm.incentives.map((incentive, idx) => (
                   <Table.tr key={idx}>
                     <Table.td>
                       <div className="flex gap-3 items-center">
-                        <Currency.Icon currency={incentive.rewardToken} width={24} height={24} />
+                        <Currency.Icon
+                          currency={incentiveRewardToToken(pair.chainId, incentive)}
+                          width={24}
+                          height={24}
+                        />
                         <Typography weight={600} variant="sm" className="text-slate-50">
                           {incentive.rewardToken.symbol}
                         </Typography>

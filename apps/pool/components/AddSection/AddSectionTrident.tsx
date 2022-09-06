@@ -6,12 +6,10 @@ import { FC, useCallback, useMemo, useState } from 'react'
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { AddSectionReviewModalTrident } from './AddSectionReviewModalTrident'
 import { AddSectionWidget } from './AddSectionWidget'
 
 export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards(pair)
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
@@ -72,7 +70,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
       >
         {({ isWritePending, setOpen }) => (
           <AddSectionWidget
-            isFarm={isFarm}
+            isFarm={!!pair.farm}
             chainId={pair.chainId}
             input0={input0}
             input1={input1}
@@ -112,11 +110,11 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
     [
       input0,
       input1,
-      isFarm,
       isMounted,
       onChangeToken0TypedAmount,
       onChangeToken1TypedAmount,
       pair.chainId,
+      pair.farm,
       pair.id,
       parsedInput0,
       parsedInput1,

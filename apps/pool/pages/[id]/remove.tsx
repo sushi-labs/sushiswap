@@ -9,7 +9,6 @@ import useSWR, { SWRConfig } from 'swr'
 import {
   AddSectionMyPosition,
   Layout,
-  PoolFarmRewardsProvider,
   PoolPositionProvider,
   PoolPositionStakedProvider,
   RemoveSectionLegacy,
@@ -61,38 +60,36 @@ const _Remove = () => {
   const { pair } = data
 
   return (
-    <PoolFarmRewardsProvider>
-      <PoolPositionProvider pair={pair}>
-        <PoolPositionStakedProvider pair={pair}>
-          <Layout breadcrumbs={LINKS(router.query.id as string)}>
-            <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
-              <div className="hidden md:block" />
-              <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
-                <RemoveSectionUnstake poolAddress={pair.id} />
-                {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
-                <Container className="flex justify-center">
-                  <Link.External
-                    href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
-                    className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
-                  >
-                    <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
-                      Learn more about liquidity and yield farming
-                      <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
-                    </Typography>
-                  </Link.External>
-                </Container>
-              </div>
-              <div className="order-1 sm:order-3">
-                <AppearOnMount>
-                  <AddSectionMyPosition pair={pair} />
-                </AppearOnMount>
-              </div>
+    <PoolPositionProvider pair={pair}>
+      <PoolPositionStakedProvider pair={pair}>
+        <Layout breadcrumbs={LINKS(router.query.id as string)}>
+          <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
+            <div className="hidden md:block" />
+            <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
+              <RemoveSectionUnstake poolAddress={pair.id} />
+              {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
+              <Container className="flex justify-center">
+                <Link.External
+                  href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
+                  className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                >
+                  <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                    Learn more about liquidity and yield farming
+                    <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+                  </Typography>
+                </Link.External>
+              </Container>
             </div>
-            <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-          </Layout>
-        </PoolPositionStakedProvider>
-      </PoolPositionProvider>
-    </PoolFarmRewardsProvider>
+            <div className="order-1 sm:order-3">
+              <AppearOnMount>
+                <AddSectionMyPosition pair={pair} />
+              </AppearOnMount>
+            </div>
+          </div>
+          <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
+        </Layout>
+      </PoolPositionStakedProvider>
+    </PoolPositionProvider>
   )
 }
 

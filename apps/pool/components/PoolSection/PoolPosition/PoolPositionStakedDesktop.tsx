@@ -5,18 +5,16 @@ import { FC } from 'react'
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithAlias } from '../../../types'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
-import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 
 interface PoolPositionStakedDesktopProps {
   pair: PairWithAlias
 }
 
 export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pair }) => {
-  const { isFarm } = usePoolFarmRewards(pair)
   const { token0, token1 } = useTokensFromPair(pair)
   const { value1, value0, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
 
-  if (!isFarm) return <></>
+  if (!pair.farm) return <></>
 
   if (isLoading && !isError) {
     return (

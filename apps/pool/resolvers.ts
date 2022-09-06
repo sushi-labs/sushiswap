@@ -41,22 +41,24 @@ export const resolvers: Resolvers = {
   // },
   Query: {
     crossChainPair: async (root, args, context, info) => {
-      return context.Exchange.Query.pair({
-        root,
-        args,
-        context: {
-          ...context,
-          now: args.now,
-          chainId: args.chainId,
-          chainName: chainName[args.chainId],
-          chainShortName: chainShortName[args.chainId],
-          subgraphName: EXCHANGE_SUBGRAPH_NAME[args.chainId],
-          subgraphHost: GRAPH_HOST[args.chainId],
-        },
-        info,
-      }).then((pool) => {
-        if (!pool) {
-          return context.Trident.Query.pair({
+      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+
+      const pool = AMM_ENABLED_NETWORKS.includes(args.chainId)
+        ? await context.Exchange.Query.pair({
+            root,
+            args,
+            context: {
+              ...context,
+              now: args.now,
+              chainId: args.chainId,
+              chainName: chainName[args.chainId],
+              chainShortName: chainShortName[args.chainId],
+              subgraphName: EXCHANGE_SUBGRAPH_NAME[args.chainId],
+              subgraphHost: GRAPH_HOST[args.chainId],
+            },
+            info,
+          })
+        : await context.Trident.Query.pair({
             root,
             args,
             context: {
@@ -69,23 +71,48 @@ export const resolvers: Resolvers = {
               subgraphHost: GRAPH_HOST[args.chainId],
             },
             info,
-          }).then((tridentPool) => ({
-            ...tridentPool,
-            id: `${chainShortName[args.chainId]}:${tridentPool.id}`,
-            chainId: args.chainId,
-            chainName: chainName[args.chainId],
-            chainShortName: chainShortName[args.chainId],
-          }))
-        } else {
-          return {
-            ...pool,
-            id: `${chainShortName[args.chainId]}:${pool.id}`,
-            chainId: args.chainId,
-            chainName: chainName[args.chainId],
-            chainShortName: chainShortName[args.chainId],
-          }
-        }
-      })
+          })
+
+      const volume7d = pool.daySnapshots
+        ?.slice(0, 6)
+        ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+      const farm = farms?.[args.chainId]?.farms?.[pool.id]
+      // console.log(`Farm for pool ${pool.id}`, farm)
+      const feeApr = Number(pool?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? pool?.apr : 0
+      const incentiveApr =
+        farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
+      const apr = Number(feeApr) + Number(incentiveApr)
+
+      return {
+        ...pool,
+        id: `${chainShortName[args.chainId]}:${pool.id}`,
+        chainId: args.chainId,
+        chainName: chainName[args.chainId],
+        chainShortName: chainShortName[args.chainId],
+        volume7d,
+        apr: String(apr),
+        feeApr: String(feeApr),
+        incentiveApr: String(incentiveApr),
+        farm: farm
+          ? {
+              id: farm.id,
+              feeApy: String(farm.feeApy),
+              incentives: farm.incentives.map((incentive) => ({
+                apr: String(incentive.apr),
+                rewardPerDay: String(incentive.rewardPerDay),
+                rewardToken: {
+                  address: incentive.rewardToken.address,
+                  symbol: incentive.rewardToken.symbol,
+                  decimals: Number(incentive.rewardToken.decimals),
+                },
+                rewarderAddress: incentive.rewarder.address,
+                rewarderType: incentive.rewarder.type,
+              })),
+              chefType: String(farm.chefType),
+              poolType: String(farm.poolType),
+            }
+          : null,
+      }
     },
     crossChainPairs: async (root, args, context, info) => {
       const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())

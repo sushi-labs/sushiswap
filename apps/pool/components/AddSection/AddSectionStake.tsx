@@ -9,9 +9,9 @@ import useSWR from 'swr'
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
+import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
-import { usePoolFarmRewards } from '../PoolFarmRewardsProvider'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
@@ -27,10 +27,10 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
   const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress.toLowerCase()}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-  const rewards = usePoolFarmRewards(data?.pair)
 
-  if (!data || !rewards?.chefType || !isMounted) return <></>
+  if (!data) return <></>
   const { pair } = data
+  if (!pair.farm?.chefType || !isMounted) return <></>
 
   return (
     <Transition
@@ -43,7 +43,7 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_AddSectionStake pair={pair} chefType={rewards.chefType} title={title} />
+      <_AddSectionStake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} title={title} />
     </Transition>
   )
 }

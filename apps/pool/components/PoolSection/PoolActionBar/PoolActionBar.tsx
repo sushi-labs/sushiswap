@@ -4,7 +4,6 @@ import { FC, Fragment, useState } from 'react'
 import { PairWithAlias } from '../../../types'
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
-import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 
 interface PoolActionBarProps {
   pair: PairWithAlias
@@ -13,7 +12,6 @@ interface PoolActionBarProps {
 export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
   const [openPosition, setOpenPosition] = useState<boolean>(false)
   const [openRewards, setOpenRewards] = useState<boolean>(false)
-  const { isFarm } = usePoolFarmRewards(pair)
   const { isLg } = useBreakpoint('lg')
 
   if (isLg) return <></>
@@ -28,7 +26,7 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
                 My Position
               </Typography>
             </button>
-            {isFarm && (
+            {pair.farm && (
               <button onClick={() => setOpenRewards(true)} className="inline-flex cursor-pointer px-4 py-3">
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   My Rewards
@@ -38,7 +36,7 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
           </div>
         </div>
         <PoolActionBarPositionDialog pair={pair} open={openPosition} setOpen={setOpenPosition} />
-        {isFarm && <PoolActionBarPositionRewards pair={pair} open={openRewards} setOpen={setOpenRewards} />}
+        {pair.farm && <PoolActionBarPositionRewards pair={pair} open={openRewards} setOpen={setOpenRewards} />}
       </div>
     </AppearOnMount>
   )
