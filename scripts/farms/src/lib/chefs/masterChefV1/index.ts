@@ -80,7 +80,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
       const rewardPerDay = sushiPerDay * (farm.allocPoint.toNumber() / totalAllocPoint.toNumber())
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
-      acc[farm.lpToken] = {
+      acc[farm.lpToken.toLowerCase()] = {
         id: i,
         feeApy: pair.feeApy,
         incentives: [
