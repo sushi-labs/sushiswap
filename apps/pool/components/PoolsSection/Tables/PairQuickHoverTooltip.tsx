@@ -1,11 +1,11 @@
-import { Pair } from '.graphclient'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { incentiveRewardToToken } from '../../../lib/functions'
 import { useTokensFromPair } from '../../../lib/hooks'
 import { ICON_SIZE } from './contants'
-import { incentiveRewardToToken } from '../../../lib/functions'
+import { Pair } from '.graphclient'
 
 interface PairQuickHoverTooltipProps {
   row: Pair

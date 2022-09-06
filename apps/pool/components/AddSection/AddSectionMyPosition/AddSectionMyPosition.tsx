@@ -3,9 +3,9 @@ import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 import { Pair } from '../../../.graphclient'
+import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
-import { incentiveRewardToToken } from '../../../lib/functions'
 
 export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
   return (

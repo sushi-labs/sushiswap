@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
+import { formatNumber } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
@@ -13,7 +14,6 @@ import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejecte
 import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
 import XSushi = BarTypes.XSushi
-import { formatNumber } from '@sushiswap/format'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]

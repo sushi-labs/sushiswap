@@ -8,7 +8,6 @@ import {
 } from 'config'
 
 import { InputMaybe, Pagination, Resolvers } from '.graphclient'
-import { getAddress } from '@ethersproject/address'
 
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
   if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data

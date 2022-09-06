@@ -3,8 +3,8 @@ import { Chef, useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { Pair } from '../.graphclient'
-import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
 import { CHEF_TYPE_MAP } from '../lib/constants'
+import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined

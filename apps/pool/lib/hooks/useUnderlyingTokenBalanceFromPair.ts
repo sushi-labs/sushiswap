@@ -1,6 +1,6 @@
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { useMemo } from 'react'
 import { ZERO } from '@sushiswap/math'
+import { useMemo } from 'react'
 
 interface Params {
   totalSupply: Amount<Token> | undefined

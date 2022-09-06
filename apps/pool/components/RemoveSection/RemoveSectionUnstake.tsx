@@ -8,11 +8,11 @@ import useSWR from 'swr'
 import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { Pair } from '../../.graphclient'
+import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
-import { CHEF_TYPE_MAP } from '../../lib/constants'
 
 interface AddSectionStakeProps {
   pair: Pair

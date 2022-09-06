@@ -12,7 +12,6 @@ import {
   AddSectionStake,
   AddSectionTrident,
   Layout,
-  PoolFarmRewardsProvider,
   PoolPositionProvider,
   PoolPositionStakedProvider,
 } from '../../components'

@@ -5,7 +5,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { Layout, PoolFarmRewardsProvider, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
+import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
 import { getBundles, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {

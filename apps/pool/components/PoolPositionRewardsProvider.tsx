@@ -5,9 +5,9 @@ import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useStat
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { Incentive, Pair } from '../.graphclient'
-import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'
 import { CHEF_TYPE_MAP } from '../lib/constants'
 import { incentiveRewardToToken } from '../lib/functions'
+import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]

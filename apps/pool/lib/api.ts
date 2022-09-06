@@ -1,8 +1,8 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 
-import { CrossChainFarmsQuery, QuerycrossChainPairsArgs } from '../.graphclient'
-import { STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
+import { QuerycrossChainPairsArgs } from '../.graphclient'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getPoolCount = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')

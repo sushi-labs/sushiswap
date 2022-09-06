@@ -2,7 +2,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, Fragment } from 'react'
+import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
@@ -11,7 +11,6 @@ import {
   PoolButtons,
   PoolChart,
   PoolComposition,
-  PoolFarmRewardsProvider,
   PoolHeader,
   PoolMyRewards,
   PoolPosition,
@@ -76,9 +75,7 @@ const _Pool = () => {
                   <PoolStats pair={pair} />
                 </AppearOnMount>
                 <PoolComposition pair={pair} />
-                <AppearOnMount>
-                  <PoolRewards pair={pair} />
-                </AppearOnMount>
+                <PoolRewards pair={pair} />
               </div>
 
               <div className="flex flex-col order-2 gap-4">
