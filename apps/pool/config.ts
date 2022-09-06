@@ -1,8 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUPPORTED_CHAIN_IDS = [
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+
+export const AMM_ENABLED_NETWORKS = [
+  // ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -12,9 +13,9 @@ export const SUPPORTED_CHAIN_IDS = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  ChainId.KAVA,
-  ChainId.METIS,
 ]
+
+export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
 const PENDING_GRAPH_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
@@ -23,8 +24,8 @@ const KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/name'
 const PENDING_KAVA_HOST_ENDPOINT = 'api.thegraph.com/subgraphs/id'
 
 export const GRAPH_HOST = {
-  [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
   [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
   [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
   [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
   [ChainId.BSC]: GRAPH_HOST_ENDPOINT,
@@ -35,12 +36,13 @@ export const GRAPH_HOST = {
   [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
+  [ChainId.HARMONY]: GRAPH_HOST_ENDPOINT,
   [ChainId.KAVA]: 'pvt.graph.kava.io/subgraphs/name',
   [ChainId.METIS]: 'andromeda.thegraph.metis.io/subgraphs/name',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushiswap/sushiswap-ethereum',
+  [ChainId.ETHEREUM]: 'sushi-graph/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
   [ChainId.BSC]: 'sushiswap/sushiswap-bsc',
@@ -50,6 +52,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
+  // [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
 }
 
 export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -63,17 +66,3 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.METIS]: 'sushi-labs/trident-metis',
   [ChainId.KAVA]: 'sushiswap/trident-kava',
 }
-
-export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
-
-export const AMM_ENABLED_NETWORKS = [
-  ChainId.AVALANCHE,
-  ChainId.ARBITRUM,
-  ChainId.BSC,
-  ChainId.CELO,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-]

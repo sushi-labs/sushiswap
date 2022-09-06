@@ -77,11 +77,15 @@ export const resolvers: Resolvers = {
         ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
       const farm = farms?.[args.chainId]?.farms?.[pool.id]
       // console.log(`Farm for pool ${pool.id}`, farm)
-      const feeApr = Number(pool?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? pool?.apr / 100 : 0
+      const feeApr =
+        Number(pool?.liquidityUSD) > 5000 ? (args.chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
       const incentiveApr =
         farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
       const apr = Number(feeApr) + Number(incentiveApr)
 
+      if (feeApr > 0 && incentiveApr > 0) {
+        console.log({ feeApr, incentiveApr })
+      }
       return {
         ...pool,
         id: `${chainShortName[args.chainId]}:${pool.id}`,
@@ -124,7 +128,8 @@ export const resolvers: Resolvers = {
                 ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
               const farm = farms?.[chainId]?.farms?.[pool.id]
               // console.log(`Farm for pool ${pool.id}`, farm)
-              const feeApr = Number(pool?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? pool?.apr / 100 : 0
+              const feeApr =
+                Number(pool?.liquidityUSD) > 5000 ? (chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
               const incentiveApr =
                 farm?.incentives?.reduce(
                   (previousValue, currentValue) => previousValue + Number(currentValue.apr),
@@ -287,7 +292,13 @@ export const resolvers: Resolvers = {
                     ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
                   const farm = farms?.[chainId]?.farms?.[el.pair.id]
                   // console.log(`Farm for pool ${pool.id}`, farm)
-                  const feeApr = Number(el.pair?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? el.pair?.apr : 0
+                  const feeApr =
+                    Number(el.pair?.liquidityUSD) > 5000
+                      ? chainId === 1
+                        ? el.pair?.apr / 100_000
+                        : el.pair?.apr / 100
+                      : 0
+
                   const incentiveApr =
                     farm?.incentives?.reduce(
                       (previousValue, currentValue) => previousValue + Number(currentValue.apr),
@@ -304,15 +315,15 @@ export const resolvers: Resolvers = {
                       chainId,
                       chainName: chainName[chainId],
                       chainShortName: chainShortName[chainId],
-                      apr: String(apr / 100),
-                      feeApr: String(feeApr / 100),
-                      incentiveApr: String(incentiveApr / 100),
+                      apr: String(apr),
+                      feeApr: String(feeApr),
+                      incentiveApr: String(incentiveApr),
                       farm: farm
                         ? {
                             id: farm.id,
-                            feeApy: String(farm.feeApy / 100),
+                            feeApy: String(farm.feeApy),
                             incentives: farm.incentives.map((incentive) => ({
-                              apr: String(incentive.apr / 100),
+                              apr: String(incentive.apr),
                               rewardPerDay: String(incentive.rewardPerDay),
                               rewardToken: {
                                 address: incentive.rewardToken.address,

@@ -59,6 +59,8 @@ export const getPools = async (query?: GetPoolsQuery) => {
       : undefined
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
+    // const first = 1000
+    // const skip = 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
