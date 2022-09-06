@@ -108,7 +108,7 @@ export async function getRewarderInfos(chainId: ChainId) {
         }
         const poolLength = await readContract<MiniChefV2, Awaited<ReturnType<MiniChefV2['poolLength']>>>(poolLengthCall)
 
-        const poolIdCalls: ReadContractsConfig['contracts'] = [...Array(poolLength?.toNumber())].map((_, i) => ({
+        const poolIdCalls: ReadContractsConfig['contracts'] = [...Array(poolLength.toNumber())].map((_, i) => ({
           addressOrName: rewarder.id,
           args: [i],
           chainId: chainId,
@@ -116,7 +116,7 @@ export async function getRewarderInfos(chainId: ChainId) {
           functionName: 'poolIds',
         }))
 
-        const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength?.toNumber())].map((_, i) => ({
+        const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength.toNumber())].map((_, i) => ({
           addressOrName: rewarder.id,
           args: [i],
           chainId: chainId,

@@ -1,5 +1,6 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  noExternal: ['@sushiswap/wagmi', '@sushiswap/graph-client/config'],
+  target: 'node14',
+  noExternal: ['@sushiswap/wagmi', '@sushiswap/graph-client/config', '@sushiswap/graph-client/.graphclient'],
 })

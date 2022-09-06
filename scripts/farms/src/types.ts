@@ -1,12 +1,17 @@
 export interface Farm {
+  id: number
   feeApy: number
   incentives: {
     apr: number
     rewardPerDay: number
     rewardToken: {
       address: string
-      symbol: string
       decimals: number
+      symbol: string
+    }
+    rewarder: {
+      address: string
+      type: 'Primary' | 'Secondary'
     }
   }[]
   chefType: 'MasterChefV1' | 'MasterChefV2' | 'MiniChef'
