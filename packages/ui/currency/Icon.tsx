@@ -124,7 +124,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   }
 
   if (currency.isNative) {
-    return <NetworkIcon chainId={currency.chainId} />
+    return <NetworkIcon chainId={currency.chainId} width={rest.width} height={rest.height} />
   }
 
   if (!src) {
