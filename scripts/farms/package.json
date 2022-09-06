@@ -23,8 +23,8 @@
     "dist"
   ],
   "scripts": {
-    "start": "ts-node --transpileOnly src/index.ts",
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "start": "ts-node --transpileOnly src/run.ts",
+    "build": "tsup src/run.ts --format esm,cjs --dts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
