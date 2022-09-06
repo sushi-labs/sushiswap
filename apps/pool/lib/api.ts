@@ -123,19 +123,19 @@ export const getSushiBar = async () => {
   return xsushi
 }
 
-type GetUserQuery = Partial<{
+export type GetUserQuery = {
   id: string
   networks: string
-}>
+}
 
-export const getUser = async (query?: GetUserQuery) => {
+export const getUser = async (query: GetUserQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
   const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUser: user } = await sdk.CrossChainUser({
     chainIds: networks,
-    id: query?.id?.toLowerCase(),
+    id: query.id.toLowerCase(),
     now: Math.round(new Date().getTime() / 1000),
   })
 

@@ -13,7 +13,6 @@ import {
   AddSectionStake,
   FEE_MAP,
   Layout,
-  PoolFarmRewardsProvider,
   PoolPositionProvider,
   PoolPositionStakedProvider,
   SelectFeeWidget,
@@ -202,7 +201,7 @@ const _Add: FC<AddProps> = ({
   )
 
   return (
-    <PoolFarmRewardsProvider>
+    <>
       <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
         <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
@@ -333,7 +332,7 @@ const _Add: FC<AddProps> = ({
           </PoolPositionStakedProvider>
         </PoolPositionProvider>
       )}
-    </PoolFarmRewardsProvider>
+    </>
   )
 }
 
