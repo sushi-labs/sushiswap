@@ -127,6 +127,8 @@ export const resolvers: Resolvers = {
                           symbol: incentive.rewardToken.symbol,
                           decimals: Number(incentive.rewardToken.decimals),
                         },
+                        rewarderAddress: incentive.rewarder.address,
+                        rewarderType: incentive.rewarder.type,
                       })),
                       chefType: String(farm.chefType),
                       poolType: String(farm.poolType),
@@ -239,33 +241,65 @@ export const resolvers: Resolvers = {
       ]).then((bundles) => bundles.flat())
     },
     crossChainUser: async (root, args, context, info) => {
+      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+
       const transformer = (user, chainId) => {
         return {
           ...user,
           id: args.id,
           chainId,
           chainName: chainName[chainId],
-          liquidityPositions: user
-            ? user.liquidityPositions.map((el) => {
-                const volume7d = el.pair.daySnapshots?.reduce((previousValue, currentValue, i) => {
-                  if (i > 6) return previousValue
-                  return previousValue + Number(currentValue.volumeUSD)
-                }, 0)
-
-                return {
-                  ...el,
-                  // TODO REMOVE WHEN SUBGRAPH UPDATED
-                  balance: Math.floor(Number(el.balance / 2)),
-                  pair: {
-                    ...el.pair,
-                    volume7d,
-                    chainId,
-                    chainName: chainName[chainId],
-                    chainShortName: chainShortName[chainId],
-                  },
-                }
-              })
-            : [],
+          liquidityPositions:
+            user?.liquidityPositions?.length > 0
+              ? user.liquidityPositions.map((el) => {
+                  const volume7d = el.pair.daySnapshots
+                    ?.slice(0, 6)
+                    ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+                  const farm = farms?.[chainId]?.farms?.[el.pair.id]
+                  // console.log(`Farm for pool ${pool.id}`, farm)
+                  const feeApr = Number(el.pair?.liquidityUSD) > 5000 && Number(volume7d) > 1000 ? el.pair?.apr : 0
+                  const incentiveApr =
+                    farm?.incentives?.reduce(
+                      (previousValue, currentValue) => previousValue + Number(currentValue.apr),
+                      0
+                    ) ?? 0
+                  const apr = Number(feeApr) + Number(incentiveApr)
+                  return {
+                    ...el,
+                    balance: Math.floor(Number(el.balance / 2)),
+                    pair: {
+                      ...el.pair,
+                      volume7d,
+                      id: `${chainShortName[chainId]}:${el.pair.id}`,
+                      chainId,
+                      chainName: chainName[chainId],
+                      chainShortName: chainShortName[chainId],
+                      apr: String(apr),
+                      feeApr: String(feeApr),
+                      incentiveApr: String(incentiveApr),
+                      farm: farm
+                        ? {
+                            id: farm.id,
+                            feeApy: String(farm.feeApy),
+                            incentives: farm.incentives.map((incentive) => ({
+                              apr: String(incentive.apr),
+                              rewardPerDay: String(incentive.rewardPerDay),
+                              rewardToken: {
+                                address: incentive.rewardToken.address,
+                                symbol: incentive.rewardToken.symbol,
+                                decimals: Number(incentive.rewardToken.decimals),
+                              },
+                              rewarderAddress: incentive.rewarder.address,
+                              rewarderType: incentive.rewarder.type,
+                            })),
+                            chefType: String(farm.chefType),
+                            poolType: String(farm.poolType),
+                          }
+                        : null,
+                    },
+                  }
+                })
+              : [],
         }
       }
 

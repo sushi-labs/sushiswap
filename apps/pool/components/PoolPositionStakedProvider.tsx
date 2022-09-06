@@ -4,7 +4,7 @@ import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { Pair } from '../.graphclient'
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
-import { usePoolFarmRewards } from './PoolFarmRewardsProvider'
+import { CHEF_TYPE_MAP } from '../lib/constants'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined
@@ -28,9 +28,7 @@ interface PoolPositionStakedProviderProps {
 }
 
 export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
-  const { farmId, chefType } = usePoolFarmRewards(pair)
-
-  if (farmId === undefined || !chefType)
+  if (pair?.farm?.id === undefined || !pair?.farm?.chefType)
     return (
       <Context.Provider
         value={{
@@ -52,7 +50,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
     )
 
   return (
-    <_PoolPositionStakedProvider pair={pair} farmId={farmId} chefType={chefType}>
+    <_PoolPositionStakedProvider pair={pair} farmId={Number(pair.farm.id)} chefType={CHEF_TYPE_MAP[pair.farm.chefType]}>
       {children}
     </_PoolPositionStakedProvider>
   )

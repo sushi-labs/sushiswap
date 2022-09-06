@@ -1,60 +1,40 @@
-import { chainShortName } from '@sushiswap/chain'
 import { useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { useAccount, useQuery } from 'wagmi'
+import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import { Pair, User } from '../../../../.graphclient'
-import { PairWithBalance } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
-import { usePoolFarmRewardsContext } from '../../../PoolFarmRewardsProvider'
 
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
-  const { getRewardsForPair } = usePoolFarmRewardsContext()
   const { selectedNetworks } = usePoolFilters()
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const [columnVisibility, setColumnVisibility] = useState({})
-  const queryKey = `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
-  const {
-    data: user,
-    isError,
-    isLoading,
-  } = useQuery<User>([queryKey], () => fetch(queryKey).then((response) => response.json()))
 
-  const liquidityPositions: PairWithBalance[] = useMemo(() => {
-    if (!user?.liquidityPositions) return []
-    return user.liquidityPositions.map((el) => {
-      const id = `${chainShortName[el.pair.chainId]}:${el.pair.id}`
-      const { incentives, farmId, chefType } = getRewardsForPair({
-        ...el.pair,
-        id,
-      })
+  const { data: user, isValidating } = useSWR<User>(
+    `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    (url) => fetch(url).then((response) => response.json())
+  )
 
-      return {
-        ...el.pair,
-        id,
-        liquidityTokenBalance: el.balance,
-        incentives: incentives || [],
-        farmId,
-        chefType,
-      }
-    })
-  }, [getRewardsForPair, user?.liquidityPositions])
+  const positions = useMemo(() => {
+    if (!user) return []
+    return user?.liquidityPositions?.map((el) => el.pair)
+  }, [user])
 
-  const table = useReactTable<Pair | PairWithBalance>({
-    data: liquidityPositions ?? [],
+  const table = useReactTable<Pair>({
+    data: positions || [],
     state: {
       columnVisibility,
     },
-    // @ts-ignore
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -70,14 +50,13 @@ export const PositionsTable: FC = () => {
   }, [isMd, isSm])
 
   return (
-    <GenericTable<Pair | PairWithBalance>
+    <GenericTable<Pair>
       table={table}
-      // @ts-ignore
       columns={COLUMNS}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={isLoading && !isError}
+      loading={!user || isValidating}
       placeholder="No positions found"
-      pageSize={Math.max(liquidityPositions?.length, 5)}
+      pageSize={Math.max(user?.liquidityPositions?.length || 0, 5)}
     />
   )
 }

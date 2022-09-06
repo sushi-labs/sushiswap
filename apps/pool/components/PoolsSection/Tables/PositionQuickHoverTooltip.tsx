@@ -4,7 +4,6 @@ import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
 import { PairWithBalance } from '../../../types'
-import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
 import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
@@ -36,7 +35,6 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
     value1: stakedValue1,
   } = usePoolPositionStaked()
 
-  const { rewardAPR, totalAPR, isFarm } = usePoolFarmRewards(row)
   const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
 
   return (
@@ -64,13 +62,13 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         </div>
         <div className="flex flex-col gap-1">
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
+            <span className="text-slate-400">APR:</span> {formatPercent(row.apr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(rewardAPR)}
+            <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.apr / 100)}
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
           </Typography>
         </div>
       </div>
@@ -129,7 +127,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </Typography>
         </div>
       </div>
-      {isFarm && (
+      {row.farm && (
         <div className="flex flex-col gap-1.5 mt-4">
           <Typography variant="xs" className="mb-1 text-slate-500">
             Farmed Rewards

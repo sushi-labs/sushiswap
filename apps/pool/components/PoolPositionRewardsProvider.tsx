@@ -1,12 +1,13 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { Chef, Incentive, RewarderType, useMasterChef } from '@sushiswap/wagmi'
+import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
-import { Pair } from '../.graphclient'
+import { Incentive, Pair } from '../.graphclient'
 import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'
-import { usePoolFarmRewards } from './PoolFarmRewardsProvider'
+import { CHEF_TYPE_MAP } from '../lib/constants'
+import { incentiveRewardToToken } from '../lib/functions'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]
@@ -25,7 +26,7 @@ interface PoolPositionRewardsProviderProps {
   farmId: number
   chefType: Chef
   children: ReactNode
-  incentives: Incentive<Token>[]
+  incentives: Incentive[]
 }
 
 interface PoolPositionStakedProviderProps {
@@ -34,9 +35,7 @@ interface PoolPositionStakedProviderProps {
 }
 
 export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
-  const { farmId, chefType, incentives } = usePoolFarmRewards(pair)
-
-  if (farmId === undefined || !chefType || !incentives)
+  if (pair?.farm?.id === undefined || !pair?.farm?.chefType || !pair?.farm?.incentives)
     return (
       <Context.Provider
         value={{
@@ -53,7 +52,12 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = 
     )
 
   return (
-    <_PoolPositionRewardsProvider pair={pair} farmId={farmId} chefType={chefType} incentives={incentives}>
+    <_PoolPositionRewardsProvider
+      pair={pair}
+      farmId={Number(pair.farm.id)}
+      chefType={CHEF_TYPE_MAP[pair.farm.chefType]}
+      incentives={pair.farm.incentives}
+    >
       {children}
     </_PoolPositionRewardsProvider>
   )
@@ -73,14 +77,14 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
   const [rewardTokens, rewarderAddresses, types] = useMemo(() => {
     return incentives.reduce<[Token[], string[], RewarderType[]]>(
       (acc, incentive) => {
-        acc[0].push(incentive.rewardToken)
-        acc[1].push(incentive.rewarder.address)
-        acc[2].push(incentive.rewarder.type)
+        acc[0].push(incentiveRewardToToken(pair.chainId, incentive))
+        acc[1].push(incentive.rewarderAddress)
+        acc[2].push(incentive.rewarderType === 'Primary' ? RewarderType.Primary : RewarderType.Secondary)
         return acc
       },
       [[], [], []]
     )
-  }, [incentives])
+  }, [incentives, pair.chainId])
 
   const {
     data: pendingRewards,

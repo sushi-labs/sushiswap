@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { PairWithBalance, PairWithFarmRewards } from '../../../types'
+import { Pair } from '../../../.graphclient'
 import { PairVolume7dCell } from '.'
 import { PairAPRCell } from './PairAPRCell'
 import { PairChainCell } from './PairChainCell'
@@ -13,7 +13,7 @@ import { PairTVLCell } from './PairTVLCell'
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
-export const NETWORK_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const NETWORK_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <PairChainCell row={props.row.original} />,
@@ -23,7 +23,7 @@ export const NETWORK_COLUMN: ColumnDef<PairWithFarmRewards> = {
   },
 }
 
-export const NAME_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const NAME_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PairNameCell row={props.row.original} />,
@@ -43,7 +43,7 @@ export const NAME_COLUMN: ColumnDef<PairWithFarmRewards> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const TVL_COLUMN: ColumnDef<Pair, unknown> = {
   header: 'TVL',
   id: 'liquidityUSD',
   accessorFn: (row) => row.liquidityUSD,
@@ -55,7 +55,7 @@ export const TVL_COLUMN: ColumnDef<PairWithFarmRewards> = {
   },
 }
 
-export const APR_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const APR_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'apr',
   header: 'APR',
   accessorFn: (row) => row.apr,
@@ -67,7 +67,7 @@ export const APR_COLUMN: ColumnDef<PairWithFarmRewards> = {
   },
 }
 
-export const REWARDS_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const REWARDS_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'rewards',
   header: 'Rewards',
   cell: (props) => <PairRewardsCell row={props.row.original} />,
@@ -81,7 +81,7 @@ export const REWARDS_COLUMN: ColumnDef<PairWithFarmRewards> = {
   },
 }
 
-export const POSITION_COLUMN: ColumnDef<PairWithBalance> = {
+export const POSITION_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'position',
   header: 'Value',
   cell: (props) => <PairPositionCell row={props.row.original} />,
@@ -92,7 +92,7 @@ export const POSITION_COLUMN: ColumnDef<PairWithBalance> = {
   },
 }
 
-export const VOLUME_COLUMN: ColumnDef<PairWithFarmRewards> = {
+export const VOLUME_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'volume',
   header: 'Volume (7d)',
   cell: (props) => <PairVolume7dCell row={props.row.original} />,

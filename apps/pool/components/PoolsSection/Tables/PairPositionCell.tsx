@@ -4,9 +4,9 @@ import { FC } from 'react'
 
 import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
-import { CellWithBalanceProps } from './types'
+import { CellProps } from './types'
 
-export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
+export const PairPositionCell: FC<CellProps> = ({ row }) => {
   return (
     <PoolPositionProvider pair={row}>
       <PoolPositionStakedProvider pair={row}>
@@ -16,7 +16,7 @@ export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
   )
 }
 
-const _PairPositionCell: FC<CellWithBalanceProps> = () => {
+const _PairPositionCell: FC<CellProps> = () => {
   const { value1, value0 } = usePoolPosition()
   const { value0: stakedValue0, value1: stakedValue1 } = usePoolPositionStaked()
 

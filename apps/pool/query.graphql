@@ -60,7 +60,6 @@ query CrossChainPairs(
       date
       volumeUSD
     }
-
     farm {
       id
       feeApy
@@ -72,16 +71,9 @@ query CrossChainPairs(
           symbol
           decimals
         }
+        rewarderAddress
+        rewarderType
       }
-      # incentives {
-      #   apr
-      #   rewardPerDay
-      #   rewardToken {
-      #     address
-      #     symbol
-      #     decimals
-      #   }
-      # }
       chefType
       poolType
     }
@@ -96,33 +88,50 @@ query CrossChainUser($id: ID!, $chainIds: [BigInt!]!, $now: Int!, $block: Block_
         id
         chainId
         chainName
+        chainShortName
         name
-        reserve0
-        reserve1
-        liquidity
         swapFee
-        source
         twapEnabled
         volume7d
+        source
         token0 {
-          id
           name
+          id
           decimals
           symbol
         }
         token1 {
-          id
           name
+          id
           decimals
           symbol
         }
-        apr
         liquidityNative
         liquidityUSD
+        apr
+        feeApr
+        incentiveApr
         daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
           id
           date
           volumeUSD
+        }
+        farm {
+          id
+          feeApy
+          incentives {
+            apr
+            rewardPerDay
+            rewardToken {
+              address
+              symbol
+              decimals
+            }
+            rewarderAddress
+            rewarderType
+          }
+          chefType
+          poolType
         }
       }
     }

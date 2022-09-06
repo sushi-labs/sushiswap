@@ -1,19 +1,18 @@
+import { Pair } from '.graphclient'
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
-import { PairWithFarmRewards } from '../../../types'
-import { usePoolFarmRewards } from '../../PoolFarmRewardsProvider'
 import { ICON_SIZE } from './contants'
+import { incentiveRewardToToken } from '../../../lib/functions'
 
 interface PairQuickHoverTooltipProps {
-  row: PairWithFarmRewards
+  row: Pair
 }
 
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
-  const { rewardAPR, totalAPR } = usePoolFarmRewards(row)
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -39,26 +38,26 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </div>
         <div className="flex flex-col gap-1">
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(totalAPR)}
+            <span className="text-slate-400">APR:</span> {formatPercent(row.apr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(rewardAPR)}
+            <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.apr / 100)}
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
           </Typography>
         </div>
       </div>
-      {row.incentives.length > 0 && (
+      {row.farm?.incentives && (
         <>
           <hr className="my-3 border-t border-slate-200/10" />
           <div className="flex flex-col gap-1.5">
             <Typography variant="xs" className="mb-1 text-slate-500">
               Reward Emission
             </Typography>
-            {row.incentives.map((incentive, index) => (
+            {row.farm.incentives.map((incentive, index) => (
               <div key={index} className="flex items-center gap-2">
-                <Currency.Icon currency={incentive.rewardToken} width={18} height={18} />
+                <Currency.Icon currency={incentiveRewardToToken(row.chainId, incentive)} width={18} height={18} />
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   <span>
                     {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}

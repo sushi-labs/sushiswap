@@ -1,7 +1,8 @@
-import { PairWithBalance, PairWithFarmRewards } from '../../../types'
+import { PairWithBalance } from '../../../types'
+import { Pair } from '../../../.graphclient'
 
 export interface CellProps {
-  row: PairWithFarmRewards
+  row: Pair
 }
 
 export interface CellWithBalanceProps {

@@ -5,13 +5,10 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
-import { PairWithFarmRewards } from '../../../../types'
 import { usePoolFilters } from '../../../PoolsProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
-import { usePoolFarmRewardsContext } from '../../../PoolFarmRewardsProvider'
-import { useQuery } from 'wagmi'
 
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
@@ -68,7 +65,6 @@ const fetcher = ({
 }
 
 export const PoolsTable: FC = () => {
-  const { getRewardsForPair } = usePoolFarmRewardsContext()
   const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
@@ -85,7 +81,7 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const { data: poolCount } = useSWR<number>(
     '/pool/api/pools/count',
@@ -93,23 +89,8 @@ export const PoolsTable: FC = () => {
     {}
   )
 
-  const data: PairWithFarmRewards[] = useMemo(() => {
-    return (
-      pools?.map((pool) => {
-        const { incentives, farmId, chefType } = getRewardsForPair(pool)
-
-        return {
-          ...pool,
-          incentives: incentives || [],
-          farmId,
-          chefType,
-        }
-      }) || []
-    )
-  }, [getRewardsForPair, pools])
-
-  const table = useReactTable<PairWithFarmRewards>({
-    data,
+  const table = useReactTable<Pair>({
+    data: pools || [],
     columns: COLUMNS,
     state: {
       sorting,
@@ -136,10 +117,10 @@ export const PoolsTable: FC = () => {
 
   return (
     <>
-      <GenericTable<PairWithFarmRewards>
+      <GenericTable<Pair>
         table={table}
         columns={COLUMNS}
-        loading={!pools && isValidating}
+        loading={!pools || isValidating}
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}

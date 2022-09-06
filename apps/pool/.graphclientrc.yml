@@ -30,15 +30,17 @@ additionalTypeDefs: |
     symbol: String!
     decimals: Int!
   }
-  type Inventive {
+  type Incentive {
     apr: BigDecimal!
     rewardPerDay: BigDecimal!
     rewardToken: RewardToken!
+    rewarderAddress: String!
+    rewarderType: String!
   }
   type Farm {
     id: ID!
     feeApy: BigDecimal!
-    incentives: [Inventive!]!
+    incentives: [Incentive!]!
     chefType: String!
     poolType: String!
   }

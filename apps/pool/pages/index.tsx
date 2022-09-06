@@ -54,38 +54,36 @@ const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
 
 const _Pools = () => {
   return (
-    <PoolFarmRewardsProvider>
-      <Layout>
-        <div className="flex flex-col gap-10 md:gap-16">
-          <section className="flex flex-col gap-6 lg:flex-row">
-            <div className="max-w-md space-y-4">
-              <h2 className="text-2xl font-semibold text-slate-50">Sushi Yield</h2>
-              <p className="text-slate-300">
-                Onsen is back with a new contract, allowing for more yield opportunities and functionalities.{' '}
-              </p>
+    <Layout>
+      <div className="flex flex-col gap-10 md:gap-16">
+        <section className="flex flex-col gap-6 lg:flex-row">
+          <div className="max-w-md space-y-4">
+            <h2 className="text-2xl font-semibold text-slate-50">Sushi Yield</h2>
+            <p className="text-slate-300">
+              Onsen is back with a new contract, allowing for more yield opportunities and functionalities.{' '}
+            </p>
+          </div>
+          <div className="flex justify-end flex-grow not-prose">
+            <div className="flex flex-col gap-3 w-full lg:w-[200px]">
+              <Link.Internal href="/add" passHref={true}>
+                <Button as="a" fullWidth color="blue" startIcon={<PlusIcon width={16} height={16} />}>
+                  New Position
+                </Button>
+              </Link.Internal>
+              <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
+                  Join Onsen
+                </Button>
+              </Link.External>
             </div>
-            <div className="flex justify-end flex-grow not-prose">
-              <div className="flex flex-col gap-3 w-full lg:w-[200px]">
-                <Link.Internal href="/add" passHref={true}>
-                  <Button as="a" fullWidth color="blue" startIcon={<PlusIcon width={16} height={16} />}>
-                    New Position
-                  </Button>
-                </Link.Internal>
-                <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                  <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
-                    Join Onsen
-                  </Button>
-                </Link.External>
-              </div>
-            </div>
-          </section>
-          <SushiBarSection />
-          <PoolsProvider>
-            <PoolsSection />
-          </PoolsProvider>
-        </div>
-      </Layout>
-    </PoolFarmRewardsProvider>
+          </div>
+        </section>
+        <SushiBarSection />
+        <PoolsProvider>
+          <PoolsSection />
+        </PoolsProvider>
+      </div>
+    </Layout>
   )
 }
 
