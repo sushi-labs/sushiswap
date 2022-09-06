@@ -68,7 +68,10 @@ export const getPools = async (query?: GetPoolsQuery) => {
 
     const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
       ? JSON.parse(query?.pagination)
-      : undefined
+      : {
+          pageIndex: 0,
+          pageSize: 20,
+        }
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     // const first = 1000
