@@ -22,11 +22,11 @@ interface FilterContext {
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
-interface PoolsProvider {
+interface PoolsFiltersProvider {
   children?: ReactNode
 }
 
-export const PoolsProvider: FC<PoolsProvider> = ({ children }) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const [filters, _setFilters] = useState({
     query: '',
     extraQuery: '',

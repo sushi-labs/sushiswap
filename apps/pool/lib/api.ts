@@ -4,7 +4,11 @@ import { getUnixTime, subMonths, subYears } from 'date-fns'
 import { QuerycrossChainPairsArgs } from '../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
-export const getPoolCount = async () => {
+export type GetPoolCountQuery = Partial<{
+  networks: string
+}>
+
+export const getPoolCount = async (query?: GetPoolCountQuery) => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
@@ -12,7 +16,15 @@ export const getPoolCount = async () => {
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
-  return factories.reduce((sum, cur) => sum + +cur.pairCount, 0)
+  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+  return factories.reduce((sum, cur) => {
+    if (chainIds.includes(cur.chainId)) {
+      sum = sum + +cur.pairCount
+    }
+
+    return sum
+  }, 0)
 }
 
 export const getFactories = async () => {

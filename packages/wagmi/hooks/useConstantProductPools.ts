@@ -1,10 +1,10 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/exchange'
+import ConstantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 
-import CONSTANT_PRODUCT_POOL_ABI from '../abis/constant-product-pool.json'
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
 export enum PoolState {
@@ -14,7 +14,7 @@ export enum PoolState {
   INVALID,
 }
 
-const POOL_INTERFACE = new Interface(CONSTANT_PRODUCT_POOL_ABI)
+const POOL_INTERFACE = new Interface(ConstantProductPoolArtifact.abi)
 
 type PoolInput = [Type | undefined, Type | undefined, Fee, boolean]
 

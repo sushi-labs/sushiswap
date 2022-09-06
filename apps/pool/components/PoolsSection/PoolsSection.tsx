@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { User } from '../../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { usePoolFilters } from '../PoolsProvider'
+import { usePoolFilters } from '../PoolsFiltersProvider'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 

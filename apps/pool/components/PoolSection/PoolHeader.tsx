@@ -53,26 +53,24 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
               </Typography>
             </Link.External>
           </div>
-          <AppearOnMount>
-            <div className="flex flex-col gap-1">
-              <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
-                APR: <span className="font-semibold text-slate-50">{formatPercent(pair.apr)}</span>
-                {pair.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
+          <div className="flex flex-col gap-1">
+            <Typography weight={400} as="span" className="text-slate-400 sm:text-right">
+              APR: <span className="font-semibold text-slate-50">{formatPercent(pair.apr)}</span>
+              {pair.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
+            </Typography>
+            <div className="flex gap-2">
+              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                Rewards: {formatPercent(pair.incentiveApr)}
               </Typography>
-              <div className="flex gap-2">
-                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                  Rewards: {formatPercent(pair.incentiveApr)}
-                </Typography>
-                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                  Fees: {formatPercent(pair.feeApr / 100)}
-                </Typography>
-              </div>
+              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                Fees: {formatPercent(pair.feeApr)}
+              </Typography>
             </div>
-          </AppearOnMount>
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
+        <div className="flex gap-3 rounded-lg bg-slate-800 shadow-md shadow-black/10 p-3">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
@@ -83,7 +81,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
             </AppearOnMount>
           </Typography>
         </div>
-        <div className="flex gap-3 rounded-lg bg-slate-800 p-3">
+        <div className="flex gap-3 rounded-lg bg-slate-800 shadow-md shadow-black/10 p-3">
           <Currency.Icon currency={token1} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
