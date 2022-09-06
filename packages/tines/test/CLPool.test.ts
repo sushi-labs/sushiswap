@@ -5,6 +5,9 @@ import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigNumber } from '../src'
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
+const two96 = Math.pow(2, 96)
+const two96BN = BigNumber.from(2).pow(96)
+
 export function getRandomLin(rnd: () => number, min: number, max: number) {
   return rnd() * (max - min) + min
 }
@@ -79,7 +82,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
     BigNumber.from(0),
     BigNumber.from(0),
     BigNumber.from(0),
-    1,
+    two96BN,
     -1,
     []
   )
@@ -93,7 +96,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   pool.nearestTick = Math.floor(getRandomLin(rnd, 0, pool.ticks.length - 1))
   const tickPrice = getTickPrice(pool, pool.nearestTick)
   const nextTickPrice = getTickPrice(pool, pool.nearestTick + 1)
-  pool.sqrtPrice = getRandomLin(rnd, tickPrice, nextTickPrice)
+  pool.sqrtPriceX96 = getBigNumber(getRandomLin(rnd, tickPrice, nextTickPrice) * two96)
   pool.liquidity = getTickLiquidity(pool, pool.nearestTick)
 
   return pool
