@@ -96,7 +96,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
   [ChainId.FANTOM]: 'sushiswap/exchange-fantom',
   [ChainId.FUSE]: 'sushiswap/exchange-fuse',
-  [ChainId.GNOSIS]: 'sushiswap/exchange-gnosis',
+  [ChainId.GNOSIS]: 'sushiswap/xdai-exchange',
   [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',

@@ -62,6 +62,7 @@ export abstract class RPool {
   }
 
   // Returns [<output amount>, <gas consumption estimation>]
+  // Should throw if the rest of liquidity is lesser than minLiquidity
   abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
   abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
@@ -95,7 +96,9 @@ export class ConstantProductRPool extends RPool {
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
-    return { out: (y * amountIn) / (x / (1 - this.fee) + amountIn), gasSpent: this.swapGasCost }
+    const out = (y * amountIn) / (x / (1 - this.fee) + amountIn)
+    if (y - out < this.minLiquidity) throw 'CP OutOfLiquidity'
+    return { out, gasSpent: this.swapGasCost }
   }
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
@@ -218,7 +221,7 @@ export class HybridRPool extends RPool {
     const xNewBN = xBN.add(getBigNumber(amountIn * (1 - this.fee)))
     const yNewBN = this.computeY(xNewBN)
     const dy = parseInt(yBN.sub(yNewBN).toString())
-
+    if (parseInt(yNewBN.toString()) < this.minLiquidity) throw 'Hybrid OutOfLiquidity'
     return { out: dy, gasSpent: this.swapGasCost }
   }
 

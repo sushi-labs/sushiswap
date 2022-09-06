@@ -1,6 +1,7 @@
 import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
 import { Layout } from 'components'
 import { CreateMultipleForm } from 'components/vesting'
+import { NextSeo } from 'next-seo'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -15,12 +16,15 @@ const LINKS: BreadcrumbLink[] = [
 
 const MultipleVesting = () => {
   return (
-    <Layout>
-      <Breadcrumb home="/dashboard" links={LINKS} />
-      <div className="mt-6">
-        <CreateMultipleForm />
-      </div>
-    </Layout>
+    <>
+      <NextSeo title="New Vestings" />
+      <Layout>
+        <Breadcrumb home="/dashboard" links={LINKS} />
+        <div className="mt-6">
+          <CreateMultipleForm />
+        </div>
+      </Layout>
+    </>
   )
 }
 
