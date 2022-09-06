@@ -126,7 +126,7 @@ export const resolvers: Resolvers = {
               const volume7d = pool.daySnapshots
                 ?.slice(0, 6)
                 ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
-              const farm = farms?.[chainId]?.farms?.[pool.id]
+              const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
               // console.log(`Farm for pool ${pool.id}`, farm)
               const feeApr =
                 Number(pool?.liquidityUSD) > 5000 ? (chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
@@ -177,8 +177,8 @@ export const resolvers: Resolvers = {
       return Promise.all([
         ...args.chainIds
           .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Trident.Query.pairs({
+          .map((chainId) => {
+            return context.Trident.Query.pairs({
               root,
               args,
               context: {
@@ -191,11 +191,11 @@ export const resolvers: Resolvers = {
               },
               info,
             }).then((pools) => transformer(pools, chainId))
-          ),
+          }),
         ...args.chainIds
           .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Exchange.Query.pairs({
+          .map((chainId) => {
+            return context.Exchange.Query.pairs({
               root,
               args,
               context: {
@@ -207,8 +207,37 @@ export const resolvers: Resolvers = {
                 subgraphHost: GRAPH_HOST[chainId],
               },
               info,
-            }).then((pools) => transformer(pools, chainId))
-          ),
+            })
+              .then((pools) => {
+                if (!farms?.[chainId]?.farms) return pools
+                const ids = Array.from(
+                  new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
+                )
+                return context.Exchange.Query.pairs({
+                  root,
+                  args: {
+                    first: ids.length,
+                    where: {
+                      id_in: Array.from(
+                        new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
+                      ),
+                    },
+                  },
+                  context: {
+                    ...context,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                    subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                    subgraphHost: GRAPH_HOST[chainId],
+                  },
+                  info,
+                })
+              })
+              .then((pools) => {
+                return transformer(pools, chainId)
+              })
+          }),
       ])
         .then((pools) =>
           pools.flat().sort((a, b) => {
@@ -217,7 +246,6 @@ export const resolvers: Resolvers = {
             } else if (args.orderDirection === 'desc') {
               return b[args.orderBy || 'apr'] - a[args.orderBy || 'apr']
             }
-
             return 0
           })
         )
