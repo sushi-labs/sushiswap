@@ -198,8 +198,10 @@ query stream($block: Block_height, $id: ID!) {
     initialShares
     initialAmount
     extendedShares
+    initialSharesExtended
     remainingShares
     withdrawnAmount
+    withdrawnAmountAfterExtension
     txHash
     recipient {
       id
