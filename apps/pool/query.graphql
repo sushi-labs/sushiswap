@@ -34,6 +34,9 @@ query CrossChainPairs(
     chainName
     chainShortName
     name
+    reserve0
+    reserve1
+    liquidity
     swapFee
     twapEnabled
     volume7d
@@ -90,6 +93,9 @@ query CrossChainUser($id: ID!, $chainIds: [BigInt!]!, $now: Int!, $block: Block_
         chainName
         chainShortName
         name
+        reserve0
+        reserve1
+        liquidity
         swapFee
         twapEnabled
         volume7d
@@ -149,6 +155,7 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: BigInt!) {
     name
     reserve0
     reserve1
+    liquidity
     swapFee
     twapEnabled
     volume7d

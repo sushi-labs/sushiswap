@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { Pair, User } from '../../../../.graphclient'
-import { usePoolFilters } from '../../../PoolsProvider'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'

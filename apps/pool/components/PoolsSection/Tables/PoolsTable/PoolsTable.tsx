@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
-import { usePoolFilters } from '../../../PoolsProvider'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
@@ -84,7 +84,7 @@ export const PoolsTable: FC = () => {
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
   const { data: poolCount } = useSWR<number>(
-    '/pool/api/pools/count',
+    `/pool/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json()),
     {}
   )
