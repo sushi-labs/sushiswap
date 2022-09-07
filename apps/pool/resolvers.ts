@@ -129,7 +129,13 @@ export const resolvers: Resolvers = {
               const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
               // console.log(`Farm for pool ${pool.id}`, farm)
               const feeApr =
-                Number(pool?.liquidityUSD) > 5000 ? (chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
+                Number(pool?.liquidityUSD) > 5000
+                  ? chainId === 1
+                    ? pool?.apr / 100_000
+                    : chainId === 100
+                    ? pool?.apr * 100
+                    : pool?.apr / 100
+                  : 0
               const incentiveApr =
                 farm?.incentives?.reduce(
                   (previousValue, currentValue) => previousValue + Number(currentValue.apr),

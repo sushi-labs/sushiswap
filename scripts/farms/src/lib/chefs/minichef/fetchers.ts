@@ -100,23 +100,18 @@ export async function getRewarderInfos(chainId: ChainId) {
   return Promise.all(
     rewarders.map(async (rewarder) => {
       try {
-        const poolLengthCall: ReadContractConfig = {
-          addressOrName: rewarder.id,
-          chainId: chainId,
-          contractInterface: ComplexRewarderTimeABI,
-          functionName: 'poolLength',
-        }
-        const poolLength = await readContract<MiniChefV2, Awaited<ReturnType<MiniChefV2['poolLength']>>>(poolLengthCall)
+        // const poolLengthCall: ReadContractConfig = {
+        //   addressOrName: rewarder.id,
+        //   chainId: chainId,
+        //   contractInterface: ComplexRewarderTimeABI,
+        //   functionName: 'poolLength',
+        // }
+        const poolLength = await getPoolLength(chainId)
+        // const poolLength = await readContract<MiniChefV2, Awaited<ReturnType<MiniChefV2['poolLength']>>>(poolLengthCall)
 
-        const poolIdCalls: ReadContractsConfig['contracts'] = [...Array(poolLength.toNumber())].map((_, i) => ({
-          addressOrName: rewarder.id,
-          args: [i],
-          chainId: chainId,
-          contractInterface: ComplexRewarderTimeABI,
-          functionName: 'poolIds',
-        }))
+        const poolIds = !poolLength?.isZero() ? [...Array(poolLength?.toNumber()).keys()] : []
 
-        const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength.toNumber())].map((_, i) => ({
+        const poolInfoCalls: ReadContractsConfig['contracts'] = poolIds.map((_, i) => ({
           addressOrName: rewarder.id,
           args: [i],
           chainId: chainId,
@@ -124,32 +119,16 @@ export async function getRewarderInfos(chainId: ChainId) {
           functionName: 'poolInfo',
         }))
 
-        const [poolIds, poolInfos] = await Promise.all([
-          readContracts<Awaited<ReturnType<ComplexRewarderTime['poolIds']>>[]>({
-            allowFailure: true,
-            contracts: poolIdCalls,
-          }),
-          readContracts<Awaited<ReturnType<ComplexRewarderTime['poolInfo']>>[]>({
-            allowFailure: true,
-            contracts: poolInfoCalls,
-          }),
-        ])
-
-        // if (rewarder.id === '0x3f505b5cff05d04f468db65e27e72ec45a12645f') {
-        //   console.log(
-        //     [...Array(poolLength?.toNumber())].map((_, i) => ({
-        //       // Minichef pool ID
-        //       id: poolIds[i].toNumber(),
-        //       allocPoint: Number(poolInfos[i].allocPoint),
-        //     }))
-        //   )
-        // }
+        const poolInfos = await readContracts<Awaited<ReturnType<ComplexRewarderTime['poolInfo']>>[]>({
+          allowFailure: true,
+          contracts: poolInfoCalls,
+        })
 
         return {
           id: rewarder.id,
-          pools: [...Array(poolLength?.toNumber())].map((_, i) => ({
+          pools: poolIds.map((_, i) => ({
             // Minichef pool ID
-            id: poolIds[i].toNumber(),
+            id: poolIds[i],
             allocPoint: Number(poolInfos[i].allocPoint),
           })),
           totalAllocPoint: poolInfos.reduce((acc, cur) => (acc += cur.allocPoint.toNumber()), 0),

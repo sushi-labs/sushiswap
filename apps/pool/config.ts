@@ -54,7 +54,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.CELO]: 'sushiswap/sushiswap-celo',
   [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
   [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
+  [ChainId.GNOSIS]: 'sushi-labs/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
   // [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',

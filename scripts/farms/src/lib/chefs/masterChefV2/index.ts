@@ -109,6 +109,8 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
     getAverageBlockTime(ChainId.ETHEREUM),
   ])
 
+  console.log('MasterChefV2 poolLength', poolLength?.toNumber())
+
   const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
     getPoolInfos(poolLength.toNumber()),
     getLpTokens(poolLength.toNumber()),
@@ -124,7 +126,7 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
     getTokenBalancesOf(lpTokens, MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM], ChainId.ETHEREUM),
   ])
 
-  const pools = [...Array(poolLength.toNumber())].map((_, i) => ({
+  const pools = [...Array(poolLength?.toNumber()).keys()].map((_, i) => ({
     id: i,
     poolInfo: poolInfos[i],
     lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,

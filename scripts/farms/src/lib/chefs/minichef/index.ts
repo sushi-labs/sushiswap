@@ -78,23 +78,15 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
         })
       }
 
-      if (pool.pair.id === '0xf38c5b39f29600765849ca38712f302b1522c9b8') {
-        console.log({ sushiPriceUSD, sushiRewardPerYearUSD, stakedLiquidityUSD, lusd: pool.pair.liquidityETH })
-      }
-
       if (pool.rewarder) {
         const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
 
         if (token) {
           let rewardPerSecond
-
-          // if (pool.pair.id === '0xc704050a17af0caed763431b80e38e8d8ff15591') {
-          //   console.log('RPS', pool)
-          // }
-
           // Multipool rewarder
           if (pool.rewarder.pools) {
             const poolInfo = pool.rewarder.pools.find((rewaderPool) => rewaderPool.id === pool.id)
+
             if (poolInfo) {
               // poolInfo.allocPoint.div(masterChefV2.totalAllocPoint).times(masterChefV2.sushiPerDay)
               rewardPerSecond =
