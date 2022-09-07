@@ -10,6 +10,11 @@ enum Filters {
   selectedNetworks = 'selectedNetworks',
 }
 
+export enum SelectedTable {
+  Markets = 'Markets',
+  Tokens = 'Tokens',
+}
+
 interface FilterContext {
   query: string
   extraQuery: string
@@ -17,6 +22,7 @@ interface FilterContext {
   [Filters.singleSidedStakingOnly]: boolean
   [Filters.stablePairsOnly]: boolean
   [Filters.selectedNetworks]: ChainId[]
+  selectedTable: SelectedTable
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -34,6 +40,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => 
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
     [Filters.selectedNetworks]: SUPPORTED_CHAIN_IDS,
+    selectedTable: SelectedTable.Markets,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

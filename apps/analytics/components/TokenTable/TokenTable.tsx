@@ -50,16 +50,7 @@ const fetcher = ({
   let where = {}
   if (args.query) {
     where = {
-      token0_: { symbol_contains_nocase: args.query },
-    }
-
-    _url.searchParams.set('where', JSON.stringify(where))
-  }
-
-  if (args.extraQuery) {
-    where = {
-      ...where,
-      token1_: { symbol_contains_nocase: args.extraQuery },
+      symbol_contains_nocase: args.query,
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
@@ -71,7 +62,7 @@ const fetcher = ({
 }
 
 export const TokenTable: FC = () => {
-  const { query, extraQuery, selectedNetworks } = usePoolFilters()
+  const { query, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
@@ -84,8 +75,8 @@ export const TokenTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
-    [sorting, pagination, selectedNetworks, query, extraQuery]
+    () => ({ sorting, pagination, selectedNetworks, query }),
+    [sorting, pagination, selectedNetworks, query]
   )
 
   const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher, {})
@@ -113,13 +104,11 @@ export const TokenTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, fees7d: false, network: false })
-    } else if (isSm && isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false })
+      setColumnVisibility({ price: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
+      setColumnVisibility({ price: false, volume: false })
     }
   }, [isLg, isMd, isSm])
 

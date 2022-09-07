@@ -4,10 +4,10 @@ import { useDebounce } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
-import { usePoolFilters } from '../../PoolsFiltersProvider'
+import { SelectedTable, usePoolFilters } from '../../PoolsFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
-  const { setFilters } = usePoolFilters()
+  const { setFilters, selectedTable } = usePoolFilters()
 
   const [_query, setQuery] = useState<string>('')
   const [_extraQuery, setExtraQuery] = useState<string>('')
@@ -35,7 +35,7 @@ export const TableFiltersSearchToken: FC = () => {
   return (
     <div
       className={classNames(
-        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12'
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-3 bg-slate-800 rounded-2xl h-12'
       )}
     >
       <div
@@ -71,38 +71,49 @@ export const TableFiltersSearchToken: FC = () => {
           </IconButton>
         </Transition>
       </div>
-      <div className="h-full py-3">
-        <div className="w-px h-full bg-slate-200/20" />
-      </div>
       <Transition
-        show={extra}
-        unmount={false}
-        className="transition-[max-width] overflow-hidden"
+        show={selectedTable === SelectedTable.Markets}
+        className="transition-[max-width] overflow-hidden flex items-center h-12 gap-2"
         enter="duration-300 ease-in-out"
         enterFrom="transform max-w-0"
-        enterTo="transform max-w-[120px]"
+        enterTo="transform max-w-[200px]"
         leave="transition-[max-width] duration-250 ease-in-out"
-        leaveFrom="transform max-w-[120px]"
+        leaveFrom="transform max-w-[200px]"
         leaveTo="transform max-w-0"
       >
-        <input
-          value={_extraQuery}
-          placeholder="... other token"
-          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
-          type="text"
-          onInput={(e) => setExtraQuery(e.currentTarget.value)}
-        />
+        <div className="h-full py-3 px-2">
+          <div className="w-px h-full bg-slate-200/20" />
+        </div>
+        <Transition
+          show={extra}
+          unmount={false}
+          className="flex flex-grow transition-[max-width] overflow-hidden"
+          enter="duration-300 ease-in-out"
+          enterFrom="transform max-w-0"
+          enterTo="transform max-w-[200px]"
+          leave="transition-[max-width] duration-250 ease-in-out"
+          leaveFrom="transform max-w-[200px]"
+          leaveTo="transform max-w-0"
+        >
+          <input
+            value={_extraQuery}
+            placeholder="... other token"
+            className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
+            type="text"
+            onInput={(e) => setExtraQuery(e.currentTarget.value)}
+          />
+        </Transition>
+        <IconButton className="mr-1" onClick={() => setExtra((prev) => !prev)}>
+          <PlusIcon
+            width={20}
+            height={20}
+            className={classNames(
+              extra ? 'rotate-45' : '',
+              'transition-[transform] ease-in-out rotate-0 text-slate-400 group-hover:text-slate-200 delay-[400ms]'
+            )}
+          />
+        </IconButton>
       </Transition>
-      <IconButton onClick={() => setExtra((prev) => !prev)}>
-        <PlusIcon
-          width={20}
-          height={20}
-          className={classNames(
-            extra ? 'rotate-45' : '',
-            'transition-[transform] ease-in-out rotate-0 text-slate-400 group-hover:text-slate-200 delay-[400ms]'
-          )}
-        />
-      </IconButton>
     </div>
   )
 }

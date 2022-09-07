@@ -86,6 +86,14 @@ const _Index = () => {
   return (
     <Layout>
       <div className="flex flex-col gap-10">
+        <section className="flex flex-col gap-6 lg:flex-row">
+          <div className="max-w-md space-y-4">
+            <h2 className="text-2xl font-semibold text-slate-50">Sushi Analytics</h2>
+            <p className="text-slate-300">
+              Dive deeper in the analytics of Sushi Bar, BentoBox, Pools, Farms and Tokens.
+            </p>
+          </div>
+        </section>
         <PoolsFiltersProvider>
           <ChartSection />
           <TableSection />

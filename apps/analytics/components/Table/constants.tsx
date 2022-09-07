@@ -154,8 +154,8 @@ export const TOKEN_PRICE_COLUMN: ColumnDef<Token, unknown> = {
 }
 
 export const TOKEN_VOLUME_COLUMN: ColumnDef<Token, unknown> = {
-  id: 'price',
-  header: 'Price',
+  id: 'volume',
+  header: 'Volume',
   cell: (props) => <TokenVolumeCell row={props.row.original} />,
   size: 160,
   meta: {
