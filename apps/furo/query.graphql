@@ -143,8 +143,10 @@ query userStreams($block: Block_height, $id: ID!) {
     initialShares
     initialAmount
     extendedShares
+    initialSharesExtended
     remainingShares
     withdrawnAmount
+    withdrawnAmountAfterExtension
     recipient {
       id
     }
@@ -169,8 +171,10 @@ query userStreams($block: Block_height, $id: ID!) {
     initialShares
     initialAmount
     extendedShares
+    initialSharesExtended
     remainingShares
     withdrawnAmount
+    withdrawnAmountAfterExtension
     recipient {
       id
     }
