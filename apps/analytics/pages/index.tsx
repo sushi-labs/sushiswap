@@ -1,29 +1,33 @@
-import { ENABLED_NETWORKS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PairsProvider, PairTable, PairTableSection } from '../components'
 import { ChartSection } from '../components/ChartSection'
-import { getCharts, getPairs, GetPairsQuery } from '../lib/api'
+import { getCharts, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  // console.log('SSR query', query)
-  const [pairs, charts] = await Promise.all([getPairs(query as unknown as GetPairsQuery), getCharts()])
+  const [pairs, charts, poolCount] = await Promise.all([
+    getPools(query as unknown as GetPoolsQuery),
+    getCharts(),
+    getPoolCount(),
+  ])
+
   return {
     props: {
       fallback: {
         [unstable_serialize({
-          url: '/analytics/api/pairs',
+          url: '/analytics/api/pools',
           args: {
             sorting: [
               {
-                id: 'liquidityUSD',
+                id: 'apr',
                 desc: true,
               },
             ],
-            selectedNetworks: ENABLED_NETWORKS,
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
@@ -33,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
           },
         })]: pairs,
         [`/analytics/api/charts`]: charts,
+        [`/analytics/api/pools/count`]: poolCount,
       },
     },
   }

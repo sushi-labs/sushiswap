@@ -8,7 +8,7 @@ export const PairVolume24hCell: FC<CellProps> = ({ row }) => {
   const volume = formatUSD(row.volume24h)
 
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50">
+    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
       {volume.includes('NaN') ? '$0.00' : volume}
     </Typography>
   )

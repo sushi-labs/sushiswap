@@ -1,29 +1,69 @@
-import { QuerypairsArgs } from '../.graphclient'
-import { ENABLED_NETWORKS } from '../config'
+import { QuerycrossChainPairsArgs } from '../.graphclient'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
-export type GetPairsQuery = QuerypairsArgs & { networks: string }
+export type GetPoolCountQuery = Partial<{
+  networks: string
+}>
 
-export const getPairs = async (query: GetPairsQuery) => {
+export const getPoolCount = async (query?: GetPoolCountQuery) => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+  return factories.reduce((sum, cur) => {
+    if (chainIds.includes(cur.chainId)) {
+      sum = sum + +cur.pairCount
+    }
+
+    return sum
+  }, 0)
+}
+
+export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+  networks: string
+  where?: string
+  pagination: string
+}
+
+export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const { getBuiltGraphSDK } = await import('../.graphclient')
-    const { CrossChainPairs } = getBuiltGraphSDK()
-    const first = query?.first && !isNaN(Number(query.first)) ? Number(query.first) : 20
-    const skip = query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
-    const where = query?.where ? query.where : undefined
-    const orderBy = query?.orderBy || 'liquidityUSD'
+    const sdk = getBuiltGraphSDK()
+
+    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+      ? JSON.parse(query?.pagination)
+      : {
+          pageIndex: 0,
+          pageSize: 20,
+        }
+    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
+    // const first = 1000
+    // const skip = 0
+    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
+    const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks ? JSON.parse(query.networks) : ENABLED_NETWORKS
-    const { crossChainPairs } = await CrossChainPairs({
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+    const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
+      pagination,
       where,
       orderBy,
       orderDirection,
       chainIds,
       now: Math.round(new Date().getTime() / 1000),
     })
+
     return crossChainPairs
   } catch (error) {
+    console.log(error)
     throw new Error(error)
   }
 }
@@ -32,7 +72,7 @@ export const getStats = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
   const { crossChainStats: stats } = await sdk.CrossChainStats({
-    chainIds: ENABLED_NETWORKS,
+    chainIds: SUPPORTED_CHAIN_IDS,
     first: 1000,
     now: Math.round(new Date().getTime() / 1000),
   })
@@ -44,7 +84,7 @@ export const getCharts = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
   const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
-    chainIds: ENABLED_NETWORKS,
+    chainIds: SUPPORTED_CHAIN_IDS,
     first: 1000,
   })
 

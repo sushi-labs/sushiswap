@@ -8,7 +8,7 @@ export const PairTVLCell: FC<CellProps> = ({ row }) => {
   const tvl = formatUSD(row.liquidityUSD)
 
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50">
+    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
       {tvl.includes('NaN') ? '$0.00' : tvl}
     </Typography>
   )
