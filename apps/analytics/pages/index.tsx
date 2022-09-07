@@ -3,9 +3,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { Layout, PoolsFiltersProvider } from '../components'
-import { ChartSection } from '../components/ChartSection'
-import { TableSection } from '../components/TableSection'
+import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
 import { getCharts, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {

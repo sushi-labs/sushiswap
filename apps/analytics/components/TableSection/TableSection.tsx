@@ -6,7 +6,7 @@ import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { PairTable } from '../PairTable'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { TableFilters } from '../Table/TableFilters'
-import { TokenTable } from '../TokenTable/TokenTable'
+import { TokenTable } from '../TokenTable'
 
 export const TableSection: FC = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
