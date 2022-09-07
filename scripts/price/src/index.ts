@@ -4,33 +4,58 @@ import { ChainId } from '@sushiswap/chain'
 import { getUnixTime } from 'date-fns'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import { SUSHISWAP_CHAINS, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
 import redis from './redis'
 
 async function getSushiSwapResults() {
   const results = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
-      const sdk = getBuiltGraphSDK({ chainId, name: SUSHISWAP_SUBGRAPH_NAME[chainId] })
-      return sdk.SushiSwapTokens({ first: 100000, where: { derivedETH_gt: 0 } }).catch(() => {
-        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
-        return undefined
-      })
+      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
+
+      // temporary until new subgraph syncs
+      if (chainId === ChainId.POLYGON) {
+        return sdk
+          .PolygonTokens({ first: 100000, where: { derivedETH_gt: 0 } })
+          .then((res) => ({
+            tokenPrices: res.Polygon_tokens.map((token) => ({
+              id: token.id,
+              derivedNative: token.derivedETH,
+              token: {
+                liquidity: token.liquidity,
+              },
+            })),
+            bundle: {
+              nativePrice: res.Polygon_bundle?.ethPrice,
+            },
+            _meta: res._meta,
+          }))
+          .catch((e) => {
+            console.log(e)
+            console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+            return undefined
+          })
+      } else {
+        return sdk.Tokens({ first: 100000, where: { derivedNative_gt: 0 } }).catch(() => {
+          console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+          return undefined
+        })
+      }
     })
   )
 
   return results
     .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
     .map((result, i) => {
-      const nativePrice = Number(result.bundle?.ethPrice)
+      const nativePrice = Number(result.bundle?.nativePrice)
       const updatedAtBlock = Number(result._meta?.block.number)
 
       return {
         chainId: SUSHISWAP_CHAINS[i],
         updatedAtBlock,
-        tokens: result.tokens.map((token) => ({
+        tokens: result.tokenPrices.map((token) => ({
           id: token.id,
-          priceUSD: token.derivedETH * nativePrice,
-          liquidityNative: Number(token.liquidity),
+          priceUSD: token.derivedNative * nativePrice,
+          liquidity: Number(token.token.liquidity),
         })),
       }
     })
@@ -39,15 +64,16 @@ async function getSushiSwapResults() {
 async function getTridentResults() {
   const results = await Promise.all(
     TRIDENT_CHAINS.map((chainId) => {
-      const sdk = getBuiltGraphSDK({ chainId, name: TRIDENT_SUBGRAPH_NAME[chainId] })
+      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] })
       return sdk
-        .TridentTokens({
+        .Tokens({
           first: 100000,
           where: {
             derivedNative_gt: 0,
           },
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e)
           console.log(`Fetch failed: Trident - ${ChainId[chainId]}`)
           return undefined
         })
@@ -57,7 +83,7 @@ async function getTridentResults() {
   return results
     .filter((result): result is NonNullable<typeof results[0]> => result !== undefined)
     .map((result, i) => {
-      //const nativePrice = Number(result.bundle?.nativePrice)
+      const nativePrice = Number(result.bundle?.nativePrice)
       const updatedAtBlock = Number(result._meta?.block.number)
       return {
         chainId: TRIDENT_CHAINS[i],
@@ -65,8 +91,8 @@ async function getTridentResults() {
         tokens: result.tokenPrices.map((tokenPrice) => {
           return {
             id: tokenPrice.id,
-            priceUSD: Number(tokenPrice.lastUsdPrice),
-            liquidityNative: Number(tokenPrice.token?.liquidityNative),
+            priceUSD: tokenPrice.derivedNative * nativePrice,
+            liquidity: Number(tokenPrice.token.liquidity),
           }
         }),
       }
@@ -87,23 +113,25 @@ export async function execute() {
     // Get all sources for specific chain (Legacy, Trident or Legacy+Trident)
     const sources = results.filter((result) => result.chainId === chainId)
 
-    let tokens
+    let tokens: { id: string; priceUSD: number }[] = []
 
     // No need to go through everything if there's just going to be one entry anyway
     if (sources.length === 1) {
-      tokens = sources[0].tokens
+      const uniqueTokens = new Map()
+      sources[0].tokens.forEach((token) => uniqueTokens.set(token.id, token.priceUSD))
+      tokens = Array.from(uniqueTokens.entries()).map(([id, priceUSD]) => ({ id, priceUSD }))
     } else {
       const allTokens = sources.flatMap((result) => result.tokens)
-      const seenTokens = new Map<string, { priceUSD: number; liquidityNative: number }>()
+      const seenTokens = new Map<string, { priceUSD: number; liquidity: number }>()
       allTokens.forEach((token) => {
         const previousBestToken = seenTokens.get(token.id)
 
         if (previousBestToken) {
-          if (previousBestToken.liquidityNative < token.liquidityNative) {
-            seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidityNative: token.liquidityNative })
+          if (previousBestToken.liquidity < token.liquidity) {
+            seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidity: token.liquidity })
           }
         } else {
-          seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidityNative: token.liquidityNative })
+          seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidity: token.liquidity })
         }
       })
       tokens = Array.from(seenTokens.entries()).map(([id, { priceUSD }]) => ({ id, priceUSD }))
