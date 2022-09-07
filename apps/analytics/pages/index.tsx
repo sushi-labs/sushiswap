@@ -3,8 +3,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { Layout, PairsProvider, PairTable, PairTableSection } from '../components'
+import { Layout, PoolsFiltersProvider } from '../components'
 import { ChartSection } from '../components/ChartSection'
+import { TableSection } from '../components/TableSection'
 import { getCharts, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
@@ -54,13 +55,11 @@ const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
 const _Index = () => {
   return (
     <Layout>
-      <div className="flex flex-col gap-4">
-        <PairsProvider>
+      <div className="flex flex-col gap-10">
+        <PoolsFiltersProvider>
           <ChartSection />
-          <PairTableSection>
-            <PairTable />
-          </PairTableSection>
-        </PairsProvider>
+          <TableSection />
+        </PoolsFiltersProvider>
       </div>
     </Layout>
   )

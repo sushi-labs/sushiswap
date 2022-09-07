@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../.graphclient'
-import { usePoolFilters } from '../PairsProvider'
+import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   APR_COLUMN,
   FEES_7_COLUMN,
