@@ -1,62 +1,61 @@
-query ExchangeTokens($first: Int = 100000, $skip: Int = 0, $where: Exchange_Token_filter, $block: Exchange_Block_height) {
-  tokens:Exchange_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+query Tokens($first: Int = 100000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    symbol
+    decimals
+    liquidity
+    
+    price {
+      derivedNative
+    }
+  }
+  
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query PolygonTokens($first: Int = 100000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
+  tokens:Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
     decimals
     liquidity
     derivedETH
   }
-}
 
-query ExchangeBundle($block: Exchange_Block_height) {
-  bundle:Exchange_bundle(id: 1, block: $block) {
-    ethPrice
+  bundle:Polygon_bundle(id: 1, block: $block) {
+    nativePrice:ethPrice
   }
 }
 
-query ExchangePairs($first: Int = 100000, $skip: Int = 0, $where: Exchange_Pair_filter, $block: Exchange_Block_height) {
-  pairs:Exchange_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+query Pairs($first: Int = 100000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
-    totalSupply
+    liquidity
     volumeUSD
-    reserveUSD
-    trackedReserveETH
-  }
-}
-
-
-query TridentTokens($first: Int = 100000, $skip: Int = 0, $where: Trident_Token_filter, $block: Trident_Block_height) {
-  tokens:Trident_tokens(first: $first, skip: $skip, where: $where, block: $block) {
-    id
-    symbol
-    decimals
-    liquidity
-    price {
-      derivedNative
-    }
-  }
-
-  bundle:Trident_bundle(id: 1, block: $block) {
-    nativePrice
-  }
-}
-
-query TridentBundle($block: Trident_Block_height) {
-  bundle:Trident_bundle(id: 1, block: $block) {
-    nativePrice
-  }
-}
-
-query TridentPairs($first: Int = 100000, $skip: Int = 0, $where: Trident_Pair_filter, $block: Trident_Block_height) {
-  pairs:Trident_pairs(first: $first, skip: $skip, where: $where, block: $block) {
-    id
-    feesNative
-    liquidity
     liquidityNative
     apr
   }
+
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
 }
 
+query PolygonPairs($first: Int = 100000, $skip: Int = 0, $where: Polygon_Pair_filter, $block: Polygon_Block_height) {
+  pairs:Polygon_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    liquidity:totalSupply
+    volumeUSD
+    liquidityUSD:reserveUSD
+    liquidityNative:trackedReserveETH
+  }
+
+  bundle:Polygon_bundle(id: 1, block: $block) {
+    nativePrice:ethPrice
+  }
+}
 
 query MasterChefV2Rewarders($first: Int = 1000, $skip: Int = 0, $where: MasterChef_MasterChefV2Rewarder_filter, $block: MasterChef_Block_height) {
   rewarders:MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {

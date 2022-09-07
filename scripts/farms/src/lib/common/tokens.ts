@@ -1,8 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { ERC20 } from '@sushiswap/core'
-import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-client/config'
+import { SUBGRAPH_HOST } from '@sushiswap/graph-client/config'
 import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
 
+import { EXCHANGE_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '../../config'
 import { divBigNumberToNumber } from './utils'
 
 interface Token {
@@ -19,19 +20,21 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
 
-  const [{ tokens }, { bundle }] = await Promise.all([
-    sdk.ExchangeTokens({
-      where: { id_in: ids.map((id) => id.toLowerCase()) },
-    }),
-    sdk.ExchangeBundle(),
-  ])
+  // waiting for new subgraph to sync
+  const { tokens, bundle } =
+    chainId === ChainId.POLYGON
+      ? await sdk.PolygonTokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } }).then(({ tokens, bundle }) => ({
+          tokens: tokens.map((token) => ({ ...token, price: { derivedNative: token.derivedETH } })),
+          bundle,
+        }))
+      : await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
 
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
     decimals: Number(token.decimals),
     liquidity: Number(token.liquidity),
-    derivedUSD: token.derivedETH * bundle?.ethPrice,
+    derivedUSD: token.price.derivedNative * bundle?.nativePrice,
   }))
 }
 
@@ -41,12 +44,9 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
 
-  const [{ tokens }, { bundle }] = await Promise.all([
-    sdk.TridentTokens({
-      where: { id_in: ids.map((id) => id.toLowerCase()) },
-    }),
-    sdk.TridentBundle(),
-  ])
+  const { tokens, bundle } = await sdk.Tokens({
+    where: { id_in: ids.map((id) => id.toLowerCase()) },
+  })
 
   return tokens.map((token) => ({
     id: token.id,

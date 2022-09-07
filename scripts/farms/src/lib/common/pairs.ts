@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
-import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-client/config'
 import { daysInWeek, daysInYear } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'
 
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '../../config'
 import { getBlockDaysAgo } from './blocks'
 import { aprToApy, divBigNumberToNumber } from './utils'
 
@@ -22,34 +22,47 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = EXCHANGE_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
-  const block7d = await getBlockDaysAgo(7, chainId)
+  let bundle: { nativePrice: number } | null | undefined
+  let pairs
 
-  const [{ pairs }, { pairs: pairs7d }, { bundle }] = await Promise.all([
-    sdk.ExchangePairs({ first: ids.length, where: { id_in: ids.map((id) => id.toLowerCase()) } }),
-    sdk.ExchangePairs({
+  if (chainId === ChainId.POLYGON) {
+    const block7d = await getBlockDaysAgo(7, chainId)
+
+    const [{ pairs: pairsL, bundle: bundleL }, { pairs: pairs7d }] = await Promise.all([
+      sdk.PolygonPairs({ first: ids.length, where: { id_in: ids.map((id) => id.toLowerCase()) } }),
+      sdk.PolygonPairs({
+        first: ids.length,
+        where: { id_in: ids.map((id) => id.toLowerCase()) },
+        block: { number: block7d?.number },
+      }),
+    ])
+
+    bundle = bundleL
+    pairs = pairsL.map((pair) => {
+      const pair7d = pairs7d.find((pair7d) => pair7d.id === pair.id)
+      const feeApr = pair7d
+        ? ((pair.volumeUSD - pair7d.volumeUSD) * EXCHANGE_LP_FEE * WEEKS_IN_YEAR) / pair.liquidityUSD
+        : 0
+
+      return { ...pair, apr: feeApr }
+    })
+  } else {
+    ;({ pairs, bundle } = await sdk.Pairs({
       first: ids.length,
       where: { id_in: ids.map((id) => id.toLowerCase()) },
-      block: { number: block7d?.number },
-    }),
-    sdk.ExchangeBundle(),
-  ])
+    }))
+  }
 
   return pairs.map((pair) => {
-    const pair7d = pairs7d.find((pair7d) => pair7d.id === pair.id)
-
-    const feeApr = pair7d
-      ? ((pair.volumeUSD - pair7d.volumeUSD) * EXCHANGE_LP_FEE * WEEKS_IN_YEAR) / pair.reserveUSD
-      : 0
-
-    const liquidityUSD = pair.trackedReserveETH * bundle?.ethPrice
+    const liquidityUSD = pair.liquidityNative * bundle!.nativePrice
 
     return {
       id: pair.id,
-      feeApy: aprToApy(feeApr * 100, 3650) / 100,
-      totalSupply: pair.totalSupply,
-      liquidityUSD: liquidityUSD > 0 ? liquidityUSD : pair.reserveUSD,
+      feeApy: aprToApy(pair.apr * 100, 3650) / 100,
+      totalSupply: pair.liquidity,
+      liquidityUSD: liquidityUSD,
       type: 'Legacy',
     }
   })
@@ -59,27 +72,14 @@ async function getTridentPairs(ids: string[], chainId: ChainId): Promise<Pair[]>
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
-  const block7d = await getBlockDaysAgo(7, chainId)
-
-  const [{ pairs }, { pairs: pairs7d }, { bundle }] = await Promise.all([
-    sdk.TridentPairs({ where: { id_in: ids.map((id) => id.toLowerCase()) } }),
-    sdk.TridentPairs({
-      where: { id_in: ids.map((id) => id.toLowerCase()) },
-      block: { number: block7d?.number },
-    }),
-    sdk.TridentBundle(),
-  ])
+  const { pairs, bundle } = await sdk.Pairs({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
 
   return pairs.map((pair) => {
-    const pair7d = pairs7d.find((pair7d) => pair7d.id === pair.id)
-
-    const feeApr = pair7d ? ((pair.feesNative - pair7d.feesNative) * WEEKS_IN_YEAR) / pair.liquidityNative : 0
-
     return {
       id: pair.id,
-      feeApy: aprToApy(feeApr * 100, 3650) / 100,
+      feeApy: aprToApy(pair.apr * 100, 3650) / 100,
       totalSupply: divBigNumberToNumber(BigNumber.from(pair.liquidity), 18),
       liquidityUSD: pair.liquidityNative * bundle?.nativePrice,
       type: 'Trident',

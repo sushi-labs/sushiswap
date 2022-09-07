@@ -3,12 +3,11 @@ import { ComplexRewarderTime, MiniChefV2 } from '@sushiswap/core'
 import ComplexRewarderTimeABI from '@sushiswap/core/abi/ComplexRewarderTime.json'
 import MiniChefV2ABI from '@sushiswap/core/abi/MiniChefV2.json'
 import { MINICHEF_ADDRESS } from '@sushiswap/core-sdk'
-import { SUBGRAPH_HOST } from '@sushiswap/graph-client/config'
 import { ReadContractConfig, readContracts, ReadContractsConfig } from '@wagmi/core'
 import { readContract } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
-import { MINICHEF_SUBGRAPH_NAME } from '../../../config'
+import { GRAPH_HOST, MINICHEF_SUBGRAPH_NAME } from '../../../config'
 
 export async function getPoolLength(chainId: ChainId) {
   const poolLengthCall: ReadContractConfig = {
@@ -86,7 +85,7 @@ export async function getRewarders(poolLength: number, chainId: ChainId) {
 export async function getRewarderInfos(chainId: ChainId) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient')
   const subgraphName = MINICHEF_SUBGRAPH_NAME[chainId]
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   const { rewarders } = await sdk.MiniChefRewarders({
     where: {
@@ -94,7 +93,6 @@ export async function getRewarderInfos(chainId: ChainId) {
       rewardToken_not: '0x0000000000000000000000000000000000000000',
     },
   })
-
   console.log('get rewarder infos')
 
   return Promise.all(
