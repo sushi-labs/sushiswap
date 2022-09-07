@@ -28,6 +28,10 @@ export const resolvers: Resolvers = {
     volume7d: (root, args, context, info) => root.volume7d || '0',
     fees7d: (root, args, context, info) => root.fees7d || '0',
   },
+  Bundle: {
+    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+  },
   FactoryDaySnapshot: {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
@@ -282,5 +286,95 @@ export const resolvers: Resolvers = {
           ),
       ]).then((snapshots) => snapshots.flat())
     },
+    crossChainTokens: async (root, args, context, info) => {
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.tokens({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((tokens) => {
+              return tokens?.length > 0
+                ? tokens.map((token) => ({
+                    ...token,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                  }))
+                : []
+            })
+          ),
+        ...args.chainIds
+          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Exchange.Query.tokens({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                subgraphHost: GRAPH_HOST[chainId],
+              },
+              info,
+            }).then((tokens) => {
+              return tokens?.length > 0
+                ? tokens.map((token) => ({
+                    ...token,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                  }))
+                : []
+            })
+          ),
+      ])
+        .then((pools) =>
+          pools.flat().sort((a, b) => {
+            if (args.orderDirection === 'asc') {
+              return a[args.orderBy || 'apr'] - b[args.orderBy || 'apr']
+            } else if (args.orderDirection === 'desc') {
+              return b[args.orderBy || 'apr'] - a[args.orderBy || 'apr']
+            }
+            return 0
+          })
+        )
+        .then((pools) => page(pools, args.pagination))
+    },
+    crossChainBundles: async (root, args, context, info) =>
+      Promise.all(
+        args.chainIds.map((chainId) =>
+          context.Exchange.Query.bundles({
+            root,
+            args,
+            context: {
+              ...context,
+              chainId,
+              chainName: chainName[chainId],
+              subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+              subgraphHost: GRAPH_HOST[chainId],
+            },
+            info,
+          }).then((bundles) =>
+            bundles.map((bundle) => ({
+              ...bundle,
+              chainId,
+              chainName: chainName[chainId],
+            }))
+          )
+        )
+      ).then((bundles) => bundles.flat()),
   },
 }

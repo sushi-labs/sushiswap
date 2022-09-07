@@ -1,5 +1,19 @@
-import { QuerycrossChainPairsArgs } from '../.graphclient'
+import { QuerycrossChainPairsArgs, QuerycrossChainTokensArgs } from '../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../config'
+
+export const getBundles = async () => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  return bundles.reduce((acc, cur) => {
+    acc[cur.chainId] = cur
+    return acc
+  }, {})
+}
 
 export type GetPoolCountQuery = Partial<{
   networks: string
@@ -42,9 +56,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
           pageSize: 20,
         }
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
-    const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
-    // const first = 1000
-    // const skip = 0
+    const skip = 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
@@ -66,6 +78,70 @@ export const getPools = async (query?: GetPoolsQuery) => {
     console.log(error)
     throw new Error(error)
   }
+}
+
+export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'pagination'> & {
+  networks: string
+  where?: string
+  pagination: string
+}
+
+export const getTokens = async (query?: GetTokensQuery) => {
+  try {
+    const { getBuiltGraphSDK } = await import('../.graphclient')
+    const sdk = getBuiltGraphSDK()
+
+    const pagination: QuerycrossChainTokensArgs['pagination'] = query?.pagination
+      ? JSON.parse(query?.pagination)
+      : {
+          pageIndex: 0,
+          pageSize: 20,
+        }
+    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const skip = 0
+    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
+    const orderBy = query?.orderBy || 'liquidityUSD'
+    const orderDirection = query?.orderDirection || 'desc'
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+    const { crossChainTokens } = await sdk.CrossChainTokens({
+      first,
+      skip,
+      pagination,
+      where,
+      orderBy,
+      orderDirection,
+      chainIds,
+    })
+
+    return crossChainTokens
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+}
+
+export type GetTokenCountQuery = Partial<{
+  networks: string
+}>
+
+export const getTokenCount = async (query?: GetTokenCountQuery) => {
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK()
+
+  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+  return factories.reduce((sum, cur) => {
+    if (chainIds.includes(cur.chainId)) {
+      sum = sum + +cur.tokenCount
+    }
+
+    return sum
+  }, 0)
 }
 
 export const getStats = async () => {

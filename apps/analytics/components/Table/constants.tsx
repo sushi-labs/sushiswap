@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { Pair } from '../../.graphclient'
+import { Pair, Token } from '../../.graphclient'
 import { NetworkCell } from './NetworkCell'
 import { PairAPRCell } from './PairAPRCell'
 import { PairFees7dCell } from './PairFees7dCell'
@@ -10,6 +10,11 @@ import { PairNameCell } from './PairNameCell'
 import { PairTVLCell } from './PairTVLCell'
 import { PairVolume7dCell } from './PairVolume7dCell'
 import { PairVolume24hCell } from './PairVolume24hCell'
+import { TokenChainCell } from './TokenChainCell'
+import { TokenLiquidityCell } from './TokenLiquidityCell'
+import { TokenNameCell } from './TokenNameCell'
+import { TokenPriceCell } from './TokenPriceCell'
+import { TokenVolumeCell } from './TokenVolumeCell'
 
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
@@ -100,6 +105,59 @@ export const APR_COLUMN: ColumnDef<Pair, unknown> = {
   accessorFn: (row) => row.apr,
   cell: (props) => <PairAPRCell row={props.row.original} />,
   size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  },
+}
+
+export const TOKEN_CHAIN_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'network',
+  header: 'Chain',
+  cell: (props) => <TokenChainCell row={props.row.original} />,
+  size: 30,
+  meta: {
+    skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
+  },
+}
+
+export const TOKEN_NAME_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'tokenName',
+  header: 'Name',
+  cell: (props) => <TokenNameCell row={props.row.original} />,
+  size: 160,
+  meta: {
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  },
+}
+
+export const TOKEN_LIQUIDITY_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'liquidity',
+  header: 'Liquidity',
+  cell: (props) => <TokenLiquidityCell row={props.row.original} />,
+  size: 160,
+  meta: {
+    className: 'justify-end',
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  },
+}
+
+export const TOKEN_PRICE_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'price',
+  header: 'Price',
+  cell: (props) => <TokenPriceCell row={props.row.original} />,
+  size: 160,
+  meta: {
+    className: 'justify-end',
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  },
+}
+
+export const TOKEN_VOLUME_COLUMN: ColumnDef<Token, unknown> = {
+  id: 'price',
+  header: 'Price',
+  cell: (props) => <TokenVolumeCell row={props.row.original} />,
+  size: 160,
   meta: {
     className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,

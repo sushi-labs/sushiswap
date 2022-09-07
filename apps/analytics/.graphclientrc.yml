@@ -13,6 +13,15 @@ additionalTypeDefs: |
     pageIndex: Int! = 0
     pageSize: Int! = 20
   }
+  extend type Bundle {
+    chainId: BigInt!
+    chainName: String!
+  }
+  extend type Token {
+    chainId: BigInt!
+    chainName: String!
+    chainShortName: String!
+  }
   type RewardToken {
     address: String!
     symbol: String!
@@ -66,9 +75,20 @@ additionalTypeDefs: |
       now: Int!,
       block: Block_height
     ): [Pair!]!
+    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
     crossChainStats(first: Int!, orderBy: Pair_orderBy, orderDirection: OrderDirection, chainIds: [BigInt!]!, now: Int!): [Pair!]!
     crossChainFactoryDaySnapshots(first: Int! = 1000, skip: Int! = 0, where: FactoryDaySnapshot_filter, orderBy: FactoryDaySnapshot_orderBy!, orderDirection: OrderDirection!, block: Block_height, chainIds: [BigInt!]!): [FactoryDaySnapshot!]!
     crossChainFactories(chainIds: [BigInt!]!): [Factory!]!
+    crossChainTokens(
+      first: Int!,
+      skip: Int! = 0, 
+      pagination: Pagination,
+      where: Token_filter, 
+      orderBy: Token_orderBy, 
+      orderDirection: OrderDirection, 
+      chainIds: [BigInt!]!, 
+      block: Block_height
+    ): [Token!]!
   }
 
 additionalResolvers:

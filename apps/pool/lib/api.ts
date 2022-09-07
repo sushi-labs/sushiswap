@@ -2,14 +2,14 @@ import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 
 import { CrossChainFarmsQuery, QuerypairsArgs } from '../.graphclient'
-import { AMM_ENABLED_NETWORKS, STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
+import { STAKING_ENABLED_NETWORKS, SUPPORTED_CHAIN_IDS } from '../config'
 
 export const getBundles = async () => {
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK()
 
   const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
-    chainIds: AMM_ENABLED_NETWORKS,
+    chainIds: SUPPORTED_CHAIN_IDS,
   })
 
   return bundles.reduce((acc, cur) => {

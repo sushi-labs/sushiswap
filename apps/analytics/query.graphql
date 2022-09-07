@@ -53,11 +53,6 @@ query CrossChainPairs(
     apr
     feeApr
     incentiveApr
-    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-      id
-      date
-      volumeUSD
-    }
     farm {
       id
       feeApy
@@ -86,6 +81,42 @@ query CrossChainPairs(
       date
       volumeUSD
       feesUSD
+    }
+  }
+}
+
+query CrossChainTokens(
+  $first: Int = 20
+  $skip: Int = 0
+  $pagination: Pagination
+  $where: Token_filter
+  $orderBy: Token_orderBy = liquidityUSD
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [BigInt!]!
+) {
+  crossChainTokens(
+    first: $first,
+    skip: $skip,
+    pagination: $pagination,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    block: $block,
+    chainIds: $chainIds,
+  ) {
+    chainId
+    chainName
+    chainShortName
+    id
+    name
+    liquidityUSD
+    symbol
+    decimals
+    volumeUSD
+    feesUSD
+    price {
+      derivedNative
     }
   }
 }
@@ -164,5 +195,16 @@ query CrossChainFactories($chainIds: [BigInt!]!) {
     chainId
     chainName
     pairCount
+    tokenCount
   }
 }
+
+query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainBundles(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    nativePrice
+  }
+}
+
