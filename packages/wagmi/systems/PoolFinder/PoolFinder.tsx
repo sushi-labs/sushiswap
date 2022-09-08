@@ -1,6 +1,6 @@
-import { PairState } from '@sushiswap/wagmi'
 import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
 
+import { PairState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { ConstantProductPool } from './ConstantProductPool'
 import { LegacyPool } from './LegacyPool'
@@ -17,11 +17,11 @@ interface Props {
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
-export interface State {
+export interface PoolState {
   pool: PoolStateUnion
 }
 
-const reducer = (state: State, action: PoolExistenceStateAction) => {
+const reducer = (state: PoolState, action: PoolExistenceStateAction) => {
   switch (action.type) {
     case 'update': {
       return {

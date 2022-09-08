@@ -1,8 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { ConstantProductPool, Fee, Pair } from '@sushiswap/exchange'
-import { PairState, PoolState } from '@sushiswap/wagmi'
 import { ReactElement } from 'react'
+
+import { PairState, PoolState } from '../../hooks'
 
 export type ComponentsWrapperProps<T> = {
   children:

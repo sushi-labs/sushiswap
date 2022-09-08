@@ -1,7 +1,7 @@
 import { Fee } from '@sushiswap/exchange'
-import { useConstantProductPool } from '@sushiswap/wagmi'
 import { FC, useEffect } from 'react'
 
+import { useConstantProductPool } from '../../hooks'
 import { PoolFinderType, TridentPoolFinderProps } from './types'
 
 export const ConstantProductPool: FC<TridentPoolFinderProps> = ({

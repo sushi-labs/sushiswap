@@ -5,7 +5,7 @@ import { ConstantProductPool, Fee, Pair } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker, PairState, PoolState, Web3Input } from '@sushiswap/wagmi'
+import { Checker, PairState, PoolFinder, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
   AddSectionMyPosition,
   AddSectionReviewModalLegacy,
@@ -26,7 +26,6 @@ import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
-import { PoolFinder } from '../systems/PoolFinder/PoolFinder'
 import { PairWithAlias } from '../types'
 
 const LINKS: BreadcrumbLink[] = [
@@ -200,6 +199,15 @@ const _Add: FC<AddProps> = ({
     [pool, poolState, token1]
   )
 
+  useEffect(() => {
+    if (pool) {
+      onChangeToken0TypedAmount(input0)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onChangeToken0TypedAmount])
+
+  console.log(poolState === PoolState.LOADING)
   return (
     <>
       <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
@@ -239,6 +247,7 @@ const _Add: FC<AddProps> = ({
                 onRemoveToken={removeCustomToken}
                 chainId={chainId}
                 tokenMap={tokenMap}
+                loading={poolState === PoolState.LOADING}
               />
               <div className="p-3">
                 <Checker.Connected fullWidth size="md">
