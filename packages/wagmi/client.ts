@@ -1,6 +1,6 @@
 import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import { allChains, Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -12,7 +12,7 @@ export type Client = ReturnType<typeof createClient>
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
-const { chains, provider, webSocketProvider }: CreateClientConfig = configureChains(
+const { chains, provider, webSocketProvider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   [...allChains, ...otherChains],
   [
     alchemyProvider({ alchemyId }),
