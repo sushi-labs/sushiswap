@@ -88,16 +88,22 @@ export class Stream extends Furo {
       const percent = new Percent(passed, duration)
       return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
     } else {
+      const totalShares = JSBI.add(this.inititalShares.quotient, this.extendedShares.quotient)
+      const streamedBeforeExtension = JSBI.subtract(totalShares, this.initialSharesExtended.quotient)
+
       const duration = JSBI.subtract(
         JSBI.BigInt(this.endTime.getTime()),
         JSBI.BigInt(this.extendedAtTimestamp.getTime())
       )
       const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.extendedAtTimestamp.getTime()))
-      const balance = Amount.fromRawAmount(
-        this.token,
-        JSBI.divide(JSBI.multiply(this.remainingAmount.quotient, passed), duration)
-      ).add(this.withdrawnAmount)
-      const percent = new Percent(balance.quotient, this.totalAmount.quotient)
+      const streamedSharesAfterExtension = JSBI.divide(
+        JSBI.multiply(this.initialSharesExtended.quotient, passed),
+        duration
+      )
+
+      const totalStreamed = JSBI.add(streamedSharesAfterExtension, streamedBeforeExtension)
+
+      const percent = new Percent(totalStreamed, totalShares)
       return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
     }
   }
