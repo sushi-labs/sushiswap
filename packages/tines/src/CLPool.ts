@@ -90,14 +90,22 @@ export class CLRPool extends RPool {
     let outAmount = 0
     let input = amountIn
 
+    let startFlag = true
     while (input > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length)
         return { out: outAmount, gasSpent: this.swapGasCost }
 
-      //Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
-      const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
-      const nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
-      const priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
+      let nextTickPrice, priceDiff
+      if (startFlag) {
+        // Increasing precision at first step only - otherwise its too slow
+        const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
+        priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
+        startFlag = false
+      } else {
+        nextTickPrice = Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
+        priceDiff = currentPrice - nextTickPrice
+      }
 
       // console.log('L, P, tick, nextP', currentLiquidity,
       //     currentPrice, this.ticks[nextTickToCross].index, nextTickPrice);
@@ -113,7 +121,7 @@ export class CLRPool extends RPool {
           input = 0
         } else {
           output = currentLiquidity * priceDiff
-          currentPriceBN = nextTickPriceBN
+          //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDx
           if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
@@ -131,7 +139,7 @@ export class CLRPool extends RPool {
           input = 0
         } else {
           output = (currentLiquidity * -priceDiff) / currentPrice / nextTickPrice
-          currentPriceBN = nextTickPriceBN
+          //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDy
           if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
@@ -160,13 +168,21 @@ export class CLRPool extends RPool {
     let input = 0
     let outBeforeFee = amountOut / (1 - this.fee)
 
+    let startFlag = true
     while (outBeforeFee > 0) {
       if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) return { inp: input, gasSpent: this.swapGasCost }
 
-      //Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
-      const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
-      const nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
-      const priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
+      let nextTickPrice, priceDiff
+      if (startFlag) {
+        // Increasing precision at first step only - otherwise its too slow
+        const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
+        nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
+        priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
+        startFlag = false
+      } else {
+        nextTickPrice = Math.sqrt(Math.pow(1.0001, this.ticks[nextTickToCross].index))
+        priceDiff = currentPrice - nextTickPrice
+      }
 
       // console.log('L, P, tick, nextP', currentLiquidity,
       //     currentPrice, this.ticks[nextTickToCross].index, nextTickPrice);
@@ -180,7 +196,7 @@ export class CLRPool extends RPool {
           outBeforeFee = 0
         } else {
           input += (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
-          currentPriceBN = nextTickPriceBN
+          //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
           if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
@@ -199,7 +215,7 @@ export class CLRPool extends RPool {
           outBeforeFee = 0
         } else {
           input += currentLiquidity * -priceDiff
-          currentPriceBN = nextTickPriceBN
+          //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
           if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
