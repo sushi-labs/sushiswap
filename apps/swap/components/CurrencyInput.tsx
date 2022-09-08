@@ -43,6 +43,20 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         loading={inputType !== tradeType ? isLoading : false}
       />
     ),
-    [chainId, className, currency, customTokenMap, onAddToken, onChange, onRemoveToken, onSelect, tokenMap, value]
+    [
+      chainId,
+      className,
+      currency,
+      customTokenMap,
+      inputType,
+      isLoading,
+      onAddToken,
+      onChange,
+      onRemoveToken,
+      onSelect,
+      tokenMap,
+      tradeType,
+      value,
+    ]
   )
 }
