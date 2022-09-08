@@ -123,7 +123,6 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
 
         acc[pool.pair.id] = {
           id: pool.id,
-          feeApy: pool.pair.feeApy,
           incentives: incentives,
           chefType: 'MiniChef',
           poolType: pool.pair.type,

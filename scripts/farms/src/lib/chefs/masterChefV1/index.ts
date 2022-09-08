@@ -82,7 +82,6 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
 
       acc[farm.lpToken.toLowerCase()] = {
         id: i,
-        feeApy: pair.feeApy,
         incentives: [
           {
             apr: rewardPerYearUSD / ((pair.liquidityUSD * lpBalance) / pair.totalSupply),

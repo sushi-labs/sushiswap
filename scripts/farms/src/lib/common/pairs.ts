@@ -1,22 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
-import { daysInWeek, daysInYear } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'
 
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '../../config'
-import { getBlockDaysAgo } from './blocks'
 import { aprToApy, divBigNumberToNumber } from './utils'
 
 interface Pair {
   id: string
-  feeApy: number
   totalSupply: number
   liquidityUSD: number
   type: Farm['poolType']
 }
-
-const WEEKS_IN_YEAR = daysInYear / daysInWeek
-const EXCHANGE_LP_FEE = 0.0025
 
 async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
@@ -28,26 +22,15 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
   let pairs
 
   if (chainId === ChainId.POLYGON) {
-    const block7d = await getBlockDaysAgo(7, chainId)
-
-    const [{ pairs: pairsL, bundle: bundleL }, { pairs: pairs7d }] = await Promise.all([
-      sdk.PolygonPairs({ first: ids.length, where: { id_in: ids.map((id) => id.toLowerCase()) } }),
-      sdk.PolygonPairs({
+    ;({ pairs, bundle } = await sdk
+      .PolygonPairs({
         first: ids.length,
         where: { id_in: ids.map((id) => id.toLowerCase()) },
-        block: { number: block7d?.number },
-      }),
-    ])
-
-    bundle = bundleL
-    pairs = pairsL.map((pair) => {
-      const pair7d = pairs7d.find((pair7d) => pair7d.id === pair.id)
-      const feeApr = pair7d
-        ? ((pair.volumeUSD - pair7d.volumeUSD) * EXCHANGE_LP_FEE * WEEKS_IN_YEAR) / pair.liquidityUSD
-        : 0
-
-      return { ...pair, apr: feeApr }
-    })
+      })
+      .then(({ pairs, bundle }) => ({
+        pairs: pairs.map((pair) => ({ ...pair, liquidity: BigInt(Math.floor(pair.liquidity * 1e18)) })),
+        bundle,
+      })))
   } else {
     ;({ pairs, bundle } = await sdk.Pairs({
       first: ids.length,
@@ -60,8 +43,7 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
 
     return {
       id: pair.id,
-      feeApy: aprToApy(pair.apr * 100, 3650) / 100,
-      totalSupply: pair.liquidity,
+      totalSupply: divBigNumberToNumber(BigNumber.from(pair.liquidity), 18),
       liquidityUSD: liquidityUSD,
       type: 'Legacy',
     }
@@ -79,7 +61,6 @@ async function getTridentPairs(ids: string[], chainId: ChainId): Promise<Pair[]>
   return pairs.map((pair) => {
     return {
       id: pair.id,
-      feeApy: aprToApy(pair.apr * 100, 3650) / 100,
       totalSupply: divBigNumberToNumber(BigNumber.from(pair.liquidity), 18),
       liquidityUSD: pair.liquidityNative * bundle?.nativePrice,
       type: 'Trident',

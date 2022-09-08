@@ -190,7 +190,6 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
 
       acc[pool.pair.id] = {
         id: pool.id,
-        feeApy: pool.pair.feeApy,
         incentives: incentives,
         chefType: 'MasterChefV2',
         poolType: pool.pair.type,
