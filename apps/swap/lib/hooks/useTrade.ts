@@ -1,9 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
+import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
   FACTORY_ADDRESS,
-  Fee,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
@@ -16,8 +15,8 @@ import {
   getConstantProductPoolFactoryContract,
   PairState,
   PoolState,
-  useBentoBoxTotal,
-  useConstantProductPools,
+  useBentoBoxTotals,
+  useGetAllConstantProductPools,
   usePairs,
 } from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
@@ -32,9 +31,15 @@ type UseTradePayload = {
   otherCurrency: Currency | undefined
 }
 
-export type UseTradeOutput =
+export type TradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
   | undefined
+
+export interface UseTradeOutput {
+  data: TradeOutput
+  isLoading: boolean
+  isError: boolean
+}
 
 type UseTrade = (payload: UseTradePayload) => UseTradeOutput
 
@@ -60,18 +65,14 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const pairs = usePairs(chainId, currencyCombinations)
-
-  // TODO all fee tiers and twap
-  const currencyCombinationsWithFeeAndTwap = useMemo(() => {
-    return currencyCombinations.reduce<[Token, Token, Fee, boolean][]>((acc, el) => {
-      acc.push([el[0], el[1], Fee.DEFAULT, false])
-      return acc
-    }, [])
-  }, [currencyCombinations])
+  const { data: pairs, isLoading: isPairsLoading, isError: isPairsError } = usePairs(chainId, currencyCombinations)
 
   // Trident constant product pools
-  const constantProductPools = useConstantProductPools(chainId, currencyCombinationsWithFeeAndTwap)
+  const {
+    data: constantProductPools,
+    isLoading: isCppLoading,
+    isError: isCppError,
+  } = useGetAllConstantProductPools(chainId, currencyCombinations)
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
@@ -92,8 +93,9 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
     [pools]
   )
 
-  const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
-  const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
+  const rebases = useBentoBoxTotals(chainId, [currencyIn, currencyOut])
+  const currencyInRebase = currencyIn ? rebases?.[currencyIn.wrapped.address] : undefined
+  const currencyOutRebase = currencyOut ? rebases?.[currencyOut.wrapped.address] : undefined
 
   return useMemo(() => {
     if (
@@ -134,14 +136,18 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
             Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
           )
 
-          return Trade.exactIn(
-            useLegacy ? legacyRoute : tridentRoute,
-            amountSpecified,
-            currencyOut,
-            useLegacy ? TradeVersion.V1 : TradeVersion.V2,
-            !useLegacy ? currencyInRebase : undefined,
-            !useLegacy ? currencyOutRebase : undefined
-          )
+          return {
+            data: Trade.exactIn(
+              useLegacy ? legacyRoute : tridentRoute,
+              amountSpecified,
+              currencyOut,
+              useLegacy ? TradeVersion.V1 : TradeVersion.V2,
+              !useLegacy ? currencyInRebase : undefined,
+              !useLegacy ? currencyOutRebase : undefined
+            ),
+            isLoading: isPairsLoading || isCppLoading,
+            isError: isPairsError || isCppError,
+          }
         }
 
         const legacyRoute = findSingleRouteExactIn(
@@ -155,7 +161,11 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
 
         if (legacyRoute.status === RouteStatus.Success) {
           // console.debug('Found legacy route', legacyRoute)
-          return Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1)
+          return {
+            data: Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1),
+            isLoading: isPairsLoading || isCppLoading,
+            isError: isPairsError || isCppError,
+          }
         } else {
           // console.debug('No legacy route', legacyRoute)
         }
@@ -170,20 +180,30 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
           data.gasPrice.toNumber()
         )
         if (tridentRoute.status === RouteStatus.Success) {
-          return Trade.exactIn(
-            tridentRoute,
-            amountSpecified,
-            currencyOut,
-            TradeVersion.V2,
-            currencyInRebase,
-            currencyOutRebase
-          )
+          return {
+            data: Trade.exactIn(
+              tridentRoute,
+              amountSpecified,
+              currencyOut,
+              TradeVersion.V2,
+              currencyInRebase,
+              currencyOutRebase
+            ),
+            isLoading: isPairsLoading || isCppLoading,
+            isError: isPairsError || isCppError,
+          }
         }
 
         // TODO: Use best trade if both available
       } else if (tradeType === TradeType.EXACT_OUTPUT) {
         //
       }
+    }
+
+    return {
+      data: undefined,
+      isLoading: false,
+      isError: false,
     }
   }, [
     data,
@@ -196,5 +216,9 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
     otherCurrency,
     filteredPools,
     tradeType,
+    isPairsLoading,
+    isCppLoading,
+    isPairsError,
+    isCppError,
   ])
 }

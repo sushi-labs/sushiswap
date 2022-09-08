@@ -106,11 +106,13 @@ const Index: FC = () => {
                       amounts={[parsedInput0]}
                     >
                       <SwapReviewModalLegacy chainId={chainId}>
-                        {({ isWritePending, setOpen }) => (
-                          <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                            {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
-                          </Button>
-                        )}
+                        {({ isWritePending, setOpen }) => {
+                          return (
+                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                              {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
+                            </Button>
+                          )
+                        }}
                       </SwapReviewModalLegacy>
                     </Checker.Amounts>
                   </Checker.Network>

@@ -3,10 +3,12 @@ import { Amount, Type as Currency } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { useTrade as useFindTrade, UseTradeOutput } from '../lib/hooks/useTrade'
+import { TradeOutput, useTrade as useFindTrade } from '../lib/hooks/useTrade'
 
 interface TradeContext {
-  trade: UseTradeOutput
+  trade: TradeOutput
+  isLoading: boolean
+  isError: boolean
 }
 
 const Context = createContext<TradeContext | undefined>(undefined)
@@ -28,8 +30,10 @@ export const TradeProvider: FC<TradeProviderProps> = ({
   otherCurrency,
   children,
 }) => {
-  if (!amountSpecified || !mainCurrency || !otherCurrency) {
-    return <Context.Provider value={{ trade: undefined }}>{children}</Context.Provider>
+  if (!mainCurrency || !otherCurrency) {
+    return (
+      <Context.Provider value={{ trade: undefined, isLoading: false, isError: false }}>{children}</Context.Provider>
+    )
   }
 
   return (
@@ -48,7 +52,7 @@ export const TradeProvider: FC<TradeProviderProps> = ({
 interface _TradeProviderProps {
   chainId: ChainId
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
-  amountSpecified: Amount<Currency>
+  amountSpecified: Amount<Currency> | undefined
   mainCurrency: Currency
   otherCurrency: Currency
   children: ReactNode
@@ -62,7 +66,11 @@ const _TradeProvider: FC<_TradeProviderProps> = ({
   otherCurrency,
   children,
 }) => {
-  const trade = useFindTrade({
+  const {
+    data: trade,
+    isError,
+    isLoading,
+  } = useFindTrade({
     chainId,
     tradeType,
     mainCurrency,
@@ -70,7 +78,11 @@ const _TradeProvider: FC<_TradeProviderProps> = ({
     amountSpecified,
   })
 
-  return <Context.Provider value={useMemo(() => ({ trade }), [trade])}>{children}</Context.Provider>
+  return (
+    <Context.Provider value={useMemo(() => ({ trade, isError, isLoading }), [isError, isLoading, trade])}>
+      {children}
+    </Context.Provider>
+  )
 }
 
 export const useTrade = () => {
@@ -79,5 +91,5 @@ export const useTrade = () => {
     throw new Error('Hook can only be used inside Pool Position Staked Context')
   }
 
-  return context.trade
+  return context
 }

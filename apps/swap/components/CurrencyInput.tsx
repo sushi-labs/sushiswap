@@ -24,7 +24,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   inputType,
   tradeType,
 }) => {
-  const trade = useTrade()
+  const { trade, isLoading } = useTrade()
   const value = inputType === tradeType ? _value : trade ? trade?.outputAmount?.toExact() : ''
 
   return useMemo(
@@ -40,6 +40,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
         onRemoveToken={onRemoveToken}
         chainId={chainId}
         tokenMap={tokenMap}
+        loading={inputType !== tradeType ? isLoading : false}
       />
     ),
     [chainId, className, currency, customTokenMap, onAddToken, onChange, onRemoveToken, onSelect, tokenMap, value]

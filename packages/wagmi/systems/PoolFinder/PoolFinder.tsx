@@ -17,11 +17,11 @@ interface Props {
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
-export interface PoolState {
+export interface PoolFinderState {
   pool: PoolStateUnion
 }
 
-const reducer = (state: PoolState, action: PoolExistenceStateAction) => {
+const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
   switch (action.type) {
     case 'update': {
       return {

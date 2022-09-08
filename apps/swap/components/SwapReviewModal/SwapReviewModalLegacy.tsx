@@ -13,7 +13,7 @@ interface SwapReviewModalLegacy {
 }
 
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children }) => {
-  const trade = useTrade()
+  const { trade } = useTrade()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
@@ -24,7 +24,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const execute = useCallback(async () => {
     try {
       console.log('try')
-      const tx = await sendTransactionAsync()
+      await sendTransactionAsync()
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
         setError((e as ProviderRpcError).message)

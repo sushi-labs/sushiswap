@@ -153,7 +153,12 @@ type BalancePanel = Pick<CurrencyInputProps, 'onChange' | 'currency' | 'disableM
 const BalancePanel: FC<BalancePanel> = ({ onChange, currency, disableMaxButton, fundSource = FundSource.WALLET }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
-  const { data: balance } = useBalance({ chainId: currency?.chainId, currency, account: address })
+  const { data: balance } = useBalance({
+    chainId: currency?.chainId,
+    currency,
+    account: address,
+    enabled: Boolean(currency),
+  })
 
   return useMemo(
     () => (

@@ -10,7 +10,7 @@ import { warningSeverity } from '../../lib/functions'
 import { useSettings } from '../../lib/state/storage'
 
 export const SwapStatsDisclosure: FC = () => {
-  const trade = useTrade()
+  const { trade } = useTrade()
   const [{ slippageTolerance }] = useSettings()
   const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade?.priceImpact])
 
@@ -44,7 +44,7 @@ export const SwapStatsDisclosure: FC = () => {
         </Typography>
       </>
     )
-  }, [])
+  }, [priceImpactSeverity, slippagePercent, trade])
 
   return (
     <Transition
@@ -105,7 +105,7 @@ export const SwapStatsDisclosure: FC = () => {
                 className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
               >
                 {stats}
-                <Route trade={trade} />
+                <Route />
               </Disclosure.Panel>
             </Transition>
           </>

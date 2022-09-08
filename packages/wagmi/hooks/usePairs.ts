@@ -1,5 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Type as Currency, Type } from '@sushiswap/currency'
+import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
@@ -15,46 +15,55 @@ export enum PairState {
   INVALID,
 }
 
+export function getPairs(chainId: number, currencies: [Currency | undefined, Currency | undefined][]) {
+  return currencies
+    .filter((currencies): currencies is [Type, Type] => {
+      const [currencyA, currencyB] = currencies
+      return Boolean(
+        currencyA &&
+          currencyB &&
+          currencyA.chainId === currencyB.chainId &&
+          !currencyA.wrapped.equals(currencyB.wrapped) &&
+          FACTORY_ADDRESS[currencyA.chainId]
+      )
+    })
+    .reduce<[Token[], Token[], any[]]>(
+      (acc, [currencyA, currencyB]) => {
+        acc[0].push(currencyA.wrapped)
+        acc[1].push(currencyB.wrapped)
+        acc[2].push({
+          chainId,
+          addressOrName: computePairAddress({
+            factoryAddress: FACTORY_ADDRESS[currencyA.chainId],
+            tokenA: currencyA.wrapped,
+            tokenB: currencyB.wrapped,
+          }),
+          contractInterface: PAIR_INTERFACE,
+          functionName: 'getReserves',
+        })
+        return acc
+      },
+      [[], [], []]
+    )
+}
+
+interface UsePairsReturn {
+  isLoading: boolean
+  isError: boolean
+  data: [PairState, Pair | null][]
+}
+
 export function usePairs(
   chainId: number,
   currencies: [Currency | undefined, Currency | undefined][],
   config?: Omit<UseContractReadsConfig, 'contracts'>
-): [PairState, Pair | null][] {
-  const tokens = useMemo(
-    () =>
-      currencies
-        .filter((currencies): currencies is [Type, Type] => {
-          const [currencyA, currencyB] = currencies
-          return Boolean(
-            currencyA &&
-              currencyB &&
-              currencyA.chainId === currencyB.chainId &&
-              !currencyA.wrapped.equals(currencyB.wrapped) &&
-              FACTORY_ADDRESS[currencyA.chainId]
-          )
-        })
-        .map(([currencyA, currencyB]) => [currencyA.wrapped, currencyB.wrapped]),
-    [currencies]
-  )
-
-  const pairAddresses = useMemo(
-    () =>
-      tokens.map(([tokenA, tokenB]) => {
-        return computePairAddress({ factoryAddress: FACTORY_ADDRESS[tokenA.chainId], tokenA, tokenB })
-      }),
-    [tokens]
-  )
-
-  const { data } = useContractReads({
-    contracts: pairAddresses.map((addressOrName) => ({
-      chainId,
-      addressOrName: addressOrName,
-      contractInterface: PAIR_INTERFACE,
-      functionName: 'getReserves',
-    })),
+): UsePairsReturn {
+  const [tokensA, tokensB, contracts] = useMemo(() => getPairs(chainId, currencies), [chainId, currencies])
+  const { data, isLoading, isError } = useContractReads({
+    contracts: contracts,
     ...{
       ...config,
-      enabled: config?.enabled !== undefined ? config.enabled && pairAddresses.length > 0 : pairAddresses.length > 0,
+      enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
       cacheOnBlock: true,
       watch: true,
       keepPreviousData: true,
@@ -62,21 +71,40 @@ export function usePairs(
   })
 
   return useMemo(() => {
-    if (pairAddresses.length === 0) return [[PairState.INVALID, null]]
-    if (!data) return pairAddresses.map(() => [PairState.LOADING, null])
-    return data.map((result, i) => {
-      const tokenA = tokens[i][0]
-      const tokenB = tokens[i][1]
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-      if (!result) return [PairState.NOT_EXISTS, null]
-      const [reserve0, reserve1] = result
-      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
-      return [
-        PairState.EXISTS,
-        new Pair(Amount.fromRawAmount(token0, reserve0.toString()), Amount.fromRawAmount(token1, reserve1.toString())),
-      ]
-    })
-  }, [data, pairAddresses, tokens])
+    if (contracts.length === 0) return { isLoading, isError, data: [[PairState.INVALID, null]] }
+    if (!data)
+      return {
+        isLoading,
+        isError,
+        data: contracts.map(() => [PairState.LOADING, null]),
+      }
+
+    return {
+      isLoading,
+      isError,
+      data: data.map((result, i) => {
+        const tokenA = tokensA[i]
+        const tokenB = tokensB[i]
+        if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
+        if (!result) return [PairState.NOT_EXISTS, null]
+        const [reserve0, reserve1] = result
+        const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+        return [
+          PairState.EXISTS,
+          new Pair(
+            Amount.fromRawAmount(token0, reserve0.toString()),
+            Amount.fromRawAmount(token1, reserve1.toString())
+          ),
+        ]
+      }),
+    }
+  }, [contracts, data, isError, isLoading, tokensA, tokensB])
+}
+
+interface UsePairReturn {
+  isLoading: boolean
+  isError: boolean
+  data: [PairState, Pair | null]
 }
 
 export function usePair(
@@ -84,7 +112,16 @@ export function usePair(
   tokenA?: Currency,
   tokenB?: Currency,
   config?: Omit<UseContractReadsConfig, 'contracts'>
-): [PairState, Pair | null] {
+): UsePairReturn {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB])
-  return usePairs(chainId, inputs, config)[0]
+  const { data, isLoading, isError } = usePairs(chainId, inputs, config)
+
+  return useMemo(
+    () => ({
+      isLoading,
+      isError,
+      data: data?.[0],
+    }),
+    [data, isError, isLoading]
+  )
 }

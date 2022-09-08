@@ -2,15 +2,11 @@ import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import { Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { UseTradeOutput } from '../lib/hooks/useTrade'
+import { TradeOutput } from '../lib/hooks/useTrade'
 import { useTrade } from './TradeProvider'
 
-interface Route {
-  trade: UseTradeOutput
-}
-
 // Can render an entire tines single route with dots between
-export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
+export const SingleRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   if (!trade) return <></>
   return (
     <div className="relative flex">
@@ -34,7 +30,7 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
 }
 
 // Can render a tines multi route
-export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
+export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   if (!trade) return <></>
   const initialPaths = trade.route.legs.filter(
     (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
@@ -82,8 +78,8 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   )
 }
 
-export const Route: FC<Route> = () => {
-  const trade = useTrade()
+export const Route: FC = () => {
+  const { trade } = useTrade()
   if (!trade) return <></>
 
   return (
