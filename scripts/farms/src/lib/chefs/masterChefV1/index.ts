@@ -80,23 +80,28 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
       const rewardPerDay = sushiPerDay * (farm.allocPoint.toNumber() / totalAllocPoint.toNumber())
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
+      let incentives: Farm['incentives'] = [
+        {
+          apr: rewardPerYearUSD / ((pair.liquidityUSD * lpBalance) / pair.totalSupply),
+          rewardPerDay: rewardPerDay,
+          rewardToken: {
+            address: SUSHI[ChainId.ETHEREUM].address,
+            decimals: SUSHI[ChainId.ETHEREUM].decimals ?? 18,
+            symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
+          },
+          rewarder: {
+            address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
+            type: 'Primary',
+          },
+        },
+      ]
+
+      incentives = incentives.filter((incentive) => incentive.apr !== 0)
+      if (incentives.length === 0) return acc
+
       acc[farm.lpToken.toLowerCase()] = {
         id: i,
-        incentives: [
-          {
-            apr: rewardPerYearUSD / ((pair.liquidityUSD * lpBalance) / pair.totalSupply),
-            rewardPerDay: rewardPerDay,
-            rewardToken: {
-              address: SUSHI[ChainId.ETHEREUM].address,
-              decimals: SUSHI[ChainId.ETHEREUM].decimals ?? 18,
-              symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
-            },
-            rewarder: {
-              address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
-              type: 'Primary',
-            },
-          },
-        ],
+        incentives: incentives,
         chefType: 'MasterChefV1',
         poolType: pair.type,
       }
