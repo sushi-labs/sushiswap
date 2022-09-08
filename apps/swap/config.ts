@@ -1,35 +1,23 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { Theme } from './types'
-
-export const defaultTheme: Theme = {
-  accent: '#0993EC',
-  primary: {
-    default: 'text-slate-200',
-    hover: 'hover:text-slate-100',
-  },
-  secondary: {
-    default: 'text-slate-400',
-    hover: 'hover:text-slate-300',
-  },
-  borderRadius: 12,
-  background: {
-    primary: 'bg-slate-700',
-    secondary: 'bg-slate-800',
-  },
-}
-
-export const SUPPORTED_CHAIN_IDS = [
-  ChainId.ETHEREUM,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.POLYGON,
-  ChainId.FANTOM,
-  ChainId.BSC,
+export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
+  // ChainId.POLYGON,
+  ChainId.KAVA,
+  ChainId.METIS,
 ]
 
-export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
-  [ChainId.OPTIMISM]: '0x93395129bd3fcf49d95730D3C2737c17990fF328',
-  [ChainId.POLYGON]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288',
-}
+export const AMM_ENABLED_NETWORKS = [
+  ChainId.ETHEREUM,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+]
+
+export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]

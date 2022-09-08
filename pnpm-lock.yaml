@@ -36,7 +36,7 @@ importers:
       prettier: 2.7.1
       sort-package-json: 1.57.0
       ts-jest: 28.0.7_jest@28.1.3
-      turbo: 1.4.5
+      turbo: 1.4.6
 
   apis/farm:
     specifiers:
@@ -176,7 +176,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/analytics:
@@ -253,7 +253,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       swr: 1.3.0_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/blog:
@@ -322,7 +322,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/furo:
@@ -474,7 +474,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typechain: 8.1.0_typescript@4.7.4
       typescript: 4.7.4
 
@@ -522,7 +522,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/kashi:
@@ -629,7 +629,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/partner:
@@ -728,7 +728,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       react-hook-form: 7.33.1_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/pool:
@@ -843,10 +843,113 @@ importers:
       graphql: 16.6.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/swap:
+    specifiers:
+      '@builder.io/partytown': ^0.6.0
+      '@ethersproject/abi': ^5.0.0
+      '@ethersproject/address': ^5.0.0
+      '@ethersproject/bignumber': ^5.0.0
+      '@ethersproject/bytes': ^5.0.0
+      '@ethersproject/constants': ^5.0.0
+      '@ethersproject/contracts': ^5.0.0
+      '@ethersproject/experimental': ^5.0.0
+      '@ethersproject/providers': ^5.0.0
+      '@ethersproject/solidity': ^5.0.0
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@types/node': ^17.0.30
+      '@types/numeral': ^2.0.2
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      autoprefixer: ^10.4.0
+      date-fns: ^2.29.1
+      eslint: ^8.20.0
+      ethers: ^5.0.0
+      next: ^12.2.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
+      next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
+      postcss: ^8.4.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-redux: ^8.0.1
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typescript: ^4.0.0
+      wagmi: ^0.5.12
+    dependencies:
+      '@builder.io/partytown': 0.6.4
+      '@ethersproject/abi': 5.6.4
+      '@ethersproject/address': 5.6.1
+      '@ethersproject/bignumber': 5.6.2
+      '@ethersproject/bytes': 5.6.1
+      '@ethersproject/constants': 5.6.1
+      '@ethersproject/contracts': 5.6.2
+      '@ethersproject/experimental': 5.6.3
+      '@ethersproject/providers': 5.6.8
+      '@ethersproject/solidity': 5.6.1
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      date-fns: 2.29.1
+      ethers: 5.6.9
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.21_next@12.2.3
+      numeral: 2.0.6
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      swr: 1.3.0_react@18.2.0
+      wagmi: 0.5.12_um4cugg2i3ywhvigsmvsir7hgy
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.45
+      '@types/numeral': 2.0.2
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.1.6
+      typescript: 4.7.4
+
+  apps/xswap:
     specifiers:
       '@builder.io/partytown': ^0.6.1
       '@ethersproject/abi': ^5.0.0
@@ -954,7 +1057,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   examples/multicall:
@@ -1131,7 +1234,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   packages/chain:
@@ -3579,7 +3682,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_oai42fke67omxp5i2g4vu7ymuy
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.6.9
@@ -8445,7 +8548,7 @@ packages:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
     dev: false
 
   /@tanstack/react-table/8.0.0-alpha.87_biqbaboplfbrettd7655fr4n2y:
@@ -8580,14 +8683,16 @@ packages:
       typescript: 4.7.4
     dev: false
 
-  /@typechain/ethers-v5/2.0.0_oai42fke67omxp5i2g4vu7ymuy:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.6.9
       typechain: 3.0.0_typescript@4.7.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@typechain/hardhat/6.1.2_nzvn3pcr2zogolee74b45246su:
@@ -10367,7 +10472,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -12018,7 +12123,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream/1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -12079,8 +12184,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       is-text-path: 1.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -14854,15 +14959,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.1:
-    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
@@ -19803,17 +19899,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /postcss-import/14.1.0:
-    resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      postcss: ^8.0.0
-    dependencies:
-      postcss-value-parser: 4.2.0
-      read-cache: 1.0.0
-      resolve: 1.22.1
-    dev: true
-
   /postcss-import/14.1.0_postcss@8.4.14:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
@@ -19824,15 +19909,6 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
-
-  /postcss-js/4.0.0:
-    resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
-    engines: {node: ^12 || ^14 || >= 16}
-    peerDependencies:
-      postcss: ^8.3.3
-    dependencies:
-      camelcase-css: 2.0.1
-    dev: true
 
   /postcss-js/4.0.0_postcss@8.4.14:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -19890,15 +19966,6 @@ packages:
       lilconfig: 2.0.5
       ts-node: 10.9.1_x2utdhayajzrh747hktprshhby
       yaml: 1.10.2
-    dev: true
-
-  /postcss-nested/5.0.6:
-    resolution: {integrity: sha512-rKqm2Fk0KbA8Vt3AdGN0FB9OBOMDVajMG6ZCf/GoHgdxUJ4sBFp0A/uMIRm+MJUdo33YXEtjqIz8u7DAp8B7DA==}
-    engines: {node: '>=12.0'}
-    peerDependencies:
-      postcss: ^8.2.14
-    dependencies:
-      postcss-selector-parser: 6.0.10
     dev: true
 
   /postcss-nested/5.0.6_postcss@8.4.14:
@@ -21552,7 +21619,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -22185,41 +22252,6 @@ packages:
     resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
-    dependencies:
-      arg: 5.0.2
-      chokidar: 3.5.3
-      color-name: 1.1.4
-      detective: 5.2.1
-      didyoumean: 1.2.2
-      dlv: 1.1.3
-      fast-glob: 3.2.11
-      glob-parent: 6.0.2
-      is-glob: 4.0.3
-      lilconfig: 2.0.5
-      normalize-path: 3.0.0
-      object-hash: 3.0.0
-      picocolors: 1.0.0
-      postcss: 8.4.14
-      postcss-import: 14.1.0
-      postcss-js: 4.0.0
-      postcss-load-config: 3.1.4
-      postcss-nested: 5.0.6
-      postcss-selector-parser: 6.0.10
-      postcss-value-parser: 4.2.0
-      quick-lru: 5.1.1
-      resolve: 1.22.1
-    transitivePeerDependencies:
-      - ts-node
-    dev: true
-
-  /tailwindcss/3.1.6_postcss@8.4.14:
-    resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
-    engines: {node: '>=12.13.0'}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -22868,137 +22900,137 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /turbo-android-arm64/1.4.5:
-    resolution: {integrity: sha512-cKPJVyS1A2BBVbcH8XVeBArtEjHxioEm9zQa3Hv68usQOOFW+KOjH+0fGvjqMrWztLVFhE+npeVsnyu/6AmRew==}
+  /turbo-android-arm64/1.4.6:
+    resolution: {integrity: sha512-YxSlHc64CF5J7yNUMiLBHkeLyzrpe75Oy7tivWb3z7ySG44BXPikk4HDJZPh0T1ELvukDwuPKkvDukJ2oCLJpA==}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-64/1.4.5:
-    resolution: {integrity: sha512-cK6LjkziSfopTznpfx3EdW/C11xFlK01tYxNj0XPoBW4vNb1zLsfrI/HIwp0SzdNLqzCBwOJBK0VB07Q1MmlxQ==}
+  /turbo-darwin-64/1.4.6:
+    resolution: {integrity: sha512-f6uto7LLpjwZ6iZSF+8uaDpuiTji6xmnWDxNuW23DBE8iv5mxehHd+6Ys851uKDRrPb3QdCu9ctyigKTAla5Vg==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.4.5:
-    resolution: {integrity: sha512-hnixteVmfllup0//mGr2AZOff8oJ9dEydRU/EvbyIJ7PdkSct8758YnP5l2yMyxxipHHALSwchOKcySoaPBLRw==}
+  /turbo-darwin-arm64/1.4.6:
+    resolution: {integrity: sha512-o9C6e5XyuMHQwE0fEhUxfpXxvNr2QXXWX8nxIjygxeF19AqKbk/s08vZBOEmXV6/gx/pRhZ1S2nf0PIUjKBD/Q==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.4.5:
-    resolution: {integrity: sha512-DDNSDiKJF/F1qbSNlvRs2UO79iMPlKFw/ZcVCDKXRjMI5uMRujMIfNnoStAg6kifYZJ0KIxnzdsbbJFtCTgPhQ==}
+  /turbo-freebsd-64/1.4.6:
+    resolution: {integrity: sha512-Gg9VOUo6McXYKGevcYjGUSmMryZyZggvpdPh7Dw3QTcT8Tsy6OBtq6WnJ2O4kFDsMigyKtEOJPceD9vDMZt3yQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.4.5:
-    resolution: {integrity: sha512-pFU8ujUp7XU527NM04P4foDjOKfi8f0rNJqREU6AMxawiMI6y0oyHc3W4VNKm0Y9IsjcfguZKZRMPeQ0n7LgJA==}
+  /turbo-freebsd-arm64/1.4.6:
+    resolution: {integrity: sha512-W7VrcneWFN1QENKt5cpAPSsf9ArYBBAm3VtPBZEO5tX8kuahGlah1SKdKJXrRxYOY82wyNxDagS/rHpBlrAAzw==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.4.5:
-    resolution: {integrity: sha512-Y5pnIetm4CwxbG1YQbvnTmjROPjQjX03ktHvmoekBleU1coYGShGPd9iarQZ96XkeaRevfwfSJ90AnDGwc3/QQ==}
+  /turbo-linux-32/1.4.6:
+    resolution: {integrity: sha512-76j/zsui6mWPX8pZVMGgF8eiKHPmKuGa2lo0A/Ja0HUvdYCOGUfHsWJGVVIeYbuEp3jsKyVt7OnMDeH9CqO6bg==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.4.5:
-    resolution: {integrity: sha512-tiTusM7mYib3iLmVOWmxhsg6xU3EArjOL4l3yh9rYBdArhDJk+DrhXkbJkYOYgNSWUEfPeBs0lzSkfTIQ2H21g==}
+  /turbo-linux-64/1.4.6:
+    resolution: {integrity: sha512-z4A37Xm7lZyO9ddtGnvQHWMrsAKX6vFBxdbtb9MY76VRblo7lWSuk4LwCeM+T+ZDJ9LBFiF7aD/diRShlLx9jA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.4.5:
-    resolution: {integrity: sha512-5BsTRsoZeUWXWau4t4CNdL6NjlDdXrh8suhj5YolXUVCe039A5IutS7Dgd4i8dV1BovFCU3bz38dqQI2Qst5eQ==}
+  /turbo-linux-arm/1.4.6:
+    resolution: {integrity: sha512-Uh/V3oaAdhyZW6FKPpKihAxQo3EbvLaVNnzzkBmBnvHRkqoDJHhpuG72V7nn8pzxVbJ1++NEVjvbc2kmKFvGjg==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.4.5:
-    resolution: {integrity: sha512-R03HPqb0tJtqsGF4P3oPWsggdpTe9CZiBEtzATFpL7WVzm/Dsimy1Wcj07v6gCWdgi/mWmRt+OcZfGhnf7mibQ==}
+  /turbo-linux-arm64/1.4.6:
+    resolution: {integrity: sha512-FW1jmOpZfOoVVvml338N0MPnYjiMyYWTaMb4T+IosgGYymcUE3xJjfXJcqfU/9/uKTyY8zG0qr9/5rw2kpMS2Q==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.4.5:
-    resolution: {integrity: sha512-08+WhWCx2Bp6wKH8im4Z2iEBCgiWJLZbNbZ8YHxamwlIk1JsklyCCMikMSWb0GmpKi7EIjdmtPRQY2CyoBefpg==}
+  /turbo-linux-mips64le/1.4.6:
+    resolution: {integrity: sha512-iWaL3Pwj52BH3T2M8nXScmbSnq4+x47MYK7lJMG7FsZGAIoT5ToO1Wt1iX3GRHTcnIZYm/kCfJ1ptK/NCossLA==}
     cpu: [mipsel]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.4.5:
-    resolution: {integrity: sha512-feGjTOYcCbg12Y6JzL8nxaUOzjqqYtO6vtxrJy16yVCd2k2htd18iZ1kLjWKDZA94vdyW5lfyAGsAQik2eAC4A==}
+  /turbo-linux-ppc64le/1.4.6:
+    resolution: {integrity: sha512-Af/KlUmpiORDyELxT7byXNWl3fefErGQMJfeqXEtAdhs8OCKQWuU+lchcZbiBZYNpL+lZoa3PAmP9Fpx7R4plA==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.4.5:
-    resolution: {integrity: sha512-O4tOnGmVJrR1JOKepuUvx/kqgaU6eMEjYUihJlvQmz9pTA/ecs8HrTGyXrabbmp5YdUmF2qsXaAcOvEuJaNPmQ==}
+  /turbo-windows-32/1.4.6:
+    resolution: {integrity: sha512-NBd+XPlRSaR//lVN13Q9DOqK3CbowSvafIyGsO4jfvMsGTdyNDL6AYtFsvTKW91/G7ZhATmSEkPn2pZRuhP/DA==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.4.5:
-    resolution: {integrity: sha512-3W9gGq9h2szhestsoA1XqN9hV0wCRpGCEV6fbb3q9EaJY8K9Tff8By0mi+fE31OKHY4om+PHg595q7kybcyG/Q==}
+  /turbo-windows-64/1.4.6:
+    resolution: {integrity: sha512-86AbmG+CjzVTpn4RGtwU2CYy4zSyAc9bIQ4pDGLIpCJg6JlD11duaiMJh0SCU/HCqWLJjWDI4qD+f9WNbgPsyQ==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.4.5:
-    resolution: {integrity: sha512-/77f6OJM/4MqYEoCMER5MZTbfJZuVN22R9mc7iJDFOrNJrwvAWiAx98Fvo7WEVpMjGFUEq4Wi0UV5SpMAGU3bA==}
+  /turbo-windows-arm64/1.4.6:
+    resolution: {integrity: sha512-V+pWcqhTtmQQ3ew8qEjYtUwzyW6tO1RgvP+6OKzItYzTnMTr1Fe42Q21V+tqRNxuNfFDKsgVJdk2p5wB87bvyQ==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.4.5:
-    resolution: {integrity: sha512-imAyc1kZusjzMWY4RO572FWws8x6CoM5mX7D3qtMjdGuqOBNBhPTIaJ0LmQLu+xzuKIOlJ5m/2587CsHOJTdgw==}
+  /turbo/1.4.6:
+    resolution: {integrity: sha512-FKtBXlOJ7YjSK22yj4sJLCtDcHFElypt7xw9cZN7Wyv9x4XBrTmh5KP6RmcGnRR1/GJlTNwD2AY2T9QTPnHh+g==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-android-arm64: 1.4.5
-      turbo-darwin-64: 1.4.5
-      turbo-darwin-arm64: 1.4.5
-      turbo-freebsd-64: 1.4.5
-      turbo-freebsd-arm64: 1.4.5
-      turbo-linux-32: 1.4.5
-      turbo-linux-64: 1.4.5
-      turbo-linux-arm: 1.4.5
-      turbo-linux-arm64: 1.4.5
-      turbo-linux-mips64le: 1.4.5
-      turbo-linux-ppc64le: 1.4.5
-      turbo-windows-32: 1.4.5
-      turbo-windows-64: 1.4.5
-      turbo-windows-arm64: 1.4.5
+      turbo-android-arm64: 1.4.6
+      turbo-darwin-64: 1.4.6
+      turbo-darwin-arm64: 1.4.6
+      turbo-freebsd-64: 1.4.6
+      turbo-freebsd-arm64: 1.4.6
+      turbo-linux-32: 1.4.6
+      turbo-linux-64: 1.4.6
+      turbo-linux-arm: 1.4.6
+      turbo-linux-arm64: 1.4.6
+      turbo-linux-mips64le: 1.4.6
+      turbo-linux-ppc64le: 1.4.6
+      turbo-windows-32: 1.4.6
+      turbo-windows-64: 1.4.6
+      turbo-windows-arm64: 1.4.6
     dev: true
 
   /tweetnacl-util/0.15.1:

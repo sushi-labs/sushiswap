@@ -3,6 +3,8 @@ import { classNames, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 
+import { Theme } from '../types'
+
 interface RenderPayload {
   invert: boolean
   toggleInvert(): void
@@ -12,6 +14,7 @@ interface RenderPayload {
 
 interface Rate {
   price: Price<Type, Type> | undefined
+  theme: Theme
   children?: (payload: RenderPayload) => ReactNode
 }
 

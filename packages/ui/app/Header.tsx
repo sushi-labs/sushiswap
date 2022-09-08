@@ -7,6 +7,7 @@ import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, u
 
 export enum AppType {
   Swap = 'Swap',
+  xSwap = 'xSwap',
   Furo = 'Streaming',
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
@@ -19,6 +20,7 @@ export enum AppType {
 
 const LINK = {
   [AppType.Swap]: '/swap',
+  [AppType.xSwap]: '/xswap',
   [AppType.Furo]: '/furo',
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
@@ -92,7 +94,7 @@ export function Header({
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
                 <span className="text-sm capitalize truncate">
-                  {appType === AppType.Swap ? 'Explore Apps' : appType}
+                  {[AppType.xSwap, AppType.Swap].includes(appType) ? 'Explore Apps' : appType}
                 </span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
@@ -114,6 +116,18 @@ export function Header({
                     {AppType.Swap}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       The easiest way to trade
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://sushi.com/swap"
+                    key={AppType.xSwap}
+                    value={AppType.xSwap}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.xSwap}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Cross-chain swapping made easy
                     </Typography>
                   </Select.Option>
                   <Select.Option
