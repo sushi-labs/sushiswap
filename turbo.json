@@ -87,6 +87,12 @@
         "deployments/**"
       ],
       "cache": true
+    },
+    "server": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": true
     }
   },
   "baseBranch": "origin/master"

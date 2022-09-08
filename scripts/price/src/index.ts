@@ -129,4 +129,3 @@ export async function execute() {
   console.log(`Finished updating prices`)
   process.exit()
 }
-execute()
