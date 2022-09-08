@@ -26,8 +26,10 @@ const exampleStream = new Stream({
     remainingShares: '50000000000',
     initialShares: '119940000000',
     initialAmount: '117994000000',
+    initialSharesExtended: '0',
     extendedShares: '0',
     withdrawnAmount: '69308282750',
+    withdrawnAmountAfterExtension: '0',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     recipient: { id: AddressZero },

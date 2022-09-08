@@ -18,16 +18,16 @@ export const SUPPORTED_CHAINS = [
 export const GRAPH_HOST = 'api.thegraph.com'
 
 export const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.ETHEREUM]: 'sushi-labs/furo-ethereum',
-  [ChainId.GÖRLI]: 'sushi-labs/furo-goerli',
-  [ChainId.ARBITRUM]: 'sushi-labs/furo-arbitrum',
-  [ChainId.AVALANCHE]: 'sushi-labs/furo-avalanche',
-  [ChainId.BSC]: 'sushi-labs/furo-bsc',
-  [ChainId.FANTOM]: 'sushi-labs/furo-fantom',
-  [ChainId.GNOSIS]: 'sushi-labs/furo-gnosis',
-  [ChainId.HARMONY]: 'sushi-labs/furo-harmony',
-  [ChainId.MOONBEAM]: 'sushi-labs/furo-moonbeam',
-  [ChainId.MOONRIVER]: 'sushi-labs/furo-moonriver',
-  [ChainId.OPTIMISM]: 'sushi-labs/furo-optimism',
-  [ChainId.POLYGON]: 'sushi-labs/furo-polygon',
+  [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
+  [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',
+  [ChainId.ARBITRUM]: 'sushi-subgraphs/furo-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-subgraphs/furo-avalanche',
+  [ChainId.BSC]: 'sushi-subgraphs/furo-bsc',
+  [ChainId.FANTOM]: 'sushi-subgraphs/furo-fantom',
+  [ChainId.GNOSIS]: 'sushi-subgraphs/furo-gnosis',
+  [ChainId.HARMONY]: 'sushi-subgraphs/furo-harmony',
+  [ChainId.MOONBEAM]: 'sushi-subgraphs/furo-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-subgraphs/furo-moonriver',
+  [ChainId.OPTIMISM]: 'sushi-subgraphs/furo-optimism',
+  [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
 }
