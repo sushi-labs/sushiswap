@@ -2,21 +2,22 @@ import { ChainId } from '@sushiswap/chain'
 
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
+  // ChainId.METIS,
   // ChainId.KAVA,
-  // ChainId.METIS
 ]
 
 export const AMM_ENABLED_NETWORKS = [
-  // ChainId.ETHEREUM,
-  // ChainId.AVALANCHE,
-  // ChainId.ARBITRUM,
-  // ChainId.BSC,
-  // ChainId.CELO,
+  ChainId.ETHEREUM,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.BSC,
+  ChainId.CELO,
   ChainId.FANTOM,
-  // ChainId.FUSE,
-  // ChainId.GNOSIS,
-  // ChainId.MOONBEAM,
-  // ChainId.MOONRIVER,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  // ChainId.HARMONY,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
@@ -45,14 +46,14 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushi-graph/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushiswap/sushiswap-bsc',
+  [ChainId.BSC]: 'sushi-graph/sushiswap-bsc',
   [ChainId.CELO]: 'sushiswap/sushiswap-celo',
   [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
   [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
-  // [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
+  [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {

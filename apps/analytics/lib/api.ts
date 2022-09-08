@@ -31,9 +31,8 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
 
   return factories.reduce((sum, cur) => {
     if (chainIds.includes(cur.chainId)) {
-      sum = sum + +cur.pairCount
+      sum = sum + Number(cur.pairCount)
     }
-
     return sum
   }, 0)
 }
@@ -58,7 +57,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
     const skip = 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
-    const orderBy = query?.orderBy || 'apr'
+    const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
@@ -171,7 +170,7 @@ export const getCharts = async () => {
     dateSnapshotMap.set(
       snapshot.date,
       value
-        ? [value[0] + Number(snapshot.liquidityUSD), value[0] + Number(snapshot.volumeUSD)]
+        ? [value[0] + Number(snapshot.liquidityUSD), value[1] + Number(snapshot.volumeUSD)]
         : [Number(snapshot.liquidityUSD), Number(snapshot.volumeUSD)]
     )
   }

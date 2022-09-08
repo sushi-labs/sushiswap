@@ -89,7 +89,7 @@ export const PairTable: FC = () => {
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'apr', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
