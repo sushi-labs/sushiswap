@@ -5,7 +5,10 @@ import ConstantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 
-import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
+import {
+  getConstantProductPoolFactoryContract,
+  useConstantProductPoolFactoryContract,
+} from './useConstantProductPoolFactoryContract'
 
 export enum PoolState {
   LOADING,
@@ -24,7 +27,7 @@ interface PoolData {
   token1: Token
 }
 
-export function useGetAllExistedPools(
+export function useGetAllConstantProductPools(
   chainId: number,
   currencies: [Type | undefined, Type | undefined][]
 ): [PoolState, ConstantProductPool | null][] {
@@ -195,7 +198,7 @@ export function useConstantProductPools(
       contractInterface: POOL_INTERFACE,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0,
+    enabled: poolsAddresses.length > 0 && getConstantProductPoolFactoryContract(chainId).addressOrName,
     watch: true,
     keepPreviousData: true,
     cacheOnBlock: true,

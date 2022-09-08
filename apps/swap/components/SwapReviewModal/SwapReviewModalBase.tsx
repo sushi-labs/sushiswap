@@ -1,4 +1,4 @@
-import { PlusIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Dialog, Typography } from '@sushiswap/ui'
@@ -63,7 +63,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
           </div>
           <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
             <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-              <PlusIcon width={18} height={18} className="text-slate-200" />
+              <ChevronDownIcon width={18} height={18} className="text-slate-200" />
             </div>
           </div>
           <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">

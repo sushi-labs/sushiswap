@@ -1,3 +1,5 @@
 export * from './Layout'
 export * from './Rate'
+export * from './Route'
 export * from './SwapReviewModal'
+export * from './TradeProvider'

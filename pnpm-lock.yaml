@@ -872,6 +872,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -919,6 +920,7 @@ importers:
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi

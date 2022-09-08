@@ -1,20 +1,19 @@
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, getV2RouterContractConfig } from '@sushiswap/wagmi'
-import React, { FC, ReactNode, useCallback, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
+import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
 
 interface SwapReviewModalLegacy {
   chainId: ChainId
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
-export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, input0, input1, children }) => {
+export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children }) => {
+  const trade = useTrade()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
@@ -34,6 +33,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, inpu
       console.log(e)
     }
   }, [sendTransactionAsync])
+
+  const [input0, input1] = useMemo(
+    () => [trade?.inputAmount, trade?.outputAmount],
+    [trade?.inputAmount, trade?.outputAmount]
+  )
 
   return (
     <>
