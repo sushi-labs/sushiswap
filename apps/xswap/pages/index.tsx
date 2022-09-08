@@ -19,6 +19,7 @@ import {
   usePrices,
   useSushiXSwapContract,
   useSushiXSwapContractWithProvider,
+  useTrade,
   Wallet,
 } from '@sushiswap/wagmi'
 import {
@@ -34,7 +35,6 @@ import {
   TransactionProgressOverlay,
 } from 'components'
 import { defaultTheme } from 'config'
-import { useTrade } from 'lib/hooks'
 import { useBridgeFees } from 'lib/hooks/useBridgeFees'
 import { useTokens } from 'lib/state/token-lists'
 import { SushiXSwap } from 'lib/SushiXSwap'
@@ -293,13 +293,13 @@ const Widget: FC<Swap> = ({
   }, [dstToken, dstTypedAmount])
 
   // srcTrade
-  const srcTrade = useTrade(
-    srcChainId,
-    TradeType.EXACT_INPUT,
-    sameChainSwap || crossChainSwap || swapTransfer ? srcAmount : undefined,
-    sameChainSwap || crossChainSwap || swapTransfer ? srcToken : undefined,
-    crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
-  )
+  const { data: srcTrade } = useTrade({
+    chainId: srcChainId,
+    tradeType: TradeType.EXACT_INPUT,
+    amountSpecified: sameChainSwap || crossChainSwap || swapTransfer ? srcAmount : undefined,
+    mainCurrency: sameChainSwap || crossChainSwap || swapTransfer ? srcToken : undefined,
+    otherCurrency: crossChainSwap || swapTransfer ? srcBridgeToken : dstToken,
+  })
 
   const srcOutputAmount = srcTrade?.outputAmount
 
@@ -358,13 +358,13 @@ const Widget: FC<Swap> = ({
     )
   }, [dstBridgeToken, srcAmountOut])
 
-  const dstTrade = useTrade(
-    dstChainId,
-    TradeType.EXACT_INPUT,
-    crossChainSwap || transferSwap ? dstAmountIn : undefined,
-    crossChainSwap || transferSwap ? dstBridgeToken : undefined,
-    crossChainSwap || transferSwap ? dstToken : undefined
-  )
+  const { data: dstTrade } = useTrade({
+    chainId: dstChainId,
+    tradeType: TradeType.EXACT_INPUT,
+    amountSpecified: crossChainSwap || transferSwap ? dstAmountIn : undefined,
+    mainCurrency: crossChainSwap || transferSwap ? dstBridgeToken : undefined,
+    otherCurrency: crossChainSwap || transferSwap ? dstToken : undefined,
+  })
 
   // const dstMinimumAmountOut = dstTrade?.minimumAmountOut(swapSlippage)
 

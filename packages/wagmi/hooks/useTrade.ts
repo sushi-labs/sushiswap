@@ -11,17 +11,14 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
-import {
-  getConstantProductPoolFactoryContract,
-  PairState,
-  PoolState,
-  useBentoBoxTotals,
-  useGetAllConstantProductPools,
-  usePairs,
-} from '@sushiswap/wagmi'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
+
+import { useBentoBoxTotals } from './useBentoBoxTotals'
+import { getConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
+import { PoolState, useGetAllConstantProductPools } from './useConstantProductPools'
+import { PairState, usePairs } from './usePairs'
 
 type UseTradePayload = {
   chainId: ChainId

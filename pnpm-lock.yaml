@@ -2003,6 +2003,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/trident': ^1.0.0-canary.41
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -2038,6 +2039,7 @@ importers:
       '@sushiswap/math': link:../math
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tines': link:../tines
       '@sushiswap/trident': 1.0.0-canary.41
       '@sushiswap/ui': link:../ui
       '@uniswap/v2-core': 1.0.1

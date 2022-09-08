@@ -1,8 +1,8 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import { Tooltip, Typography } from '@sushiswap/ui'
+import { TradeOutput } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { TradeOutput } from '../lib/hooks/useTrade'
 import { useTrade } from './TradeProvider'
 
 // Can render an entire tines single route with dots between
