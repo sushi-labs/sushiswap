@@ -11,17 +11,12 @@ import {
 import { InputMaybe, Pagination, Pair, Resolvers } from '.graphclient'
 
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
-  if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) {
-    console.log('no pagination return data')
-    return data
-  }
+  if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data
 
   const start = pagination.pageIndex * pagination.pageSize
   const end = (pagination.pageIndex + 1) * pagination.pageSize
 
-  console.log({ start, end, dlength: data.length })
-
-  // return data
+  // console.log({ start, end, dlength: data.length })
 
   return data.slice(start, end) as T
 }
@@ -147,7 +142,7 @@ export const resolvers: Resolvers = {
     },
     crossChainPairs: async (root, args, context, info) => {
       // console.log('CROSS CHAIN PAIRS ARGS', args)
-      const transformer = (pools: Pair[], oneDayPools: Pair[], chainId) => {
+      const transformer = (pools: Pair[], oneDayPools: Pair[], farms: any, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
               const pool1d = oneDayPools.find((oneDayPool) => oneDayPool.id === pool.id)
@@ -195,94 +190,34 @@ export const resolvers: Resolvers = {
           : []
       }
 
-      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
-
-      return Promise.all([
-        ...args.chainIds
-          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-          .map((chainId, i) => {
-            return Promise.all([
-              // latest trident pairs
-              context.Trident.Query.pairs({
-                root,
-                args,
-                context: {
-                  ...context,
-                  chainId,
-                  chainName: chainName[chainId],
-                  chainShortName: chainShortName[chainId],
-                  subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                  subgraphHost: GRAPH_HOST[chainId],
-                },
-                info,
-              }),
-              // trident pairs one day ago
-              // could optimise this by reducing selection set in "info"
-              context.Trident.Query.pairs({
-                root,
-                args: {
-                  ...args,
-                  block: { number: Number(args.oneDayBlockNumbers[i]) },
-                },
-                context: {
-                  ...context,
-                  chainId,
-                  chainName: chainName[chainId],
-                  chainShortName: chainShortName[chainId],
-                  subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                  subgraphHost: GRAPH_HOST[chainId],
-                },
-                info,
-              }),
-            ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, chainId))
-          }),
-        ...args.chainIds
-          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-          .map((chainId, i) => {
-            return context.Exchange.Query.pairs({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
-              },
-              info,
-            })
-              .then((pools) => {
-                const poolIds = pools.map((pool) => pool.id)
-                if (!farms?.[chainId]?.farms) return poolIds
-                return Array.from(new Set([...poolIds, ...Object.keys(farms?.[chainId]?.farms)]))
-              })
-              .then((poolIds) => {
-                // console.log({ info })
+      return fetch('https://farm.sushi.com/v0')
+        .then((data) => data.json())
+        .then((farms) =>
+          Promise.all([
+            ...args.chainIds
+              .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+              .map((chainId, i) => {
                 return Promise.all([
-                  context.Exchange.Query.pairs({
+                  // latest trident pairs
+                  context.Trident.Query.pairs({
                     root,
-                    args: {
-                      ...args,
-                      first: poolIds.length,
-                      where: { id_in: poolIds },
-                    },
+                    args,
                     context: {
                       ...context,
                       chainId,
                       chainName: chainName[chainId],
                       chainShortName: chainShortName[chainId],
-                      subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
                       subgraphHost: GRAPH_HOST[chainId],
                     },
                     info,
                   }),
-                  context.Exchange.Query.pairs({
+                  // trident pairs one day ago
+                  // could optimise this by reducing selection set in "info"
+                  context.Trident.Query.pairs({
                     root,
                     args: {
                       ...args,
-                      first: poolIds.length,
-                      where: { id_in: poolIds },
                       block: { number: Number(args.oneDayBlockNumbers[i]) },
                     },
                     context: {
@@ -290,19 +225,112 @@ export const resolvers: Resolvers = {
                       chainId,
                       chainName: chainName[chainId],
                       chainShortName: chainShortName[chainId],
-                      subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
                       subgraphHost: GRAPH_HOST[chainId],
                     },
                     info,
                   }),
-                ])
-              })
-              .then(([pools, oneDayPools]) => {
-                console.log({ poolsLength: pools.length, oneDayPoolsLength: oneDayPools.length })
-                return transformer(pools, oneDayPools, chainId)
-              })
-          }),
-      ])
+                ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+              }),
+            ...args.chainIds
+              .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+              .map((chainId, i) => {
+                // If no farms on this chain, just do two pairs queries
+                // cound probably combine this into one query
+                if (!farms?.[chainId]) {
+                  return Promise.all([
+                    context.Exchange.Query.pairs({
+                      root,
+                      args,
+                      context: {
+                        ...context,
+                        chainId,
+                        chainName: chainName[chainId],
+                        chainShortName: chainShortName[chainId],
+                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                        subgraphHost: GRAPH_HOST[chainId],
+                      },
+                      info,
+                    }),
+                    context.Exchange.Query.pairs({
+                      root,
+                      args: {
+                        ...args,
+                        block: { number: Number(args.oneDayBlockNumbers[i]) },
+                      },
+                      context: {
+                        ...context,
+                        chainId,
+                        chainName: chainName[chainId],
+                        chainShortName: chainShortName[chainId],
+                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                        subgraphHost: GRAPH_HOST[chainId],
+                      },
+                      info,
+                    }),
+                  ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+                }
+
+                // If farm, to avoid ordering issues
+                return context.Exchange.Query.pairs({
+                  root,
+                  args,
+                  context: {
+                    ...context,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                    subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                    subgraphHost: GRAPH_HOST[chainId],
+                  },
+                  info,
+                })
+                  .then((pools) => {
+                    const poolIds = Array.from(
+                      new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
+                    )
+                    return Promise.all([
+                      context.Exchange.Query.pairs({
+                        root,
+                        args: {
+                          ...args,
+                          first: poolIds.length,
+                          where: { id_in: poolIds },
+                        },
+                        context: {
+                          ...context,
+                          chainId,
+                          chainName: chainName[chainId],
+                          chainShortName: chainShortName[chainId],
+                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                          subgraphHost: GRAPH_HOST[chainId],
+                        },
+                        info,
+                      }),
+                      context.Exchange.Query.pairs({
+                        root,
+                        args: {
+                          ...args,
+                          first: poolIds.length,
+                          where: { id_in: poolIds },
+                          block: { number: Number(args.oneDayBlockNumbers[i]) },
+                        },
+                        context: {
+                          ...context,
+                          chainId,
+                          chainName: chainName[chainId],
+                          chainShortName: chainShortName[chainId],
+                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                          subgraphHost: GRAPH_HOST[chainId],
+                        },
+                        info,
+                      }),
+                    ])
+                  })
+                  .then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+              }),
+          ])
+        )
         .then((pools) =>
           pools.flat().sort((a, b) => {
             if (args.orderDirection === 'asc') {
