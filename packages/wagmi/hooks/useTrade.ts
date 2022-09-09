@@ -26,6 +26,8 @@ type UseTradePayload = {
   amountSpecified: Amount<Currency> | undefined
   mainCurrency: Currency | undefined
   otherCurrency: Currency | undefined
+  tridentEnabled?: boolean
+  ammEnabled?: boolean
 }
 
 export type TradeOutput =
@@ -47,8 +49,18 @@ type UseTrade = (payload: UseTradePayload) => UseTradeOutput
  * @param amountSpecified the exact amount to swap in/out
  * @param mainCurrency the desired input/payment currency
  * @param otherCurrency the desired output/payment currency
+ * @param tridentEnabled whether to fetch trident pools
+ * @param ammEnabled whether to fetch amm pools
  */
-export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCurrency, otherCurrency }) => {
+export const useTrade: UseTrade = ({
+  chainId,
+  tradeType,
+  amountSpecified,
+  mainCurrency,
+  otherCurrency,
+  tridentEnabled = true,
+  ammEnabled = true,
+}) => {
   const { data } = useFeeData({
     chainId,
   })
@@ -62,14 +74,18 @@ export const useTrade: UseTrade = ({ chainId, tradeType, amountSpecified, mainCu
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const { data: pairs, isLoading: isPairsLoading, isError: isPairsError } = usePairs(chainId, currencyCombinations)
+  const {
+    data: pairs,
+    isLoading: isPairsLoading,
+    isError: isPairsError,
+  } = usePairs(chainId, currencyCombinations, { enabled: ammEnabled })
 
   // Trident constant product pools
   const {
     data: constantProductPools,
     isLoading: isCppLoading,
     isError: isCppError,
-  } = useGetAllConstantProductPools(chainId, currencyCombinations)
+  } = useGetAllConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])

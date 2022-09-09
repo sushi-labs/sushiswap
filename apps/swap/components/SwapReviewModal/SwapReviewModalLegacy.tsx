@@ -23,7 +23,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const execute = useCallback(async () => {
     try {
-      console.log('try')
       await sendTransactionAsync()
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {

@@ -4,6 +4,7 @@ import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@su
 import ConstantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
+import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
 import {
   getConstantProductPoolFactoryContract,
@@ -35,7 +36,8 @@ interface UseGetAllConstantProductPoolsReturn {
 
 export function useGetAllConstantProductPools(
   chainId: number,
-  currencies: [Type | undefined, Type | undefined][]
+  currencies: [Type | undefined, Type | undefined][],
+  config?: Omit<UseContractReadsConfig, 'contracts'>
 ): UseGetAllConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
@@ -66,7 +68,7 @@ export function useGetAllConstantProductPools(
       functionName: 'poolsCount',
       args: el,
     })),
-    enabled: pairsUniqueAddr.length > 0,
+    enabled: pairsUniqueAddr.length > 0 && config?.enabled,
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
@@ -96,7 +98,7 @@ export function useGetAllConstantProductPools(
         functionName: 'getPools',
         args: el,
       })) || [],
-    enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0),
+    enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
   })
 
   const pools = useMemo(() => {
@@ -135,7 +137,7 @@ export function useGetAllConstantProductPools(
         functionName: 'swapFee',
       })),
     ],
-    enabled: poolsAddresses.length > 0,
+    enabled: poolsAddresses.length > 0 && config?.enabled,
   })
 
   return useMemo(() => {

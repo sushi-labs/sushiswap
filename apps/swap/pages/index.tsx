@@ -9,7 +9,7 @@ import { Checker } from '@sushiswap/wagmi'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-import { Layout, SwapReviewModalLegacy, TradeProvider } from '../components'
+import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider } from '../components'
 import { CurrencyInput } from '../components/CurrencyInput'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens } from '../lib/state/storage'
@@ -52,7 +52,9 @@ const Index: FC = () => {
       <Layout>
         <Widget id="swap" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title="Swap" />
+            <Widget.Header title="Swap">
+              <SettingsOverlay chainId={chainId} />
+            </Widget.Header>
             <CurrencyInput
               className="p-3"
               value={input0}

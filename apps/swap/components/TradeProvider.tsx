@@ -4,6 +4,8 @@ import { TradeType } from '@sushiswap/exchange'
 import { TradeOutput, useTrade as useFindTrade } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
+import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
+
 interface TradeContext {
   trade: TradeOutput
   isLoading: boolean
@@ -75,6 +77,8 @@ const _TradeProvider: FC<_TradeProviderProps> = ({
     mainCurrency,
     otherCurrency,
     amountSpecified,
+    ammEnabled: AMM_ENABLED_NETWORKS.includes(chainId),
+    tridentEnabled: TRIDENT_ENABLED_NETWORKS.includes(chainId),
   })
 
   return (
