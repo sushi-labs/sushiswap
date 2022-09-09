@@ -17,6 +17,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ThemeProvider>
           <App.Shell>
             <App.Header
+              withScrollBackground={true}
               appType={AppType.Pool}
               nav={
                 <App.NavItemList>
