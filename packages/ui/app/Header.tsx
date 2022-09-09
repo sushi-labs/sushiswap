@@ -3,7 +3,17 @@ import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '../index'
+import {
+  classNames,
+  Container,
+  Link,
+  MaxWidth,
+  Select,
+  SushiIcon,
+  Typography,
+  useBreakpoint,
+  useDrawer,
+} from '../index'
 
 export enum AppType {
   Swap = 'Swap',
@@ -49,6 +59,9 @@ export function Header({
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
   const { isMd } = useBreakpoint('md')
+  const { is2xl } = useBreakpoint('2xl')
+
+  const { open } = useDrawer()
 
   // Show when:
   // 1. We scroll down for 45px
@@ -66,7 +79,7 @@ export function Header({
     >
       <Transition
         as={Fragment}
-        show={showBackground || !withScrollBackground}
+        show={showBackground || !withScrollBackground || (open && !is2xl)}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"

@@ -1,14 +1,16 @@
 import '@sushiswap/ui/index.css'
 
-import { App, AppType, ThemeProvider, ToastContainer } from '@sushiswap/ui'
-import { client, Wallet } from '@sushiswap/wagmi'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { client } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
+
+import { Header } from '../components'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
@@ -16,22 +18,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       <Provider store={store}>
         <ThemeProvider>
           <App.Shell>
-            <App.Header
-              withScrollBackground={true}
-              appType={AppType.Swap}
-              nav={
-                <App.NavItemList>
-                  <App.NavItem href="/swap" label="Swap" />
-                  <App.NavItem href="/pool" label="Earn" />
-                </App.NavItemList>
-              }
-            >
-              <Wallet.Button
-                size="sm"
-                className="border-none shadow-md whitespace-nowrap"
-                supportedNetworks={SUPPORTED_CHAIN_IDS}
-              />
-            </App.Header>
+            <Header />
             <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
             <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
             <App.Footer />

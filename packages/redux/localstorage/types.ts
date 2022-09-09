@@ -13,6 +13,10 @@ export enum GasPrice {
 
 export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string; name?: string; decimals: number }
 
+export interface Notification {
+  data: string
+}
+
 export type StorageState = {
   expertMode: boolean
   slippageTolerance: number
@@ -23,6 +27,7 @@ export type StorageState = {
   gasType: 'custom' | 'preset'
   customTokens: Record<number, Record<string, TokenAsObject>>
   transactionDeadline: number
+  notifications: Record<string, Notification[]>
 }
 
 export interface UpdateSlippageTolerancePayload {
@@ -55,6 +60,15 @@ export interface UpdateGasType {
 
 export interface UpdateTransactionDeadline {
   transactionDeadline: number
+}
+
+export interface AddNotification {
+  account: string
+  notification: Notification
+}
+
+export interface ClearNotifications {
+  account: string
 }
 
 export type AddCustomToken = TokenAsObject

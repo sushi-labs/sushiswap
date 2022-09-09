@@ -2,6 +2,8 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
   AddCustomToken,
+  AddNotification,
+  ClearNotifications,
   GasPrice,
   RemoveCustomToken,
   StorageState,
@@ -26,6 +28,7 @@ const initialState: StorageState = {
   customTokens: parsedState?.customTokens || {},
   expertMode: parsedState?.expertMode || false,
   transactionDeadline: 30,
+  notifications: parsedState?.notifications || {},
 }
 
 const reducers = {
@@ -83,6 +86,18 @@ const reducers = {
   updateTransactionDeadline: (state: StorageState, action: PayloadAction<UpdateTransactionDeadline>) => {
     const { transactionDeadline } = action.payload
     state.transactionDeadline = transactionDeadline
+  },
+  addNotification: (state: StorageState, action: PayloadAction<AddNotification>) => {
+    const { notification, account } = action.payload
+    if (!state.notifications[account]) {
+      state.notifications[account] = []
+    }
+
+    state.notifications[account].push(notification)
+  },
+  clearNotifications: (state: StorageState, action: PayloadAction<ClearNotifications>) => {
+    const { account } = action.payload
+    state.notifications[account] = []
   },
 }
 

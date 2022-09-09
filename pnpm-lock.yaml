@@ -1925,6 +1925,7 @@ importers:
       '@types/react-window': ^1.8.5
       autoprefixer: ^10.4.0
       classnames: ^2.3.1
+      date-fns: ^2.29.1
       next: ^12.2.0
       postcss: ^8.4.0
       rc-tooltip: ^5.2.2
@@ -1954,6 +1955,7 @@ importers:
       '@tailwindcss/line-clamp': 0.4.0
       '@tailwindcss/typography': 0.5.4
       classnames: 2.3.1
+      date-fns: 2.29.1
       rc-tooltip: 5.2.2_biqbaboplfbrettd7655fr4n2y
       react-dropzone: 14.2.2_react@18.2.0
       react-popper: 2.3.0_ili5ylfne7i3hkfpsanzgkfu6m

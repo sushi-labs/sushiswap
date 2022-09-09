@@ -46,7 +46,7 @@ export const Balance: FC<Props> = ({ address, supportedNetworks, children }) => 
       <Typography weight={500} className="flex gap-2 items-center text-slate-200 -ml-0.5" as="span">
         {chain?.id && (
           <NetworkSelector supportedNetworks={supportedNetworks}>
-            <IconButton>
+            <IconButton as="div">
               <NetworkIcon chainId={chain?.id} width={20} height={20} />
             </IconButton>
           </NetworkSelector>

@@ -5,7 +5,7 @@ import { Toast } from './index'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-export const ToastCompleted: FC<Toast> = ({ href, onDismiss, summary }) => {
+export const ToastCompleted: FC<Pick<Toast, 'href' | 'onDismiss' | 'summary'>> = ({ href, onDismiss, summary }) => {
   return (
     <>
       <ToastContent
