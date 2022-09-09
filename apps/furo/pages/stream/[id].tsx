@@ -40,6 +40,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { c
     getRebase(chainId as string, stream.token.id),
   ])
 
+  console.log('stream', stream)
+
   return {
     props: {
       fallback: {

@@ -6,11 +6,14 @@ import { Furo } from './Furo'
 import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
-  public readonly extendedShares: Amount<Token>
   public readonly totalAmount: Amount<Token>
   public readonly inititalShares: Amount<Token>
   public readonly inititalAmount: Amount<Token>
+  public readonly initialSharesExtended: Amount<Token>
+  public readonly extendedShares: Amount<Token>
   public readonly extendedAtTimestamp: Date
+  public readonly withdrawnShares: Amount<Token>
+  public readonly withdrawnAmountAfterExtension: Amount<Token>
 
   public constructor({ chainId, furo, rebase }: { chainId: ChainId; furo: StreamDTO; rebase: RebaseDTO }) {
     super({ chainId, furo, rebase })
@@ -19,8 +22,14 @@ export class Stream extends Furo {
     )
     this.inititalShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))
     this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
+    this.initialSharesExtended = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialSharesExtended))
     this.extendedShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.extendedShares))
     this.extendedAtTimestamp = new Date(parseInt(furo.extendedAtTimestamp) * 1000)
+    this.withdrawnShares = Amount.fromRawAmount(
+      this.token,
+      JSBI.subtract(JSBI.add(this.inititalShares.quotient, this.extendedShares.quotient), this.remainingShares.quotient)
+    )
+    this.withdrawnAmountAfterExtension = Amount.fromRawAmount(this.token, furo.withdrawnAmountAfterExtension)
   }
 
   public override get balance(): Amount<Token> {
@@ -30,10 +39,14 @@ export class Stream extends Furo {
     if (this.extendedShares.equalTo(0)) {
       const duration = JSBI.subtract(JSBI.BigInt(this.endTime.getTime()), JSBI.BigInt(this.startTime.getTime()))
       const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.startTime.getTime()))
-      const balance = Amount.fromRawAmount(
+      const streamedShares = JSBI.divide(JSBI.multiply(this.inititalShares.quotient, passed), duration)
+      const pendingAmount = Amount.fromShare(
         this.token,
-        JSBI.divide(JSBI.multiply(this.totalAmount.quotient, passed), duration)
+        JSBI.subtract(streamedShares, this.withdrawnShares.quotient),
+        this.rebase
       )
+      const balance = Amount.fromRawAmount(this.token, JSBI.add(this.withdrawnAmount.quotient, pendingAmount.quotient))
+
       return balance.lessThan(this.totalAmount) ? balance : this.totalAmount
     } else {
       const duration = JSBI.subtract(
@@ -41,10 +54,21 @@ export class Stream extends Furo {
         JSBI.BigInt(this.extendedAtTimestamp.getTime())
       )
       const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.extendedAtTimestamp.getTime()))
-      const balance = Amount.fromRawAmount(
+      const streamedSharesAfterExtension = JSBI.divide(
+        JSBI.multiply(this.initialSharesExtended.quotient, passed),
+        duration
+      )
+      const withdrawnSharesAfterExtension = JSBI.subtract(
+        this.initialSharesExtended.quotient,
+        this.remainingShares.quotient
+      )
+      const pendingAmount = Amount.fromShare(
         this.token,
-        JSBI.divide(JSBI.multiply(this.remainingAmount.quotient, passed), duration)
-      ).add(this.withdrawnAmount)
+        JSBI.subtract(streamedSharesAfterExtension, withdrawnSharesAfterExtension),
+        this.rebase
+      )
+
+      const balance = Amount.fromRawAmount(this.token, JSBI.add(this.withdrawnAmount.quotient, pendingAmount.quotient))
 
       return balance.lessThan(this.totalAmount) ? balance : this.totalAmount
     }
@@ -64,16 +88,22 @@ export class Stream extends Furo {
       const percent = new Percent(passed, duration)
       return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
     } else {
+      const totalShares = JSBI.add(this.inititalShares.quotient, this.extendedShares.quotient)
+      const streamedBeforeExtension = JSBI.subtract(totalShares, this.initialSharesExtended.quotient)
+
       const duration = JSBI.subtract(
         JSBI.BigInt(this.endTime.getTime()),
         JSBI.BigInt(this.extendedAtTimestamp.getTime())
       )
       const passed = JSBI.subtract(JSBI.BigInt(Date.now()), JSBI.BigInt(this.extendedAtTimestamp.getTime()))
-      const balance = Amount.fromRawAmount(
-        this.token,
-        JSBI.divide(JSBI.multiply(this.remainingAmount.quotient, passed), duration)
-      ).add(this.withdrawnAmount)
-      const percent = new Percent(balance.quotient, this.totalAmount.quotient)
+      const streamedSharesAfterExtension = JSBI.divide(
+        JSBI.multiply(this.initialSharesExtended.quotient, passed),
+        duration
+      )
+
+      const totalStreamed = JSBI.add(streamedSharesAfterExtension, streamedBeforeExtension)
+
+      const percent = new Percent(totalStreamed, totalShares)
       return percent.greaterThan(new Percent(100, 100).asFraction) ? new Percent(100, 100) : percent
     }
   }
