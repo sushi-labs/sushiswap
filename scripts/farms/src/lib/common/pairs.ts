@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'
 
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '../../config'
-import { aprToApy, divBigNumberToNumber } from './utils'
+import { divBigNumberToNumber } from './utils'
 
 interface Pair {
   id: string

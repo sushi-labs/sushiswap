@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-client/config'
+import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { getUnixTime, subDays } from 'date-fns'
 
 interface Block {
