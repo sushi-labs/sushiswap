@@ -1,4 +1,5 @@
 export * from './Account'
+export * from './NetworkSelector'
 export * from './TokenListFilterByQuery'
 export * from './TokenSelector'
 export * from './Wallet'
