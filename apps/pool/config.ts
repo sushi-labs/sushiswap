@@ -14,10 +14,11 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.BSC,
   ChainId.CELO,
   ChainId.FANTOM,
-  // ChainId.FUSE,
-  // ChainId.GNOSIS,
-  // ChainId.MOONBEAM,
-  // ChainId.MOONRIVER,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  // ChainId.HARMONY,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
