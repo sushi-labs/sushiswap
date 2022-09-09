@@ -61,7 +61,6 @@ export const getOneDayBlocks = async (chainIds: string[]) => {
   const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
   const start = getUnixTime(date)
   const end = getUnixTime(addSeconds(date, 600))
-  console.log('getOneDayBlocks', chainIds)
   return sdk.CrossChainBlocks({
     first: 1,
     skip: 0,

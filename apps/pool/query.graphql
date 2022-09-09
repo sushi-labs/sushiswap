@@ -104,6 +104,11 @@ query CrossChainPairs(
     apr
     feeApr
     incentiveApr
+    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+      id
+      date
+      volumeUSD
+    }
     farm {
       id
       feeApy

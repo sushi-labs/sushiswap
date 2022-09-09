@@ -34,6 +34,7 @@ export const resolvers: Resolvers = {
   },
   Pair: {
     volume1d: (root, args, context, info) => root.volume1d || '0',
+    // volume2d: (root, args, context, info) => root.volume2d || '0',
     volume7d: (root, args, context, info) => root.volume7d || '0',
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
@@ -109,16 +110,10 @@ export const resolvers: Resolvers = {
         ?.slice(0, 6)
         ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
       const farm = farms?.[args.chainId]?.farms?.[pool.id]
-      // console.log(`Farm for pool ${pool.id}`, farm)
-      const feeApr =
-        Number(pool?.liquidityUSD) > 5000 ? (args.chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
+      const feeApr = pool?.apr
       const incentiveApr =
         farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
       const apr = Number(feeApr) + Number(incentiveApr)
-
-      if (feeApr > 0 && incentiveApr > 0) {
-        console.log({ feeApr, incentiveApr })
-      }
       return {
         ...pool,
         id: `${chainShortName[args.chainId]}:${pool.id}`,
@@ -156,9 +151,9 @@ export const resolvers: Resolvers = {
         return pools?.length > 0
           ? pools.map((pool) => {
               const pool1d = oneDayPools.find((oneDayPool) => oneDayPool.id === pool.id)
-              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d?.volumeUSD) : pool.volumeUSD
+              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : Number(pool.volumeUSD)
+              console.log({ volume1d })
               const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
-              // const feeApr = Number(pool?.liquidityUSD) > 5000 ? pool?.apr : 0
               const feeApr = pool?.apr
               const incentiveApr =
                 farm?.incentives?.reduce(
@@ -263,6 +258,7 @@ export const resolvers: Resolvers = {
                 return Array.from(new Set([...poolIds, ...Object.keys(farms?.[chainId]?.farms)]))
               })
               .then((poolIds) => {
+                // console.log({ info })
                 return Promise.all([
                   context.Exchange.Query.pairs({
                     root,
@@ -302,7 +298,7 @@ export const resolvers: Resolvers = {
                 ])
               })
               .then(([pools, oneDayPools]) => {
-                // console.log({ poolsLength: pools.length, oneDayPoolsLength: oneDayPools.length })
+                console.log({ poolsLength: pools.length, oneDayPoolsLength: oneDayPools.length })
                 return transformer(pools, oneDayPools, chainId)
               })
           }),

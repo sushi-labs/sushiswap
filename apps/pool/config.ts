@@ -53,11 +53,11 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
   [ChainId.CELO]: 'subgraph-qa/sushiswap-celo',
   [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
-  [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushi-labs/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
-  // [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
+  [ChainId.FUSE]: 'subgraph-qa/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'subgraph-qa/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'subgraph-qa/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'subgraph-qa/sushiswap-moonriver',
+  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
 }
 
 export const STAKING_SUBGRAPH_NAME: Record<number | string, string> = {
