@@ -147,7 +147,7 @@ export const resolvers: Resolvers = {
           ? pools.map((pool) => {
               const pool1d = oneDayPools.find((oneDayPool) => oneDayPool.id === pool.id)
               const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : Number(pool.volumeUSD)
-              console.log({ volume1d })
+              // console.log({ volume1d })
               const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
               const feeApr = pool?.apr
               const incentiveApr =
@@ -198,7 +198,6 @@ export const resolvers: Resolvers = {
               .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
               .map((chainId, i) => {
                 return Promise.all([
-                  // latest trident pairs
                   context.Trident.Query.pairs({
                     root,
                     args,
@@ -212,8 +211,6 @@ export const resolvers: Resolvers = {
                     },
                     info,
                   }),
-                  // trident pairs one day ago
-                  // could optimise this by reducing selection set in "info"
                   context.Trident.Query.pairs({
                     root,
                     args: {

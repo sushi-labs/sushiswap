@@ -7,8 +7,8 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.METIS,
 ]
 
-export const AMM_ENABLED_NETWORKS = [
-  // ChainId.ETHEREUM,
+export const AMM_ENABLED_NETWORKS: ChainId[] = [
+  ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
