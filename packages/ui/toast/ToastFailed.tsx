@@ -1,11 +1,11 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { FC } from 'react'
 
-import { Toast } from './index'
+import { NotificationData } from './index'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-export const ToastFailed: FC<Toast> = ({ href, onDismiss, summary }) => {
+export const ToastFailed: FC<NotificationData> = ({ href, onDismiss, summary }) => {
   return (
     <>
       <ToastContent

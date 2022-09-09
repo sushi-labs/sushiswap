@@ -62,7 +62,7 @@ export interface UpdateTransactionDeadline {
   transactionDeadline: number
 }
 
-export interface AddNotification {
+export interface createNotification {
   account: string
   notification: Notification
 }

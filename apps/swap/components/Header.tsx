@@ -8,7 +8,7 @@ import { useNotifications } from '../lib/state/storage'
 
 export const Header: FC = () => {
   const { address } = useAccount()
-  const [notifications, { clearNotifications, addNotification }] = useNotifications(address)
+  const [notifications, { clearNotifications }] = useNotifications(address)
 
   return (
     <App.Header
@@ -27,11 +27,7 @@ export const Header: FC = () => {
           className="border-none shadow-md whitespace-nowrap"
           supportedNetworks={SUPPORTED_CHAIN_IDS}
         />
-        <NotificationCentre
-          notifications={notifications}
-          clearNotifications={clearNotifications}
-          addNotification={addNotification}
-        />
+        <NotificationCentre notifications={notifications} clearNotifications={clearNotifications} />
       </div>
     </App.Header>
   )

@@ -3,5 +3,5 @@ export interface ShellProps {
 }
 
 export function Shell({ children }: ShellProps): JSX.Element {
-  return <div className="w-full">{children}</div>
+  return <div>{children}</div>
 }

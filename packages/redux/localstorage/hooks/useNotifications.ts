@@ -1,3 +1,4 @@
+import { createToast, NotificationData } from '@sushiswap/ui'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -7,7 +8,7 @@ import { Notification, WithStorageState } from '../types'
 type UseNotificationsReturn = [
   Notification[],
   {
-    addNotification(notification: Notification): void
+    createNotification(notification: NotificationData): void
     clearNotifications(): void
   }
 ]
@@ -21,9 +22,10 @@ export const useNotifications: UseNotifications = (context, account) => {
   )
   const dispatch = useDispatch()
 
-  const addNotification = useCallback(
-    (notification: Notification) => {
-      dispatch(actions.addNotification({ account, notification }))
+  const createNotification = useCallback(
+    ({ promise, ...rest }: NotificationData) => {
+      createToast({ ...rest, promise })
+      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest) }))
     },
     [actions, dispatch]
   )
@@ -35,7 +37,7 @@ export const useNotifications: UseNotifications = (context, account) => {
   return [
     notifications || [],
     {
-      addNotification,
+      createNotification,
       clearNotifications,
     },
   ]

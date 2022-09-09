@@ -17,7 +17,7 @@ export const TOAST_OPTIONS: ToastOptions = {
   icon: false,
 }
 
-export interface Toast {
+export interface NotificationData {
   summary: {
     pending: ReactNode | Array<ReactNode>
     completed: ReactNode | Array<ReactNode>
@@ -29,7 +29,7 @@ export interface Toast {
   onDismiss(): void
 }
 
-export const createToast = (props: Omit<Toast, 'onDismiss'>) => {
+export const createToast = (props: Omit<NotificationData, 'onDismiss'>) => {
   const onDismiss = () => toast.dismiss(props.txHash)
 
   // Spawn new toasts based on promise result

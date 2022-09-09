@@ -1,7 +1,11 @@
+import { Transition } from '@headlessui/react'
+import { useIsMounted } from '@sushiswap/hooks'
+import classNames from 'classnames'
 import React, {
   createContext,
   Dispatch,
   FC,
+  Fragment,
   MouseEventHandler,
   ReactNode,
   SetStateAction,
@@ -14,7 +18,6 @@ import React, {
 import ReactDOM from 'react-dom'
 
 import { ButtonComponent } from '../button'
-import { classNames } from '../index'
 
 interface DrawerContext {
   open: boolean
@@ -28,7 +31,7 @@ interface ProviderProps {
   children: ReactNode
 }
 
-export const Provider: FC<ProviderProps> = ({ children }) => {
+export const Root: FC<ProviderProps> = ({ children }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(true)
   const [, setRender] = useState(false)
@@ -38,19 +41,7 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     if (ref.current) setRender(true)
   }, [])
 
-  return (
-    <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>
-      <div className={open ? '2xl:w-[calc(100%-380px)] w-full' : 'w-full'}>{children}</div>
-      <div
-        className={classNames(
-          open ? 'w-full md:w-[380px]' : 'w-0',
-          'top-[54px] 2xl:top-0 fixed right-0 bottom-0 z-[1080] bg-slate-900 border-l border-slate-200/10 h-screen shadow-md lg:shadow-none shadow-black/30'
-        )}
-      >
-        <div ref={ref} />
-      </div>
-    </DrawerContext.Provider>
-  )
+  return <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>{children}</DrawerContext.Provider>
 }
 
 export const useDrawer = () => {
@@ -82,15 +73,46 @@ export const DrawerButton: ButtonComponent = (props) => {
 }
 
 export const Panel: FC<PanelProps> = ({ children, className }) => {
-  const { element } = useDrawer()
-  if (!element) return <></>
+  const { open, setOpen } = useDrawer()
+  const isMounted = useIsMounted()
+
+  if (!isMounted) return <></>
 
   return ReactDOM.createPortal(
-    <div className={classNames(className, 'flex flex-col gap-3 px-4 py-4 overflow-y-auto h-screen hide-scrollbar')}>
-      {children}
-    </div>,
-    element
+    <Transition.Root appear show={open} unmount={false} as={Fragment}>
+      <div className={classNames(className, 'fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080]')}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-in-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in-out duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          unmount={false}
+        >
+          <div
+            aria-hidden="true"
+            onClick={() => setOpen(false)}
+            className="translate-x-[-100%] absolute inset-0 bg-black/40 transition-opacity"
+          />
+        </Transition.Child>
+        <Transition.Child
+          className="w-full sm:w-[380px] bg-slate-800 top-0 bottom-0 absolute px-5 shadow-xl shadow-black/30"
+          enter="transform transition ease-in-out duration-300"
+          enterFrom="translate-x-0"
+          enterTo="translate-x-[-100%]"
+          leave="transform transition ease-in-out duration-500"
+          leaveFrom="translate-x-[-100%]"
+          leaveTo="translate-x-0"
+          unmount={false}
+        >
+          {children}
+        </Transition.Child>
+      </div>
+    </Transition.Root>,
+    document.body
   )
 }
 
-export const Drawer = { Provider, Panel, Button: DrawerButton }
+export const Drawer = { Root, Panel, Button: DrawerButton }

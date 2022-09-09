@@ -1,11 +1,10 @@
 import { FC } from 'react'
 
-import { Loader } from '..'
-import { Toast } from './index'
+import { Loader, NotificationData } from '..'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-export const ToastPending: FC<Toast> = ({ href, onDismiss, summary }) => {
+export const ToastPending: FC<NotificationData> = ({ href, onDismiss, summary }) => {
   return (
     <>
       <ToastContent

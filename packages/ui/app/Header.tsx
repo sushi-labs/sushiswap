@@ -59,9 +59,6 @@ export function Header({
 }: HeaderProps): JSX.Element {
   const scrollY = useScrollPosition()
   const { isMd } = useBreakpoint('md')
-  const { is2xl } = useBreakpoint('2xl')
-
-  const { open } = useDrawer()
 
   // Show when:
   // 1. We scroll down for 45px
@@ -79,7 +76,7 @@ export function Header({
     >
       <Transition
         as={Fragment}
-        show={showBackground || !withScrollBackground || (open && !is2xl)}
+        show={showBackground || !withScrollBackground}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"

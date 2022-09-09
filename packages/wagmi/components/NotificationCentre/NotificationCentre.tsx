@@ -1,7 +1,6 @@
 import { BellIcon, XIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Button, createToast, Drawer, IconButton, Typography } from '@sushiswap/ui'
-import React, { createContext, FC, useCallback, useContext } from 'react'
+import { Button, Drawer, IconButton, Typography } from '@sushiswap/ui'
+import React, { createContext, FC } from 'react'
 
 import { Notification } from './Notification'
 import { CreateNotificationParams, NotificationType } from './types'
@@ -11,58 +10,20 @@ export const NotificationCentreContext = createContext<ProviderProps | undefined
 interface ProviderProps {
   notifications: { data: string }[]
   clearNotifications(): void
-  addNotification({ data }: { data: string }): void
   createNotification(type: NotificationType, params: CreateNotificationParams): void
 }
 
-export const NotificationCentre: FC<ProviderProps> = ({ notifications, clearNotifications, addNotification }) => {
-  const createNotification = useCallback(
-    (type: NotificationType, params: CreateNotificationParams) => {
-      addNotification({
-        data: JSON.stringify({
-          type,
-          chainId: ChainId.ETHEREUM,
-          pending: params.summary.pending,
-          completed: params.summary.completed,
-          failed: params.summary.failed,
-          txHash: params.txHash,
-          date: new Date().toISOString(),
-        }),
-      })
-
-      createToast(params)
-    },
-    [addNotification]
-  )
-
+export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> = ({
+  notifications,
+  clearNotifications,
+}) => {
   return (
-    <NotificationCentreContext.Provider
-      value={{ notifications, clearNotifications, addNotification, createNotification }}
-    >
-      <_NotificationCentre />
-    </NotificationCentreContext.Provider>
-  )
-}
-
-const useNotificationCentre = () => {
-  const context = useContext(NotificationCentreContext)
-  if (!context) {
-    throw new Error('Hook can only be used inside Notification Centre Context')
-  }
-
-  return context
-}
-
-const _NotificationCentre: FC = () => {
-  const { notifications, clearNotifications } = useNotificationCentre()
-
-  return (
-    <>
+    <Drawer.Root>
       <Drawer.Button className="bg-slate-700 hover:ring-2 ring-slate-600 cursor-pointer h-[36px] w-[36px] flex items-center justify-center rounded-xl">
         <BellIcon width={20} height={20} />
       </Drawer.Button>
-      <Drawer.Panel className="relative">
-        <div className="flex gap-3 items-baseline mb-2">
+      <Drawer.Panel>
+        <div className="flex gap-3 items-center mb-2 h-[54px] border-b border-slate-200/5">
           <Typography variant="lg" weight={500} className="text-slate-50">
             Notifications
           </Typography>
@@ -81,6 +42,6 @@ const _NotificationCentre: FC = () => {
           return <Notification key={index} data={el.data} />
         })}
       </Drawer.Panel>
-    </>
+    </Drawer.Root>
   )
 }

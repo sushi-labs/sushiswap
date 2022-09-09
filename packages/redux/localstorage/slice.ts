@@ -2,8 +2,8 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
   AddCustomToken,
-  AddNotification,
   ClearNotifications,
+  createNotification,
   GasPrice,
   RemoveCustomToken,
   StorageState,
@@ -87,7 +87,7 @@ const reducers = {
     const { transactionDeadline } = action.payload
     state.transactionDeadline = transactionDeadline
   },
-  addNotification: (state: StorageState, action: PayloadAction<AddNotification>) => {
+  createNotification: (state: StorageState, action: PayloadAction<createNotification>) => {
     const { notification, account } = action.payload
     if (!state.notifications[account]) {
       state.notifications[account] = []

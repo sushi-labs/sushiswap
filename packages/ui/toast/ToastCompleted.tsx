@@ -1,11 +1,15 @@
 import { CheckCircleIcon } from '@heroicons/react/outline'
 import { FC } from 'react'
 
-import { Toast } from './index'
+import { NotificationData } from './index'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-export const ToastCompleted: FC<Pick<Toast, 'href' | 'onDismiss' | 'summary'>> = ({ href, onDismiss, summary }) => {
+export const ToastCompleted: FC<Pick<NotificationData, 'href' | 'onDismiss' | 'summary'>> = ({
+  href,
+  onDismiss,
+  summary,
+}) => {
   return (
     <>
       <ToastContent
