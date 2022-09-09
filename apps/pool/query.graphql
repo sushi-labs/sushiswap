@@ -1,3 +1,45 @@
+query Bar($id: ID! = "xSushi") {
+  xsushi(id: $id) {
+    sushiXsushiRatio
+    apr1m
+    apr3m
+    apr6m
+    apr12m
+  }
+}
+
+query EthereumBlocks($where: Block_filter) {
+  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
+    id
+    number
+    timestamp
+  }
+}
+
+query CrossChainBlocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = "timestamp"
+  $orderDirection: OrderDirection = "asc",
+  $chainIds: [BigInt!]!
+) {
+  crossChainBlocks(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    chainName
+    number
+    timestamp
+  }
+}
+
 query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   crossChainBundles(first: $first, chainIds: $chainIds) {
     id
@@ -16,6 +58,7 @@ query CrossChainPairs(
   $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [BigInt!]!
+  $oneDayBlockNumbers: [BigInt!]!
   $now: Int!
 ) {
   crossChainPairs(
@@ -27,6 +70,7 @@ query CrossChainPairs(
     orderDirection: $orderDirection,
     block: $block, 
     chainIds: $chainIds, 
+    oneDayBlockNumbers: $oneDayBlockNumbers,
     now: $now
   ) {
     id
@@ -39,7 +83,7 @@ query CrossChainPairs(
     liquidity
     swapFee
     twapEnabled
-    volume7d
+    volume1d
     source
     token0 {
       name
@@ -55,14 +99,11 @@ query CrossChainPairs(
     }
     liquidityNative
     liquidityUSD
+    volumeUSD
+    aprUpdatedAtTimestamp
     apr
     feeApr
     incentiveApr
-    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-      id
-      date
-      volumeUSD
-    }
     farm {
       id
       feeApy
@@ -275,23 +316,7 @@ query Pair($id: ID!, $now: Int!, $chainId: BigInt!) {
   }
 }
 
-query EthereumBlocks($where: Block_filter) {
-  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
-    id
-    number
-    timestamp
-  }
-}
 
-query Bar($id: ID! = "xSushi") {
-  xsushi(id: $id) {
-    sushiXsushiRatio
-    apr1m
-    apr3m
-    apr6m
-    apr12m
-  }
-}
 
 # query CrossChainFarms($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
 #   farms {

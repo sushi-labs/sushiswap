@@ -1,23 +1,23 @@
 import { ChainId } from '@sushiswap/chain'
 
 export const TRIDENT_ENABLED_NETWORKS = [
-  ChainId.OPTIMISM,
+  // ChainId.OPTIMISM,
   // ChainId.POLYGON,
-  ChainId.KAVA,
-  ChainId.METIS,
+  // ChainId.KAVA,
+  // ChainId.METIS,
 ]
 
 export const AMM_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
+  // ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
   ChainId.CELO,
   ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
+  // ChainId.FUSE,
+  // ChainId.GNOSIS,
+  // ChainId.MOONBEAM,
+  // ChainId.MOONRIVER,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
@@ -47,12 +47,12 @@ export const GRAPH_HOST = {
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushi-graph/sushiswap-ethereum',
-  [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushiswap/sushiswap-bsc',
-  [ChainId.CELO]: 'sushiswap/sushiswap-celo',
-  [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'subgraph-qa/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'subgraph-qa/sushiswap-arbitrum',
+  [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
+  [ChainId.CELO]: 'subgraph-qa/sushiswap-celo',
+  [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
   [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushi-labs/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
@@ -70,4 +70,25 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sushi-graph/trident-polygon',
   [ChainId.METIS]: 'sushi-labs/trident-metis',
   [ChainId.KAVA]: 'sushiswap/trident-kava',
+}
+
+export const BLOCK_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
+  [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
+  [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
+  [ChainId.FANTOM]: 'matthewlilley/fantom-blocks',
+  [ChainId.BSC]: 'matthewlilley/bsc-blocks',
+  [ChainId.HARMONY]: 'sushiswap/harmony-blocks',
+  [ChainId.AVALANCHE]: 'matthewlilley/avalanche-blocks',
+  [ChainId.CELO]: 'ubeswap/celo-blocks',
+  [ChainId.ARBITRUM]: 'sushiswap/arbitrum-blocks',
+  [ChainId.OKEX]: 'okexchain-blocks/oec',
+  [ChainId.HECO]: 'hecoblocks/heco',
+  [ChainId.MOONRIVER]: 'sushiswap/moonriver-blocks',
+  [ChainId.FUSE]: 'sushiswap/fuse-blocks',
+  [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
+  [ChainId.MOONBEAM]: 'sushiswap/moonbeam-blocks',
+  [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
+  [ChainId.KAVA]: 'sushiswap/blocks-kava',
+  [ChainId.METIS]: 'sushiswap/blocks-metis',
 }

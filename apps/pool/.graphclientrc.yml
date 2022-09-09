@@ -3,15 +3,15 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/sushiswap-avalanche}
-  # - name: Staking
-  #   handler:
-  #     graphql:
-  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
   - name: Bar
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/xsushi}
-  - name: Blocks-ethereum
+  - name: Blocks
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+  - name: EthereumBlocks
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
@@ -19,7 +19,10 @@ sources:
     handler:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
-
+# - name: Staking
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:olastenberg/staking-arbitrum}
 additionalTypeDefs: |
   input Pagination {
     pageIndex: Int! = 0
@@ -50,6 +53,7 @@ additionalTypeDefs: |
     chainShortName: String!
   }
   extend type Pair {
+    volume1d: BigDecimal!
     volume7d: BigDecimal!
     chainId: BigInt!
     chainName: String!
@@ -70,23 +74,46 @@ additionalTypeDefs: |
     chainId: BigInt!
     chainName: String!
   }
+  extend type Block {
+    chainId: BigInt!
+    chainName: String!
+  }
   extend type Query {
+    crossChainBlocks(
+      first: Int,
+      skip: Int, 
+      where: Block_filter, 
+      orderBy: Block_orderBy, 
+      orderDirection: OrderDirection, 
+      chainIds: [BigInt!]!
+    ): [Block!]!
     crossChainPair(id: ID!, now: Int!, chainId: BigInt!): Pair!
     crossChainPairs(
-      first: Int!,
-      skip: Int! = 0, 
+      first: Int,
+      skip: Int, 
       pagination: Pagination,
       where: Pair_filter, 
       orderBy: Pair_orderBy, 
       orderDirection: OrderDirection, 
-      chainIds: [BigInt!]!, 
-      now: Int!,
+      chainIds: [BigInt!]!,
+      oneDayBlockNumbers: [BigInt!]!,
       block: Block_height
+      now: Int!,
     ): [Pair!]!
-    crossChainBundles(first: Int!, chainIds: [BigInt!]!): [Bundle!]!
+    crossChainBundles(
+      first: Int!,
+      chainIds: [BigInt!]!
+    ): [Bundle!]!
+    crossChainUser(
+      id: ID!, 
+      chainIds: [BigInt!]!, 
+      now: Int!, 
+      block: Block_height
+    ): User!
+    crossChainFactories(
+      chainIds: [BigInt!]!
+    ): [Factory!]!
     # crossChainFarms(first: Int!, chainIds: [BigInt!]!): [Farm!]!
-    crossChainUser(id: ID!, chainIds: [BigInt!]!, now: Int!, block: Block_height): User!
-    crossChainFactories(chainIds: [BigInt!]!): [Factory!]!
   }
 
 additionalResolvers:

@@ -1,17 +1,25 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getUnixTime, subMonths, subYears } from 'date-fns'
+import {
+  addSeconds,
+  getUnixTime,
+  startOfHour,
+  startOfMinute,
+  startOfSecond,
+  subDays,
+  subMonths,
+  subYears,
+} from 'date-fns'
 
-import { QuerycrossChainPairsArgs } from '../.graphclient'
+import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../config'
+
+const sdk = getBuiltGraphSDK()
 
 export type GetPoolCountQuery = Partial<{
   networks: string
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const { crossChainFactories: factories } = await sdk.CrossChainFactories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
@@ -28,9 +36,6 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
 }
 
 export const getFactories = async () => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const { crossChainFactories: factories } = await sdk.CrossChainFactories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
@@ -42,9 +47,6 @@ export const getFactories = async () => {
 }
 
 export const getBundles = async () => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
@@ -55,6 +57,21 @@ export const getBundles = async () => {
   }, {})
 }
 
+export const getOneDayBlocks = async (chainIds: string[]) => {
+  const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
+  const start = getUnixTime(date)
+  const end = getUnixTime(addSeconds(date, 600))
+  console.log('getOneDayBlocks', chainIds)
+  return sdk.CrossChainBlocks({
+    first: 1,
+    skip: 0,
+    where: { timestamp_gt: start, timestamp_lt: end },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
+    chainIds,
+  })
+}
+
 export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
@@ -63,8 +80,8 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
-    const { getBuiltGraphSDK } = await import('../.graphclient')
-    const sdk = getBuiltGraphSDK()
+    const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
+    const start = getUnixTime(date)
 
     const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
       ? JSON.parse(query?.pagination)
@@ -72,14 +89,18 @@ export const getPools = async (query?: GetPoolsQuery) => {
           pageIndex: 0,
           pageSize: 20,
         }
-    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const first = pagination?.pageIndex && pagination?.pageSize ? (pagination.pageIndex + 1) * pagination.pageSize : 20
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     // const first = 1000
     // const skip = 0
-    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
+    const where = query?.where
+      ? { ...JSON.parse(query.where), aprUpdatedAtTimestamp_gt: start }
+      : { aprUpdatedAtTimestamp_gt: start }
     const orderBy = query?.orderBy || 'apr'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+
+    const { crossChainBlocks: oneDayBlocks } = await getOneDayBlocks(chainIds)
 
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
@@ -89,6 +110,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       orderBy,
       orderDirection,
       chainIds,
+      oneDayBlockNumbers: oneDayBlocks.map((block) => block.number),
       now: Math.round(new Date().getTime() / 1000),
     })
 
@@ -100,9 +122,6 @@ export const getPools = async (query?: GetPoolsQuery) => {
 }
 
 export const getPool = async (id: string) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const { crossChainPair: pair } = await sdk.CrossChainPair({
     id: id.includes(':') ? id.split(':')[1] : id,
     chainId: chainShortNameToChainId[id.split(':')[0]],
@@ -113,8 +132,6 @@ export const getPool = async (id: string) => {
 }
 
 export const getOneMonthBlock = async () => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
 
   return await (
@@ -123,8 +140,6 @@ export const getOneMonthBlock = async () => {
 }
 
 export const getOneYearBlock = async () => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
   const oneYearAgo = getUnixTime(subYears(new Date(), 1))
 
   return await (
@@ -133,9 +148,6 @@ export const getOneYearBlock = async () => {
 }
 
 export const getSushiBar = async () => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const { xsushi } = await sdk.Bar()
   return xsushi
 }
@@ -146,9 +158,6 @@ export type GetUserQuery = {
 }
 
 export const getUser = async (query: GetUserQuery) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
   const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUser: user } = await sdk.CrossChainUser({
     chainIds: networks,

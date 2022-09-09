@@ -31,6 +31,7 @@ export const PoolsSection: FC = () => {
           >
             All Yields
           </Tab>
+
           <Tab
             className={({ selected }) =>
               classNames(
