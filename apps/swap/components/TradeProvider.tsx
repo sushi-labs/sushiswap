@@ -14,7 +14,7 @@ interface TradeContext {
 
 const Context = createContext<TradeContext | undefined>(undefined)
 
-interface TradeProviderProps {
+interface _TradeProviderProps {
   chainId: ChainId
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
   amountSpecified: Amount<Currency> | undefined
@@ -23,43 +23,7 @@ interface TradeProviderProps {
   children: ReactNode
 }
 
-export const TradeProvider: FC<TradeProviderProps> = ({
-  chainId,
-  tradeType,
-  amountSpecified,
-  mainCurrency,
-  otherCurrency,
-  children,
-}) => {
-  if (!mainCurrency || !otherCurrency) {
-    return (
-      <Context.Provider value={{ trade: undefined, isLoading: false, isError: false }}>{children}</Context.Provider>
-    )
-  }
-
-  return (
-    <_TradeProvider
-      chainId={chainId}
-      tradeType={tradeType}
-      amountSpecified={amountSpecified}
-      mainCurrency={mainCurrency}
-      otherCurrency={otherCurrency}
-    >
-      {children}
-    </_TradeProvider>
-  )
-}
-
-interface _TradeProviderProps {
-  chainId: ChainId
-  tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
-  amountSpecified: Amount<Currency> | undefined
-  mainCurrency: Currency
-  otherCurrency: Currency
-  children: ReactNode
-}
-
-const _TradeProvider: FC<_TradeProviderProps> = ({
+export const TradeProvider: FC<_TradeProviderProps> = ({
   chainId,
   tradeType,
   amountSpecified,
