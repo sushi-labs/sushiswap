@@ -1,6 +1,5 @@
 export interface Farm {
   id: number
-  feeApy: number
   incentives: {
     apr: number
     rewardPerDay: number

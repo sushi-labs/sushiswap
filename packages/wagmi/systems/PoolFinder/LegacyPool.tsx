@@ -1,6 +1,6 @@
-import { usePair } from '@sushiswap/wagmi'
 import { FC, useEffect } from 'react'
 
+import { usePair } from '../../hooks'
 import { LegacyPoolFinderProps, PoolFinderType } from './types'
 
 export const LegacyPool: FC<LegacyPoolFinderProps> = ({ chainId, dispatch, token0, token1, index }) => {

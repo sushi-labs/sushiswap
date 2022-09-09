@@ -61,7 +61,7 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
 
         const stakedLiquidityUSD = (pool.pair.liquidityUSD * pool.lpBalance) / pool.pair.totalSupply
 
-        const incentives: Farm['incentives'] = []
+        let incentives: Farm['incentives'] = []
 
         if (sushiRewardPerDay && sushiRewardPerDay > 0) {
           incentives.push({
@@ -121,9 +121,11 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
           }
         }
 
+        incentives = incentives.filter((incentive) => incentive.apr !== 0)
+        if (incentives.length === 0) return acc
+
         acc[pool.pair.id] = {
           id: pool.id,
-          feeApy: pool.pair.feeApy,
           incentives: incentives,
           chefType: 'MiniChef',
           poolType: pool.pair.type,

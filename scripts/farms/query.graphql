@@ -35,7 +35,6 @@ query Pairs($first: Int = 100000, $skip: Int = 0, $where: Pair_filter, $block: B
     liquidity
     volumeUSD
     liquidityNative
-    apr
   }
 
   bundle(id: 1, block: $block) {

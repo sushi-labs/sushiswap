@@ -10,7 +10,7 @@ import {
   Loader,
   Typography,
 } from '@sushiswap/ui'
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { FC, MouseEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalance, usePrices } from '../../hooks'
@@ -24,7 +24,7 @@ export interface CurrencyInputProps
   value: string
   disabled?: boolean
   onChange(value: string): void
-  currency?: Type
+  currency: Type | undefined
   usdPctChange?: number
   disableMaxButton?: boolean
   className?: string
@@ -49,14 +49,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fundSource = FundSource.WALLET,
   loading,
 }) => {
-  const { address } = useAccount()
-  const isMounted = useIsMounted()
   const inputRef = useRef<HTMLInputElement>(null)
-  const { data: tokenPrices } = usePrices({ chainId: currency?.chainId })
-  const { data: balance } = useBalance({ chainId: currency?.chainId, currency, account: address })
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
-  const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
-  const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
 
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -67,10 +61,23 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     setTokenSelectorOpen(false)
   }, [])
 
-  return useMemo(() => {
-    return (
-      <div className={className} onClick={focusInput}>
-        <div className="relative flex items-center gap-1">
+  const onClick = useCallback<MouseEventHandler>(
+    (e) => {
+      if (!onSelect) return
+      e.stopPropagation()
+      setTokenSelectorOpen(true)
+    },
+    [onSelect]
+  )
+
+  return (
+    <div className={className} onClick={focusInput}>
+      <div className="relative flex items-center gap-1">
+        {loading ? (
+          <div className="flex flex-grow items-center h-[44px]">
+            <Loader size={18} />
+          </div>
+        ) : (
           <Input.Numeric
             ref={inputRef}
             variant="unstyled"
@@ -80,118 +87,121 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             value={value}
             readOnly={disabled}
           />
-          <button
-            {...(onSelect && {
-              onClick: (e) => {
-                setTokenSelectorOpen(true)
-                e.stopPropagation()
-              },
-            })}
-            className={classNames(
-              onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
-              (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
-              currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
-              'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
-            )}
-          >
-            {loading ? (
-              <div className="pr-12 pl-1">
-                <Loader />
-              </div>
-            ) : currency ? (
-              <>
-                <div className="w-5 h-5">
-                  <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
-                </div>
-                <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
-              </>
-            ) : (
-              <div className="ml-0.5 -mr-0.5 pl-1">Select</div>
-            )}
-            {onSelect && (
-              <div className="w-5 h-5">
-                <ChevronDownIcon width={20} height={20} />
-              </div>
-            )}
-          </button>
-        </div>
-        <div className="flex flex-row justify-between">
-          <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
-            {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
-            {usdPctChange && (
-              <span
-                className={classNames(
-                  usdPctChange === 0
-                    ? ''
-                    : usdPctChange > 0
-                    ? 'text-green'
-                    : usdPctChange < -5
-                    ? 'text-red'
-                    : usdPctChange < -3
-                    ? 'text-yellow'
-                    : 'text-slate-500'
-                )}
-              >
-                {' '}
-                {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
-                  usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
-                }%)`}
-              </span>
-            )}
-          </Typography>
-
-          <div className="h-6">
-            <AppearOnMount show={!!balance}>
-              <button
-                type="button"
-                onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
-                className="text-slate-400 hover:text-slate-300 py-1 text-xs"
-                disabled={disableMaxButton}
-              >
-                {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
-              </button>
-            </AppearOnMount>
-          </div>
-        </div>
-        {onSelect && (
-          <TokenSelector
-            variant="dialog"
-            onClose={handleClose}
-            open={tokenSelectorOpen}
-            fundSource={FundSource.WALLET}
-            chainId={chainId}
-            currency={currency}
-            onSelect={onSelect}
-            onAddToken={onAddToken}
-            onRemoveToken={onRemoveToken}
-            tokenMap={tokenMap}
-            customTokenMap={customTokenMap}
-          />
         )}
+        <button
+          onClick={onClick}
+          className={classNames(
+            onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
+            (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
+            currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
+            'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
+          )}
+        >
+          {loading ? (
+            <div className="pr-12 pl-1">
+              <Loader />
+            </div>
+          ) : currency ? (
+            <>
+              <div className="w-5 h-5">
+                <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
+              </div>
+              <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
+            </>
+          ) : (
+            <div className="ml-0.5 -mr-0.5 pl-1">Select</div>
+          )}
+          {onSelect && (
+            <div className="w-5 h-5">
+              <ChevronDownIcon width={20} height={20} />
+            </div>
+          )}
+        </button>
       </div>
-    )
-  }, [
-    balance,
-    chainId,
-    className,
-    currency,
-    customTokenMap,
-    disableMaxButton,
-    disabled,
-    focusInput,
-    fundSource,
-    handleClose,
-    isMounted,
-    loading,
-    onAddToken,
-    onChange,
-    onRemoveToken,
-    onSelect,
-    parsedValue,
-    price,
-    tokenMap,
-    tokenSelectorOpen,
-    usdPctChange,
-    value,
-  ])
+      <div className="flex flex-row justify-between">
+        <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
+        <div className="h-6">
+          <BalancePanel
+            onChange={onChange}
+            currency={currency}
+            fundSource={fundSource}
+            disableMaxButton={disableMaxButton}
+          />
+        </div>
+      </div>
+      {onSelect && (
+        <TokenSelector
+          variant="dialog"
+          onClose={handleClose}
+          open={tokenSelectorOpen}
+          fundSource={FundSource.WALLET}
+          chainId={chainId}
+          currency={currency}
+          onSelect={onSelect}
+          onAddToken={onAddToken}
+          onRemoveToken={onRemoveToken}
+          tokenMap={tokenMap}
+          customTokenMap={customTokenMap}
+        />
+      )}
+    </div>
+  )
+}
+
+type BalancePanel = Pick<CurrencyInputProps, 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource'>
+
+const BalancePanel: FC<BalancePanel> = ({ onChange, currency, disableMaxButton, fundSource = FundSource.WALLET }) => {
+  const isMounted = useIsMounted()
+  const { address } = useAccount()
+  const { data: balance } = useBalance({ chainId: currency?.chainId, currency, account: address })
+
+  return useMemo(
+    () => (
+      <AppearOnMount show={!!balance}>
+        <button
+          type="button"
+          onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
+          className="text-slate-400 hover:text-slate-300 py-1 text-xs"
+          disabled={disableMaxButton}
+        >
+          {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
+        </button>
+      </AppearOnMount>
+    ),
+    [balance, disableMaxButton, fundSource, isMounted, onChange]
+  )
+}
+
+type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'>
+const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
+  const isMounted = useIsMounted()
+  const { data: tokenPrices } = usePrices({ chainId: currency?.chainId })
+  const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
+  const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
+
+  return (
+    <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
+      {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
+      {usdPctChange && (
+        <span
+          className={classNames(
+            usdPctChange === 0
+              ? ''
+              : usdPctChange > 0
+              ? 'text-green'
+              : usdPctChange < -5
+              ? 'text-red'
+              : usdPctChange < -3
+              ? 'text-yellow'
+              : 'text-slate-500'
+          )}
+        >
+          {' '}
+          {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+            usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
+          }%)`}
+        </span>
+      )}
+    </Typography>
+  )
 }
