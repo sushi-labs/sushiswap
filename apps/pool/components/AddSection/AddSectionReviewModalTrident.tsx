@@ -248,6 +248,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
           error={error}
         >
           <Approve
+            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -285,6 +286,6 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         </AddSectionReviewModal>
       </>
     ),
-    [chain, chainId, children, error, execute, input0, input1, isWritePending, open]
+    [chain, chainId, children, createNotification, error, execute, input0, input1, isWritePending, open]
   )
 }

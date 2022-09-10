@@ -146,6 +146,7 @@ export const SushiBarSectionMobile: FC = () => {
                   </Tab.Panel>
                   <Dialog.Actions className="h-[84px]">
                     <Approve
+                      onSuccess={createNotification}
                       className="flex !flex-row !justify-center"
                       components={
                         <Approve.Components>

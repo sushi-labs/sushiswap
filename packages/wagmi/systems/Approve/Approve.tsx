@@ -1,5 +1,5 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
+import { classNames, NotificationData } from '@sushiswap/ui'
 import React, { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
 
 import { ApprovalState } from '../../hooks'
@@ -12,6 +12,7 @@ interface Props {
   className?: string
   components: ReactElement<ApproveButton<'button'>>
   render({ isUnknown, approved }: { approved: boolean | undefined; isUnknown: boolean | undefined }): ReactNode
+  onSuccess(data: NotificationData): void
 }
 
 export interface State {
@@ -51,7 +52,7 @@ const reducer = (state: State, action: ApprovalAction) => {
   }
 }
 
-const Controller: FC<Props> = ({ className, components, render }) => {
+const Controller: FC<Props> = ({ className, components, render, onSuccess }) => {
   const isMounted = useIsMounted()
   const [state, dispatch] = useReducer(reducer, {
     approvals: [],
@@ -76,11 +77,12 @@ const Controller: FC<Props> = ({ className, components, render }) => {
             index,
             allApproved: state.isApproved,
             initialized,
+            onSuccess,
           })
         }
       })
     )
-  }, [components, initialized, state.isApproved])
+  }, [components, initialized, onSuccess, state.isApproved])
 
   const button = useMemo(() => {
     const index = state.approvals.findIndex((el) => el?.[0] === ApprovalState.NOT_APPROVED)

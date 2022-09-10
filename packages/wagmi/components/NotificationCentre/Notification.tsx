@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react'
 import {
+  CashIcon,
   ChevronDownIcon,
   DownloadIcon,
   FireIcon,
@@ -90,6 +91,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
               {status === 'success' && notification.type === 'burn' && <FireIcon width={20} height={20} />}
               {status === 'success' && notification.type === 'enterBar' && <DownloadIcon width={20} height={20} />}
               {status === 'success' && notification.type === 'leaveBar' && <UploadIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'claimRewards' && <CashIcon width={20} height={20} />}
             </div>
           </Badge>
           <div className="flex flex-col gap-0.5">

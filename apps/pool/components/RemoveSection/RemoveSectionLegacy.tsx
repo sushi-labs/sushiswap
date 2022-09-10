@@ -234,6 +234,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                   }
                 >
                   <Approve
+                    onSuccess={createNotification}
                     className="flex-grow !justify-end"
                     components={
                       <Approve.Components>

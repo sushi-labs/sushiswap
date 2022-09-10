@@ -1,10 +1,17 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { Chain } from '@sushiswap/chain'
 import { Amount, Currency } from '@sushiswap/currency'
-import { createToast, Dots } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContract, UserRejectedRequestError, useSendTransaction, useSigner } from 'wagmi'
+import {
+  erc20ABI,
+  useAccount,
+  useContract,
+  useNetwork,
+  UserRejectedRequestError,
+  useSendTransaction,
+  useSigner,
+} from 'wagmi'
 
 import { useERC20Allowance } from './useERC20Allowance'
 
@@ -23,8 +30,10 @@ export enum ApprovalState {
 export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove?: Amount<Currency>,
-  spender?: string
+  spender?: string,
+  onSuccess?: (data: NotificationData) => void
 ): [ApprovalState, () => Promise<void>] {
+  const { chain } = useNetwork()
   const { address } = useAccount()
   const { data: signer } = useSigner()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
@@ -52,6 +61,11 @@ export function useERC20ApproveCallback(
   })
 
   const approve = useCallback(async (): Promise<void> => {
+    if (!chain?.id) {
+      console.error('Not connected')
+      return
+    }
+
     if (approvalState !== ApprovalState.NOT_APPROVED) {
       console.error('approve was called unnecessarily')
       return
@@ -97,22 +111,38 @@ export function useERC20ApproveCallback(
         },
       })
 
-      createToast({
-        txHash: data.hash,
-        href: Chain.from(amountToApprove.currency.chainId).getTxUrl(data.hash),
-        promise: data.wait(),
-        summary: {
-          pending: <Dots>Approving {amountToApprove.currency.symbol}</Dots>,
-          completed: `Successfully approved ${amountToApprove.currency.symbol}`,
-          failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
-        },
-      })
+      if (onSuccess) {
+        const ts = new Date().getTime()
+        onSuccess({
+          type: 'approval',
+          chainId: chain?.id,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Approving ${amountToApprove.currency.symbol}`,
+            completed: `Successfully approved ${amountToApprove.currency.symbol}`,
+            failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
+          },
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
+      }
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
         console.error(e)
       }
     }
-  }, [approvalState, token, tokenContract, amountToApprove, spender, sendTransactionAsync, address])
+  }, [
+    chain?.id,
+    approvalState,
+    token,
+    tokenContract,
+    amountToApprove,
+    spender,
+    sendTransactionAsync,
+    address,
+    onSuccess,
+  ])
 
   return [approvalState, approve]
 }

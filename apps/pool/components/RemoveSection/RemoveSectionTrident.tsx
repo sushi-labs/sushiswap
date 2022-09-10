@@ -227,6 +227,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                   }
                 >
                   <Approve
+                    onSuccess={createNotification}
                     className="flex-grow !justify-end"
                     components={
                       <Approve.Components>
@@ -268,6 +269,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       </div>
     ),
     [
+      createNotification,
       error,
       execute,
       isMounted,

@@ -122,6 +122,7 @@ export const SushiBarSectionDesktop: FC = () => {
               </div>
               <div className="flex gap-1 order-4">
                 <Approve
+                  onSuccess={createNotification}
                   className="flex !flex-row !justify-center"
                   components={
                     <Approve.Components>

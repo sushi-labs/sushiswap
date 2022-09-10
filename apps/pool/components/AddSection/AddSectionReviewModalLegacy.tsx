@@ -170,6 +170,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           error={error}
         >
           <Approve
+            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -200,6 +201,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         </AddSectionReviewModal>
       </>
     ),
-    [chainId, children, error, execute, input0, input1, isWritePending, open]
+    [chainId, children, createNotification, error, execute, input0, input1, isWritePending, open]
   )
 }

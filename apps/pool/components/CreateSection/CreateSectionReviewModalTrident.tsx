@@ -177,6 +177,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         error={error}
       >
         <Approve
+          onSuccess={createNotification}
           className="flex-grow !justify-end"
           components={
             <Approve.Components>
