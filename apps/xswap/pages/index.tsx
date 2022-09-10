@@ -46,7 +46,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Theme } from 'types'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { useCustomTokens, useSettings } from '../lib/state/storage'
+import { useCustomTokens, useNotifications, useSettings } from '../lib/state/storage'
 
 const BIPS_BASE = JSBI.BigInt(10000)
 
@@ -160,7 +160,7 @@ const Widget: FC<Swap> = ({
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
-
+  const [, { createNotification }] = useNotifications(address)
   const [isWritePending, setIsWritePending] = useState<boolean>(false)
 
   const [signature, setSignature] = useState<Signature>()
@@ -1256,6 +1256,7 @@ const Widget: FC<Swap> = ({
                               )}
                             </div>
                             <Approve
+                              onSuccess={createNotification}
                               className="flex-grow !justify-end pt-4"
                               components={
                                 <Approve.Components>
