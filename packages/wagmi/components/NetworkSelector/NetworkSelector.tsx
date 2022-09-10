@@ -22,7 +22,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
         </Listbox.Button>
       }
     >
-      <Select.Options className="w-[max-content] right-0 mt-5 !fixed !bg-slate-700">
+      <Select.Options className="!w-[max-content] right-0 mt-[20px] !fixed !bg-slate-700">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 px-2 py-2">
           {supportedNetworks.map((el) => (
             <div
