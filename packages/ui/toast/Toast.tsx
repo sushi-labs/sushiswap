@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import React, { ReactNode } from 'react'
 import { toast, ToastOptions } from 'react-toastify'
 
@@ -18,18 +19,20 @@ export const TOAST_OPTIONS: ToastOptions = {
 }
 
 export interface NotificationData {
+  type: 'swap' | 'mint' | 'burn'
+  chainId: ChainId
   summary: {
     pending: ReactNode | Array<ReactNode>
     completed: ReactNode | Array<ReactNode>
     failed: ReactNode | Array<ReactNode>
   }
-  href: string
   txHash: string
+  groupTimestamp: number
+  timestamp: number
   promise: Promise<any>
-  onDismiss(): void
 }
 
-export const createToast = (props: Omit<NotificationData, 'onDismiss'>) => {
+export const createToast = (props: NotificationData) => {
   const onDismiss = () => toast.dismiss(props.txHash)
 
   // Spawn new toasts based on promise result

@@ -2,13 +2,13 @@ import { BellIcon, XIcon } from '@heroicons/react/solid'
 import { Button, Drawer, IconButton, Typography } from '@sushiswap/ui'
 import React, { createContext, FC } from 'react'
 
-import { Notification } from './Notification'
+import { NotificationGroup } from './NotificationGroup'
 import { CreateNotificationParams, NotificationType } from './types'
 
 export const NotificationCentreContext = createContext<ProviderProps | undefined>(undefined)
 
 interface ProviderProps {
-  notifications: { data: string }[]
+  notifications: Record<number, string[]>
   clearNotifications(): void
   createNotification(type: NotificationType, params: CreateNotificationParams): void
 }
@@ -23,7 +23,7 @@ export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> =
         <BellIcon width={20} height={20} />
       </Drawer.Button>
       <Drawer.Panel>
-        <div className="flex gap-3 items-center mb-2 h-[54px] border-b border-slate-200/5">
+        <div className="flex gap-3 items-center mb-3 h-[54px] border-b border-slate-200/5">
           <Typography variant="lg" weight={500} className="text-slate-50">
             Notifications
           </Typography>
@@ -38,9 +38,11 @@ export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> =
             </Drawer.Button>
           </div>
         </div>
-        {notifications.map((el, index) => {
-          return <Notification key={index} data={el.data} />
-        })}
+        <div className="flex flex-col gap-3">
+          {Object.entries(notifications).map(([, notifications], index) => {
+            return <NotificationGroup key={index} notifications={notifications} />
+          })}
+        </div>
       </Drawer.Panel>
     </Drawer.Root>
   )

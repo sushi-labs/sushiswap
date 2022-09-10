@@ -88,16 +88,20 @@ const reducers = {
     state.transactionDeadline = transactionDeadline
   },
   createNotification: (state: StorageState, action: PayloadAction<createNotification>) => {
-    const { notification, account } = action.payload
+    const { notification, account, timestamp } = action.payload
     if (!state.notifications[account]) {
-      state.notifications[account] = []
+      state.notifications[account] = {}
     }
 
-    state.notifications[account].push(notification)
+    if (!state.notifications[account][timestamp]) {
+      state.notifications[account][timestamp] = [notification]
+    } else {
+      state.notifications[account][timestamp].push(notification)
+    }
   },
   clearNotifications: (state: StorageState, action: PayloadAction<ClearNotifications>) => {
     const { account } = action.payload
-    state.notifications[account] = []
+    delete state.notifications[account]
   },
 }
 
