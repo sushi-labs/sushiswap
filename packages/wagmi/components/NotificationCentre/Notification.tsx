@@ -1,6 +1,6 @@
 import { Disclosure } from '@headlessui/react'
 import { SwitchHorizontalIcon } from '@heroicons/react/outline'
-import { CheckCircleIcon, ChevronDownIcon, XCircleIcon } from '@heroicons/react/solid'
+import { CheckCircleIcon, ChevronDownIcon, LockOpenIcon, XCircleIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
 import {
   Badge,
@@ -63,13 +63,12 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
       )}
       <Link.External href={chains[notification.chainId].getTxUrl(notification.txHash)} className="!no-underline">
         <div className="relative cursor-pointer flex items-center gap-5 rounded-2xl px-4 py-3 pr-8">
-          {notification.type === 'swap' && (
-            <Badge badgeContent={<NetworkIcon chainId={notification.chainId} width={18} height={18} />}>
-              <div className="p-2 bg-slate-600 rounded-full">
-                <SwitchHorizontalIcon width={20} height={20} />
-              </div>
-            </Badge>
-          )}
+          <Badge badgeContent={<NetworkIcon chainId={notification.chainId} width={18} height={18} />}>
+            <div className="p-2 bg-slate-600 rounded-full">
+              {notification.type === 'swap' && <SwitchHorizontalIcon width={20} height={20} />}
+              {notification.type === 'approval' && <LockOpenIcon width={20} height={20} />}
+            </div>
+          </Badge>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
               <Typography variant="sm" weight={500} className="text-slate-50 whitespace-normal">
