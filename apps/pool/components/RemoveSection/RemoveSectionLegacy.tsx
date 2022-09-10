@@ -270,6 +270,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     )
   }, [
     balance,
+    createNotification,
     error,
     execute,
     isMounted,

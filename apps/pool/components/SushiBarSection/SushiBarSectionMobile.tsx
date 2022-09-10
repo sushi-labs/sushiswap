@@ -14,10 +14,8 @@ import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejecte
 import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
 import XSushi = BarTypes.XSushi
-import { Simulate } from 'react-dom/test-utils'
 
 import { useNotifications } from '../../lib/state/storage'
-import select = Simulate.select
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]

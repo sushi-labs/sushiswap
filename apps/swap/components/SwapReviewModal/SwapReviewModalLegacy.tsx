@@ -2,8 +2,9 @@ import { ChainId } from '@sushiswap/chain'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, getV2RouterContractConfig } from '@sushiswap/wagmi'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, UserRejectedRequestError, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
+import { useNotifications } from '../../lib/state/storage'
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
 
@@ -14,6 +15,8 @@ interface SwapReviewModalLegacy {
 
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children }) => {
   const { trade } = useTrade()
+  const { address } = useAccount()
+  const [, { createNotification }] = useNotifications(address)
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
@@ -50,6 +53,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         error={error}
       >
         <Approve
+          onSuccess={createNotification}
           className="flex-grow !justify-end"
           components={
             <Approve.Components>
