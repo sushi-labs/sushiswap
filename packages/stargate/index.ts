@@ -1,15 +1,23 @@
 import { ChainId } from '@sushiswap/chain'
 import { Currency, Token, USDC, USDC_ADDRESS, USDT, USDT_ADDRESS } from '@sushiswap/currency'
 
+// Ethereum: 101
+// BNB: 102
+// Avalanche: 106
+// Polygon: 109
+// Arbitrum: 110
+// Optimism: 111
+// Fantom: 112
+
 export const STARGATE_CHAIN_ID: Record<number, number> = {
   // MAINNETS
-  [ChainId.ETHEREUM]: 1,
-  [ChainId.BSC]: 2,
-  [ChainId.AVALANCHE]: 6,
-  [ChainId.POLYGON]: 9,
-  [ChainId.ARBITRUM]: 10,
-  [ChainId.OPTIMISM]: 11,
-  [ChainId.FANTOM]: 12,
+  [ChainId.ETHEREUM]: 101,
+  [ChainId.BSC]: 102,
+  [ChainId.AVALANCHE]: 106,
+  [ChainId.POLYGON]: 109,
+  [ChainId.ARBITRUM]: 110,
+  [ChainId.OPTIMISM]: 111,
+  [ChainId.FANTOM]: 112,
   // TESTNETS
   [ChainId.RINKEBY]: 10001,
   [ChainId.BSC_TESTNET]: 10002,

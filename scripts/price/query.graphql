@@ -1,12 +1,14 @@
-query SushiSwapTokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
-  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+query Tokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height) {
+  tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
     id
-    liquidity
-    derivedETH
+    token {
+      liquidity
+    }
+    derivedNative
   }
 
   bundle(id: 1, block: $block) {
-    ethPrice
+    nativePrice
   }
 
   _meta {
@@ -16,18 +18,15 @@ query SushiSwapTokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, 
   }
 }
 
-query TridentTokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height) {
-  tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
+query PolygonTokens($first: Int = 5000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Block_height) {
+  Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
-    derivedNative
-    lastUsdPrice
-    token {
-      liquidityNative
-    }
+    liquidity
+    derivedETH
   }
 
-  bundle(id: 1, block: $block) {
-    nativePrice
+  Polygon_bundle(id: 1, block: $block) {
+    ethPrice
   }
 
   _meta {

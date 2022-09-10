@@ -106,13 +106,15 @@ export class Vesting extends Furo {
     if (!this.isStarted) return Amount.fromRawAmount(this.token, '0')
 
     let sum = Amount.fromRawAmount(this.token, '0')
-    if (this.cliffDuration && Date.now() > this.startTime.getTime() + this.cliffDuration * 1000) {
-      sum = sum.add(this.cliffAmount)
+    if (this.cliffDuration) {
+      if (Date.now() > this.startTime.getTime() + this.cliffDuration * 1000) {
+        sum = sum.add(this.cliffAmount)
 
-      const payouts = Math.floor(
-        (Date.now() - this.startTime.getTime() + this.cliffDuration * 1000) / (this.stepDuration * 1000)
-      )
-      sum = sum.add(this.stepAmount.multiply(payouts))
+        const payouts = Math.floor(
+          (Date.now() - this.startTime.getTime() + this.cliffDuration * 1000) / (this.stepDuration * 1000)
+        )
+        sum = sum.add(this.stepAmount.multiply(payouts))
+      }
     } else {
       const payouts = Math.floor((Date.now() - this.startTime.getTime()) / (this.stepDuration * 1000))
       sum = sum.add(this.stepAmount.multiply(payouts))
