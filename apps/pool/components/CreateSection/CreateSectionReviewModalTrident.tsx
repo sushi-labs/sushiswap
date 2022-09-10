@@ -1,10 +1,10 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { computeConstantProductPoolAddress, Fee } from '@sushiswap/exchange'
-import { Button, createToast, Dots } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
@@ -22,6 +22,7 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
+import { useNotifications } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
@@ -50,6 +51,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const { chain } = useNetwork()
   const contract = useV3RouterContract(chainId)
   const factory = useConstantProductPoolFactoryContract(chainId)
+  const [, { createNotification }] = useNotifications(address)
 
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
     chainId,
@@ -69,7 +71,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   }, [factory, fee, token0, token1])
 
   const execute = useCallback(async () => {
-    if (!factory || !token0 || !token1 || !poolAddress) return
+    if (!chain?.id || !factory || !token0 || !token1 || !poolAddress) return
 
     let value
     const liquidityInput: LiquidityInput[] = []
@@ -126,19 +128,19 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         },
       })
 
-      createToast({
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'mint',
+        chainId: chain.id,
         txHash: data.hash,
-        href: Chain.from(chainId).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
-          pending: (
-            <Dots>
-              Adding liquidity to the {token0.symbol}/{token1.symbol} pair
-            </Dots>
-          ),
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           failed: 'Something went wrong when adding liquidity',
         },
+        timestamp: ts,
+        groupTimestamp: ts,
       })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
@@ -149,8 +151,9 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     }
   }, [
     address,
-    chainId,
+    chain?.id,
     contract,
+    createNotification,
     factory,
     fee,
     input0,

@@ -19,7 +19,7 @@ export const TOAST_OPTIONS: ToastOptions = {
 }
 
 export interface NotificationData {
-  type: 'swap' | 'mint' | 'burn' | 'approval'
+  type: 'swap' | 'mint' | 'burn' | 'approval' | 'enterBar' | 'leaveBar'
   chainId: ChainId
   summary: {
     pending: ReactNode | Array<ReactNode>

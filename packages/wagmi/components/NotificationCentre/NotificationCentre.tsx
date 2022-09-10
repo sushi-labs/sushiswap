@@ -1,11 +1,9 @@
 import { BellIcon, XIcon } from '@heroicons/react/solid'
 import { Button, Drawer, IconButton, Typography } from '@sushiswap/ui'
-import React, { createContext, FC } from 'react'
+import React, { FC } from 'react'
 
 import { NotificationGroup } from './NotificationGroup'
 import { CreateNotificationParams, NotificationType } from './types'
-
-export const NotificationCentreContext = createContext<ProviderProps | undefined>(undefined)
 
 interface ProviderProps {
   notifications: Record<number, string[]>
@@ -39,9 +37,11 @@ export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> =
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          {Object.entries(notifications).map(([, notifications], index) => {
-            return <NotificationGroup key={index} notifications={notifications} />
-          })}
+          {Object.entries(notifications)
+            .reverse()
+            .map(([, notifications], index) => {
+              return <NotificationGroup key={index} notifications={notifications} />
+            })}
         </div>
       </Drawer.Panel>
     </Drawer.Root>

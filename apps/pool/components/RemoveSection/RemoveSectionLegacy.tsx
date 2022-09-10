@@ -1,10 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Chain } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Button, createToast, Dots } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   calculateGasMargin,
@@ -20,7 +19,7 @@ import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, use
 
 import { Pair } from '../../.graphclient'
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -38,6 +37,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
+  const [, { createNotification }] = useNotifications(address)
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
@@ -46,7 +46,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const [percentage, setPercentage] = useState<string>('')
   const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
 
-  const [poolState, pool] = usePair(pair.chainId, token0, token1)
+  const {
+    data: [poolState, pool],
+  } = usePair(pair.chainId, token0, token1)
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -160,19 +162,19 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           },
         })
 
-        createToast({
+        const ts = new Date().getTime()
+        createNotification({
+          type: 'burn',
+          chainId: chain.id,
           txHash: data.hash,
-          href: Chain.from(chain.id).getTxUrl(data.hash),
           promise: data.wait(),
           summary: {
-            pending: (
-              <Dots>
-                Removing liquidity from the {token0.symbol}/{token1.symbol} pair
-              </Dots>
-            ),
+            pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
             completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
             failed: 'Something went wrong when removing liquidity',
           },
+          timestamp: ts,
+          groupTimestamp: ts,
         })
       }
     } catch (e: unknown) {
@@ -198,6 +200,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     percentageEntity,
     deadline,
     sendTransactionAsync,
+    createNotification,
   ])
 
   return useMemo(() => {
