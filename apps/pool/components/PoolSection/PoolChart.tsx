@@ -39,7 +39,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 
 export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
-  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.All)
+  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
 
   const [xData, yData] = useMemo(() => {
     const data =
@@ -171,7 +171,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col md:flex-row gap-5 justify-between">
+      <div className="flex flex-col justify-between gap-5 md:flex-row">
         <div className="flex gap-6">
           <button
             onClick={() => setChartType(PoolChartType.Volume)}

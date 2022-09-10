@@ -13,11 +13,11 @@ interface PoolStats {
 export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
-
   const [totals1d, totals2d] = pair.dayChangeData
   const reserveChange = ((totals1d.liquidityUSD - totals2d.liquidityUSD) / totals2d.liquidityUSD) * 100
   const volChange = ((totals1d.volumeUSD - totals2d.volumeUSD) / totals2d.volumeUSD) * 100
-  const txCountChange = ((totals1d.txCount - totals2d.txCount) / totals2d.txCount) * 100
+  const transactionCountChange =
+    ((totals1d.transactionCount - totals2d.transactionCount) / totals2d.transactionCount) * 100
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -62,11 +62,11 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
           Transactions (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatNumber(totals1d.txCount)}
+          {formatNumber(totals1d.transactionCount)}
         </Typography>
-        <Typography variant="xs" weight={500} className={txCountChange > 0 ? 'text-green' : 'text-red'}>
-          {txCountChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(txCountChange))}%
+        <Typography variant="xs" weight={500} className={transactionCountChange > 0 ? 'text-green' : 'text-red'}>
+          {transactionCountChange > 0 ? '+' : '-'}
+          {formatNumber(Math.abs(transactionCountChange))}%
         </Typography>
       </div>
     </div>

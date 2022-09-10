@@ -1,9 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { ERC20 } from '@sushiswap/core'
-import { SUBGRAPH_HOST } from '@sushiswap/graph-client/config'
 import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
 
-import { EXCHANGE_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '../../config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '../../config'
 import { divBigNumberToNumber } from './utils'
 
 interface Token {
@@ -18,7 +17,7 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = EXCHANGE_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   // waiting for new subgraph to sync
   const { tokens, bundle } =
@@ -42,7 +41,7 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },

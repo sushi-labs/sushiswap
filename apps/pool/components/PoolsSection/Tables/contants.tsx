@@ -2,13 +2,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
 import { Pair } from '../../../.graphclient'
-import { PairVolume7dCell } from '.'
 import { PairAPRCell } from './PairAPRCell'
 import { PairChainCell } from './PairChainCell'
 import { PairNameCell } from './PairNameCell'
 import { PairPositionCell } from './PairPositionCell'
 import { PairRewardsCell } from './PairRewardsCell'
 import { PairTVLCell } from './PairTVLCell'
+import { PairVolume24hCell } from './PairVolume24hCell'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
@@ -94,8 +94,8 @@ export const POSITION_COLUMN: ColumnDef<Pair, unknown> = {
 
 export const VOLUME_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'volume',
-  header: 'Volume (7d)',
-  cell: (props) => <PairVolume7dCell row={props.row.original} />,
+  header: 'Volume (24h)',
+  cell: (props) => <PairVolume24hCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',

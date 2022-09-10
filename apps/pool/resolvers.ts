@@ -1,19 +1,22 @@
 import { chainName, chainShortName } from '@sushiswap/chain'
 import {
   AMM_ENABLED_NETWORKS,
+  BLOCK_SUBGRAPH_NAME,
   EXCHANGE_SUBGRAPH_NAME,
   GRAPH_HOST,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from 'config'
 
-import { InputMaybe, Pagination, Resolvers } from '.graphclient'
+import { InputMaybe, Pagination, Pair, Resolvers } from '.graphclient'
 
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
   if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data
 
   const start = pagination.pageIndex * pagination.pageSize
   const end = (pagination.pageIndex + 1) * pagination.pageSize
+
+  // console.log({ start, end, dlength: data.length })
 
   return data.slice(start, end) as T
 }
@@ -25,6 +28,8 @@ export const resolvers: Resolvers = {
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
   },
   Pair: {
+    volume1d: (root, args, context, info) => root.volume1d || '0',
+    // volume2d: (root, args, context, info) => root.volume2d || '0',
     volume7d: (root, args, context, info) => root.volume7d || '0',
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
@@ -34,11 +39,35 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   },
+  Block: {
+    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+  },
   // Farm: {
   //   chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
   //   chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
   // },
   Query: {
+    crossChainBlocks: async (root, args, context, info) => {
+      // console.log('CROSS CHAIN BLOCKS ARGS', args)
+      return Promise.all(
+        args.chainIds.map((chainId) => {
+          return context.Blocks.Query.blocks({
+            root,
+            args,
+            context: {
+              ...context,
+              chainId,
+              chainName: chainName[chainId],
+              chainShortName: chainShortName[chainId],
+              subgraphName: BLOCK_SUBGRAPH_NAME[chainId],
+              subgraphHost: GRAPH_HOST[chainId],
+            },
+            info,
+          })
+        })
+      ).then((blocks) => blocks.flat())
+    },
     crossChainPair: async (root, args, context, info) => {
       const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
@@ -76,16 +105,10 @@ export const resolvers: Resolvers = {
         ?.slice(0, 6)
         ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
       const farm = farms?.[args.chainId]?.farms?.[pool.id]
-      // console.log(`Farm for pool ${pool.id}`, farm)
-      const feeApr =
-        Number(pool?.liquidityUSD) > 5000 ? (args.chainId === 1 ? pool?.apr / 100_000 : pool?.apr / 100) : 0
+      const feeApr = pool?.apr
       const incentiveApr =
         farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
       const apr = Number(feeApr) + Number(incentiveApr)
-
-      if (feeApr > 0 && incentiveApr > 0) {
-        console.log({ feeApr, incentiveApr })
-      }
       return {
         ...pool,
         id: `${chainShortName[args.chainId]}:${pool.id}`,
@@ -118,37 +141,24 @@ export const resolvers: Resolvers = {
       }
     },
     crossChainPairs: async (root, args, context, info) => {
-      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
-
-      const transformer = (pools, chainId) => {
+      // console.log('CROSS CHAIN PAIRS ARGS', args)
+      const transformer = (pools: Pair[], oneDayPools: Pair[], farms: any, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
-              const volume7d = pool.daySnapshots
-                ?.slice(0, 6)
-                ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+              const pool1d = oneDayPools.find((oneDayPool) => oneDayPool.id === pool.id)
+              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : Number(pool.volumeUSD)
+              // console.log({ volume1d })
               const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
-              // console.log(`Farm for pool ${pool.id}`, farm)
-              const feeApr =
-                Number(pool?.liquidityUSD) > 5000
-                  ? chainId === 1
-                    ? pool?.apr / 100_000
-                    : chainId === 100
-                    ? pool?.apr * 100
-                    : pool?.apr / 100
-                  : 0
+              const feeApr = pool?.apr
               const incentiveApr =
                 farm?.incentives?.reduce(
                   (previousValue, currentValue) => previousValue + Number(currentValue.apr),
                   0
                 ) ?? 0
               const apr = Number(feeApr) + Number(incentiveApr)
-
-              // if (feeApr > 0 && incentiveApr > 0) {
-              //   console.log({ feeApr, incentiveApr })
-              // }
               return {
                 ...pool,
-                volume7d,
+                volume1d,
                 id: `${chainShortName[chainId]}:${pool.id}`,
                 chainId,
                 chainName: chainName[chainId],
@@ -180,55 +190,88 @@ export const resolvers: Resolvers = {
           : []
       }
 
-      return Promise.all([
-        ...args.chainIds
-          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-          .map((chainId) => {
-            return context.Trident.Query.pairs({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
-              },
-              info,
-            }).then((pools) => transformer(pools, chainId))
-          }),
-        ...args.chainIds
-          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-          .map((chainId) => {
-            return context.Exchange.Query.pairs({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
-              },
-              info,
-            })
-              .then((pools) => {
-                if (!farms?.[chainId]?.farms) return pools
-                const ids = Array.from(
-                  new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
-                )
+      return fetch('https://farm.sushi.com/v0')
+        .then((data) => data.json())
+        .then((farms) =>
+          Promise.all([
+            ...args.chainIds
+              .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+              .map((chainId, i) => {
+                return Promise.all([
+                  context.Trident.Query.pairs({
+                    root,
+                    args,
+                    context: {
+                      ...context,
+                      chainId,
+                      chainName: chainName[chainId],
+                      chainShortName: chainShortName[chainId],
+                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                      subgraphHost: GRAPH_HOST[chainId],
+                    },
+                    info,
+                  }),
+                  context.Trident.Query.pairs({
+                    root,
+                    args: {
+                      ...args,
+                      block: { number: Number(args.oneDayBlockNumbers[i]) },
+                    },
+                    context: {
+                      ...context,
+                      chainId,
+                      chainName: chainName[chainId],
+                      chainShortName: chainShortName[chainId],
+                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                      subgraphHost: GRAPH_HOST[chainId],
+                    },
+                    info,
+                  }),
+                ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+              }),
+            ...args.chainIds
+              .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+              .map((chainId, i) => {
+                // If no farms on this chain, just do two pairs queries
+                // cound probably combine this into one query
+                if (!farms?.[chainId]) {
+                  return Promise.all([
+                    context.Exchange.Query.pairs({
+                      root,
+                      args,
+                      context: {
+                        ...context,
+                        chainId,
+                        chainName: chainName[chainId],
+                        chainShortName: chainShortName[chainId],
+                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                        subgraphHost: GRAPH_HOST[chainId],
+                      },
+                      info,
+                    }),
+                    context.Exchange.Query.pairs({
+                      root,
+                      args: {
+                        ...args,
+                        block: { number: Number(args.oneDayBlockNumbers[i]) },
+                      },
+                      context: {
+                        ...context,
+                        chainId,
+                        chainName: chainName[chainId],
+                        chainShortName: chainShortName[chainId],
+                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                        subgraphHost: GRAPH_HOST[chainId],
+                      },
+                      info,
+                    }),
+                  ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+                }
+
+                // If farm, to avoid ordering issues
                 return context.Exchange.Query.pairs({
                   root,
-                  args: {
-                    first: ids.length,
-                    where: {
-                      id_in: Array.from(
-                        new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
-                      ),
-                    },
-                  },
+                  args,
                   context: {
                     ...context,
                     chainId,
@@ -239,12 +282,52 @@ export const resolvers: Resolvers = {
                   },
                   info,
                 })
-              })
-              .then((pools) => {
-                return transformer(pools, chainId)
-              })
-          }),
-      ])
+                  .then((pools) => {
+                    const poolIds = Array.from(
+                      new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
+                    )
+                    return Promise.all([
+                      context.Exchange.Query.pairs({
+                        root,
+                        args: {
+                          ...args,
+                          first: poolIds.length,
+                          where: { id_in: poolIds },
+                        },
+                        context: {
+                          ...context,
+                          chainId,
+                          chainName: chainName[chainId],
+                          chainShortName: chainShortName[chainId],
+                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                          subgraphHost: GRAPH_HOST[chainId],
+                        },
+                        info,
+                      }),
+                      context.Exchange.Query.pairs({
+                        root,
+                        args: {
+                          ...args,
+                          first: poolIds.length,
+                          where: { id_in: poolIds },
+                          block: { number: Number(args.oneDayBlockNumbers[i]) },
+                        },
+                        context: {
+                          ...context,
+                          chainId,
+                          chainName: chainName[chainId],
+                          chainShortName: chainShortName[chainId],
+                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                          subgraphHost: GRAPH_HOST[chainId],
+                        },
+                        info,
+                      }),
+                    ])
+                  })
+                  .then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+              }),
+          ])
+        )
         .then((pools) =>
           pools.flat().sort((a, b) => {
             if (args.orderDirection === 'asc') {

@@ -22,11 +22,11 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
         <Disclosure>
           {() => (
             <>
-              {!TRIDENT_ENABLED_NETWORKS.includes(selectedNetwork) ? (
+              {TRIDENT_ENABLED_NETWORKS.some((network) => network === selectedNetwork) ? (
                 <Tooltip
                   mouseEnterDelay={0.3}
                   button={
-                    <div className="flex justify-between items-center pr-3">
+                    <div className="flex items-center justify-between pr-3">
                       <Widget.Header title="2. Select Fee Tier" className="!pb-3" />
                       <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
                         {(FEE_MAP[fee] / 100).toFixed(2)}%
@@ -41,7 +41,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                 ></Tooltip>
               ) : (
                 <Disclosure.Button className="w-full pr-3">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <Widget.Header title="2. Select Fee Tier" className="!pb-3" />
                     <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
                       {(FEE_MAP[fee] / 100).toFixed(2)}%
