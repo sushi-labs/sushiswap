@@ -196,7 +196,7 @@ export const resolvers: Resolvers = {
           Promise.all([
             ...args.chainIds
               .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-              .map((chainId, i) => {
+              .map((chainId) => {
                 return Promise.all([
                   context.Trident.Query.pairs({
                     root,
@@ -231,9 +231,9 @@ export const resolvers: Resolvers = {
               }),
             ...args.chainIds
               .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-              .map((chainId, i) => {
+              .map((chainId) => {
                 // If no farms on this chain, just do two pairs queries
-                // cound probably combine this into one query
+                // could probably combine this into one query
                 if (!farms?.[chainId]) {
                   return Promise.all([
                     context.Exchange.Query.pairs({

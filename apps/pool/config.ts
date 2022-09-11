@@ -8,16 +8,16 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
 ]
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [
-  ChainId.ETHEREUM,
-  // ChainId.AVALANCHE,
-  // ChainId.ARBITRUM,
-  // ChainId.BSC,
-  // ChainId.CELO,
-  // ChainId.FANTOM,
-  // ChainId.FUSE,
-  // ChainId.GNOSIS,
-  // ChainId.MOONBEAM,
-  // ChainId.MOONRIVER,
+  // ChainId.ETHEREUM,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
   // ChainId.HARMONY,
 ]
 
