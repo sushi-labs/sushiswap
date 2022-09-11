@@ -41,8 +41,7 @@
     },
     "generate": {
       "dependsOn": [
-        "^build",
-        "$REDIS_URL"
+        "^build"
       ],
       "outputs": [
         "^build",
