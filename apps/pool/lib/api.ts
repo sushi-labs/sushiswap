@@ -102,7 +102,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
 
     const { crossChainBlocks: oneDayBlocks } = await getOneDayBlocks(chainIds)
 
-    console.log({ oneDayBlocks })
+    // console.log({ oneDayBlocks })
 
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,

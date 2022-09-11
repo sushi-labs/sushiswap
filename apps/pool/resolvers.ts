@@ -146,8 +146,7 @@ export const resolvers: Resolvers = {
         return pools?.length > 0
           ? pools.map((pool) => {
               const pool1d = oneDayPools.find((oneDayPool) => oneDayPool.id === pool.id)
-              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : Number(pool.volumeUSD)
-              // console.log({ volume1d })
+              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : 0
               const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
               const feeApr = pool?.apr
               const incentiveApr =
@@ -232,43 +231,6 @@ export const resolvers: Resolvers = {
             ...args.chainIds
               .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
               .map((chainId) => {
-                // If no farms on this chain, just do two pairs queries
-                // could probably combine this into one query
-                if (!farms?.[chainId]) {
-                  return Promise.all([
-                    context.Exchange.Query.pairs({
-                      root,
-                      args,
-                      context: {
-                        ...context,
-                        chainId,
-                        chainName: chainName[chainId],
-                        chainShortName: chainShortName[chainId],
-                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                        subgraphHost: GRAPH_HOST[chainId],
-                      },
-                      info,
-                    }),
-                    context.Exchange.Query.pairs({
-                      root,
-                      args: {
-                        ...args,
-                        block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
-                      },
-                      context: {
-                        ...context,
-                        chainId,
-                        chainName: chainName[chainId],
-                        chainShortName: chainShortName[chainId],
-                        subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                        subgraphHost: GRAPH_HOST[chainId],
-                      },
-                      info,
-                    }),
-                  ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
-                }
-
-                // If farm, to avoid ordering issues
                 return context.Exchange.Query.pairs({
                   root,
                   args,
@@ -283,6 +245,30 @@ export const resolvers: Resolvers = {
                   info,
                 })
                   .then((pools) => {
+                    // If no farms, resolve pools and one day pools
+                    if (!farms?.[chainId]?.farms) {
+                      return Promise.all([
+                        Promise.resolve(pools),
+                        context.Exchange.Query.pairs({
+                          root,
+                          args: {
+                            ...args,
+                            first: pools.length,
+                            where: { id_in: pools.map((pool) => pool.id) },
+                            block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
+                          },
+                          context: {
+                            ...context,
+                            chainId,
+                            chainName: chainName[chainId],
+                            chainShortName: chainShortName[chainId],
+                            subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+                            subgraphHost: GRAPH_HOST[chainId],
+                          },
+                          info,
+                        }),
+                      ])
+                    }
                     const poolIds = Array.from(
                       new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
                     )
