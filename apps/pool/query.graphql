@@ -21,7 +21,7 @@ query CrossChainBlocks(
   $skip: Int = 0
   $where: Block_filter
   $orderBy: Block_orderBy = "timestamp"
-  $orderDirection: OrderDirection = "asc",
+  $orderDirection: OrderDirection = "desc",
   $chainIds: [BigInt!]!
 ) {
   crossChainBlocks(
@@ -59,7 +59,6 @@ query CrossChainPairs(
   $block: Block_height
   $chainIds: [BigInt!]!
   $oneDayBlockNumbers: [BigInt!]!
-  $now: Int!
 ) {
   crossChainPairs(
     first: $first, 
@@ -70,8 +69,7 @@ query CrossChainPairs(
     orderDirection: $orderDirection,
     block: $block, 
     chainIds: $chainIds, 
-    oneDayBlockNumbers: $oneDayBlockNumbers,
-    now: $now
+    oneDayBlockNumbers: $oneDayBlockNumbers
   ) {
     id
     chainId
@@ -83,7 +81,6 @@ query CrossChainPairs(
     liquidity
     swapFee
     twapEnabled
-    volume1d
     source
     token0 {
       name
@@ -100,15 +97,11 @@ query CrossChainPairs(
     liquidityNative
     liquidityUSD
     volumeUSD
+    volume1d
     aprUpdatedAtTimestamp
     apr
     feeApr
     incentiveApr
-    daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-      id
-      date
-      volumeUSD
-    }
     farm {
       id
       feeApy

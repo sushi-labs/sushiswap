@@ -98,7 +98,6 @@ additionalTypeDefs: |
       chainIds: [BigInt!]!,
       oneDayBlockNumbers: [BigInt!]!,
       block: Block_height
-      now: Int!,
     ): [Pair!]!
     crossChainBundles(
       first: Int!,

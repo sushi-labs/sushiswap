@@ -215,7 +215,7 @@ export const resolvers: Resolvers = {
                     root,
                     args: {
                       ...args,
-                      block: { number: Number(args.oneDayBlockNumbers[i]) },
+                      block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
                     },
                     context: {
                       ...context,
@@ -253,7 +253,7 @@ export const resolvers: Resolvers = {
                       root,
                       args: {
                         ...args,
-                        block: { number: Number(args.oneDayBlockNumbers[i]) },
+                        block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
                       },
                       context: {
                         ...context,
@@ -310,7 +310,7 @@ export const resolvers: Resolvers = {
                           ...args,
                           first: poolIds.length,
                           where: { id_in: poolIds },
-                          block: { number: Number(args.oneDayBlockNumbers[i]) },
+                          block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
                         },
                         context: {
                           ...context,
