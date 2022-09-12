@@ -118,11 +118,10 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushi-labs/trident-polygon',
-  [ChainId.KOVAN]: 'sushi-labs/trident-kovan',
-  [ChainId.OPTIMISM]: 'sushi-labs/trident-optimism',
-  [ChainId.KAVA]: 'sushiswap/trident-kava',
-  [ChainId.METIS]: 'sushiswap/trident-metis',
+  [ChainId.POLYGON]: 'subgraph-qa/trident-polygon',
+  [ChainId.OPTIMISM]: 'subgraph-qa/trident-optimism',
+  [ChainId.KAVA]: 'subgraph-qa/trident-kava',
+  [ChainId.METIS]: 'subgraph-qa/trident-metis',
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
