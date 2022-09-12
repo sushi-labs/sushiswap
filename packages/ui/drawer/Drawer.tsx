@@ -33,7 +33,7 @@ interface ProviderProps {
 
 export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [, setRender] = useState(false)
 
   // Force render

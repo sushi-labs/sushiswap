@@ -83,7 +83,7 @@ const Index: FC = () => {
             </div>
             <div className="bg-slate-800">
               <CurrencyInput
-                className="p-3 !pb-1"
+                className="p-3"
                 value={input1}
                 onChange={onInput1}
                 currency={token1}
