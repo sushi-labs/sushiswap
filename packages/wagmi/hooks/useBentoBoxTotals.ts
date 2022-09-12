@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
@@ -34,6 +35,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
     cacheOnBlock: true,
     watch: true,
     keepPreviousData: true,
+    enabled: Boolean(getBentoBoxContractConfig(chainId).addressOrName !== AddressZero),
   })
 
   return useMemo(() => {

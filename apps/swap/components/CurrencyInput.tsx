@@ -1,7 +1,7 @@
 import { TradeType } from '@sushiswap/exchange'
 import { Web3Input } from '@sushiswap/wagmi'
 import { CurrencyInputProps } from '@sushiswap/wagmi/components/Web3Input/Currency'
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 
 import { useTrade } from './TradeProvider'
 
@@ -27,36 +27,19 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   const { trade, isLoading } = useTrade()
   const value = inputType === tradeType ? _value : trade ? trade?.outputAmount?.toExact() : ''
 
-  return useMemo(
-    () => (
-      <Web3Input.Currency
-        className={className}
-        value={value}
-        onChange={onChange}
-        currency={currency}
-        onSelect={onSelect}
-        customTokenMap={customTokenMap}
-        onAddToken={onAddToken}
-        onRemoveToken={onRemoveToken}
-        chainId={chainId}
-        tokenMap={tokenMap}
-        loading={inputType !== tradeType ? isLoading : false}
-      />
-    ),
-    [
-      chainId,
-      className,
-      currency,
-      customTokenMap,
-      inputType,
-      isLoading,
-      onAddToken,
-      onChange,
-      onRemoveToken,
-      onSelect,
-      tokenMap,
-      tradeType,
-      value,
-    ]
+  return (
+    <Web3Input.Currency
+      className={className}
+      value={value}
+      onChange={onChange}
+      currency={currency}
+      onSelect={onSelect}
+      customTokenMap={customTokenMap}
+      onAddToken={onAddToken}
+      onRemoveToken={onRemoveToken}
+      chainId={chainId}
+      tokenMap={tokenMap}
+      loading={inputType !== tradeType ? isLoading : false}
+    />
   )
 }
