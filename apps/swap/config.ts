@@ -4,6 +4,7 @@ export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, Chai
 
 export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
+  ChainId.POLYGON,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
   ChainId.BSC,
