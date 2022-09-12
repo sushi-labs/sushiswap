@@ -13,7 +13,8 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.HARMONY,
+  // ChainId.ARBITRUM_NOVA,
+  ChainId.HARMONY,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]

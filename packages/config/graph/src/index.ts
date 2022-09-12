@@ -50,6 +50,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.KAVA]: KAVA_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
   [ChainId.FUSE]: GRAPH_HOST,
+  [ChainId.ARBITRUM_NOVA]: '34.148.218.47:8000/subgraphs/name',
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -115,6 +116,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONBEAM]: 'subgraph-qa/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'subgraph-qa/sushiswap-moonriver',
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
+  [ChainId.ARBITRUM_NOVA]: 'subgraph-qa/sushiswap-arbitrum-nova',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
