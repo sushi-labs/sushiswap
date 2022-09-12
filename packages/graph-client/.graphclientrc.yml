@@ -17,6 +17,7 @@ additionalTypeDefs: |
 additionalResolvers:
   - ./resolvers/bentobox.ts
   - ./resolvers/blocks.ts
+  # - ./resolvers/sushiswap.ts
 
 documents:
   - './queries/*.graphql'

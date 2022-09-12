@@ -7,7 +7,7 @@ export const KAVA_HOST = 'pvt.graph.kava.io/subgraphs/name'
 export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
-export const PENDING_METIS_HOST = ''
+export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
 export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -36,6 +36,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
+  [ChainId.CELO]: GRAPH_HOST,
   [ChainId.ETHEREUM]: GRAPH_HOST,
   [ChainId.FANTOM]: GRAPH_HOST,
   [ChainId.GNOSIS]: GRAPH_HOST,
@@ -49,7 +50,6 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.KAVA]: KAVA_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
   [ChainId.FUSE]: GRAPH_HOST,
-  [ChainId.CELO]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -101,6 +101,20 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
+}
+
+export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'subgraph-qa/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'subgraph-qa/sushiswap-arbitrum',
+  [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
+  [ChainId.CELO]: 'subgraph-qa/sushiswap-celo',
+  [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
+  [ChainId.FUSE]: 'subgraph-qa/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'subgraph-qa/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'subgraph-qa/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'subgraph-qa/sushiswap-moonriver',
+  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {

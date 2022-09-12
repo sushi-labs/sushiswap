@@ -1,12 +1,11 @@
 import { chainName, chainShortName } from '@sushiswap/chain'
 import {
-  AMM_ENABLED_NETWORKS,
-  BLOCK_SUBGRAPH_NAME,
-  EXCHANGE_SUBGRAPH_NAME,
-  GRAPH_HOST,
-  TRIDENT_ENABLED_NETWORKS,
+  BLOCKS_SUBGRAPH_NAME,
+  SUBGRAPH_HOST,
+  SUSHISWAP_SUBGRAPH_NAME,
   TRIDENT_SUBGRAPH_NAME,
-} from 'config'
+} from '@sushiswap/graph-config'
+import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from 'config'
 
 import { InputMaybe, Pagination, Pair, Resolvers } from '.graphclient'
 
@@ -60,8 +59,8 @@ export const resolvers: Resolvers = {
               chainId,
               chainName: chainName[chainId],
               chainShortName: chainShortName[chainId],
-              subgraphName: BLOCK_SUBGRAPH_NAME[chainId],
-              subgraphHost: GRAPH_HOST[chainId],
+              subgraphName: BLOCKS_SUBGRAPH_NAME[chainId],
+              subgraphHost: SUBGRAPH_HOST[chainId],
             },
             info,
           })
@@ -81,8 +80,8 @@ export const resolvers: Resolvers = {
               chainId: args.chainId,
               chainName: chainName[args.chainId],
               chainShortName: chainShortName[args.chainId],
-              subgraphName: EXCHANGE_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: GRAPH_HOST[args.chainId],
+              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
+              subgraphHost: SUBGRAPH_HOST[args.chainId],
             },
             info,
           })
@@ -96,7 +95,7 @@ export const resolvers: Resolvers = {
               chainName: chainName[args.chainId],
               chainShortName: chainShortName[args.chainId],
               subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: GRAPH_HOST[args.chainId],
+              subgraphHost: SUBGRAPH_HOST[args.chainId],
             },
             info,
           })
@@ -141,7 +140,6 @@ export const resolvers: Resolvers = {
       }
     },
     crossChainPairs: async (root, args, context, info) => {
-      // console.log('CROSS CHAIN PAIRS ARGS', args)
       const transformer = (pools: Pair[], oneDayPools: Pair[], farms: any, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
@@ -196,37 +194,41 @@ export const resolvers: Resolvers = {
             ...args.chainIds
               .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
               .map((chainId) => {
-                return Promise.all([
-                  context.Trident.Query.pairs({
-                    root,
-                    args,
-                    context: {
-                      ...context,
-                      chainId,
-                      chainName: chainName[chainId],
-                      chainShortName: chainShortName[chainId],
-                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                      subgraphHost: GRAPH_HOST[chainId],
-                    },
-                    info,
-                  }),
-                  context.Trident.Query.pairs({
-                    root,
-                    args: {
-                      ...args,
-                      block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
-                    },
-                    context: {
-                      ...context,
-                      chainId,
-                      chainName: chainName[chainId],
-                      chainShortName: chainShortName[chainId],
-                      subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                      subgraphHost: GRAPH_HOST[chainId],
-                    },
-                    info,
-                  }),
-                ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+                return context.Trident.Query.pairs({
+                  root,
+                  args,
+                  context: {
+                    ...context,
+                    chainId,
+                    chainName: chainName[chainId],
+                    chainShortName: chainShortName[chainId],
+                    subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                    subgraphHost: SUBGRAPH_HOST[chainId],
+                  },
+                  info,
+                }).then((pools) =>
+                  Promise.all([
+                    Promise.resolve(pools),
+                    context.Trident.Query.pairs({
+                      root,
+                      args: {
+                        ...args,
+                        first: pools.length,
+                        where: { id_in: pools.map((pool) => pool.id) },
+                        block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
+                      },
+                      context: {
+                        ...context,
+                        chainId,
+                        chainName: chainName[chainId],
+                        chainShortName: chainShortName[chainId],
+                        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                        subgraphHost: SUBGRAPH_HOST[chainId],
+                      },
+                      info,
+                    }),
+                  ]).then(([pools, oneDayPools]) => transformer(pools, oneDayPools, farms, chainId))
+                )
               }),
             ...args.chainIds
               .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
@@ -239,8 +241,8 @@ export const resolvers: Resolvers = {
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
-                    subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                    subgraphHost: GRAPH_HOST[chainId],
+                    subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                    subgraphHost: SUBGRAPH_HOST[chainId],
                   },
                   info,
                 })
@@ -262,8 +264,8 @@ export const resolvers: Resolvers = {
                             chainId,
                             chainName: chainName[chainId],
                             chainShortName: chainShortName[chainId],
-                            subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                            subgraphHost: GRAPH_HOST[chainId],
+                            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                            subgraphHost: SUBGRAPH_HOST[chainId],
                           },
                           info,
                         }),
@@ -285,8 +287,8 @@ export const resolvers: Resolvers = {
                           chainId,
                           chainName: chainName[chainId],
                           chainShortName: chainShortName[chainId],
-                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                          subgraphHost: GRAPH_HOST[chainId],
+                          subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                          subgraphHost: SUBGRAPH_HOST[chainId],
                         },
                         info,
                       }),
@@ -303,8 +305,8 @@ export const resolvers: Resolvers = {
                           chainId,
                           chainName: chainName[chainId],
                           chainShortName: chainShortName[chainId],
-                          subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                          subgraphHost: GRAPH_HOST[chainId],
+                          subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                          subgraphHost: SUBGRAPH_HOST[chainId],
                         },
                         info,
                       }),
@@ -338,8 +340,8 @@ export const resolvers: Resolvers = {
                 ...context,
                 chainId,
                 chainName: chainName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((bundles) =>
@@ -362,8 +364,8 @@ export const resolvers: Resolvers = {
                 ...context,
                 chainId,
                 chainName: chainName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((bundles) =>
@@ -458,8 +460,8 @@ export const resolvers: Resolvers = {
                 ...context,
                 chainId,
                 chainName: chainName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((user) => transformer(user, chainId))
@@ -475,7 +477,7 @@ export const resolvers: Resolvers = {
                 chainId,
                 chainName: chainName[chainId],
                 subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((user) => transformer(user, chainId))
@@ -505,8 +507,8 @@ export const resolvers: Resolvers = {
                 chainId,
                 chainName: chainName[chainId],
                 chainShortName: chainShortName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((factories) => {
@@ -531,8 +533,8 @@ export const resolvers: Resolvers = {
                 chainId,
                 chainName: chainName[chainId],
                 chainShortName: chainShortName[chainId],
-                subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-                subgraphHost: GRAPH_HOST[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
               },
               info,
             }).then((factories) => {

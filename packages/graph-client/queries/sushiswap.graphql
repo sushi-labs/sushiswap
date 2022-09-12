@@ -1,0 +1,8 @@
+query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainBundles(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    nativePrice
+  }
+}

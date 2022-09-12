@@ -768,6 +768,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -821,6 +822,7 @@ importers:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage

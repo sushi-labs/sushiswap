@@ -34,6 +34,7 @@
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@tanstack/react-table": "8.5.0",
     "date-fns": "^2.29.1",
     "echarts": "^5.3.3",
