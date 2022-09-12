@@ -65,10 +65,12 @@ export const useTrade: UseTrade = ({
     chainId,
   })
 
-  const [currencyIn, currencyOut] = useMemo(
+  const currencies = useMemo(
     () => (tradeType === TradeType.EXACT_INPUT ? [mainCurrency, otherCurrency] : [otherCurrency, mainCurrency]),
     [tradeType, mainCurrency, otherCurrency]
   )
+
+  const [currencyIn, currencyOut] = currencies
 
   // Generate currency combinations of input and output token based on configured bases
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
@@ -106,7 +108,7 @@ export const useTrade: UseTrade = ({
     [pools]
   )
 
-  const rebases = useBentoBoxTotals(chainId, [currencyIn, currencyOut])
+  const rebases = useBentoBoxTotals(chainId, currencies)
   const currencyInRebase = currencyIn ? rebases?.[currencyIn.wrapped.address] : undefined
   const currencyOutRebase = currencyOut ? rebases?.[currencyOut.wrapped.address] : undefined
 

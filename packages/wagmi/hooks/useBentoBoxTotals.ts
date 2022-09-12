@@ -31,6 +31,9 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
 
   const { data: totals } = useContractReads({
     contracts,
+    cacheOnBlock: true,
+    watch: true,
+    keepPreviousData: true,
   })
 
   return useMemo(() => {

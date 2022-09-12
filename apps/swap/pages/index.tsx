@@ -97,7 +97,7 @@ const Index: FC = () => {
                 tradeType={tradeType}
               />
               <SwapStatsDisclosure />
-              <div className="p-3 pt-1">
+              <div className="p-3 pt-0">
                 <Checker.Connected fullWidth size="md">
                   <Checker.Network fullWidth size="md" chainId={chainId}>
                     <Checker.Amounts
