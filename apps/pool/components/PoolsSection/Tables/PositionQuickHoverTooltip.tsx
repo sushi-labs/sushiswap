@@ -100,33 +100,35 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </Typography>
         </div>
       </div>
-      <div className="flex flex-col gap-1.5 mt-4">
-        <Typography variant="xs" className="mb-1 text-slate-500">
-          Staked Position
-        </Typography>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Currency.Icon currency={token0} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-slate-50">
-              {stakedUnderlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
+      {row.farm && (
+        <div className="flex flex-col gap-1.5 mt-4">
+          <Typography variant="xs" className="mb-1 text-slate-500">
+            Staked Position
+          </Typography>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Currency.Icon currency={token0} width={18} height={18} />
+              <Typography variant="sm" weight={600} className="text-slate-50">
+                {stakedUnderlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
+              </Typography>
+            </div>
+            <Typography variant="xs" className="text-slate-400">
+              {formatUSD(stakedValue0)}
             </Typography>
           </div>
-          <Typography variant="xs" className="text-slate-400">
-            {formatUSD(stakedValue0)}
-          </Typography>
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Currency.Icon currency={token1} width={18} height={18} />
-            <Typography variant="sm" weight={600} className="text-slate-50">
-              {stakedUnderlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Currency.Icon currency={token1} width={18} height={18} />
+              <Typography variant="sm" weight={600} className="text-slate-50">
+                {stakedUnderlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
+              </Typography>
+            </div>
+            <Typography variant="xs" className="text-slate-400">
+              {formatUSD(stakedValue1)}
             </Typography>
           </div>
-          <Typography variant="xs" className="text-slate-400">
-            {formatUSD(stakedValue1)}
-          </Typography>
         </div>
-      </div>
+      )}
       {row.farm && (
         <div className="flex flex-col gap-1.5 mt-4">
           <Typography variant="xs" className="mb-1 text-slate-500">
