@@ -11,7 +11,7 @@ import { Button, classNames, createToast, Dialog, Dots, Switch, Typography } fro
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -27,7 +27,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [changeEndDate, setChangeEndDate] = useState(false)
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<string>()
-  const [fromBentoBox, setFromBentoBox] = useState(false)
   const [error, setError] = useState<string>()
 
   const amountAsEntity = useMemo(() => {
@@ -68,7 +67,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           BigNumber.from(stream.id),
           BigNumber.from(topUp ? topUpAmount : '0'),
           changeEndDate ? difference : 0,
-          fromBentoBox,
+          false,
         ],
       })
 
@@ -82,10 +81,12 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
           failed: 'Something went wrong updating the stream',
         },
       })
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
     }
-  }, [activeChain?.id, amount, amountAsEntity, changeEndDate, endDate, fromBentoBox, stream, topUp, writeAsync])
+  }, [activeChain.id, amount, amountAsEntity, changeEndDate, endDate, stream, topUp, writeAsync])
 
   if (!stream || !address || stream?.canUpdate(address)) return null
 

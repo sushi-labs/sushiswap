@@ -4,13 +4,13 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Stream } from 'lib'
+import { Stream, Vesting } from 'lib'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useContractWrite, useNetwork } from 'wagmi'
 
 interface CancelModalProps {
   title: string
-  stream?: Stream
+  stream?: Stream | Vesting
   abi: ContractInterface
   address: string
   fn: string

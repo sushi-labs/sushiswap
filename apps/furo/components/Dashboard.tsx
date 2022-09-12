@@ -3,6 +3,7 @@ import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
+import { FuroTableType, StreamTable } from 'components'
 import { toToken } from 'lib'
 import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
@@ -12,10 +13,9 @@ import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
 import { useAccount } from 'wagmi'
 
-import { FuroTable, FuroTableType } from './FuroTable'
 import { Rebase } from '.graphclient'
 
-const fetcher = (params: any) =>
+const fetcher = (params) =>
   fetch(params)
     .then((res) => res.json())
     .catch((e) => console.log(JSON.stringify(e)))
@@ -132,7 +132,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
       </div>
       <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
-        <div className="flex justify-between px-2">
+        <div className="flex flex-col sm:flex-row gap-6 justify-between px-2">
           <Tab.List className="flex gap-10">
             <Tab
               as={Typography}
@@ -182,7 +182,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
         <Tab.Panels>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}
@@ -200,7 +200,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             />
           </Tab.Panel>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}

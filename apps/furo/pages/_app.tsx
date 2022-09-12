@@ -17,11 +17,17 @@ import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
 import store from '../store'
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[]
+  }
+}
+
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
 
   useEffect(() => {
-    const handler = (page: any) =>
+    const handler = (page) =>
       window.dataLayer.push({
         event: 'pageview',
         page,

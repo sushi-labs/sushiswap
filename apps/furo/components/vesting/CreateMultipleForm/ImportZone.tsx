@@ -151,7 +151,6 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
       })
     },
 
-    // @ts-ignore
     [append, chain, onErrors, trigger]
   )
 

@@ -1,4 +1,3 @@
-import { Amount } from '@sushiswap/currency'
 import { Button, HistoryIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Stream, Transaction, Vesting } from 'lib'
@@ -62,7 +61,7 @@ export const HistoryPopover: FC<Props> = ({ stream, transactionRepresentations }
 }
 
 const HistoryPopoverTransaction: FC<{ stream: Stream | Vesting; transaction: Transaction }> = memo(
-  ({ stream, transaction }) => {
+  ({ transaction }) => {
     return (
       <div key={transaction.id} className="py-2 grid grid-cols-[80px_80px_100px] gap-2 items-center">
         <Typography className="tracking-wider capitalize text-slate-200" weight={500} variant="xxs">

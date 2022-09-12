@@ -39,7 +39,7 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
-    "@tanstack/react-table": "8.0.0-alpha.87",
+    "@tanstack/react-table": "8.5.13",
     "@uniswap/redux-multicall": "^1.1.1",
     "@uniswap/token-lists": "^1.0.0-beta.29",
     "@visx/curve": "^2.1.0",

@@ -12,6 +12,8 @@ export const transformStreamFormData: TransformStreamFormData = (payload) => {
     ? new Token({
         chainId: currency.chainId,
         decimals: currency.decimals,
+        // wrapped address becomes address because react-hook-form parses classes into json objects
+        // @ts-ignore
         address: currency.address,
         name: currency.name,
         symbol: currency.symbol,

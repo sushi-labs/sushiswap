@@ -5,12 +5,19 @@ import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
-import { Stream } from 'lib'
+import { Stream, Vesting } from 'lib'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
+import {
+  ProviderRpcError,
+  useAccount,
+  useContractWrite,
+  useEnsAddress,
+  useNetwork,
+  UserRejectedRequestError,
+} from 'wagmi'
 
 interface TransferModalProps {
-  stream?: Stream
+  stream?: Stream | Vesting
   abi: ContractInterface
   address: string
   fn?: string
@@ -58,8 +65,10 @@ export const TransferModal: FC<TransferModalProps> = ({
           failed: 'Something went wrong transferring the stream',
         },
       })
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
     }
 
     setRecipient(undefined)

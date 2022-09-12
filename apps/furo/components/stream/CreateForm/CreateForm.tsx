@@ -4,7 +4,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Currency } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
-import log from '@sushiswap/log'
 import { JSBI } from '@sushiswap/math'
 import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
@@ -12,7 +11,7 @@ import { Approve } from '@sushiswap/wagmi/systems'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import { CreateStreamFormData, CreateStreamFormDataValidated } from '../types'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
@@ -116,16 +115,10 @@ export const CreateForm: FC = () => {
         })
 
         setSignature(undefined)
-      } catch (e: any) {
-        setError(e.message)
-
-        log.tenderly({
-          chainId: activeChain?.id,
-          from: address,
-          to: contract.address,
-          data: batchAction({ contract, actions }),
-          value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
-        })
+      } catch (e: unknown) {
+        if (!(e instanceof UserRejectedRequestError)) {
+          setError((e as ProviderRpcError).message)
+        }
       }
     },
     [address, activeChain?.id, amountAsEntity, contract, sendTransactionAsync, signature, rebase]

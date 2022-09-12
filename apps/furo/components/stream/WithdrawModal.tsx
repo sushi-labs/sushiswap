@@ -10,7 +10,7 @@ import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { useStreamBalance } from 'lib/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -69,8 +69,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream }) => {
           failed: 'Something went wrong withdrawing from stream',
         },
       })
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
     }
   }, [activeChain?.id, amount, fundSource, stream, writeAsync, withdrawTo])
 
