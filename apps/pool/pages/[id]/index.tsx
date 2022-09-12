@@ -20,7 +20,7 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { getPool, getSushiBar } from '../../lib/api'
+import { getPool } from '../../lib/api'
 import { PairWithAlias } from '../../types'
 
 const LINKS = (id: string): BreadcrumbLink[] => [
@@ -32,13 +32,12 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pair, stats] = await Promise.all([getPool(query.id as string), getSushiBar()])
+  const [pair] = await Promise.all([getPool(query.id as string)])
 
   return {
     props: {
       fallback: {
         [`/pool/api/pool/${query.id}`]: { pair },
-        [`/pool/api/bar`]: { stats },
       },
     },
   }
