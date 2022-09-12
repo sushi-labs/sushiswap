@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export const MoonriverCircle = (props: React.ComponentProps<'svg'>) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
-    <rect width="128" height="128" fill="url(#paint0_linear_303_494)" rx="64"></rect>
+    <rect width="128" height="128" fill="url(#paint0_radial_303_494)" rx="64"></rect>
     <g clipPath="url(#clip0_303_494)">
       <path
         fill="#F2B705"
@@ -18,10 +18,17 @@ export const MoonriverCircle = (props: React.ComponentProps<'svg'>) => (
       ></path>
     </g>
     <defs>
-      <linearGradient id="paint0_linear_303_494" x1="64" x2="64" y1="0" y2="128" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#322B89"></stop>
-        <stop offset="1" stopColor="#5C50F4"></stop>
-      </linearGradient>
+      <radialGradient
+        id="paint0_radial_303_494"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientTransform="rotate(90 0 64) scale(85.5)"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#3F398D"></stop>
+        <stop offset="1" stopColor="#3F1262"></stop>
+      </radialGradient>
       <clipPath id="clip0_303_494">
         <path fill="#fff" d="M0 0H62V79H0z" transform="translate(33 25)"></path>
       </clipPath>
