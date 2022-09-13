@@ -182,13 +182,13 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           </div>
         </div>
 
-        <div className={defaultSidePadding}>
-          <Typography variant="h3" weight={700}>
+        <div>
+          <Typography variant="h3" weight={700} className={defaultSidePadding}>
             Latest Releases
           </Typography>
           {latestReleases && (
-            <div className="overflow-x-auto">
-              <div className="flex gap-6 mt-6 sm:mt-12 transition-all sm:gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 w-[798px] sm:w-full">
+            <div className={classNames('overflow-x-auto pb-4', defaultSidePadding)}>
+              <div className="flex gap-6 mt-6 sm:mt-12 transition-all sm:gap-4 md:grid md:grid-cols-3 w-[798px] md:w-full">
                 <ArticleList
                   articles={latestReleases as ArticleEntity[]}
                   loading={loading}
